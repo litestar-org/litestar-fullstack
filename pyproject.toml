@@ -1,0 +1,117 @@
+[tool.poetry]
+name = "starlite-spa"
+version = "0.1.0"
+description = "Opinionated template for integrating Starlite with a SPA"
+authors = ["Cody Fincher <cody.fincher@gmail.com>"]
+maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/cofin/pyspa"
+repository = "https://github.com/cofin/pyspa"
+documentation = "https://starlite-api.github.io/starlite-spa"
+keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "ssr"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
+include = ["CHANGELOG.md"]
+packages = [
+    { include = "pyspa", from = "src" },
+]
+[tool.poetry.scripts]
+pyspa = "pyspa:main"
+pg-ready = "pyspa.utils.postgres_ready:main"
+redis-ready = "pyspa.utils.redis_ready:main"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+starlite = { extras = ["brotli"], version = "*" }
+pydantic = {extras = ["dotenv","email"], version = "*"}
+typer = "*"
+gunicorn = "^20.1.0"
+uvicorn = {extras = ["standard"], version = "^0.18.2"}
+sqlalchemy = { git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main" }
+alembic = "^1.8.1"
+redis = "*"
+hiredis = "*"
+asyncpg = "*"
+rich = "*"
+picologging = "*"
+httpx = "^0.23.0"
+duckdb = "^0.4.0"
+
+[tool.poetry.dev-dependencies]
+hypothesis = { extras = ["cli"], version = "*" }
+mkdocs-material = "*"
+uvicorn = "*"
+sqlalchemy = { extras = ["mypy"], version = "*" }
+coverage = {extras = ["toml"], version = "*"}
+mypy = "*"
+pre-commit = "*"
+pylint = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+pytest-dotenv = "*"
+types-redis = "*"
+types-pyyaml = "*"
+types-requests = "*"
+bump2version = "*"
+flake8 = "*"
+flake8-type-checking = "*"
+pyupgrade = "*"
+blacken-docs ="*"
+bandit = "*"
+flake8-bugbear = "*"
+flake8-comprehensions = "*"
+flake8-mutable = "*"
+flake8-print = "*"
+flake8-simplify = "*"
+slotscheck = "*"
+types-freezegun = "*"
+Jinja2 = "*"
+freezegun = "*"
+pytest-mock = "*"
+tox = "*"
+mkdocs = "*"
+mkdocstrings = "*"
+mkdocstrings-python = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    'pragma: no cover',
+    'if TYPE_CHECKING:',
+    'except ImportError as e:',
+    '\.\.\.'
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

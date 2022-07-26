@@ -1,0 +1,113 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      SETUPTOOLS_USE_DISTUTILS: stdlib
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - uses: pre-commit/action@v3.0.0
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root --extras="brotli"
+      - name: Set pythonpath
+        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+      - name: Test
+        run: poetry run pytest
+        if: matrix.python-version != '3.10'
+      - name: Test with Coverage
+        run: poetry run pytest --cov=. --cov-report=xml
+        if: matrix.python-version == '3.10'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-xml
+          path: coverage.xml
+        if: matrix.python-version == '3.10'
+  sonar:
+    needs: test
+    if: github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-xml
+      - name: Fix coverage file for sonarcloud
+        run: sed -i "s/home\/runner\/work\/starlite\/starlite/github\/workspace/g" coverage.xml
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  snyk:
+    needs: test
+    if: github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk Monitor
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: snyk/actions/python-3.8@master
+        with:
+          command: monitor
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Run Snyk Test
+        if: ${{ github.ref != 'refs/heads/main' }}
+        uses: snyk/actions/python-3.8@master
+        with:
+          command: test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  codeql:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

@@ -1,0 +1,32 @@
+site_name: Pytemplates - Typer CLI
+repo_url: https://github.com/PyTemplate/typer_cli
+edit_uri: ./edit/main/docs
+
+# Sticking with readthedocs theme for basic template
+# material theme also installed
+theme:
+  name: "readthedocs"
+
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+    - Home: index.md
+    - User Guide:
+      - Installation: user_guide/installation.md
+      - Usage: user_guide/usage.md
+    - Developer Guide:
+      - Developer Setup: developer_guide/developer_setup.md
+      - Commands: developer_guide/commands.md
+      - Workflows: developer_guide/workflows.md
+      - Releases: developer_guide/releases.md
+    - App Reference:
+      - App Reference: app_reference/app.md
+    - Code Reference:
+      - Core:
+        - Module1: code_reference/module1.md
+        - Module2: code_reference/module2.md
+    - Extras:
+      - File Tree: extras/file_tree.md
+      - Credits: extras/credits.md
