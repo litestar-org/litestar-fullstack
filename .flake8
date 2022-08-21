@@ -1,6 +1,6 @@
 [flake8]
 jobs = 4
-max-line-length = 88
+max-line-length = 80
 exclude = .git,__pycache__
 max-complexity = 10
 # D203 - blank line before docstring

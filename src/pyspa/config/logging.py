@@ -5,10 +5,11 @@ import re
 from functools import lru_cache
 from logging import Filter as LoggingFilter
 from queue import Queue
-from typing import Any, Final, List
+from typing import TYPE_CHECKING, Any, Final, Generic, List, TypeVar
 
 import picologging
 from gunicorn.glogging import Logger as GunicornLogger
+from picologging import LogRecord
 from picologging.handlers import QueueHandler, QueueListener
 from rich.console import Console
 from rich.logging import RichHandler as _RichHandler
@@ -78,7 +79,7 @@ class QueueListenerHandler(QueueHandler):  # type: ignore
         self,
         handlers: List[Any],
         respect_handler_level: bool = False,
-        queue: Queue = Queue(-1),
+        queue: Queue[LogRecord] = Queue(-1),
     ):
         super().__init__(queue)
         self.handlers = _resolve_handlers(handlers)
@@ -100,14 +101,6 @@ class StubbedGunicornLogger(GunicornLogger):  # type: ignore
         self.access_logger.addHandler(self.handler)
 
 
-def _resolve_handlers(handlers: List[Any]) -> List[Any]:
-    """
-    Converts list of string of handlers to the object of respective handler.
-    Indexing the list performs the evaluation of the object.
-    """
-    return [handlers[i] for i in range(len(handlers))]
-
-
 log_config = LoggingConfig(
     root={"level": settings.app.LOG_LEVEL, "handlers": ["queue_listener"]},
     filters={
@@ -123,7 +116,7 @@ log_config = LoggingConfig(
             "formatter": "standard",
         },
         "queue_listener": {
-            "class": "pyspa.config.logging.QueueListenerHandler",
+            "class": "starlite.logging.picologging.QueueListenerHandler",
             "handlers": ["cfg://handlers.console"],
         },
     },
@@ -160,5 +153,13 @@ def get_logger(name: str = DEFAULT_LOG_NAME) -> picologging.Logger:
     """
     Returns a Configured Logger
     """
-    logging.config.dictConfig(log_config.dict())
+    log_config.configure()
     return picologging.getLogger(name)
+
+
+def _resolve_handlers(handlers: List[Any]) -> List[Any]:
+    """
+    Converts list of string of handlers to the object of respective handler.
+    Indexing the list performs the evaluation of the object.
+    """
+    return [handlers[i] for i in range(len(handlers))]

@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - db:/var/lib/postrgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: optimus-prime
+      POSTGRES_DB: optimus-prime
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INSTALL_ARGS: ""
+    command: scripts/entry
+    depends_on:
+      - db
+      - cache
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./src/opdba:/workspace/opdba
+      # - ./scripts:/code/scripts
+      - ./tests:/workspace/tests
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    container_name: advisor-mailhog
+    ports:
+      - "8025:8025"
+volumes:
+  db: {}
+  cache: {}

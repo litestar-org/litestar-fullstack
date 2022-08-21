@@ -71,11 +71,11 @@ class GunicornSettings(BaseSettings):
 
     ACCESS_LOG: str
     ERROR_LOG: str
-    HOST: str
-    KEEPALIVE: int
-    LOG_LEVEL: str
-    PORT: int
-    RELOAD: str
+    HOST: str = "0.0.0.0"
+    KEEPALIVE: int = 120
+    LOG_LEVEL: str = "INFO"
+    PORT: int = 8080
+    RELOAD: bool = False
     THREADS: int
     TIMEOUT: int = 120
     WORKERS: int

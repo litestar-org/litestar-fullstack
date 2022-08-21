@@ -1,8 +1,9 @@
 import asyncio
 import sys
 
-from app.core.db import engine
 from sqlalchemy import text
+
+from pyspa.core.db import engine
 
 
 async def c() -> None:

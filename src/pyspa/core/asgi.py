@@ -1,9 +1,10 @@
-from opdba import routes
-from opdba.config import settings
-from opdba.config.logging import log_config
-from opdba.core import exceptions, openapi, response
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlite import CompressionConfig, Starlite
+
+from pyspa import routes
+from pyspa.config import settings
+from pyspa.config.logging import log_config
+from pyspa.core import exceptions, openapi, response
 
 app = Starlite(
     debug=settings.app.DEBUG,

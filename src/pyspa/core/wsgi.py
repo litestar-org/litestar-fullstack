@@ -6,7 +6,7 @@ import signal
 import sys
 import threading
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any, NoReturn, Union
 
 from gunicorn.app.base import Application
 from gunicorn.arbiter import Arbiter
@@ -15,6 +15,9 @@ from uvicorn.workers import UvicornWorker as _UvicornWorker
 
 from pyspa.config import settings
 from pyspa.core.asgi import app
+
+if TYPE_CHECKING:
+    from starlite import Starlite
 
 
 class ReloaderThread(threading.Thread):
@@ -72,20 +75,17 @@ class UvicornWorker(_UvicornWorker):  # type: ignore
 class ApplicationLoader(Application):  # type: ignore
     """Bootstraps the WSGI app"""
 
-    def __init__(
-        self,
-        options=None,
-    ):
+    def __init__(self, options: dict[str, str | bool | int] | None = None):
         self.options = options or {}
         self.config_path = self.options.pop("config", None)
         super().__init__()
 
-    def init(self, parser, options, args):
+    def init(self, parser, options, args):  # type: ignore
         """Class ApplicationLoader object constructor."""
         self.options = options
         self.cfg.set("default_proc_name", args[0])
 
-    def load_config(self):
+    def load_config(self) -> None:
         """Load config from passed options"""
         if self.config_path:
             self.load_config_from_file(self.config_path)
@@ -97,7 +97,7 @@ class ApplicationLoader(Application):  # type: ignore
         for key, value in config.items():
             self.cfg.set(key.lower(), value)
 
-    def load(self):
+    def load(self) -> "Starlite":
         """Load application."""
         return app
 
@@ -107,14 +107,14 @@ def run_wsgi(
     port: int,
     http_workers: int,
     reload: bool,
-):
+) -> None:
     """Run gunicorn WSGI with ASGI workers."""
     sys.argv = [
         "--gunicorn",
     ]
     if reload:
         sys.argv.append("-r")
-    sys.argv.append("opdba.core.asgi:app")
+    sys.argv.append("pyspa.core.asgi:app")
     ApplicationLoader(
         options={
             "host": host,
@@ -122,16 +122,6 @@ def run_wsgi(
             "port": str(port),
             "reload": reload,
             "loglevel": settings.app.LOG_LEVEL,
-            "config": "opdba/config/gunicorn.py",
+            "config": "pyspa/config/gunicorn.py",
         },
     ).run()
-
-
-if __name__ == "__main__":
-
-    run_wsgi(
-        host=settings.server.bind_host,
-        port=settings.server.tcp_port,
-        http_workers=settings.server.http_workers,
-        reload=settings.server.reload,
-    )
