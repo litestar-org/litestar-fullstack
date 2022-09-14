@@ -22,6 +22,7 @@ app = Starlite(
     middleware=[security.oauth2_authentication.middleware, middleware.DatabaseSessionMiddleware],
     dependencies={"db": Provide(db.db_session)},
     static_files_config=static_files.config,
+    allowed_hosts=settings.app.BACKEND_CORS_ORIGINS,
 )
 
 

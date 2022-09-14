@@ -11,7 +11,6 @@ from functools import lru_cache
 from typing import List, Literal, Union
 
 import picologging as logging
-from pydantic import AnyHttpUrl
 from pydantic import BaseSettings as _BaseSettings
 from pydantic import SecretBytes, SecretStr, ValidationError, validator
 
@@ -82,7 +81,7 @@ class AppSettings(EnvironmentSettings):
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 24
     INVITE_TOKEN_EXPIRE_HOURS: int = 24
     USER_VERIFICATION_TOKEN_EXPIRE_HOURS: int = 24
-    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: list[str] = []
     CSRF_COOKIE_NAME: str = "pyspa-csrf-token"
     CSRF_COOKIE_SECURE: bool = True
 
