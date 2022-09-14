@@ -24,7 +24,7 @@ async def user_lookup(sub: str) -> "User":
 
 oauth2_authentication = OAuth2PasswordBearerAuth(  # nosec
     retrieve_user_handler=user_lookup,
-    token_secret=settings.app.SECRET_KEY,
+    token_secret=settings.app.SECRET_KEY.get_secret_value(),
     token_url=paths.urls.ACCESS_TOKEN,
     exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],
 )
