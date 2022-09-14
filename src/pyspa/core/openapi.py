@@ -1,11 +1,21 @@
-from openapi_schema_pydantic import Contact  # type: ignore
+from pydantic_openapi_schema.v3_1_0 import Contact
 from starlite import OpenAPIConfig
 
-from pyspa import __version__
+from pyspa.config import settings
+from pyspa.core.security import oauth2_authentication
 
 config = OpenAPIConfig(
-    title="pyspa",
-    version=str(__version__),
-    contact=Contact(name="Cody Fincher", email="cody@fincher.cloud"),
-    description="Simple Single Page Application",
+    title=settings.openapi.TITLE or settings.app.NAME,
+    version=settings.openapi.VERSION,
+    contact=Contact(name=settings.openapi.CONTACT_NAME, email=settings.openapi.CONTACT_EMAIL),
+    use_handler_docstrings=True,
+    root_schema_site="elements",
+    components=[oauth2_authentication.openapi_components],
+    security=[oauth2_authentication.security_requirement],
 )
+"""
+OpenAPI config for app, see [OpenAPISettings][starlite_bedrock.config.OpenAPISettings]
+
+Defaults to 'elements' for the documentation.
+ It has an interactive 3.1 compliant web app and Swagger does not yet support 3.1
+"""

@@ -1,9 +1,9 @@
 import typer
 
+from pyspa.asgi import run_server
 from pyspa.cli.console import console
 from pyspa.config import settings
-from pyspa.config.logging import get_logger
-from pyspa.core.wsgi import run_wsgi
+from pyspa.config.logging import log_config
 
 cli = typer.Typer(
     no_args_is_help=True,
@@ -14,31 +14,41 @@ cli = typer.Typer(
     add_completion=False,
 )
 
-logger = get_logger("root")
 
-
-@cli.command(name="server")
-def run_server(
+@cli.command()
+def api(
     host: str = typer.Option(
-        settings.gunicorn.HOST,
+        settings.server.HOST,
+        "--host",
+        "-h",
         help="Host interface to listen on.  Use 0.0.0.0 for all available interfaces.",
     ),
-    port: int = typer.Option(settings.gunicorn.PORT, help="Port to listen on."),
+    port: int = typer.Option(settings.server.PORT, "--port", "-p", help="Port to listen on."),
     workers: int = typer.Option(
-        settings.gunicorn.WORKERS,
-        help="Number of HTTP workers to run.  This should equal the number of CPUs available.",
+        settings.server.WORKERS,
+        "--workers",
+        "-w",
+        help="Number of HTTP workers to run.",
+    ),
+    reload: bool = typer.Option(
+        False,
+        "--reload",
+        "-r",
+        help="Reload the application on code changes",
     ),
 ) -> None:
-    """Run the server"""
-    settings.gunicorn.HOST = host
-    settings.gunicorn.PORT = port
-    settings.gunicorn.WORKERS = workers
-    console.print("[bold green]...Gathering data")
-    run_wsgi(host, port, workers, reload=settings.gunicorn.RELOAD)
-
-
-@cli.command(name="worker")
-def run_worker() -> None:
-    """Run the worker"""
-    console.print("[bold green]...Gathering data")
-    logger.info("Running worker")
+    """Run the API server."""
+    log_config.configure()
+    console.print("[bold blue]Launching API Server with Uvicorn")
+    settings.server.HOST = host
+    settings.server.PORT = port
+    settings.server.WORKERS = workers
+    settings.server.RELOAD = reload
+    run_server(
+        host=settings.server.HOST,
+        port=settings.server.PORT,
+        http_workers=settings.server.WORKERS,
+        reload=settings.server.RELOAD,
+        log_level=settings.server.LOG_LEVEL,
+        asgi_app=settings.server.ASGI_APP,
+    )

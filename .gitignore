@@ -91,9 +91,6 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
-# poetry
-# poetry.lock
-
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
@@ -105,13 +102,15 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.venv
 
 # Spyder project settings
 .spyderproject
@@ -131,5 +130,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# VSCode
-.vscode
+# vscode
+# .vscode
+.venv
+.venv

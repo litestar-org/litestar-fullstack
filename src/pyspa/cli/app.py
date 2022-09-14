@@ -1,6 +1,6 @@
 import typer
 
-from pyspa.cli.commands import manage_cli, run_cli
+from pyspa.cli import commands
 
 cli = typer.Typer(
     name="Simple Single Page Application",
@@ -11,6 +11,13 @@ cli = typer.Typer(
     pretty_exceptions_short=True,
     add_completion=False,
 )
-
-cli.add_typer(run_cli, name="run")
-cli.add_typer(manage_cli, name="manage")
+cli.add_typer(
+    commands.run.cli,
+    name="run",
+    help="Launch Starlite PySPA",
+)
+cli.add_typer(
+    commands.manage.cli,
+    name="manage",
+    help="Configure Starlite PySPA",
+)

@@ -7,12 +7,11 @@ logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from starlette.responses import Response
-    from starlite.types import Request
+    from starlite.connection import Request
 
 
 def logging_exception_handler(request: "Request", exc: Exception) -> "Response":
-    """
-    Logs exception and returns appropriate response.
+    """Logs exception and returns appropriate response.
 
     Parameters
     ----------

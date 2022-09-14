@@ -8,21 +8,21 @@
 [MASTER]
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=third_party
+ignore=third_party,pyspa.db.migrations
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
 ignore-patterns=
 
 # Pickle collected data for later comparisons.
-persistent=no
+persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
 load-plugins=
 
 # Use multiple processes to speed up Pylint.
-jobs=4
+jobs=6
 
 # Allow loading of arbitrary C extensions. Extensions are imported into the
 # active Python interpreter and may run arbitrary code.

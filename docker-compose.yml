@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./src/opdba:/workspace/opdba
+      - ./src/pyspa:/workspace/pyspa
       # - ./scripts:/code/scripts
       - ./tests:/workspace/tests
 
