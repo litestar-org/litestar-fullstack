@@ -78,7 +78,7 @@ migrate:          ## Generate database migrations
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
-	@echo "ATTENTION: This operation will wipe alll migrations and recreate from an emtpy state."
+	@echo "ATTENTION: This operation will wipe all migrations and recreate from an emtpy state."
 	@env PYTHONPATH=src poetry run pyspa manage purge-database --no-prompt
 	rm -Rf src/pyspa/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
