@@ -6,6 +6,12 @@ from sqlalchemy import orm, select
 from pyspa import models, repositories, schemas
 from pyspa.core import security
 from pyspa.services.base import DataAccessService, DataAccessServiceException
+from pyspa.services.team_invite import (
+    TeamInvitationEmailMismatchException,
+    TeamInvitationExpired,
+    TeamInvitationNotFoundException,
+    team_invite,
+)
 
 if TYPE_CHECKING:
     from pydantic import UUID4
@@ -105,9 +111,16 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
             team.members.append(models.TeamMember(user=user, role=models.TeamRoleTypes.ADMIN, is_owner=True))
             db.add(team)  # this will get committed with the user object below
         if invitation_id:
-            # invitation_obj = await services.invite.get(id=obj_in.invitation_id, db=db)
-            #   TODO
-            raise NotImplementedError
+            invite = await team_invite.get_by_id(id=obj_in.invitation_id, db=db)
+            if not invite:
+                raise TeamInvitationNotFoundException
+            if invite.is_accepted:
+                raise TeamInvitationExpired
+            if invite.email != obj_in.email:
+                raise TeamInvitationEmailMismatchException
+            team.members.append(models.TeamMember(user=user, role=invite.role, is_owner=False))
+            invite.is_accepted = True
+            db.add(invite)  # this is automatically committed with the statement below
         return await self.repository.create(db, user)
 
     @staticmethod
