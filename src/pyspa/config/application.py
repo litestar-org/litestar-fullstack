@@ -9,13 +9,15 @@ import sys
 from datetime import datetime
 from enum import Enum, EnumMeta
 from functools import lru_cache
-from typing import Literal, Union
+from typing import Any, Literal, Optional, Union, cast
+from uuid import NAMESPACE_DNS, uuid3
 
 from pydantic import BaseSettings as _BaseSettings
 from pydantic import SecretBytes, SecretStr, ValidationError, validator
 
-from pyspa import utils
 from pyspa.config.paths import BASE_DIR
+from pyspa.utils.serializers import convert_datetime_to_gmt, deserialize_object, serialize_object
+from pyspa.utils.text import slugify
 from pyspa.version import __version__
 
 __all__ = [
@@ -35,11 +37,11 @@ class BaseSettings(_BaseSettings):
     class Config:
         """Base Settings Config"""
 
-        json_loads = utils.serializers.deserialize_object
-        json_dumps = utils.serializers.serialize_object
+        json_loads = deserialize_object
+        json_dumps = serialize_object
         case_sensitive = True
         json_encoders = {
-            datetime: utils.serializers.convert_datetime_to_gmt,
+            datetime: convert_datetime_to_gmt,
             SecretStr: lambda secret: secret.get_secret_value() if secret else None,
             SecretBytes: lambda secret: secret.get_secret_value() if secret else None,
             Enum: lambda enum: enum.value if enum else None,
@@ -95,7 +97,7 @@ class AppSettings(EnvironmentSettings):
         str
             `self.NAME`, all lowercase and hyphens instead of spaces.
         """
-        return utils.text.slugify(self.NAME)
+        return slugify(self.NAME)
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
@@ -220,6 +222,19 @@ class Settings(BaseSettings):
     db: DatabaseSettings
     openapi: OpenAPISettings
     server: ServerSettings
+
+    installation_id: str | None = None
+
+    @validator("installation_id", pre=True, always=True)
+    def generate_installation_id(
+        cls,
+        value: Optional[str],
+        values: dict[str, Any],
+    ) -> str:
+        if isinstance(value, str):
+            return slugify(value)
+        db = cast("DatabaseSettings", values.get("db"))
+        return str(uuid3(NAMESPACE_DNS, db.URL))
 
 
 @lru_cache
