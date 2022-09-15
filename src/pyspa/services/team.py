@@ -18,7 +18,7 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
 
     async def create(self, db: "AsyncSession", obj_in: schemas.TeamCreate) -> models.Team:
         obj_data = obj_in.dict(
-            exclude_unset=True, by_alias=False, exclude_none=True, exclude=["owner_id"]  # typing: ignore[arg-type]
+            exclude_unset=True, by_alias=False, exclude_none=True, exclude=["owner_id"]  # type: ignore[arg-type]
         )
         team = self.model(**obj_data)
         team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoleTypes.ADMIN, is_owner=True))
