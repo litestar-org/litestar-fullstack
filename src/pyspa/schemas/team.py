@@ -9,36 +9,36 @@ from pyspa.schemas.base import CamelizedBaseSchema
 
 # #################################
 #
-# Workspace Member
+# Team Member
 #
 # #################################
 
 
 # Properties to receive via API on creation
-class WorkspaceMemberCreate(CamelizedBaseSchema):
+class TeamMemberCreate(CamelizedBaseSchema):
     user_id: UUID4
-    role: models.WorkspaceRoleTypes = models.WorkspaceRoleTypes.MEMBER
+    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
 
 
 # Properties to receive via API on update
-class WorkspaceMemberUpdate(CamelizedBaseSchema):
-    role: Optional[models.WorkspaceRoleTypes] = models.WorkspaceRoleTypes.MEMBER
+class TeamMemberUpdate(CamelizedBaseSchema):
+    role: Optional[models.TeamRoleTypes] = models.TeamRoleTypes.MEMBER
     is_owner: Optional[bool] = False
 
 
 # Additional properties to return via API
-class WorkspaceMember(CamelizedBaseSchema):
+class TeamMember(CamelizedBaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
     email: EmailStr
     full_name: Optional[str]
-    role: Optional[models.WorkspaceRoleTypes] = models.WorkspaceRoleTypes.MEMBER
+    role: Optional[models.TeamRoleTypes] = models.TeamRoleTypes.MEMBER
     is_owner: Optional[bool] = False
 
     class Config:
         orm_mode = True
 
     @classmethod
-    def from_orm(cls, obj: Any) -> "WorkspaceMember":
+    def from_orm(cls, obj: Any) -> "TeamMember":
         """
         Format organization details for the User object
 
@@ -63,26 +63,26 @@ class WorkspaceMember(CamelizedBaseSchema):
 
 
 # Properties to receive via API on creation
-class WorkspaceInvitationCreate(CamelizedBaseSchema):
-    workspace_id: UUID4
-    role: models.WorkspaceRoleTypes = models.WorkspaceRoleTypes.MEMBER
+class TeamInvitationCreate(CamelizedBaseSchema):
+    team_id: UUID4
+    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
     email: EmailStr
     user_id: UUID4
 
 
 # Properties to receive via API on update
-class WorkspaceInvitationUpdate(CamelizedBaseSchema):
-    workspace_id: UUID4
-    role: models.WorkspaceRoleTypes = models.WorkspaceRoleTypes.MEMBER
+class TeamInvitationUpdate(CamelizedBaseSchema):
+    team_id: UUID4
+    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
     email: EmailStr
     is_accepted: bool
 
 
 # Additional properties to return via API
-class WorkspaceInvitation(CamelizedBaseSchema):
+class TeamInvitation(CamelizedBaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
-    workspace_id: UUID4
+    team_id: UUID4
     email: EmailStr
-    role: models.WorkspaceRoleTypes
+    role: models.TeamRoleTypes
     user_id: UUID4
     is_accepted: bool

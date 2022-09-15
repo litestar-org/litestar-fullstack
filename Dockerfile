@@ -47,7 +47,7 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_VERSION='1.1.4' \
-    POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" 
+    POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}"
 RUN apt-get install -y --no-install-recommends curl git build-essential \
     && apt-get autoremove -y
 
@@ -79,7 +79,7 @@ RUN addgroup --system --gid 1001 "app-user" \
     && adduser --no-create-home --system --uid 1001 "app-user" \
     && chown -R "app-user":"app-user" /app
 COPY --chown="app-user":"app-user" --from=build-stage /app/venv /app/venv/
-COPY --chown="app-user":"app-user" *.md  LICENSE /app/ 
+COPY --chown="app-user":"app-user" *.md  LICENSE /app/
 COPY --chown="app-user":"app-user" sample /app/sample
 
 # These are the two folders that change the most.

@@ -32,7 +32,7 @@ class TotaledResults(GenericModel, Generic[SchemaType]):
     """Provides count and result of result set"""
 
     count: int
-    results: List[SchemaType]
+    results: list[SchemaType]
 
 
 class PaginatedResults(GenericModel, Generic[SchemaType]):
@@ -41,7 +41,7 @@ class PaginatedResults(GenericModel, Generic[SchemaType]):
     count: int
     limit: int
     skip: int
-    results: List[SchemaType]
+    results: list[SchemaType]
 
 
 class DataAccessServiceException(Exception):
@@ -56,9 +56,9 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
 
     def __init__(
         self,
-        model: Type[ModelType],
-        repository: Type[RepositoryType],
-        default_options: Optional[List[Any]] = None,
+        model: type[ModelType],
+        repository: type[RepositoryType],
+        default_options: Optional[list[Any]] = None,
     ) -> None:
         """
         CRUD object with default methods to create, read, update, delete (CRUD).
@@ -72,7 +72,7 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         self.repository = repository(model=model)
         self.default_options = default_options if default_options else []
 
-    async def get_by_id(self, db: "AsyncSession", id: int, options: Optional[List[Any]] = None) -> Optional[ModelType]:
+    async def get_by_id(self, db: "AsyncSession", id: int, options: Optional[list[Any]] = None) -> Optional[ModelType]:
         """
         Obtain model instance by `identifier`.
 
@@ -87,7 +87,7 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         return db_obj or None
 
     async def get(
-        self, db: "AsyncSession", *args: Any, options: Optional[List[Any]] = None, **kwargs: Any
+        self, db: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
     ) -> Optional[SchemaType]:
         """
         Obtain a list of model instances
@@ -119,9 +119,9 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         *args: Any,
         skip: int = 0,
         limit: int = 100,
-        options: Optional[List[Any]] = None,
+        options: Optional[list[Any]] = None,
         **kwargs: Any,
-    ) -> Tuple[List[ModelType], int]:
+    ) -> tuple[list[ModelType], int]:
         """
         Obtain a list of model instances
 
@@ -161,8 +161,8 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         return results, count
 
     async def list(
-        self, db: "AsyncSession", *args: Any, options: Optional[List[Any]] = None, **kwargs: Any
-    ) -> List[ModelType]:
+        self, db: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
+    ) -> list[ModelType]:
         """
         Obtain a list of model instances
 
@@ -204,7 +204,7 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         return db_obj
 
     async def update(
-        self, db: "AsyncSession", db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        self, db: "AsyncSession", db_obj: ModelType, obj_in: Union[UpdateSchemaType, dict[str, Any]]
     ) -> ModelType:
         """
         Update model instance `db_obj` with fields and values specified by `obj_in`.

@@ -1,6 +1,14 @@
 from pyspa.schemas.base import BaseSchema, CamelizedBaseSchema
 from pyspa.schemas.health import SystemHealth
 from pyspa.schemas.message import Message
+from pyspa.schemas.team import (
+    TeamInvitation,
+    TeamInvitationCreate,
+    TeamInvitationUpdate,
+    TeamMember,
+    TeamMemberCreate,
+    TeamMemberUpdate,
+)
 from pyspa.schemas.user import (
     User,
     UserCreate,
@@ -8,16 +16,8 @@ from pyspa.schemas.user import (
     UserPasswordConfirm,
     UserPasswordUpdate,
     UserSignup,
+    UserTeam,
     UserUpdate,
-    UserWorkspace,
-)
-from pyspa.schemas.workspace import (
-    WorkspaceInvitation,
-    WorkspaceInvitationCreate,
-    WorkspaceInvitationUpdate,
-    WorkspaceMember,
-    WorkspaceMemberCreate,
-    WorkspaceMemberUpdate,
 )
 
 __all__ = [
@@ -32,11 +32,11 @@ __all__ = [
     "UserPasswordUpdate",
     "UserSignup",
     "UserUpdate",
-    "UserWorkspace",
-    "WorkspaceInvitation",
-    "WorkspaceInvitationCreate",
-    "WorkspaceInvitationUpdate",
-    "WorkspaceMember",
-    "WorkspaceMemberCreate",
-    "WorkspaceMemberUpdate",
+    "UserTeam",
+    "TeamInvitation",
+    "TeamInvitationCreate",
+    "TeamInvitationUpdate",
+    "TeamMember",
+    "TeamMemberCreate",
+    "TeamMemberUpdate",
 ]

@@ -1,8 +1,12 @@
+from pathlib import Path
 from typing import Final
 
-from opdba import utils
+from pyspa import utils
 
-BASE_DIR: Final = utils.import_tools.module_to_os_path("opdba")
+BASE_DIR: Final = utils.import_tools.module_to_os_path("pyspa")
+
+PUBLIC_DIR = Path(BASE_DIR, "web/public")
+ASSETS_DIR = Path(BASE_DIR, "web/assets")
 
 
 class ApiPaths:
@@ -14,6 +18,7 @@ class ApiPaths:
     REFRESH_TOKEN = "/access/refresh"  # nosec
     SIGNUP = "/access/signup"
     #
+    STATIC = "/public"
 
 
 urls = ApiPaths()

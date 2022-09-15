@@ -103,4 +103,5 @@ repos:
             starlette,
             sqlalchemy,
             types-freezegun,
+            types-jose
           ]

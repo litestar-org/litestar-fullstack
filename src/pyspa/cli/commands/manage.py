@@ -136,7 +136,7 @@ async def drop_tables() -> None:
 
     async with engine.begin() as db:
         logger.info("[bold red] Dropping the db")
-        BaseModel.metadata.drop_all()
+        await db.run_sync(BaseModel.metadata.drop_all)
         logger.info("[bold red] Truncating the version table")
 
         await db.execute(

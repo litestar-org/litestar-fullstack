@@ -54,11 +54,11 @@ def run_server(
     import uvicorn  # pylint: disable=[import-outside-toplevel]
 
     uvicorn.run(
-        asgi_app=asgi_app,
+        app=asgi_app,
         host=host,
         port=port,
         log_level=log_level,
-        log_config=None,
+        log_config=None,  # this tells uvicorn to not apply its customizations
         reload=reload,
         lifespan=lifespan,
         access_log=access_log,

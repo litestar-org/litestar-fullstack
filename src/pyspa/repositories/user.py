@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class UserRepository(BaseRepository[models.User]):
     async def get_by_email(
-        self, db: "AsyncSession", email: str, options: Optional[List[Any]] = None
+        self, db: "AsyncSession", email: str, options: Optional[list[Any]] = None
     ) -> models.User | None:
         options = options if options else []
         statement = select(self.model).where(self.model.email == email).options(*options)

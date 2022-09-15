@@ -96,16 +96,16 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         return db_obj.is_superuser
 
     @staticmethod
-    def is_workspace_member(db_obj: "models.User", workspace_id: "UUID4") -> bool:
-        """Returns true if the user is a member of the workspace"""
-        return any(membership.workspace.id == workspace_id for membership in db_obj.workspaces)
+    def is_team_member(db_obj: "models.User", team_id: "UUID4") -> bool:
+        """Returns true if the user is a member of the team"""
+        return any(membership.team.id == team_id for membership in db_obj.teams)
 
     @staticmethod
-    def is_workspace_admin(db_obj: "models.User", workspace_id: "UUID4") -> bool:
-        """Returns true if the user is an admin of the workspace"""
+    def is_team_admin(db_obj: "models.User", team_id: "UUID4") -> bool:
+        """Returns true if the user is an admin of the team"""
         return any(
-            membership.workspace.id == workspace_id and membership.role == models.WorkspaceRoleTypes.ADMIN
-            for membership in db_obj.workspaces
+            membership.team.id == team_id and membership.role == models.TeamRoleTypes.ADMIN
+            for membership in db_obj.teams
         )
 
 
@@ -113,8 +113,8 @@ user = UserService(
     model=models.User,
     repository=repositories.UserRepository,
     default_options=[
-        orm.subqueryload(models.User.workspaces).options(
-            orm.joinedload(models.WorkspaceMember.workspace, innerjoin=True).options(
+        orm.subqueryload(models.User.teams).options(
+            orm.joinedload(models.TeamMember.team, innerjoin=True).options(
                 orm.noload("*"),
             ),
         ),

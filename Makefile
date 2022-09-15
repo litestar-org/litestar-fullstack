@@ -2,7 +2,7 @@
 .ONESHELL:
 ENV_PREFIX=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
 USING_POETRY=$(shell grep "tool.poetry" pyproject.toml && echo "yes")
-USING_DOCKER=$(shell grep "OPDBA_USE_DOCKER=true" .env && echo "yes")
+USING_DOCKER=$(shell grep "PYSPA_USE_DOCKER=true" .env && echo "yes")
 USING_PNPM=$(shell python3 -c "if __import__('pathlib').Path('pnpm-lock.yaml').exists(): print('yes')")
 USING_YARN=$(shell python3 -c "if __import__('pathlib').Path('yarn.lock').exists(): print('yes')")
 USING_NPM=$(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
@@ -24,7 +24,7 @@ help:  ## Display this help
 
 
 .PHONY: upgrade-dependencies
-upgrade-dependencies:          ## Upgrade all dependencies to the latest stable versions
+upgrade-dependencies:       ## Upgrade all dependencies to the latest stable versions
 	@if [ "$(USING_POETRY)" ]; then poetry update; fi
 	@echo "Python Dependencies Updated"
 	@if [ "$(USING_YARN)" ]; then yarn upgrade; fi
@@ -34,24 +34,26 @@ upgrade-dependencies:          ## Upgrade all dependencies to the latest stable 
 ###############
 # lint & test #
 ###############
-format-source: ## Format source code
+format-source:       ## Format source code
 	@echo 'Formatting and cleaning source...'
 	./scripts/format-source-code.sh
 
-lint: ## check style with flake8
-	env PYTHONPATH=src poetry run flake8 src
+lint:       ## check style with flake8
+	env PYTHONPATH=src poetry run pre-commit run --all-files
 
-test: ## run tests quickly with the default Python
+test:       ## run tests quickly with the default Python
 	env PYTHONPATH=src poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/backend/unit
 	coverage xml
 	coverage html
 
-test-all: ## run tests on every Python version with tox
+test-all:       ## run tests on every Python version with tox
 	env PYTHONPATH=src poetry run tox
 
-coverage: ## check code coverage quickly with the default Python
+coverage:       ## check code coverage quickly with the default Python
 	env PYTHONPATH=src/ poetry run coverage run --source pyspa -m pytest
 	env PYTHONPATH=src/ poetry run coverage report -m
+
+
 
 .PHONY: install
 install:          ## Install the project in dev mode.
@@ -66,17 +68,58 @@ install:          ## Install the project in dev mode.
 .PHONY: migrations
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
+	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
 	@env PYTHONPATH=src poetry run alembic -c src/pyspa/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src poetry run pyspa config upgrade-database
+	@env PYTHONPATH=src poetry run pyspa manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will wipe alll migrations and recreate from an emtpy state."
-	@env PYTHONPATH=src poetry run pyspa config purge-database --no-prompt
+	@env PYTHONPATH=src poetry run pyspa manage purge-database --no-prompt
 	rm -Rf src/pyspa/db/migrations/versions/*.py
+	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
 	@env PYTHONPATH=src poetry run alembic -c src/pyspa/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
+.PHONY: clean
+clean:       ## remove all build, testing, and static documentation files
+	rm -fr build/
+	rm -fr dist/
+	rm -fr .eggs/
+	find . -name '*.egg-info' -exec rm -fr {} +
+	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -fr {} +
+	find . -name '.ipynb_checkpoints' -exec rm -fr {} +
+	rm -fr .tox/
+	rm -fr .coverage
+	rm -fr coverage.xml
+	rm -fr coverage.json
+	rm -fr htmlcov/
+	rm -fr .pytest_cache
+	rm -fr .mypy_cache
+	rm -fr site
+
+.PHONY: gen-docs
+gen-docs:       ## generate HTML documentation
+	mkdocs build
+
+.PHONY: docs
+docs:       ## generate HTML documentation and serve it to the browser
+	mkdocs build
+	mkdocs serve
+
+.PHONY: pre-release
+pre-release:       ## bump the version and create the release tag
+	make check
+	make gen-docs
+	make clean
+	bump2version $(increment)
+	git describe --tags --abbrev=0
+	head pyproject.toml | grep version
+	cat src/pytemplates_typer_cli/__version__.py

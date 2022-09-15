@@ -15,8 +15,8 @@ cli = typer.Typer(
 )
 
 
-@cli.command()
-def api(
+@cli.command(name="server")
+def server(
     host: str = typer.Option(
         settings.server.HOST,
         "--host",
@@ -25,7 +25,7 @@ def api(
     ),
     port: int = typer.Option(settings.server.PORT, "--port", "-p", help="Port to listen on."),
     workers: int = typer.Option(
-        settings.server.WORKERS,
+        settings.server.HTTP_WORKERS,
         "--workers",
         "-w",
         help="Number of HTTP workers to run.",
@@ -42,13 +42,13 @@ def api(
     console.print("[bold blue]Launching API Server with Uvicorn")
     settings.server.HOST = host
     settings.server.PORT = port
-    settings.server.WORKERS = workers
+    settings.server.HTTP_WORKERS = workers
     settings.server.RELOAD = reload
     run_server(
         host=settings.server.HOST,
         port=settings.server.PORT,
-        http_workers=settings.server.WORKERS,
+        http_workers=settings.server.HTTP_WORKERS,
         reload=settings.server.RELOAD,
-        log_level=settings.server.LOG_LEVEL,
+        log_level=settings.server.UVICORN_LOG_LEVEL,
         asgi_app=settings.server.ASGI_APP,
     )

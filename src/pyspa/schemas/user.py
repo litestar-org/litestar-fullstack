@@ -17,33 +17,33 @@ class User(CamelizedBaseSchema):
     is_superuser: bool
     is_active: bool
     is_verified: bool
-    workspace_count: Optional[int] = 0
-    workspaces: Optional[List["UserWorkspace"]] = []
+    team_count: Optional[int] = 0
+    teams: Optional[list["UserTeam"]] = []
 
     @classmethod
     def from_orm(cls, obj: Any) -> "User":
         """Appends additional data from nested tables to the user object"""
-        if getattr(obj, "workspaces", None):
-            obj.workspace_count = len(obj.workspaces)
+        if getattr(obj, "teams", None):
+            obj.team_count = len(obj.teams)
         return super().from_orm(obj)
 
 
-class UserWorkspace(CamelizedBaseSchema):
-    """Holds workspaces details for a user
+class UserTeam(CamelizedBaseSchema):
+    """Holds teams details for a user
 
-    This is nested in the User Model for 'workspace'
+    This is nested in the User Model for 'team'
     """
 
-    workspace_id: "Optional[UUID4]" = None
+    team_id: "Optional[UUID4]" = None
     name: "Optional[str]" = None
     is_owner: "Optional[bool]" = False
-    role: "Optional[models.WorkspaceRoleTypes]" = models.WorkspaceRoleTypes.MEMBER
+    role: "Optional[models.TeamRoleTypes]" = models.TeamRoleTypes.MEMBER
 
     @classmethod
-    def from_orm(cls, obj: Any) -> "UserWorkspace":
-        """Flatten workspace details to the user membership object"""
-        if getattr(obj, "workspace", None) and getattr(obj.workspace, "name", None):
-            obj.name = obj.workspace.name
+    def from_orm(cls, obj: Any) -> "UserTeam":
+        """Flatten team details to the user membership object"""
+        if getattr(obj, "team", None) and getattr(obj.team, "name", None):
+            obj.name = obj.team.name
         return super().from_orm(obj)
 
 
@@ -51,14 +51,14 @@ class UserSignup(CamelizedBaseSchema):
     email: EmailStr
     password: SecretStr
     full_name: Optional[str] = None
-    workspace_name: Optional[str] = None
+    team_name: Optional[str] = None
     invitation_id: Optional[int] = None
 
     @root_validator(pre=True)
-    def workspace_or_invitation_but_not_both(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if values.get("workspace_name", None) and values.get("invitation_id", None):
+    def team_or_invitation_but_not_both(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if values.get("team_name", None) and values.get("invitation_id", None):
             raise ValueError(
-                "Unable to accept invitation and create a default workspace",
+                "Unable to accept invitation and create a default team",
             )
         return values
 
@@ -90,17 +90,17 @@ class UserCreate(CamelizedBaseSchema):
     email: EmailStr
     hashed_password: SecretStr
     full_name: Optional[str] = None
-    workspace_name: Optional[str] = None
+    team_name: Optional[str] = None
     invitation_id: Optional[int] = None
     is_superuser: Optional[bool] = False
     is_active: Optional[bool] = True
     is_verified: Optional[bool] = False
 
     @root_validator(pre=True)
-    def workspace_or_invitation_but_not_both(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if values.get("workspace_name", None) and values.get("invitation_id", None):
+    def team_or_invitation_but_not_both(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if values.get("team_name", None) and values.get("invitation_id", None):
             raise ValueError(
-                "Unable to accept invitation and create a default workspace",
+                "Unable to accept invitation and create a default team",
             )
         return values
 

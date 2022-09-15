@@ -71,7 +71,7 @@ class RepositoryProtocol(Protocol[DatabaseModelType]):
         Protocol (_type_): _description_
     """
 
-    model: Type[DatabaseModelType]
+    model: type[DatabaseModelType]
     """
     A model that extends [`DeclarativeBase`][sqlalchemy.orm.DeclarativeBase]. Must be set by concrete subclasses.
     """
@@ -156,18 +156,18 @@ class RepositoryProtocol(Protocol[DatabaseModelType]):
 
 
 class ExpiresAtRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithExpiresAtType]):
-    model: Type[DatabaseModelWithExpiresAtType]
+    model: type[DatabaseModelWithExpiresAtType]
 
     async def delete_expired(self, session: "AsyncSession") -> None:
         ...  # pragma: no cover
 
 
 class CreatedUpdatedAtRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithCreatedUpdatedAtType]):
-    model: Type[DatabaseModelWithCreatedUpdatedAtType]
+    model: type[DatabaseModelWithCreatedUpdatedAtType]
 
 
 class SlugRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithSlugType]):
-    model: Type[DatabaseModelWithSlugType]
+    model: type[DatabaseModelWithSlugType]
 
     async def get_by_slug(
         self,
@@ -178,7 +178,7 @@ class SlugRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithSlugT
 
 
 class SoftDeleteRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithSoftDeleteType]):
-    model: Type[DatabaseModelWithSoftDeleteType]
+    model: type[DatabaseModelWithSoftDeleteType]
 
 
 class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
@@ -186,7 +186,7 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
 
     def __init__(
         self,
-        model: Type[DatabaseModelType],
+        model: type[DatabaseModelType],
     ):
         """
         CRUD object with default methods to create, read, update, delete (CRUD).
@@ -207,7 +207,7 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
 
     async def paginate(
         self, session: "AsyncSession", statement: "Select", limit: int = 10, offset: int = 0
-    ) -> Tuple[List[DatabaseModelType], int]:
+    ) -> tuple[list[DatabaseModelType], int]:
         paginated_statement = statement.offset(offset).limit(limit)
 
         [count, results] = await asyncio.gather(

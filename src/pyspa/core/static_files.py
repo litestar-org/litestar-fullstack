@@ -1,12 +1,6 @@
-from pathlib import Path
-
 from starlite import StaticFilesConfig
 
 from pyspa.config import paths
 
-config = [
-    StaticFilesConfig(
-        directories=[Path(paths.BASE_DIR, "web/public"), Path(paths.BASE_DIR, "web/assets")], path="/public"
-    ),
-]
+config = [StaticFilesConfig(directories=[paths.PUBLIC_DIR, paths.ASSETS_DIR], path=paths.urls.STATIC)]
 """Static files config"""

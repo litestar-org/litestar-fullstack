@@ -58,7 +58,7 @@ def do_run_migrations(connection: "Connection") -> None:
         connection=connection,
         target_metadata=target_metadata,
         compare_type=True,
-        version_table="ddl_version",
+        version_table=settings.db.MIGRATION_DDL_VERSION_TABLE,
         user_module_prefix="sa.",
     )
 

@@ -4,13 +4,13 @@ All configuration is via environment variables.
 Take not of the environment variable prefixes required for each settings class, except
 [`AppSettings`][starlite_lib.config.AppSettings].
 """
+import logging
 import sys
 from datetime import datetime
 from enum import Enum, EnumMeta
 from functools import lru_cache
 from typing import List, Literal, Union
 
-import picologging as logging
 from pydantic import BaseSettings as _BaseSettings
 from pydantic import SecretBytes, SecretStr, ValidationError, validator
 
@@ -104,7 +104,7 @@ class AppSettings(EnvironmentSettings):
     ) -> Union[list[str], str]:
         """Parses a list of origins"""
 
-        if isinstance(value, List):
+        if isinstance(value, list):
             return value
         if isinstance(value, str) and not value.startswith("["):
             return [host.strip() for host in value.split(",")]
@@ -167,7 +167,8 @@ class DatabaseSettings(EnvironmentSettings):
     POOL_PRE_PING: bool = True
     URL: str
     MIGRATION_CONFIG: str = f"{BASE_DIR}/config/alembic.ini"
-    MIGRATION_PATH: str = f"{BASE_DIR}/core/migrations"
+    MIGRATION_PATH: str = f"{BASE_DIR}/db/migrations"
+    MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
 
 
 # noinspection PyUnresolvedReferences
@@ -200,9 +201,11 @@ class ServerSettings(EnvironmentSettings):
     ASGI_APP: str = "pyspa.asgi:app"
     HOST: str = "0.0.0.0"  # nosec
     PORT: int = 8000
-    WORKERS: int = 1
+    HTTP_WORKERS: int = 1
+    BACKGROUND_WORKERS: int = 1
     RELOAD: bool = False
-    LOG_LEVEL: str = "error"
+    UVICORN_LOG_LEVEL: str = "WARNING"
+    GUNICORN_LOG_LEVEL: str = "WARNING"
 
 
 class Settings(BaseSettings):
@@ -219,7 +222,7 @@ class Settings(BaseSettings):
     server: ServerSettings
 
 
-@lru_cache()
+@lru_cache
 def get_settings(env: str = "production") -> "Settings":
     """Load Settings file
 

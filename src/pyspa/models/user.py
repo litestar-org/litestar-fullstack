@@ -8,14 +8,14 @@ from pyspa.db import db_types as t
 from pyspa.models.base import BaseModel, CreatedUpdatedAtMixin
 
 if TYPE_CHECKING:
-    from .workspace import WorkspaceMember
+    from .team import TeamMember
 
 
 class User(BaseModel, CreatedUpdatedAtMixin):
     """Users"""
 
     __tablename__ = "user_account"
-    __table_args__ = {"comment": "User accounts for OP DBA access"}
+    __table_args__ = {"comment": "User accounts for application access"}
 
     full_name: orm.Mapped[str] = sa.Column(sa.String(length=255), nullable=True)
     email: orm.Mapped[EmailStr] = sa.Column(t.EmailString, unique=True, index=True, nullable=False)
@@ -26,8 +26,8 @@ class User(BaseModel, CreatedUpdatedAtMixin):
     # -----------
     # ORM Relationships
     # ------------
-    workspaces: orm.Mapped[list["WorkspaceMember"]] = orm.relationship(
-        "WorkspaceMember",
+    teams: orm.Mapped[list["TeamMember"]] = orm.relationship(
+        "TeamMember",
         back_populates="user",
         lazy="subquery",
         cascade="all, delete",

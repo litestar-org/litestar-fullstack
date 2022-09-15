@@ -1,4 +1,4 @@
-import picologging as logging
+import logging
 
 from pyspa import asgi, cli, config, core, db, middleware, models, repositories, schemas, utils, web
 from pyspa.version import __version__

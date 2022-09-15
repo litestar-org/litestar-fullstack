@@ -16,7 +16,7 @@ class OAuth2PasswordBearerAuth(JWTAuth):
     """
     The URL for retrieving a new token
     """
-    scopes: Optional[Dict[str, str]] = {}
+    scopes: Optional[dict[str, str]] = {}
     """Scopes available for the token"""
 
     @property
