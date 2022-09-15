@@ -1,3 +1,3 @@
 # App Reference
 
-::: pyvite.main
+::: pyspa.__main__

@@ -3,7 +3,7 @@
 To install the package using `pip`:
 
 ```bash
-pip install pyvite
+pip install pyspa
 ```
 
 To download the CLI application using `docker`:

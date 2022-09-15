@@ -79,7 +79,7 @@ make build
 To run the image:
 
 ```bash
-docker run --rm pyvite hello user
-docker run --rm pyvite goodbye user
-docker run --rm pyvite version
+docker run --rm pyspa hello user
+docker run --rm pyspa goodbye user
+docker run --rm pyspa version
 ```

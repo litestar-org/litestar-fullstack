@@ -25,8 +25,8 @@ nav:
       - App Reference: app_reference/app.md
   - Code Reference:
       - Core:
-          - Module1: code_reference/module1.md
-          - Module2: code_reference/module2.md
+          - CLI: code_reference/cli.md
+          - Config: code_reference/config.md
   - Extras:
       - File Tree: extras/file_tree.md
       - Credits: extras/credits.md
