@@ -93,7 +93,7 @@ class BaseModel(DeclarativeBase):
     )
     id._creation_order = 1  # type: ignore[attr-defined] # pylint: disable=[protected-access]
 
-    def from_dict(self, **kwargs: Any) -> "Self":
+    def from_dict(self, **kwargs: Any) -> "Self":  # type: ignore[valid-type] # todo: check this type
         """Return ORM Object from Dictionary"""
         if self.__table__:
             for column in self.__table__.columns:

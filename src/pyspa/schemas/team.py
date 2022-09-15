@@ -22,6 +22,7 @@ class TeamCreate(CamelizedBaseSchema):
 
     name: str
     description: Optional[str]
+    owner_id: UUID4
 
 
 # Properties to receive via API on update
@@ -30,7 +31,6 @@ class TeamUpdate(CamelizedBaseSchema):
 
     name: Optional[str] = None
     description: Optional[str]
-    organization_id: Optional[UUID4]
 
 
 # Additional properties to return via API
