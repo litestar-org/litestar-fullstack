@@ -2,14 +2,14 @@
 
 ## Test
 
-- Run the tests on every push/pull_request to the _main_ branch.
+- Run the tests on every push/pull*request to the \_main* branch.
 - Writes a coverage report using pytest-cov and uploads it to codecov.io.
 - Tests run against python versions 3.8 and 3.9.
 - Optional manual trigger in the github actions tab.
 
 ## Lint
 
-- Run the linting tools on every push/pull_request to the _main_ branch.
+- Run the linting tools on every push/pull*request to the \_main* branch.
 - Includes pre-commit hooks, black, isort, flake8, pylint, and mypy.
 - Optional manual trigger in the github actions tab.
 

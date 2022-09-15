@@ -6,6 +6,44 @@ from pydantic import UUID4, EmailStr, Field
 
 from pyspa import models
 from pyspa.schemas.base import CamelizedBaseSchema
+from pyspa.schemas.upload import Upload
+
+# #################################
+#
+# Team
+#
+# #################################
+# Shared properties
+
+
+# Properties to receive via API on creation
+class TeamCreate(CamelizedBaseSchema):
+    """Team properties received on create"""
+
+    name: str
+    description: Optional[str]
+
+
+# Properties to receive via API on update
+class TeamUpdate(CamelizedBaseSchema):
+    """Team properties received on update"""
+
+    name: Optional[str] = None
+    description: Optional[str]
+    organization_id: Optional[UUID4]
+
+
+# Additional properties to return via API
+class Team(CamelizedBaseSchema):
+    """Team Response properties"""
+
+    id: UUID4 = Field(default_factory=uuid.uuid4)
+    name: Optional[str]
+    description: Optional[str]
+    members: Optional[list["TeamMember"]] = []
+    uploads: Optional[list["Upload"]] = []
+    pending_invitations: Optional[list["TeamInvitation"]] = []
+
 
 # #################################
 #
@@ -86,3 +124,6 @@ class TeamInvitation(CamelizedBaseSchema):
     role: models.TeamRoleTypes
     user_id: UUID4
     is_accepted: bool
+
+
+Team.update_forward_refs()

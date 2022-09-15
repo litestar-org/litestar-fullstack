@@ -9,6 +9,7 @@ from pyspa.schemas.team import (
     TeamMemberCreate,
     TeamMemberUpdate,
 )
+from pyspa.schemas.upload import Upload, UploadCreate, UploadUpdate
 from pyspa.schemas.user import (
     User,
     UserCreate,
@@ -39,4 +40,7 @@ __all__ = [
     "TeamMember",
     "TeamMemberCreate",
     "TeamMemberUpdate",
+    "Upload",
+    "UploadCreate",
+    "UploadUpdate",
 ]

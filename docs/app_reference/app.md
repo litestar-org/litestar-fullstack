@@ -1,3 +1,3 @@
 # App Reference
 
-::: pyspa.__main__
+::: pyspa.**main**

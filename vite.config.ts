@@ -1,18 +1,20 @@
-import vueI18n from "@intlify/vite-plugin-vue-i18n"
-import vue from "@vitejs/plugin-vue"
-import path from "path"
-import { defineConfig } from "vite"
-import eslintPlugin from "vite-plugin-eslint"
+import vueI18n from "@intlify/vite-plugin-vue-i18n";
+import vue from "@vitejs/plugin-vue";
+import path from "path";
+import { defineConfig } from "vite";
+import eslintPlugin from "vite-plugin-eslint";
 
-const Dotenv = require("dotenv")
+const Dotenv = require("dotenv");
 
-Dotenv.config({ path: path.join(__dirname, ".env") })
+Dotenv.config({ path: path.join(__dirname, ".env") });
 
 // function getStaticUrl() {
 //   return process.env.GLUENT_CONSOLE_STATIC_URL
 // }
 function getBackendUrl(path) {
-  return `${process.env.GLUENT_CONSOLE_BACKEND_URL || "http://127.0.0.1:8000"}${path}`
+  return `${
+    process.env.GLUENT_CONSOLE_BACKEND_URL || "http://127.0.0.1:8000"
+  }${path}`;
 }
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -86,7 +88,11 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            return id.toString().split("node_modules/")[1].split("/")[0].toString()
+            return id
+              .toString()
+              .split("node_modules/")[1]
+              .split("/")[0]
+              .toString();
           }
         },
       },
@@ -99,4 +105,4 @@ export default defineConfig({
       "vue-i18n": "vue-i18n/dist/vue-i18n.runtime.esm-bundler.js",
     },
   },
-})
+});
