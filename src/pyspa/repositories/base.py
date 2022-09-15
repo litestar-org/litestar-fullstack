@@ -4,7 +4,7 @@ import string
 from collections import abc
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Generic, List, Optional, Protocol, Tuple, Type, TypeVar, Union, cast, overload
+from typing import TYPE_CHECKING, Any, Generic, List, Optional, Protocol, Tuple, TypeVar, Union, cast, overload
 from uuid import UUID
 
 from pydantic import UUID4

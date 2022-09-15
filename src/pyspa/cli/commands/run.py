@@ -49,6 +49,6 @@ def server(
         port=settings.server.PORT,
         http_workers=settings.server.HTTP_WORKERS,
         reload=settings.server.RELOAD,
-        log_level=settings.server.UVICORN_LOG_LEVEL,
+        log_level=settings.server.UVICORN_LOG_LEVEL.lower(),
         asgi_app=settings.server.ASGI_APP,
     )

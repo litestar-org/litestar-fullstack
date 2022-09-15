@@ -60,11 +60,11 @@ log_config = LoggingConfig(
     },
     loggers={
         "uvicorn.access": {
-            "propagate": True,
+            "propagate": False,
             "filters": ["health_filter"],
-            "level": settings.server.UVICORN_LOG_LEVEL.lower(),
+            "level": settings.server.UVICORN_LOG_LEVEL.upper(),
         },
-        "uvicorn.error": {"propagate": True, "level": settings.server.UVICORN_LOG_LEVEL.lower()},
+        "uvicorn.error": {"propagate": False, "level": settings.server.UVICORN_LOG_LEVEL.upper()},
         "sqlalchemy": {
             "propagate": True,
             "level": "WARNING",

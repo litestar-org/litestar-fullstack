@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 from enum import Enum, EnumMeta
 from functools import lru_cache
-from typing import List, Literal, Union
+from typing import Literal, Union
 
 from pydantic import BaseSettings as _BaseSettings
 from pydantic import SecretBytes, SecretStr, ValidationError, validator
