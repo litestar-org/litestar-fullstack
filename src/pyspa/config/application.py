@@ -75,14 +75,14 @@ class AppSettings(EnvironmentSettings):
     JWT_ENCRYPTION_ALGORITHM: str = "HS256"
     USER_REGISTRATION_ENABLED: bool = True
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day expiration
-    REFRESH_TOKEN_COOKIE_NAME: str = "pyspa-refresh-token"
+    REFRESH_TOKEN_COOKIE_NAME: str = "refresh-token"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 5
-    ACCESS_TOKEN_COOKIE_NAME: str = "pyspa-access-token"
+    ACCESS_TOKEN_COOKIE_NAME: str = "access-token"
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 24
     INVITE_TOKEN_EXPIRE_HOURS: int = 24
     USER_VERIFICATION_TOKEN_EXPIRE_HOURS: int = 24
     BACKEND_CORS_ORIGINS: list[str] = []
-    CSRF_COOKIE_NAME: str = "pyspa-csrf-token"
+    CSRF_COOKIE_NAME: str = "csrftoken"
     CSRF_COOKIE_SECURE: bool = True
 
     @property

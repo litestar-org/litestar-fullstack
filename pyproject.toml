@@ -32,8 +32,6 @@ packages = [
 ]
 [tool.poetry.scripts]
 pyspa = "pyspa.__main__:main"
-pg-ready = "pyspa.utils.postgres_ready:main"
-redis-ready = "pyspa.utils.redis_ready:main"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
