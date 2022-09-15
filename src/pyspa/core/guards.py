@@ -2,8 +2,39 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from starlite import BaseRouteHandler, NotAuthorizedException, Request
 
+from pyspa import services
+
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    from pyspa.models.user import User
+
+
+def is_active_user(request: Request, _: BaseRouteHandler) -> None:
+    if not services.user.is_active(request.user):
+        raise NotAuthorizedException("Inactive account")
+
+
+def is_superuser(request: Request, _: BaseRouteHandler) -> None:
+
+    if services.user.is_superuser(request.user):
+        return None
+    raise NotAuthorizedException("Inactive account")
+
+
+def is_team_member_or_superuser(request: Request, route_handler: BaseRouteHandler) -> None:
+    team_id = ...
+    if services.user.is_superuser(request.user):
+        return None
+    if services.user.is_team_member(request.user, team_id):
+        return None
+    raise NotAuthorizedException("Insufficient permissions to access team.")
+
+
+def is_team_member_or_superuser(request: Request, route_handler: BaseRouteHandler) -> None:
+    team_id = ...
+    if not services.user.is_team_member(request.user, team_id):
+        raise NotAuthorizedException("Inactive account")
 
 
 class CheckPayloadMismatch:

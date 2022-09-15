@@ -14,6 +14,7 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=schemas.BaseSchema)
 SchemaType = TypeVar("SchemaType", bound=schemas.BaseSchema)
 
 if TYPE_CHECKING:
+    from pydantic import UUID4
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -72,7 +73,9 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         self.repository = repository(model=model)
         self.default_options = default_options if default_options else []
 
-    async def get_by_id(self, db: "AsyncSession", id: int, options: Optional[list[Any]] = None) -> Optional[ModelType]:
+    async def get_by_id(
+        self, db: "AsyncSession", id: "UUID4", options: Optional[list[Any]] = None
+    ) -> Optional[ModelType]:
         """
         Obtain model instance by `identifier`.
 

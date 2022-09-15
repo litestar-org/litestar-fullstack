@@ -1,4 +1,5 @@
 import base64
+import logging
 from typing import TYPE_CHECKING
 
 from passlib.context import CryptContext
@@ -6,7 +7,6 @@ from passlib.context import CryptContext
 from pyspa import db, services
 from pyspa.config import paths, settings
 from pyspa.middleware import OAuth2PasswordBearerAuth
-from pyspa.services.user import UserNotFoundException
 from pyspa.utils.asyncer import run_async
 
 if TYPE_CHECKING:
@@ -14,16 +14,34 @@ if TYPE_CHECKING:
 
     from pyspa.models import User
 
+logger = logging.getLogger()
 
-async def user_lookup(sub: str) -> "User":
+
+class SecurityException(Exception):
+    """Base exception for security"""
+
+
+class UserInactiveException(SecurityException):
+    """Inactive User"""
+
+
+class AuthenticationInvalidException(SecurityException):
+    """Inactive User"""
+
+
+class AccessForbiddenException(SecurityException):
+    """Not enough permissions"""
+
+
+async def current_user(sub: str) -> "User":
     user = await services.user.get_by_username(db.db_session(), sub)
     if user:
         return user
-    raise UserNotFoundException
+    raise AccessForbiddenException
 
 
 oauth2_authentication = OAuth2PasswordBearerAuth(  # nosec
-    retrieve_user_handler=user_lookup,
+    retrieve_user_handler=current_user,
     token_secret=settings.app.SECRET_KEY.get_secret_value(),
     token_url=paths.urls.ACCESS_TOKEN,
     exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],

@@ -151,6 +151,11 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
             for membership in db_obj.teams
         )
 
+    @staticmethod
+    def is_team_owner(db_obj: models.User, team_id: "UUID4") -> bool:
+        """Returns true if the user is an admin of the team"""
+        return any(membership.team.id == team_id and membership.is_owner for membership in db_obj.teams)
+
 
 user = UserService(
     model=models.User,
