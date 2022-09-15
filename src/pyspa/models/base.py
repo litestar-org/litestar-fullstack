@@ -1,7 +1,7 @@
 import functools
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, Optional, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, TypeAlias, TypeVar
 
 import sqlalchemy as sa
 from pydantic import UUID4
@@ -16,6 +16,9 @@ from sqlalchemy.sql import func as sql_func
 from sqlalchemy.sql.expression import FunctionElement
 
 from pyspa.db import db_types as t
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 __all__ = [
     "meta",
@@ -90,7 +93,7 @@ class BaseModel(DeclarativeBase):
     )
     id._creation_order = 1  # type: ignore[attr-defined] # pylint: disable=[protected-access]
 
-    def from_dict(self, **kwargs: Any) -> "BaseModel":
+    def from_dict(self, **kwargs: Any) -> "Self":
         """Return ORM Object from Dictionary"""
         if self.__table__:
             for column in self.__table__.columns:

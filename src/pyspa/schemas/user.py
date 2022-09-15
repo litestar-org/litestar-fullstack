@@ -1,5 +1,5 @@
 # Standard Library
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from pydantic import UUID4, EmailStr, root_validator
 from pydantic.types import SecretStr
@@ -88,7 +88,7 @@ class UserCreate(CamelizedBaseSchema):
     """User Create Properties"""
 
     email: EmailStr
-    hashed_password: SecretStr
+    password: SecretStr
     full_name: Optional[str] = None
     team_name: Optional[str] = None
     invitation_id: Optional[int] = None
