@@ -97,9 +97,7 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
             # invitation_obj = await services.invite.get(id=obj_in.invitation_id, db=db)
             #   TODO
             raise NotImplementedError
-        await self.repository.create(db, user)
-        await self.repository.refresh(db, user)
-        return user
+        return await self.repository.create(db, user)
 
     @staticmethod
     def is_verified(db_obj: "models.User") -> bool:
