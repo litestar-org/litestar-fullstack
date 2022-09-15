@@ -184,10 +184,7 @@ class SoftDeleteRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWit
 class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
     """Base SQL Alchemy repository."""
 
-    def __init__(
-        self,
-        model: type[DatabaseModelType],
-    ):
+    def __init__(self, model: type[DatabaseModelType]):
         """
         CRUD object with default methods to create, read, update, delete (CRUD).
 

@@ -111,7 +111,7 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
             team.members.append(models.TeamMember(user=user, role=models.TeamRoleTypes.ADMIN, is_owner=True))
             db.add(team)  # this will get committed with the user object below
         if invitation_id:
-            invite = await team_invite.get_by_id(id=obj_in.invitation_id, db=db)
+            invite = await team_invite.get_by_id(id=invitation_id, db=db)
             if not invite:
                 raise TeamInvitationNotFoundException
             if invite.is_accepted:
