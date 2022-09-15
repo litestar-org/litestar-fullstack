@@ -82,10 +82,10 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
 
     async def create(self, db: AsyncSession, obj_in: schemas.UserCreate | schemas.UserSignup) -> models.User:
         obj_data = obj_in.dict(exclude_unset=True, exclude_none=True)
-        password = obj_data.pop("password")
-        invitation_id = obj_data.pop("invitation_id")
-        team_name = obj_data.pop("team_name")
-        obj_data.update({"hashed_password": security.get_password_hash(password)})
+        password: str = obj_data.pop("password")
+        invitation_id: str = obj_data.pop("invitation_id", None)
+        team_name: str = obj_data.pop("team_name", None)
+        obj_data.update({"hashed_password": security.get_password_hash(SecretStr(password))})
         user = models.User.from_dict(**obj_data)
 
         if team_name:
