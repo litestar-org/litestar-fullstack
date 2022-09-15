@@ -6,7 +6,8 @@ from pydantic import UUID4, EmailStr, Field
 
 from pyspa import models
 from pyspa.schemas.base import CamelizedBaseSchema
-from pyspa.schemas.upload import Upload
+from pyspa.schemas.team_invite import TeamInvitation  # noqa: TC002
+from pyspa.schemas.upload import Upload  # noqa: TC002
 
 # #################################
 #
@@ -90,40 +91,6 @@ class TeamMember(CamelizedBaseSchema):
             obj.email = member.email
             obj.id = member.id
         return super().from_orm(obj)
-
-
-# #################################
-#
-# Invitation
-#
-# #################################
-# Shared properties
-
-
-# Properties to receive via API on creation
-class TeamInvitationCreate(CamelizedBaseSchema):
-    team_id: UUID4
-    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
-    email: EmailStr
-    user_id: UUID4
-
-
-# Properties to receive via API on update
-class TeamInvitationUpdate(CamelizedBaseSchema):
-    team_id: UUID4
-    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
-    email: EmailStr
-    is_accepted: bool
-
-
-# Additional properties to return via API
-class TeamInvitation(CamelizedBaseSchema):
-    id: UUID4 = Field(default_factory=uuid.uuid4)
-    team_id: UUID4
-    email: EmailStr
-    role: models.TeamRoleTypes
-    user_id: UUID4
-    is_accepted: bool
 
 
 Team.update_forward_refs()

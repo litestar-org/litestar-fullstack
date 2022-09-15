@@ -1,17 +1,8 @@
 from pyspa.schemas.base import BaseSchema, CamelizedBaseSchema
 from pyspa.schemas.health import SystemHealth
 from pyspa.schemas.message import Message
-from pyspa.schemas.team import (
-    Team,
-    TeamCreate,
-    TeamInvitation,
-    TeamInvitationCreate,
-    TeamInvitationUpdate,
-    TeamMember,
-    TeamMemberCreate,
-    TeamMemberUpdate,
-    TeamUpdate,
-)
+from pyspa.schemas.team import Team, TeamCreate, TeamMember, TeamMemberCreate, TeamMemberUpdate, TeamUpdate
+from pyspa.schemas.team_invite import TeamInvitation, TeamInvitationCreate, TeamInvitationUpdate
 from pyspa.schemas.upload import Upload, UploadCreate, UploadUpdate
 from pyspa.schemas.user import (
     User,
