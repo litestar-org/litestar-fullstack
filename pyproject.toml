@@ -1,53 +1,56 @@
 [tool.poetry]
-name = "pyspa"
-version = "0.1.0"
-description = "Opinionated template for integrating Starlite with a SPA"
 authors = ["Cody Fincher <cody.fincher@gmail.com>"]
-maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/cofin/pyspa"
-repository = "https://github.com/cofin/pyspa"
-documentation = "https://cofin.github.io/pyspa"
-keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Environment :: Web Environment",
-    "License :: OSI Approved :: MIT License",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development",
-    "Typing :: Typed",
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Typing :: Typed",
 ]
+description = "Opinionated template for integrating Starlite with a SPA"
+documentation = "https://cofin.github.io/pyspa"
+homepage = "https://github.com/cofin/pyspa"
 include = ["CHANGELOG.md"]
+keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
+license = "MIT"
+maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
+name = "pyspa"
 packages = [
-    { include = "pyspa", from = "src" },
+  {include = "pyspa", from = "src"},
 ]
+readme = "README.md"
+repository = "https://github.com/cofin/pyspa"
+version = "0.1.0"
 [tool.poetry.scripts]
 pyspa = "pyspa.__main__:main"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
-pydantic = {extras = ["dotenv","email"], version = "*"}
-passlib = {version = "*", extras = ["argon2"]}
-httpx = "*"
-typer = "*"
-uvicorn = {extras = ["standard"], version = "*"}
-sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["brotli", "picologging"]}
 alembic = "*"
 asyncpg = "*"
-redis = "*"
+fsspec = "*"
 hiredis = "*"
+httpx = "*"
+passlib = {version = "*", extras = ["argon2"]}
+pydantic = {extras = ["dotenv", "email"], version = "*"}
+python = ">=3.10,<4.0"
+redis = "*"
 rich = "*"
+sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
+starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = []}
+starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
+starlite-sessions = "*"
+typer = "*"
+universal_pathlib = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
 Jinja2 = "*"
@@ -119,18 +122,16 @@ profile = "black"
 skip_gitignore = true
 src_paths = ["src", "test"]
 
-
-
 [tool.coverage.run]
 omit = ["*/tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
-    'pragma: no cover',
-    'if TYPE_CHECKING:',
-    'except ImportError as e:',
-    '\.\.\.',
-    "if __name__ == '__main__':",
+  'pragma: no cover',
+  'if TYPE_CHECKING:',
+  'except ImportError as e:',
+  '\.\.\.',
+  "if __name__ == '__main__':",
 ]
 
 [tool.pytest.ini_options]

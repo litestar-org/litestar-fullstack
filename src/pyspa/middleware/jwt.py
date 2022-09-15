@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from pydantic import AnyUrl
 from pydantic_openapi_schema.v3_1_0 import Components, OAuthFlow, OAuthFlows, SecurityRequirement, SecurityScheme
@@ -39,6 +39,7 @@ class OAuth2PasswordBearerAuth(JWTAuth):
         Returns:
             An [Components][pydantic_schema_pydantic.v3_1_0.components.Components] instance.
         """
+        # todo: this may not be correct
         return Components(
             securitySchemes={
                 self.openapi_security_scheme_name: SecurityScheme(
