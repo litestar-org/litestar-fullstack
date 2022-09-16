@@ -67,7 +67,7 @@ class AppSettings(EnvironmentSettings):
         case_sensitive = True
 
     NAME: str = "optimus-prime"
-    SECRET_KEY: SecretStr
+    SECRET_KEY: SecretBytes
     BUILD_NUMBER: str = __version__
     DEBUG: bool = False
     DEFAULT_PAGINATION_LIMIT: int = 10

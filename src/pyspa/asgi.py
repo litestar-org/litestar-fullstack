@@ -1,9 +1,9 @@
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlite import Provide, Starlite
 
-from pyspa import db, middleware, web
+from pyspa import api, db, middleware
 from pyspa.config import log_config, settings
-from pyspa.core import cache, client, compression, cors, csrf, exceptions, openapi, security, static_files
+from pyspa.core import cache, client, compression, cors, exceptions, openapi, security, static_files
 
 __all__ = ["app", "run_server"]
 
@@ -16,10 +16,9 @@ app = Starlite(
     openapi_config=openapi.config,
     compression_config=compression.config,
     cors_config=cors.config,
-    csrf_config=csrf.config,
-    route_handlers=[web.router],
+    route_handlers=[api.router],
     cache_config=cache.config,
-    middleware=[security.oauth2_authentication.middleware, middleware.DatabaseSessionMiddleware],
+    middleware=[security.auth.middleware, middleware.DatabaseSessionMiddleware],
     dependencies={"db": Provide(db.db_session)},
     static_files_config=static_files.config,
     allowed_hosts=settings.app.BACKEND_CORS_ORIGINS,

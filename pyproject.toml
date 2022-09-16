@@ -6,8 +6,6 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python",
@@ -17,8 +15,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 description = "Opinionated template for integrating Starlite with a SPA"
-documentation = "https://cofin.github.io/pyspa"
-homepage = "https://github.com/cofin/pyspa"
+documentation = "https://cofin.github.io/starlite-spa"
+homepage = "https://github.com/cofin/starlite-spa"
 include = ["CHANGELOG.md"]
 keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"

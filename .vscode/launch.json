@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "name": "Python: File",
+      "type": "python",
+      "request": "launch",
+      "module": "pyspa.__main__:main",
+      "args": ["run", "server"],
+      "justMyCode": true
+    }
+  ]
+}

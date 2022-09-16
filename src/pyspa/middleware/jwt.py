@@ -53,7 +53,7 @@ class OAuth2PasswordBearerAuth(JWTAuth):
                 self.openapi_security_scheme_name: SecurityScheme(
                     type="oauth2",
                     name=self.auth_header,
-                    security_scheme_in="header",
+                    security_scheme_in="cookie",
                     description="OAUTH2 password bearer authentication and authorization.",
                     scheme="Bearer",
                     bearerFormat="JWT",
@@ -139,7 +139,7 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         raise NotAuthorizedException("Authorization required to access")
 
 
-def coalesce(iterable: list[Optional[str]], default: str | None = None, pred: Any = None) -> str | None:
+def coalesce(iterable: list[Optional[str]], default: str | None = None, pred: "Any" = None) -> str | None:
     """Returns the first non-null value in the iterable.
 
     If no true value is found, returns *default*

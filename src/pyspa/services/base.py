@@ -89,7 +89,7 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         db_obj = await self.repository.get_by_id(db, id, options)
         return db_obj or None
 
-    async def get(
+    async def get_one_or_none(
         self, db: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
     ) -> Optional[SchemaType]:
         """
@@ -116,7 +116,7 @@ class DataAccessService(Generic[ModelType, RepositoryType, CreateSchemaType, Upd
         db_obj = await self.repository.get_one_or_none(db, statement)
         return db_obj or None
 
-    async def get_multi(
+    async def get(
         self,
         db: "AsyncSession",
         *args: Any,

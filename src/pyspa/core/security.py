@@ -1,49 +1,37 @@
 import base64
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 
 from passlib.context import CryptContext
+from pydantic import UUID4
+from starlite import NotAuthorizedException
+from starlite_sessions import SessionAuth
 
 from pyspa import db, services
 from pyspa.config import paths, settings
-from pyspa.middleware import OAuth2PasswordBearerAuth
 from pyspa.utils.asyncer import run_async
 
 if TYPE_CHECKING:
-    from pydantic import SecretStr
+    from pydantic import SecretBytes, SecretStr
 
     from pyspa.models import User
 
 logger = logging.getLogger()
 
 
-class SecurityException(Exception):
-    """Base exception for security"""
-
-
-class UserInactiveException(SecurityException):
-    """Inactive User"""
-
-
-class AuthenticationInvalidException(SecurityException):
-    """Inactive User"""
-
-
-class AccessForbiddenException(SecurityException):
-    """Not enough permissions"""
-
-
-async def current_user(sub: str) -> "User":
-    user = await services.user.get_by_username(db.db_session(), sub)
+async def current_user(session: dict[str, Any]) -> "User":
+    user_id = UUID4(session.get("user_id")) if session.get("user_id") else None
+    if not user_id:
+        raise NotAuthorizedException
+    user = await services.user.get_by_id(db.db_session(), user_id)
     if user:
         return user
-    raise AccessForbiddenException
+    raise NotAuthorizedException
 
 
-oauth2_authentication = OAuth2PasswordBearerAuth(  # nosec
+auth = SessionAuth(
     retrieve_user_handler=current_user,
-    token_secret=settings.app.SECRET_KEY.get_secret_value(),
-    token_url=paths.urls.ACCESS_TOKEN,
+    secret=settings.app.SECRET_KEY,
     exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],
 )
 
@@ -55,7 +43,7 @@ def get_encryption_key(secret: str) -> bytes:
     return base64.urlsafe_b64encode(padded_secret.encode())
 
 
-async def get_password_hash(password: "SecretStr") -> str:
+async def get_password_hash(password: Union["SecretBytes", "SecretStr"]) -> str:
     """Get password hash
     Args:
         password: Plain password
@@ -66,7 +54,7 @@ async def get_password_hash(password: "SecretStr") -> str:
     return pw_hash
 
 
-async def verify_password(plain_password: "SecretStr", hashed_password: str) -> bool:
+async def verify_password(plain_password: Union["SecretBytes", "SecretStr"], hashed_password: str) -> bool:
     """Verify password
     Args:
         plain_password: Plain password

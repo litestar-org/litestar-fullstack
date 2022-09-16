@@ -50,10 +50,9 @@ def requires_team_admin(request: Request, _: BaseRouteHandler) -> None:
 
 def requires_team_ownership(request: Request, _: BaseRouteHandler) -> None:
     team_id = UUID4(request.path_params["team_id"])
-    if services.user.is_superuser(request.user):
+    if services.user.is_superuser(request.user) or services.user.is_team_owner(request.user, team_id):
         return None
-    if not services.user.is_team_owner(request.user, team_id):
-        raise NotAuthorizedException("Insufficient permissions to access team.")
+    raise NotAuthorizedException("Insufficient permissions to access team.")
 
 
 class CheckPayloadMismatch:

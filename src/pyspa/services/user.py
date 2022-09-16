@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Any, Optional
 
-from pydantic import SecretStr
 from sqlalchemy import orm, select
 
 from pyspa import models, repositories, schemas
@@ -14,7 +13,7 @@ from pyspa.services.team_invite import (
 )
 
 if TYPE_CHECKING:
-    from pydantic import UUID4
+    from pydantic import UUID4, SecretStr
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -99,10 +98,10 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
 
     async def create(self, db: "AsyncSession", obj_in: schemas.UserCreate | schemas.UserSignup) -> models.User:
         obj_data = obj_in.dict(exclude_unset=True, exclude_none=True)
-        password: str = obj_data.pop("password")
-        invitation_id: str = obj_data.pop("invitation_id", None)
-        team_name: str = obj_data.pop("team_name", None)
-        obj_data.update({"hashed_password": security.get_password_hash(SecretStr(password))})
+        password: "SecretStr" = obj_data.pop("password")
+        invitation_id: UUID4 | None = obj_data.pop("invitation_id", None)
+        team_name: str | None = obj_data.pop("team_name", None)
+        obj_data.update({"hashed_password": await security.get_password_hash(password)})
         user = models.User.from_dict(**obj_data)
 
         if team_name:

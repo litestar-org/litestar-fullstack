@@ -1,8 +1,8 @@
 from starlite import Router
 
-from pyspa.web.routes import collection, health
+from pyspa.api.routes import collection, health, user
 
-__all__ = ["collection_router", "health_router", "organization_router", "access_router", "user_router"]
+__all__ = ["collection_router", "health_router", "access_router", "user_router"]
 
 collection_router = Router(
     path="",
@@ -12,13 +12,9 @@ health_router = Router(
     path="",
     route_handlers=[health.health_check],
 )
-organization_router = Router(
-    path="",
-    route_handlers=[],
-)
 access_router = Router(
     path="",
-    route_handlers=[],
+    route_handlers=[user.login, user.signup],
 )
 user_router = Router(
     path="",
