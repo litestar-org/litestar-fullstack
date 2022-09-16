@@ -1,11 +1,11 @@
-site_name: Pytemplates - Typer CLI
+site_name: Starlite SPA Sample Architecture
 repo_url: https://github.com/cofin/starlite-spa
 edit_uri: ./edit/main/docs
 
 # Sticking with readthedocs theme for basic template
 # material theme also installed
 theme:
-  name: "readthedocs"
+  name: "material"
 
 plugins:
   - search
