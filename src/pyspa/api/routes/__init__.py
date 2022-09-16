@@ -6,7 +6,7 @@ __all__ = ["collection_router", "health_router", "access_router", "user_router"]
 
 collection_router = Router(
     path="",
-    route_handlers=[collection.handle_collection_upload],
+    route_handlers=[collection.CollectionController],
 )
 health_router = Router(
     path="",

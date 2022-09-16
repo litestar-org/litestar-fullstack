@@ -11,12 +11,11 @@ ASSETS_DIR = Path(BASE_DIR, "web/assets")
 
 class ApiPaths:
     OPENAPI_SCHEMA = "/schema"
-    API_BASE = "/api"
-    HEALTH = "/health"
+    HEALTH = "/api/health"
     # Auth
-    ACCESS_TOKEN = "/access/login"  # nosec
-    REFRESH_TOKEN = "/access/refresh"  # nosec
-    SIGNUP = "/access/signup"
+    ACCESS_TOKEN = "/api/access/login"  # nosec
+    REFRESH_TOKEN = "/api/access/refresh"  # nosec
+    SIGNUP = "/api/access/signup"
     #
     STATIC = "/public"
 

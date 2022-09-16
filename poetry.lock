@@ -1553,7 +1553,7 @@ testing = ["requests"]
 type = "git"
 url = "https://github.com/starlite-api/starlite.git"
 reference = "main"
-resolved_reference = "a3056724a7c4ef1d83dcdf60fd4498d34c5f62f8"
+resolved_reference = "cb0ea3481140c3780622032b4cde2222485ff711"
 
 [[package]]
 name = "starlite-jwt"

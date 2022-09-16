@@ -3,7 +3,7 @@ from starlite import Provide, Starlite
 
 from pyspa import api, db, middleware
 from pyspa.config import log_config, settings
-from pyspa.core import cache, client, compression, cors, exceptions, openapi, security, static_files
+from pyspa.core import cache, client, compression, cors, exceptions, openapi, response, security, static_files
 
 __all__ = ["app", "run_server"]
 
@@ -18,6 +18,7 @@ app = Starlite(
     cors_config=cors.config,
     route_handlers=[api.router],
     cache_config=cache.config,
+    response_class=response.Response,
     middleware=[security.auth.middleware, middleware.DatabaseSessionMiddleware],
     dependencies={"db": Provide(db.db_session)},
     static_files_config=static_files.config,

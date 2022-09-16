@@ -1,7 +1,11 @@
 import logging
 
-from starlite import Body, RequestEncodingType, UploadFile, post
+from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlite import Body, Parameter, RequestEncodingType, UploadFile, post
+from starlite.controller import Controller
 
+from pyspa.core import guards
 from pyspa.schemas import CamelizedBaseSchema
 
 logger = logging.getLogger(__name__)
@@ -15,16 +19,23 @@ class FormData(CamelizedBaseSchema):
         arbitrary_types_allowed = True
 
 
-@post(
-    path="/upload",
-    cache=False,
-    tags=["Collection"],
-)
-async def handle_collection_upload(
-    data: FormData = Body(media_type=RequestEncodingType.MULTI_PART),
-) -> dict[str, str]:
-    """Upload a file"""
-    logger.info("Processing Uploaded File")
-    return {
-        "status": "file uploaded",
-    }
+class CollectionController(Controller):
+    path = "/team/{team_id:uuid}"
+    guards = [guards.requires_team_membership, guards.requires_active_user]
+
+    @post(path="/upload")
+    async def upload_file(
+        self,
+        db: AsyncSession,
+        team_id: UUID4 = Parameter(
+            title="Team ID",
+            description="The identifier for the uploaded file's team",
+        ),
+        data: FormData = Body(media_type=RequestEncodingType.MULTI_PART),
+    ) -> dict[str, str]:
+        """Upload a file"""
+
+        logger.info("Processing Uploaded File")
+        return {
+            "status": "file uploaded",
+        }

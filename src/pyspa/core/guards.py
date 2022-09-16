@@ -32,7 +32,7 @@ def requires_superuser(request: Request, _: BaseRouteHandler) -> None:
 
 
 def requires_team_membership(request: Request, _: BaseRouteHandler) -> None:
-    team_id = UUID4(request.path_params["team_id"])
+    team_id = request.path_params["team_id"]
     if services.user.is_superuser(request.user):
         return None
     if services.user.is_team_member(request.user, team_id):
@@ -41,7 +41,7 @@ def requires_team_membership(request: Request, _: BaseRouteHandler) -> None:
 
 
 def requires_team_admin(request: Request, _: BaseRouteHandler) -> None:
-    team_id = UUID4(request.path_params["team_id"])
+    team_id = request.path_params["team_id"]
     if services.user.is_superuser(request.user):
         return None
     if not services.user.is_team_admin(request.user, team_id):

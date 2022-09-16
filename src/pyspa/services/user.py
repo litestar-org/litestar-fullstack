@@ -102,7 +102,7 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         invitation_id: UUID4 | None = obj_data.pop("invitation_id", None)
         team_name: str | None = obj_data.pop("team_name", None)
         obj_data.update({"hashed_password": await security.get_password_hash(password)})
-        user = models.User.from_dict(**obj_data)
+        user = self.model(**obj_data)
 
         if team_name:
             """Create the team the user entered into the form"""

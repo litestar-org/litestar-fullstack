@@ -1,10 +1,9 @@
 from starlite import Router
 
 from pyspa.api import routes
-from pyspa.config.paths import urls
 
 router = Router(
-    path=urls.API_BASE,
+    path="",
     route_handlers=[
         routes.health_router,
         routes.access_router,
