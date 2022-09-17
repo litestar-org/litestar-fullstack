@@ -1,23 +1,23 @@
-import typer
+import multiprocessing
+import platform
+from typing import Any
+
+import click
 
 from pyspa.cli import commands
+from pyspa.config import log_config, settings
 
-cli = typer.Typer(
-    name="Simple Single Page Application",
-    no_args_is_help=True,
-    rich_markup_mode="markdown",
-    pretty_exceptions_enable=True,
-    pretty_exceptions_show_locals=False,
-    pretty_exceptions_short=True,
-    add_completion=False,
-)
-cli.add_typer(
-    commands.run.cli,
-    name="run",
-    help="Launch Starlite PySPA",
-)
-cli.add_typer(
-    commands.manage.cli,
-    name="manage",
-    help="Configure Starlite PySPA",
-)
+
+@click.group(help=settings.app.NAME)
+def cli(**options: dict[str, Any]) -> None:
+    log_config.configure()
+    if platform.system() == "Darwin":
+        multiprocessing.set_start_method("fork", force=True)
+
+
+cli.add_command(commands.run.cli, name="run")
+cli.add_command(commands.manage.cli, name="manage")
+
+
+if __name__ == "__main__":
+    cli()
