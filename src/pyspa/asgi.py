@@ -5,7 +5,7 @@ from pyspa import api, db, middleware
 from pyspa.config import log_config, settings
 from pyspa.core import cache, client, compression, cors, exceptions, openapi, response, security, static_files
 
-__all__ = ["app", "run_server"]
+__all__ = ["app"]
 
 
 app = Starlite(
@@ -24,44 +24,3 @@ app = Starlite(
     static_files_config=static_files.config,
     allowed_hosts=settings.app.BACKEND_CORS_ORIGINS,
 )
-
-
-"""Application Web Server Gateway Interface - gunicorn."""
-
-
-def run_server(
-    host: str,
-    port: int,
-    http_workers: int,
-    reload: bool,
-    log_level: str,
-    asgi_app: str,
-    lifespan: str = "auto",
-    access_log: bool = True,
-) -> None:
-    """Launches an ASGI application with Uvicorn
-
-    Args:
-        host (str): _description_
-        port (int): _description_
-        http_workers (int): _description_
-        reload (bool): _description_
-        log_level (str): _description_
-        asgi_app (str): _description_
-        lifespan (str, optional): _description_. Defaults to "auto".
-        access_log (bool, optional): _description_. Defaults to True.
-    """
-    import uvicorn  # pylint: disable=[import-outside-toplevel]
-
-    uvicorn.run(
-        app=asgi_app,
-        host=host,
-        port=port,
-        log_level=log_level,
-        log_config=None,  # this tells uvicorn to not apply its customizations
-        reload=reload,
-        lifespan=lifespan,
-        access_log=access_log,
-        workers=http_workers,
-        reload_excludes=[".git", ".venv", "*.pyc"],
-    )

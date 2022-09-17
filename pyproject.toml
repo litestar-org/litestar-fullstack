@@ -50,6 +50,8 @@ typer = "*"
 universal_pathlib = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 
+greenlet = "*"
+
 [tool.poetry.group.dev.dependencies]
 Jinja2 = "*"
 autoflake = "*"
@@ -89,6 +91,7 @@ types-python-jose = "*"
 types-pyyaml = "*"
 types-redis = "*"
 types-requests = "*"
+nodeenv = "*"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

@@ -1,6 +1,6 @@
 import typer
+import uvicorn
 
-from pyspa.asgi import run_server
 from pyspa.cli.console import console
 from pyspa.config import settings
 from pyspa.config.logging import log_config
@@ -44,11 +44,16 @@ def server(
     settings.server.PORT = port
     settings.server.HTTP_WORKERS = workers
     settings.server.RELOAD = reload
-    run_server(
+
+    uvicorn.run(
+        app=settings.server.ASGI_APP,
         host=settings.server.HOST,
         port=settings.server.PORT,
-        http_workers=settings.server.HTTP_WORKERS,
-        reload=settings.server.RELOAD,
         log_level=settings.server.UVICORN_LOG_LEVEL.lower(),
-        asgi_app=settings.server.ASGI_APP,
+        log_config=None,  # this tells uvicorn to not apply its customizations
+        reload=settings.server.RELOAD,
+        lifespan="auto",
+        access_log=True,
+        workers=settings.server.HTTP_WORKERS,
+        reload_excludes=[".git", ".venv", "*.pyc"],
     )
