@@ -2,7 +2,7 @@ from pyspa import models
 from pyspa.repositories.base import BaseRepository
 
 
-class TeamRepository(BaseRepository[models.Team]):
+class TeamInvitationRepository(BaseRepository[models.TeamInvitation]):
     """_summary_
 
     Args:
@@ -10,4 +10,4 @@ class TeamRepository(BaseRepository[models.Team]):
     """
 
 
-team = TeamRepository(model=models.Team)
+team_invite = TeamInvitationRepository(model=models.TeamInvitation)
