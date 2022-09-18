@@ -63,18 +63,25 @@ log_config = LoggingConfig(
             "propagate": False,
             "filters": ["health_filter"],
             "level": settings.server.UVICORN_LOG_LEVEL.upper(),
+            "handlers": ["queue_listener"],
         },
-        "uvicorn.error": {"propagate": False, "level": settings.server.UVICORN_LOG_LEVEL.upper()},
+        "uvicorn.error": {
+            "propagate": False,
+            "level": settings.server.UVICORN_LOG_LEVEL.upper(),
+            "handlers": ["queue_listener"],
+        },
         "sqlalchemy": {
-            "propagate": True,
+            "propagate": False,
             "level": "WARNING",
+            "handlers": ["queue_listener"],
         },
         "starlite": {
             "level": "WARNING",
             "propagate": True,
+            "handlers": ["queue_listener"],
         },
         "pydantic_openapi_schema": {
-            "propagate": True,
+            "propagate": False,
             "level": "WARNING",
             "handlers": ["queue_listener"],
         },
