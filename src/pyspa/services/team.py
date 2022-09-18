@@ -22,7 +22,7 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
             exclude_unset=True, by_alias=False, exclude_none=True, exclude=["owner_id"]  # type: ignore[arg-type]
         )
         team = self.model(**obj_data)
-        team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoless.ADMIN, is_owner=True))
+        team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoles.ADMIN, is_owner=True))
         return await self.repository.create(db, team)
 
     async def get_teams_for_user(

@@ -30,5 +30,6 @@ class User(BaseModel, CreatedUpdatedAtMixin):
         "TeamMember",
         back_populates="user",
         lazy="subquery",
+        join_depth=1,
         cascade="all, delete",
     )

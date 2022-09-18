@@ -51,7 +51,7 @@ class Team(BaseModel, CreatedUpdatedAtMixin):
     )
     pending_invitations: orm.Mapped[list["TeamInvitation"]] = orm.relationship(
         "TeamInvitation",
-        primaryjoin="and_(TeamInvitation.team_id==Team.id, TeamInvitation.is_accepted == False)",  # noqa: E501
+        primaryjoin="and_(TeamInvitation.team_id==Team.id, TeamInvitation.is_accepted == False)",
         viewonly=True,
         lazy="noload",
     )
@@ -71,10 +71,10 @@ class TeamMember(BaseModel, CreatedUpdatedAtMixin):
     # ORM Relationships
     # ------------
     user: orm.Mapped["User"] = orm.relationship(
-        "User", back_populates="teams", lazy="joined", foreign_keys="TeamMember.user_id", active_history=True
+        "User", back_populates="teams", lazy="noload", foreign_keys="TeamMember.user_id", active_history=True
     )
     team: orm.Mapped["Team"] = orm.relationship(
-        "Team", back_populates="members", lazy="joined", foreign_keys="TeamMember.team_id", active_history=True
+        "Team", back_populates="members", lazy="noload", foreign_keys="TeamMember.team_id", active_history=True
     )
 
 
@@ -87,8 +87,11 @@ class TeamInvitation(BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin):
     role: orm.Mapped[TeamRoles] = sa.Column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False)
     is_accepted: orm.Mapped[bool] = sa.Column(sa.Boolean, default=False)
     invited_by_id: orm.Mapped[UUID4] = sa.Column(sa.ForeignKey("user_account.id"), nullable=False)
+    invited_by_email: orm.Mapped[EmailStr] = sa.Column(t.EmailString, nullable=False)
     # -----------
     # ORM Relationships
     # ------------
-    team: orm.Mapped["Team"] = orm.relationship("Team", foreign_keys="TeamInvitation.team_id")
-    invited_by: orm.Mapped["User"] = orm.relationship("User", foreign_keys="TeamInvitation.invited_by_id")
+    team: orm.Mapped["Team"] = orm.relationship("Team", foreign_keys="TeamInvitation.team_id", lazy="noload")
+    invited_by: orm.Mapped["User"] = orm.relationship(
+        "User", foreign_keys="TeamInvitation.invited_by_id", lazy="noload"
+    )

@@ -37,7 +37,7 @@ class UserTeam(CamelizedBaseSchema):
     team_id: "Optional[UUID4]" = None
     name: "Optional[str]" = None
     is_owner: "Optional[bool]" = False
-    role: "Optional[models.TeamRoless]" = models.TeamRoless.MEMBER
+    role: "Optional[models.TeamRoles]" = models.TeamRoles.MEMBER
 
     @classmethod
     def from_orm(cls, obj: Any) -> "UserTeam":

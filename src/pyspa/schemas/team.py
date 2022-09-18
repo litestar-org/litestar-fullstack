@@ -56,12 +56,12 @@ class Team(CamelizedBaseSchema):
 # Properties to receive via API on creation
 class TeamMemberCreate(CamelizedBaseSchema):
     user_id: UUID4
-    role: models.TeamRoless = models.TeamRoless.MEMBER
+    role: models.TeamRoles = models.TeamRoles.MEMBER
 
 
 # Properties to receive via API on update
 class TeamMemberUpdate(CamelizedBaseSchema):
-    role: Optional[models.TeamRoless] = models.TeamRoless.MEMBER
+    role: Optional[models.TeamRoles] = models.TeamRoles.MEMBER
     is_owner: Optional[bool] = False
 
 
@@ -70,7 +70,7 @@ class TeamMember(CamelizedBaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
     email: EmailStr
     full_name: Optional[str]
-    role: Optional[models.TeamRoless] = models.TeamRoless.MEMBER
+    role: Optional[models.TeamRoles] = models.TeamRoles.MEMBER
     is_owner: Optional[bool] = False
 
     class Config:

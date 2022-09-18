@@ -26,6 +26,8 @@ class Upload(BaseModel, CreatedUpdatedAtMixin):
     team: orm.Mapped["Team"] = orm.relationship(
         "Team",
         back_populates="uploads",
+        lazy="noload",
+        join_depth=1,
         innerjoin=True,
         viewonly=True,
     )
