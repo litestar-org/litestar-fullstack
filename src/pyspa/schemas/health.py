@@ -9,8 +9,8 @@ class SystemHealth(CamelizedBaseSchema):
 
     app: str
     version: str
-    status: str
     database_status: str
+    cache_status: str
 
     class Config:
         """
@@ -20,5 +20,4 @@ class SystemHealth(CamelizedBaseSchema):
         schema_extra = {
             "app": settings.app.NAME,
             "version": settings.app.BUILD_NUMBER,
-            "status": "ok",
         }
