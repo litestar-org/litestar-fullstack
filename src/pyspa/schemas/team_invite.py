@@ -10,7 +10,7 @@ from pyspa.schemas.base import CamelizedBaseSchema
 # Properties to receive via API on creation
 class TeamInvitationCreate(CamelizedBaseSchema):
     team_id: UUID4
-    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
+    role: models.TeamRoless = models.TeamRoless.MEMBER
     email: EmailStr
     user_id: UUID4
 
@@ -18,7 +18,7 @@ class TeamInvitationCreate(CamelizedBaseSchema):
 # Properties to receive via API on update
 class TeamInvitationUpdate(CamelizedBaseSchema):
     team_id: UUID4
-    role: models.TeamRoleTypes = models.TeamRoleTypes.MEMBER
+    role: models.TeamRoless = models.TeamRoless.MEMBER
     email: EmailStr
     is_accepted: bool
 
@@ -28,6 +28,6 @@ class TeamInvitation(CamelizedBaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
     team_id: UUID4
     email: EmailStr
-    role: models.TeamRoleTypes
+    role: models.TeamRoless
     invited_by: UUID4
     is_accepted: bool

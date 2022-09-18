@@ -107,7 +107,7 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         if team_name:
             """Create the team the user entered into the form"""
             team = models.Team(name=team_name)
-            team.members.append(models.TeamMember(user=user, role=models.TeamRoleTypes.ADMIN, is_owner=True))
+            team.members.append(models.TeamMember(user=user, role=models.TeamRoless.ADMIN, is_owner=True))
             db.add(team)  # this will get committed with the user object below
         if invitation_id:
             invite = await team_invite.get_by_id(id=invitation_id, db=db)
@@ -146,8 +146,7 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
     def is_team_admin(db_obj: models.User, team_id: "UUID4") -> bool:
         """Returns true if the user is an admin of the team"""
         return any(
-            membership.team.id == team_id and membership.role == models.TeamRoleTypes.ADMIN
-            for membership in db_obj.teams
+            membership.team.id == team_id and membership.role == models.TeamRoless.ADMIN for membership in db_obj.teams
         )
 
     @staticmethod

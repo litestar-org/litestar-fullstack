@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 # # ----------------------------
 # Roles
-class TeamRoleTypes(str, Enum):
+class TeamRoles(str, Enum):
     """Team Role valid values"""
 
     ADMIN = "ADMIN"
@@ -65,9 +65,7 @@ class TeamMember(BaseModel, CreatedUpdatedAtMixin):
     __table_args__ = (sa.UniqueConstraint("user_id", "team_id"),)
     user_id: orm.Mapped[UUID4] = sa.Column(sa.ForeignKey("user_account.id"), nullable=False)
     team_id: orm.Mapped[UUID4] = sa.Column(sa.ForeignKey("team.id"), nullable=False)
-    role: orm.Mapped[TeamRoleTypes] = sa.Column(
-        sa.String(length=50), default=TeamRoleTypes.MEMBER, nullable=False, index=True
-    )
+    role: orm.Mapped[TeamRoles] = sa.Column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False, index=True)
     is_owner: orm.Mapped[bool] = sa.Column(sa.Boolean, default=False, nullable=False)
     # -----------
     # ORM Relationships
@@ -86,7 +84,7 @@ class TeamInvitation(BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin):
     __tablename__ = "team_invitation"
     team_id: orm.Mapped[UUID4] = sa.Column(sa.ForeignKey("team.id"), nullable=False)
     email: orm.Mapped[EmailStr] = sa.Column(t.EmailString, nullable=False)
-    role: orm.Mapped[TeamRoleTypes] = sa.Column(sa.String(length=50), default=TeamRoleTypes.MEMBER, nullable=False)
+    role: orm.Mapped[TeamRoles] = sa.Column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False)
     is_accepted: orm.Mapped[bool] = sa.Column(sa.Boolean, default=False)
     invited_by_id: orm.Mapped[UUID4] = sa.Column(sa.ForeignKey("user_account.id"), nullable=False)
     # -----------
