@@ -16,7 +16,7 @@ from pyspa import schemas, services, utils
 from pyspa.asgi import app
 from pyspa.cli.console import console
 from pyspa.config import settings
-from pyspa.db import engine
+from pyspa.db import AsyncScopedSession, engine
 from pyspa.models import BaseModel, meta
 
 logger = logging.getLogger()
@@ -76,6 +76,7 @@ def generate_random_key(length: int = 32) -> None:
     default=False,
     required=False,
     show_default=False,
+    is_flag=True,
 )
 def create_user(
     email: Optional[str],
@@ -96,8 +97,8 @@ def create_user(
     )
 
     async def _create_user(obj_in: schemas.UserSignup) -> None:
-        async with engine.begin() as db:
-            user = await services.user.create(db=db, obj_in=obj_in)  # type: ignore[arg-type]
+        async with AsyncScopedSession() as db:
+            user = await services.user.create(db=db, obj_in=obj_in)
             console.print(f"User created: {user.email}")
 
     utils.asyncer.run(_create_user)(obj_in)
@@ -116,15 +117,15 @@ def promote_to_superuser(email: Optional[str]) -> None:
     email = email or click.prompt("Email")
 
     async def _promote_to_superuser(email: EmailStr) -> None:
-        async with engine.begin() as db:
-            user = await services.user.get_by_email(db=db, email=email)  # type: ignore[arg-type]
+        async with AsyncScopedSession() as db:
+            user = await services.user.get_by_email(db=db, email=email)
             if user:
                 console.print(f"Promoting user: {user.email}")
                 user_in = schemas.UserUpdate(
                     email=user.email,
                     is_superuser=True,
                 )
-                user = await services.user.update(db_obj=user, obj_in=user_in, db=db)  # type: ignore[arg-type]
+                user = await services.user.update(db_obj=user, obj_in=user_in, db=db)
                 console.print(f"Upgraded {email} to superuser")
             else:
                 console.print(f"User not found: {email}")
