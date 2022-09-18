@@ -67,7 +67,6 @@ def run_server(host: str, port: int, http_workers: int, reload: bool, verbose: b
         lifespan="auto",
         access_log=True,
         workers=settings.server.HTTP_WORKERS,
-        reload_excludes=[".git", ".venv", "*.pyc"],
     )
 
 
