@@ -3,7 +3,7 @@ from typing import Final
 
 from pyspa import utils
 
-BASE_DIR: Final = utils.import_tools.module_to_os_path("pyspa")
+BASE_DIR: Final = utils.module_loading.module_to_os_path("pyspa")
 
 PUBLIC_DIR = Path(BASE_DIR, "web/public")
 ASSETS_DIR = Path(BASE_DIR, "web/assets")

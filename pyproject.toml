@@ -43,7 +43,7 @@ python = ">=3.10,<4.0"
 redis = "*"
 rich = "*"
 sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = []}
+starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["picologging","brotli"]}
 starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
 starlite-sessions = "*"
 universal_pathlib = "*"
@@ -139,3 +139,8 @@ exclude_lines = [
 addopts = "--cov=src -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
 asyncio_mode = "auto"
 env_files = [".env.example"]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+tests = ["B201", "B301","B101"]
+skips = ["B101", "B601"]

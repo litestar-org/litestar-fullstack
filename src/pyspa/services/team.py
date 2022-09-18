@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from pydantic import UUID4
 from sqlalchemy import orm, select
 
 from pyspa import models, repositories, schemas
 from pyspa.services.base import DataAccessService, DataAccessServiceException
 
 if TYPE_CHECKING:
+    from pydantic import UUID4
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -26,13 +26,13 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
         return await self.repository.create(db, team)
 
     async def get_teams_for_user(
-        self, db: "AsyncSession", user_id: UUID4, options: Optional[List[Any]] = None
+        self, db: "AsyncSession", user_id: "UUID4", options: Optional[List[Any]] = None
     ) -> List[schemas.Team]:
         """Get all workspaces for a user"""
         options = options if options else self.default_options
         statement = (
             select(self.model)
-            .join(models.TeamMember, onclause=self.models.id == models.TeamMember.team_id, isouter=False)
+            .join(models.TeamMember, onclause=self.model.id == models.TeamMember.team_id, isouter=False)
             .where(models.TeamMember.user_id == user_id)
             .options(*options)
         )

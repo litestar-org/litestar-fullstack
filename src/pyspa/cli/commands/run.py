@@ -80,7 +80,7 @@ def _generate_header_info(title: str = "Starlite Application") -> str:
         str: The header info
     """
     return f"""
-    [bold blue]{title}[/bold blue]
+    [bold blue]✨ {title}[/bold blue]
     Listening at: {settings.server.HOST}
     Number of http workers: {settings.server.HTTP_WORKERS}
     Number of background workers: {settings.server.BACKGROUND_WORKERS}

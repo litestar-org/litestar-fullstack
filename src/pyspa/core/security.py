@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Any, Union
 from passlib.context import CryptContext
 from pydantic import UUID4
 from starlite import NotAuthorizedException
-from starlite_sessions import SessionAuth
 
 from pyspa import db, services
 from pyspa.config import paths, settings
+from pyspa.middleware.jwt import OAuth2PasswordBearerAuth
 from pyspa.utils.asyncer import run_async
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger()
 
 
-async def current_user(session: dict[str, Any]) -> "User":
+async def current_user_from_session(session: dict[str, Any]) -> "User":
     user_id = UUID4(session.get("user_id")) if session.get("user_id") else None
     if not user_id:
         raise NotAuthorizedException
@@ -29,9 +29,22 @@ async def current_user(session: dict[str, Any]) -> "User":
     raise NotAuthorizedException
 
 
-auth = SessionAuth(
-    retrieve_user_handler=current_user,
-    secret=settings.app.SECRET_KEY,
+async def current_user_from_token(sub: str) -> "User":
+    user = await services.user.get_by_email(db.db_session(), sub)
+    if user:
+        return user
+    raise NotAuthorizedException
+
+
+# auth = SessionAuth(
+#     retrieve_user_handler=current_user_from_session,
+#     secret=settings.app.SECRET_KEY,
+#     exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],
+# )
+auth = OAuth2PasswordBearerAuth(  # nosec
+    retrieve_user_handler=current_user_from_token,
+    token_secret=settings.app.SECRET_KEY.get_secret_value().decode(),
+    token_url=paths.urls.ACCESS_TOKEN,
     exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],
 )
 

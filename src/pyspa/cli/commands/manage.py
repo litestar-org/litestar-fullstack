@@ -2,7 +2,7 @@ import binascii
 import logging
 import os
 import sys
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, Optional
 
 import click
 from alembic import command as migration_command
@@ -10,7 +10,6 @@ from alembic.config import Config as AlembicConfig
 from pydantic import EmailStr, SecretStr
 from rich.prompt import Confirm
 from sqlalchemy import Table
-from sqlalchemy.ext.asyncio import AsyncConnection
 from sqlalchemy.schema import DropTable
 
 from pyspa import schemas, services, utils
@@ -98,7 +97,7 @@ def create_user(
 
     async def _create_user(obj_in: schemas.UserSignup) -> None:
         async with engine.begin() as db:
-            user = await services.user.create(db=db, obj_in=obj_in)
+            user = await services.user.create(db=db, obj_in=obj_in)  # type: ignore[arg-type]
             console.print(f"User created: {user.email}")
 
     utils.asyncer.run(_create_user)(obj_in)
@@ -118,19 +117,19 @@ def promote_to_superuser(email: Optional[str]) -> None:
 
     async def _promote_to_superuser(email: EmailStr) -> None:
         async with engine.begin() as db:
-            user = await services.user.get_by_email(db=db, email=email)
+            user = await services.user.get_by_email(db=db, email=email)  # type: ignore[arg-type]
             if user:
                 console.print(f"Promoting user: {user.email}")
                 user_in = schemas.UserUpdate(
                     email=user.email,
                     is_superuser=True,
                 )
-                user = await services.user.update(db_obj=user, obj_in=user_in, db=db)  # type: ignore
+                user = await services.user.update(db_obj=user, obj_in=user_in, db=db)  # type: ignore[arg-type]
                 console.print(f"Upgraded {email} to superuser")
             else:
                 console.print(f"User not found: {email}")
 
-    utils.asyncer.run(_promote_to_superuser)(email=email)
+    utils.asyncer.run(_promote_to_superuser)(email=EmailStr(email))
 
 
 @cli.command(
@@ -261,9 +260,3 @@ async def drop_tables() -> None:
         )
         await db.commit()
     logger.info("Successfully dropped all objects")
-
-
-async def _db() -> AsyncGenerator[AsyncConnection, None]:
-
-    async with engine.begin() as db:
-        yield db

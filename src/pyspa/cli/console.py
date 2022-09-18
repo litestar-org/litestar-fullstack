@@ -1,8 +1,6 @@
-from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.rule import Rule
-from rich.text import Text
 
 from pyspa.config import settings
 
@@ -15,7 +13,7 @@ console = Console(
     stderr=False,
 )
 TEXT_LOGO = """
-Starlite
+[bold yellow]✨ Starlite
 """
 
 
@@ -35,18 +33,6 @@ def print_prologue(
     """
     if is_interactive:
         if not custom_header:
-            custom_header = settings.app.NAME
-        console.print(
-            Columns(
-                (
-                    Panel(Text.from_ansi(TEXT_LOGO), width=26, height=11),
-                    Panel(
-                        custom_header,
-                        height=11,
-                        width=max(35, console.width - 27),
-                    ),
-                ),
-            ),
-            overflow="ellipsis",
-        )
+            custom_header = f"[bold blue]✨ {settings.app.NAME}"
+        console.print(Panel(custom_header, height=10, width=console.width), overflow="ellipsis")
         console.print(Rule(title=command_title))
