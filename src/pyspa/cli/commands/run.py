@@ -3,6 +3,7 @@ import os
 from typing import Any, Dict
 
 import click
+from rich.rule import Rule
 
 from pyspa.cli.console import console, print_prologue
 from pyspa.config import settings
@@ -50,6 +51,7 @@ def run_server(host: str, port: int, http_workers: int, reload: bool, verbose: b
         is_interactive=console.is_interactive,
         custom_header=_generate_header_info(),
     )
+    console.print(Rule(title="Run Logs"))
     settings.server.HOST = host
     settings.server.PORT = port
     settings.server.HTTP_WORKERS = http_workers
