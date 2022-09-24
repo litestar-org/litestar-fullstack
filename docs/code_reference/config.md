@@ -1,3 +1,3 @@
 # Configuration
 
-::: pyspa.config
+::: app.config

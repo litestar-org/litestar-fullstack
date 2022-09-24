@@ -50,7 +50,7 @@ test-all:       ## run tests on every Python version with tox
 	env PYTHONPATH=src poetry run tox
 
 coverage:       ## check code coverage quickly with the default Python
-	env PYTHONPATH=src/ poetry run coverage run --source pyspa -m pytest
+	env PYTHONPATH=src/ poetry run coverage run --source app -m pytest
 	env PYTHONPATH=src/ poetry run coverage report -m
 
 
@@ -69,20 +69,20 @@ install:          ## Install the project in dev mode.
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/pyspa/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src poetry run pyspa manage upgrade-database
+	@env PYTHONPATH=src poetry run app manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will wipe all migrations and recreate from an emtpy state."
-	@env PYTHONPATH=src poetry run pyspa manage purge-database --no-prompt
-	rm -Rf src/pyspa/db/migrations/versions/*.py
+	@env PYTHONPATH=src poetry run app manage purge-database --no-prompt
+	rm -Rf src/app/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/pyspa/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean
 clean:       ## remove all build, testing, and static documentation files

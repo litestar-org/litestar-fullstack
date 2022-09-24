@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./src/pyspa:/workspace/pyspa
+      - ./src/app:/workspace/app
       # - ./scripts:/code/scripts
       - ./tests:/workspace/tests
 

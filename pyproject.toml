@@ -21,15 +21,15 @@ include = ["CHANGELOG.md"]
 keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
-name = "pyspa"
+name = "app"
 packages = [
-  {include = "pyspa", from = "src"},
+  {include = "app", from = "src"},
 ]
 readme = "README.md"
-repository = "https://github.com/cofin/pyspa"
+repository = "https://github.com/cofin/app"
 version = "0.1.0"
 [tool.poetry.scripts]
-pyspa = "pyspa.__main__:main"
+app = "app.__main__:main"
 
 [tool.poetry.dependencies]
 alembic = "*"

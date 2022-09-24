@@ -1,3 +1,3 @@
 # CLI
 
-::: pyspa.cli
+::: app.cli

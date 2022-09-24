@@ -3,7 +3,7 @@
 To install the package using `pip`:
 
 ```bash
-pip install pyspa
+pip install app
 ```
 
 To download the CLI application using `docker`:

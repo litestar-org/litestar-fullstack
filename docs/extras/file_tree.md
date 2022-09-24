@@ -28,7 +28,7 @@
 ├── pyproject.toml
 ├── README.md
 ├── src
-│   └── pyspa
+│   └── app
 │       ├── core
 │       │   ├── __init__.py
 │       │   ├── module1.py

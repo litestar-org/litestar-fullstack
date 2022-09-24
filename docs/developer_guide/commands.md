@@ -8,7 +8,7 @@
 
 - `make check` - Run the test and lint commands.
 
-- `make build` - Build a docker image locally using the Dockerfile. The image will be named _pyspa_.
+- `make build` - Build a docker image locally using the Dockerfile. The image will be named _app_.
 
 - `make gen-docs` - Generate HTML documentation.
 

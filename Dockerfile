@@ -71,7 +71,7 @@ COPY alembic.ini ./
 COPY scripts ./scripts/
 COPY alembic ./alembic/
 # These are the two folders that change the most.
-COPY pyspa /app/
+COPY app /app/
 COPY --from=git /version /app/.version
 
 # switch to a non-root user for security

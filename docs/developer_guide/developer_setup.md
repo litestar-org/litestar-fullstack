@@ -79,7 +79,7 @@ make build
 To run the image:
 
 ```bash
-docker run --rm pyspa hello user
-docker run --rm pyspa goodbye user
-docker run --rm pyspa version
+docker run --rm app hello user
+docker run --rm app goodbye user
+docker run --rm app version
 ```
