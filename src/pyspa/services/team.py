@@ -27,7 +27,7 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
 
     async def get_teams_for_user(
         self, db: "AsyncSession", user_id: "UUID4", options: Optional[List[Any]] = None
-    ) -> List[schemas.Team]:
+    ) -> List[models.Team]:
         """Get all workspaces for a user"""
         options = options if options else self.default_options
         statement = (

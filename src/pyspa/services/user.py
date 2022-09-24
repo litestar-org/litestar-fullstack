@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Optional
 
 from sqlalchemy import orm, select
+from starlite import NotAuthorizedException
 
 from pyspa import models, repositories, schemas
 from pyspa.core import security
@@ -56,11 +57,11 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         """
         user_obj = await self.get_by_email(db, email=username)
         if user_obj is None:
-            raise UserNotFoundException
+            raise NotAuthorizedException("User not found or password invalid")
         if not await security.verify_password(password, user_obj.hashed_password):
-            raise UserLoginFailedException
+            raise NotAuthorizedException("User not found or password invalid")
         if not user_obj.is_active:
-            raise UserInactiveException
+            raise NotAuthorizedException("User account is inactive")
         return user_obj
 
     async def update_password(

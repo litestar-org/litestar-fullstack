@@ -51,7 +51,7 @@ log_config = LoggingConfig(
             "omit_repeated_times": False,
         },
         "queue_listener": {
-            "class": "starlite.QueueListenerHandler",
+            "class": "starlite.logging.standard.QueueListenerHandler",
             "handlers": ["cfg://handlers.console"],
         },
     },
@@ -62,7 +62,7 @@ log_config = LoggingConfig(
         "uvicorn.access": {
             "propagate": False,
             "filters": ["health_filter"],
-            "level": settings.server.UVICORN_LOG_LEVEL.upper(),
+            "level": "INFO",
             "handlers": ["queue_listener"],
         },
         "uvicorn.error": {

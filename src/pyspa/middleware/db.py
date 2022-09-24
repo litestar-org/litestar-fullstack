@@ -1,12 +1,13 @@
 import logging
 from typing import TYPE_CHECKING
 
+from starlite import ScopeType
 from starlite.middleware import MiddlewareProtocol
 
 from pyspa.db import AsyncScopedSession
 
 if TYPE_CHECKING:
-    from starlette.types import ASGIApp, Message, Receive, Scope, Send
+    from starlite.types import ASGIApp, Message, Receive, Scope, Send
 
 
 __all__ = ["DatabaseSessionMiddleware"]
@@ -21,7 +22,7 @@ class DatabaseSessionMiddleware(MiddlewareProtocol):
     @staticmethod
     async def _manage_session(message: "Message") -> None:
         logger.debug("_manage_session() called: %s", message)
-        if 200 <= message["status"] < 300:
+        if 200 <= message["status"] < 300:  # type: ignore[typeddict-item]
             await AsyncScopedSession.commit()
             logger.debug("session committed")
         else:
@@ -31,7 +32,7 @@ class DatabaseSessionMiddleware(MiddlewareProtocol):
         logger.debug("database session removed")
 
     async def __call__(self, scope: "Scope", receive: "Receive", send: "Send") -> None:
-        if scope["type"] == "http":
+        if scope["type"] == ScopeType.HTTP:
 
             async def send_wrapper(message: "Message") -> None:
                 if message["type"] == "http.response.start":
