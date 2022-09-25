@@ -28,7 +28,6 @@ class BaseSchema(_BaseSchema):
         use_enum_values = True
         json_loads = serializers.deserialize_object
         json_dumps = serializers.serialize_object
-        arbitrary_types_allowed = True
         json_encoders = {
             datetime: serializers.convert_datetime_to_gmt,
             SecretStr: lambda secret: secret.get_secret_value() if secret else None,
