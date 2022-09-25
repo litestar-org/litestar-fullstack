@@ -1,0 +1,5 @@
+@import '@/assets/tailwind/_base.css';
+@import '@/assets/tailwind/_components.css';
+@import '@/assets/tailwind/_utilities.css';
+@import '@/assets/_app.css';
+@import '@/assets/_progress.css';

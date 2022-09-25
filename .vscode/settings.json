@@ -32,12 +32,12 @@
   "python.linting.pylintArgs": ["--extension-pkg-whitelist='pydantic'"],
   "python.linting.flake8Args": ["--max-line-length=120"],
   "python.sortImports.args": ["--profile", "black"],
-  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestArgs": ["tests/server"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.linting.flake8Enabled": true,
   "python.linting.mypyEnabled": true,
   "python.linting.enabled": true,
-  "mypy.targets": ["src", "tests"],
+  "mypy.targets": ["src/server", "tests/server"],
   "mypy.runUsingActiveInterpreter": true
 }
