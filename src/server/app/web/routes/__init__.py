@@ -21,5 +21,5 @@ user_router = Router(
 )
 frontend_router = Router(
     path="",
-    route_handlers=[frontend.site_index],
+    route_handlers=[frontend.site_index, frontend.authenticated_test],
 )
