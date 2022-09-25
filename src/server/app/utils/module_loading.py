@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @lru_cache
-def module_to_os_path(dotted_path: str = "app") -> Path:
+def module_to_os_path(dotted_path: str) -> Path:
     """
     Returns the path to the base directory of the project or the module specified by `dotted_path`.
 

@@ -15,8 +15,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 description = "Opinionated template for integrating Starlite with a SPA"
-documentation = "https://cofin.github.io/starlite-spa"
-homepage = "https://github.com/cofin/starlite-spa"
+documentation = "https://cofin.github.io/starlite-full-stack-example"
+homepage = "https://github.com/cofin/starlite-full-stack-example"
 include = ["CHANGELOG.md"]
 keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"
@@ -26,7 +26,7 @@ packages = [
   {include = "app", from = "src/server"},
 ]
 readme = "README.md"
-repository = "https://github.com/cofin/starlite-spa"
+repository = "https://github.com/cofin/starlite-full-stack-example"
 version = "0.1.0"
 [tool.poetry.scripts]
 app = "app.__main__:main"

@@ -1,5 +1,5 @@
 site_name: Starlite SPA Sample Architecture
-repo_url: https://github.com/cofin/starlite-spa
+repo_url: https://github.com/cofin/starlite-full-stack-example
 edit_uri: ./edit/main/docs
 
 # Sticking with readthedocs theme for basic template

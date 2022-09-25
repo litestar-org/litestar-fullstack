@@ -1,5 +1,5 @@
 {
-  "name": "starlite-spa",
+  "name": "starlite-full-stack-example",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -19,7 +19,7 @@
     "vue-i18n-extract": "npx vue-i18n-extract",
     "vue-i18n-extract-remove": "npx vue-i18n-extract --remove",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gen-api": "poetry run python3 scripts/export-openapi-schema && rm -rf src/ui/src/api/client && npx @openapitools/openapi-generator-cli generate -i ./src/ui/spec/openapi.json -g typescript-axios -o src/ui/src/api/client --additional-properties withSeparateModelsAndApi=true,supportsES6=true,useSingleRequestParameter=true,apiPackage=api,modelPackage=models",
+    "gen-api": "poetry run python3 scripts/export-openapi-schema && rm -rf src/ui/src/api/client && npx @openapitools/openapi-generator-cli generate -i ./src/ui/spec/openapi.json -g typescript -o src/ui/src/api/client --additional-properties withSeparateModelsAndApi=true,supportsES6=true,useSingleRequestParameter=true,apiPackage=api,modelPackage=models",
     "cy-run-ct-chrome": "cypress run-ct --browser chrome",
     "cy-run-ct-firefox": "cypress run-ct --browser firefox",
     "cy-run-it-chrome": "cypress run --browser chrome",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cofin/starlite-spa.git"
+    "url": "https://github.com/cofin/starlite-full-stack-example.git"
   },
   "dependencies": {
     "jwt-decode": "^3.1.2",

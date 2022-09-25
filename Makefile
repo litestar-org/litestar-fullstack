@@ -2,13 +2,17 @@
 .ONESHELL:
 ENV_PREFIX=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
 USING_POETRY=$(shell grep "tool.poetry" pyproject.toml && echo "yes")
-USING_DOCKER=$(shell grep "PYSPA_USE_DOCKER=true" .env && echo "yes")
+USING_DOCKER=$(shell grep "USE_DOCKER=true" .env && echo "yes")
 USING_PNPM=$(shell python3 -c "if __import__('pathlib').Path('pnpm-lock.yaml').exists(): print('yes')")
 USING_YARN=$(shell python3 -c "if __import__('pathlib').Path('yarn.lock').exists(): print('yes')")
 USING_NPM=$(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
 VENV_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
 PYTHON_PACKAGES=$(shell poetry export -f requirements.txt  --without-hashes |cut -d'=' -f1 |cut -d ' ' -f1)
 GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+FRONTEND_SRC_DIR=src/ui
+FRONTEND_BUILD_DIR=$(FRONTEND_SRC_DIR)/dist
+BACKEND_SRC_DIR=src/server
+BACKEND_BUILD_DIR=dist
 .EXPORT_ALL_VARIABLES:
 
 ifndef VERBOSE
@@ -54,7 +58,9 @@ coverage:       ## check code coverage quickly with the default Python
 	env PYTHONPATH=src/ poetry run coverage report -m
 
 
-
+###############
+# app         #
+###############
 .PHONY: install
 install:          ## Install the project in dev mode.
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
@@ -105,6 +111,20 @@ clean:       ## remove all build, testing, and static documentation files
 	rm -fr .mypy_cache
 	rm -fr site
 
+
+build-frontend: $(FRONTEND_BUILD_DIR)
+
+$(FRONTEND_BUILD_DIR): $(shell find $(FRONTEND_SRC_DIR) -not -path "$(FRONTEND_BUILD_DIR)")
+	@npm run build
+
+build-backend: $(BACKEND_BUILD_DIR)
+
+$(BACKEND_BUILD_DIR): $(shell find $(BACKEND_SRC_DIR))
+	@poetry build
+
+###############
+# docs        #
+###############
 .PHONY: gen-docs
 gen-docs:       ## generate HTML documentation
 	mkdocs build
@@ -123,3 +143,31 @@ pre-release:       ## bump the version and create the release tag
 	git describe --tags --abbrev=0
 	head pyproject.toml | grep version
 	cat src/pytemplates_typer_cli/__version__.py
+
+###########
+# version #
+###########
+.PHONY: version-bump-major
+version-bump-major:       ## bump major version
+	poetry run bump2version major
+.PHONY: version-bump-minor
+version-bump-minor:       ## bump minor version
+	poetry run bump2version minor
+.PHONY: version-bump-patch
+version-bump-patch:       ## bump patch version
+	poetry run bump2version patch
+
+
+###########
+# license #
+###########
+
+.PHONY: licenses
+licenses: 			## Generate licenses
+	@echo "Generating Licenses"
+	@poetry run pip-licenses --with-urls --format=markdown --order=name --packages ${PYTHON_PACKAGES}
+
+.PHONY: license-file
+license-file: 		## Generate licenses
+	@echo "Generating License file"
+	@poetry run pip-licenses --packages ${PYTHON_PACKAGES} --format=plain-vertical --with-license-file --no-license-path > NOTICE

@@ -160,3 +160,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+requirements.txt
