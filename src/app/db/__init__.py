@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.ext.asyncio import async_scoped_session
 
-from app.db import db_types
+from app.db import db_types, models, repositories
 from app.db.engine import async_session_factory, create_async_engine, create_async_session_maker, engine
 
 if TYPE_CHECKING:
@@ -39,4 +39,6 @@ __all__ = [
     "AsyncScopedSession",
     "on_shutdown",
     "db_session",
+    "models",
+    "repositories",
 ]

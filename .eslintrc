@@ -1,6 +1,0 @@
-{
-  "extends": ["galex", "plugin:wc/recommended", "plugin:lit/recommended"],
-  "rules": {
-    "@typescript-eslint/explicit-member-accessibility": "off"
-  }
-}

@@ -1,8 +1,8 @@
 from starlite import Router
 
-from app.api.routes import collection, health, user
+from app.web.routes import collection, frontend, health, user
 
-__all__ = ["collection_router", "health_router", "access_router", "user_router"]
+__all__ = ["collection_router", "health_router", "access_router", "user_router", "frontend_router"]
 
 collection_router = Router(
     path="",
@@ -19,4 +19,8 @@ access_router = Router(
 user_router = Router(
     path="",
     route_handlers=[],
+)
+frontend_router = Router(
+    path="",
+    route_handlers=[frontend.site_index],
 )

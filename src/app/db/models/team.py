@@ -7,7 +7,7 @@ from pydantic import UUID4, EmailStr
 from sqlalchemy import orm
 
 from app.db import db_types as t
-from app.models.base import BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin
+from app.db.models.base import BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin, SlugModelMixin
 
 if TYPE_CHECKING:
     from .upload import Upload
@@ -23,7 +23,7 @@ class TeamRoles(str, Enum):
     MEMBER = "MEMBER"
 
 
-class Team(BaseModel, CreatedUpdatedAtMixin):
+class Team(BaseModel, CreatedUpdatedAtMixin, SlugModelMixin):
     """Contains collections of Databases.
 
     Allows for grouping and permissions to be applied to a set of databases.
@@ -39,12 +39,7 @@ class Team(BaseModel, CreatedUpdatedAtMixin):
     # ORM Relationships
     # ------------
     members: orm.Mapped[list["TeamMember"]] = orm.relationship(
-        "TeamMember",
-        back_populates="team",
-        lazy="subquery",
-        load_on_pending=True,
-        cascade="all, delete",
-        active_history=True,
+        "TeamMember", back_populates="team", lazy="noload", cascade="all, delete"
     )
     invitations: orm.Mapped[list["TeamInvitation"]] = orm.relationship(
         "TeamInvitation", back_populates="team", lazy="noload"

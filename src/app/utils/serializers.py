@@ -17,7 +17,7 @@ def serialize_object(value: Any) -> str:
         if isinstance(value, pgproto.UUID):
             return str(value)
         if isinstance(value, SecretBytes):
-            return value.get_secret_value()
+            return value.get_secret_value().decode()
         raise TypeError
 
     return orjson.dumps(

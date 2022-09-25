@@ -2,20 +2,28 @@ from typing import TYPE_CHECKING, Any, List, Optional
 
 from sqlalchemy import orm, select
 
-from app import models, repositories, schemas
-from app.services.base import DataAccessService, DataAccessServiceException
+from app import schemas
+from app.db import models, repositories
+from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 
 if TYPE_CHECKING:
     from pydantic import UUID4
     from sqlalchemy.ext.asyncio import AsyncSession
 
+    from app.db.repositories.base import LimitOffset
 
-class TeamServiceException(DataAccessServiceException):
+
+class TeamServiceException(BaseRepositoryServiceException):
     """_summary_"""
 
 
-class TeamService(DataAccessService[models.Team, repositories.TeamRepository, schemas.TeamCreate, schemas.TeamUpdate]):
+class TeamService(
+    BaseRepositoryService[models.Team, repositories.TeamRepository, schemas.TeamCreate, schemas.TeamUpdate]
+):
     """Handles basic lookup operations for a team"""
+
+    model_type = models.Team
+    repository_type = repositories.TeamRepository
 
     async def create(self, db: "AsyncSession", obj_in: schemas.TeamCreate) -> models.Team:
         obj_data = obj_in.dict(
@@ -23,11 +31,16 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
         )
         team = self.model(**obj_data)
         team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoles.ADMIN, is_owner=True))
-        return await self.repository.create(db, team)
+        team = await self.repository.create(db, team)
+        return team
 
     async def get_teams_for_user(
-        self, db: "AsyncSession", user_id: "UUID4", options: Optional[List[Any]] = None
-    ) -> List[models.Team]:
+        self,
+        db: "AsyncSession",
+        user_id: "UUID4",
+        limit_offset: Optional["LimitOffset"] = None,
+        options: Optional[List[Any]] = None,
+    ) -> list[models.Team] | tuple[list[models.Team], int]:
         """Get all workspaces for a user"""
         options = options if options else self.default_options
         statement = (
@@ -36,7 +49,7 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
             .where(models.TeamMember.user_id == user_id)
             .options(*options)
         )
-        return await self.repository.list(db, statement)
+        return await self.repository.select(db, statement, limit_offset)
 
     @staticmethod
     def is_owner(team: models.Team, user_id: int) -> bool:
@@ -45,8 +58,6 @@ class TeamService(DataAccessService[models.Team, repositories.TeamRepository, sc
 
 
 team = TeamService(
-    model=models.Team,
-    repository=repositories.TeamRepository,
     default_options=[
         orm.noload("*"),
         orm.subqueryload(models.Team.members).options(

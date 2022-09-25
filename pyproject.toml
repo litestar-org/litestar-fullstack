@@ -26,7 +26,7 @@ packages = [
   {include = "app", from = "src"},
 ]
 readme = "README.md"
-repository = "https://github.com/cofin/app"
+repository = "https://github.com/cofin/starlite-spa"
 version = "0.1.0"
 [tool.poetry.scripts]
 app = "app.__main__:main"
@@ -44,7 +44,7 @@ redis = "*"
 rich = "*"
 sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
 starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["picologging","brotli"]}
-starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
+starlite-jwt = {git = "https://github.com/cofin/starlite-jwt.git", branch = "enhancements"}
 starlite-sessions = "*"
 universal_pathlib = "*"
 uvicorn = {extras = ["standard"], version = "*"}

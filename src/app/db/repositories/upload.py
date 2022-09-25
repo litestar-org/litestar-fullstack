@@ -1,5 +1,5 @@
-from app import models
-from app.repositories.base import BaseRepository
+from app.db import models
+from app.db.repositories.base import BaseRepository
 
 
 class UploadRepository(BaseRepository[models.Upload]):
@@ -10,6 +10,3 @@ class UploadRepository(BaseRepository[models.Upload]):
     """
 
     model_type = models.Upload
-
-
-upload = UploadRepository()

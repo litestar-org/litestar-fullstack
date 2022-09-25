@@ -4,7 +4,7 @@ from typing import Any, Optional
 from pydantic import UUID4, EmailStr, root_validator
 from pydantic.types import SecretStr
 
-from app import models
+from app.db import models
 from app.schemas.base import CamelizedBaseSchema
 
 

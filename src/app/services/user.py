@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING, Any, Optional
 from sqlalchemy import orm, select
 from starlite import NotAuthorizedException
 
-from app import models, repositories, schemas
+from app import schemas
 from app.core import security
-from app.services.base import DataAccessService, DataAccessServiceException
+from app.db import models, repositories
+from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 from app.services.team_invite import (
     TeamInvitationEmailMismatchException,
     TeamInvitationExpired,
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class UserServiceException(DataAccessServiceException):
+class UserServiceException(BaseRepositoryServiceException):
     """_summary_"""
 
 
@@ -26,8 +27,13 @@ class UserNotFoundException(UserServiceException):
     """_summary_"""
 
 
-class UserService(DataAccessService[models.User, repositories.UserRepository, schemas.UserCreate, schemas.UserUpdate]):
+class UserService(
+    BaseRepositoryService[models.User, repositories.UserRepository, schemas.UserCreate, schemas.UserUpdate]
+):
     """Handles database operations for users"""
+
+    model_type = models.User
+    repository_type = repositories.UserRepository
 
     async def exists(self, db: "AsyncSession", username: str) -> bool:
         statement = select(self.model.id).where(self.model.email == username)
@@ -56,9 +62,9 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         self, db: "AsyncSession", obj_in: schemas.UserPasswordUpdate, db_obj: models.User
     ) -> None:
         if not await security.verify_password(obj_in.current_password, db_obj.hashed_password):
-            raise UserPasswordVerifyException
+            raise NotAuthorizedException("Password failed to match")
         if not self.is_active(db_obj):
-            raise UserInactiveException
+            raise NotAuthorizedException("User account is not active")
         db_obj.hashed_password = await security.get_password_hash(obj_in.new_password)
         await self.repository.update(db, db_obj)
 
@@ -92,7 +98,6 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
         team_name: str | None = obj_data.pop("team_name", None)
         obj_data.update({"hashed_password": await security.get_password_hash(password)})
         user = self.model(**obj_data)
-
         if team_name:
             """Create the team the user entered into the form"""
             team = models.Team(name=team_name)
@@ -109,7 +114,8 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
             team.members.append(models.TeamMember(user=user, role=invite.role, is_owner=False))
             invite.is_accepted = True
             db.add(invite)  # this is automatically committed with the statement below
-        return await self.repository.create(db, user)
+        user = await self.repository.create(db, user)
+        return user
 
     @staticmethod
     def is_verified(db_obj: models.User) -> bool:
@@ -145,8 +151,6 @@ class UserService(DataAccessService[models.User, repositories.UserRepository, sc
 
 
 user = UserService(
-    model=models.User,
-    repository=repositories.UserRepository,
     default_options=[
         orm.subqueryload(models.User.teams).options(
             orm.joinedload(models.TeamMember.team, innerjoin=True).options(

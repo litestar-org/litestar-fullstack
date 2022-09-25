@@ -18,6 +18,7 @@ class ApiPaths:
     SIGNUP = "/api/access/signup"
     #
     STATIC = "/public"
+    INDEX = "/"
 
 
 urls = ApiPaths()

@@ -1,10 +1,11 @@
 from sqlalchemy import orm
 
-from app import models, repositories, schemas
-from app.services.base import DataAccessService, DataAccessServiceException
+from app import schemas
+from app.db import models, repositories
+from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 
 
-class TeamInvitationServiceException(DataAccessServiceException):
+class TeamInvitationServiceException(BaseRepositoryServiceException):
     """_summary_"""
 
 
@@ -21,7 +22,7 @@ class TeamInvitationEmailMismatchException(TeamInvitationServiceException):
 
 
 class TeamInvitationService(
-    DataAccessService[
+    BaseRepositoryService[
         models.TeamInvitation,
         repositories.TeamInvitationRepository,
         schemas.TeamInvitationCreate,
@@ -30,7 +31,8 @@ class TeamInvitationService(
 ):
     """Handles basic lookup operations for an Invitation"""
 
+    model_type = models.TeamInvitation
+    repository_type = repositories.TeamInvitationRepository
 
-team_invite = TeamInvitationService(
-    model=models.TeamInvitation, repository=repositories.TeamInvitationRepository, default_options=[orm.noload("*")]
-)
+
+team_invite = TeamInvitationService(default_options=[orm.noload("*")])

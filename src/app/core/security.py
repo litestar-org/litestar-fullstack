@@ -1,46 +1,42 @@
 import base64
 import logging
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Union
 
 from passlib.context import CryptContext
-from pydantic import UUID4
 from starlite import NotAuthorizedException
+from starlite_jwt import OAuth2PasswordBearerAuth
 
 from app import db, services
 from app.config import paths, settings
-from app.middleware.jwt import OAuth2PasswordBearerAuth
 from app.utils.asyncer import run_async
 
 if TYPE_CHECKING:
     from pydantic import SecretBytes, SecretStr
 
-    from app.models import User
+    from app.db.models import User
 
 logger = logging.getLogger()
 
 
-async def current_user_from_session(session: dict[str, Any]) -> "User":
-    user_id = UUID4(session.get("user_id")) if session.get("user_id") else None
-    if not user_id:
-        raise NotAuthorizedException
-    user = await services.user.get_by_id(db.db_session(), user_id)
-    if user:
-        return user
-    raise NotAuthorizedException
-
-
 async def current_user_from_token(sub: str) -> "User":
     user = await services.user.get_by_email(db.db_session(), sub)
-    if user:
+    if user and user.is_active:
         return user
-    raise NotAuthorizedException
+    raise NotAuthorizedException("Invalid account name")
 
 
 auth = OAuth2PasswordBearerAuth(  # nosec
     retrieve_user_handler=current_user_from_token,
     token_secret=settings.app.SECRET_KEY.get_secret_value().decode(),
     token_url=paths.urls.ACCESS_TOKEN,
-    exclude=[paths.urls.OPENAPI_SCHEMA, paths.urls.HEALTH, paths.urls.ACCESS_TOKEN, paths.urls.SIGNUP],
+    exclude=[
+        paths.urls.OPENAPI_SCHEMA,
+        paths.urls.HEALTH,
+        paths.urls.ACCESS_TOKEN,
+        paths.urls.SIGNUP,
+        paths.urls.STATIC,
+        paths.urls.INDEX,
+    ],
 )
 
 password_crypt_context = CryptContext(schemes=["argon2"], deprecated="auto")

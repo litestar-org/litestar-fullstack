@@ -19,13 +19,6 @@ sa.JsonObject = JsonObject
 sa.PydanticType = PydanticType
 sa.TimestampAwareDateTime = TimestampAwareDateTime
 
-
-sa.GUID = GUID
-sa.EmailString = EmailString
-sa.JsonObject = JsonObject
-sa.PydanticType = PydanticType
-sa.TimestampAwareDateTime = TimestampAwareDateTime
-
 # revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}
 down_revision = ${repr(down_revision)}

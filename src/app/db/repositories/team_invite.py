@@ -1,5 +1,5 @@
-from app import models
-from app.repositories.base import BaseRepository
+from app.db import models
+from app.db.repositories.base import BaseRepository
 
 
 class TeamInvitationRepository(BaseRepository[models.TeamInvitation]):
@@ -10,6 +10,3 @@ class TeamInvitationRepository(BaseRepository[models.TeamInvitation]):
     """
 
     model_type = models.TeamInvitation
-
-
-team_invite = TeamInvitationRepository()

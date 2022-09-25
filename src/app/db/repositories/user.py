@@ -1,5 +1,5 @@
-from app import models
-from app.repositories.base import BaseRepository
+from app.db import models
+from app.db.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository[models.User]):
@@ -9,6 +9,3 @@ class UserRepository(BaseRepository[models.User]):
     Args:
         BaseRepository (_type_): _description_
     """
-
-
-user = UserRepository()

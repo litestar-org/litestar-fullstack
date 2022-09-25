@@ -6,12 +6,22 @@ __all__ = ["slugify"]
 
 
 def slugify(value: str, allow_unicode: bool = False) -> str:
-    """
+    """slugify
+
     Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
     dashes to single dashes. Remove characters that aren't alphanumerics,
     underscores, or hyphens. Convert to lowercase. Also strip leading and
     trailing whitespace, dashes, and underscores.
+
+    Args:
+        value (str): the string to slugify
+        allow_unicode (bool, optional): allow unicode characters in slug. Defaults to False.
+
+    Returns:
+        str: a slugified string of the value parameter
+
     """
+
     if allow_unicode:
         value = unicodedata.normalize("NFKC", value)
     else:

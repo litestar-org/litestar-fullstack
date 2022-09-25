@@ -17,7 +17,7 @@ from app.asgi import app
 from app.cli.console import console
 from app.config import settings
 from app.db import AsyncScopedSession, engine
-from app.models import BaseModel, meta
+from app.db.models import BaseModel, meta
 
 logger = logging.getLogger()
 
@@ -144,14 +144,13 @@ def promote_to_superuser(email: Optional[str]) -> None:
     required=False,
     show_default=False,
 )
-def export_api_schema(options: dict[str, Any]) -> None:
+def export_api_schema(export_path: str) -> None:
     """Push secrets to Secrets Provider"""
-    export_location = options.get("export_location", ".")
     console.print("Exporting API Schema")
     application = app
     schema = application.openapi_schema
     if schema:
-        with open(export_location, "w", encoding="utf-8") as fd:
+        with open(export_path, "w", encoding="utf-8") as fd:
             fd.write(utils.serializers.serialize_object(application.openapi_schema))
         console.print_json(schema.json())
 
@@ -160,7 +159,7 @@ def export_api_schema(options: dict[str, Any]) -> None:
     name="create-database",
     help="Creates an empty postgres database and executes migrations",
 )
-def create_database(options: dict[str, Any]) -> None:
+def create_database() -> None:
     """Create database DDL migrations."""
     alembic_cfg = AlembicConfig(settings.db.MIGRATION_CONFIG)
     alembic_cfg.set_main_option("script_location", settings.db.MIGRATION_PATH)
@@ -171,7 +170,7 @@ def create_database(options: dict[str, Any]) -> None:
     name="upgrade-database",
     help="Executes migrations to apply any outstanding database structures.",
 )
-def upgrade_database(options: dict[str, Any]) -> None:
+def upgrade_database() -> None:
     """Upgrade the database to the latest revision."""
     alembic_cfg = AlembicConfig(settings.db.MIGRATION_CONFIG)
     alembic_cfg.set_main_option("script_location", settings.db.MIGRATION_PATH)
@@ -189,10 +188,10 @@ def upgrade_database(options: dict[str, Any]) -> None:
     default=False,
     required=False,
     show_default=True,
+    is_flag=True,
 )
-def reset_database(options: dict[str, Any]) -> None:
+def reset_database(no_prompt: bool) -> None:
     """Resets the database to an initial empty state."""
-    no_prompt = options.get("no_prompt", False)
     if not no_prompt:
         Confirm.ask(
             "[bold red] Are you sure you want to drop and recreate everything?",
@@ -217,10 +216,10 @@ def reset_database(options: dict[str, Any]) -> None:
     default=False,
     required=False,
     show_default=True,
+    is_flag=True,
 )
-def purge_database(options: dict[str, Any]) -> None:
+def purge_database(no_prompt: bool) -> None:
     """Drop all objects in the database."""
-    no_prompt = options.get("no_prompt", False)
     if not no_prompt:
         confirm = Confirm.ask(
             "[bold red] Are you sure you want to drop everything?",

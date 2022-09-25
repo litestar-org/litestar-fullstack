@@ -5,7 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy import orm
 
 from app.db import db_types as t
-from app.models.base import BaseModel, CreatedUpdatedAtMixin
+from app.db.models.base import BaseModel, CreatedUpdatedAtMixin
 
 if TYPE_CHECKING:
     from .team import TeamMember
@@ -27,9 +27,5 @@ class User(BaseModel, CreatedUpdatedAtMixin):
     # ORM Relationships
     # ------------
     teams: orm.Mapped[list["TeamMember"]] = orm.relationship(
-        "TeamMember",
-        back_populates="user",
-        lazy="subquery",
-        join_depth=1,
-        cascade="all, delete",
+        "TeamMember", back_populates="user", lazy="noload", join_depth=1, cascade="all, delete"
     )
