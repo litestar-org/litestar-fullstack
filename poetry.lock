@@ -1515,7 +1515,7 @@ sqlcipher = ["sqlcipher3_binary"]
 type = "git"
 url = "https://github.com/sqlalchemy/sqlalchemy.git"
 reference = "main"
-resolved_reference = "1657cea73d5ec9aeedd541001e125e03e581a34b"
+resolved_reference = "86e21c2d6f750f55c5dbe31d6ab8875230d8ecb0"
 
 [[package]]
 name = "starlette"

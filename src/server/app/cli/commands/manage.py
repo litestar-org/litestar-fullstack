@@ -158,8 +158,8 @@ def export_api_schema(export_path: str, verbose: bool) -> None:
     """Push secrets to Secrets Provider"""
     console.print("Exporting API Schema")
     application = app
-    schema = application.openapi_schema.json(exclude_none=True, exclude_unset=True) or "{}"
-    if schema:
+    if application.openapi_schema:
+        schema = application.openapi_schema.json(exclude_none=True, exclude_unset=True)
         with open(f"{export_path}/openapi.json", "w", encoding="utf-8") as fd:
             fd.write(schema)
         if verbose:
