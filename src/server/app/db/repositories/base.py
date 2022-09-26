@@ -7,8 +7,6 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, Generic, List, Optional, Protocol, TypeVar, Union, overload
 from uuid import UUID
 
-from app.db.models.base import DatabaseModelType, DatabaseModelWithCreatedUpdatedAtType, DatabaseModelWithSlugType
-from app.utils.slugify_text import slugify
 from pydantic import UUID4
 from sqlalchemy.engine import Result
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -16,6 +14,9 @@ from sqlalchemy.sql import Select
 from sqlalchemy.sql import func as sql_func
 from sqlalchemy.sql import select
 from sqlalchemy.sql.selectable import TypedReturnsRows
+
+from app.db.models.base import DatabaseModelType, DatabaseModelWithCreatedUpdatedAtType, DatabaseModelWithSlugType
+from app.utils.slugify_text import slugify
 
 if TYPE_CHECKING:
     from sqlalchemy import Executable
@@ -149,7 +150,7 @@ class RepositoryProtocol(Protocol[DatabaseModelType]):
 
     async def select(
         self, db: "AsyncSession", statement: "Select", limit_offset: LimitOffset | None = None
-    ) -> Union[tuple[list[DatabaseModelType], int], List[DatabaseModelType]]:
+    ) -> Union[tuple[list[DatabaseModelType], int], list[DatabaseModelType]]:
         ...  # pragma: no cover
 
     async def create(self, db: "AsyncSession", db_object: "DatabaseModelType") -> "DatabaseModelType":
@@ -251,7 +252,7 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
     async def create_many(
         self,
         db: "AsyncSession",
-        db_objects: List[DatabaseModelType],
+        db_objects: list[DatabaseModelType],
         commit: bool = True,
     ) -> "List[DatabaseModelType]":
         """Create Many"""

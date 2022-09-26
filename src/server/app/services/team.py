@@ -39,7 +39,7 @@ class TeamService(
         db: "AsyncSession",
         user_id: "UUID4",
         limit_offset: Optional["LimitOffset"] = None,
-        options: Optional[List[Any]] = None,
+        options: Optional[list[Any]] = None,
     ) -> list[models.Team] | tuple[list[models.Team], int]:
         """Get all workspaces for a user"""
         options = options if options else self.default_options

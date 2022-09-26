@@ -7,6 +7,8 @@ USING_PNPM=$(shell python3 -c "if __import__('pathlib').Path('pnpm-lock.yaml').e
 USING_YARN=$(shell python3 -c "if __import__('pathlib').Path('yarn.lock').exists(): print('yes')")
 USING_NPM=$(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
 VENV_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
+NODE_MODULES_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
+
 PYTHON_PACKAGES=$(shell poetry export -f requirements.txt  --without-hashes |cut -d'=' -f1 |cut -d ' ' -f1)
 GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
 FRONTEND_SRC_DIR=src/ui
@@ -31,8 +33,9 @@ help:  ## Display this help
 upgrade-dependencies:       ## Upgrade all dependencies to the latest stable versions
 	@if [ "$(USING_POETRY)" ]; then poetry update; fi
 	@echo "Python Dependencies Updated"
+	@if [ "$(USING_NPM)" ]; then npm upgrade --latest; fi
 	@if [ "$(USING_YARN)" ]; then yarn upgrade; fi
-	@if [ "$(USING_PNPM)" ]; then pnpm upgrade; fi
+	@if [ "$(USING_PNPM)" ]; then pnpm upgrade --latest; fi
 	@echo "Node Dependencies Updated"
 
 ###############
@@ -71,24 +74,23 @@ install:          ## Install the project in dev mode.
 	@echo "Install complete.  ** If you want to recreate your entire virtualenv run 'make virtualenv'"
 
 
-.PHONY: migrations
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/server/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src poetry run app manage upgrade-database
+	@env PYTHONPATH=src/server poetry run app manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will wipe all migrations and recreate from an emtpy state."
-	@env PYTHONPATH=src poetry run app manage purge-database --no-prompt
-	rm -Rf src/app/db/migrations/versions/*.py
+	@env PYTHONPATH=src/server poetry run app manage purge-database --no-prompt
+	rm -Rf src/server/app/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/server/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean
 clean:       ## remove all build, testing, and static documentation files
@@ -115,6 +117,7 @@ clean:       ## remove all build, testing, and static documentation files
 build-frontend: $(FRONTEND_BUILD_DIR)
 
 $(FRONTEND_BUILD_DIR): $(shell find $(FRONTEND_SRC_DIR) -not -path "$(FRONTEND_BUILD_DIR)")
+	@poetry run app manage export-openapi-schema --export-path ./src/ui/spec/
 	@npm run build
 
 build-backend: $(BACKEND_BUILD_DIR)
@@ -122,6 +125,12 @@ build-backend: $(BACKEND_BUILD_DIR)
 $(BACKEND_BUILD_DIR): $(shell find $(BACKEND_SRC_DIR))
 	@poetry build
 
+
+.PHONY: build
+build: build-frontend build-backend          ## Install the project in dev mode.
+
+
+.PHONY: migrations
 ###############
 # docs        #
 ###############

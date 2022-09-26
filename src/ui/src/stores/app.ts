@@ -1,17 +1,5 @@
-import {
- 
-  Token,
-  User,
-  Users,
-} from "@/api/client"
-import {
-  ANONYMOUS_AUTH,
-  ANONYMOUS_USER,
-  Auth,
- 
-  DEFAULT_USERS,
- 
-} from "@/api/types"
+import { Token, User, Users } from "@/api/client"
+import { ANONYMOUS_AUTH, ANONYMOUS_USER, Auth, DEFAULT_USERS } from "@/api/types"
 import Storage from "@/plugins/storage"
 import jwtDecode, { JwtPayload } from "jwt-decode"
 import { acceptHMRUpdate, defineStore } from "pinia"
@@ -22,13 +10,12 @@ export const authStorage = new Storage<{ currentUser: User; auth: Auth }>("auth"
 export const useAppStore = defineStore("app", () => {
   const currentUser = ref<User>(authStorage.get()?.currentUser || ANONYMOUS_USER)
   const auth = ref<Auth>(authStorage.get()?.auth || ANONYMOUS_AUTH)
- 
+
   const sidebarOpen = ref(false)
   const darkMode = ref(false)
- 
+
   const users = ref<Users>(DEFAULT_USERS)
   const selectedUser = ref<User>(ANONYMOUS_USER)
- 
 
   function setAuth(tokenData?: Token) {
     if (tokenData === undefined || tokenData === null) {
@@ -65,13 +52,13 @@ export const useAppStore = defineStore("app", () => {
   return {
     currentUser,
     auth,
- 
+
     sidebarOpen,
     darkMode,
- 
+
     users,
     selectedUser,
- 
+
     setAuth,
     setCurrentUser,
   }

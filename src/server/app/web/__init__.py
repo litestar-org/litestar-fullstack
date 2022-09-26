@@ -1,5 +1,6 @@
-from app.web import routes
 from starlite import Router
+
+from app.web import routes
 
 router = Router(
     path="",

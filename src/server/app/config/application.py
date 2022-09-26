@@ -12,12 +12,13 @@ from functools import lru_cache
 from typing import Any, Literal, Optional, Union, cast
 from uuid import NAMESPACE_DNS, uuid3
 
+from pydantic import BaseSettings as _BaseSettings
+from pydantic import SecretBytes, SecretStr, ValidationError, validator
+
 from app.config.paths import BASE_DIR
 from app.utils.serializers import convert_datetime_to_gmt, deserialize_object, serialize_object
 from app.utils.slugify_text import slugify
 from app.version import __version__
-from pydantic import BaseSettings as _BaseSettings
-from pydantic import SecretBytes, SecretStr, ValidationError, validator
 
 __all__ = [
     "BASE_DIR",

@@ -7,7 +7,6 @@ const Dotenv = require("dotenv")
 
 Dotenv.config({ path: path.join(__dirname, ".env") })
 
- 
 function getBackendUrl(path) {
   return `${process.env.BACKEND_URL || "http://127.0.0.1:8000"}${path}`
 }
@@ -66,10 +65,7 @@ export default defineConfig({
       "chart.js",
     ],
   },
-  plugins: [
-    vue(),
-    eslintPlugin()
-  ],
+  plugins: [vue(), eslintPlugin()],
   build: {
     target: "esnext",
     outDir: "dist",
@@ -87,7 +83,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src/ui/src/"), 
+      "@": path.resolve(__dirname, "src/ui/src/"),
     },
   },
 })

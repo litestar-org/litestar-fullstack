@@ -44,7 +44,7 @@ redis = "*"
 rich = "*"
 sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
 starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["picologging","brotli"]}
-starlite-jwt = {git = "https://github.com/cofin/starlite-jwt.git", branch = "enhancements"}
+starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
 starlite-sessions = "*"
 universal_pathlib = "*"
 uvicorn = {extras = ["standard"], version = "*"}
@@ -121,10 +121,10 @@ line_length = 119
 multi_line_output = 3
 profile = "black"
 skip_gitignore = true
-src_paths = ["src", "test"]
+src_paths = ["src/server", "test/server"]
 
 [tool.coverage.run]
-omit = ["*/tests/*"]
+omit = ["*/tests/server/*"]
 
 [tool.coverage.report]
 exclude_lines = [

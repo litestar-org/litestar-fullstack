@@ -12,7 +12,7 @@ from app.config.logging import log_config
 
 @click.group(name="run", invoke_without_command=False)
 @click.pass_context
-def cli(_: Dict[str, Any]) -> None:
+def cli(_: dict[str, Any]) -> None:
     """Run Commands"""
 
 

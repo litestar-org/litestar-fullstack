@@ -7,16 +7,17 @@ from typing import Any, Optional
 import click
 from alembic import command as migration_command
 from alembic.config import Config as AlembicConfig
+from pydantic import EmailStr, SecretStr
+from rich.prompt import Confirm
+from sqlalchemy import Table
+from sqlalchemy.schema import DropTable
+
 from app import schemas, services, utils
 from app.asgi import app
 from app.cli.console import console
 from app.config import settings
 from app.db import AsyncScopedSession, engine
 from app.db.models import BaseModel, meta
-from pydantic import EmailStr, SecretStr
-from rich.prompt import Confirm
-from sqlalchemy import Table
-from sqlalchemy.schema import DropTable
 
 logger = logging.getLogger()
 
@@ -143,15 +144,26 @@ def promote_to_superuser(email: Optional[str]) -> None:
     required=False,
     show_default=False,
 )
-def export_api_schema(export_path: str) -> None:
+@click.option(
+    "--verbose",
+    "-v",
+    help="Verbose output.",
+    type=click.BOOL,
+    default=False,
+    required=False,
+    show_default=True,
+    is_flag=True,
+)
+def export_api_schema(export_path: str, verbose: bool) -> None:
     """Push secrets to Secrets Provider"""
     console.print("Exporting API Schema")
     application = app
-    schema = application.openapi_schema
+    schema = application.openapi_schema.json(exclude_none=True, exclude_unset=True) or "{}"
     if schema:
-        with open(export_path, "w", encoding="utf-8") as fd:
-            fd.write(utils.serializers.serialize_object(application.openapi_schema))
-        console.print_json(schema.json())
+        with open(f"{export_path}/openapi.json", "w", encoding="utf-8") as fd:
+            fd.write(schema)
+        if verbose:
+            console.print_json(schema)
 
 
 @cli.command(

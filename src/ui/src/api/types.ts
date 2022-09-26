@@ -1,12 +1,4 @@
-import {
-   User,
- 
-  Users,
- 
-  ErrorMessage,
- 
- 
-} from "@/api/client"
+import { User, Users, ErrorMessage } from "@/api/client"
 import { ComputedRef, reactive } from "vue"
 
 export const ANONYMOUS_USER: Readonly<User> = Object.freeze({
@@ -16,8 +8,8 @@ export const ANONYMOUS_USER: Readonly<User> = Object.freeze({
   isSuperuser: false,
   isActive: false,
   isVerified: false,
-}) 
- 
+})
+
 export const NO_TEAM: Readonly<Team> = Object.freeze({
   id: 0,
   slug: "no-team",
@@ -42,7 +34,7 @@ export const notification = reactive({
 })
 export interface Auth {
   accessToken: string
-    tokenType: string
+  tokenType: string
   userId: string | null
   authenticatedAt: Date | null
   accessTokenValidUntil: Date | null
@@ -50,10 +42,10 @@ export interface Auth {
 export const ANONYMOUS_AUTH: Readonly<Auth> = Object.freeze({
   userId: "",
   accessToken: "",
-   tokenType: "",
+  tokenType: "",
   authenticatedAt: null,
   accessTokenValidUntil: null,
-}) 
+})
 
 export interface JwtOptions<Fallback> {
   /**
@@ -71,7 +63,7 @@ export interface JwtResult<Payload, Header, Fallback> {
   header: ComputedRef<Header | Fallback>
   payload: ComputedRef<Payload | Fallback>
 }
- 
+
 export const BACKEND_UNAVAILABLE: Readonly<ErrorMessage> = Object.freeze({
   error: {
     code: 500,

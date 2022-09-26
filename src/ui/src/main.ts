@@ -4,9 +4,9 @@ import { router } from "@/router"
 import { createPinia } from "pinia"
 import "@/assets/main.css"
 import { createAuth } from "@/plugins/auth"
- import { createHead } from "@vueuse/head"
+import { createHead } from "@vueuse/head"
 import registerGlobalComponents from "@/plugins/globalComponents"
- import Notifications from "notiwind"
+import Notifications from "notiwind"
 
 export const app = createApp(App)
 const head = createHead()
@@ -34,5 +34,5 @@ app.use(auth)
 app.use(Notifications)
 
 app.config.globalProperties.$http = axiosInstance
- app.provide("enable-route-transitions", true)
+app.provide("enable-route-transitions", true)
 app.mount("#app")

@@ -1,0 +1,244 @@
+{
+  "info": { "title": "Optimus Prime", "contact": { "name": "Admin", "email": "admin@localhost" }, "version": "v1" },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["Server"],
+        "description": "Health check handler",
+        "operationId": "Health Check",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": { "application/json": { "media_type_schema": { "ref": "#/components/schemas/SystemHealth" } } }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/access/login": {
+      "post": {
+        "tags": ["Access"],
+        "operationId": "Login",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": { "media_type_schema": { "ref": "#/components/schemas/UserLogin" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": { "application/json": { "media_type_schema": { "ref": "#/components/schemas/User" } } }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "media_type_schema": {
+                  "properties": {
+                    "status_code": { "type": "integer" },
+                    "detail": { "type": "string" },
+                    "extra": { "additionalProperties": {}, "type": ["null", "object", "array"] }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [{ "status_code": 400, "detail": "Bad Request", "extra": {} }]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/access/signup": {
+      "post": {
+        "tags": ["Access"],
+        "operationId": "Signup",
+        "requestBody": {
+          "content": { "application/json": { "media_type_schema": { "ref": "#/components/schemas/UserSignup" } } },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": { "application/json": { "media_type_schema": { "ref": "#/components/schemas/User" } } }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "media_type_schema": {
+                  "properties": {
+                    "status_code": { "type": "integer" },
+                    "detail": { "type": "string" },
+                    "extra": { "additionalProperties": {}, "type": ["null", "object", "array"] }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [{ "status_code": 400, "detail": "Bad Request", "extra": {} }]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/team/{team_id}/upload": {
+      "post": {
+        "description": "Upload a file",
+        "operationId": "Upload File",
+        "parameters": [
+          {
+            "name": "team_id",
+            "param_in": "path",
+            "description": "The identifier for the uploaded file's team",
+            "required": true,
+            "param_schema": {
+              "type": "string",
+              "schema_format": "uuid",
+              "title": "Team ID",
+              "description": "The identifier for the uploaded file's team"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": { "multipart/form-data": { "media_type_schema": { "ref": "#/components/schemas/FormData" } } },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": { "application/json": { "media_type_schema": { "type": "object" } } }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "media_type_schema": {
+                  "properties": {
+                    "status_code": { "type": "integer" },
+                    "detail": { "type": "string" },
+                    "extra": { "additionalProperties": {}, "type": ["null", "object", "array"] }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [{ "status_code": 400, "detail": "Bad Request", "extra": {} }]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FormData": {
+        "properties": {
+          "collection": { "type": "string", "contentMediaType": "application/octet-stream", "title": "Collection" },
+          "variableT": { "type": "integer", "title": "Variablet" }
+        },
+        "type": "object",
+        "required": ["collection", "variableT"],
+        "title": "FormData",
+        "description": "Camelized Base pydantic schema"
+      },
+      "SystemHealth": {
+        "properties": {
+          "app": { "type": "string", "title": "App" },
+          "version": { "type": "string", "title": "Version" },
+          "databaseStatus": { "type": "string", "title": "Databasestatus" },
+          "cacheStatus": { "type": "string", "title": "Cachestatus" }
+        },
+        "type": "object",
+        "required": ["app", "version", "databaseStatus", "cacheStatus"],
+        "title": "SystemHealth",
+        "description": "Health check response schema."
+      },
+      "TeamRoles": {
+        "type": "string",
+        "enum": ["ADMIN", "MEMBER"],
+        "title": "TeamRoles",
+        "description": "Team Role valid values"
+      },
+      "UserTeam": {
+        "properties": {
+          "teamId": { "type": "string", "schema_format": "uuid4", "title": "Teamid" },
+          "name": { "type": "string", "title": "Name" },
+          "isOwner": { "type": "boolean", "title": "Isowner", "default": false },
+          "role": { "allOf": [{ "ref": "#/components/schemas/TeamRoles" }], "default": "MEMBER" }
+        },
+        "type": "object",
+        "title": "UserTeam",
+        "description": "Holds teams details for a user\n\nThis is nested in the User Model for 'team'"
+      },
+      "User": {
+        "properties": {
+          "id": { "type": "string", "schema_format": "uuid4", "title": "Id" },
+          "email": { "type": "string", "schema_format": "email", "title": "Email" },
+          "fullName": { "type": "string", "title": "Fullname" },
+          "isSuperuser": { "type": "boolean", "title": "Issuperuser" },
+          "isActive": { "type": "boolean", "title": "Isactive" },
+          "isVerified": { "type": "boolean", "title": "Isverified" },
+          "teamCount": { "type": "integer", "title": "Teamcount", "default": 0 },
+          "teams": {
+            "items": { "ref": "#/components/schemas/UserTeam" },
+            "type": "array",
+            "title": "Teams",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": ["id", "email", "isSuperuser", "isActive", "isVerified"],
+        "title": "User",
+        "description": "User properties to use for a response"
+      },
+      "UserLogin": {
+        "properties": {
+          "username": { "type": "string", "title": "Username" },
+          "password": { "type": "string", "schema_format": "password", "title": "Password", "writeOnly": true }
+        },
+        "type": "object",
+        "required": ["username", "password"],
+        "title": "UserLogin",
+        "description": "Properties required to log in"
+      },
+      "UserSignup": {
+        "properties": {
+          "email": { "type": "string", "schema_format": "email", "title": "Email" },
+          "password": { "type": "string", "schema_format": "password", "title": "Password", "writeOnly": true },
+          "fullName": { "type": "string", "title": "Fullname" },
+          "teamName": { "type": "string", "title": "Teamname" },
+          "invitationId": { "type": "integer", "title": "Invitationid" }
+        },
+        "type": "object",
+        "required": ["email", "password"],
+        "title": "UserSignup",
+        "description": "Camelized Base pydantic schema"
+      }
+    },
+    "securitySchemes": {
+      "BearerToken": {
+        "type": "oauth2",
+        "description": "OAUTH2 password bearer authentication and authorization.",
+        "name": "Authorization",
+        "security_scheme_in": "header",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT",
+        "flows": { "password": { "tokenUrl": "/api/access/login", "scopes": {} } }
+      }
+    }
+  },
+  "security": [{ "BearerToken": [] }]
+}
