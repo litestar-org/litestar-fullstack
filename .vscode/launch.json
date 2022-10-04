@@ -1,10 +1,11 @@
 {
   "configurations": [
+  
     {
-      "name": "Python: File",
+      "name": "Starlite Application",
       "type": "python",
       "request": "launch",
-      "module": "pyspa.__main__:main",
+      "module": "app",
       "args": ["run", "server"],
       "justMyCode": true
     }

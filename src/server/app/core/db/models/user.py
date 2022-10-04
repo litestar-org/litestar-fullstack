@@ -4,8 +4,8 @@ import sqlalchemy as sa
 from pydantic import EmailStr
 from sqlalchemy import orm
 
-from app.db import db_types as t
-from app.db.models.base import BaseModel, CreatedUpdatedAtMixin
+from app.core.db import db_types as t
+from app.core.db.models.base import BaseModel, CreatedUpdatedAtMixin
 
 if TYPE_CHECKING:
     from .team import TeamMember

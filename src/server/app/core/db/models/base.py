@@ -15,7 +15,7 @@ from sqlalchemy.orm.decl_api import declarative_mixin, declared_attr
 from sqlalchemy.sql import func as sql_func
 from sqlalchemy.sql.expression import FunctionElement
 
-from app.db import db_types as t
+from app.core.db import db_types as t
 
 if TYPE_CHECKING:
     from typing_extensions import Self

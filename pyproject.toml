@@ -34,7 +34,8 @@ app = "app.__main__:main"
 [tool.poetry.dependencies]
 alembic = "*"
 asyncpg = "*"
-fsspec = "*"
+click = "*"
+greenlet = "^1.1.3"
 hiredis = "*"
 httpx = "*"
 passlib = {version = "*", extras = ["argon2"]}
@@ -43,22 +44,41 @@ python = ">=3.10,<4.0"
 redis = "*"
 rich = "*"
 sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["picologging","brotli"]}
-starlite-jwt = {git = "https://github.com/starlite-api/starlite-jwt.git", branch = "main"}
-starlite-sessions = "*"
-universal_pathlib = "*"
+starlite = {version = "^1.24.0", extras = ["brotli"]}
+starlite-jwt = "^1.4.0"
 uvicorn = {extras = ["standard"], version = "*"}
-click = "*"
-greenlet = "*"
 
 [tool.poetry.group.dev.dependencies]
-Jinja2 = "*"
-autoflake = "*"
-bandit = "*"
-blacken-docs = "*"
 bump2version = "*"
 coverage = {extras = ["toml"], version = "*"}
 cython = "*"
+hypothesis = {extras = ["cli"], version = "*"}
+ipykernel = "*"
+ipython = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+pytest-dotenv = "*"
+pytest-mock = "*"
+tox = "*"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
+mkdocs-material = "*"
+mkdocstrings = "*"
+mkdocstrings-python = "*"
+
+[tool.poetry.group.lint]
+optional = true
+
+[tool.poetry.group.lint.dependencies]
+autoflake = "*"
+bandit = "*"
+black = "*"
+blacken-docs = "*"
 flake8 = "*"
 flake8-bugbear = "*"
 flake8-comprehensions = "*"
@@ -67,31 +87,20 @@ flake8-print = "*"
 flake8-simplify = "*"
 flake8-type-checking = "*"
 freezegun = "*"
-hypothesis = {extras = ["cli"], version = "*"}
+httpx = "*"
 isort = "*"
-mkdocs = "*"
-mkdocs-material = "*"
-mkdocstrings = "*"
-mkdocstrings-python = "*"
 mypy = "*"
 pre-commit = "*"
 pylint = "*"
-pytest = "*"
-pytest-asyncio = "*"
-pytest-cov = "*"
-pytest-dotenv = "*"
-pytest-mock = "*"
 pyupgrade = "*"
 slotscheck = "*"
-tox = "*"
+types-click = "*"
 types-freezegun = "*"
 types-passlib = "*"
 types-python-jose = "*"
 types-pyyaml = "*"
 types-redis = "*"
 types-requests = "*"
-types-click = "*"
-nodeenv = "*"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -142,5 +151,5 @@ env_files = [".env.example"]
 
 [tool.bandit]
 exclude_dirs = ["tests"]
-tests = ["B201", "B301","B101"]
 skips = ["B101", "B601"]
+tests = ["B201", "B301", "B101"]

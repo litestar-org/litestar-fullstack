@@ -15,7 +15,7 @@ from sqlalchemy.sql import func as sql_func
 from sqlalchemy.sql import select
 from sqlalchemy.sql.selectable import TypedReturnsRows
 
-from app.db.models.base import DatabaseModelType, DatabaseModelWithCreatedUpdatedAtType, DatabaseModelWithSlugType
+from app.core.db.models.base import DatabaseModelType, DatabaseModelWithCreatedUpdatedAtType, DatabaseModelWithSlugType
 from app.utils.slugify_text import slugify
 
 if TYPE_CHECKING:
@@ -117,49 +117,49 @@ class RepositoryProtocol(Protocol[DatabaseModelType]):
 
     @overload
     async def execute(
-        self, db: "AsyncSession", statement: "TypedReturnsRows[TableRowType]", **kwargs: "Any"
+        self, db_session: "AsyncSession", statement: "TypedReturnsRows[TableRowType]", **kwargs: "Any"
     ) -> "Result[TableRowType]":
         ...
 
     @overload
-    async def execute(self, db: "AsyncSession", statement: "Executable", **kwargs: Any) -> "Result[Any]":
+    async def execute(self, db_session: "AsyncSession", statement: "Executable", **kwargs: Any) -> "Result[Any]":
         ...
 
-    async def execute(self, db: "AsyncSession", statement: "Executable", **kwargs: Any) -> "Result[Any]":
+    async def execute(self, db_session: "AsyncSession", statement: "Executable", **kwargs: Any) -> "Result[Any]":
         ...  # pragma: no cover
 
-    async def commit(self, db: "AsyncSession") -> None:
+    async def commit(self, db_session: "AsyncSession") -> None:
         with self.catch_sqlalchemy_exception():
-            await db.commit()
+            await db_session.commit()
 
-    async def refresh(self, db: "AsyncSession", db_object: "DatabaseModelType") -> None:
+    async def refresh(self, db_session: "AsyncSession", db_object: "DatabaseModelType") -> None:
         with self.catch_sqlalchemy_exception():
-            await db.refresh(db_object)
+            await db_session.refresh(db_object)
 
-    async def flush(self, db: "AsyncSession") -> None:
+    async def flush(self, db_session: "AsyncSession") -> None:
         with self.catch_sqlalchemy_exception():
-            await db.flush()
+            await db_session.flush()
 
     async def get_by_id(
-        self, db: "AsyncSession", id: "Union[UUID4, int]"  # pylint: disable=[redefined-builtin]
+        self, db_session: "AsyncSession", id: "Union[UUID4, int]"  # pylint: disable=[redefined-builtin]
     ) -> "Optional[DatabaseModelType]":
         ...  # pragma: no cover
 
-    async def get_one_or_none(self, db: "AsyncSession", statement: "Select") -> "Optional[DatabaseModelType]":
+    async def get_one_or_none(self, db_session: "AsyncSession", statement: "Select") -> "Optional[DatabaseModelType]":
         ...  # pragma: no cover
 
     async def select(
-        self, db: "AsyncSession", statement: "Select", limit_offset: LimitOffset | None = None
+        self, db_session: "AsyncSession", statement: "Select", limit_offset: LimitOffset | None = None
     ) -> Union[tuple[list[DatabaseModelType], int], list[DatabaseModelType]]:
         ...  # pragma: no cover
 
-    async def create(self, db: "AsyncSession", db_object: "DatabaseModelType") -> "DatabaseModelType":
+    async def create(self, db_session: "AsyncSession", db_object: "DatabaseModelType") -> "DatabaseModelType":
         ...  # pragma: no cover
 
-    async def update(self, db: "AsyncSession", db_object: "DatabaseModelType") -> None:
+    async def update(self, db_session: "AsyncSession", db_object: "DatabaseModelType") -> None:
         ...  # pragma: no cover
 
-    async def delete(self, db: "AsyncSession", db_object: "DatabaseModelType") -> None:
+    async def delete(self, db_session: "AsyncSession", db_object: "DatabaseModelType") -> None:
         ...  # pragma: no cover
 
 
@@ -170,7 +170,7 @@ class CreatedUpdatedAtRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseMo
 class SlugRepositoryProtocol(RepositoryProtocol, Protocol[DatabaseModelWithSlugType]):
     model: type[DatabaseModelWithSlugType]
 
-    async def get_by_slug(self, db: "AsyncSession", slug: str) -> Optional[DatabaseModelWithSlugType]:
+    async def get_by_slug(self, db_session: "AsyncSession", slug: str) -> Optional[DatabaseModelWithSlugType]:
         ...  # pragma: no cover
 
 
@@ -183,15 +183,15 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
         """
         self.model = self.model_type
 
-    async def get_one_or_none(self, db: "AsyncSession", statement: "Select") -> "Optional[DatabaseModelType]":
+    async def get_one_or_none(self, db_session: "AsyncSession", statement: "Select") -> "Optional[DatabaseModelType]":
         statement.execution_options(populate_existing=True)
-        results = await self.execute(db, statement)
+        results = await self.execute(db_session, statement)
         db_object = results.first()
         return db_object[0] if db_object else None
 
     async def get_by_id(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         id: "Union[int, UUID4]",  # pylint: disable=[redefined-builtin]
         options: "Optional[List[Any]]" = None,
     ) -> Optional[DatabaseModelType]:
@@ -210,77 +210,79 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
             select(self.model).where(self.model.id == id).options(*options).execution_options(populate_existing=True)
         )
 
-        return await self.get_one_or_none(db, statement)
+        return await self.get_one_or_none(db_session, statement)
 
     async def select(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         statement: Optional[Select] = None,
         limit_offset: LimitOffset | None = None,
     ) -> Union[list[DatabaseModelType], tuple[list[DatabaseModelType], int]]:
         statement = statement or select(self.model).execution_options(populate_existing=True)
         if limit_offset:
             paginated_statement = statement.offset(limit_offset.offset).limit(limit_offset.limit)
-            [count, results] = await asyncio.gather(self.count(db, statement), self.execute(db, paginated_statement))
+            [count, results] = await asyncio.gather(
+                self.count(db_session, statement), self.execute(db_session, paginated_statement)
+            )
             return [result[0] for result in results.unique().all()], count
         else:
-            results = await self.execute(db, statement)
+            results = await self.execute(db_session, statement)
             return [result[0] for result in results.unique().all()]
 
-    async def count(self, db: "AsyncSession", statement: "Select") -> int:
+    async def count(self, db_session: "AsyncSession", statement: "Select") -> int:
         count_statement = statement.with_only_columns(  # type: ignore[call-overload]
             [sql_func.count()],
             maintain_column_froms=True,
         ).order_by(None)
-        results = await self.execute(db, count_statement)
+        results = await self.execute(db_session, count_statement)
         return results.scalar_one()  # type: ignore
 
     async def create(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         db_object: "DatabaseModelType",
         commit: bool = True,
     ) -> DatabaseModelType:
-        db.add(instance=db_object)
+        db_session.add(instance=db_object)
         if commit:
-            await self.commit(db)
+            await self.commit(db_session)
         else:
-            await self.flush(db)
-        await self.refresh(db, db_object)
+            await self.flush(db_session)
+        await self.refresh(db_session, db_object)
         return db_object
 
     async def create_many(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         db_objects: list[DatabaseModelType],
         commit: bool = True,
     ) -> "List[DatabaseModelType]":
         """Create Many"""
         for db_object in db_objects:
-            db.add(instance=db_object)
+            db_session.add(instance=db_object)
         if commit:
-            await self.commit(db)
+            await self.commit(db_session)
         else:
-            await self.flush(db)
+            await self.flush(db_session)
         return db_objects
 
-    async def update(self, db: "AsyncSession", db_object: "DatabaseModelType", commit: bool = True) -> None:
-        db.add(db_object)
+    async def update(self, db_session: "AsyncSession", db_object: "DatabaseModelType", commit: bool = True) -> None:
+        db_session.add(db_object)
         if commit:
-            await self.commit(db)
+            await self.commit(db_session)
         else:
-            await db.flush()
-        await self.refresh(db, db_object)
+            await db_session.flush()
+        await self.refresh(db_session, db_object)
 
-    async def delete(self, db: "AsyncSession", db_object: "DatabaseModelType", commit: bool = True) -> None:
+    async def delete(self, db_session: "AsyncSession", db_object: "DatabaseModelType", commit: bool = True) -> None:
         with self.catch_sqlalchemy_exception():
-            await db.delete(db_object)
+            await db_session.delete(db_object)
             if commit:
-                await self.commit(db)
+                await self.commit(db_session)
             else:
-                await self.flush(db)
+                await self.flush(db_session)
 
-    async def execute(self, db: "AsyncSession", statement: "Executable", **kwargs: "Any") -> "Result[Any]":
+    async def execute(self, db_session: "AsyncSession", statement: "Executable", **kwargs: "Any") -> "Result[Any]":
         """
         Execute `statement` with [`self.db`][starlite_lib.repository.Base.db].
 
@@ -289,7 +291,7 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
         statement : Executable
             Any SQLAlchemy executable type.
         **kwargs : Any
-            Passed as kwargs to [`self.db.execute()`][sqlalchemy.ext.asyncio.AsyncSession.execute]
+            Passed as kwargs to [`self.db_session.execute()`][sqlalchemy.ext.asyncio.AsyncSession.execute]
 
         Returns
         -------
@@ -297,7 +299,7 @@ class BaseRepository(RepositoryProtocol, Generic[DatabaseModelType]):
             A set of database results.
         """
         with self.catch_sqlalchemy_exception():
-            return await db.execute(statement, **kwargs)
+            return await db_session.execute(statement, **kwargs)
 
 
 class SlugRepositoryMixin(SlugRepositoryProtocol, Generic[DatabaseModelWithSlugType]):
@@ -305,7 +307,7 @@ class SlugRepositoryMixin(SlugRepositoryProtocol, Generic[DatabaseModelWithSlugT
 
     async def get_by_slug(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         slug: str,
         options: "Optional[List[Any]]" = None,
     ) -> "Optional[DatabaseModelWithSlugType]":
@@ -317,19 +319,19 @@ class SlugRepositoryMixin(SlugRepositoryProtocol, Generic[DatabaseModelWithSlugT
             .execution_options(populate_existing=True)
         )
 
-        return await self.get_one_or_none(db, statement)
+        return await self.get_one_or_none(db_session, statement)
 
     async def get_available_slug(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         value_to_slugify: str,
     ) -> str:
         slug = slugify(value_to_slugify)
-        if await self._is_slug_unique(db, slug):
+        if await self._is_slug_unique(db_session, slug):
             return slug
         random_string = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))  # nosec
         return f"{slug}-{random_string}"
 
-    async def _is_slug_unique(self, db: "AsyncSession", slug: str) -> bool:
+    async def _is_slug_unique(self, db_session: "AsyncSession", slug: str) -> bool:
         statement = select(self.model.slug).where(self.model.slug == slug)
-        return await self.get_one_or_none(db, statement) is None
+        return await self.get_one_or_none(db_session, statement) is None

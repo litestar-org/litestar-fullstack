@@ -4,7 +4,7 @@ from typing import Any, Optional, cast
 
 from pydantic import UUID4, EmailStr, Field
 
-from app.db import models
+from app.core.db import models
 from app.schemas.base import CamelizedBaseSchema
 from app.schemas.team_invite import TeamInvitation  # noqa: TC002
 from app.schemas.upload import Upload  # noqa: TC002

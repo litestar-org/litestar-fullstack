@@ -1,39 +1,85 @@
 version: "3.9"
 services:
+  cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    hostname: cache
+    command: redis-server --appendonly yes
+    volumes:
+      - cache-data:/data
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
   db:
     image: postgres:latest
-    volumes:
-      - db:/var/lib/postrgresql/data/
     ports:
       - "5432:5432"
+    hostname: db
     environment:
-      POSTGRES_PASSWORD: optimus-prime
-      POSTGRES_DB: optimus-prime
-
+      POSTGRES_PASSWORD: "app"
+      POSTGRES_USER: "app"
+      POSTGRES_DB: "app"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - app
+      interval: 2s
+      timeout: 3s
+      retries: 40
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        INSTALL_ARGS: ""
-    command: scripts/entry
+    command: app run server
+    image: app:latest
+    restart: always
     depends_on:
-      - db
-      - cache
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - .env.example
     volumes:
-      - ./src/app:/workspace/app
-      # - ./scripts:/code/scripts
-      - ./tests:/workspace/tests
+      - static-data:/workspace/app/static:cached
+      - upload-data:/workspace/app/media:cached
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    container_name: advisor-mailhog
-    ports:
-      - "8025:8025"
+  migrator:
+    image: app:latest
+    restart: never
+    command: app manage upgrade-database
+    env_file:
+      - .env.example
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
-  db: {}
-  cache: {}
+  db-data: {}
+  cache-data: {}
+  static-data: {}
+  upload-data: {}

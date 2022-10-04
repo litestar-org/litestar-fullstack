@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from pydantic import UUID4
 from sqlalchemy import orm
 
-from app.db.models.base import BaseModel, CreatedUpdatedAtMixin
+from app.core.db.models.base import BaseModel, CreatedUpdatedAtMixin
 
 if TYPE_CHECKING:
     from .team import Team

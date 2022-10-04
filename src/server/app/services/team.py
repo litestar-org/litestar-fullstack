@@ -1,16 +1,16 @@
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from sqlalchemy import orm, select
 
 from app import schemas
-from app.db import models, repositories
+from app.core.db import models, repositories
 from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 
 if TYPE_CHECKING:
     from pydantic import UUID4
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    from app.db.repositories.base import LimitOffset
+    from app.core.db.repositories.base import LimitOffset
 
 
 class TeamServiceException(BaseRepositoryServiceException):
@@ -25,18 +25,18 @@ class TeamService(
     model_type = models.Team
     repository_type = repositories.TeamRepository
 
-    async def create(self, db: "AsyncSession", obj_in: schemas.TeamCreate) -> models.Team:
+    async def create(self, db_session: "AsyncSession", obj_in: schemas.TeamCreate) -> models.Team:
         obj_data = obj_in.dict(
             exclude_unset=True, by_alias=False, exclude_none=True, exclude=["owner_id"]  # type: ignore[arg-type]
         )
         team = self.model(**obj_data)
         team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoles.ADMIN, is_owner=True))
-        team = await self.repository.create(db, team)
+        team = await self.repository.create(db_session, team)
         return team
 
     async def get_teams_for_user(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         user_id: "UUID4",
         limit_offset: Optional["LimitOffset"] = None,
         options: Optional[list[Any]] = None,
@@ -49,7 +49,7 @@ class TeamService(
             .where(models.TeamMember.user_id == user_id)
             .options(*options)
         )
-        return await self.repository.select(db, statement, limit_offset)
+        return await self.repository.select(db_session, statement, limit_offset)
 
     @staticmethod
     def is_owner(team: models.Team, user_id: int) -> bool:

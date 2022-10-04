@@ -3,7 +3,7 @@ import uuid
 
 from pydantic import UUID4, EmailStr, Field
 
-from app.db import models
+from app.core.db import models
 from app.schemas.base import CamelizedBaseSchema
 
 

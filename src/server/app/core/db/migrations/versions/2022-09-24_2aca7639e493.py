@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from app.db.db_types import GUID, EmailString, JsonObject, PydanticType, TimestampAwareDateTime
+from app.core.db.db_types import GUID, EmailString, JsonObject, PydanticType, TimestampAwareDateTime
 
 sa.GUID = GUID
 sa.EmailString = EmailString

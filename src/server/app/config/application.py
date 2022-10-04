@@ -167,6 +167,7 @@ class DatabaseSettings(EnvironmentSettings):
     POOL_TIMEOUT: int = 30
     POOL_RECYCLE: int = 300
     POOL_PRE_PING: bool = True
+    CONNECT_ARGS: dict[str, Any] = {}
     URL: str
     MIGRATION_CONFIG: str = f"{BASE_DIR}/config/alembic.ini"
     MIGRATION_PATH: str = f"{BASE_DIR}/db/migrations"

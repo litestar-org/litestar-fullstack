@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 # Given an instance of 'JWTAuth' we can create a login handler function:
 @post(path=urls.ACCESS_TOKEN, media_type=MediaType.JSON, cache=False, tags=["Access"])
 async def login(
-    db: AsyncSession, request: Request, data: schemas.UserLogin = Body(media_type=RequestEncodingType.URL_ENCODED)
+    db_session: AsyncSession,
+    request: Request,
+    data: schemas.UserLogin = Body(media_type=RequestEncodingType.URL_ENCODED),
 ) -> schemas.User:
     # we have a user instance - probably by retrieving it from persistence using another lib.
     # what's important for our purposes is to have an identifier:
@@ -23,7 +25,7 @@ async def login(
 
 
 @post(path=urls.SIGNUP, tags=["Access"])
-async def signup(db: AsyncSession, request: Request, data: schemas.UserSignup) -> schemas.User:
+async def signup(db_session: AsyncSession, request: Request, data: schemas.UserSignup) -> schemas.User:
     user = await services.user.create(db, data)
     request.set_session({"user_id": user.id})
     return schemas.User.from_orm(user)

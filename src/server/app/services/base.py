@@ -6,8 +6,8 @@ from uuid import UUID
 from sqlalchemy import Select, select
 
 from app import schemas
-from app.db import repositories
-from app.db.models.base import DatabaseModelType
+from app.core.db import repositories
+from app.core.db.models.base import DatabaseModelType
 
 RepositoryType = TypeVar("RepositoryType", bound=repositories.BaseRepository)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=schemas.BaseSchema)
@@ -61,14 +61,14 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         self.default_options = default_options if default_options else []
 
     async def get_by_id(
-        self, db: "AsyncSession", id: "UUID4", options: Optional[list["Any"]] = None
+        self, db_session: "AsyncSession", id: "UUID4", options: Optional[list["Any"]] = None
     ) -> Optional[DatabaseModelType]:
         """
         Obtain model instance by `identifier`.
 
         Args:
             id: The identifier of the model instance.
-            db: The database session.
+            db_session:   The database session.
         Returns:
             Returns `None` on unsuccessful search`.
         """
@@ -76,7 +76,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         return await self.repository.get_by_id(db, id, options)
 
     async def get_one_or_none(
-        self, db: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
+        self, db_session: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
     ) -> Optional[DatabaseModelType]:
         """
         Obtain a list of model instances
@@ -87,7 +87,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         Args:
             skip: The offset of the list.
             limit: The maximum number of elements in the list.
-            db: The database session.
+            db_session:   The database session.
         Returns:
             Returns a paginated response
         """
@@ -103,7 +103,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
 
     async def get(
         self,
-        db: "AsyncSession",
+        db_session: "AsyncSession",
         limit_offset: repositories.LimitOffset | None = None,
         options: Optional[list["ExecutableOption"]] = None,
         **kwargs: Any,
@@ -117,7 +117,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         Args:
             skip: The offset of the list.
             limit: The maximum number of elements in the list.
-            db: The database session.
+            db_session:   The database session.
         Returns:
             Returns a paginated response
         """
@@ -130,11 +130,11 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         results = await self.repository.select(db, statement)
         return results
 
-    async def create(self, db: "AsyncSession", obj_in: CreateSchemaType) -> DatabaseModelType:
+    async def create(self, db_session: "AsyncSession", obj_in: CreateSchemaType) -> DatabaseModelType:
         """Create an instance of the model and insert it into the database.
 
         Args:
-            db: The database session.
+            db_session:   The database session.
             obj_in: The object to create.
 
         Returns:
@@ -147,13 +147,13 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         return db_obj
 
     async def update(
-        self, db: "AsyncSession", db_obj: DatabaseModelType, obj_in: Union[UpdateSchemaType, dict[str, Any]]
+        self, db_session: "AsyncSession", db_obj: DatabaseModelType, obj_in: Union[UpdateSchemaType, dict[str, Any]]
     ) -> DatabaseModelType:
         """
         Update model instance `db_obj` with fields and values specified by `obj_in`.
 
         Args:
-            db: The database session.
+            db_session:   The database session.
             db_obj: The object to update.
             obj_in: The object to update with.
         Returns:
@@ -167,11 +167,11 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         await self.repository.update(db, db_obj)
         return db_obj
 
-    async def delete(self, db: "AsyncSession", id: "UUID4") -> Optional[DatabaseModelType]:
+    async def delete(self, db_session: "AsyncSession", id: "UUID4") -> Optional[DatabaseModelType]:
         """Delete model instance by `identifier`.
 
         Args:
-            db: The database session.
+            db_session:   The database session.
             id: The identifier of the model instance.
         Returns:
             The deleted object.

@@ -16,8 +16,8 @@ from app import schemas, services, utils
 from app.asgi import app
 from app.cli.console import console
 from app.config import settings
-from app.db import AsyncScopedSession, engine
-from app.db.models import BaseModel, meta
+from app.core.db import db_session
+from app.core.db.models import BaseModel, meta
 
 logger = logging.getLogger()
 
@@ -97,8 +97,8 @@ def create_user(
     )
 
     async def _create_user(obj_in: schemas.UserSignup) -> None:
-        async with AsyncScopedSession() as db:
-            user = await services.user.create(db=db, obj_in=obj_in)
+        async with db_session() as db:
+            user = await services.user.create(db_session=db, obj_in=obj_in)
             console.print(f"User created: {user.email}")
 
     utils.asyncer.run(_create_user)(obj_in)
@@ -117,15 +117,15 @@ def promote_to_superuser(email: Optional[str]) -> None:
     email = email or click.prompt("Email")
 
     async def _promote_to_superuser(email: EmailStr) -> None:
-        async with AsyncScopedSession() as db:
-            user = await services.user.get_by_email(db=db, email=email)
+        async with db_session() as db:
+            user = await services.user.get_by_email(db_session=db, email=email)
             if user:
                 console.print(f"Promoting user: {user.email}")
                 user_in = schemas.UserUpdate(
                     email=user.email,
                     is_superuser=True,
                 )
-                user = await services.user.update(db_obj=user, obj_in=user_in, db=db)
+                user = await services.user.update(db_obj=user, obj_in=user_in, db_session=db)
                 console.print(f"Upgraded {email} to superuser")
             else:
                 console.print(f"User not found: {email}")

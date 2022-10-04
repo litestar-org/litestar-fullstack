@@ -16,11 +16,11 @@ logger = logging.getLogger()
 
 
 @get(path=urls.HEALTH, media_type=MediaType.JSON, cache=False, tags=["Server"])
-async def health_check(db: AsyncSession) -> Response[schemas.SystemHealth]:
+async def health_check(db_session: AsyncSession) -> Response[schemas.SystemHealth]:
     """Health check handler"""
     logger.info("Checking Server Health")
     try:
-        await db.execute(text("select count(1) from ddl_version"))
+        await db_session.execute(text("select count(1) from ddl_version"))
         db_ping = True
     except ConnectionRefusedError:
         db_ping = False

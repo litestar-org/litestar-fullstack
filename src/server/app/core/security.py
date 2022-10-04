@@ -1,25 +1,27 @@
 import base64
 import logging
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from passlib.context import CryptContext
-from starlite import NotAuthorizedException
+from starlite import ASGIConnection, NotAuthorizedException
 from starlite_jwt import OAuth2PasswordBearerAuth
 
-from app import db, services
+from app import services
 from app.config import paths, settings
+from app.core.db import config as db_config
 from app.utils.asyncer import run_async
 
 if TYPE_CHECKING:
     from pydantic import SecretBytes, SecretStr
 
-    from app.db.models import User
+    from app.core.db.models import User
 
 logger = logging.getLogger()
 
 
-async def current_user_from_token(sub: str) -> "User":
-    user = await services.user.get_by_email(db.db_session(), sub)
+async def current_user_from_token(unique_identifier: str, connection: ASGIConnection[Any, Any, Any]) -> "User":
+    db_session = connection.app.state[db_config.session_maker_app_state_key]
+    user = await services.user.get_by_email(db_session, unique_identifier)
     if user and user.is_active:
         return user
     raise NotAuthorizedException("Invalid account name")

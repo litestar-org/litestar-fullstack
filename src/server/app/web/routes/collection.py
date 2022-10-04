@@ -26,7 +26,7 @@ class CollectionController(Controller):
     @post(path="/upload")
     async def upload_file(
         self,
-        db: AsyncSession,
+        db_session: AsyncSession,
         team_id: UUID4 = Parameter(
             title="Team ID",
             description="The identifier for the uploaded file's team",

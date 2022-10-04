@@ -1,7 +1,7 @@
 from sqlalchemy import orm
 
 from app import schemas
-from app.db import models, repositories
+from app.core.db import models, repositories
 from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 
 

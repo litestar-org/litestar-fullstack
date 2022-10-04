@@ -6,8 +6,8 @@ import sqlalchemy as sa
 from pydantic import UUID4, EmailStr
 from sqlalchemy import orm
 
-from app.db import db_types as t
-from app.db.models.base import BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin, SlugModelMixin
+from app.core.db import db_types as t
+from app.core.db.models.base import BaseModel, CreatedUpdatedAtMixin, ExpiresAtMixin, SlugModelMixin
 
 if TYPE_CHECKING:
     from .upload import Upload

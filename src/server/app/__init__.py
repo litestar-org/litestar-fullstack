@@ -1,6 +1,6 @@
 import logging
 
-from app import asgi, cli, config, core, db, schemas, services, utils, web
+from app import asgi, cli, config, core, schemas, services, utils, web
 from app.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -15,6 +15,5 @@ __all__ = [
     "utils",
     "cli",
     "asgi",
-    "db",
     "schemas",
 ]
