@@ -97,7 +97,7 @@ def create_user(
     )
 
     async def _create_user(obj_in: schemas.UserSignup) -> None:
-        async with db_session() as db:
+        with db_session() as db:
             user = await services.user.create(db_session=db, obj_in=obj_in)
             console.print(f"User created: {user.email}")
 
@@ -117,7 +117,7 @@ def promote_to_superuser(email: Optional[str]) -> None:
     email = email or click.prompt("Email")
 
     async def _promote_to_superuser(email: EmailStr) -> None:
-        async with db_session() as db:
+        with db_session() as db:
             user = await services.user.get_by_email(db_session=db, email=email)
             if user:
                 console.print(f"Promoting user: {user.email}")

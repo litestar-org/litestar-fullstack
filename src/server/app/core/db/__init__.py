@@ -4,12 +4,7 @@ from typing import TYPE_CHECKING, Union, cast
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
-from starlite.plugins.sql_alchemy import (
-    SQLAlchemyConfig,
-    SQLAlchemyEngineConfig,
-    SQLAlchemyPlugin,
-    SQLAlchemySessionConfig,
-)
+from starlite.plugins.sql_alchemy import SQLAlchemyConfig, SQLAlchemyEngineConfig, SQLAlchemySessionConfig
 
 from app.config import settings
 from app.utils import serializers
@@ -39,7 +34,6 @@ config = SQLAlchemyConfig(
     session_config=session_config,
     session_maker_app_state_key="db_session_maker",
 )
-plugin = SQLAlchemyPlugin(config=config)
 
 
 @contextmanager
