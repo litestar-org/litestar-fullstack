@@ -1,8 +1,7 @@
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, cast
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.pool import NullPool
 from starlite.plugins.sql_alchemy import SQLAlchemyConfig, SQLAlchemyEngineConfig, SQLAlchemySessionConfig
 
@@ -37,26 +36,26 @@ config = SQLAlchemyConfig(
 
 
 @contextmanager
-def db_session() -> "Iterator[Union[Session, AsyncSession]]":
+def db_session() -> "Iterator[AsyncSession]":
     """Use this to get a database session where you can't in starlite
 
     Returns:
         config.session_class: _description_
     """
-    create_engine_callable = (
-        config.create_async_engine_callable if config.use_async_engine else config.create_engine_callable
-    )
-    session_maker_kwargs = session_config.dict(
-        exclude_none=True, exclude={"future"} if config.use_async_engine else set()
-    )
-    session_class = config.session_class or (AsyncSession if config.use_async_engine else Session)
-    engine = create_engine_callable(config.connection_string, **config.engine_config_dict)
-    session_maker = config.session_maker(engine, class_=session_class, **session_maker_kwargs)  # type: ignore[arg-type]
-    session = cast("Union[Session, AsyncSession]", session_maker())
     try:
+        session = config.session_maker()
         yield session
     finally:
         session.close()
+
+
+def db_engine() -> "AsyncEngine":
+    """Fetch the db engine
+
+    Returns:
+        config.session_class: _description_
+    """
+    return cast("AsyncEngine", config.engine)
 
 
 __all__ = [
@@ -65,6 +64,7 @@ __all__ = [
     "engine_config",
     "db_types",
     "db_session",
+    "db_engine",
     "models",
     "repositories",
 ]

@@ -44,7 +44,7 @@ python = ">=3.10,<4.0"
 redis = "*"
 rich = "*"
 sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
-starlite = {version = "^1.24.0", extras = ["brotli"]}
+starlite = {version = "^1.25.0", extras = ["brotli"]}
 starlite-jwt = "^1.4.0"
 uvicorn = {extras = ["standard"], version = "*"}
 
