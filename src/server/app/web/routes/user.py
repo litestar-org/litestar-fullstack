@@ -18,7 +18,7 @@ async def login(
 ) -> schemas.User:
     # we have a user instance - probably by retrieving it from persistence using another lib.
     # what's important for our purposes is to have an identifier:
-    user = await services.user.authenticate(db, data.username, data.password)
+    user = await services.user.authenticate(db_session, data.username, data.password)
     request.set_session({"user_id": user.id})
     logger.info(f"authenticated user: {user.email}")
     return schemas.User.from_orm(user)
@@ -26,6 +26,6 @@ async def login(
 
 @post(path=urls.SIGNUP, tags=["Access"])
 async def signup(db_session: AsyncSession, request: Request, data: schemas.UserSignup) -> schemas.User:
-    user = await services.user.create(db, data)
+    user = await services.user.create(db_session, data)
     request.set_session({"user_id": user.id})
     return schemas.User.from_orm(user)
