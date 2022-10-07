@@ -100,7 +100,6 @@ types-passlib = "*"
 types-python-jose = "*"
 types-pyyaml = "*"
 types-redis = "*"
-types-requests = "*"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

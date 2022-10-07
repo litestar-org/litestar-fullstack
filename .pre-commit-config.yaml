@@ -58,7 +58,15 @@ repos:
     rev: v0.14.1
     hooks:
       - id: slotscheck
-        exclude: "^(?!starlite/)"
+        exclude: "^(?!dbma/)"
+        additional_dependencies:
+          [pydantic, pydantic_factories, starlite, starlite-jwt, pyyaml, sqlalchemy, requests, jinja2, mako]
+  - repo: https://github.com/pycqa/pylint
+    rev: "v2.14.4"
+    hooks:
+      - id: pylint
+        exclude: "test_*"
+        args: ["--unsafe-load-any-extension=y"]
         additional_dependencies:
           [
             openapi_schema_pydantic,
@@ -68,18 +76,11 @@ repos:
             pyyaml,
             starlette,
             sqlalchemy,
-            requests,
-            jinja2,
-            mako,
+            starlite,
+            picologging,
+            rich,
+            structlog,
           ]
-  - repo: https://github.com/pycqa/pylint
-    rev: "v2.14.4"
-    hooks:
-      - id: pylint
-        exclude: "test_*"
-        args: ["--unsafe-load-any-extension=y"]
-        additional_dependencies:
-          [openapi_schema_pydantic, orjson, pydantic, pydantic_factories, pyyaml, starlette, sqlalchemy]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v0.961"
     hooks:
@@ -88,7 +89,6 @@ repos:
           [
             orjson,
             types-PyYAML,
-            types-requests,
             openapi_schema_pydantic,
             pydantic,
             pydantic_factories,
@@ -96,4 +96,6 @@ repos:
             sqlalchemy,
             types-freezegun,
             types-python-jose,
+            types-redis,
+            types-click,
           ]

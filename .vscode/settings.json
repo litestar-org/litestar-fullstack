@@ -1,43 +1,57 @@
 {
-  "python.formatting.provider": "none",
-  "[python]": {
-    "editor.formatOnPaste": false,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "ms-python.black-formatter",
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true,
-      "source.fixAll": true,
-      "source.fixSpelling": true
-    }
-  },
   "files.exclude": {
     "**/._*": true,
     "**/*.pyc": {
       "when": "$(basename).py"
     },
+    ".mypy_cache": true,
     "**/__pycache__": true,
     ".venv": true,
     ".idea": true,
     ".run": true,
     ".pytest_cache": true,
-    ".mypy_cache": true,
-    ".hypothesis": true,
+    ".nova": true,
     ".cache": true,
     ".dist": true,
     "**/.pytest_cache": true
   },
-
-  "isort.args": ["--profile", "black", "--overwrite-in-place"],
-  "python.linting.pylintEnabled": true,
-  "python.linting.pylintArgs": ["--extension-pkg-whitelist='pydantic'"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true
+  },
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.linting.flake8Enabled": true,
   "python.linting.flake8Args": ["--max-line-length=120"],
-  "python.sortImports.args": ["--profile", "black"],
-  "python.testing.pytestArgs": ["tests/server"],
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.linting.flake8Enabled": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.sortImports.args": ["--profile", "black"],
+  "python.formatting.provider": "none",
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
+  "[python]": {
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "eslint.alwaysShowStatus": true,
+  "eslint.validate": ["vue", "javascript", "javascriptreact", "html"],
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "html.format.wrapAttributes": "auto",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "python.linting.banditEnabled": true,
   "python.linting.mypyEnabled": true,
-  "python.linting.enabled": true,
-  "mypy.targets": ["src/server", "tests/server"],
-  "mypy.runUsingActiveInterpreter": true
+  "mypy.runUsingActiveInterpreter": true,
+  "cSpell.words": ["dbma"]
 }
