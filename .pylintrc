@@ -272,7 +272,9 @@ max-line-length=120
 # Regexp for a line that is allowed to be longer than the limit.
 ignore-long-lines=(?x)(
   ^\s*(\#\ )?<?https?://\S+>?$|
-  ^\s*(from\s+\S+\s+)?import\s+.+$)
+  ^\s*(from\s+\S+\s+)?import\s+.+$
+  \s*#\s(pytype|pylint): (enable|disable)=\S+
+  )
 
 # Allow the body of an if to be on the same line as the test if there is no
 # else.
@@ -281,7 +283,6 @@ single-line-if-stmt=yes
 # Maximum number of lines in a module
 max-module-lines=99999
 
-# Jacob changed to 4 spaces, conforming to PEP-8
 indent-string='    '
 
 # Number of spaces of indent required inside a hanging  or continued line.

@@ -2,7 +2,7 @@ from asyncio import Lock
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from fnmatch import fnmatch
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, List, Optional, Tuple, Union, cast
 
 from redis import RedisError
 from redis.asyncio import Redis
@@ -167,10 +167,12 @@ class CacheObject:
 
 
 class ExtendedSimpleCacheBackend(CacheBackendProtocol):
+    """Simple cache backend with additional functions to match the redis protocol"""
+
     def __init__(self) -> None:
         """This class offers a simple thread safe cache backend that stores
         values in local memory using a `dict`."""
-        self._store: Dict[str, CacheObject] = {}
+        self._store: dict[str, CacheObject] = {}
         self._lock = Lock()
 
     async def get(self, key: str) -> Any:  # pylint: disable=invalid-overridden-method

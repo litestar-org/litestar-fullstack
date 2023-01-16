@@ -73,7 +73,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
             Returns `None` on unsuccessful search`.
         """
         options = options if options else self.default_options
-        return await self.repository.get_by_id(db, id, options)
+        return await self.repository.get_by_id(db_session, id, options)
 
     async def get_one_or_none(
         self, db_session: "AsyncSession", *args: Any, options: Optional[list[Any]] = None, **kwargs: Any
@@ -99,7 +99,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
             .options(*options)
             .execution_options(populate_existing=True)
         )
-        return await self.repository.get_one_or_none(db, statement)
+        return await self.repository.get_one_or_none(db_session, statement)
 
     async def get(
         self,
@@ -125,9 +125,9 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         statement = select(self.model).options(*options).execution_options(populate_existing=True)
         statement = self._filter_select_by_kwargs(statement, **kwargs)
         if limit_offset:
-            results, count = await self.repository.select(db, statement, limit_offset=limit_offset)
+            results, count = await self.repository.select(db_session, statement, limit_offset=limit_offset)
             return results, count
-        results = await self.repository.select(db, statement)
+        results = await self.repository.select(db_session, statement)
         return results
 
     async def create(self, db_session: "AsyncSession", obj_in: CreateSchemaType) -> DatabaseModelType:
@@ -143,7 +143,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         """
         obj_in_data = obj_in.dict(exclude_unset=True, by_alias=False, exclude_none=True)
         db_obj = self.model(**obj_in_data)
-        await self.repository.create(db, db_obj)
+        await self.repository.create(db_session, db_obj)
         return db_obj
 
     async def update(
@@ -164,7 +164,7 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         for field in db_obj.dict():
             if field in update_data:
                 setattr(db_obj, field, update_data.get(field))
-        await self.repository.update(db, db_obj)
+        await self.repository.update(db_session, db_obj)
         return db_obj
 
     async def delete(self, db_session: "AsyncSession", id: "UUID4") -> Optional[DatabaseModelType]:
@@ -176,9 +176,9 @@ class BaseRepositoryService(Generic[DatabaseModelType, RepositoryType, CreateSch
         Returns:
             The deleted object.
         """
-        db_obj = await self.repository.get_by_id(db, id)
+        db_obj = await self.repository.get_by_id(db_session, id)
         if db_obj:
-            await self.repository.delete(db, db_obj)
+            await self.repository.delete(db_session, db_obj)
         return db_obj or None
 
     def _filter_select_by_kwargs(self, statement: "Select", **kwargs: Any) -> "Select":

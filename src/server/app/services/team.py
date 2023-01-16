@@ -29,6 +29,7 @@ class TeamService(
         obj_data = obj_in.dict(
             exclude_unset=True, by_alias=False, exclude_none=True, exclude=["owner_id"]  # type: ignore[arg-type]
         )
+        obj_data["slug"] = self.repository.get_available_slug(db_session, obj_in.name)
         team = self.model(**obj_data)
         team.members.append(models.TeamMember(user_id=obj_in.owner_id, role=models.TeamRoles.ADMIN, is_owner=True))
         team = await self.repository.create(db_session, team)

@@ -170,7 +170,7 @@ class DatabaseSettings(EnvironmentSettings):
     CONNECT_ARGS: dict[str, Any] = {}
     URL: str
     MIGRATION_CONFIG: str = f"{BASE_DIR}/config/alembic.ini"
-    MIGRATION_PATH: str = f"{BASE_DIR}/db/migrations"
+    MIGRATION_PATH: str = f"{BASE_DIR}/core/db/migrations"
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
 
 

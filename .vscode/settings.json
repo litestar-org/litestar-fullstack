@@ -5,6 +5,7 @@
       "when": "$(basename).py"
     },
     ".mypy_cache": true,
+    ".mypy_cache": true,
     "**/__pycache__": true,
     ".venv": true,
     ".idea": true,

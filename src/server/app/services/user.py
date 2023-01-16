@@ -6,6 +6,7 @@ from starlite import NotAuthorizedException
 from app import schemas
 from app.core import security
 from app.core.db import models, repositories
+from app.core.db.repositories.team import TeamRepository
 from app.services.base import BaseRepositoryService, BaseRepositoryServiceException
 from app.services.team_invite import (
     TeamInvitationEmailMismatchException,
@@ -100,7 +101,9 @@ class UserService(
         user = self.model(**obj_data)
         if team_name:
             """Create the team the user entered into the form"""
-            team = models.Team(name=team_name)
+            slug = await TeamRepository().get_available_slug(db_session, team_name)
+            team = models.Team(name=team_name, slug=slug)
+
             team.members.append(models.TeamMember(user=user, role=models.TeamRoles.ADMIN, is_owner=True))
             db_session.add(team)  # this will get committed with the user object below
         if invitation_id:

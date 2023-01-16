@@ -1,9 +1,9 @@
 # type: ignore
 """
 
-Revision ID: 2aca7639e493
+Revision ID: 390399695310
 Revises:
-Create Date: 2022-09-24 22:37:46.159101
+Create Date: 2022-10-06 12:13:56.719360
 
 """
 import sqlalchemy as sa
@@ -19,7 +19,7 @@ sa.PydanticType = PydanticType
 sa.TimestampAwareDateTime = TimestampAwareDateTime
 
 # revision identifiers, used by Alembic.
-revision = "2aca7639e493"
+revision = "390399695310"
 down_revision = None
 branch_labels = None
 depends_on = None

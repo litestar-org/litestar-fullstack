@@ -16,7 +16,7 @@ from app import schemas, services, utils
 from app.asgi import app
 from app.cli.console import console
 from app.config import settings
-from app.core.db import db_session
+from app.core.db import db_engine, db_session
 from app.core.db.models import BaseModel, meta
 
 logger = logging.getLogger()
@@ -257,7 +257,7 @@ def show_database_revision() -> None:
 async def drop_tables() -> None:
     logger.info("Connecting to database backend.")
 
-    async with engine.begin() as db:
+    async with db_engine().begin() as db:
         logger.info("[bold red] Dropping the db")
         await db.run_sync(BaseModel.metadata.drop_all)
         logger.info("[bold red] Dropping the version table")

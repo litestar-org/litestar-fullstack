@@ -65,9 +65,9 @@ RUN apt-get install -y --no-install-recommends curl git build-essential g++ unzi
 # installs specified bazel
 RUN if [ `uname -m` = 'x86_64' ]; then BAZEL_ARCHITECTURE="x86_64"; else BAZEL_ARCHITECTURE="arm64"; fi \
     && curl -sS -L -o bazel --output-dir /usr/local/bin/ --create-dirs "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-linux-${BAZEL_ARCHITECTURE}" \
-    && chmod +x /usr/local/bin/bazel 
+    && chmod +x /usr/local/bin/bazel
 
-# installs specified protobuf 
+# installs specified protobuf
 RUN if [ `uname -m` = 'x86_64' ]; then PROTOC_ARCHITECTURE="x86_64"; else PROTOC_ARCHITECTURE="aarch_64"; fi \
     && curl -sS -L -o protoc.zip --output-dir /tmp/ --create-dirs "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-${PROTOC_ARCHITECTURE}.zip" \
     && unzip /tmp/protoc.zip -d /usr/local \
