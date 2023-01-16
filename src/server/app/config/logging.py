@@ -2,11 +2,10 @@ import logging
 import re
 from typing import Any
 
-from starlette.status import HTTP_200_OK
-from starlite.config import LoggingConfig
-
 from app.config.application import settings
 from app.config.paths import urls
+from starlite.config import LoggingConfig
+from starlite.status_codes import HTTP_200_OK
 
 
 class AccessLogFilter(logging.Filter):

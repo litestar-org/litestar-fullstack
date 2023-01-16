@@ -2,29 +2,42 @@ import base64
 import logging
 from typing import TYPE_CHECKING, Any, Union
 
-from passlib.context import CryptContext
-from starlite import ASGIConnection, NotAuthorizedException
-from starlite_jwt import OAuth2PasswordBearerAuth
-
 from app import services
 from app.config import paths, settings
-from app.core.db import config as db_config
 from app.utils.asyncer import run_async
+from passlib.context import CryptContext
+from starlite import ASGIConnection, NotAuthorizedException
+from starlite.contrib.jwt.jwt_auth import OAuth2PasswordBearerAuth
 
 if TYPE_CHECKING:
-    from pydantic import SecretBytes, SecretStr
-
     from app.core.db.models import User
+    from pydantic import SecretBytes, SecretStr
 
 logger = logging.getLogger()
 
 
-async def current_user_from_token(unique_identifier: str, connection: ASGIConnection[Any, Any, Any]) -> "User":
-    db_session = connection.app.state[db_config.session_maker_app_state_key]
-    user = await services.user.get_by_email(db_session, unique_identifier)
-    if user and user.is_active:
-        return user
-    raise NotAuthorizedException("Invalid account name")
+async def current_user_from_token(token: str, connection: ASGIConnection[Any, Any, Any]) -> "User":
+    """Current user from local JWT token.
+
+    Fetches the user information from the database when loading from a local token.
+
+    If the user doesn't exist, the record will be created and returned.
+
+    Args:
+        unique_identifier (str): _description_
+        connection (ASGIConnection[Any, Any, Any]): ASGI connection.
+
+    Raises:
+        NotAuthorizedException: User not authorized.
+
+    Returns:
+        User: User record mapped to the JWT identifier
+    """
+    async with sqlalchemy_plugin.async_session_factory() as db_session:
+        user = await services.users.get_by_email(db_session, token.sub)
+        if user and user.is_active:
+            return user
+    raise NotAuthorizedException("Unable to validate token.")
 
 
 auth = OAuth2PasswordBearerAuth(  # nosec
@@ -54,7 +67,7 @@ async def get_password_hash(password: Union["SecretBytes", "SecretStr"]) -> str:
     Args:
         password: Plain password
     Returns:
-        Hashed password
+        Hashed password.
     """
     pw_hash = await run_async(password_crypt_context.hash)(password.get_secret_value())
     return pw_hash
@@ -66,7 +79,7 @@ async def verify_password(plain_password: Union["SecretBytes", "SecretStr"], has
         plain_password: Plain password
         hashed_password: Hashed password
     Returns:
-        True if password is correct
+        True if password is correct.
     """
     valid, _ = await run_async(password_crypt_context.verify_and_update)(
         plain_password.get_secret_value(),

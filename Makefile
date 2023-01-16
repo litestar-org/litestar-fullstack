@@ -29,8 +29,8 @@ help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 
-.PHONY: upgrade-dependencies
-upgrade-dependencies:       ## Upgrade all dependencies to the latest stable versions
+.PHONY: upgrade
+upgrade:       ## Upgrade all dependencies to the latest stable versions
 	@if [ "$(USING_POETRY)" ]; then poetry update; fi
 	@echo "Python Dependencies Updated"
 	@if [ "$(USING_NPM)" ]; then npm upgrade --latest; fi
@@ -69,22 +69,22 @@ install:          ## Install the project in dev mode.
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with main && exit; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p ./src/ui/public; fi
 	if [ "$(USING_NPM)" ]; then npm install; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
 
 
 
-.PHONY: install-dev
-install-dev:	 ## Install the project in dev mode.
+.PHONY: runtime
+runtime-only:	 ## Install the project in production mode.
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && exit; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p ./src/ui/public ; fi
 	if [ "$(USING_NPM)" ]; then npm install; fi
-	@echo "=> Install complete.  ** If you want to re-install re-run 'make install-dev'"
+	@echo "=> Install complete.  ** If you want to re-install re-run 'make runtime'"
 
-
+.PHONY: migrations
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;

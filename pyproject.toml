@@ -6,8 +6,7 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development :: Libraries",
@@ -18,7 +17,7 @@ description = "Opinionated template for integrating Starlite with a SPA"
 documentation = "https://cofin.github.io/starlite-full-stack-example"
 homepage = "https://github.com/cofin/starlite-full-stack-example"
 include = ["CHANGELOG.md"]
-keywords = ["api", "rest", "http", "asgi", "pydantic", "starlette", "fastapi", "framework", "websocket", "vite", "spa"]
+keywords = ["api", "rest", "http", "asgi", "pydantic", "starlite", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
 name = "app"
@@ -34,33 +33,31 @@ app = "app.__main__:main"
 [tool.poetry.dependencies]
 alembic = "*"
 asyncpg = "*"
-click = "*"
-greenlet = "^1.1.3"
 hiredis = "*"
-httpx = "*"
 passlib = {version = "*", extras = ["argon2"]}
-pydantic = {extras = ["dotenv", "email"], version = "*"}
-python = ">=3.10,<4.0"
-redis = "*"
-rich = "*"
-sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main", extras = ["asyncio"]}
-starlite = {version = "^1.24.0", extras = ["brotli"]}
-starlite-jwt = "^1.4.0"
+pydantic = {version = ">=1.9.0", extras = [
+  "dotenv",
+  "typing_extensions",
+  "email",
+]}
+python = ">=3.11,<4.0"
+redis = ">=4.4.2"
+rich-click = ">=1.6.0"
+sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
+starlite = {version = ">=1.35", extras = ["standard", "jwt", 'cli', 'redis']}
+starlite-saqlalchemy = "*"
+starlite-users = {git = "https://github.com/LonelyVikingMichael/starlite-users.git", branch = "main"}
 uvicorn = {extras = ["standard"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
-bump2version = "*"
 coverage = {extras = ["toml"], version = "*"}
 cython = "*"
-hypothesis = {extras = ["cli"], version = "*"}
-ipykernel = "*"
-ipython = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
+pytest-docker = "*"
 pytest-dotenv = "*"
 pytest-mock = "*"
-tox = "*"
 
 [tool.poetry.group.docs]
 optional = true
@@ -75,32 +72,20 @@ mkdocstrings-python = "*"
 optional = true
 
 [tool.poetry.group.lint.dependencies]
-autoflake = "*"
-bandit = "*"
+asyncpg-stubs = "*"
 black = "*"
 blacken-docs = "*"
-flake8 = "*"
-flake8-bugbear = "*"
-flake8-comprehensions = "*"
-flake8-mutable = "*"
-flake8-print = "*"
-flake8-simplify = "*"
-flake8-type-checking = "*"
-freezegun = "*"
-httpx = "*"
-isort = "*"
 mypy = "*"
 pre-commit = "*"
 pylint = "*"
-pyupgrade = "*"
+pylint-pydantic = "*"
+ruff = '*'
 slotscheck = "*"
 types-click = "*"
-types-freezegun = "*"
 types-passlib = "*"
 types-python-jose = "*"
 types-pyyaml = "*"
 types-redis = "*"
-types-requests = "*"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -122,34 +107,100 @@ exclude = '''
 '''
 include = '\.pyi?$'
 line-length = 120
-[tool.autoflake]
-check = true
-
-[tool.isort]
-line_length = 119
-multi_line_output = 3
-profile = "black"
-skip_gitignore = true
-src_paths = ["src/server", "test/server"]
-
-[tool.coverage.run]
-omit = ["*/tests/server/*"]
 
 [tool.coverage.report]
 exclude_lines = [
-  'pragma: no cover',
   'if TYPE_CHECKING:',
-  'except ImportError as e:',
-  '\.\.\.',
+  'pragma: no cover',
   "if __name__ == '__main__':",
 ]
+show_missing = true
+
+[tool.coverage.run]
+omit = ["tests/*"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=src -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
+addopts = "--cov=app -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
 asyncio_mode = "auto"
 env_files = [".env.example"]
 
-[tool.bandit]
-exclude_dirs = ["tests"]
-skips = ["B101", "B601"]
-tests = ["B201", "B301", "B101"]
+[tool.ruff]
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".hg",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+  '__pycache__',
+]
+fix = true
+ignore = [
+  'B008',
+  'B009',
+  'C408',
+  'C417',
+  "D100",
+  "D203",
+  "D204",
+  "D213",
+  "D215",
+  "D400",
+  "D404",
+  "D406",
+  "D407",
+  "D408",
+  "D409",
+  "D413",
+  'E501',
+  "N818",
+]
+line-length = 120
+select = [
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'N',
+  'W',
+  'I',
+  'UP',
+  'S',
+]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+# Assume Python 3.11.
+src = ["src/server", "tests/"]
+target-version = "py311"
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.pep8-naming]
+classmethod-decorators = [
+  'classmethod',
+  'validator',
+  'root_validator',
+  'declared_attr',
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ['F401']
+
+[tool.ruff.isort]
+known-first-party = [ 'tests']

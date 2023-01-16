@@ -19,7 +19,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins="pylint_pydantic"
 
 # Use multiple processes to speed up Pylint.
 jobs=6
@@ -264,7 +264,7 @@ generated-members=
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=88
+max-line-length=120
 
 # TODO(https://github.com/PyCQA/pylint/issues/3352): Direct pylint to exempt
 # lines made too long by directives to pytype.
@@ -324,7 +324,7 @@ callbacks=cb_,_cb
 # List of qualified module names which can have objects that can redefine
 # builtins.
 redefining-builtins-modules=six,six.moves,past.builtins,future.builtins,functools
-
+ignored-argument-names=args|kwargs|_|__
 
 [LOGGING]
 
@@ -436,6 +436,3 @@ max-attributes=20
 max-locals=30
 max-returns=15
 max-branches=15
-
-[VARIABLES]
-ignored-argument-names=args|kwargs|_|__

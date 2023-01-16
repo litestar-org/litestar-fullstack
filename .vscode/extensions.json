@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-python.black-formatter",
+    "mikestead.dotenv",
+    "christian-kohler.path-intellisense",
+    "ms-python.vscode-pylance",
+    "ms-python.python",
+    "angular.ng-template",
+    "charliermarsh.ruff"
+  ]
+}

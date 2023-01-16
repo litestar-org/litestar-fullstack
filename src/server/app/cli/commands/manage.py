@@ -2,7 +2,7 @@ import binascii
 import logging
 import os
 import sys
-from typing import Any, Optional
+from typing import Any
 
 import click
 from alembic import command as migration_command
@@ -25,7 +25,7 @@ logger = logging.getLogger()
 @click.group(name="manage", invoke_without_command=False)
 @click.pass_context
 def cli(_: dict[str, Any]) -> None:
-    """System Administration Commands"""
+    """System Administration Commands."""
 
 
 @cli.command(name="generate-random-key")
@@ -79,14 +79,13 @@ def generate_random_key(length: int = 32) -> None:
     is_flag=True,
 )
 def create_user(
-    email: Optional[str],
-    full_name: Optional[str],
-    password: Optional[str],
-    team_name: Optional[str],
-    superuser: Optional[bool],
+    email: str | None,
+    full_name: str | None,
+    password: str | None,
+    team_name: str | None,
+    superuser: bool | None,
 ) -> None:
-    """Create a user"""
-
+    """Create a user."""
     email = email or click.prompt("Email")
     full_name = full_name or click.prompt("Full Name", show_default=False)
     password = password or click.prompt("Password", hide_input=True, confirmation_prompt=True)
@@ -112,8 +111,8 @@ def create_user(
     required=False,
     show_default=False,
 )
-def promote_to_superuser(email: Optional[str]) -> None:
-    """Promotes a user to application superuser"""
+def promote_to_superuser(email: str | None) -> None:
+    """Promotes a user to application superuser."""
     email = email or click.prompt("Email")
 
     async def _promote_to_superuser(email: EmailStr) -> None:
@@ -155,7 +154,7 @@ def promote_to_superuser(email: Optional[str]) -> None:
     is_flag=True,
 )
 def export_api_schema(export_path: str, verbose: bool) -> None:
-    """Push secrets to Secrets Provider"""
+    """Push secrets to Secrets Provider."""
     console.print("Exporting API Schema")
     application = app
     if application.openapi_schema:
@@ -249,7 +248,7 @@ def purge_database(no_prompt: bool) -> None:
     help="Shows the current revision for the database.",
 )
 def show_database_revision() -> None:
-    """Show current database revision"""
+    """Show current database revision."""
     alembic_cfg = AlembicConfig(settings.db.MIGRATION_CONFIG)
     alembic_cfg.set_main_option("script_location", settings.db.MIGRATION_PATH)
     migration_command.current(alembic_cfg, verbose=False)

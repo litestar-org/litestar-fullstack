@@ -6,7 +6,7 @@ from starlite.middleware import ExceptionHandlerMiddleware
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from starlette.responses import Response
+    from starlite import Response
     from starlite.connection import Request
 
 

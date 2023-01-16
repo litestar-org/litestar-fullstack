@@ -1,6 +1,6 @@
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlite import Starlite
 from starlite.plugins.sql_alchemy import SQLAlchemyPlugin
+from starlite.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 
 from app import web
 from app.config import log_config, settings

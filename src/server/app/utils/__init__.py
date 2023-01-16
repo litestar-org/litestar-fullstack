@@ -1,3 +1,3 @@
-from app.utils import asyncer, module_loading, serializers, slugify_text
+from app.utils import module_loading, serializers, slugify_text
 
-__all__ = ["asyncer", "module_loading", "slugify_text", "serializers"]
+__all__ = ["module_loading", "slugify_text", "serializers"]
