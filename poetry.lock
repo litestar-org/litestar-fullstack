@@ -113,7 +113,10 @@ files = [
 [package.dependencies]
 lazy-object-proxy = ">=1.4.0"
 typing-extensions = ">=4.0.0"
-wrapt = {version = ">=1.14,<2", markers = "python_version >= \"3.11\""}
+wrapt = [
+    {version = ">=1.11,<2", markers = "python_version < \"3.11\""},
+    {version = ">=1.14,<2", markers = "python_version >= \"3.11\""},
+]
 
 [[package]]
 name = "async-timeout"
@@ -240,6 +243,7 @@ click = ">=8.0.0"
 mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0"
 platformdirs = ">=2"
+tomli = {version = ">=1.1.0", markers = "python_full_version < \"3.11.0a7\""}
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -564,6 +568,9 @@ files = [
     {file = "coverage-7.0.5.tar.gz", hash = "sha256:051afcbd6d2ac39298d62d340f94dbb6a1f31de06dfaf6fcef7b759dd3860c45"},
 ]
 
+[package.dependencies]
+tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.11.0a6\" and extra == \"toml\""}
+
 [package.extras]
 toml = ["tomli"]
 
@@ -772,15 +779,30 @@ dnspython = ">=1.15.0"
 idna = ">=2.0.0"
 
 [[package]]
+name = "exceptiongroup"
+version = "1.1.0"
+description = "Backport of PEP 654 (exception groups)"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "exceptiongroup-1.1.0-py3-none-any.whl", hash = "sha256:327cbda3da756e2de031a3107b81ab7b3770a602c4d16ca618298c526f4bec1e"},
+    {file = "exceptiongroup-1.1.0.tar.gz", hash = "sha256:bcb67d800a4497e1b404c2dd44fca47d3b7a5e5433dbab67f96c1a685cdfdf23"},
+]
+
+[package.extras]
+test = ["pytest (>=6)"]
+
+[[package]]
 name = "faker"
-version = "16.4.0"
+version = "16.5.0"
 description = "Faker is a Python package that generates fake data for you."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-16.4.0-py3-none-any.whl", hash = "sha256:5420467fad3fa582094057754e5e81326cb1f51ab822bf9df96c077cfb35ae49"},
-    {file = "Faker-16.4.0.tar.gz", hash = "sha256:dcffdca8ec9a715982bcd5f53ee688dc4784cd112f9910f8f7183773eb3ec276"},
+    {file = "Faker-16.5.0-py3-none-any.whl", hash = "sha256:fe28a26bc9f75c2df503a3509b462730a5dc63dfc15f38185da813782ac644d0"},
+    {file = "Faker-16.5.0.tar.gz", hash = "sha256:c62d25f3f78b76e839f27213d913e6463a971f71772bed384f0a18328a99d0ee"},
 ]
 
 [package.dependencies]
@@ -1696,6 +1718,7 @@ files = [
 
 [package.dependencies]
 mypy-extensions = ">=0.4.3"
+tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 typing-extensions = ">=3.10"
 
 [package.extras]
@@ -1982,14 +2005,14 @@ typing-extensions = "*"
 
 [[package]]
 name = "pydantic-openapi-schema"
-version = "1.5.0"
+version = "1.5.1"
 description = "OpenAPI Schema using pydantic. Forked for Starlite-API from 'openapi-schema-pydantic'."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic_openapi_schema-1.5.0-py3-none-any.whl", hash = "sha256:0b60d105a2665287fbf8ee85602919a3558e07cf34261e64fa8f4d2281a3bad0"},
-    {file = "pydantic_openapi_schema-1.5.0.tar.gz", hash = "sha256:50bf6ee00fc0dcd1c87b96f30c3273e3bebcc12f23f30c31e5af5ec2e3275c87"},
+    {file = "pydantic_openapi_schema-1.5.1-py3-none-any.whl", hash = "sha256:fd5b1bff81ff70faa87fec62bd8193ccd671f31bc15b32a4557623d3db0e5eae"},
+    {file = "pydantic_openapi_schema-1.5.1.tar.gz", hash = "sha256:d9b56235f4c4817c6e3693c4f8122c3e5e9c75f6b3b454524ad985012a264daf"},
 ]
 
 [package.dependencies]
@@ -2026,10 +2049,14 @@ files = [
 [package.dependencies]
 astroid = ">=2.12.13,<=2.14.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-dill = {version = ">=0.3.6", markers = "python_version >= \"3.11\""}
+dill = [
+    {version = ">=0.2", markers = "python_version < \"3.11\""},
+    {version = ">=0.3.6", markers = "python_version >= \"3.11\""},
+]
 isort = ">=4.2.5,<6"
 mccabe = ">=0.6,<0.8"
 platformdirs = ">=2.2.0"
+tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 tomlkit = ">=0.10.1"
 
 [package.extras]
@@ -2097,9 +2124,11 @@ files = [
 [package.dependencies]
 attrs = ">=19.2.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
+exceptiongroup = {version = ">=1.0.0rc8", markers = "python_version < \"3.11\""}
 iniconfig = "*"
 packaging = "*"
 pluggy = ">=0.12,<2.0"
+tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
@@ -2421,28 +2450,28 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "ruff"
-version = "0.0.223"
+version = "0.0.224"
 description = "An extremely fast Python linter, written in Rust."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "ruff-0.0.223-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:7d4f5ba5e4779dcc8ca7e61f96ad867792c205bf961fc486890cd5fd24b73884"},
-    {file = "ruff-0.0.223-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:2204aba39fe76bf4efd88290554899f1d0c0e3fd8b69fb80819abf6738fd889e"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1151008716230ae3086fc0754e6abf2dde013e8504b77a911a03e07386eda85e"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:9613848d4ad72a79f185c3c78f8777e6d3e5f65bf15fbba97dabc01d17254014"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:edbc88507f8417102d002f15bccf457340d3e2c3c304f77472ff39927a0769a2"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:6fe10bf4d0efa81360c6d32ffb41f242de1ef187a65c81021fe7947e0a84e7cd"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9656ba683f6627ca85257b4dc449ce76b68763c848172069811b222611d904c7"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:ad3f84559be0f87788f11503a185f322360d45942c07a0461eda791dcfb3d83d"},
-    {file = "ruff-0.0.223-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fc554613ad218a82929e05d31d2da6e4fa85b6f6c82a09c6de5c9f79159c02e5"},
-    {file = "ruff-0.0.223-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:d115714dcf039ed6d75254f4e2023259ce5261330bd1ab2567f15f58680191b3"},
-    {file = "ruff-0.0.223-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:e856dcce47b695bee20fdc3f2da3e29026642ca1b71dbc98723cb62c38294952"},
-    {file = "ruff-0.0.223-py3-none-musllinux_1_2_i686.whl", hash = "sha256:cf64a6368eca3bb34aa4606425ed46c632cfd4197086ce6746efa6c5de188940"},
-    {file = "ruff-0.0.223-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:57a302273315fa1582ec262bd3ca0d057d21cd96359f2ba9fb582ef30f897a68"},
-    {file = "ruff-0.0.223-py3-none-win32.whl", hash = "sha256:25fe04755c3d68240c3320b3420dc0a4157c2c1952a063014c44d5c382bd8368"},
-    {file = "ruff-0.0.223-py3-none-win_amd64.whl", hash = "sha256:2bad5fcfcf374f76744e96661dd6f04e65d83d51c54507db9faf580a9cd93ec3"},
-    {file = "ruff-0.0.223.tar.gz", hash = "sha256:35359ee7fe710a19380e3eaba2fe45abe0a881057e0fe5a2ae7fbc29b6e8fca3"},
+    {file = "ruff-0.0.224-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:015277c45716733e99a19267fd244870bff2b619d4814065fe5cded5ab139b92"},
+    {file = "ruff-0.0.224-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:ca8211b316fa2df70d90e38819862d58e4aec87643c2c343ba5102a7ff5d3221"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:637a502a37da3aac9832a0dd21255376b0320cf66e3d420d11000e09deb3e682"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:a85fe53b8193c3e9f7ca9bef7dfd3bcd079a86542a14b66f352ce0316de5c457"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:367c74a9ff9da165df7dc1e5e1fae5c4cda05cb94202bc9a6e5836243bc625c1"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:2d230fc497abdeb3b54d2808ba59802962b50e0611b558337d4c07e6d490ed6c"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:3df2bcb525fec6c2d551f7ab9843e42e8e4fa33586479953445ef64cbe6d6352"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:30e494a23c2f23a07adbd4a9df526057a8cdb4c88536bbc513b5a73385c3d5a7"},
+    {file = "ruff-0.0.224-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eac5836f89f1388b7bb718a5c77cdd13e356737573d29581a18d7f575e42124c"},
+    {file = "ruff-0.0.224-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:d791073cfd40c8e697d4c79faa67e2ad54dc960854bfa0c0cba61ef4bb02d3b1"},
+    {file = "ruff-0.0.224-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:ef72a081dfe24bfb8aa0568e0f1ee0174fffbc6ebb0ae2b8b4cd3f9457cc867b"},
+    {file = "ruff-0.0.224-py3-none-musllinux_1_2_i686.whl", hash = "sha256:666ecfcf0019f5b0e72e0eba7a7330760b680ba0fb6413b139a594b117e612db"},
+    {file = "ruff-0.0.224-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:815d5d448e2bf5107340d6f47cbddac74186cb365c56bdcc2315fbcf59ebc466"},
+    {file = "ruff-0.0.224-py3-none-win32.whl", hash = "sha256:17d98c1f03e98c15d3f2c49e0ffdedc57b221217c4e3d7b6f732893101083240"},
+    {file = "ruff-0.0.224-py3-none-win_amd64.whl", hash = "sha256:3db4fe992cea69405061e09974c3955b750611b1e76161471c27cd2e8ccffa05"},
+    {file = "ruff-0.0.224.tar.gz", hash = "sha256:3b07c2e8da29605a8577b1aef90f8ca0c34a66683b77b06007f1970bc0689003"},
 ]
 
 [[package]]
@@ -2548,6 +2577,7 @@ files = [
 
 [package.dependencies]
 click = ">=8.0,<9.0"
+tomli = {version = ">=0.2.6,<3.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "sniffio"
@@ -2687,14 +2717,14 @@ structlog = ["structlog"]
 
 [[package]]
 name = "starlite-saqlalchemy"
-version = "0.28.0"
+version = "0.28.1"
 description = "Starlite config plugin with SAQ and SQLAlchemy boilerplate"
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "starlite_saqlalchemy-0.28.0-py3-none-any.whl", hash = "sha256:0e7fccfa056fca23ba71bb9635bd9a94d8a3fefcb14d7d313fab661a65900713"},
-    {file = "starlite_saqlalchemy-0.28.0.tar.gz", hash = "sha256:a9b7e3bc609386474639fcfafc8dde0e49ce039100a18cd77ce74b5e075ea74a"},
+    {file = "starlite_saqlalchemy-0.28.1-py3-none-any.whl", hash = "sha256:30a04a057bffc7b626a5b8eb253cc1beb7a5c7f3577e0c687d6918f405c6610a"},
+    {file = "starlite_saqlalchemy-0.28.1.tar.gz", hash = "sha256:c3c435403f9e139bed96eca07844fbe71676d50e6044602aedae9f35a56098ad"},
 ]
 
 [package.dependencies]
@@ -2769,6 +2799,18 @@ files = [
 
 [package.extras]
 doc = ["reno", "sphinx", "tornado (>=4.5)"]
+
+[[package]]
+name = "tomli"
+version = "2.0.1"
+description = "A lil' TOML parser"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
+    {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
 
 [[package]]
 name = "tomlkit"
@@ -3221,5 +3263,5 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11,<4.0"
-content-hash = "cce6f54fed0cb05ce3e280e7b85a198ba61d9e790390ad13ac5ee6451fdd9d57"
+python-versions = ">=3.10,<4.0"
+content-hash = "67a7cda1bd2a7153bf27026324e054c543a07688b75b21a3af3b9c59c439a37b"
