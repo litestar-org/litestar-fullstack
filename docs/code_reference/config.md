@@ -1,3 +1,3 @@
-# Configuration
+# Application Core Libraries
 
-::: app.config
+::: app.lib

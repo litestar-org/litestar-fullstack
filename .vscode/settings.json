@@ -5,7 +5,6 @@
       "when": "$(basename).py"
     },
     ".mypy_cache": true,
-    ".mypy_cache": true,
     "**/__pycache__": true,
     ".venv": true,
     ".idea": true,
@@ -47,7 +46,7 @@
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.codeActionsOnSave": {
       "source.organizeImports": false,
-      "source.fixAll": false
+      "source.fixAll": true
     }
   },
   "eslint.alwaysShowStatus": true,
@@ -67,5 +66,7 @@
   "mypy.debugLogging": false,
   "ruff.args": [],
   "ruff.importStrategy": "fromEnvironment",
-  "pylint.importStrategy": "fromEnvironment"
+  "pylint.importStrategy": "fromEnvironment",
+  "black-formatter.importStrategy": "fromEnvironment",
+  "ruff.fixAll": true
 }

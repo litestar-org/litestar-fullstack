@@ -45,8 +45,7 @@ redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
 starlite = {version = ">=1.35", extras = ["standard", "jwt", 'cli', 'redis']}
-starlite-saqlalchemy = "*"
-starlite-users = {git = "https://github.com/LonelyVikingMichael/starlite-users.git", branch = "main"}
+starlite-saqlalchemy = {version = "*", extras = ["cache","worker","sqlalchemy"]}
 uvicorn = {extras = ["standard"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
@@ -201,6 +200,7 @@ classmethod-decorators = [
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ['F401']
+"tests/*.py" = ['D103','S101','D104']
 
 [tool.ruff.isort]
 known-first-party = [ 'tests']

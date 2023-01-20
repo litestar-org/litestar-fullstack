@@ -1,6 +1,6 @@
 # Developer Setup
 
-To begin local development, clone the [PyTemplates/typer_cli](https://github.com/PyTemplate/typer_cli) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
+To begin local development, clone the [cofin/typer_cli/starlite-full-stack-example](https://github.com/cofin/starlite-full-stack-example) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
 
 ## Using poetry
 
@@ -24,48 +24,6 @@ Install optional dependencies using square brackets:
 
 ```bash
 pip install .[environment]
-```
-
-## Environments
-
-```python
-test = [
-    "pytest",
-    "pytest-cov",
-]
-
-lint = [
-    "black",
-    "isort",
-    "flake8",
-    "pylint",
-    "mypy",
-    "pre-commit",
-]
-
-docs = [
-    "mkdocs",
-    "mkdocstrings",
-    "mkdocstrings-python",
-    "mkdocs-material",
-]
-
-# Includes all optional dependencies
-dev = [
-    "pytest",
-    "pytest-cov",
-    "black",
-    "isort",
-    "flake8",
-    "pylint",
-    "mypy",
-    "pre-commit",
-    "mkdocs",
-    "mkdocstrings",
-    "mkdocstrings-python",
-    "mkdocs-material",
-    "bump2version",
-]
 ```
 
 ## Using a local docker build

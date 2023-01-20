@@ -160,3 +160,7 @@ dist-ssr
 *.sw?
 
 requirements.txt
+
+# temporary files
+tmp/
+temp/

@@ -27,6 +27,3 @@ nav:
       - Core:
           - CLI: code_reference/cli.md
           - Config: code_reference/config.md
-  - Extras:
-      - File Tree: extras/file_tree.md
-      - Credits: extras/credits.md
