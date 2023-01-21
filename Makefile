@@ -8,13 +8,13 @@ USING_YARN=$(shell python3 -c "if __import__('pathlib').Path('yarn.lock').exists
 USING_NPM=$(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
 VENV_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
 NODE_MODULES_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
-
 PYTHON_PACKAGES=$(shell if poetry --version > /dev/null; then poetry export -f requirements.txt  --without-hashes |cut -d'=' -f1 |cut -d ' ' -f1; fi)
-GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+VERSION := $(shell grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
 FRONTEND_SRC_DIR=src/ui
 FRONTEND_BUILD_DIR=$(FRONTEND_SRC_DIR)/dist
 BACKEND_SRC_DIR=src/server
 BACKEND_BUILD_DIR=dist
+
 .EXPORT_ALL_VARIABLES:
 
 ifndef VERBOSE
@@ -41,10 +41,6 @@ upgrade:       ## Upgrade all dependencies to the latest stable versions
 ###############
 # lint & test #
 ###############
-format-source:       ## Format source code
-	@echo 'Formatting and cleaning source...'
-	./scripts/format-source-code.sh
-
 lint:       ## check style with flake8
 	env PYTHONPATH=src/server poetry run pre-commit run --all-files
 
@@ -52,9 +48,6 @@ test:       ## run tests quickly with the default Python
 	env PYTHONPATH=src/server poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/backend/unit
 	coverage xml
 	coverage html
-
-test-all:       ## run tests on every Python version with tox
-	env PYTHONPATH=src poetry run tox
 
 coverage:       ## check code coverage quickly with the default Python
 	env PYTHONPATH=src/server poetry run coverage run --source app -m pytest
@@ -66,18 +59,21 @@ coverage:       ## check code coverage quickly with the default Python
 ###############
 .PHONY: install
 install:          ## Install the project in dev mode.
-	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
-	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
+	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
+	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
+	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
 	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p ./src/ui/public; fi
 	if [ "$(USING_NPM)" ]; then npm install; fi
+	if [ "$(USING_YARN)" ]; then yarn install; fi
+	if [ "$(USING_PNPM)" ]; then pnpm install; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
 
 
 
 .PHONY: runtime
 runtime-only:	 ## Install the project in production mode.
-	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
+	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
 	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p ./src/ui/public ; fi
@@ -88,20 +84,20 @@ runtime-only:	 ## Install the project in production mode.
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/server/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/server/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src/server poetry run app manage upgrade-database
+	@env PYTHONPATH=src/server .venv/bin/app manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will wipe all migrations and recreate from an emtpy state."
 	@env PYTHONPATH=src/server poetry run app manage purge-database --no-prompt
-	rm -Rf src/server/app/core/db/migrations/versions/*.py
+	rm -Rf src/server/app/lib/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/server/app/config/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src .venv/bin/alembic -c src/server/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean
 clean:       ## remove all build, testing, and static documentation files
@@ -125,6 +121,9 @@ clean:       ## remove all build, testing, and static documentation files
 	rm -fr site
 
 
+download-backend-deps:      ## download wheel files
+	@poetry export --without-hashes --only=main -f requirements.txt --output dist/requirements.txt && rm -Rf dist/wheels && poetry run pip download --no-binary=':all:'  -r dist/requirements.txt -d dist/wheels
+
 build-frontend: $(FRONTEND_BUILD_DIR)
 
 $(FRONTEND_BUILD_DIR): $(shell find $(FRONTEND_SRC_DIR) -not -path "$(FRONTEND_BUILD_DIR)")
@@ -136,58 +135,23 @@ build-backend: $(BACKEND_BUILD_DIR)
 $(BACKEND_BUILD_DIR): $(shell find $(BACKEND_SRC_DIR))
 	@poetry build
 
-
-.PHONY: build
 build: build-frontend build-backend          ## Install the project in dev mode.
 
-
-.PHONY: migrations
 ###############
 # docs        #
 ###############
-.PHONY: gen-docs
 gen-docs:       ## generate HTML documentation
-	mkdocs build
+	.venv/bin/mkdocs build
 
 .PHONY: docs
 docs:       ## generate HTML documentation and serve it to the browser
-	mkdocs build
-	mkdocs serve
+	.venv/bin/mkdocs build
+	.venv/bin/mkdocs serve
 
 .PHONY: pre-release
 pre-release:       ## bump the version and create the release tag
-	make check
 	make gen-docs
 	make clean
-	bump2version $(increment)
+	.venv/bin/bump2version $(increment)
 	git describe --tags --abbrev=0
 	head pyproject.toml | grep version
-	cat src/pytemplates_typer_cli/__version__.py
-
-###########
-# version #
-###########
-.PHONY: version-bump-major
-version-bump-major:       ## bump major version
-	poetry run bump2version major
-.PHONY: version-bump-minor
-version-bump-minor:       ## bump minor version
-	poetry run bump2version minor
-.PHONY: version-bump-patch
-version-bump-patch:       ## bump patch version
-	poetry run bump2version patch
-
-
-###########
-# license #
-###########
-
-.PHONY: licenses
-licenses: 			## Generate licenses
-	@echo "Generating Licenses"
-	@poetry run pip-licenses --with-urls --format=markdown --order=name --packages ${PYTHON_PACKAGES}
-
-.PHONY: license-file
-license-file: 		## Generate licenses
-	@echo "Generating License file"
-	@poetry run pip-licenses --packages ${PYTHON_PACKAGES} --format=plain-vertical --with-license-file --no-license-path > NOTICE

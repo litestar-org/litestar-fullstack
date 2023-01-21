@@ -1,19 +1,22 @@
-import logging
+"""Application."""
+from rich import get_console
+from rich.traceback import install as rich_tracebacks
 
-from app import asgi, cli, config, core, schemas, services, utils, web
-from app.version import __version__
+from app import asgi, domain, lib
 
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
+__all__ = ["lib", "domain", "asgi"]
 
-__all__ = [
-    "__version__",
-    "web",
-    "config",
-    "services",
-    "core",
-    "utils",
-    "cli",
-    "asgi",
-    "schemas",
-]
+rich_tracebacks(
+    console=get_console(),
+    suppress=(
+        "sqlalchemy",
+        "starlite_saqlalchemy",
+        "click",
+        "rich",
+        "saq",
+        "starlite",
+        "rich_click",
+    ),
+    show_locals=False,
+)
+"""Pre-configured traceback handler.  Suppresses some of the frames by default to reduce the amount printed to the screen."""

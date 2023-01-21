@@ -1,3 +1,7 @@
-from app.utils import module_loading, serializers, slugify_text
+"""Application Utilities.
 
-__all__ = ["module_loading", "slugify_text", "serializers"]
+Stores useful libraries, helpers or utilities for various application components.
+"""
+from . import module_loader
+
+__all__ = ["module_loader"]
