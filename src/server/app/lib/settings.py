@@ -135,6 +135,8 @@ def get_settings() -> Settings:
         """Override Application host to allow connectivity from external IPs."""
         server_settings.HOST = "0.0.0.0"  # noqa: S104
         """Override Application host to allow connectivity from external IPs."""
+        server_settings.RELOAD_DIRS = [str(BASE_DIR)]
+        """Override Application reload dir."""
         app: AppSettings = app_settings
         api: APISettings = api_settings
         redis: RedisSettings = redis_settings
