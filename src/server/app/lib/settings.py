@@ -128,7 +128,7 @@ def get_settings() -> Settings:
     return settings
     ```
     Returns:
-        Settings: _description_
+        Settings: application settings
     """
     try:
         server_settings.APP_LOC = "app.main:run_app"
