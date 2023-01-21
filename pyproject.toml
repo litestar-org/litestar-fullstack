@@ -47,6 +47,7 @@ sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
 starlite = {version = ">=1.35", extras = ["standard", "jwt", 'cli', 'redis']}
 starlite-saqlalchemy = {version = "*", extras = ["cache","worker","sqlalchemy"]}
 uvicorn = {extras = ["standard"], version = "*"}
+greenlet = {version = "^2.0.1", platform = "darwin"}
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "*"}
@@ -201,6 +202,7 @@ classmethod-decorators = [
 [tool.ruff.per-file-ignores]
 "__init__.py" = ['F401']
 "tests/*.py" = ['D103','S101','D104']
+"*/migrations/*.py" = ['D104']
 
 [tool.ruff.isort]
 known-first-party = [ 'tests']
