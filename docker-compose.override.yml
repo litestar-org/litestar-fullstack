@@ -11,8 +11,15 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/workspace/app/
-    command: app run server
+      - ./docs:/workspace/app/docs/
+      - ./tests:/workspace/app/tests/
+      - ./src:/workspace/app/src/
+      - ./Makefile:/workspace/app/Makefile
+      - ./pyproject.toml:/workspace/app/pyproject.toml
+      - ./poetry.lock:/workspace/app/poetry.lock
+      - ./mkdocs.yml:/workspace/app/mkdocs.yml
+      - ./service_account.json:/workspace/app/service_account.json
+    command: app api run --reload
 
   localmail:
     image: mailhog/mailhog:v1.0.0
