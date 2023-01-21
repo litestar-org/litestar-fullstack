@@ -8,13 +8,14 @@ from starlite_saqlalchemy.db import async_session_factory, engine
 from starlite_saqlalchemy.repository.sqlalchemy import SQLAlchemyRepository
 from starlite_saqlalchemy.sqlalchemy_plugin import SQLAlchemyHealthCheck, before_send_handler, config, plugin
 
-from . import orm
+from . import orm, utils
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = [
     "orm",
+    "utils",
     "before_send_handler",
     "SQLAlchemyHealthCheck",
     "config",

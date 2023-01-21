@@ -6,7 +6,7 @@ FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
-# RUN npm install -g npm@9.2.0
+RUN npm install -g npm@9.2.0
 # COPY package.json package-lock.json angular.json tsconfig.json LICENSE Makefile ./
 # RUN npm install
 # COPY src/ui ./src/ui
@@ -39,7 +39,7 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_ALWAYS_COPY=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_VERSION='1.3.1' \
+    POETRY_VERSION='1.3.2' \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:$PATH"
@@ -60,7 +60,6 @@ RUN curl -sSL https://install.python-poetry.org | python - \
 WORKDIR /workspace/app
 COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
 COPY docs ./docs/
-COPY scripts ./scripts
 COPY tests ./tests/
 COPY src ./src
 RUN python -m venv --copies /workspace/app/.venv
@@ -68,7 +67,7 @@ RUN . /workspace/app/.venv/bin/activate \
     && pip install -U pip cython setuptools wheel \
     && poetry config virtualenvs.options.always-copy true \
     && poetry install $POETRY_INSTALL_ARGS
-EXPOSE 8080
+EXPOSE 8000
 
 
 
@@ -91,6 +90,6 @@ COPY --chown="app-user":"app-user" src /workspace/app/src
 # COPY --chown="app-user":"app-user" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/server/app/domain/web/public
 USER "app-user"
 STOPSIGNAL SIGINT
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT [ "app" ]
 CMD [ "run", "server"]

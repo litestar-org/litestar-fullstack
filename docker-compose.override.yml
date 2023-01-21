@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      target: build-stage
+      target: build-image
       dockerfile: ./Dockerfile
       args:
         # remove this to build for production.

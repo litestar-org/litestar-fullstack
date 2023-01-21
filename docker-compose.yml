@@ -3,7 +3,7 @@ services:
   cache:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "16379:6379"
     hostname: cache
     command: redis-server --appendonly yes
     volumes:
@@ -26,7 +26,7 @@ services:
   db:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "15432:5432"
     hostname: db
     environment:
       POSTGRES_PASSWORD: "app"
@@ -68,16 +68,20 @@ services:
       - static-data:/workspace/app/static:cached
       - upload-data:/workspace/app/media:cached
 
-  migrator:
-    image: app:latest
-    restart: never
-    command: app manage upgrade-database
-    env_file:
-      - .env.example
-    depends_on:
-      db:
-        condition: service_healthy
-
+  # migrator:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   image: app:latest
+  #   restart: no
+  #   command: app manage upgrade-database
+  #   env_file:
+  #     - .env.example
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     cache:
+  #       condition: service_healthy
 volumes:
   db-data: {}
   cache-data: {}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Final
+from typing import Final, Literal
 
 from pydantic import BaseSettings, ValidationError
 from starlite_saqlalchemy.settings import (
@@ -12,10 +12,10 @@ from starlite_saqlalchemy.settings import (
     LogSettings,
     OpenAPISettings,
     RedisSettings,
-    ServerSettings,
-    WorkerSettings,
 )
 from starlite_saqlalchemy.settings import DatabaseSettings as _DatabaseSettings
+from starlite_saqlalchemy.settings import ServerSettings as _ServerSettings
+from starlite_saqlalchemy.settings import WorkerSettings as _WorkerSettings
 from starlite_saqlalchemy.settings import api as api_settings
 from starlite_saqlalchemy.settings import app as app_settings
 from starlite_saqlalchemy.settings import http as http_client_settings
@@ -53,16 +53,37 @@ BASE_DIR: Final = utils.module_loader.module_to_os_path(DEFAULT_MODULE_NAME)
 PUBLIC_DIR = Path(BASE_DIR / "api" / "public")
 
 
+class ServerSettings(_ServerSettings):
+    """Server Settings."""
+
+    HTTP_WORKERS: int | None = None
+    """Number of HTTP Worker processes to be spawned by Uvicorn."""
+
+
+class WorkerSettings(_WorkerSettings):
+    """Worker Settings."""
+
+    INIT_METHOD: Literal["in-process", "standalone"] = "in-process"
+    BACKGROUND_WORKERS: int = 1
+    WORKER_CONCURRENCY: int = 10
+
+
 class DatabaseSettings(_DatabaseSettings):
     """Database Settings."""
 
+    DB_ENGINE: str | None = None
+    DB_USER: str | None = None
+    DB_PASSWORD: str | None = None
+    DB_HOST: str | None = None
+    DB_PORT: str | None = None
+    DB_NAME: str | None = None
     MIGRATION_CONFIG: str = f"{BASE_DIR}/lib/db/alembic.ini"
     MIGRATION_PATH: str = f"{BASE_DIR}/lib/db/migrations"
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
 
 
 class Settings(BaseSettings):
-    """Settings.
+    """All Settings.
 
     All settings are nested here
     """
@@ -86,30 +107,42 @@ def get_settings() -> Settings:
 
     This fetches a `.env` configuration from a Google secret and configures the environment with those variables.
 
+    ```python
+    secret_id = os.environ.get("ENV_SECRETS", None)
+    env_file_exists = os.path.isfile(f"{os.curdir}/.env")
+    local_service_account_exists = os.path.isfile(f"{os.curdir}/service_account.json")
+    if local_service_account_exists:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
+    project_id = os.environ.get("GOOGLE_PROJECT_ID", None)
+    if project_id is None:
+        _, project_id = google.auth.default()
+        os.environ["GOOGLE_PROJECT_ID"] = project_id
+    if not env_file_exists and secret_id:
+        secret = secret_manager.get_secret(project_id, secret_id)
+        load_dotenv(stream=io.StringIO(secret))
+
+    try:
+        settings =  ... # existing code below
+    except:
+        ...
+    return settings
+    ```
     Returns:
         Settings: _description_
     """
-    # secret_id = os.environ.get("ENV_SECRETS", None)
-    # env_file_exists = os.path.isfile(f"{os.curdir}/.env")
-    # local_service_account_exists = os.path.isfile(f"{os.curdir}/service_account.json")
-    # if local_service_account_exists:
-    #     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
-    # project_id = os.environ.get("GOOGLE_PROJECT_ID", None)
-    # if project_id is None:
-    #     _, project_id = google.auth.default()
-    #     os.environ["GOOGLE_PROJECT_ID"] = project_id
-    # if not env_file_exists and secret_id:
-    #     secret = secret_manager.get_secret(project_id, secret_id)
-    #     load_dotenv(stream=io.StringIO(secret))
     try:
+        server_settings.APP_LOC = "app.main:run_app"
+        """Override Application host to allow connectivity from external IPs."""
+        server_settings.HOST = "0.0.0.0"  # noqa: S104
+        """Override Application host to allow connectivity from external IPs."""
         app: AppSettings = app_settings
         api: APISettings = api_settings
         redis: RedisSettings = redis_settings
         db: DatabaseSettings = DatabaseSettings.parse_obj({})
         openapi: OpenAPISettings = openapi_settings
-        server: ServerSettings = server_settings
+        server: ServerSettings = ServerSettings.parse_obj(server_settings.dict())
         log: LogSettings = log_settings
-        worker: WorkerSettings = worker_settings
+        worker: WorkerSettings = WorkerSettings.parse_obj(worker_settings.dict())
         http_client: HTTPClientSettings = http_client_settings
         settings = Settings(
             app=app,

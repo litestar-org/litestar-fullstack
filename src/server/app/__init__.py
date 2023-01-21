@@ -2,9 +2,9 @@
 from rich import get_console
 from rich.traceback import install as rich_tracebacks
 
-from app import asgi, domain, lib
+from app import domain, lib
 
-__all__ = ["lib", "domain", "asgi"]
+__all__ = ["lib", "domain"]
 
 rich_tracebacks(
     console=get_console(),
