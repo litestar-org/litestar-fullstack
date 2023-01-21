@@ -10,7 +10,7 @@ def test_import_string() -> None:
 
 def test_import_string_missing() -> None:
     try:
-        cls = import_string("starlite.config.compression.CompressionConfig")
+        cls = import_string("imaginary_module_that_doesnt_exist.Config")  # a random nonexistent class
     except ImportError:
         cls = None
     assert cls is None
