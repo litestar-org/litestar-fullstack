@@ -28,7 +28,7 @@ __all__ = [
 
 
 @asynccontextmanager
-async def session() -> "AsyncIterator[AsyncSession]":
+async def session() -> AsyncIterator[AsyncSession]:
     """Use this to get a database session where you can't in starlite.
 
     Returns:

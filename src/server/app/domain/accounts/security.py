@@ -37,7 +37,7 @@ __all__ = [
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any]) -> User:
-    """Current user from local JWT token.
+    """Lookup current user from local JWT token.
 
     Fetches the user information from the database when loading from a local token.
 
@@ -78,7 +78,7 @@ def requires_active_user(request: ASGIConnection, _: BaseRouteHandler) -> None:
 
 
 def requires_superuser(request: ASGIConnection, _: BaseRouteHandler) -> None:
-    """Verifies the request user is a superuser.
+    """Request requires active superuser.
 
     Args:
         request (Request): _description_
