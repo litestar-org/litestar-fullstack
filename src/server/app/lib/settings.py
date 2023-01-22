@@ -64,8 +64,8 @@ class WorkerSettings(_WorkerSettings):
     """Worker Settings."""
 
     INIT_METHOD: Literal["in-process", "standalone"] = "in-process"
-    BACKGROUND_WORKERS: int = 1
-    WORKER_CONCURRENCY: int = 10
+    PROCESSES: int = 1
+    CONCURRENCY: int = 10
 
 
 class DatabaseSettings(_DatabaseSettings):
