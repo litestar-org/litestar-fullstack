@@ -3,6 +3,8 @@ from starlite_saqlalchemy import PluginConfig as SAQLAlchemyPluginConfig
 
 from . import settings
 
+__all__ = ["saqlalchemy"]
+
 saqlalchemy = SAQLAlchemyPlugin(
     config=SAQLAlchemyPluginConfig(
         do_after_exception=True,

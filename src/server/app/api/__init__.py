@@ -1,4 +1,4 @@
 """Application API Module."""
-from . import routes, urls
+from . import routes, security, urls
 
-__all__ = ["urls", "routes"]
+__all__ = ["urls", "routes", "security"]
