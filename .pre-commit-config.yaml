@@ -94,6 +94,7 @@ repos:
           [
             picologging,
             pydantic,
+            pylint_pydantic,
             jinja2,
             hiredis,
             passlib,
@@ -130,6 +131,7 @@ repos:
           [
             picologging,
             pydantic,
+            pylint_pydantic,
             jinja2,
             hiredis,
             passlib,

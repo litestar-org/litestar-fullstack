@@ -203,7 +203,7 @@ classmethod-decorators = [
 [tool.ruff.per-file-ignores]
 "__init__.py" = ['F401']
 "tests/*.py" = ['D103','S101','D104']
-"*/migrations/*.py" = ['D104']
+"*/migrations/*.py" = ['D104','D103','D205','D212']
 
 [tool.ruff.isort]
 known-first-party = [ 'tests']
