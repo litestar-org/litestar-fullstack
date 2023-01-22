@@ -38,19 +38,6 @@ logger = logging.getLogger("app")
 
 async def app_launcher() -> None:
     """Wrap the uvicorn process with anyio signal handlers."""
-
-    async def _signal_handler(scope: CancelScope) -> None:
-        """Signal Handler."""
-        with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
-            async for signum in signals:
-                if signum == signal.SIGINT:
-                    print("Ctrl+C pressed!")
-                else:
-                    print("Terminated!")
-
-                scope.cancel()
-                return
-
     async with create_task_group() as tg:
         tg.start_soon(_signal_handler, tg.cancel_scope)
 
@@ -63,7 +50,9 @@ async def app_launcher() -> None:
             reload=bool(settings.server.RELOAD),
             reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
             timeout_keep_alive=settings.server.KEEPALIVE,
-            lifespan="auto",
+            log_config=None,
+            # access_log=False,
+            lifespan="off",
             workers=settings.server.HTTP_WORKERS,
         )
 
@@ -147,25 +136,15 @@ def run_app(
     settings.log.LEVEL = 10 if verbose else settings.log.LEVEL
     logger.info("starting application.")
 
-    workers: list[multiprocessing.Process] = []
     try:
         if settings.worker.INIT_METHOD == "standalone":
             for i in range(settings.worker.PROCESSES):
                 logger.info("Launching worker process #%s", i + 1)
                 process = multiprocessing.Process(target=worker.run_worker)
                 process.start()
-                workers.append(process)
         anyio.run(app_launcher, backend="asyncio", backend_options={"use_uvloop": True})
-    except KeyboardInterrupt:
-        for w in workers:
-            if w.is_alive():
-                w.kill()
     finally:
-        for w in workers:
-            if w.is_alive():
-                w.join()
         logger.info("⏏️  Shutdown complete")
-        sys.exit(4)
 
 
 # Management App
@@ -254,3 +233,16 @@ def show_database_revision() -> None:
 
 app.add_command(management_app, name="manage")
 app.add_command(api_app, name="api")
+
+
+async def _signal_handler(scope: CancelScope) -> None:
+    """Signal Handler."""
+    with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
+        async for signum in signals:
+            if signum == signal.SIGINT:
+                print("Ctrl+C pressed!")
+            else:
+                print("Terminated!")
+
+            scope.cancel()
+            return
