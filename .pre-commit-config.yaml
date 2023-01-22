@@ -94,7 +94,7 @@ repos:
           [
             picologging,
             pydantic,
-            pylint_pydantic,
+            pylint-pydantic,
             jinja2,
             hiredis,
             passlib,
@@ -131,7 +131,7 @@ repos:
           [
             picologging,
             pydantic,
-            pylint_pydantic,
+            pylint-pydantic,
             jinja2,
             hiredis,
             passlib,
@@ -140,6 +140,7 @@ repos:
             pydantic_factories,
             pydantic_openapi_schema,
             git+https://github.com/sqlalchemy/sqlalchemy,
+            starlite-saqlalchemy,
             starlite_multipart,
             structlog,
             aiosmtplib,
