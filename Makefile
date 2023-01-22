@@ -93,10 +93,10 @@ migrate:          ## Generate database migrations
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
-	@echo "ATTENTION: This operation will wipe all migrations and recreate from an emtpy state."
+	@echo "ATTENTION: This operation will wipe all migrations and recreate from an empty state."
 	@env PYTHONPATH=src/server poetry run app manage purge-database --no-prompt
 	rm -Rf src/server/app/lib/db/migrations/versions/*.py
-	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Intial migration message: " MIGRATION_MESSAGE; done ;
+	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Initial migration message: " MIGRATION_MESSAGE; done ;
 	@env PYTHONPATH=src .venv/bin/alembic -c src/server/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean

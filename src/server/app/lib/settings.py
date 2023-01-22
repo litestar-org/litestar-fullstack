@@ -122,7 +122,7 @@ def get_settings() -> Settings:
         load_dotenv(stream=io.StringIO(secret))
 
     try:
-        settings =  ... # existing code below
+        settings = ...  # existing code below
     except:
         ...
     return settings

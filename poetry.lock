@@ -2664,14 +2664,14 @@ sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
 name = "starlite"
-version = "1.49.0"
+version = "1.50.1"
 description = "Performant, light and flexible ASGI API Framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "starlite-1.49.0-py3-none-any.whl", hash = "sha256:97748c7915706f5888f6eb245a4305f7c50f3fdb5bc09785421ee5677513cee9"},
-    {file = "starlite-1.49.0.tar.gz", hash = "sha256:216c84745617070b766d0e759016a13fcfb467f75b54c8735a0b1e78625363bf"},
+    {file = "starlite-1.50.1-py3-none-any.whl", hash = "sha256:31d45efc805b895b9733b58825942129e55ebbbf8ddaeaf931b1237af5daae37"},
+    {file = "starlite-1.50.1.tar.gz", hash = "sha256:7cc30ace31c47c406666baff839e4dfa24e205855ef0fada011b9e1bbadda852"},
 ]
 
 [package.dependencies]
@@ -2680,7 +2680,7 @@ click = {version = "*", optional = true, markers = "extra == \"cli\" or extra ==
 cryptography = {version = "*", optional = true, markers = "extra == \"cryptography\" or extra == \"jwt\" or extra == \"full\""}
 fast-query-parsers = "*"
 httpx = ">=0.22"
-jinja2 = ">=3.1.2"
+jinja2 = {version = ">=3.1.2", optional = true, markers = "extra == \"jinja\" or extra == \"standard\" or extra == \"full\""}
 jsbeautifier = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\""}
 mako = ">=1.2.4"
 msgspec = ">=0.11.0"
@@ -2699,13 +2699,14 @@ typing-extensions = "*"
 brotli = ["brotli"]
 cli = ["click", "jsbeautifier", "rich (>=13.0.0)"]
 cryptography = ["cryptography"]
-full = ["aiomcache", "brotli", "click", "cryptography", "opentelemetry-instrumentation-asgi", "picologging", "python-jose", "redis[hiredis]", "rich (>=13.0.0)", "structlog"]
+full = ["aiomcache", "brotli", "click", "cryptography", "jinja2 (>=3.1.2)", "opentelemetry-instrumentation-asgi", "picologging", "python-jose", "redis[hiredis]", "rich (>=13.0.0)", "structlog"]
+jinja = ["jinja2 (>=3.1.2)"]
 jwt = ["cryptography", "python-jose"]
 memcached = ["aiomcache"]
 opentelemetry = ["opentelemetry-instrumentation-asgi"]
 picologging = ["picologging"]
 redis = ["redis[hiredis]"]
-standard = ["click", "jsbeautifier", "picologging", "rich (>=13.0.0)"]
+standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "picologging", "rich (>=13.0.0)"]
 structlog = ["structlog"]
 
 [[package]]
@@ -2714,23 +2715,21 @@ version = "0.29.0"
 description = "Starlite config plugin with SAQ and SQLAlchemy boilerplate"
 category = "main"
 optional = false
-python-versions = ">=3.10,<4.0"
-files = [
-    {file = "starlite_saqlalchemy-0.29.0-py3-none-any.whl", hash = "sha256:2d649e3fdd3afe0e79aa6cc0b5bb9a1662f92ad6b2ef273f1d951e3436afde0d"},
-    {file = "starlite_saqlalchemy-0.29.0.tar.gz", hash = "sha256:4960cc96ab5f8b4ae49d3989e561d04ccfd351cfefb59f93ae7f099bbac54464"},
-]
+python-versions = "^3.10"
+files = []
+develop = false
 
 [package.dependencies]
 asyncpg = "*"
-hiredis = {version = "*", optional = true, markers = "extra == \"cache\" or extra == \"worker\" or extra == \"all\""}
+hiredis = {version = "*", optional = true}
 httpx = "*"
 msgspec = "*"
 pydantic = "*"
 python-dotenv = "*"
-redis = {version = "*", optional = true, markers = "extra == \"cache\" or extra == \"all\""}
-saq = {version = ">=0.9.1,<0.10.0", optional = true, markers = "extra == \"worker\" or extra == \"all\""}
-sqlalchemy = {version = "2.0.0rc3", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"all\""}
-starlite = ">=1.40.1,<2.0.0"
+redis = {version = "*", optional = true}
+saq = {version = "^0.9.1", optional = true}
+sqlalchemy = {version = "==2.0.0rc3", optional = true}
+starlite = "^1.40.1"
 structlog = ">=22.2.0"
 tenacity = "*"
 uvicorn = "*"
@@ -2742,6 +2741,12 @@ cache = ["hiredis", "redis"]
 sentry = ["sentry-sdk"]
 sqlalchemy = ["sqlalchemy (==2.0.0rc3)"]
 worker = ["hiredis", "saq (>=0.9.1,<0.10.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/cofin/starlite-saqlalchemy.git"
+reference = "saq-reconnect"
+resolved_reference = "a44d16303ef9e382e02ac53d3f7fcba7497d9560"
 
 [[package]]
 name = "structlog"
@@ -3259,4 +3264,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "773e3c572e753f2f93b3528f682b236688853b8eaa745e3aa7bf8e8ed5ac2cd9"
+content-hash = "abb06747ecf7de9469909571e38c1c5008b59c801d6fe59bca515a85627fbbec"
