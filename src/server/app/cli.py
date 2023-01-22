@@ -240,9 +240,9 @@ async def _signal_handler(scope: CancelScope) -> None:
     with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
         async for signum in signals:
             if signum == signal.SIGINT:
-                print("Ctrl+C pressed!")
+                logger.info("Shutdown request received.  Stopping application services.")
             else:
-                print("Terminated!")
+                logger.info("Terminating application services.")
 
             scope.cancel()
             return
