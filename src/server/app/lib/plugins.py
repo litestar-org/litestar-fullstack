@@ -16,5 +16,6 @@ saqlalchemy = SAQLAlchemyPlugin(
 )
 """Configures `starlite-saqlalchemy` plugin.
 
-Setting INIT_METHOD to `standalone` will start the Background Worker process in a separate process instead of with each HTTP worker.
+Setting INIT_METHOD to `standalone` will start the Background Worker
+process in a separate process instead of with each HTTP worker.
 """

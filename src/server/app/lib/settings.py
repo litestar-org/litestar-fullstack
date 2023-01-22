@@ -132,9 +132,11 @@ def get_settings() -> Settings:
     """
     try:
         server_settings.APP_LOC = "app.main:run_app"
-        """Override Application host to allow connectivity from external IPs."""
+        """Override Application host to allow connectivity from external
+        IPs."""
         server_settings.HOST = "0.0.0.0"  # noqa: S104
-        """Override Application host to allow connectivity from external IPs."""
+        """Override Application host to allow connectivity from external
+        IPs."""
         server_settings.RELOAD_DIRS = [str(BASE_DIR)]
         """Override Application reload dir."""
         app: AppSettings = app_settings

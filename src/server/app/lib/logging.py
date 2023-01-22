@@ -1,6 +1,7 @@
 """Log configuration.
 
-Adds `getLogger` function and re-exports `starlite-saqlalchemy` log config for convenience.
+Adds `getLogger` function and re-exports `starlite-saqlalchemy` log
+config for convenience.
 """
 from typing import TYPE_CHECKING
 

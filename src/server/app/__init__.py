@@ -19,4 +19,8 @@ rich_tracebacks(
     ),
     show_locals=False,
 )
-"""Pre-configured traceback handler.  Suppresses some of the frames by default to reduce the amount printed to the screen."""
+"""Pre-configured traceback handler.
+
+Suppresses some of the frames by default to reduce the amount printed to
+the screen.
+"""

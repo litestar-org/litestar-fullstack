@@ -14,7 +14,10 @@ if TYPE_CHECKING:
 
 @lru_cache
 def module_to_os_path(dotted_path: str = "app") -> Path:
-    """Return path to the base directory of the project or the module specified by `dotted_path`.
+    """Find Module to OS Path.
+
+    Return path to the base directory of the project or the module specified
+    by `dotted_path`.
 
     Ensures that pkgutil returns a valid source file loader.
     """

@@ -41,7 +41,6 @@ if threading.current_thread() is not threading.main_thread():
 
 def run_worker() -> None:
     """Run a worker."""
-
     async def _signal_handler(scope: CancelScope, worker_instance: Worker) -> None:
         with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
             async for _ in signals:
