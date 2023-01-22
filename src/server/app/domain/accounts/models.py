@@ -25,12 +25,12 @@ class User(orm.DatabaseModel):
         nullable=False,
         info=dto.field(validators=[check_email], pydantic_type=constr(to_lower=True)),
     )
-    name: Mapped[str] = mapped_column(nullable=True)
-    hashed_password: Mapped[str] = mapped_column(sa.String(length=255), nullable=True, info=dto.field("private"))
+    name: Mapped[str | None] = mapped_column(nullable=True)
+    hashed_password: Mapped[str | None] = mapped_column(sa.String(length=255), nullable=True, info=dto.field("private"))
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False, info=dto.field("read-only"))
     is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False, info=dto.field("read-only"))
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False, info=dto.field("read-only"))
-    verified_at: Mapped[date] = mapped_column(nullable=True, info=dto.field("read-only"))
+    verified_at: Mapped[date | None] = mapped_column(nullable=True, info=dto.field("read-only"))
     joined_at: Mapped[date] = mapped_column(default=date.today, info=dto.field("read-only"))
     # -----------
     # ORM Relationships
