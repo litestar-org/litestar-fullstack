@@ -89,6 +89,8 @@ def app(**_: dict[str, "Any"]) -> None:
 @click.pass_context
 def api_app(_: dict[str, Any]) -> None:
     """Application API Commands."""
+
+
 @api_app.command(name="run", help="Starts the application server")
 @click.option(
     "--host",
@@ -176,6 +178,8 @@ def run_app(
 @click.pass_context
 def management_app(_: dict[str, Any]) -> None:
     """System Administration Commands."""
+
+
 @management_app.command(
     name="create-database",
     help="Creates an empty postgres database and executes migrations",

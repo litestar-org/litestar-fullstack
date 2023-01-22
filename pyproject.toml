@@ -33,6 +33,7 @@ app = "app.main:run_cli"
 [tool.poetry.dependencies]
 alembic = "*"
 asyncpg = "*"
+greenlet = {version = ">=2.0.1", platform = "darwin"}
 hiredis = "*"
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
@@ -44,10 +45,9 @@ python = ">=3.10,<4.0"
 redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
-starlite = {version = ">=1.35", extras = ["standard", "jwt", 'cli', 'redis']}
-starlite-saqlalchemy = {git = "https://github.com/cofin/starlite-saqlalchemy.git", branch = "saq-reconnect", extras = ["cache","worker","sqlalchemy"]}
+starlite = {version = ">=1.50.1", extras = ["standard", "jwt", 'cli', 'redis']}
+starlite-saqlalchemy = {version = "*", extras = ["cache", "worker", "sqlalchemy"]}
 uvicorn = {extras = ["standard"], version = "*"}
-greenlet = {version = ">=2.0.1", platform = "darwin"}
 uvloop = "*"
 
 [tool.poetry.group.dev.dependencies]
@@ -113,12 +113,24 @@ line-length = 120
 exclude_lines = [
   'if TYPE_CHECKING:',
   'pragma: no cover',
-  "if __name__ == '__main__':",
+  "if __name__ == .__main__.:",
+  'def __repr__',
+  'if self\.debug:',
+  'if settings\.DEBUG',
+  'raise AssertionError',
+  'raise NotImplementedError',
+  'if 0:',
+  'class .*\bProtocol\):',
+  '@(abc\.)?abstractmethod',
 ]
 show_missing = true
 
+[tool.coverage.paths]
+source = ["src/server"]
+
 [tool.coverage.run]
-omit = ["tests/*"]
+branch = true
+omit = ["tests/*", "**/*/migrations/**/*.py", "src/server/app/cli.py"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=app -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
@@ -201,9 +213,9 @@ classmethod-decorators = [
 ]
 
 [tool.ruff.per-file-ignores]
+"*/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "__init__.py" = ['F401']
-"tests/*.py" = ['D103','S101','D104']
-"*/migrations/*.py" = ['D104','D103','D205','D212']
+"tests/*.py" = ['D103', 'S101', 'D104']
 
 [tool.ruff.isort]
-known-first-party = [ 'tests']
+known-first-party = ['tests']

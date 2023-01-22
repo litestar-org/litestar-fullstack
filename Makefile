@@ -45,9 +45,9 @@ lint:       ## check style with flake8
 	env PYTHONPATH=src/server poetry run pre-commit run --all-files
 
 test:       ## run tests quickly with the default Python
-	env PYTHONPATH=src/server poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/backend/unit
-	coverage xml
-	coverage html
+	env PYTHONPATH=src/server poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/server/unit
+	env PYTHONPATH=src/server poetry run coverage xml
+	env PYTHONPATH=src/server poetry run coverage html
 
 coverage:       ## check code coverage quickly with the default Python
 	env PYTHONPATH=src/server poetry run coverage run --source app -m pytest
