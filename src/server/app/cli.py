@@ -13,18 +13,21 @@
 # limitations under the License.
 import multiprocessing
 import platform
+import signal
 import sys
 from typing import Any
 
 import anyio
 import rich_click as click
 import uvicorn
+from anyio import create_task_group, open_signal_receiver
+from anyio.abc import CancelScope
 from click import echo
 from rich import get_console
 from rich.prompt import Confirm
 from starlite_saqlalchemy.constants import IS_LOCAL_ENVIRONMENT
 
-from app.lib import db, logging, settings
+from app.lib import db, logging, settings, worker
 
 __all__ = ["app"]
 
@@ -44,6 +47,41 @@ console = get_console()
 """Pre-configured CLI Console."""
 
 logger = logging.getLogger("app")
+
+
+async def app_launcher() -> None:
+    """Wrap the uvicorn process with anyio signal handlers."""
+
+    async def _signal_handler(scope: CancelScope) -> None:
+        """Signal Handler."""
+        with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
+            async for signum in signals:
+                if signum == signal.SIGINT:
+                    print("Ctrl+C pressed!")
+                else:
+                    print("Terminated!")
+
+                scope.cancel()
+                return
+
+    async with create_task_group() as tg:
+        tg.start_soon(_signal_handler, tg.cancel_scope)
+
+        uvicorn_config = uvicorn.Config(
+            app=settings.server.APP_LOC,
+            factory=settings.server.APP_LOC_IS_FACTORY,
+            host=settings.server.HOST,
+            port=settings.server.PORT,
+            loop="none",
+            reload=bool(settings.server.RELOAD),
+            reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
+            timeout_keep_alive=settings.server.KEEPALIVE,
+            lifespan="auto",
+            workers=settings.server.HTTP_WORKERS,
+        )
+
+        server = uvicorn.Server(config=uvicorn_config)
+        await server.serve()
 
 
 @click.group(help="Starlite Reference Application")
@@ -88,7 +126,7 @@ def api_app(_: dict[str, Any]) -> None:
     "--http-workers",
     help="The number of HTTP worker processes for handling requests.",
     type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=2,
+    default=None,
     required=False,
     show_default=True,
 )
@@ -96,14 +134,19 @@ def api_app(_: dict[str, Any]) -> None:
     "--background-workers",
     help="The number of worker processes for handling background jobs.",
     type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=1,
+    default=None,
     required=False,
     show_default=True,
 )
 @click.option("-r", "--reload", help="Enable reload", is_flag=True, default=False, type=bool)
 @click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
 def run_app(
-    host: str, port: int | None, http_workers: int, background_workers: int, reload: bool | None, verbose: bool | None
+    host: str,
+    port: int | None,
+    http_workers: int | None,
+    background_workers: int | None,
+    reload: bool | None,
+    verbose: bool | None,
 ) -> None:
     """Run the API server."""
     logging.config.configure()
@@ -116,21 +159,26 @@ def run_app(
     settings.worker.BACKGROUND_WORKERS = background_workers or settings.worker.BACKGROUND_WORKERS
     settings.log.LEVEL = 10 if verbose else settings.log.LEVEL
     logger.info("starting application.")
-    uvicorn_config = uvicorn.Config(
-        app=settings.server.APP_LOC,
-        factory=settings.server.APP_LOC_IS_FACTORY,
-        host=settings.server.HOST,
-        port=settings.server.PORT,
-        loop="none",
-        reload=settings.server.RELOAD,
-        reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
-        timeout_keep_alive=settings.server.KEEPALIVE,
-        lifespan="auto",
-        workers=settings.server.HTTP_WORKERS,
-    )
 
-    server = uvicorn.Server(config=uvicorn_config)
-    anyio.run(server.serve, backend="asyncio", backend_options={"use_uvloop": True})
+    workers: list[multiprocessing.Process] = []
+    try:
+        if settings.worker.INIT_METHOD == "standalone":
+            for i in range(settings.worker.BACKGROUND_WORKERS):
+                logger.info("Launching worker process #%s", i + 1)
+                process = multiprocessing.Process(target=worker.run_worker)
+                process.start()
+                workers.append(process)
+        anyio.run(app_launcher, backend="asyncio", backend_options={"use_uvloop": True})
+    except KeyboardInterrupt:
+        for w in workers:
+            if w.is_alive():
+                w.kill()
+    finally:
+        for w in workers:
+            if w.is_alive():
+                w.join()
+        logger.info("⏏️  Shutdown complete")
+        sys.exit(4)
 
 
 # Management App
