@@ -78,50 +78,11 @@ repos:
     hooks:
       - id: docformatter
         args: [--in-place]
-  - repo: https://github.com/johnfraney/flake8-markdown
-    rev: v0.4.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    # Ruff version.
+    rev: "v0.0.191"
     hooks:
-      - id: flake8-markdown
-  - repo: https://github.com/dosisod/refurb
-    rev: v1.7.0
-    hooks:
-      - id: refurb
-        args: [--ignore, "120", --ignore, "128"]
-        additional_dependencies:
-          [
-            orjson,
-            picologging,
-            aiosql,
-            duckdb,
-            fsspec,
-            jinja2,
-            hiredis,
-            passlib,
-            rich,
-            pandas,
-            packaging,
-            google-re2,
-            google-cloud-bigquery,
-            pydantic,
-            pydantic_factories,
-            pydantic_openapi_schema,
-            git+https://github.com/sqlalchemy/sqlalchemy,
-            starlite_multipart,
-            structlog,
-            aiosmtplib,
-            alembic,
-            asyncpg,
-            asyncpg-stubs,
-            httpx,
-            pytest,
-            pytest-docker,
-            saq,
-            starlite,
-            starlite-jwt,
-            types-redis,
-            uvicorn,
-          ]
-
+      - id: ruff
   - repo: https://github.com/pycqa/pylint
     rev: "v2.15.5"
     hooks:
@@ -130,20 +91,13 @@ repos:
         args: ["--unsafe-load-any-extension=y"]
         additional_dependencies:
           [
-            orjson,
             picologging,
             pydantic,
-            aiosql,
-            duckdb,
-            fsspec,
             jinja2,
             hiredis,
             passlib,
             rich,
-            pandas,
             packaging,
-            google-re2,
-            google-cloud-bigquery,
             pydantic_factories,
             pydantic_openapi_schema,
             git+https://github.com/sqlalchemy/sqlalchemy,
@@ -158,49 +112,12 @@ repos:
             pytest-docker,
             saq,
             starlite,
-            starlite-jwt,
+            types-freezegun,
+            types-python-jose,
+            types-click,
             types-redis,
-            uvicorn,
-          ]
-
-  - repo: https://github.com/pycqa/pylint
-    rev: "v2.15.5"
-    hooks:
-      - id: pylint
-        exclude: "test_*"
-        args: ["--unsafe-load-any-extension=y"]
-        additional_dependencies:
-          [
-            orjson,
-            picologging,
-            pydantic,
-            aiosql,
-            duckdb,
-            fsspec,
-            jinja2,
-            hiredis,
-            passlib,
-            rich,
-            pandas,
-            packaging,
-            google-re2,
-            google-cloud-bigquery,
-            pydantic_factories,
-            pydantic_openapi_schema,
-            git+https://github.com/sqlalchemy/sqlalchemy,
-            starlite_multipart,
-            structlog,
-            aiosmtplib,
-            alembic,
-            asyncpg,
-            asyncpg-stubs,
-            httpx,
-            pytest,
-            pytest-docker,
-            saq,
-            starlite,
-            starlite-jwt,
-            types-redis,
+            types-passlib,
+            types-click,
             uvicorn,
           ]
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -209,42 +126,32 @@ repos:
       - id: mypy
         additional_dependencies:
           [
-            orjson,
             picologging,
-            aiosql,
-            duckdb,
-            fsspec,
+            pydantic,
             jinja2,
             hiredis,
             passlib,
             rich,
-            pandas,
             packaging,
-            google-re2,
-            google-cloud-bigquery,
-            types-PyYAML,
-            openapi_schema_pydantic,
-            pydantic,
             pydantic_factories,
+            pydantic_openapi_schema,
+            git+https://github.com/sqlalchemy/sqlalchemy,
+            starlite_multipart,
+            structlog,
             aiosmtplib,
             alembic,
             asyncpg,
             asyncpg-stubs,
-            git+https://github.com/sqlalchemy/sqlalchemy,
             httpx,
             pytest,
             pytest-docker,
             saq,
-            sentry-sdk,
             starlite,
-            starlite-jwt,
-            types-redis,
-            uvicorn,
             types-freezegun,
             types-python-jose,
-            types-redis,
             types-click,
             types-redis,
             types-passlib,
             types-click,
+            uvicorn,
           ]
