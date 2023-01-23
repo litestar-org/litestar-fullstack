@@ -41,6 +41,7 @@ if threading.current_thread() is not threading.main_thread():
 
 def run_worker() -> None:
     """Run a worker."""
+    logging.config.configure()
     anyio.run(_run_worker, backend="asyncio", backend_options={"use_uvloop": True})
 
 
