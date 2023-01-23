@@ -8,7 +8,7 @@ def check_email(email: str) -> str:
     """Validate an email."""
     if "@" not in email:
         raise ValueError("Invalid email!")
-    return email
+    return email.lower()
 
 
 def slugify(value: str, allow_unicode: bool = False, separator: str | None = None) -> str:
