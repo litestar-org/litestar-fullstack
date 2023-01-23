@@ -17,10 +17,10 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
 
     Args:
         connection (ASGIConnection): HTTP Request
-        _ (BaseRouteHandler): _description_
+        _ (BaseRouteHandler): Route handler
 
     Raises:
-        NotAuthorizedException: _description_
+        NotAuthorizedException: Not authorized exception
 
     Returns:
         None: No Return

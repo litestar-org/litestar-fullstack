@@ -68,5 +68,8 @@
   "ruff.importStrategy": "fromEnvironment",
   "pylint.importStrategy": "fromEnvironment",
   "black-formatter.importStrategy": "fromEnvironment",
-  "ruff.fixAll": true
+  "ruff.fixAll": true,
+  "[toml]": {
+    "editor.defaultFormatter": "be5invis.toml"
+  }
 }
