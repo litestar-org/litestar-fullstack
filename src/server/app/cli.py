@@ -1,4 +1,6 @@
+import binascii
 import multiprocessing
+import os
 import platform
 import signal
 import sys
@@ -157,6 +159,21 @@ def run_app(
 @click.pass_context
 def management_app(_: dict[str, Any]) -> None:
     """System Administration Commands."""
+
+
+@management_app.command(name="generate-random-key")
+@click.option(
+    "--length",
+    "-l",
+    help="Length of random key to generate",
+    type=click.INT,
+    default=32,
+    required=False,
+    show_default=False,
+)
+def generate_random_key(length: int) -> None:
+    """Admin helper to generate random character string."""
+    console.print(f"KEY: {binascii.hexlify(os.urandom(length)).decode()}")
 
 
 @management_app.command(
