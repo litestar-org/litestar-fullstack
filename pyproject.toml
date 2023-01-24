@@ -28,7 +28,7 @@ readme = "README.md"
 repository = "https://github.com/cofin/starlite-full-stack-example"
 version = "0.1.0"
 [tool.poetry.scripts]
-app = "app.main:run_cli"
+app = "app.__main__:run_cli"
 
 [tool.poetry.dependencies]
 alembic = "*"
@@ -46,9 +46,10 @@ redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
 starlite = {version = ">=1.50.1", extras = ["standard", "jwt", 'cli', 'redis']}
-starlite-saqlalchemy = {version = "*", extras = ["cache", "worker", "sqlalchemy"]}
+starlite-saqlalchemy = {git = "https://github.com/cofin/starlite-saqlalchemy.git", branch = "pagination-enhancements", extras = ["cache", "worker", "sqlalchemy"], develop = true}
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
+# starlite-saqlalchemy = {version = "*", extras = ["cache", "worker", "sqlalchemy"]}
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "*"}
