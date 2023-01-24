@@ -13,7 +13,7 @@ saqlalchemy = SAQLAlchemyPlugin(
         do_compression=True,
         do_logging=True,
         do_exception_handlers=True,
-        do_worker=True if settings.worker.INIT_METHOD == "in-process" else False,
+        do_worker=bool(settings.worker.INIT_METHOD == "in-process"),
     )
 )
 """Configures `starlite-saqlalchemy` plugin.
