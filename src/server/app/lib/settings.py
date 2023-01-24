@@ -100,7 +100,7 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def load_settings() -> Settings:
     """Load Settings file.
 
     As an example, I've commented out how you might go about injecting secrets into the environment for production.
@@ -165,7 +165,7 @@ def get_settings() -> Settings:
     return settings
 
 
-_settings = get_settings()
+_settings = load_settings()
 
 app = _settings.app
 api = _settings.api
