@@ -11,4 +11,4 @@ __all__ = ["run_app"]
 
 def run_app() -> Starlite:
     """Create ASGI application."""
-    return Starlite(route_handlers=[domain.urls.example_handler], on_app_init=[plugins.saqlalchemy])
+    return Starlite(route_handlers=[*domain.routes], on_app_init=[plugins.saqlalchemy])

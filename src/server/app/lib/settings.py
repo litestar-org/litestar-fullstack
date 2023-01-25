@@ -131,7 +131,7 @@ def load_settings() -> Settings:
         Settings: application settings
     """
     try:
-        server_settings.APP_LOC = "app.main:run_app"
+        server_settings.APP_LOC = "app.asgi:run_app"
         """Override Application host to allow connectivity from external
         IPs."""
         server_settings.HOST = "0.0.0.0"  # noqa: S104

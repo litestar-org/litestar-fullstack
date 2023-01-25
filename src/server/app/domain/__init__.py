@@ -1,4 +1,13 @@
 """Application Modules."""
-from . import accounts, security, teams, urls, web
+from __future__ import annotations
 
-__all__ = ["accounts", "teams", "web", "urls", "security"]
+from typing import TYPE_CHECKING
+
+from . import accounts, examples, security, teams, urls, web
+
+if TYPE_CHECKING:
+    from starlite.types import ControllerRouterHandler
+
+routes: list[ControllerRouterHandler] = [examples.controllers.example_handler]
+
+__all__ = ["accounts", "examples", "teams", "web", "urls", "security", "routes"]

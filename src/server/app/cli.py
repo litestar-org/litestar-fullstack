@@ -2,15 +2,11 @@ import binascii
 import multiprocessing
 import os
 import platform
-import signal
 import sys
 from typing import Any
 
-import anyio
 import rich_click as click
 import uvicorn
-from anyio import create_task_group, open_signal_receiver
-from anyio.abc import CancelScope
 from click import echo
 from rich import get_console
 from rich.prompt import Confirm
@@ -36,30 +32,6 @@ console = get_console()
 """Pre-configured CLI Console."""
 
 logger = logging.getLogger("app")
-
-
-async def app_launcher() -> None:
-    """Wrap the uvicorn process with anyio signal handlers."""
-    async with create_task_group() as tg:
-        tg.start_soon(_signal_handler, tg.cancel_scope)
-
-        uvicorn_config = uvicorn.Config(
-            app=settings.server.APP_LOC,
-            factory=settings.server.APP_LOC_IS_FACTORY,
-            host=settings.server.HOST,
-            port=settings.server.PORT,
-            loop="none",
-            reload=bool(settings.server.RELOAD),
-            reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
-            timeout_keep_alive=settings.server.KEEPALIVE,
-            log_config=None,
-            # access_log=False,
-            lifespan="off",
-            workers=settings.server.HTTP_WORKERS,
-        )
-
-        server = uvicorn.Server(config=uvicorn_config)
-        await server.serve()
 
 
 @click.group(help="Starlite Reference Application")
@@ -139,12 +111,26 @@ def run_app(
     logger.info("starting application.")
 
     try:
+
         if settings.worker.INIT_METHOD == "standalone":
-            for i in range(settings.worker.PROCESSES):
-                logger.info("Launching worker process #%s", i + 1)
+            for _i in range(settings.worker.PROCESSES):
                 process = multiprocessing.Process(target=worker.run_worker)
                 process.start()
-        anyio.run(app_launcher, backend="asyncio", backend_options={"use_uvloop": True})
+
+        uvicorn.run(
+            app=settings.server.APP_LOC,
+            factory=settings.server.APP_LOC_IS_FACTORY,
+            host=settings.server.HOST,
+            port=settings.server.PORT,
+            loop="uvloop",
+            reload=bool(settings.server.RELOAD),
+            reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
+            timeout_keep_alive=settings.server.KEEPALIVE,
+            log_config=None,
+            # access_log=False,
+            lifespan="off",
+            workers=settings.server.HTTP_WORKERS,
+        )
     finally:
         logger.info("⏏️  Shutdown complete")
 
@@ -250,16 +236,3 @@ def show_database_revision() -> None:
 
 app.add_command(management_app, name="manage")
 app.add_command(api_app, name="api")
-
-
-async def _signal_handler(scope: CancelScope) -> None:
-    """Signal Handler."""
-    with open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
-        async for signum in signals:
-            if signum == signal.SIGINT:
-                logger.info("Shutdown request received.  Stopping application services.")
-            else:
-                logger.info("Terminating application services.")
-
-            scope.cancel()
-            return
