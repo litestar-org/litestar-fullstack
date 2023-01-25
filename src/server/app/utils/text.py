@@ -1,7 +1,7 @@
 import re
 import unicodedata
 
-__all__ = ["check_email"]
+__all__ = ["check_email", "slugify"]
 
 
 def check_email(email: str) -> str:
@@ -35,3 +35,15 @@ def slugify(value: str, allow_unicode: bool = False, separator: str | None = Non
     if separator is not None:
         return re.sub(r"[-\s]+", "-", value).strip("-_").replace("-", separator)
     return re.sub(r"[-\s]+", "-", value).strip("-_")
+
+
+def camel_case(string: str) -> str:
+    """Convert a string to camel case.
+
+    Args:
+        string (str): The string to convert
+
+    Returns:
+        str: The string converted to camel case
+    """
+    return "".join(word if index == 0 else word.capitalize() for index, word in enumerate(string.split("_")))
