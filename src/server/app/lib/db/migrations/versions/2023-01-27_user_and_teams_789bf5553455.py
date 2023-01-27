@@ -1,8 +1,8 @@
-"""teams
+"""user and teams
 
-Revision ID: 7fe6dee3ca59
-Revises: 3509c01a5e01
-Create Date: 2023-01-22 17:50:09.447771
+Revision ID: 789bf5553455
+Revises: 
+Create Date: 2023-01-27 10:23:56.744320
 
 """
 import sqlalchemy as sa
@@ -11,8 +11,8 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = '7fe6dee3ca59'
-down_revision = '3509c01a5e01'
+revision = '789bf5553455'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -27,6 +27,20 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', name=op.f('pk_team'))
     )
     op.create_index(op.f('ix_team_name'), 'team', ['name'], unique=False)
+    op.create_table('user_account',
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('hashed_password', sa.String(length=255), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('is_verified', sa.Boolean(), nullable=False),
+    sa.Column('verified_at', sa.Date(), nullable=True),
+    sa.Column('joined_at', sa.Date(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_user_account')),
+    comment='User accounts for application access'
+    )
+    op.create_index(op.f('ix_user_account_email'), 'user_account', ['email'], unique=True)
     op.create_table('team_invitation',
     sa.Column('team_id', sa.UUID(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
@@ -59,6 +73,8 @@ def downgrade():
     op.drop_index(op.f('ix_team_member_role'), table_name='team_member')
     op.drop_table('team_member')
     op.drop_table('team_invitation')
+    op.drop_index(op.f('ix_user_account_email'), table_name='user_account')
+    op.drop_table('user_account')
     op.drop_index(op.f('ix_team_name'), table_name='team')
     op.drop_table('team')
     # ### end Alembic commands ###
