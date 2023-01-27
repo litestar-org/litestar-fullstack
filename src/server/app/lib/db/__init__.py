@@ -34,7 +34,4 @@ async def session() -> AsyncIterator[AsyncSession]:
         config.session_class: _description_
     """
     async with async_session_factory() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+        yield session
