@@ -8,8 +8,7 @@ from starlite.contrib.jwt import OAuth2Login
 
 from app.domain import security, urls
 from app.domain.teams.models import TeamMember
-from app.lib import logging
-from app.lib.db import orm
+from app.lib import logging, orm
 
 from . import guards, schemas
 from .models import User

@@ -8,8 +8,7 @@ import sqlalchemy as sa
 from pydantic import constr
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.lib import dto
-from app.lib.db import orm
+from app.lib import dto, orm
 from app.utils.text import check_email
 
 if TYPE_CHECKING:

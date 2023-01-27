@@ -7,8 +7,7 @@ from pydantic import constr
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.teams.models import TeamMember
-from app.lib import dto
-from app.lib.db import orm
+from app.lib import dto, orm
 from app.utils.text import check_email
 
 __all__ = ["User"]
