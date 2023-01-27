@@ -75,8 +75,8 @@ def api_app(_: dict[str, Any]) -> None:
 @click.option(
     "--http-workers",
     help="The number of HTTP worker processes for handling requests.",
-    type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=None,
+    type=click.IntRange(min=1, max=multiprocessing.cpu_count() + 1),
+    default=multiprocessing.cpu_count() + 1,
     required=False,
     show_default=True,
 )

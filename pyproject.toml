@@ -45,12 +45,13 @@ python = ">=3.10,<4.0"
 redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 sqlalchemy = {version = ">=1.4.42", allow-prereleases = true}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["standard", "jwt", 'cli', 'redis']}
-starlite-saqlalchemy = {git = "https://github.com/cofin/starlite-saqlalchemy.git", branch = "pagination-enhancements", extras = ["cache", "worker", "sqlalchemy"], develop = true}
+starlite = {version = ">=1.50.1", extras = ["standard", "jwt", 'cli', 'redis']}
+starlite-saqlalchemy = {git = "https://github.com/cofin/starlite-saqlalchemy.git", branch = "custom", extras = ["cache", "worker", "sqlalchemy", "structlog"], develop = true}
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
+
 # starlite-saqlalchemy = {version = "*", extras = ["cache", "worker", "sqlalchemy"]}
-# starlite = {version = ">=1.50.1", extras = ["standard", "jwt", 'cli', 'redis']}
+structlog = "^22.3.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "*"}

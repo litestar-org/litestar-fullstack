@@ -1,18 +1,20 @@
 from __future__ import annotations
 
+import binascii
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Final, Literal
 
-from pydantic import BaseSettings, ValidationError
+from pydantic import BaseSettings, SecretBytes, ValidationError, validator
 from starlite_saqlalchemy.settings import (
     APISettings,
-    AppSettings,
     HTTPClientSettings,
     LogSettings,
     OpenAPISettings,
     RedisSettings,
 )
+from starlite_saqlalchemy.settings import AppSettings as _AppSettings
 from starlite_saqlalchemy.settings import DatabaseSettings as _DatabaseSettings
 from starlite_saqlalchemy.settings import ServerSettings as _ServerSettings
 from starlite_saqlalchemy.settings import WorkerSettings as _WorkerSettings
@@ -58,6 +60,39 @@ class ServerSettings(_ServerSettings):
 
     HTTP_WORKERS: int | None = None
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
+
+
+class AppSettings(_AppSettings):
+    """App Settings."""
+
+    SECRET_KEY: SecretBytes
+    """Number of HTTP Worker processes to be spawned by Uvicorn."""
+    JWT_ENCRYPTION_ALGORITHM: str = "HS256"
+    BACKEND_CORS_ORIGINS: list[str] = ["*"]
+
+    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    def assemble_cors_origins(
+        cls,  # noqa: N805
+        value: str | list[str],
+    ) -> list[str] | str:
+        """Parse a list of origins."""
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str) and not value.startswith("["):
+            return [host.strip() for host in value.split(",")]
+        if isinstance(value, str) and value.startswith("[") and value.endswith("]"):
+            return list(value)
+        raise ValueError(value)
+
+    @validator("SECRET_KEY", pre=True, always=True)
+    def generate_secret_key(
+        cls,  # noqa: N805
+        value: SecretBytes | None,
+    ) -> SecretBytes:
+        """Generate a secret key."""
+        if value is None:
+            return SecretBytes(binascii.hexlify(os.urandom(32)))
+        return value
 
 
 class WorkerSettings(_WorkerSettings):
@@ -139,7 +174,7 @@ def load_settings() -> Settings:
         IPs."""
         server_settings.RELOAD_DIRS = [str(BASE_DIR)]
         """Override Application reload dir."""
-        app: AppSettings = app_settings
+        app: AppSettings = AppSettings.parse_obj(app_settings.dict())
         api: APISettings = api_settings
         redis: RedisSettings = redis_settings
         db: DatabaseSettings = DatabaseSettings.parse_obj({})

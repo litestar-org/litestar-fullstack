@@ -1,22 +1,19 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any
 
 from starlite import ASGIConnection, NotAuthorizedException
-from starlite.contrib.jwt import Token
+from starlite.contrib.jwt import OAuth2PasswordBearerAuth, Token
 
+from app.domain import urls
+from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
-from app.lib import logging
-
-if TYPE_CHECKING:
-    from typing import Any
-
-    from app.domain.accounts.models import User
+from app.lib import logging, settings
 
 logger = logging.getLogger()
 
 
-__all__ = ["current_user_from_token"]
+__all__ = ["current_user_from_token", "auth"]
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any]) -> User:
@@ -41,3 +38,16 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     if user and user.is_active:
         return user
     raise NotAuthorizedException("Unable to authenticate token.")
+
+
+auth = OAuth2PasswordBearerAuth[User](
+    retrieve_user_handler=current_user_from_token,
+    token_secret=settings.app.SECRET_KEY.get_secret_value().decode(),
+    token_url=urls.ACCOUNT_LOGIN,
+    exclude=[
+        urls.OPENAPI_SCHEMA,
+        urls.SYSTEM_HEALTH,
+        urls.ACCOUNT_LOGIN,
+        urls.ACCOUNT_REGISTER,
+    ],
+)

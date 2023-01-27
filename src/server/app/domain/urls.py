@@ -1,7 +1,7 @@
 INDEX = "/"
 PUBLIC = "/public"
 OPENAPI_SCHEMA = "/schema"
-HEALTH = "/api/health"
+SYSTEM_HEALTH = "/api/health"
 
 ACCOUNT_LOGIN = "/api/access/login"
 ACCOUNT_REGISTER = "/api/access/signup"
