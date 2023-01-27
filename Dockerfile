@@ -7,8 +7,8 @@ ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
 RUN npm install -g npm@9.2.0
-# COPY package.json package-lock.json angular.json tsconfig.json LICENSE Makefile ./
-# RUN npm install
+COPY package.json package-lock.json postcss.config.js prettier.config.js tailwind.json vite.config.js tsconfig.json LICENSE Makefile ./
+RUN npm install
 # COPY src/ui ./src/ui
 # RUN npm run build
 
