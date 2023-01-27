@@ -3,7 +3,9 @@
 Adds `getLogger` function and re-exports `starlite-saqlalchemy` log
 config for convenience.
 """
-from typing import TYPE_CHECKING
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from starlite_saqlalchemy.log import config
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
 __all__ = ["getLogger", "config"]
 
 
-def getLogger(name: str | None = None) -> "Logger":  # noqa: N802
+def getLogger(name: str | None = None, **kwargs: Any) -> "Logger":  # noqa: N802
     """Return a configured logger for the given name.
 
     Args:
@@ -23,4 +25,4 @@ def getLogger(name: str | None = None) -> "Logger":  # noqa: N802
     Returns:
         Logger: A configured logger instance
     """
-    return structlog.getLogger(name)  # type: ignore
+    return structlog.getLogger(name, **kwargs)  # type: ignore
