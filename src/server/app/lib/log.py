@@ -8,12 +8,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 import structlog
-from starlite_saqlalchemy.log import config
+from starlite_saqlalchemy.log import config, configure
 
 if TYPE_CHECKING:
     from structlog import BoundLogger as Logger
 
-__all__ = ["getLogger", "config"]
+__all__ = ["getLogger", "config", "configure"]
 
 
 def getLogger(name: str | None = None, **kwargs: Any) -> Logger:  # noqa: N802
