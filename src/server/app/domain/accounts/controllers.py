@@ -8,13 +8,11 @@ from starlite.contrib.jwt import OAuth2Login
 
 from app.domain import security, urls
 from app.domain.teams.models import TeamMember
-from app.lib import logging, orm
+from app.lib import orm
 
 from . import guards, schemas
 from .models import User
 from .services import UserService
-
-logger = logging.getLogger()
 
 
 def provides_user_service(db_session: AsyncSession) -> UserService:

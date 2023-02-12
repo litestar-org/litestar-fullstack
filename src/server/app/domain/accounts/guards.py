@@ -2,11 +2,6 @@ from __future__ import annotations
 
 from starlite import ASGIConnection, BaseRouteHandler, NotAuthorizedException
 
-from app.lib import logging
-
-logger = logging.getLogger()
-
-
 __all__ = ["requires_superuser", "requires_active_user"]
 
 
