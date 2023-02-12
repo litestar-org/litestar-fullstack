@@ -19,7 +19,7 @@ from starlite_saqlalchemy.worker import (
     queue,
 )
 
-from . import logging
+from .log import getLogger
 
 __all__ = [
     "JobConfig",
@@ -33,7 +33,7 @@ __all__ = [
     "run_worker",
 ]
 
-logger = logging.getLogger()
+logger = getLogger()
 
 if threading.current_thread() is not threading.main_thread():
     atexit.unregister(_exit_function)
@@ -41,7 +41,7 @@ if threading.current_thread() is not threading.main_thread():
 
 def run_worker() -> None:
     """Run a worker."""
-    logging.config.configure()
+    log.config.configure()
     anyio.run(_run_worker, backend="asyncio", backend_options={"use_uvloop": True})
 
 
@@ -55,7 +55,6 @@ async def _signal_handler(scope: CancelScope, worker_instance: Worker) -> None:
 
 async def _run_worker() -> None:
     async with create_task_group() as tg:
-
         worker_kwargs: dict[str, Any] = {"functions": [(make_service_callback.__qualname__, make_service_callback)]}
         worker_kwargs["before_process"] = log.worker.before_process
         worker_kwargs["after_process"] = log.worker.after_process

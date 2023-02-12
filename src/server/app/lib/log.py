@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 __all__ = ["getLogger", "config"]
 
 
-def getLogger(name: str | None = None, **kwargs: Any) -> "Logger":  # noqa: N802
+def getLogger(name: str | None = None, **kwargs: Any) -> Logger:  # noqa: N802
     """Return a configured logger for the given name.
 
     Args:

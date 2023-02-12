@@ -4,11 +4,11 @@ from alembic.config import Config as AlembicConfig
 from sqlalchemy import Table
 from sqlalchemy.schema import DropTable
 
-from app.lib import logging, settings
+from app.lib import log, settings
 from app.lib.db import engine
 from app.lib.orm import DatabaseModel, meta
 
-logger = logging.getLogger()
+logger = log.getLogger()
 
 
 def create_database() -> None:
