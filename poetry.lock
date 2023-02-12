@@ -2764,7 +2764,7 @@ worker = ["hiredis", "saq (>=0.9.1,<0.10.0)"]
 type = "git"
 url = "https://github.com/cofin/starlite-saqlalchemy.git"
 reference = "custom"
-resolved_reference = "a7561b7a4236d43489bb02d55ddc1d33eb4b409b"
+resolved_reference = "9629afe7f7141cbd8405840f648462651cda8d75"
 
 [[package]]
 name = "structlog"

@@ -7,3 +7,5 @@ __all__ = ["UserRepository"]
 
 class UserRepository(db.SQLAlchemyRepository[User]):
     """User Repository."""
+
+    model_type = User

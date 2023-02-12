@@ -9,6 +9,7 @@ from app.lib import crypt
 from app.lib.service import RepositoryService
 
 from .models import User
+from .repositories import UserRepository
 
 if TYPE_CHECKING:
     pass
@@ -18,6 +19,8 @@ __all__ = ["UserService"]
 
 class UserService(RepositoryService[User]):
     """User Service."""
+
+    repository_type = UserRepository
 
     async def exists(self, username: str) -> bool:
         """Check if the user exist.
