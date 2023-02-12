@@ -159,7 +159,6 @@ dist-ssr
 *.sln
 *.sw?
 
-requirements.txt
 
 # temporary files
 tmp/
