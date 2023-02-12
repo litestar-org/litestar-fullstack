@@ -12,7 +12,7 @@ from rich import get_console
 from rich.prompt import Confirm
 from starlite_saqlalchemy.constants import IS_LOCAL_ENVIRONMENT
 
-from app.lib import db, logging, settings, worker
+from app.lib import db, log, settings, worker
 
 __all__ = ["app"]
 
@@ -31,13 +31,13 @@ click.rich_click.APPEND_METAVARS_HELP = True
 console = get_console()
 """Pre-configured CLI Console."""
 
-logger = logging.getLogger("app")
+logger = log.getLogger()
 
 
 @click.group(help="Starlite Reference Application")
 def app(**_: dict[str, "Any"]) -> None:
     """CLI application entrypoint."""
-    logging.config.configure()
+    log.config.configure()
     if platform.system() == "Darwin":
         multiprocessing.set_start_method("fork", force=True)
 
@@ -48,13 +48,13 @@ def app(**_: dict[str, "Any"]) -> None:
 #
 
 
-@click.group(name="api", invoke_without_command=False, help="API Commands")
+@click.group(name="run", invoke_without_command=False, help="Run application services.")
 @click.pass_context
-def api_app(_: dict[str, Any]) -> None:
-    """Application API Commands."""
+def run_app(_: dict[str, Any]) -> None:
+    """Launch Application Components."""
 
 
-@api_app.command(name="run", help="Starts the application server")
+@run_app.command(name="server", help="Starts the application server")
 @click.option(
     "--host",
     help="Host interface to listen on.  Use 0.0.0.0 for all available interfaces.",
@@ -81,41 +81,55 @@ def api_app(_: dict[str, Any]) -> None:
     show_default=True,
 )
 @click.option(
-    "--background-workers",
+    "--worker-processes",
     help="The number of worker processes for handling background jobs.",
     type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=None,
+    default=settings.worker.PROCESSES,
+    required=False,
+    show_default=True,
+)
+@click.option(
+    "--worker-concurrency",
+    help="The number of simultaneous jobs a worker process can execute.",
+    type=click.IntRange(min=1),
+    default=settings.worker.CONCURRENCY,
     required=False,
     show_default=True,
 )
 @click.option("-r", "--reload", help="Enable reload", is_flag=True, default=False, type=bool)
 @click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
-def run_app(
+@click.option("-d", "--debug", help="Enable debugging.", is_flag=True, default=False, type=bool)
+def run_server(  # noqa: PLR0913
     host: str,
     port: int | None,
     http_workers: int | None,
-    background_workers: int | None,
+    worker_processes: int | None,
+    worker_concurrency: int | None,
     reload: bool | None,
     verbose: bool | None,
+    debug: bool | None,
 ) -> None:
     """Run the API server."""
-    logging.config.configure()
+    log.config.configure()
     settings.server.HOST = host or settings.server.HOST
     settings.server.PORT = port or settings.server.PORT
     settings.server.RELOAD = (
         reload or settings.server.RELOAD if settings.server.RELOAD is not None else IS_LOCAL_ENVIRONMENT
     )
     settings.server.HTTP_WORKERS = http_workers or settings.server.HTTP_WORKERS
-    settings.worker.PROCESSES = background_workers or settings.worker.PROCESSES
-    settings.log.LEVEL = 10 if verbose else settings.log.LEVEL
+    settings.worker.PROCESSES = worker_processes or settings.worker.PROCESSES
+    settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
+    settings.app.DEBUG = debug or settings.app.DEBUG
+    settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
     logger.info("starting application.")
-
+    workers: list[multiprocessing.Process] = []
     try:
-
+        logger.info("starting Background worker processes.")
         if settings.worker.INIT_METHOD == "standalone":
             for _i in range(settings.worker.PROCESSES):
                 process = multiprocessing.Process(target=worker.run_worker)
                 process.start()
+        logger.info("Starting HTTP Server.")
 
         uvicorn.run(
             app=settings.server.APP_LOC,
@@ -129,10 +143,57 @@ def run_app(
             log_config=None,
             # access_log=False,
             lifespan="off",
-            workers=settings.server.HTTP_WORKERS,
+            workers=1 if bool(settings.server.RELOAD) else settings.server.HTTP_WORKERS,
         )
+    except Exception as e:
+        logger.error(e)
+
     finally:
+        for w in workers:
+            if w.is_alive():
+                w.kill()
         logger.info("⏏️  Shutdown complete")
+        sys.exit()
+
+
+@run_app.command(name="worker", help="Starts the background worker process")
+@click.option(
+    "--worker-processes",
+    help="The number of worker processes for handling background jobs.",
+    type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
+    default=settings.worker.PROCESSES,
+    required=False,
+    show_default=True,
+)
+@click.option(
+    "--worker-concurrency",
+    help="The number of simultaneous jobs a worker process can execute.",
+    type=click.IntRange(min=1),
+    default=settings.worker.CONCURRENCY,
+    required=False,
+    show_default=True,
+)
+@click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
+@click.option("-d", "--debug", help="Enable debugging.", is_flag=True, default=False, type=bool)
+def run_worker(
+    worker_processes: int | None,
+    worker_concurrency: int | None,
+    verbose: bool | None,
+    debug: bool | None,
+) -> None:
+    """Run the API server."""
+    log.config.configure()
+
+    settings.worker.PROCESSES = worker_processes or settings.worker.PROCESSES
+    settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
+    settings.app.DEBUG = debug or settings.app.DEBUG
+    settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
+    logger.info("starting Background worker processes.")
+    if settings.worker.PROCESSES > 1:
+        for _i in range(settings.worker.PROCESSES - 1):
+            process = multiprocessing.Process(target=worker.run_worker)
+            process.start()
+    worker.run_worker()
 
 
 # Management App
@@ -235,4 +296,4 @@ def show_database_revision() -> None:
 
 
 app.add_command(management_app, name="manage")
-app.add_command(api_app, name="api")
+app.add_command(run_app, name="run")
