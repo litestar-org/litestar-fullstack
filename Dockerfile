@@ -87,7 +87,7 @@ COPY --chown="app-user":"app-user" --from=build-image /workspace/app/.venv /work
 COPY --chown="app-user":"app-user" pyproject.toml README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
 COPY --chown="app-user":"app-user" docs ./docs/
 COPY --chown="app-user":"app-user" src /workspace/app/src
-# COPY --chown="app-user":"app-user" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/server/app/domain/web/public
+# COPY --chown="app-user":"app-user" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/app/domain/web/public
 USER "app-user"
 STOPSIGNAL SIGINT
 EXPOSE 8000

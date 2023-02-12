@@ -12,7 +12,7 @@ PYTHON_PACKAGES=$(shell if poetry --version > /dev/null; then poetry export -f r
 VERSION := $(shell grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
 FRONTEND_SRC_DIR=src/ui
 FRONTEND_BUILD_DIR=$(FRONTEND_SRC_DIR)/dist
-BACKEND_SRC_DIR=src/server
+BACKEND_SRC_DIR=src
 BACKEND_BUILD_DIR=dist
 
 .EXPORT_ALL_VARIABLES:
@@ -42,16 +42,16 @@ upgrade:       ## Upgrade all dependencies to the latest stable versions
 # lint & test #
 ###############
 lint:       ## check style with flake8
-	env PYTHONPATH=src/server poetry run pre-commit run --all-files
+	env PYTHONPATH=src poetry run pre-commit run --all-files
 
 test:       ## run tests quickly with the default Python
-	env PYTHONPATH=src/server poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/server/unit
-	env PYTHONPATH=src/server poetry run coverage xml
-	env PYTHONPATH=src/server poetry run coverage html
+	env PYTHONPATH=src poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/server/unit
+	env PYTHONPATH=src poetry run coverage xml
+	env PYTHONPATH=src poetry run coverage html
 
 coverage:       ## check code coverage quickly with the default Python
-	env PYTHONPATH=src/server poetry run coverage run --source app -m pytest
-	env PYTHONPATH=src/server poetry run coverage report -m
+	env PYTHONPATH=src poetry run coverage run --source app -m pytest
+	env PYTHONPATH=src poetry run coverage report -m
 
 
 ###############
@@ -84,20 +84,20 @@ runtime-only:	 ## Install the project in production mode.
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src poetry run alembic -c src/server/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src poetry run alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src/server .venv/bin/app manage upgrade-database
+	@env PYTHONPATH=src .venv/bin/app manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will wipe all migrations and recreate from an empty state."
-	@env PYTHONPATH=src/server poetry run app manage purge-database --no-prompt
-	rm -Rf src/server/app/lib/db/migrations/versions/*.py
+	@env PYTHONPATH=src poetry run app manage purge-database --no-prompt
+	rm -Rf src/app/lib/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Initial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src .venv/bin/alembic -c src/server/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src .venv/bin/alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean
 clean:       ## remove all build, testing, and static documentation files

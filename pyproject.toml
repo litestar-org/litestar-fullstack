@@ -22,7 +22,7 @@ license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
 name = "app"
 packages = [
-  {include = "app", from = "src/server"},
+  {include = "app", from = "src"},
 ]
 readme = "README.md"
 repository = "https://github.com/cofin/starlite-full-stack-example"
@@ -128,11 +128,11 @@ exclude_lines = [
 show_missing = true
 
 [tool.coverage.paths]
-source = ["src/server"]
+source = ["src"]
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/*/migrations/**/*.py", "src/server/app/cli.py"]
+omit = ["tests/*", "**/*/migrations/**/*.py", "src/app/cli.py"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=app -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
@@ -220,7 +220,7 @@ select = [
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Assume Python 3.11.
-src = ["src/server", "tests/"]
+src = ["src", "tests/"]
 target-version = "py311"
 
 [tool.ruff.mccabe]
