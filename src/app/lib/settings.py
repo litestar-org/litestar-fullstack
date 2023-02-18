@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Final, Literal
 
-from pydantic import BaseSettings, SecretBytes, ValidationError, validator
+from pydantic import SecretBytes, ValidationError, validator
 from starlite_saqlalchemy.settings import (
     APISettings,
     HTTPClientSettings,
@@ -98,9 +98,14 @@ class AppSettings(_AppSettings):
 class WorkerSettings(_WorkerSettings):
     """Worker Settings."""
 
-    INIT_METHOD: Literal["in-process", "standalone"] = "in-process"
-    PROCESSES: int = 1
     CONCURRENCY: int = 10
+    """The number of concurrent jobs allowed to execute per worker.
+
+    Default is set to 10.
+    """
+    INIT_METHOD: Literal["integrated", "standalone"] = "integrated"
+    WEB_ENABLED: bool = False
+    WEB_PORT: int = 8081
 
 
 class DatabaseSettings(_DatabaseSettings):
@@ -117,25 +122,20 @@ class DatabaseSettings(_DatabaseSettings):
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
 
 
-class Settings(BaseSettings):
-    """All Settings.
-
-    All settings are nested here
-    """
-
-    api: APISettings
-    app: AppSettings
-    redis: RedisSettings
-    db: DatabaseSettings
-    openapi: OpenAPISettings
-    server: ServerSettings
-    log: LogSettings
-    http_client: HTTPClientSettings
-    worker: WorkerSettings
-
-
 @lru_cache
-def load_settings() -> Settings:
+def load_settings() -> (
+    tuple[
+        AppSettings,
+        APISettings,
+        RedisSettings,
+        DatabaseSettings,
+        OpenAPISettings,
+        ServerSettings,
+        LogSettings,
+        HTTPClientSettings,
+        WorkerSettings,
+    ]
+):
     """Load Settings file.
 
     As an example, I've commented out how you might go about injecting secrets into the environment for production.
@@ -183,31 +183,31 @@ def load_settings() -> Settings:
         log: LogSettings = log_settings
         worker: WorkerSettings = WorkerSettings.parse_obj(worker_settings.dict())
         http_client: HTTPClientSettings = http_client_settings
-        settings = Settings(
-            app=app,
-            api=api,
-            redis=redis,
-            db=db,
-            openapi=openapi,
-            server=server,
-            log=log,
-            worker=worker,
-            http_client=http_client,
-        )
+
     except ValidationError as e:
         print("Could not load settings. %s", e)
         raise e from e
-    return settings
+    return (
+        app,
+        api,
+        redis,
+        db,
+        openapi,
+        server,
+        log,
+        http_client,
+        worker,
+    )
 
 
-_settings = load_settings()
-
-app = _settings.app
-api = _settings.api
-db = _settings.db
-openapi = _settings.openapi
-redis = _settings.redis
-server = _settings.server
-log = _settings.log
-worker = _settings.worker
-http_client = _settings.http_client
+(
+    app,
+    api,
+    redis,
+    db,
+    openapi,
+    server,
+    log,
+    http_client,
+    worker,
+) = load_settings()

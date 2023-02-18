@@ -81,14 +81,6 @@ def run_app(_: dict[str, Any]) -> None:
     show_default=True,
 )
 @click.option(
-    "--worker-processes",
-    help="The number of worker processes for handling background jobs.",
-    type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=settings.worker.PROCESSES,
-    required=False,
-    show_default=True,
-)
-@click.option(
     "--worker-concurrency",
     help="The number of simultaneous jobs a worker process can execute.",
     type=click.IntRange(min=1),
@@ -103,7 +95,6 @@ def run_server(  # noqa: PLR0913
     host: str,
     port: int | None,
     http_workers: int | None,
-    worker_processes: int | None,
     worker_concurrency: int | None,
     reload: bool | None,
     verbose: bool | None,
@@ -117,18 +108,14 @@ def run_server(  # noqa: PLR0913
         reload or settings.server.RELOAD if settings.server.RELOAD is not None else IS_LOCAL_ENVIRONMENT
     )
     settings.server.HTTP_WORKERS = http_workers or settings.server.HTTP_WORKERS
-    settings.worker.PROCESSES = worker_processes or settings.worker.PROCESSES
     settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
     settings.app.DEBUG = debug or settings.app.DEBUG
     settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
     logger.info("starting application.")
-    workers: list[multiprocessing.Process] = []
     try:
         logger.info("starting Background worker processes.")
-        if settings.worker.INIT_METHOD == "standalone":
-            for _i in range(settings.worker.PROCESSES):
-                process = multiprocessing.Process(target=worker.run_worker)
-                process.start()
+        worker_process = multiprocessing.Process(target=worker.run_worker)
+        worker_process.start()
         logger.info("Starting HTTP Server.")
 
         uvicorn.run(
@@ -149,22 +136,12 @@ def run_server(  # noqa: PLR0913
         logger.error(e)
 
     finally:
-        for w in workers:
-            if w.is_alive():
-                w.kill()
+        if worker_process.is_alive():
+            worker_process.kill()
         logger.info("⏏️  Shutdown complete")
         sys.exit()
 
 
-@run_app.command(name="worker", help="Starts the background worker process")
-@click.option(
-    "--worker-processes",
-    help="The number of worker processes for handling background jobs.",
-    type=click.IntRange(min=1, max=multiprocessing.cpu_count()),
-    default=settings.worker.PROCESSES,
-    required=False,
-    show_default=True,
-)
 @click.option(
     "--worker-concurrency",
     help="The number of simultaneous jobs a worker process can execute.",
@@ -176,30 +153,17 @@ def run_server(  # noqa: PLR0913
 @click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
 @click.option("-d", "--debug", help="Enable debugging.", is_flag=True, default=False, type=bool)
 def run_worker(
-    worker_processes: int | None,
     worker_concurrency: int | None,
     verbose: bool | None,
     debug: bool | None,
 ) -> None:
     """Run the API server."""
     log.config.configure()
-
-    settings.worker.PROCESSES = worker_processes or settings.worker.PROCESSES
     settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
     settings.app.DEBUG = debug or settings.app.DEBUG
     settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
     logger.info("starting Background worker processes.")
-    if settings.worker.PROCESSES > 1:
-        for _i in range(settings.worker.PROCESSES - 1):
-            process = multiprocessing.Process(target=worker.run_worker)
-            process.start()
     worker.run_worker()
-
-
-# Management App
-#
-#
-#
 
 
 @click.group(name="manage", invoke_without_command=False, help="Application Management Commands")

@@ -32,14 +32,17 @@
   "python.linting.flake8Enabled": false,
   "python.linting.flake8Args": ["--max-line-length=120"],
   "python.linting.pylintEnabled": true,
-  "python.linting.pylintArgs": ["--load-plugins pylint_pydantic", "--rcfile=pylintrc"],
+  "python.linting.pylintArgs": [
+    "--load-plugins pylint_pydantic",
+    "--rcfile=pylintrc"
+  ],
   "python.linting.enabled": true,
   "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.envFile": "${workspaceFolder}/.env",
   "python.formatting.provider": "none",
-  "python.analysis.extraPaths": ["${workspaceFolder}/src/server"],
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
   "[python]": {
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,
