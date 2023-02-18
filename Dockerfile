@@ -6,7 +6,7 @@ FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
-RUN npm install -g npm@9.2.0
+RUN npm install -g npm@9.5.0
 COPY package.json package-lock.json postcss.config.js prettier.config.js tailwind.json vite.config.js tsconfig.json LICENSE Makefile ./
 RUN npm install
 # COPY src/ui ./src/ui
@@ -20,7 +20,10 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random
+    PYTHONHASHSEED=random \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+WORKDIR /workspace/app
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get autoremove -y \
@@ -29,7 +32,10 @@ RUN apt-get update \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN pip install --upgrade pip wheel setuptools cython virtualenv
+RUN pip install --upgrade pip wheel setuptools cython virtualenv poetry
+RUN addgroup --system --gid 1001 nonroot \
+    && adduser --no-create-home --system --uid 1001 nonroot \
+    && chown -R nonroot:nonroot /workspace
 
 FROM python-base AS build-image
 ARG POETRY_INSTALL_ARGS="--only main"
@@ -42,9 +48,9 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VERSION='1.3.2' \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
-    PATH="/workspace/app/.venv/bin:$PATH"
+    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 
-RUN apt-get install -y --no-install-recommends curl git build-essential g++ unzip ca-certificates libaio1 libaio-dev ninja-build make gnupg cmake gcc libssl-dev wget zip maven unixodbc-dev libssl-dev libcurl4-gnutls-dev libexpat1-dev gettext checkinstall libffi-dev libz-dev \
+RUN apt-get install -y --no-install-recommends build-essential \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /root/.cache \
@@ -52,16 +58,13 @@ RUN apt-get install -y --no-install-recommends curl git build-essential g++ unzi
     && rm -rf /var/cache/apt/* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
-# install poetry
-RUN curl -sSL https://install.python-poetry.org | python - \
-    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
-
 # install application
 WORKDIR /workspace/app
-RUN python -m venv --copies /workspace/app/.venv
+
 COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
+RUN python -m venv --copies /workspace/app/.venv
 RUN . /workspace/app/.venv/bin/activate \
-    && pip install -U pip cython setuptools wheel \
+    && pip install -U cython \
     && poetry install $POETRY_INSTALL_ARGS --no-root
 COPY docs ./docs/
 COPY tests ./tests/
@@ -73,10 +76,45 @@ EXPOSE 8000
 
 
 ## Beginning of run image
-FROM python:${PYTHON_BUILDER_IMAGE} as run-image
+FROM ${PYTHON_RUN_IMAGE} as run-image
 ARG ENV_SECRETS="runtime-secrets"
+ARG CHIPSET_ARCH=x86_64-linux-gnu
 ENV PATH="/workspace/app/.venv/bin:$PATH" \
-    ENV_SECRETS="${ENV_SECRETS}"
+    ENV_SECRETS="${ENV_SECRETS}" \
+    CHIPSET_ARCH="${CHIPSET_ARCH}"
+
+## ------------------------- copy python itself from builder -------------------------- ##
+
+# this carries more risk than installing it fully, but makes the image a lot smaller
+COPY --from=python-base /usr/local/lib/ /usr/local/lib/
+COPY --from=python-base /usr/local/bin/python /usr/local/bin/python
+COPY --from=python-base /etc/ld.so.cache /etc/ld.so.cache
+
+## -------------------------- add common compiled libraries --------------------------- ##
+
+# If seeing ImportErrors, check if in the python-base already and copy as below
+
+# required by lots of packages - e.g. six, numpy, wsgi
+COPY --from=python-base /lib/${CHIPSET_ARCH}/libz.so.1 /lib/${CHIPSET_ARCH}/
+# required by google-cloud/grpcio
+COPY --from=python-base /usr/lib/${CHIPSET_ARCH}/libffi* /usr/lib/${CHIPSET_ARCH}/
+COPY --from=python-base /lib/${CHIPSET_ARCH}/libexpat* /lib/${CHIPSET_ARCH}/
+
+## -------------------------------- non-root user setup ------------------------------- ##
+
+COPY --from=python-base /bin/echo /bin/echo
+COPY --from=python-base /bin/rm /bin/rm
+COPY --from=python-base /bin/sh /bin/sh
+
+RUN echo "nonroot:x:1000:nonroot" >> /etc/group
+RUN echo "nonroot:x:1001:" >> /etc/group
+RUN echo "nonroot:x:1000:1001::/workspace/app:" >> /etc/passwd
+
+# quick validation that python still works whilst we have a shell
+RUN python --version
+
+RUN rm /bin/sh /bin/echo /bin/rm
+
 # switch to a non-root user for security
 
 WORKDIR /workspace/app
@@ -87,6 +125,18 @@ WORKDIR /workspace/app
 COPY --from=build-image /workspace/app  /workspace/app
 # COPY --chown="nonroot":"nonroot" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/app/domain/web/public
 # USER "nonroot"
+
+## --------------------------- standardize execution env ----------------------------- ##
+USER nonroot
+ENV PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 STOPSIGNAL SIGINT
 EXPOSE 8000/tcp
 ENTRYPOINT [ "app" ]
