@@ -1,6 +1,6 @@
 ARG PYTHON_BUILDER_IMAGE=3.11-slim
 ARG NODE_BUILDER_IMAGE=18-slim
-
+ARG PYTHON_RUN_IMAGE=gcr.io/distroless/cc
 ## Build frontend
 FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
@@ -58,14 +58,15 @@ RUN curl -sSL https://install.python-poetry.org | python - \
 
 # install application
 WORKDIR /workspace/app
+RUN python -m venv --copies /workspace/app/.venv
 COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
+RUN . /workspace/app/.venv/bin/activate \
+    && pip install -U pip cython setuptools wheel \
+    && poetry install $POETRY_INSTALL_ARGS --no-root
 COPY docs ./docs/
 COPY tests ./tests/
 COPY src ./src
-RUN python -m venv --copies /workspace/app/.venv
 RUN . /workspace/app/.venv/bin/activate \
-    && pip install -U pip cython setuptools wheel \
-    && poetry config virtualenvs.options.always-copy true \
     && poetry install $POETRY_INSTALL_ARGS
 EXPOSE 8000
 
@@ -79,17 +80,14 @@ ENV PATH="/workspace/app/.venv/bin:$PATH" \
 # switch to a non-root user for security
 
 WORKDIR /workspace/app
-RUN addgroup --system --gid 1001 "app-user" \
-    && adduser --no-create-home --system --uid 1001 "app-user" \
-    && chown -R "app-user":"app-user" /workspace
+# RUN addgroup --system --gid 1001 "nonroot" \
+#     && adduser --no-create-home --system --uid 1001 "nonroot" \
+#     && chown -R "nonroot":"nonroot" /workspace
 # move files that are changed more often towards the bottom or appended to the end for docker image caching
-COPY --chown="app-user":"app-user" --from=build-image /workspace/app/.venv /workspace/app/.venv/
-COPY --chown="app-user":"app-user" pyproject.toml README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
-COPY --chown="app-user":"app-user" docs ./docs/
-COPY --chown="app-user":"app-user" src /workspace/app/src
-# COPY --chown="app-user":"app-user" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/app/domain/web/public
-USER "app-user"
+COPY --from=build-image /workspace/app  /workspace/app
+# COPY --chown="nonroot":"nonroot" --from=ui-image /workspace/app/src/ui/public /workspace/app/src/app/domain/web/public
+# USER "nonroot"
 STOPSIGNAL SIGINT
-EXPOSE 8000
+EXPOSE 8000/tcp
 ENTRYPOINT [ "app" ]
 CMD [ "run", "server"]

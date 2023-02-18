@@ -52,7 +52,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: app run server
     image: app:latest
     restart: always
     depends_on:
