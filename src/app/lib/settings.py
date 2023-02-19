@@ -52,9 +52,8 @@ __all__ = [
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_loader.module_to_os_path(DEFAULT_MODULE_NAME)
-PUBLIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
+STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
-STATIC_PATH = "/static/"
 
 
 class ServerSettings(_ServerSettings):
@@ -71,8 +70,9 @@ class AppSettings(_AppSettings):
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
     JWT_ENCRYPTION_ALGORITHM: str = "HS256"
     BACKEND_CORS_ORIGINS: list[str] = ["*"]
-    DEV_MODE: bool = False
-    """Development mode.  This will enable things like Hot reload.  TODO: maybe this can be renamed or merged with DEBUG?"""
+    STATIC_URL: str = "/static/"
+    """Default URL where static assets are located."""
+    STATIC_DIR: Path = STATIC_DIR
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
