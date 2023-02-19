@@ -64,7 +64,7 @@
   "python.linting.lintOnSave": true,
   "python.linting.mypyEnabled": true,
   "mypy.runUsingActiveInterpreter": true,
-  "mypy.targets": ["src/server"],
+  "mypy.targets": ["src"],
   "mypy.configFile": "",
   "mypy.debugLogging": false,
   "ruff.args": [],

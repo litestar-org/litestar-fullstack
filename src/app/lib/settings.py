@@ -71,6 +71,8 @@ class AppSettings(_AppSettings):
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
     JWT_ENCRYPTION_ALGORITHM: str = "HS256"
     BACKEND_CORS_ORIGINS: list[str] = ["*"]
+    DEV_MODE: bool = False
+    """Development mode.  This will enable things like Hot reload.  TODO: maybe this can be renamed or merged with DEBUG?"""
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
