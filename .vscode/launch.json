@@ -5,7 +5,7 @@
       "type": "python",
       "request": "launch",
       "module": "app",
-      "args": ["run", "server"],
+      "args": ["run", "server", "--http-workers", "1"],
       "justMyCode": true
     }
   ]

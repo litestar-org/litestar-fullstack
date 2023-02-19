@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src/app/domain/web/resources",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["vite/client", "node"]
+  },
+
+  "include": [
+    "vite.config.ts",
+    "**/*.d.ts",
+    "src/app/domain/web/resources/**/*.ts",
+    "src/app/domain/web/resources/**/*.tsx",
+    "src/app/domain/web/resources/**/*.vue"
+  ]
+}

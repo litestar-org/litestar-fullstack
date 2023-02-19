@@ -52,7 +52,9 @@ __all__ = [
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_loader.module_to_os_path(DEFAULT_MODULE_NAME)
-PUBLIC_DIR = Path(BASE_DIR / "api" / "public")
+PUBLIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
+TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
+STATIC_PATH = "/static/"
 
 
 class ServerSettings(_ServerSettings):

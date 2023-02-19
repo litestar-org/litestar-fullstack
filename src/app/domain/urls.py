@@ -1,4 +1,5 @@
 INDEX = "/"
+SITE_ROOT = "/{path:str}"
 PUBLIC = "/public"
 OPENAPI_SCHEMA = "/schema"
 SYSTEM_HEALTH = "/health"
