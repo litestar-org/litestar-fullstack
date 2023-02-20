@@ -110,7 +110,7 @@ Features:
 
 Commands to help you get this repository running.
 
-### install development environment
+### Install virtual environment and node packages
 
 Most of the development related tasks are included in the `Makefile`. To install an environment with all development packages run:
 
@@ -125,31 +125,59 @@ This command does the following:
 - executes `npm ci` to install the node modules into the environment
 - run `npm run build` to generate the static assets
 
-#### edit env file
+### Edit .env configuration
+
+There is a sample `.env` file located in the root of the repository.
 
 ```bash
 cp env.example .env
 ```
 
-Edit `SECRET_KEY`, `DATABASE_URI`, and `REDIS_URL`
+**Note** `SECRET_KEY`, `DATABASE_URI`, and `REDIS_URL` are the most important config settings. Be sure to set this properly.
 
-You can generate a SECRET_KET by running:
-`poetry run app manage generate-random-key`
+You can generate a `SECRET_KEY` by running:
 
-#### deploy migrations
+```bash
+❯ poetry run app manage generate-random-key
+KEY: 5c5f2230767976c332b6f933b63b483a35148b2218e2cdfd0da992d859feae19
+```
+
+### Deploy Database Migrations
 
 You can run most of the database commands with the integrated CLI tool.
 
 To deploy migration to the database, execute:
 `poetry run app manage upgrade-database`
 
-#### start the server in DEBUG mode (development mode)
+### Starting the server
 
-if DEBUG is set to true, the base template expects that Vite will be running. You'll need to open 2 terminal shells at the moment to get the environment running.
+#### Starting the server in `DEBUG` mode (development mode)
 
-in terminal one, run `npm run dev`.
+if `DEBUG` is set to true, the base template expects that Vite will be running. You'll need to open 2 terminal shells at the moment to get the environment running.
 
-in the second terminal, run `poetry run app run api --reload`
+in terminal one, run:
+
+```bash
+❯ npm run dev
+> vite
+
+Forced re-optimization of dependencies
+
+  VITE v4.1.2  ready in 537 ms
+
+  ➜  Local:   http://127.0.0.1:3000/static/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+```
+
+in the second terminal, run:
+
+```bash
+❯ poetry run app run server --reload
+2023-02-19 22:51:46 [info     ] starting application.
+2023-02-19 22:51:46 [info     ] starting Background worker processes.
+2023-02-19 22:51:46 [info     ] Starting HTTP Server.
+```
 
 #### start the server in production mode
 
@@ -158,7 +186,35 @@ if DEBUG is false, the server will look for the static assets that are produced 
 ```bash
 npm run build # generates static assets from vite and
 # files from the above command can be found in `src/app/domain/web/public`.
-poetry run app run api
+poetry run app run server
+```
+
+Sample output:
+
+```bash
+❯ npm run build
+
+> starlite-full-stack-example@0.0.0 build
+> vue-tsc && vite build
+
+vite v4.1.2 building for production...
+✓ 15 modules transformed.
+Generated an empty chunk: "vue".
+../public/assets/vue-5532db34.svg    0.50 kB
+../public/manifest.json              0.57 kB
+../public/assets/main-b75adab1.css   1.30 kB │ gzip:  0.67 kB
+../public/assets/vue-4ed993c7.js     0.00 kB │ gzip:  0.02 kB
+../public/assets/main-17f9b70b.js    1.50 kB │ gzip:  0.80 kB
+../public/assets/@vue-5be96905.js   52.40 kB │ gzip: 21.07 kB
+❯ poetry run app run server
+2023-02-19 22:53:08 [info     ] starting application.
+2023-02-19 22:53:08 [info     ] starting Background worker processes.
+2023-02-19 22:53:08 [info     ] Starting HTTP Server.
+^C2023-02-19 22:53:09 [info     ] ⏏️  Shutdown complete
 ```
 
 ## Make Commands
+
+- `make migrations`
+- `make squash-migrations`
+- `make upgrade`
