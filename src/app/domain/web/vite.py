@@ -43,7 +43,7 @@ class ViteConfig(BaseModel):
 
 
 config = ViteConfig.parse_obj(
-    {"hot_reload": settings.app.DEBUG, "assets_path": settings.app.STATIC_URL, "static_dir": settings.app.STATIC_DIR}
+    {"hot_reload": settings.app.DEBUG, "assets_path": settings.app.STATIC_URL, "static_dir": settings.app.STATIC_DIR},
 )
 
 
@@ -96,7 +96,7 @@ class ViteAssetLoader:
         """
         manifest = {}
         if not config.hot_reload:
-            with open(Path(config.static_dir / MANIFEST_NAME)) as manifest_file:
+            with Path(config.static_dir / MANIFEST_NAME).open() as manifest_file:
                 manifest_content = manifest_file.read()
             try:
                 manifest = json.loads(manifest_content)
@@ -178,7 +178,7 @@ class ViteAssetLoader:
             self._script_tag(
                 urljoin(config.static_url, manifest_entry["file"]),
                 attrs=scripts_attrs,
-            )
+            ),
         )
 
         return "\n".join(tags)
