@@ -4,8 +4,8 @@ import base64
 import logging
 from typing import TYPE_CHECKING
 
-from anyio.to_thread import run_sync
 from passlib.context import CryptContext
+from starlite.utils.sync import AsyncCallable
 
 if TYPE_CHECKING:
     from pydantic import SecretBytes, SecretStr
@@ -37,8 +37,7 @@ async def get_password_hash(password: SecretBytes | SecretStr) -> str:
     Returns:
         str: Hashed password
     """
-    pw_hash = await run_sync(password_crypt_context.hash, password.get_secret_value())
-    return pw_hash
+    return await AsyncCallable(password_crypt_context.hash)(secret=password.get_secret_value())
 
 
 async def verify_password(plain_password: SecretBytes | SecretStr, hashed_password: str) -> bool:
@@ -51,7 +50,8 @@ async def verify_password(plain_password: SecretBytes | SecretStr, hashed_passwo
     Returns:
         bool: True if the password hashes match
     """
-    valid, _ = await run_sync(
-        password_crypt_context.verify_and_update, plain_password.get_secret_value(), hashed_password
+    valid, _ = await AsyncCallable(password_crypt_context.verify_and_update)(
+        secret=plain_password.get_secret_value(),
+        hash=hashed_password,
     )
     return bool(valid)

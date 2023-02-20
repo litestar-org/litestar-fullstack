@@ -20,6 +20,13 @@ __all__ = ["run_app"]
 
 def run_app() -> Starlite:
     """Create ASGI application."""
+
+    async def _provide_user(request: Request[User, Token]) -> User:
+        return request.user
+
+    dependencies = {"current_user": Provide(_provide_user)}
+    """Adds current_user as optional injected dependency for all connections."""
+
     return Starlite(
         route_handlers=[*domain.routes],
         dependencies=dependencies,
@@ -27,11 +34,3 @@ def run_app() -> Starlite:
         static_files_config=static_files.config,
         template_config=template_config,
     )
-
-
-async def _provide_user(request: Request[User, Token]) -> User:
-    return request.user
-
-
-dependencies = {"current_user": Provide(_provide_user)}
-"""Adds current_user as optional injected dependency for all connections."""
