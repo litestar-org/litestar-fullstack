@@ -47,9 +47,9 @@ install:          ## Install the project in dev mode.
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
 	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
-	if [ "$(USING_NPM)" ]; then npm ci; fi
-	if [ "$(USING_YARN)" ]; then yarn install; fi
-	if [ "$(USING_PNPM)" ]; then pnpm install; fi
+	if [ "$(USING_NPM)" ]; then npm ci && npm run build; fi
+	if [ "$(USING_YARN)" ]; then yarn install && yarn run build; fi
+	if [ "$(USING_PNPM)" ]; then pnpm install && pnpm run build; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
 
 
@@ -60,7 +60,7 @@ runtime-only:	 ## Install the project in production mode.
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
 	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
-	if [ "$(USING_NPM)" ]; then npm install; fi
+	if [ "$(USING_NPM)" ]; then npm ci && npm run build; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make runtime'"
 
 .PHONY: migrations
