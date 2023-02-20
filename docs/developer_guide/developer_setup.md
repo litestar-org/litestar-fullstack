@@ -11,7 +11,7 @@ poetry install
 Install optional dependencies using the `--extras` flag:
 
 ```bash
-poetry install --extras=environment
+poetry install --extras=dev,docs,lint
 ```
 
 ## Using pip
@@ -23,21 +23,28 @@ pip install .
 Install optional dependencies using square brackets:
 
 ```bash
-pip install .[environment]
+pip install .[dev,docs,lint]
 ```
 
 ## Using a local docker build
 
 To build an image locally from the Dockerfile:
 
+To build an image ready for production deployment run:
+
 ```bash
-make build
+docker compose -f docker-compose.yml build
+```
+
+To build an development image, run:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.override.yml build
 ```
 
 To run the image:
 
 ```bash
-docker run --rm app hello user
-docker run --rm app goodbye user
-docker run --rm app version
+docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+docker compose run app manage create-database
 ```
