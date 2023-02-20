@@ -18,7 +18,6 @@ services:
       - ./pyproject.toml:/workspace/app/pyproject.toml
       - ./poetry.lock:/workspace/app/poetry.lock
       - ./mkdocs.yml:/workspace/app/mkdocs.yml
-      - ./service_account.json:/workspace/app/service_account.json
     command: app api run --reload
 
   localmail:
