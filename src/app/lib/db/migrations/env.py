@@ -1,24 +1,23 @@
 import asyncio
-from logging.config import fileConfig
 from typing import TYPE_CHECKING
 
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.lib import settings
-from app.lib.db.orm import DatabaseModel
+from app.lib import log, settings
+from app.lib.orm import DatabaseModel
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Connection
+
+log.config.configure()
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-fileConfig(config.config_file_name)  # type: ignore
 
 # add your model's MetaData object here
 # for 'autogenerate' support
