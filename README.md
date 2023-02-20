@@ -64,7 +64,8 @@ in the second terminal, run `poetry run app run api --reload`
 if DEBUG is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting th server.
 
 ```bash
-npm run build # generates static assets from vite and puts them `src/app/domain/web/public`.  executed once by `make install`
+npm run build # generates static assets from vite and
+# files from the above command can be found in `src/app/domain/web/public`.
 poetry run app run api
 ```
 
