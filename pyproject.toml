@@ -92,7 +92,7 @@ types-redis = "*"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core", "setuptools", "wheel", "cython"]
+requires = ["poetry-core", "setuptools", "cython"]
 
 [tool.black]
 exclude = '''
@@ -185,6 +185,7 @@ ignore = [
   'EM101',
   'T201',
   'ERA001',
+  'TRY003',
 ]
 line-length = 120
 select = [
@@ -196,9 +197,12 @@ select = [
   'N',
   'W',
   'I',
+  'C90',
   'UP',
-  'S', # 'ANN',
+  'S', # 'ANN', BLE
   'YTT', # 'FBT',
+  'COM',
+  'DJ',
   'A',
   'C4',
   'T10',
@@ -216,6 +220,15 @@ select = [
   'PLR',
   'PLW', # 'PIE',
   'RUF',
+  'EXE',
+  'G',
+  'RSE',
+  'PTH',
+  'PD',
+  'NPY',
+  'TCH',
+  'TID',
+  'TRY',
 ]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
