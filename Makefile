@@ -42,6 +42,7 @@ upgrade:       ## Upgrade all dependencies to the latest stable versions
 ###############
 .PHONY: install
 install:          ## Install the project in dev mode.
+	git update-index --assume-unchanged src/app/domain/web/public/.gitkeep
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
@@ -56,6 +57,7 @@ install:          ## Install the project in dev mode.
 
 .PHONY: runtime
 runtime-only:	 ## Install the project in production mode.
+	git update-index --assume-unchanged src/app/domain/web/public/.gitkeep
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
