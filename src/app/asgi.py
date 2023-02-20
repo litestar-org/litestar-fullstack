@@ -1,13 +1,19 @@
 # pylint: disable=[invalid-name,import-outside-toplevel]
 from __future__ import annotations
 
-from starlite import Provide, Request, Starlite
-from starlite.contrib.jwt import Token
+from typing import TYPE_CHECKING
+
+from starlite import Provide, Starlite
 
 from app import domain
-from app.domain.accounts.models import User
 from app.domain.web.vite import template_config
 from app.lib import plugins, static_files
+
+if TYPE_CHECKING:
+    from starlite import Request
+    from starlite.contrib.jwt import Token
+
+    from app.domain.accounts.models import User
 
 __all__ = ["run_app"]
 
