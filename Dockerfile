@@ -8,11 +8,11 @@ FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
-RUN npm install -g npm@9.5.0
-# COPY package.json package-lock.json postcss.config.js prettier.config.js tailwind.json vite.config.js tsconfig.json LICENSE Makefile ./
-# RUN npm ci && npm cache clean --force
-# COPY src/ui ./src/ui
-# RUN npm run build
+RUN npm install -g npm@9.5.0 --quiet
+COPY package.json package-lock.json  vite.config.ts tsconfig.json tsconfig.node.json LICENSE Makefile ./
+RUN npm ci --quiet && npm cache clean --force --quiet
+COPY src src
+RUN npm run build
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -81,6 +81,7 @@ COPY tests ./tests/
 COPY src ./src
 RUN . /workspace/app/.venv/bin/activate \
     && poetry install $POETRY_INSTALL_ARGS
+COPY --from=ui-image /workspace/app/src/app/domain/web/public /workspace/app/src/app/domain/web/public
 EXPOSE 8000
 
 
@@ -92,6 +93,7 @@ EXPOSE 8000
 
 FROM ${PYTHON_RUN_IMAGE} as run-image
 ARG ENV_SECRETS="runtime-secrets"
+# TODO: it would be great if chipset was autodetected as x86 or arm for better M1 support
 ARG CHIPSET_ARCH=x86_64-linux-gnu
 ENV PATH="/workspace/app/.venv/bin:$PATH" \
     ENV_SECRETS="${ENV_SECRETS}" \
