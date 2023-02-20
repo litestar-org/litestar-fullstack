@@ -163,3 +163,7 @@ dist-ssr
 # temporary files
 tmp/
 temp/
+
+
+# built files from the web UI
+src/app/domain/web/public
