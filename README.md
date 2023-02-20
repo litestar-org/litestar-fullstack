@@ -1,4 +1,18 @@
-# starlite-plugin-example
+# Starlite Reference Application
+
+This is a reference application that you can use to get your next Starlite application running quickly.
+
+It contains most of the boilerplate required for a production web API.
+
+Features:
+
+- Latest Starlite configured with best practices
+- Integration with SQLAlchemy 2.0, SAQ (Simple Asynchronous Queue), and starlite-saqlalchemy
+- Click based CLI that includes commands for database migrations and deployment
+- Frontend integrated with vitejs and includes Jinja2 templates that integrate with Vite websocket/HMR support
+- Multi-stage docker build using a Google Distroless (distroless/cc) Python 3.11 runtime image.
+- pre-configured user model that includes teams and associated team roles
+- examples of using guards for superuser and team based auth.
 
 ## quick start commands
 
