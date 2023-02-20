@@ -23,9 +23,9 @@ MANIFEST_NAME: Final = "manifest.json"
 
 
 class ViteConfig(BaseModel):
-    """Configuration for InertiaJS support.
+    """Configuration for ViteJS support.
 
-    To enable inertia JS responses, pass an instance of this class to the :class:`Starlite <starlite.app.Starlite>` constructor
+    To enable Vite integration, pass an instance of this class to the :class:`Starlite <starlite.app.Starlite>` constructor
     using the 'plugins' key.
     """
 
@@ -48,7 +48,11 @@ config = ViteConfig.parse_obj(
 
 
 class ViteAssetLoader:
-    """Vite  manifest loader."""
+    """Vite  manifest loader.
+
+    Please see: https://vitejs.dev/guide/backend-integration.html
+
+    """
 
     _instance: ClassVar[ViteAssetLoader | None] = None
     _manifest: ClassVar[dict[str, Any]] = {}
@@ -63,6 +67,29 @@ class ViteAssetLoader:
     @staticmethod
     def parse_manifest() -> dict[str, Any]:
         """Read and parse the Vite manifest file.
+
+        Example manifest:
+        ```json
+            {
+                "main.js": {
+                    "file": "assets/main.4889e940.js",
+                    "src": "main.js",
+                    "isEntry": true,
+                    "dynamicImports": ["views/foo.js"],
+                    "css": ["assets/main.b82dbe22.css"],
+                    "assets": ["assets/asset.0ab0f9cd.png"]
+                },
+                "views/foo.js": {
+                    "file": "assets/foo.869aea0d.js",
+                    "src": "views/foo.js",
+                    "isDynamicEntry": true,
+                    "imports": ["_shared.83069a53.js"]
+                },
+                "_shared.83069a53.js": {
+                    "file": "assets/shared.83069a53.js"
+                }
+                }
+        ```
 
         Raises:
             RuntimeError: if cannot load the file or JSON in file is malformed.
