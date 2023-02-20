@@ -69,19 +69,17 @@ RUN apt-get install -y --no-install-recommends build-essential \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 ## -------------------------- install application ----------------------------------- ##
-
 WORKDIR /workspace/app
-COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
+COPY --chown=65532:65532 pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
 RUN python -m venv --copies /workspace/app/.venv
 RUN . /workspace/app/.venv/bin/activate \
     && pip install -U cython \
     && poetry install $POETRY_INSTALL_ARGS --no-root
-COPY docs ./docs/
-COPY tests ./tests/
-COPY src ./src
-RUN . /workspace/app/.venv/bin/activate \
-    && poetry install $POETRY_INSTALL_ARGS
-COPY --from=ui-image /workspace/app/src/app/domain/web/public /workspace/app/src/app/domain/web/public
+COPY --chown=65532:65532 docs ./docs/
+COPY --chown=65532:65532 tests ./tests/
+COPY --chown=65532:65532 src ./src
+RUN chown -R 65532:65532 /workspace && . /workspace/app/.venv/bin/activate  && poetry install $POETRY_INSTALL_ARGS
+COPY --from=ui-image --chown=65532:65532 /workspace/app/src/app/domain/web/public /workspace/app/src/app/domain/web/public
 EXPOSE 8000
 
 
