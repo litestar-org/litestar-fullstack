@@ -10,10 +10,8 @@ VENV_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activat
 NODE_MODULES_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
 PYTHON_PACKAGES=$(shell if poetry --version > /dev/null; then poetry export -f requirements.txt  --without-hashes |cut -d'=' -f1 |cut -d ' ' -f1; fi)
 VERSION := $(shell grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
-FRONTEND_SRC_DIR=src/ui
-FRONTEND_BUILD_DIR=$(FRONTEND_SRC_DIR)/dist
-BACKEND_SRC_DIR=src
-BACKEND_BUILD_DIR=dist
+SRC_DIR=src
+BUILD_DIR=dist
 
 .EXPORT_ALL_VARIABLES:
 
@@ -38,21 +36,6 @@ upgrade:       ## Upgrade all dependencies to the latest stable versions
 	@if [ "$(USING_PNPM)" ]; then pnpm upgrade --latest; fi
 	@echo "Node Dependencies Updated"
 
-###############
-# lint & test #
-###############
-lint:       ## check style with flake8
-	env PYTHONPATH=src poetry run pre-commit run --all-files
-
-test:       ## run tests quickly with the default Python
-	env PYTHONPATH=src poetry run pytest --cov-config .coveragerc --cov=src -l --tb=short tests/server/unit
-	env PYTHONPATH=src poetry run coverage xml
-	env PYTHONPATH=src poetry run coverage html
-
-coverage:       ## check code coverage quickly with the default Python
-	env PYTHONPATH=src poetry run coverage run --source app -m pytest
-	env PYTHONPATH=src poetry run coverage report -m
-
 
 ###############
 # app         #
@@ -63,8 +46,8 @@ install:          ## Install the project in dev mode.
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
-	if [ "$(USING_NPM)" ]; then npm install; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
+	if [ "$(USING_NPM)" ]; then npm ci; fi
 	if [ "$(USING_YARN)" ]; then yarn install; fi
 	if [ "$(USING_PNPM)" ]; then pnpm install; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
@@ -76,7 +59,7 @@ runtime-only:	 ## Install the project in production mode.
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
 	if [ "$(USING_NPM)" ]; then npm install; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make runtime'"
 
@@ -120,22 +103,15 @@ clean:       ## remove all build, testing, and static documentation files
 	rm -fr .mypy_cache
 	rm -fr site
 
-
+.PHONY: .PHONY
 download-backend-deps:      ## download wheel files
-	@poetry export --without-hashes --only=main -f requirements.txt --output dist/requirements.txt && rm -Rf dist/wheels && poetry run pip download --no-binary=':all:'  -r dist/requirements.txt -d dist/wheels
+	@poetry export --without-hashes --only=main -f requirements.txt --output dist/requirements.txt && rm -Rf dist/wheels && poetry run pip download -r dist/requirements.txt -d dist/wheels
 
-build-frontend: $(FRONTEND_BUILD_DIR)
+.PHONY: build
+build: download-backend-deps
 
-$(FRONTEND_BUILD_DIR): $(shell find $(FRONTEND_SRC_DIR) -not -path "$(FRONTEND_BUILD_DIR)")
-	@poetry run app manage export-openapi-schema --export-path ./src/ui/spec/
-	@npm run build
-
-build-backend: $(BACKEND_BUILD_DIR)
-
-$(BACKEND_BUILD_DIR): $(shell find $(BACKEND_SRC_DIR))
-	@poetry build
-
-build: build-frontend build-backend          ## Install the project in dev mode.
+	npm run build
+	poetry build
 
 ###############
 # docs        #
