@@ -80,44 +80,6 @@ class ViteAssetLoader:
                 ) from exc
         return manifest
 
-    def generate_vite_server_url(self, path: str | None = None) -> str:
-        """Generate an URL to and asset served by the Vite development server.
-
-        Keyword Arguments:
-            path {Optional[str]} -- Path to the asset. (default: {None})
-
-        Returns:
-            str -- Full URL to the asset.
-        """
-        base_path = "{protocol}://{host}:{port}".format(
-            protocol=config.protocol,
-            host=config.host,
-            port=config.port,
-        )
-        return urljoin(
-            base_path,
-            urljoin(config.static_url, path if path is not None else ""),
-        )
-
-    def generate_script_tag(self, src: str, attrs: dict[str, str] | None = None) -> str:
-        """Generate an HTML script tag."""
-        attrs_str = ""
-        if attrs is not None:
-            attrs_str = " ".join([f'{key}="{value}"' for key, value in attrs.items()])
-
-        return f'<script {attrs_str} src="{src}"></script>'
-
-    def _style_tag(self, href: str) -> str:
-        """Generate and HTML <link> stylesheet tag for CSS.
-
-        Arguments:
-            href {str} -- CSS file URL.
-
-        Returns:
-            str -- CSS link tag.
-        """
-        return f'<link rel="stylesheet" href="{href}" />'
-
     def generate_vite_ws_client(self) -> str:
         """Generate the script tag for the Vite WS client for HMR.
 
@@ -129,8 +91,8 @@ class ViteAssetLoader:
         if not config.hot_reload:
             return ""
 
-        return self.generate_script_tag(
-            self.generate_vite_server_url("@vite/client"),
+        return self._script_tag(
+            self._vite_server_url("@vite/client"),
             {"type": "module"},
         )
 
@@ -145,7 +107,7 @@ class ViteAssetLoader:
         if config.is_react and config.hot_reload:
             return f"""
                 <script type="module">
-                import RefreshRuntime from '{self.generate_vite_server_url()}@react-refresh'
+                import RefreshRuntime from '{self._vite_server_url()}@react-refresh'
                 RefreshRuntime.injectIntoGlobalHook(window)
                 window.$RefreshReg$ = () => {{}}
                 window.$RefreshSig$ = () => (type) => type
@@ -161,8 +123,8 @@ class ViteAssetLoader:
             str -- All tags to import this asset in your HTML page.
         """
         if config.hot_reload:
-            return self.generate_script_tag(
-                self.generate_vite_server_url(path),
+            return self._script_tag(
+                self._vite_server_url(path),
                 {"type": "module", "async": "", "defer": ""},
             )
 
@@ -186,13 +148,51 @@ class ViteAssetLoader:
 
         # Add the script by itself
         tags.append(
-            self.generate_script_tag(
+            self._script_tag(
                 urljoin(config.static_url, manifest_entry["file"]),
                 attrs=scripts_attrs,
             )
         )
 
         return "\n".join(tags)
+
+    def _vite_server_url(self, path: str | None = None) -> str:
+        """Generate an URL to and asset served by the Vite development server.
+
+        Keyword Arguments:
+            path {Optional[str]} -- Path to the asset. (default: {None})
+
+        Returns:
+            str -- Full URL to the asset.
+        """
+        base_path = "{protocol}://{host}:{port}".format(
+            protocol=config.protocol,
+            host=config.host,
+            port=config.port,
+        )
+        return urljoin(
+            base_path,
+            urljoin(config.static_url, path if path is not None else ""),
+        )
+
+    def _script_tag(self, src: str, attrs: dict[str, str] | None = None) -> str:
+        """Generate an HTML script tag."""
+        attrs_str = ""
+        if attrs is not None:
+            attrs_str = " ".join([f'{key}="{value}"' for key, value in attrs.items()])
+
+        return f'<script {attrs_str} src="{src}"></script>'
+
+    def _style_tag(self, href: str) -> str:
+        """Generate and HTML <link> stylesheet tag for CSS.
+
+        Arguments:
+            href {str} -- CSS file URL.
+
+        Returns:
+            str -- CSS link tag.
+        """
+        return f'<link rel="stylesheet" href="{href}" />'
 
 
 class JinjaViteTemplateEngine(JinjaTemplateEngine):
@@ -259,3 +259,4 @@ def run_vite(vite_config: ViteConfig) -> None:
     Args:
         vite_config (ViteConfig): _description_
     """
+    # todo
