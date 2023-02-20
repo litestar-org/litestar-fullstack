@@ -1,4 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.11-slim
+ARG PYTHON_BUILDER_IMAGE=3.11-slim-bullseye
 ARG NODE_BUILDER_IMAGE=18-slim
 ARG PYTHON_RUN_IMAGE=gcr.io/distroless/cc:nonroot
 ## ---------------------------------------------------------------------------------- ##
@@ -40,8 +40,8 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 RUN pip install --upgrade pip wheel setuptools cython virtualenv poetry
 RUN mkdir -p /workspace/app \
-    && addgroup --system --gid 1001 nonroot \
-    && adduser --no-create-home --system --uid 1001 nonroot \
+    && addgroup --system --gid 65532 nonroot \
+    && adduser --no-create-home --system --uid 65532 nonroot \
     && chown -R nonroot:nonroot /workspace
 
 ## ---------------------------------------------------------------------------------- ##
