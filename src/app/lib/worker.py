@@ -2,11 +2,10 @@ import atexit
 import signal
 import threading
 from multiprocessing.util import _exit_function  # type: ignore[attr-defined]
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import anyio
 from anyio import create_task_group, open_signal_receiver
-from anyio.abc import CancelScope
 from starlite_saqlalchemy import log
 from starlite_saqlalchemy.worker import (
     JobConfig,
@@ -20,6 +19,10 @@ from starlite_saqlalchemy.worker import (
 )
 
 from .log import getLogger
+
+if TYPE_CHECKING:
+    from anyio.abc import CancelScope
+
 
 __all__ = [
     "JobConfig",
