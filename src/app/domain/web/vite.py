@@ -1,16 +1,23 @@
 from __future__ import annotations
 
+import atexit
+import contextlib
 import json
+import threading
+from multiprocessing.util import _exit_function  # type: ignore[attr-defined]
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Final
 from urllib.parse import urljoin
 
+import anyio
 import markupsafe
+from anyio import open_process
+from anyio.streams.text import TextReceiveStream
 from pydantic import BaseModel
 from starlite import TemplateConfig
 from starlite.contrib.jinja import JinjaTemplateEngine
 
-from app.lib import settings
+from app.lib import log, settings
 
 if TYPE_CHECKING:
     from pydantic import DirectoryPath
@@ -222,17 +229,17 @@ class ViteAssetLoader:
         return f'<link rel="stylesheet" href="{href}" />'
 
 
-class JinjaViteTemplateEngine(JinjaTemplateEngine):
+class ViteTemplateEngine(JinjaTemplateEngine):
     """Jinja Template Engine with Vite Integration."""
 
     def __init__(self, directory: DirectoryPath | list[DirectoryPath]) -> None:
         """Implement Vite templates with the default JinjaTemplateEngine."""
         super().__init__(directory)
         self._vite_asset_loader = ViteAssetLoader()
-        self.engine.globals["vite_hmr_client"] = self.vite_hmr_client
-        self.engine.globals["vite_asset"] = self.vite_asset
+        self.engine.globals["vite_hmr_client"] = self.hmr_client
+        self.engine.globals["vite_asset"] = self.resource
 
-    def vite_hmr_client(self) -> markupsafe.Markup:
+    def hmr_client(self) -> markupsafe.Markup:
         """Generate the script tag for the Vite WS client for HMR.
 
         Only used when hot module reloading is enabled, in production this method returns an empty string.
@@ -246,7 +253,7 @@ class JinjaViteTemplateEngine(JinjaTemplateEngine):
         tags.append(self._vite_asset_loader.generate_vite_ws_client())
         return markupsafe.Markup("\n".join(tags))
 
-    def vite_asset(self, path: str, scripts_attrs: dict[str, str] | None = None) -> markupsafe.Markup:
+    def resource(self, path: str, scripts_attrs: dict[str, str] | None = None) -> markupsafe.Markup:
         """Generate all assets include tags for the file in argument.
 
         Generates all scripts tags for this file and all its dependencies
@@ -270,20 +277,46 @@ class JinjaViteTemplateEngine(JinjaTemplateEngine):
 class ViteTemplateConfig(TemplateConfig):
     """Vite template config."""
 
-    engine: type[JinjaViteTemplateEngine]
+    engine: type[ViteTemplateEngine]
     """A template engine using the JinjaViteTemplateEngine`."""
+    config: ViteConfig
+    """A a config for the vite engine`."""
 
 
 template_config = ViteTemplateConfig(
     directory=settings.TEMPLATES_DIR,
-    engine=JinjaViteTemplateEngine,
+    engine=ViteTemplateEngine,
+    config=config,
 )
 
 
-def run_vite(vite_config: ViteConfig) -> None:
+if threading.current_thread() is not threading.main_thread():
+    atexit.unregister(_exit_function)
+
+
+logger = log.getLogger()
+
+
+def run_vite() -> None:
     """Run Vite in a subprocess.
 
     Args:
         vite_config (ViteConfig): _description_
     """
-    # todo
+    log.config.configure()
+    with contextlib.suppress(KeyboardInterrupt):
+        try:
+            anyio.run(_run_vite, backend="asyncio", backend_options={"use_uvloop": True})
+        finally:
+            logger.info("Vite Service stopped.")
+
+
+async def _run_vite() -> None:
+    """Run Vite in a subprocess.
+
+    Args:
+        vite_config (ViteConfig): _description_
+    """
+    async with await open_process(template_config.config.run_command) as vite_process:
+        async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
+            await logger.ainfo("Vite", message=text.replace("\n", ""))

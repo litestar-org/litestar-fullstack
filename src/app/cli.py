@@ -12,6 +12,7 @@ from rich import get_console
 from rich.prompt import Confirm
 from starlite_saqlalchemy.constants import IS_LOCAL_ENVIRONMENT
 
+from app.domain.web.vite import run_vite
 from app.lib import db, log, settings, worker
 
 __all__ = ["app"]
@@ -116,6 +117,11 @@ def run_server(  # noqa: PLR0913
         logger.info("starting Background worker processes.")
         worker_process = multiprocessing.Process(target=worker.run_worker)
         worker_process.start()
+
+        if settings.app.DEV_MODE:
+            vite_process = multiprocessing.Process(target=run_vite)
+            vite_process.start()
+
         logger.info("Starting HTTP Server.")
 
         uvicorn.run(
@@ -129,15 +135,17 @@ def run_server(  # noqa: PLR0913
             timeout_keep_alive=settings.server.KEEPALIVE,
             log_config=None,
             # access_log=False,
-            lifespan="off",
+            # lifespan="off",
             workers=1 if bool(settings.server.RELOAD) else settings.server.HTTP_WORKERS,
         )
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
     finally:
         if worker_process.is_alive():
             worker_process.kill()
+        if vite_process.is_alive():
+            vite_process.kill()
         logger.info("⏏️  Shutdown complete")
         sys.exit()
 

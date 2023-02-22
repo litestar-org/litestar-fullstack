@@ -73,6 +73,7 @@ class AppSettings(_AppSettings):
     STATIC_URL: str = "/static/"
     """Default URL where static assets are located."""
     STATIC_DIR: Path = STATIC_DIR
+    DEV_MODE: bool = False
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
