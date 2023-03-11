@@ -20,7 +20,7 @@ from starlite_saqlalchemy.worker import (
     queue,
 )
 
-from .log import getLogger
+from .log import get_logger
 
 if TYPE_CHECKING:
     from anyio.abc import CancelScope
@@ -38,7 +38,7 @@ __all__ = [
     "run_worker",
 ]
 
-logger = getLogger()
+logger = get_logger()
 
 if threading.current_thread() is not threading.main_thread():
     atexit.unregister(_exit_function)

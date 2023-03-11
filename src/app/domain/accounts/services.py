@@ -2,17 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from pydantic import SecretStr
 from starlite import NotAuthorizedException
 
 from app.lib import crypt
 from app.lib.service import RepositoryService
 
 from .models import User
-from .repositories import UserRepository
 
 if TYPE_CHECKING:
-    pass
+    from pydantic import SecretStr
+
 
 __all__ = ["UserService"]
 
@@ -20,7 +19,8 @@ __all__ = ["UserService"]
 class UserService(RepositoryService[User]):
     """User Service."""
 
-    repository_type = UserRepository
+    def __init__(self, **repo_kwargs: Any) -> None:
+        super().__init__(**repo_kwargs)
 
     async def exists(self, username: str) -> bool:
         """Check if the user exist.

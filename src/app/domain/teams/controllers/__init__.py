@@ -1,29 +1,32 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
+
+from sqlalchemy.ext.asyncio import AsyncSession  # noqa: TCH002
 from sqlalchemy.orm import joinedload, noload, subqueryload
 from starlite import Body, Controller, MediaType, Provide, RequestEncodingType, Response, get, post
-from starlite.contrib.jwt import OAuth2Login
 
 from app.domain import security, urls
-from app.domain.teams.models import TeamMember
+from app.domain.teams import guards, schemas
+from app.domain.teams.models import Team, TeamMember
+from app.domain.teams.services import TeamService
 from app.lib import log, orm
 
-from .. import guards, schemas
-from ..models import User
-from ..services import UserService
+if TYPE_CHECKING:
+    from starlite.contrib.jwt import OAuth2Login
+
 
 logger = log.get_logger()
 
 
-def provides_user_service(db_session: AsyncSession) -> UserService:
+def provides_teams_service(db_session: AsyncSession) -> TeamService:
     """Construct repository and service objects for the request."""
-    return UserService(
+    return TeamService(
         session=db_session,
         options=[
             noload("*"),
-            subqueryload(User.teams).options(
+            subqueryload(Team.members).options(
                 joinedload(TeamMember.team, innerjoin=True).options(
                     noload("*"),
                 ),

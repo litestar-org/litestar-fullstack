@@ -8,7 +8,7 @@ from app.lib import log, settings
 from app.lib.db import engine
 from app.lib.orm import DatabaseModel, meta
 
-logger = log.getLogger()
+logger = log.get_logger()
 
 
 def create_database() -> None:
@@ -59,7 +59,7 @@ async def drop_tables() -> None:
             DropTable(
                 element=Table(settings.db.MIGRATION_DDL_VERSION_TABLE, meta),
                 if_exists=True,
-            )
+            ),
         )
         await db.commit()
     logger.info("Successfully dropped all objects")

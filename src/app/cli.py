@@ -32,7 +32,7 @@ click.rich_click.APPEND_METAVARS_HELP = True
 console = get_console()
 """Pre-configured CLI Console."""
 
-logger = log.getLogger()
+logger = log.get_logger()
 
 
 @click.group(help="Starlite Reference Application")

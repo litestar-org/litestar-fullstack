@@ -294,7 +294,7 @@ if threading.current_thread() is not threading.main_thread():
     atexit.unregister(_exit_function)
 
 
-logger = log.getLogger()
+logger = log.get_logger()
 
 
 def run_vite() -> None:
