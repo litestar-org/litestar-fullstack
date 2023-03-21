@@ -1,6 +1,8 @@
 """User Account Controllers."""
 from __future__ import annotations
 
+from collections.abc import AsyncGenerator
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, noload, subqueryload
@@ -21,9 +23,9 @@ from app.lib.db import orm
 logger = log.get_logger()
 
 
-def provides_user_service(db_session: AsyncSession) -> UserService:
+async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[UserService, None]:
     """Construct repository and service objects for the request."""
-    return UserService(
+    async with UserService.new(
         session=db_session,
         base_select=select(User).options(
             noload("*"),
@@ -33,7 +35,11 @@ def provides_user_service(db_session: AsyncSession) -> UserService:
                 ),
             ),
         ),
-    )
+    ) as service:
+        try:
+            yield service
+        finally:
+            ...
 
 
 class AccessController(Controller):
