@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
-
-from pydantic import UUID4, EmailStr
-from pydantic.types import SecretStr
+from typing import TYPE_CHECKING, Any
 
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
+
+if TYPE_CHECKING:
+    from pydantic import UUID4, EmailStr
+    from pydantic.types import SecretStr
 
 
 class User(CamelizedBaseModel):
@@ -18,7 +19,7 @@ class User(CamelizedBaseModel):
     is_superuser: bool
     is_active: bool
     is_verified: bool
-    teams: "list[UserTeam] | None" = []
+    teams: list[UserTeam] | None = []
 
 
 class UserTeam(CamelizedBaseModel):
@@ -33,7 +34,7 @@ class UserTeam(CamelizedBaseModel):
     role: TeamRoles | None = TeamRoles.MEMBER
 
     @classmethod
-    def from_orm(cls, obj: Any) -> "UserTeam":
+    def from_orm(cls, obj: Any) -> UserTeam:
         """Flatten team details to the user membership object."""
         if getattr(obj, "team", None) and getattr(obj.team, "name", None):
             obj.name = obj.team.name
@@ -43,8 +44,8 @@ class UserTeam(CamelizedBaseModel):
 class UserRegister(CamelizedBaseModel):
     """User Registration Input."""
 
-    email: "EmailStr"
-    password: "SecretStr"
+    email: EmailStr
+    password: SecretStr
     name: str | None = None
 
 

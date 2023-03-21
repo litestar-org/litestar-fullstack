@@ -1,6 +1,6 @@
 from pydantic import BaseModel as _BaseModel
 
-from app.utils.text import camel_case
+from app.utils import camel_case
 
 __all__ = ["BaseModel", "CamelizedBaseModel"]
 

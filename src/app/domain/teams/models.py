@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 import sqlalchemy as sa
-from pydantic import constr
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.lib import dto, orm
-from app.utils.text import check_email
+from app.lib.db import orm
 
 if TYPE_CHECKING:
     from app.domain.accounts.models import User
@@ -35,7 +33,10 @@ class Team(orm.DatabaseModel):
     # ORM Relationships
     # ------------
     members: Mapped[list[TeamMember]] = relationship(
-        back_populates="team", cascade="all, delete", lazy="noload", passive_deletes=True
+        back_populates="team",
+        cascade="all, delete",
+        lazy="noload",
+        passive_deletes=True,
     )
     invitations: Mapped[list[TeamInvitation]] = relationship(
         back_populates="team",
@@ -85,16 +86,15 @@ class TeamInvitation(orm.DatabaseModel):
 
     __tablename__ = "team_invitation"  # type: ignore[assignment]
     team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"), nullable=False)
-    email: Mapped[str] = mapped_column(
-        nullable=False, info=dto.field(validators=[check_email], pydantic_type=constr(to_lower=True))
-    )
+    email: Mapped[str] = mapped_column(index=True)
     role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False)
     is_accepted: Mapped[bool] = mapped_column(default=False)
     invited_by_id: Mapped[UUID | None] = mapped_column(
-        sa.ForeignKey("user_account.id", ondelete="set null"), nullable=True
+        sa.ForeignKey("user_account.id", ondelete="set null"),
+        nullable=True,
     )
     invited_by_email: Mapped[str] = mapped_column(
-        nullable=False, info=dto.field(validators=[check_email], pydantic_type=constr(to_lower=True))
+        nullable=False,
     )
     # -----------
     # ORM Relationships

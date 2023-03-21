@@ -1,4 +1,5 @@
-from starlite import Controller, Template, get
+from starlite import Controller, get
+from starlite.response_containers import Template
 from starlite.status_codes import HTTP_200_OK
 
 from app.domain import urls

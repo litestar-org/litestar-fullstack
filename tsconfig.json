@@ -11,7 +11,20 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "composite": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src/app/domain/web/resources",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["vite/client", "node"]
   },
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "vite.config.ts",
+    "**/*.d.ts",
+    "src/app/domain/web/resources/**/*.ts",
+    "src/app/domain/web/resources/**/*.tsx",
+    "src/app/domain/web/resources/**/*.vue"
+  ]
 }

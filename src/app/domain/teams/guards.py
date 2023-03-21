@@ -1,8 +1,10 @@
 from uuid import UUID
 
-from starlite import ASGIConnection, BaseRouteHandler, NotAuthorizedException
+from starlite.connection import ASGIConnection
+from starlite.exceptions import NotAuthorizedException
+from starlite.handlers.base import BaseRouteHandler
 
-from .models import TeamRoles
+from app.domain.teams.models import TeamRoles
 
 
 def requires_team_membership(connection: ASGIConnection, _: BaseRouteHandler) -> None:

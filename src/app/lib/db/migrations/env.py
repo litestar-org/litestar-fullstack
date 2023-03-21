@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.lib import log, settings
-from app.lib.orm import DatabaseModel
+from app.lib.db.orm import DatabaseModel
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Connection

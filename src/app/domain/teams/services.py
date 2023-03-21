@@ -1,17 +1,16 @@
-from app.lib.service import RepositoryService
-
-from .models import Team, TeamInvitation, TeamMember
+from app.domain.teams.models import Team, TeamInvitation, TeamMember
+from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
 
 __all__ = ["TeamService", "TeamInvitationService", "TeamMemberService"]
 
 
-class TeamService(RepositoryService[Team]):
+class TeamService(SQLAlchemyRepositoryService[Team]):
     """Team Service."""
 
 
-class TeamMemberService(RepositoryService[TeamMember]):
+class TeamMemberService(SQLAlchemyRepositoryService[TeamMember]):
     """Team Member Service."""
 
 
-class TeamInvitationService(RepositoryService[TeamInvitation]):
+class TeamInvitationService(SQLAlchemyRepositoryService[TeamInvitation]):
     """Team Invitation Service."""

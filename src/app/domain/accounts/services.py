@@ -1,24 +1,27 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from pydantic import SecretStr
-from starlite import NotAuthorizedException
+from starlite.contrib.sqlalchemy.repository import ModelT, SQLAlchemyRepository
+from starlite.exceptions import PermissionDeniedException
 
 from app.lib import crypt
-from app.lib.service import RepositoryService
+from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
 
 from .models import User
-from .repositories import UserRepository
 
-if TYPE_CHECKING:
-    pass
-
-__all__ = ["UserService"]
+__all__ = ["UserService", "UserRepository"]
 
 
-class UserService(RepositoryService[User]):
-    """User Service."""
+class UserRepository(SQLAlchemyRepository[User]):
+    """User SQLAlchemy Repository."""
+
+    model_type = User
+
+
+class UserService(SQLAlchemyRepositoryService[User]):
+    """Handles database operations for users."""
 
     repository_type = UserRepository
 
@@ -26,68 +29,67 @@ class UserService(RepositoryService[User]):
         """Check if the user exist.
 
         Args:
-            db_session (AsyncSession): _description_
-            username (str): username to find.
+            username (str): _description_
 
         Returns:
-            bool: True if the user is found.
+            bool: _description_
         """
-        user_exists = await self.repository.count(email=username)
-        return bool(user_exists is not None and user_exists > 0)
-
-    async def get_by_email(self, email: str) -> User | None:
-        """Find a user by email.
-
-        Args:
-            email (str): email to find.
-
-        Returns:
-            User | None: Return User or None
-        """
-        return await self.repository.get_one_or_none(email=email)
+        user_exists = await self.repository.exists(email=username)
+        return bool(user_exists is not None)
 
     async def authenticate(self, username: str, password: SecretStr) -> User:
         """Authenticate a user.
 
         Args:
-            username (str): Username to authenticate
-            password (SecretStr): User password
+            username (str): _description_
+            password (SecretStr): _description_
 
         Raises:
             NotAuthorizedException: Raised when the user doesn't exist, isn't verified, or is not active.
 
         Returns:
-            models.User: The user object
+            User: The user object
         """
-        user_obj = await self.get_by_email(email=username)
-        if user_obj is None:
-            raise NotAuthorizedException("User not found or password invalid")
-        if not user_obj.hashed_password:
-            raise NotAuthorizedException("User does not have a configured password.")
-        if not await crypt.verify_password(password, user_obj.hashed_password):
-            raise NotAuthorizedException("User not found or password invalid")
-        if not user_obj.is_active:
-            raise NotAuthorizedException("User account is inactive")
-        return user_obj
+        db_obj = await self.get_one_or_none(email=username)
+        if db_obj is None:
+            raise PermissionDeniedException("User not found or password invalid")
+        if db_obj.hashed_password is None:
+            raise PermissionDeniedException("User not found or password invalid.")
+        if not await crypt.verify_password(password, db_obj.hashed_password):
+            raise PermissionDeniedException("User not found or password invalid")
+        if not db_obj.is_active:
+            raise PermissionDeniedException("User account is inactive")
+        return db_obj
 
-    async def update_password(self, obj_in: dict[str, Any], db_obj: User) -> None:
+    async def update_password(self, data: dict[str, Any], db_obj: User) -> None:
         """Update stored user password.
 
         This is only used when not used IAP authentication.
 
         Args:
-            db_session (AsyncSession): _description_
-            obj_in (UserPasswordUpdate): _description_
-            db_obj (models.User): _description_
+            data (UserPasswordUpdate): _description_
+            db_obj (User): _description_
 
         Raises:
-            NotAuthorizedException: _description_
+            PermissionDeniedException: _description_
         """
-        if not db_obj.hashed_password:
-            raise NotAuthorizedException("User does not have a configured password.")
-        if not await crypt.verify_password(obj_in["current_password"], db_obj.hashed_password):
-            raise NotAuthorizedException("Password failed to match")
+        if db_obj.hashed_password is None:
+            raise PermissionDeniedException("User not found or password invalid.")
+        if not await crypt.verify_password(data["current_password"], db_obj.hashed_password):
+            raise PermissionDeniedException("User not found or password invalid.")
         if not db_obj.is_active:
-            raise NotAuthorizedException("User account is not active")
-        db_obj.hashed_password = await crypt.get_password_hash(obj_in["new_password"])
+            raise PermissionDeniedException("User account is not active")
+        db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
+
+    async def create(
+        self,
+        data: ModelT | dict[str, Any],
+    ) -> User:
+        """Create a new user."""
+        if not isinstance(data, type(self.repository.model_type)):
+            password: SecretStr | str | None = data.pop("password", None)  # type: ignore[union-attr]
+            if password is not None:
+                password = SecretStr(password) if isinstance(password, str) else password
+                data.update({"hashed_password": await crypt.get_password_hash(password)})  # type: ignore[union-attr]
+        return await super().create(data)  # type: ignore[arg-type]
