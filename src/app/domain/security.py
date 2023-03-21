@@ -2,18 +2,33 @@ from __future__ import annotations
 
 from typing import Any
 
-from starlite import ASGIConnection
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, noload, selectinload
+from starlite.connection import ASGIConnection
 from starlite.contrib.jwt import OAuth2PasswordBearerAuth, Token
 
 from app.domain import urls
 from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
+from app.domain.teams.models import TeamMember
 from app.lib import settings
 
 __all__ = ["current_user_from_token", "auth"]
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any]) -> User | None:
+async def provide_user(connection: ASGIConnection[Any, User, Token, Any]) -> User:
+    """Get the user from the connection.
+
+    Args:
+        connection: current connection.
+
+    Returns:
+    User | None
+    """
+    return connection.user
+
+
+async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
     """Lookup current user from local JWT token.
 
     Fetches the user information from the database when loading from a local token.
@@ -28,10 +43,19 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     Returns:
         User: User record mapped to the JWT identifier
     """
-    service = UserService()
-    user = await service.get_by_email(token.sub)
-    if user and user.is_active:
-        return user
+    async with UserService.new(
+        base_select=select(User).options(
+            noload("*"),
+            selectinload(User.teams).options(
+                joinedload(TeamMember.team, innerjoin=True).options(
+                    noload("*"),
+                ),
+            ),
+        ),
+    ) as service:
+        user = await service.get_one_or_none(email=token.sub)
+        if user and user.is_active:
+            return user
     return None
 
 

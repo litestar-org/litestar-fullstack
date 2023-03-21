@@ -1,18 +1,22 @@
 """User Account Controllers."""
 from __future__ import annotations
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, noload, subqueryload
-from starlite import Body, Controller, MediaType, Provide, RequestEncodingType, Response, get, post
+from starlite import Controller, MediaType, Response, get, post
 from starlite.contrib.jwt import OAuth2Login
+from starlite.di import Provide
+from starlite.enums import RequestEncodingType
+from starlite.params import Body
 
 from app.domain import security, urls
+from app.domain.accounts import guards, schemas
+from app.domain.accounts.models import User
+from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
-from app.lib import log, orm
-
-from .. import guards, schemas
-from ..models import User
-from ..services import UserService
+from app.lib import log
+from app.lib.db import orm
 
 logger = log.get_logger()
 
@@ -21,14 +25,14 @@ def provides_user_service(db_session: AsyncSession) -> UserService:
     """Construct repository and service objects for the request."""
     return UserService(
         session=db_session,
-        options=[
+        base_select=select(User).options(
             noload("*"),
             subqueryload(User.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(
                     noload("*"),
                 ),
             ),
-        ],
+        ),
     )
 
 

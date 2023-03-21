@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any, TypeVar
 
-from starlite_saqlalchemy.db.orm import Base as DatabaseModel
-from starlite_saqlalchemy.db.orm import meta
+from starlite.contrib.sqlalchemy.base import Base as DatabaseModel
+from starlite.contrib.sqlalchemy.base import meta
 
 __all__ = ["DatabaseModel", "meta", "model_from_dict"]
 

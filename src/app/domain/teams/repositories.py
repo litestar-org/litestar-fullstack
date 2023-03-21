@@ -1,17 +1,17 @@
-from app.lib import db
+from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository
 
 from .models import Team, TeamInvitation, TeamMember
 
 __all__ = ["TeamRepository", "TeamMemberRepository", "TeamInvitationRepository"]
 
 
-class TeamRepository(db.SQLAlchemyRepository[Team]):
+class TeamRepository(SQLAlchemyRepository[Team]):
     """Team Repository."""
 
 
-class TeamMemberRepository(db.SQLAlchemyRepository[TeamMember]):
+class TeamMemberRepository(SQLAlchemyRepository[TeamMember]):
     """Team Member Repository."""
 
 
-class TeamInvitationRepository(db.SQLAlchemyRepository[TeamInvitation]):
+class TeamInvitationRepository(SQLAlchemyRepository[TeamInvitation]):
     """Team Invitation Repository."""

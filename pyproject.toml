@@ -44,9 +44,9 @@ pydantic = {version = ">=1.9.0", extras = [
 python = ">=3.10,<3.12"
 redis = ">=4.4.2"
 rich-click = ">=1.6.0"
+saq = "*"
 sqlalchemy = {version = ">=2.0.0"}
-starlite = {version = ">=1.50.1", extras = ["jwt", 'cli', 'redis']}
-starlite-saqlalchemy = {git = "https://github.com/cofin/starlite-saqlalchemy.git", branch = "custom", extras = ["cache", "worker", "sqlalchemy", "structlog"], develop = true}
+starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["jwt", 'cli', 'redis']}
 structlog = ">=22.3.0"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
@@ -186,6 +186,7 @@ ignore = [
   'T201',
   'ERA001',
   'TRY003',
+  'D106',
 ]
 line-length = 120
 select = [

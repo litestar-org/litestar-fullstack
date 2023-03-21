@@ -5,8 +5,9 @@ from sqlalchemy import Table
 from sqlalchemy.schema import DropTable
 
 from app.lib import log, settings
-from app.lib.db import engine
-from app.lib.orm import DatabaseModel, meta
+
+from .base import engine
+from .orm import DatabaseModel, meta
 
 logger = log.get_logger()
 

@@ -10,7 +10,6 @@ import uvicorn
 from click import echo
 from rich import get_console
 from rich.prompt import Confirm
-from starlite_saqlalchemy.constants import IS_LOCAL_ENVIRONMENT
 
 from app.domain.web.vite import run_vite
 from app.lib import db, log, settings, worker
@@ -105,9 +104,7 @@ def run_server(  # noqa: PLR0913
     log.config.configure()
     settings.server.HOST = host or settings.server.HOST
     settings.server.PORT = port or settings.server.PORT
-    settings.server.RELOAD = (
-        reload or settings.server.RELOAD if settings.server.RELOAD is not None else IS_LOCAL_ENVIRONMENT
-    )
+    settings.server.RELOAD = reload or settings.server.RELOAD if settings.server.RELOAD is not None else None
     settings.server.HTTP_WORKERS = http_workers or settings.server.HTTP_WORKERS
     settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
     settings.app.DEBUG = debug or settings.app.DEBUG

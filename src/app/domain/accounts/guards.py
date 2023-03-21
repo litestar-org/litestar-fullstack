@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from starlite import ASGIConnection, BaseRouteHandler, NotAuthorizedException
+from typing import TYPE_CHECKING
+
+from starlite.exceptions import NotAuthorizedException
+
+if TYPE_CHECKING:
+    from starlite.connection import ASGIConnection
+    from starlite.handlers.base import BaseRouteHandler
+
 
 __all__ = ["requires_superuser", "requires_active_user"]
 
