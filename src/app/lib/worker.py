@@ -403,6 +403,6 @@ def run_worker() -> None:
 
 
 async def active_workers() -> int:
-    """Server is healthy."""
+    """Return the number of active workers connected to the queue."""
     workers = await redis_client.keys(f"{queue.namespace('stats')}:*")
     return len(workers)

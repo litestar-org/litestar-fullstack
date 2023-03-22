@@ -2,11 +2,11 @@ import binascii
 import multiprocessing
 import os
 import platform
+import subprocess
 import sys
 from typing import Any
 
 import rich_click as click
-import uvicorn
 from click import echo
 from rich import get_console
 from rich.prompt import Confirm
@@ -109,34 +109,33 @@ def run_server(  # noqa: PLR0913
     settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
     settings.app.DEBUG = debug or settings.app.DEBUG
     settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
-    logger.info("starting application.")
+    logger.info("starting all application services.")
+
     try:
         logger.info("starting Background worker processes.")
         worker_process = multiprocessing.Process(target=worker.run_worker)
         worker_process.start()
 
         if settings.app.DEV_MODE:
+            logger.info("starting Vite")
             vite_process = multiprocessing.Process(target=run_vite)
             vite_process.start()
 
         logger.info("Starting HTTP Server.")
-
-        uvicorn.run(
-            app=settings.server.APP_LOC,
-            factory=settings.server.APP_LOC_IS_FACTORY,
-            host=settings.server.HOST,
-            port=settings.server.PORT,
-            loop="uvloop",
-            reload=bool(settings.server.RELOAD),
-            reload_dirs=settings.server.RELOAD_DIRS if settings.server.RELOAD else None,
-            timeout_keep_alive=settings.server.KEEPALIVE,
-            log_config=None,
-            # access_log=False,
-            # lifespan="off",
-            workers=1 if bool(settings.server.RELOAD) else settings.server.HTTP_WORKERS,
-        )
-    except Exception as e:
-        logger.exception(e)
+        reload_dirs = settings.server.RELOAD_DIRS_INCLUDE if settings.server.RELOAD else None
+        process_args = {
+            "reload": bool(settings.server.RELOAD),
+            "host": settings.server.HOST,
+            "port": settings.server.PORT,
+            "workers": 1 if bool(settings.server.RELOAD or settings.app.DEV_MODE) else settings.server.HTTP_WORKERS,
+            "factory": settings.server.APP_LOC_IS_FACTORY,
+            "loop": "uvloop",
+            "no-access-log": True,
+            "timeout-keep-alive": settings.server.KEEPALIVE,
+        }
+        if reload_dirs:
+            process_args.update({"reload-dir": reload_dirs})
+        subprocess.run(["uvicorn", settings.server.APP_LOC, *_convert_uvicorn_args(process_args)], check=True)
 
     finally:
         if worker_process.is_alive():
@@ -266,3 +265,22 @@ def show_database_revision() -> None:
 
 app.add_command(management_app, name="manage")
 app.add_command(run_app, name="run")
+
+
+def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
+    process_args = []
+    for arg, value in args.items():
+        if value is None:
+            pass
+        if isinstance(value, list):
+            for val in value:
+                if val is None:
+                    pass
+                process_args.append(f"--{arg}={val}")
+        if isinstance(value, bool):
+            if value:
+                process_args.append(f"--{arg}")
+        else:
+            process_args.append(f"--{arg}={value}")
+
+    return process_args
