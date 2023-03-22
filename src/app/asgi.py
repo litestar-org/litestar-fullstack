@@ -12,6 +12,7 @@ __all__ = ["run_app"]
 
 def run_app() -> Starlite:
     """Create ASGI application."""
+    from asyncpg.pgproto import pgproto
     from pydantic import BaseModel, SecretStr
     from starlite import Starlite
     from starlite.di import Provide
@@ -42,7 +43,7 @@ def run_app() -> Starlite:
         middleware=[log.controller.middleware_factory],
         logging_config=log.config,
         openapi_config=domain.openapi.config,
-        type_encoders={BaseModel: _base_model_encoder, SecretStr: str},
+        type_encoders={pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
         route_handlers=[*domain.routes],
         plugins=[db.plugin],
         on_shutdown=[cache.redis.close],
