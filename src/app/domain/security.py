@@ -4,7 +4,7 @@ from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
-from starlite.connection import ASGIConnection
+from starlite.connection import ASGIConnection, Request
 from starlite.contrib.jwt import OAuth2PasswordBearerAuth, Token
 
 from app.domain import urls
@@ -16,7 +16,7 @@ from app.lib import settings
 __all__ = ["current_user_from_token", "auth"]
 
 
-async def provide_user(connection: ASGIConnection[Any, User, Token, Any]) -> User:
+async def provide_user(request: Request[User, Token, Any]) -> User:
     """Get the user from the connection.
 
     Args:
@@ -25,7 +25,7 @@ async def provide_user(connection: ASGIConnection[Any, User, Token, Any]) -> Use
     Returns:
     User | None
     """
-    return connection.user
+    return request.user
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
