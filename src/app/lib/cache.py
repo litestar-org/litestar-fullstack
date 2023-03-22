@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from redis.asyncio import Redis
-from starlite.cache.config import CacheConfig, default_cache_key_builder
-from starlite.storage.redis import RedisStorage
+from starlite.config.response_cache import ResponseCacheConfig, default_cache_key_builder
+from starlite.stores.redis import RedisStore
 
 from app.lib import settings
 
@@ -47,9 +47,9 @@ def cache_key_builder(request: Request) -> str:
     return f"{settings.app.slug}:{default_cache_key_builder(request)}"
 
 
-config = CacheConfig(
-    backend=RedisStorage(redis, namespace=settings.app.slug),
-    expiration=settings.api.CACHE_EXPIRATION,
-    cache_key_builder=cache_key_builder,
+store = RedisStore(redis, namespace=settings.app.slug)
+config = ResponseCacheConfig(
+    default_expiration=settings.api.CACHE_EXPIRATION,
+    key_builder=cache_key_builder,
 )
 """Cache configuration for application."""

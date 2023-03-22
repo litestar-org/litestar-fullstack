@@ -29,7 +29,8 @@ def run_app() -> Starlite:
         return value.dict(by_alias=True)
 
     return Starlite(
-        cache_config=cache.config,
+        response_cache_config=cache.config,
+        stores=[cache.store],
         compression_config=compression.config,
         cors_config=cors.config,
         dependencies=dependencies,

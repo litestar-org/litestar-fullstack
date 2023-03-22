@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, Any, cast
-from uuid import UUID
+from typing import TYPE_CHECKING, cast
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
-from sqlalchemy.sql.sqltypes import Uuid
 from starlite.contrib.sqlalchemy_1.config import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS, SQLAlchemyConfig
-from starlite.contrib.sqlalchemy_1.plugin import SQLAlchemyPlugin as _SQLAlchemyPlugin
+from starlite.contrib.sqlalchemy_1.plugin import SQLAlchemyPlugin
 from starlite.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
 
 from app.lib import constants, serialization, settings
@@ -18,7 +15,6 @@ if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
     from sqlalchemy.ext.asyncio import AsyncSession
-    from sqlalchemy.sql.type_api import TypeEngine
     from starlite.datastructures.state import State
     from starlite.types import Message, Scope
 
@@ -72,21 +68,6 @@ config = SQLAlchemyConfig(
     session_maker_instance=async_session_factory,
     before_send_handler=before_send_handler,
 )
-
-
-class SQLAlchemyPlugin(_SQLAlchemyPlugin):
-    """Extends support for UUID."""
-
-    @property
-    def providers_map(self) -> dict[type[TypeEngine], Callable[[TypeEngine | type[TypeEngine]], Any]]:
-        """SQLAlchemy to Python type map.
-
-        Returns:
-            dict[type[TypeEngine], Callable[[TypeEngine | type[TypeEngine]], Any]]: dictionary of SQL Alchemy type to corresponding python handler
-        """
-        datatype_map = super().providers_map
-        datatype_map.update({Uuid: lambda x: UUID})
-        return datatype_map
 
 
 plugin = SQLAlchemyPlugin(config=config)

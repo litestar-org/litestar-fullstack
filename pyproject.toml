@@ -35,6 +35,7 @@ alembic = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
 hiredis = "*"
+jinja2 = "*"
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -46,11 +47,10 @@ redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 saq = "*"
 sqlalchemy = {version = ">=2.0.0"}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["jwt", 'cli', 'redis']}
+starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2']}
 structlog = ">=22.3.0"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
-# starlite-saqlalchemy = {version = "*", extras = ["cache", "worker", "sqlalchemy"]}
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "*"}
