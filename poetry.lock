@@ -2651,7 +2651,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/starlite-api/starlite.git"
 reference = "main"
-resolved_reference = "325623c388e38ae3183dbaf5ff5b1ddbf25824a7"
+resolved_reference = "8925a6d31452bb527dad9d714e243fd626263a0a"
 
 [[package]]
 name = "structlog"
@@ -3164,4 +3164,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "ca5e7d369ae7ed3a4703f7d2333380903fafb5d8707407a2bfb6dfaf9f56752a"
+content-hash = "92bb179b465527127a4a542ebf0d1447f35c852363230409fe6b1599f0838c47"

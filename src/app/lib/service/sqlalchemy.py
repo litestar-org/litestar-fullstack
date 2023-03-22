@@ -77,7 +77,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Representation of created instances.
         """
         data = [
-            model_from_dict(model=self.repository.model_type, **datum)  # type: ignore
+            model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
             if not isinstance(datum, type(self.repository.model_type))
             else datum
             for datum in data
@@ -111,7 +111,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Updated representation.
         """
         if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, **data)  # type: ignore[arg-type,   type-var]
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type,   type-var]
         self.repository.set_id_attribute_value(item_id, data)
         return await self.repository.update(data)
 
@@ -125,7 +125,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Representation of updated instances.
         """
         data = [
-            model_from_dict(model=self.repository.model_type, **datum)  # type: ignore
+            model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
             if not isinstance(datum, type(self.repository.model_type))
             else datum
             for datum in data
@@ -144,7 +144,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         self.repository.set_id_attribute_value(item_id, data)  # type: ignore[arg-type]
         if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, **data)  # type: ignore[arg-type, type-var]
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type, type-var]
         return await self.repository.upsert(data)
 
     async def get(self, item_id: Any, **kwargs: Any) -> ModelT:
