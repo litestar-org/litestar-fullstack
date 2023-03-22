@@ -64,7 +64,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Representation of created instance.
         """
         if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, **data)  # type: ignore[arg-type, type-var]
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type, type-var]
         return await self.repository.add(data)
 
     async def create_many(self, data: list[ModelT | dict[str, Any]]) -> Sequence[ModelT]:  # type: ignore[override]

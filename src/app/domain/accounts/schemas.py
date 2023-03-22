@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
+
+from pydantic import UUID4, EmailStr  # noqa: TCH002
+from pydantic.types import SecretStr  # noqa: TCH002
 
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
 
-if TYPE_CHECKING:
-    from pydantic import UUID4, EmailStr
-    from pydantic.types import SecretStr
+# if TYPE_CHECKING:
+#     from pydantic import UUID4, EmailStr
+#     from pydantic.types import SecretStr
 
 
 class User(CamelizedBaseModel):
@@ -89,3 +92,6 @@ class UserUpdate(CamelizedBaseModel):
     is_superuser: bool | None = False
     is_active: bool | None = False
     is_verified: bool | None = False
+
+
+User.update_forward_refs()

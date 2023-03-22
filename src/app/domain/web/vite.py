@@ -24,8 +24,6 @@ from starlite.template import TemplateEngineProtocol
 
 from app.lib import log, settings
 
-__all__ = ("TemplateConfig",)
-
 if TYPE_CHECKING:
     from pydantic import DirectoryPath
     from starlite.types import PathType

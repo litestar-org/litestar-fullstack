@@ -18,7 +18,6 @@ from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
 from app.lib import log
-from app.lib.db import orm
 
 logger = log.get_logger()
 
@@ -76,7 +75,7 @@ class AccessController(Controller):
     async def signup(self, user_service: UserService, data: schemas.UserRegister) -> schemas.User:
         """User Signup."""
         obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
-        user = await user_service.create(orm.model_from_dict(User, obj))
+        user = await user_service.create(obj)
         return schemas.User.from_orm(user)
 
     @get(
