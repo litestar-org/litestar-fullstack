@@ -19,6 +19,15 @@ import msgspec
 from asyncpg.pgproto import pgproto
 from pydantic import BaseModel
 
+__all__ = [
+    "convert_datetime_to_gmt",
+    "convert_string_to_camel_case",
+    "from_json",
+    "from_msgpack",
+    "to_json",
+    "to_msgpack",
+]
+
 
 def _default(value: Any) -> str:
     if isinstance(value, BaseModel):
@@ -27,7 +36,7 @@ def _default(value: Any) -> str:
         return str(value)
     try:
         val = str(value)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         raise TypeError from exc
     else:
         return val

@@ -4,6 +4,9 @@ from typing import TYPE_CHECKING
 
 from .vite import ViteTemplateEngine
 
+__all__ = ["InertiaTemplateEngine"]
+
+
 if TYPE_CHECKING:
     from pydantic import DirectoryPath
 

@@ -11,6 +11,9 @@ from starlite.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
 
 from app.lib import constants, serialization, settings
 
+__all__ = ["before_send_handler", "session"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
@@ -59,8 +62,9 @@ engine = create_async_engine(
     connect_args=settings.db.CONNECT_ARGS,
 )
 async_session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(engine, expire_on_commit=False)
-"""
-Database session factory. See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
+"""Database session factory.
+
+See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
 """
 config = SQLAlchemyConfig(
     dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,

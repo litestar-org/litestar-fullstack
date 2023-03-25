@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, cast
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
-from starlite.connection import ASGIConnection, Request
 from starlite.contrib.jwt import OAuth2PasswordBearerAuth, Token
 
 from app.domain import urls
@@ -15,8 +14,11 @@ from app.lib import settings
 
 __all__ = ["current_user_from_token", "auth"]
 
+if TYPE_CHECKING:
+    from starlite.connection import ASGIConnection, Request
 
-async def provide_user(request: Request[User, Token, Any]) -> User:
+
+async def provide_user(request: Request) -> User:
     """Get the user from the connection.
 
     Args:
@@ -25,18 +27,18 @@ async def provide_user(request: Request[User, Token, Any]) -> User:
     Returns:
     User | None
     """
-    return request.user
+    return cast("User", request.user)
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
-    """Lookup current user from local JWT token.
+async def current_user_from_token(token: Token, connection: ASGIConnection) -> User | None:
+    """Lookup current user from JWT token.
 
     Fetches the user information from the database
 
 
     Args:
         token (str): JWT Token Object
-        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.
+        connection (ASGIConnection): ASGI connection.
 
 
     Returns:

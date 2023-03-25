@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import TYPE_CHECKING
-from uuid import UUID
+from uuid import UUID  # noqa: TCH003
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship

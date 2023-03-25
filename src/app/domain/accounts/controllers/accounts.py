@@ -1,10 +1,9 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator
+from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, noload, subqueryload
 from starlite import Controller
 
@@ -12,6 +11,15 @@ from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
 from app.lib import log
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+
+__all__ = ["AccountController", "provides_user_service"]
+
 
 logger = log.get_logger()
 

@@ -8,6 +8,9 @@ from starlite.stores.redis import RedisStore
 
 from app.lib import settings
 
+__all__ = ["cache_key_builder", "on_shutdown"]
+
+
 if TYPE_CHECKING:
     from starlite.connection import Request
 
@@ -16,12 +19,11 @@ redis = Redis.from_url(
     settings.redis.URL,
     encoding="utf-8",
     socket_connect_timeout=2,
-    # socket_timeout= 1,
     socket_keepalive=5,
     health_check_interval=5,
 )
-"""
-Async [`Redis`][redis.Redis] instance, configure via
+"""Async [`Redis`][redis.Redis] instance, configure via.
+
 [CacheSettings][dma.lib.config.CacheSettings].
 """
 
@@ -39,7 +41,7 @@ def cache_key_builder(request: Request) -> str:
     request : Request
         Current request instance.
 
-    Returns
+    Returns:
     -------
     str
         App slug prefixed cache key.
@@ -47,7 +49,10 @@ def cache_key_builder(request: Request) -> str:
     return f"{settings.app.slug}:{default_cache_key_builder(request)}"
 
 
-store = RedisStore(redis, namespace=settings.app.slug)
+def redis_store_factory(name: str) -> RedisStore:
+    return RedisStore(redis, namespace=f"{settings.app.slug}:{name}")
+
+
 config = ResponseCacheConfig(
     default_expiration=settings.api.CACHE_EXPIRATION,
     key_builder=cache_key_builder,

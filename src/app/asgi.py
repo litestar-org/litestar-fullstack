@@ -12,16 +12,29 @@ __all__ = ["run_app"]
 
 def run_app() -> Starlite:
     """Create ASGI application."""
+    from datetime import datetime
+    from uuid import UUID
+
     from asyncpg.pgproto import pgproto
-    from pydantic import BaseModel, SecretStr
+    from pydantic import BaseModel, EmailStr, SecretStr
+    from sqlalchemy.ext.asyncio import AsyncSession
     from starlite import Starlite
+    from starlite.connection import ASGIConnection, Request
+    from starlite.contrib.jwt import OAuth2Login
+    from starlite.contrib.repository.filters import (
+        BeforeAfter,
+        CollectionFilter,
+        LimitOffset,
+    )
     from starlite.di import Provide
+    from starlite.stores.registry import StoreRegistry
 
     from app import domain
+    from app.domain.accounts.models import User
     from app.domain.security import provide_user
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
-    from app.lib.dependencies import create_collection_dependencies
+    from app.lib.dependencies import FilterTypes, create_collection_dependencies
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -31,7 +44,7 @@ def run_app() -> Starlite:
 
     return Starlite(
         response_cache_config=cache.config,
-        stores=[cache.store],
+        stores=StoreRegistry(default_factory=cache.redis_store_factory),
         compression_config=compression.config,
         cors_config=cors.config,
         dependencies=dependencies,
@@ -51,4 +64,18 @@ def run_app() -> Starlite:
         on_app_init=[domain.security.auth.on_app_init],
         static_files_config=static_files.config,
         template_config=template_config,  # type: ignore[arg-type]
+        signature_namespace={
+            "AsyncSession": AsyncSession,
+            "FilterTypes": FilterTypes,
+            "BeforeAfter": BeforeAfter,
+            "CollectionFilter": CollectionFilter,
+            "LimitOffset": LimitOffset,
+            "UUID": UUID,
+            "EmailStr": EmailStr,
+            "datetime": datetime,
+            "User": User,
+            "ASGIConnection": ASGIConnection,
+            "Request": Request,
+            "OAuth2Login": OAuth2Login,
+        },
     )

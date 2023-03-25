@@ -15,6 +15,9 @@ from app.lib.db import async_session_factory
 from app.lib.db.orm import model_from_dict
 from app.lib.service.generic import Service
 
+__all__ = ["SQLAlchemyRepositoryService"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Sequence
 
@@ -215,7 +218,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         return await self.repository.delete_many(item_ids)
 
-    async def list(self, *filters: FilterTypes, **kwargs: Any) -> Sequence[ModelT]:  # noqa: A003
+    async def list(self, *filters: FilterTypes, **kwargs: Any) -> Sequence[ModelT]:
         """Wrap repository scalars operation.
 
         Args:

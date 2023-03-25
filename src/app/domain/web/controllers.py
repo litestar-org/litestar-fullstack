@@ -4,6 +4,8 @@ from starlite.status_codes import HTTP_200_OK
 
 from app.domain import urls
 
+__all__ = ["WebController"]
+
 
 class WebController(Controller):
     """Web Controller."""

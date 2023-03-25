@@ -8,4 +8,4 @@ config = CSRFConfig(
     cookie_secure=settings.app.CSRF_COOKIE_SECURE,
     cookie_name=settings.app.CSRF_COOKIE_NAME,
 )
-"""Default csrf config"""
+"""Default csrf config."""

@@ -11,6 +11,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar
 from app.lib import constants
 from app.lib.exceptions import NotFoundError
 
+__all__ = ["Service"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Sequence
 
@@ -38,7 +41,6 @@ class Service(Generic[T]):
         #       "__value" of type "Type[Service[Any]]" in function "__setitem__"
         #   "Type[Service[T@Service]]" is incompatible with "Type[Service[Any]]"
         #   Type "Type[Self@Service[T@Service]]" cannot be assigned to type "Type[Service[Any]]"
-        #       (reportGeneralTypeIssues)
         constants.SERVICE_OBJECT_IDENTITY_MAP[cls.__id__] = cls  # pyright:ignore
 
     # pylint:disable=unused-argument
@@ -76,7 +78,7 @@ class Service(Generic[T]):
         """
         return data
 
-    async def list(self, **kwargs: Any) -> Sequence[T]:  # noqa: A003
+    async def list(self, **kwargs: Any) -> Sequence[T]:
         """Return view of the collection of `T`.
 
         Args:

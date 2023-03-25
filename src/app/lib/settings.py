@@ -121,7 +121,7 @@ class AppSettings(BaseSettings):
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
-        cls,  # noqa: N805
+        cls,
         value: str | list[str],
     ) -> list[str] | str:
         """Parse a list of origins."""
@@ -135,7 +135,7 @@ class AppSettings(BaseSettings):
 
     @validator("SECRET_KEY", pre=True, always=True)
     def generate_secret_key(
-        cls,  # noqa: N805
+        cls,
         value: SecretBytes | None,
     ) -> SecretBytes:
         """Generate a secret key."""
@@ -441,7 +441,7 @@ def load_settings() -> (
         http_client: HTTPClientSettings = HTTPClientSettings.parse_obj({})
 
     except ValidationError as e:
-        print("Could not load settings. %s", e)
+        print("Could not load settings. %s", e)  # noqa: T201
         raise e from e
     return (
         app,
