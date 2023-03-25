@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime  # noqa: TCH003
 from typing import Any
 
 from pydantic import UUID4, EmailStr  # noqa: TCH002
@@ -7,10 +8,6 @@ from pydantic.types import SecretStr  # noqa: TCH002
 
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
-
-# if TYPE_CHECKING:
-#     from pydantic import UUID4, EmailStr
-#     from pydantic.types import SecretStr
 
 
 class User(CamelizedBaseModel):
@@ -22,6 +19,7 @@ class User(CamelizedBaseModel):
     is_superuser: bool
     is_active: bool
     is_verified: bool
+    joined_at: datetime
     teams: list[UserTeam] | None = []
 
 
