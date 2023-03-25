@@ -1,5 +1,4 @@
 """User Account Controllers."""
-from __future__ import annotations
 
 from collections.abc import AsyncGenerator
 
@@ -13,7 +12,8 @@ from starlite.enums import RequestEncodingType
 from starlite.params import Body
 
 from app.domain import security, urls
-from app.domain.accounts import guards, schemas
+from app.domain.accounts import schemas
+from app.domain.accounts.guards import requires_active_user
 from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
@@ -82,10 +82,10 @@ class AccessController(Controller):
         operation_id="AccountProfile",
         name="account:profile",
         path=urls.ACCOUNT_PROFILE,
-        guards=[guards.requires_active_user],
+        guards=[requires_active_user],
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, current_user: User) -> schemas.User:
+    async def profile(self, current_user: "User") -> schemas.User:
         """User Profile."""
-        return schemas.User.from_orm(current_user)
+        return current_user

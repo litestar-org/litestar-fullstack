@@ -1,5 +1,7 @@
 # Starlite Reference Application
 
+\*\* Update: This repo is referencing the current alpha of Starlite 2.0. Expect things to stabilize as we get closer to a final release.
+
 This is a reference application that you can use to get your next Starlite application running quickly.
 
 It contains most of the boilerplate required for a production web API.

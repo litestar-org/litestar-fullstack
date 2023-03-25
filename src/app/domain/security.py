@@ -20,7 +20,7 @@ async def provide_user(request: Request[User, Token, Any]) -> User:
     """Get the user from the connection.
 
     Args:
-        connection: current connection.
+        request: current connection.
 
     Returns:
     User | None
@@ -31,13 +31,12 @@ async def provide_user(request: Request[User, Token, Any]) -> User:
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
     """Lookup current user from local JWT token.
 
-    Fetches the user information from the database when loading from a local token.
+    Fetches the user information from the database
 
-    If the user doesn't exist, the record will be created and returned.
 
     Args:
         token (str): JWT Token Object
-        connection (ASGIConnection[Any, Any, Any]): ASGI connection.
+        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.
 
 
     Returns:
