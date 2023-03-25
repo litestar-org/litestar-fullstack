@@ -88,4 +88,4 @@ class AccessController(Controller):
     )
     async def profile(self, current_user: "User") -> schemas.User:
         """User Profile."""
-        return current_user
+        return schemas.User.from_orm(current_user)
