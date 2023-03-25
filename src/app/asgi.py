@@ -20,12 +20,14 @@ def run_app() -> Starlite:
     from sqlalchemy.ext.asyncio import AsyncSession
     from starlite import Starlite
     from starlite.connection import ASGIConnection, Request
+    from starlite.contrib.jwt import OAuth2Login
     from starlite.contrib.repository.filters import (
         BeforeAfter,
         CollectionFilter,
         LimitOffset,
     )
     from starlite.di import Provide
+    from starlite.stores.registry import StoreRegistry
 
     from app import domain
     from app.domain.accounts.models import User
@@ -42,7 +44,7 @@ def run_app() -> Starlite:
 
     return Starlite(
         response_cache_config=cache.config,
-        stores=[cache.store],
+        stores=StoreRegistry(default_factory=cache.redis_store_factory),
         compression_config=compression.config,
         cors_config=cors.config,
         dependencies=dependencies,
@@ -74,5 +76,6 @@ def run_app() -> Starlite:
             "User": User,
             "ASGIConnection": ASGIConnection,
             "Request": Request,
+            "OAuth2Login": OAuth2Login,
         },
     )

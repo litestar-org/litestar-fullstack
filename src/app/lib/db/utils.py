@@ -9,6 +9,16 @@ from app.lib import log, settings
 from .base import engine
 from .orm import DatabaseModel, meta
 
+__all__ = [
+    "create_database",
+    "drop_tables",
+    "purge_database",
+    "reset_database",
+    "show_database_revision",
+    "upgrade_database",
+]
+
+
 logger = log.get_logger()
 
 

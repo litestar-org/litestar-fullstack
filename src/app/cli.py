@@ -91,7 +91,7 @@ def run_app(_: dict[str, Any]) -> None:
 @click.option("-r", "--reload", help="Enable reload", is_flag=True, default=False, type=bool)
 @click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
 @click.option("-d", "--debug", help="Enable debugging.", is_flag=True, default=False, type=bool)
-def run_server(  # noqa: PLR0913
+def run_server(
     host: str,
     port: int | None,
     http_workers: int | None,
@@ -122,7 +122,7 @@ def run_server(  # noqa: PLR0913
             vite_process.start()
 
         logger.info("Starting HTTP Server.")
-        reload_dirs = settings.server.RELOAD_DIRS_INCLUDE if settings.server.RELOAD else None
+        reload_dirs = settings.server.RELOAD_DIRS if settings.server.RELOAD else None
         process_args = {
             "reload": bool(settings.server.RELOAD),
             "host": settings.server.HOST,

@@ -4,6 +4,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+__all__ = ["run_cli"]
+
 
 def run_cli() -> None:
     """Application Entrypoint."""
@@ -13,7 +15,7 @@ def run_cli() -> None:
         from app import cli
 
     except ImportError:
-        print(
+        print(  # noqa: T201
             "💣 Could not load required libraries.  ",
             "Please check your installation and make sure you activated any necessary virtual environment",
         )

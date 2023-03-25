@@ -1,12 +1,11 @@
 """User Account Controllers."""
+from __future__ import annotations
 
-from collections.abc import AsyncGenerator
+from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, noload, subqueryload
 from starlite import Controller, MediaType, Response, get, post
-from starlite.contrib.jwt import OAuth2Login
 from starlite.di import Provide
 from starlite.enums import RequestEncodingType
 from starlite.params import Body
@@ -19,7 +18,16 @@ from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
 from app.lib import log
 
+__all__ = ["AccessController", "provides_user_service"]
+
+
 logger = log.get_logger()
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from starlite.contrib.jwt import OAuth2Login
 
 
 async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[UserService, None]:
@@ -86,6 +94,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, current_user: "User") -> schemas.User:
+    async def profile(self, current_user: User) -> schemas.User:
         """User Profile."""
         return schemas.User.from_orm(current_user)

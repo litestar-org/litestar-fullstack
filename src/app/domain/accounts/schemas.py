@@ -9,11 +9,22 @@ from pydantic.types import SecretStr  # noqa: TCH002
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
 
+__all__ = [
+    "User",
+    "UserCreate",
+    "UserLogin",
+    "UserPasswordConfirm",
+    "UserPasswordUpdate",
+    "UserRegister",
+    "UserTeam",
+    "UserUpdate",
+]
+
 
 class User(CamelizedBaseModel):
     """User properties to use for a response."""
 
-    id: UUID4  # noqa: A003
+    id: UUID4
     email: EmailStr
     name: str | None
     is_superuser: bool

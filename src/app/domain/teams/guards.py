@@ -6,6 +6,8 @@ from starlite.handlers.base import BaseRouteHandler
 
 from app.domain.teams.models import TeamRoles
 
+__all__ = ["requires_team_admin", "requires_team_membership", "requires_team_ownership"]
+
 
 def requires_team_membership(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     """Verify the connection user is a member of the workspace.
@@ -16,7 +18,6 @@ def requires_team_membership(connection: ASGIConnection, _: BaseRouteHandler) ->
 
     Raises:
         NotAuthorizedException: _description_
-
     """
     team_id = connection.path_params["team_id"]
     if connection.user.is_superuser:
@@ -35,7 +36,6 @@ def requires_team_admin(connection: ASGIConnection, _: BaseRouteHandler) -> None
 
     Raises:
         NotAuthorizedException: _description_
-
     """
     team_id = connection.path_params["team_id"]
     if connection.user.is_superuser:
@@ -56,7 +56,6 @@ def requires_team_ownership(connection: ASGIConnection, _: BaseRouteHandler) -> 
 
     Raises:
         NotAuthorizedException: _description_
-
     """
     team_id = UUID(connection.path_params["team_id"])
     if connection.user.is_superuser:

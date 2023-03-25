@@ -4,7 +4,6 @@ import atexit
 import contextlib
 import json
 import threading
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import cached_property
 from inspect import isclass
@@ -24,7 +23,12 @@ from starlite.template import TemplateEngineProtocol
 
 from app.lib import log, settings
 
+__all__ = ["ViteAssetLoader", "ViteConfig", "ViteTemplateConfig", "ViteTemplateEngine", "run_vite"]
+
+
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from pydantic import DirectoryPath
     from starlite.types import PathType
 
@@ -41,16 +45,23 @@ MANIFEST_NAME: Final = "manifest.json"
 class ViteConfig(BaseModel):
     """Configuration for ViteJS support.
 
-    To enable Vite integration, pass an instance of this class to the :class:`Starlite <starlite.app.Starlite>` constructor
-    using the 'plugins' key.
+    To enable Vite integration, pass an instance of this class to the
+    :class:`Starlite <starlite.app.Starlite>` constructor using the
+    'plugins' key.
     """
 
     hot_reload: bool = False
     is_react: bool = False
     static_url: str = "/static/"
-    """Base URL to generate for static asset references.  This should match what you have for the STATIC_URL"""
+    """Base URL to generate for static asset references.
+
+    This should match what you have for the STATIC_URL
+    """
     static_dir: Path
-    """Location of the manifest file. The path relative to the `assets_path` location"""
+    """Location of the manifest file.
+
+    The path relative to the `assets_path` location
+    """
     host: str = "localhost"
     protocol: str = "http"
     port: int = 3000
@@ -67,7 +78,6 @@ class ViteAssetLoader:
     """Vite  manifest loader.
 
     Please see: https://vitejs.dev/guide/backend-integration.html
-
     """
 
     _instance: ClassVar[ViteAssetLoader | None] = None
@@ -116,7 +126,7 @@ class ViteAssetLoader:
                 manifest_content = manifest_file.read()
             try:
                 manifest = json.loads(manifest_content)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 raise RuntimeError(
                     "Cannot read Vite manifest file at %s",
                     Path(vite_config.static_dir / MANIFEST_NAME),
@@ -292,18 +302,21 @@ class ViteTemplateEngine(JinjaTemplateEngine):
 class ViteTemplateConfig(Generic[T]):
     """Configuration for Templating.
 
-    To enable templating, pass an instance of this class to the :class:`Starlite <starlite.app.Starlite>` constructor using the
+    To enable templating, pass an instance of this class to the
+    :class:`Starlite <starlite.app.Starlite>` constructor using the
     'template_config' key.
     """
 
     engine: type[ViteTemplateEngine] | ViteTemplateEngine
-    """A template engine adhering to the :class:`TemplateEngineProtocol <starlite.template.base.TemplateEngineProtocol>`."""
+    """A template engine adhering to the :class:`TemplateEngineProtocol
+    <starlite.template.base.TemplateEngineProtocol>`."""
     config: ViteConfig
     """A a config for the vite engine`."""
     directory: PathType | list[PathType] | None = field(default=None)
     """A directory or list of directories from which to serve templates."""
     engine_callback: Callable[[T], None] | None = field(default=None)
-    """A callback function that allows modifying the instantiated templating protocol."""
+    """A callback function that allows modifying the instantiated templating
+    protocol."""
 
     def __post_init__(self) -> None:
         """Ensure that directory is set if engine is a class."""

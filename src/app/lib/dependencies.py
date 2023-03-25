@@ -14,6 +14,16 @@ from starlite.params import Dependency, Parameter
 
 from app.lib import constants
 
+__all__ = [
+    "create_collection_dependencies",
+    "provide_created_filter",
+    "provide_filter_dependencies",
+    "provide_id_filter",
+    "provide_limit_offset_pagination",
+    "provide_updated_filter",
+]
+
+
 DTorNone = datetime | None
 
 FilterTypes = BeforeAfter | CollectionFilter[Any] | LimitOffset
@@ -38,7 +48,7 @@ def provide_id_filter(
     ids : list[UUID] | None
         Parsed out of comma separated list of values in query params.
 
-    Returns
+    Returns:
     -------
     CollectionFilter[UUID]
     """
@@ -129,7 +139,7 @@ def provide_filter_dependencies(
     limit_offset : repository.LimitOffset
         Filter for query pagination.
 
-    Returns
+    Returns:
     -------
     list[FilterTypes]
         List of filters parsed from connection.
@@ -147,10 +157,9 @@ def create_collection_dependencies() -> dict[str, Provide]:
 
     Creates a dictionary of provides for pagination endpoints.
 
-    Returns
+    Returns:
     -------
     dict[str, Provide]
-
     """
     return {
         LIMIT_OFFSET_DEPENDENCY_KEY: Provide(provide_limit_offset_pagination),

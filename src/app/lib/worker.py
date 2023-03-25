@@ -181,7 +181,7 @@ class JobConfig:
 default_job_config_dict = utils.dataclass_as_dict_shallow(JobConfig(), exclude_none=True)
 
 
-def create_worker_instance(  # noqa: PLR0913
+def create_worker_instance(
     functions: Collection[Callable[..., Any] | tuple[str, Callable]],
     cron_jobs: Collection[saq.CronJob] = (),
     concurrency: int | None = None,

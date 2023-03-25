@@ -8,6 +8,9 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from app.lib import log, settings
 from app.lib.db.orm import DatabaseModel
 
+__all__ = ["do_run_migrations", "run_migrations_offline", "run_migrations_online"]
+
+
 if TYPE_CHECKING:
     from sqlalchemy.engine import Connection
 
@@ -25,7 +28,6 @@ target_metadata = DatabaseModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
 

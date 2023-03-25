@@ -16,6 +16,9 @@ from typing import TYPE_CHECKING
 
 import msgspec
 
+__all__ = ["EventFilter", "msgspec_json_renderer"]
+
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -44,7 +47,7 @@ class EventFilter:
 
     Add an instance to the processor chain.
 
-    Examples
+    Examples:
         structlog.configure(
             ...,
             processors=[
@@ -56,10 +59,8 @@ class EventFilter:
     """
 
     def __init__(self, filter_keys: Iterable[str]) -> None:
-        """
-
-        Args:
-            filter_keys: Iterable of string keys to be excluded from the log event.
+        """Args:
+        filter_keys: Iterable of string keys to be excluded from the log event.
         """
         self.filter_keys = filter_keys
 

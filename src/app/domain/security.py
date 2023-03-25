@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
@@ -27,7 +27,7 @@ async def provide_user(request: Request) -> User:
     Returns:
     User | None
     """
-    return request.user
+    return cast("User", request.user)
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection) -> User | None:

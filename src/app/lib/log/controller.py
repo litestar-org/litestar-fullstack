@@ -24,6 +24,9 @@ from starlite.utils.scope import get_starlite_scope_state
 
 from app.lib import settings
 
+__all__ = ["BeforeSendHandler", "drop_health_logs", "middleware_factory"]
+
+
 if TYPE_CHECKING:
     from typing import Any, Literal
 
@@ -126,7 +129,8 @@ class BeforeSendHandler:
         )
 
     async def __call__(self, message: Message, _: State, scope: Scope) -> None:
-        """Receives ASGI response messages and scope, and logs per configuration.
+        """Receives ASGI response messages and scope, and logs per
+        configuration.
 
         Args:
             message: ASGI response event.
@@ -150,7 +154,7 @@ class BeforeSendHandler:
                     await self.log_response(scope)
                 await LOGGER.alog(scope["state"]["log_level"], settings.log.HTTP_EVENT)
             # RuntimeError: Expected ASGI message 'http.response.body', but got 'http.response.start'.
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-except
                 # just in-case something in the context causes the error
                 structlog.contextvars.clear_contextvars()
                 await LOGGER.aerror("Error in logging before-send handler!", exc_info=exc)
