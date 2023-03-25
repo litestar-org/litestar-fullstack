@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
-from uuid import UUID
+from typing import TYPE_CHECKING, Any
 
 from starlite.contrib.repository.filters import (
     BeforeAfter,
@@ -24,6 +23,9 @@ FILTERS_DEPENDENCY_KEY = "filters"
 ID_FILTER_DEPENDENCY_KEY = "id_filter"
 LIMIT_OFFSET_DEPENDENCY_KEY = "limit_offset"
 UPDATED_FILTER_DEPENDENCY_KEY = "updated_filter"
+
+if TYPE_CHECKING:
+    from uuid import UUID
 
 
 def provide_id_filter(
