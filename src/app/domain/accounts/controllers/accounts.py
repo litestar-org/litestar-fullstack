@@ -20,6 +20,9 @@ from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
 from app.lib import log
 
+__all__ = ["AccountController", "provide_users_service"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
     from uuid import UUID
@@ -84,7 +87,7 @@ class AccountController(Controller):
         summary="Create a new user.",
         cache_control=None,
         description="A user who can login and use the system.",
-        path=urls.ACCOUNT_CREATE
+        path=urls.ACCOUNT_CREATE,
     )
     async def create_user(
         self,

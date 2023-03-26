@@ -7,10 +7,10 @@ if TYPE_CHECKING:
     from starlite import Starlite
 
 
-__all__ = ["run_app"]
+__all__ = ["create_app"]
 
 
-def run_app() -> Starlite:
+def create_app() -> Starlite:
     """Create ASGI application."""
     from datetime import datetime
     from uuid import UUID

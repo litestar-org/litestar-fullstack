@@ -13,6 +13,9 @@ from app.domain.teams.models import TeamInvitation
 from app.domain.teams.services import TeamInvitationService
 from app.lib import log
 
+__all__ = ["TeamInvitationController", "provide_team_invitations_service"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 

@@ -22,7 +22,7 @@ class TeamRoles(str, Enum):
     MEMBER = "MEMBER"
 
 
-class Team(orm.DatabaseModel):
+class Team(orm.DatabaseModel, orm.AuditColumns):
     """Team."""
 
     __tablename__ = "team"  # type: ignore[assignment]
@@ -50,7 +50,7 @@ class Team(orm.DatabaseModel):
     )
 
 
-class TeamMember(orm.DatabaseModel):
+class TeamMember(orm.DatabaseModel, orm.AuditColumns):
     """Team Membership."""
 
     __tablename__ = "team_member"  # type: ignore[assignment]
@@ -81,7 +81,7 @@ class TeamMember(orm.DatabaseModel):
     )
 
 
-class TeamInvitation(orm.DatabaseModel):
+class TeamInvitation(orm.DatabaseModel, orm.AuditColumns):
     """Team Invite."""
 
     __tablename__ = "team_invitation"  # type: ignore[assignment]

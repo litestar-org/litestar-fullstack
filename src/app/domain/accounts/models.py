@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 __all__ = ["User"]
 
 
-class User(orm.DatabaseModel):
+class User(orm.DatabaseModel, orm.AuditColumns):
     """User Model."""
 
     __tablename__ = "user_account"  # type: ignore[assignment]

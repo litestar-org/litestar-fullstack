@@ -13,6 +13,9 @@ from app.domain.teams.models import TeamMember
 from app.domain.teams.services import TeamMemberService
 from app.lib import log
 
+__all__ = ["TeamMemberController", "provide_team_members_service"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
