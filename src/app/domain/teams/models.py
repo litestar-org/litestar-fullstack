@@ -22,13 +22,13 @@ class TeamRoles(str, Enum):
     MEMBER = "MEMBER"
 
 
-class Team(orm.DatabaseModel):
+class Team(orm.DatabaseModel, orm.AuditColumns):
     """Team."""
 
     __tablename__ = "team"  # type: ignore[assignment]
-    name: Mapped[str] = mapped_column(nullable=False, index=True)
-    description: Mapped[str | None] = mapped_column(sa.String(length=500), nullable=True)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    name: Mapped[str] = mapped_column(index=True)
+    description: Mapped[str | None] = mapped_column(sa.String(length=500))
+    is_active: Mapped[bool] = mapped_column(default=True)
     # -----------
     # ORM Relationships
     # ------------
@@ -50,15 +50,15 @@ class Team(orm.DatabaseModel):
     )
 
 
-class TeamMember(orm.DatabaseModel):
+class TeamMember(orm.DatabaseModel, orm.AuditColumns):
     """Team Membership."""
 
     __tablename__ = "team_member"  # type: ignore[assignment]
     __table_args__ = (sa.UniqueConstraint("user_id", "team_id"),)
-    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id", ondelete="cascade"), nullable=False)
-    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"), nullable=False)
-    role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False, index=True)
-    is_owner: Mapped[bool] = mapped_column(default=False, nullable=False)
+    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id", ondelete="cascade"))
+    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"))
+    role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, index=True)
+    is_owner: Mapped[bool] = mapped_column(default=False)
 
     # -----------
     # ORM Relationships
@@ -81,21 +81,16 @@ class TeamMember(orm.DatabaseModel):
     )
 
 
-class TeamInvitation(orm.DatabaseModel):
+class TeamInvitation(orm.DatabaseModel, orm.AuditColumns):
     """Team Invite."""
 
     __tablename__ = "team_invitation"  # type: ignore[assignment]
-    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"), nullable=False)
+    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"))
     email: Mapped[str] = mapped_column(index=True)
-    role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, nullable=False)
+    role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER)
     is_accepted: Mapped[bool] = mapped_column(default=False)
-    invited_by_id: Mapped[UUID | None] = mapped_column(
-        sa.ForeignKey("user_account.id", ondelete="set null"),
-        nullable=True,
-    )
-    invited_by_email: Mapped[str] = mapped_column(
-        nullable=False,
-    )
+    invited_by_id: Mapped[UUID | None] = mapped_column(sa.ForeignKey("user_account.id", ondelete="set null"))
+    invited_by_email: Mapped[str]
     # -----------
     # ORM Relationships
     # ------------

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Any, TypeVar
 
+from starlite.contrib.sqlalchemy.base import AuditColumns, meta
 from starlite.contrib.sqlalchemy.base import Base as DatabaseModel
-from starlite.contrib.sqlalchemy.base import meta
 
-__all__ = ["DatabaseModel", "meta", "model_from_dict"]
+__all__ = ["DatabaseModel", "meta", "model_from_dict", "AuditColumns"]
 
 DatabaseModelT = TypeVar("DatabaseModelT", bound="DatabaseModel")
 

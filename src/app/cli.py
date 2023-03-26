@@ -4,13 +4,27 @@ import os
 import platform
 import subprocess
 import sys
+from json import dumps
+from pathlib import Path
 from typing import Any
 
+import anyio
 import rich_click as click
+from click import Path as ClickPath
 from click import echo
+from jsbeautifier import Beautifier
+from pydantic import EmailStr, SecretStr
 from rich import get_console
 from rich.prompt import Confirm
+from starlite._openapi.typescript_converter.converter import (
+    convert_openapi_to_typescript,
+)
+from starlite.cli._utils import StarliteCLIException
+from yaml import dump as dump_yaml
 
+from app.asgi import create_app
+from app.domain.accounts.schemas import UserCreate, UserUpdate
+from app.domain.accounts.services import UserService
 from app.domain.web.vite import run_vite
 from app.lib import db, log, settings, worker
 
@@ -174,6 +188,158 @@ def run_worker(
 @click.pass_context
 def management_app(_: dict[str, Any]) -> None:
     """System Administration Commands."""
+
+
+@management_app.command(name="create-user", help="Create a user")
+@click.option(
+    "--email",
+    help="Email of the new user",
+    type=click.STRING,
+    required=False,
+    show_default=False,
+)
+@click.option(
+    "--name",
+    help="Full name of the new user",
+    type=click.STRING,
+    required=False,
+    show_default=False,
+)
+@click.option(
+    "--password",
+    help="Password",
+    type=click.STRING,
+    required=False,
+    show_default=False,
+)
+@click.option(
+    "--superuser",
+    help="Is a superuser",
+    type=click.BOOL,
+    default=False,
+    required=False,
+    show_default=False,
+    is_flag=True,
+)
+def create_user(
+    email: str | None,
+    name: str | None,
+    password: str | None,
+    superuser: bool | None,
+) -> None:
+    """Create a user."""
+
+    async def _create_user(
+        email: str,
+        name: str,
+        password: str,
+        superuser: bool = False,
+    ) -> None:
+        obj_in = UserCreate(
+            email=EmailStr(email),
+            name=name,
+            password=SecretStr(password),
+            is_superuser=superuser,
+        )
+
+        async with UserService.new() as users_service:
+            user = await users_service.create(data=obj_in.dict(exclude_unset=True, exclude_none=True))
+            await users_service.repository.session.commit()
+            logger.info("User created: %s", user.email)
+
+    email = email or click.prompt("Email")
+    name = name or click.prompt("Full Name", show_default=False)
+    password = password or click.prompt("Password", hide_input=True, confirmation_prompt=True)
+    superuser = superuser or click.prompt("Create as superuser?", show_default=True, type=click.BOOL)
+
+    anyio.run(_create_user, email, name, password, superuser)
+
+
+@management_app.command(name="promote-to-superuser", help="Promotes a user to application superuser")
+@click.option(
+    "--email",
+    help="Email of the user",
+    type=click.STRING,
+    required=False,
+    show_default=False,
+)
+def promote_to_superuser(email: EmailStr) -> None:
+    """Promote to Superuser.
+
+    Args:
+        email (EmailStr): _description_
+    """
+
+    async def _promote_to_superuser(email: EmailStr) -> None:
+        async with UserService.new() as users_service:
+            user = await users_service.get_one_or_none(email=email)
+            if user:
+                logger.info("Promoting user: %s", user.email)
+                user_in = UserUpdate(
+                    email=EmailStr(user.email),
+                    is_superuser=True,
+                )
+                user = await users_service.update(
+                    item_id=user.id,
+                    data=user_in.dict(exclude_unset=True, exclude_none=True),
+                )
+                await users_service.repository.session.commit()
+                logger.info("Upgraded %s to superuser", email)
+            else:
+                logger.warning("User not found: %s", email)
+
+    anyio.run(_promote_to_superuser, email)
+
+
+@management_app.command("export-openapi")
+@click.option(
+    "--output",
+    help="Path to export the openapi schema.",
+    type=ClickPath(dir_okay=False, path_type=Path),  # type: ignore[type-var]
+    default=Path("openapi_schema.json"),
+    show_default=True,
+)
+def generate_openapi_schema(output: Path) -> None:
+    """Generate an OpenAPI Schema."""
+    app = create_app()
+    if not app.openapi_schema:  # pragma: no cover
+        raise StarliteCLIException("Starlite application does not have an OpenAPI schema")
+
+    if output.suffix in (".yml", ".yaml"):
+        content = dump_yaml(app.openapi_schema.to_schema(), default_flow_style=False)
+    else:
+        content = dumps(app.openapi_schema.to_schema(), indent=4)
+
+    try:
+        output.write_text(content)
+    except OSError as e:  # pragma: no cover
+        raise StarliteCLIException(f"failed to write schema to path {output}") from e
+
+
+beautifier = Beautifier()
+
+
+@management_app.command("export-typescript-types")
+@click.option(
+    "--output",
+    help="output file path",
+    type=ClickPath(dir_okay=False, path_type=Path),  # type: ignore[type-var]
+    default=Path("api-specs.d.ts"),
+    show_default=True,
+)
+@click.option("--namespace", help="namespace to use for the typescript specs", type=str, default="API")
+def generate_typescript_specs(output: Path, namespace: str) -> None:
+    """Generate TypeScript specs from the OpenAPI schema."""
+    app = create_app()
+    if not app.openapi_schema:  # pragma: no cover
+        raise StarliteCLIException("Starlite application does not have an OpenAPI schema")
+
+    try:
+        specs = convert_openapi_to_typescript(app.openapi_schema, namespace)
+        beautified_output = beautifier.beautify(specs.write())
+        output.write_text(beautified_output)
+    except OSError as e:  # pragma: no cover
+        raise StarliteCLIException(f"failed to write schema to path {output}") from e
 
 
 @management_app.command(name="generate-random-key")

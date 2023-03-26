@@ -46,7 +46,7 @@ class ServerSettings(BaseSettings):
         env_file = ".env"
         env_prefix = "SERVER_"
 
-    APP_LOC: str = "app.main:create_app"
+    APP_LOC: str = "app.asgi:create_app"
     """Path to app executable, or factory."""
     APP_LOC_IS_FACTORY: bool = True
     """Indicate if APP_LOC points to an executable or factory."""
@@ -429,7 +429,7 @@ def load_settings() -> (
     try:
         """Override Application reload dir."""
         server: ServerSettings = ServerSettings.parse_obj(
-            {"APP_LOC": "app.asgi:run_app", "HOST": "0.0.0.0", "RELOAD_DIRS": [str(BASE_DIR)]},  # noqa: S104
+            {"HOST": "0.0.0.0", "RELOAD_DIRS": [str(BASE_DIR)]},  # noqa: S104
         )
         app: AppSettings = AppSettings.parse_obj({})
         api: APISettings = APISettings.parse_obj({})

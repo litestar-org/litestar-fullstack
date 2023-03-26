@@ -10,7 +10,6 @@ rich_tracebacks(
     console=get_console(),
     suppress=(
         "sqlalchemy",
-        "starlite_saqlalchemy",
         "click",
         "rich",
         "saq",

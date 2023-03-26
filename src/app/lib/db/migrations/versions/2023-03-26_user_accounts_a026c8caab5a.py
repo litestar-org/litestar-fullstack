@@ -1,8 +1,9 @@
-"""User accounts.
+"""user accounts
 
-Revision ID: 47ac5c4eb985
+Revision ID: a026c8caab5a
 Revises:
-Create Date: 2023-03-25 17:21:02.524374
+Create Date: 2023-03-26 11:47:01.493173
+
 """
 import sqlalchemy as sa
 from alembic import op
@@ -11,7 +12,7 @@ __all__ = ["downgrade", "upgrade"]
 
 
 # revision identifiers, used by Alembic.
-revision = "47ac5c4eb985"
+revision = "a026c8caab5a"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,6 +26,8 @@ def upgrade():
         sa.Column("description", sa.String(length=500), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created", sa.DateTime(), nullable=False),
+        sa.Column("updated", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_team")),
     )
     op.create_index(op.f("ix_team_name"), "team", ["name"], unique=False)
@@ -39,6 +42,8 @@ def upgrade():
         sa.Column("verified_at", sa.DateTime(), nullable=True),
         sa.Column("joined_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created", sa.DateTime(), nullable=False),
+        sa.Column("updated", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_user_account")),
         comment="User accounts for application access",
     )
@@ -52,6 +57,8 @@ def upgrade():
         sa.Column("invited_by_id", sa.Uuid(), nullable=True),
         sa.Column("invited_by_email", sa.String(), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created", sa.DateTime(), nullable=False),
+        sa.Column("updated", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
             ["invited_by_id"],
             ["user_account.id"],
@@ -59,10 +66,7 @@ def upgrade():
             ondelete="set null",
         ),
         sa.ForeignKeyConstraint(
-            ["team_id"],
-            ["team.id"],
-            name=op.f("fk_team_invitation_team_id_team"),
-            ondelete="cascade",
+            ["team_id"], ["team.id"], name=op.f("fk_team_invitation_team_id_team"), ondelete="cascade"
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_team_invitation")),
     )
@@ -74,12 +78,11 @@ def upgrade():
         sa.Column("role", sa.String(length=50), nullable=False),
         sa.Column("is_owner", sa.Boolean(), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created", sa.DateTime(), nullable=False),
+        sa.Column("updated", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(["team_id"], ["team.id"], name=op.f("fk_team_member_team_id_team"), ondelete="cascade"),
         sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user_account.id"],
-            name=op.f("fk_team_member_user_id_user_account"),
-            ondelete="cascade",
+            ["user_id"], ["user_account.id"], name=op.f("fk_team_member_user_id_user_account"), ondelete="cascade"
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_team_member")),
         sa.UniqueConstraint("user_id", "team_id", name=op.f("uq_team_member_user_id")),
