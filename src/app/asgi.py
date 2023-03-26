@@ -27,6 +27,7 @@ def run_app() -> Starlite:
         LimitOffset,
     )
     from starlite.di import Provide
+    from starlite.pagination import OffsetPagination
     from starlite.stores.registry import StoreRegistry
 
     from app import domain
@@ -77,5 +78,6 @@ def run_app() -> Starlite:
             "ASGIConnection": ASGIConnection,
             "Request": Request,
             "OAuth2Login": OAuth2Login,
+            "OffsetPagination": OffsetPagination,
         },
     )

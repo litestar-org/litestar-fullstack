@@ -9,14 +9,15 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar
 
+from starlite.contrib.repository.exceptions import RepositoryError
+from starlite.contrib.repository.filters import (
+    LimitOffset,
+)
 from starlite.contrib.sqlalchemy.repository import ModelT, SQLAlchemyRepository
 
 from app.lib.db import async_session_factory
 from app.lib.db.orm import model_from_dict
 from app.lib.service.generic import Service
-
-__all__ = ["SQLAlchemyRepositoryService"]
-
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Sequence
@@ -24,6 +25,9 @@ if TYPE_CHECKING:
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
     from starlite.contrib.repository.abc import FilterTypes
+
+
+__all__ = ["SQLAlchemyRepositoryService"]
 
 SQLARepoServiceT = TypeVar("SQLARepoServiceT", bound="SQLAlchemyRepositoryService")
 ModelDictT: TypeAlias = dict[str, Any] | ModelT
@@ -249,3 +253,18 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         else:
             async with async_session_factory() as db_session:
                 yield cls(session=db_session, base_select=base_select)
+
+    def _limit_offset(self, *filters: FilterTypes) -> LimitOffset:
+        """Get the LimitOffset filter from filters.
+
+        Args:
+            *filters: filter types to apply to the query
+
+        Returns:
+            The LimitOffset instance.
+        """
+        for filter_ in filters:
+            if isinstance(filter_, LimitOffset):
+                return filter_
+
+        raise RepositoryError(f"Unexpected filter: {filter_}")

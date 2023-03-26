@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import SecretStr
-from starlite.contrib.sqlalchemy.repository import ModelT, SQLAlchemyRepository
+from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository
 from starlite.exceptions import PermissionDeniedException
 
 from app.lib import crypt
@@ -84,7 +84,7 @@ class UserService(SQLAlchemyRepositoryService[User]):
 
     async def create(
         self,
-        data: ModelT | dict[str, Any],
+        data: User | dict[str, Any],
     ) -> User:
         """Create a new user."""
         if not isinstance(data, type(self.repository.model_type)):
@@ -92,4 +92,4 @@ class UserService(SQLAlchemyRepositoryService[User]):
             if password is not None:
                 password = SecretStr(password) if isinstance(password, str) else password
                 data.update({"hashed_password": await crypt.get_password_hash(password)})  # type: ignore[union-attr]
-        return await super().create(data)  # type: ignore[arg-type]
+        return await super().create(data)

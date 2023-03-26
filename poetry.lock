@@ -101,14 +101,14 @@ tests = ["pytest"]
 
 [[package]]
 name = "astroid"
-version = "2.15.0"
+version = "2.15.1"
 description = "An abstract syntax tree for Python with inference support."
 category = "dev"
 optional = false
 python-versions = ">=3.7.2"
 files = [
-    {file = "astroid-2.15.0-py3-none-any.whl", hash = "sha256:e3e4d0ffc2d15d954065579689c36aac57a339a4679a679579af6401db4d3fdb"},
-    {file = "astroid-2.15.0.tar.gz", hash = "sha256:525f126d5dc1b8b0b6ee398b33159105615d92dc4a17f2cd064125d57f6186fa"},
+    {file = "astroid-2.15.1-py3-none-any.whl", hash = "sha256:89860bda98fe2bbd1f5d262229be7629d778ce280de68d95d4a73d1f592ad268"},
+    {file = "astroid-2.15.1.tar.gz", hash = "sha256:af4e0aff46e2868218502789898269ed95b663fba49e65d91c1e09c966266c34"},
 ]
 
 [package.dependencies]
@@ -821,14 +821,14 @@ files = [
 
 [[package]]
 name = "filelock"
-version = "3.10.5"
+version = "3.10.6"
 description = "A platform independent file lock."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "filelock-3.10.5-py3-none-any.whl", hash = "sha256:bfe2df552f604a333a32e43f666f0ece4ebb489c01fe42c0e8237bf83cde8ba9"},
-    {file = "filelock-3.10.5.tar.gz", hash = "sha256:6c0312de887536b07321e16e6428a580497be288259baa501bf898e39f9486f3"},
+    {file = "filelock-3.10.6-py3-none-any.whl", hash = "sha256:52f119747b2b9c4730dac715a7b1ab34b8ee70fd9259cba158ee53da566387ff"},
+    {file = "filelock-3.10.6.tar.gz", hash = "sha256:409105becd604d6b176a483f855e7e8903c5cb2873e47f2c64f66a370c046aaf"},
 ]
 
 [package.extras]
@@ -2700,7 +2700,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/starlite-api/starlite.git"
 reference = "main"
-resolved_reference = "36f337a574e17d9ac4c88f7d6869101ec3a64b2f"
+resolved_reference = "dd263cc77a52be67fb6eb30975571a9c08b29888"
 
 [[package]]
 name = "structlog"

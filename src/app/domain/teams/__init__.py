@@ -1,4 +1,4 @@
 """Team Application Module."""
-from . import controllers, guards, models, repositories, schemas, services
+from . import controllers, guards, models, schemas, services
 
-__all__ = ["controllers", "models", "repositories", "guards", "services", "schemas"]
+__all__ = ["controllers", "models", "guards", "services", "schemas"]
