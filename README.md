@@ -51,8 +51,13 @@ Features:
 ╭─ Commands ───────────────────────────────────────────────────────────────────╮
 │ create-database                 Creates an empty postgres database and       │
 │                                 executes migrations                          │
+│ create-user                     Create a user                                │
+│ export-openapi                  Generate an OpenAPI Schema.                  │
+│ export-typescript-types         Generate TypeScript specs from the OpenAPI   │
+│                                 schema.                                      │
 │ generate-random-key             Admin helper to generate random character    │
 │                                 string.                                      │
+│ promote-to-superuser            Promotes a user to application superuser     │
 │ purge-database                  Drops all tables.                            │
 │ reset-database                  Executes migrations to apply any outstanding │
 │                                 database structures.                         │
@@ -77,7 +82,9 @@ Features:
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Commands ───────────────────────────────────────────────────────────────────╮
 │ server          Starts the application server                                │
+│ worker          Starts the background workers                                │
 ╰──────────────────────────────────────────────────────────────────────────────╯
+
 ```
 
 ```bash
@@ -102,6 +109,24 @@ Features:
 │                           (INTEGER RANGE)                                    │
 │                           [default: 10; x>=1]                                │
 │ --reload              -r  Enable reload                                      │
+│ --verbose             -v  Enable verbose logging.                            │
+│ --debug               -d  Enable debugging.                                  │
+│ --help                    Show this message and exit.                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
+```bash
+❯ poetry run app run worker --help
+
+ Usage: app run worker [OPTIONS]
+
+ Starts the background workers
+
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --worker-concurrency      The number of simultaneous jobs a worker process   │
+│                           can execute.                                       │
+│                           (INTEGER RANGE)                                    │
+│                           [default: 1; x>=1]                                 │
 │ --verbose             -v  Enable verbose logging.                            │
 │ --debug               -d  Enable debugging.                                  │
 │ --help                    Show this message and exit.                        │

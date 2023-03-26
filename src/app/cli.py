@@ -160,6 +160,7 @@ def run_server(
         sys.exit()
 
 
+@run_app.command(name="worker", help="Starts the background workers")
 @click.option(
     "--worker-concurrency",
     help="The number of simultaneous jobs a worker process can execute.",
