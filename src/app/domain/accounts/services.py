@@ -25,18 +25,6 @@ class UserService(SQLAlchemyRepositoryService[User]):
 
     repository_type = UserRepository
 
-    async def exists(self, username: str) -> bool:
-        """Check if the user exist.
-
-        Args:
-            username (str): _description_
-
-        Returns:
-            bool: _description_
-        """
-        user_exists = await self.repository.exists(email=username)
-        return bool(user_exists is not None)
-
     async def authenticate(self, username: str, password: SecretStr) -> User:
         """Authenticate a user.
 

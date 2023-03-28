@@ -47,7 +47,6 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             **repo_kwargs: passed as keyword args to repo instantiation.
         """
         self.repository = self.repository_type(**repo_kwargs)
-        self.model_type = self.repository.model_type
 
     async def count(self, *filters: FilterTypes, **kwargs: Any) -> int:
         """Count of records returned by query.
@@ -70,8 +69,8 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of created instance.
         """
-        if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type, type-var]
+        if isinstance(data, dict):
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
         return await self.repository.add(data)
 
     async def create_many(self, data: list[ModelT | dict[str, Any]]) -> Sequence[ModelT]:  # type: ignore[override]
@@ -85,7 +84,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         data = [
             model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
-            if not isinstance(datum, type(self.repository.model_type))
+            if isinstance(datum, dict)
             else datum
             for datum in data
         ]
@@ -117,8 +116,8 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Updated representation.
         """
-        if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type,   type-var]
+        if isinstance(data, dict):
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
         self.repository.set_id_attribute_value(item_id, data)
         return await self.repository.update(data)
 
@@ -133,7 +132,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         data = [
             model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
-            if not isinstance(datum, type(self.repository.model_type))
+            if isinstance(datum, dict)
             else datum
             for datum in data
         ]
@@ -150,9 +149,20 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Updated or created representation.
         """
         self.repository.set_id_attribute_value(item_id, data)  # type: ignore[arg-type]
-        if not isinstance(data, type(self.repository.model_type)):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[arg-type, type-var]
+        if isinstance(data, dict):
+            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
         return await self.repository.upsert(data)
+
+    async def get_one(self, **kwargs: Any) -> ModelT:
+        """Wrap repository scalar operation.
+
+        Args:
+            **kwargs: Keyword arguments for attribute based filtering.
+
+        Returns:
+            Representation of instance with identifier `item_id`.
+        """
+        return await self.repository.get_one(**kwargs)
 
     async def get(self, item_id: Any, **kwargs: Any) -> ModelT:
         """Wrap repository scalar operation.
@@ -178,8 +188,8 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         return await self.repository.get_or_create(**kwargs)
 
-    async def get_one(self, **kwargs: Any) -> ModelT:
-        """Wrap repository scalar operation.
+    async def exists(self, **kwargs: Any) -> bool:
+        """Wrap repository exists operation.
 
         Args:
             **kwargs: Keyword arguments for attribute based filtering.
@@ -187,7 +197,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of instance with identifier `item_id`.
         """
-        return await self.repository.get_one(**kwargs)
+        return bool((await self.repository.count(**kwargs)) > 0)
 
     async def get_one_or_none(self, **kwargs: Any) -> ModelT | None:
         """Wrap repository scalar operation.

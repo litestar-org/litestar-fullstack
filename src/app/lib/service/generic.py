@@ -125,6 +125,17 @@ class Service(Generic[T]):
         """
         return data
 
+    async def exists(self, **kwargs: Any) -> bool:
+        """Retrieve true if at least 1 instance exists.
+
+        Args:
+            **kwargs: key value pairs of filter types.
+
+        Returns:
+            True if row exists
+        """
+        return False
+
     async def get(self, item_id: Any, **kwargs: Any) -> T:
         """Retrieve a representation of `T` with that is identified by `id_`.
 
