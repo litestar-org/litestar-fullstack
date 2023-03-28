@@ -134,7 +134,6 @@ class AccountController(Controller):
         operation_id="DeleteUser",
         name="users:delete",
         path=urls.ACCOUNT_DELETE,
-        tags=["Users"],
         summary="Remove User",
         description="Removes a user and all associated data from the system. Deleting a user is permanent, so please be sure you know what you are doing!",
     )
