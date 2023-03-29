@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from starlite.exceptions import NotAuthorizedException
+from starlite.exceptions import PermissionDeniedException
 
 if TYPE_CHECKING:
     from starlite.connection import ASGIConnection
@@ -22,11 +22,11 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
         _ (BaseRouteHandler): Route handler
 
     Raises:
-        NotAuthorizedException: Not authorized exception
+        PermissionDeniedException: Permission denied exception
     """
     if connection.user.is_active:
         return
-    raise NotAuthorizedException("Inactive account")
+    raise PermissionDeniedException("Inactive account")
 
 
 def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -37,11 +37,11 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
         _ (BaseRouteHandler): Route handler
 
     Raises:
-        NotAuthorizedException: Not authorized exception
+        PermissionDeniedException: Permission denied exception
 
     Returns:
         None: No Return
     """
     if connection.user.is_superuser:
         return
-    raise NotAuthorizedException(detail="Insufficient privileges")
+    raise PermissionDeniedException(detail="Insufficient privileges")
