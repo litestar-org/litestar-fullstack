@@ -26,7 +26,6 @@ class User(orm.DatabaseModel, orm.AuditColumns):
     is_superuser: Mapped[bool] = mapped_column(default=False)
     is_verified: Mapped[bool] = mapped_column(default=False)
     verified_at: Mapped[datetime | None]
-    joined_at: Mapped[datetime] = mapped_column(server_default=func.now())
     # -----------
     # ORM Relationships
     # ------------
