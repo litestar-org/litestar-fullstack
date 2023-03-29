@@ -30,7 +30,8 @@ class User(CamelizedBaseModel):
     is_superuser: bool
     is_active: bool
     is_verified: bool
-    joined_at: datetime
+    created: datetime
+    updated: datetime
     teams: list[UserTeam] | None = []
 
 
