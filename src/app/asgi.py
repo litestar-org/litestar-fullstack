@@ -32,7 +32,9 @@ def create_app() -> Starlite:
 
     from app import domain
     from app.domain.accounts.models import User
+    from app.domain.accounts.services import UserService
     from app.domain.security import provide_user
+    from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
     from app.lib.dependencies import FilterTypes, create_collection_dependencies
@@ -79,5 +81,12 @@ def create_app() -> Starlite:
             "Request": Request,
             "OAuth2Login": OAuth2Login,
             "OffsetPagination": OffsetPagination,
+            "UserService": UserService,
+            "TeamService": TeamService,
+            "TeamInvitationService": TeamInvitationService,
+            "TeamMemberService": TeamMemberService,
         },
     )
+
+
+app = create_app()

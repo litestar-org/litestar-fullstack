@@ -36,9 +36,9 @@ ModelDictT: TypeAlias = dict[str, Any] | ModelT
 class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
     """Service object that operates on a repository object."""
 
-    __item_id_ = "dma.lib.service.sqlalchemy.SQLAlchemyRepositoryService"
-
+    __item_id_ = "app.lib.service.sqlalchemy.SQLAlchemyRepositoryService"
     repository_type: type[SQLAlchemyRepository[ModelT]]
+    match_fields: list[str] | None = None
 
     def __init__(self, **repo_kwargs: Any) -> None:
         """Configure the service object.
@@ -69,11 +69,12 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of created instance.
         """
-        if isinstance(data, dict):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
+        data = await self.to_model(data, "create")
         return await self.repository.add(data)
 
-    async def create_many(self, data: list[ModelT | dict[str, Any]]) -> Sequence[ModelT]:  # type: ignore[override]
+    async def create_many(
+        self, data: list[ModelT | dict[str, Any]] | list[dict[str, Any]] | list[ModelT]
+    ) -> Sequence[ModelT]:
         """Wrap repository bulk instance creation.
 
         Args:
@@ -82,29 +83,8 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of created instances.
         """
-        data = [
-            model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
-            if isinstance(datum, dict)
-            else datum
-            for datum in data
-        ]
-        return await self.repository.add_many(data)  # type: ignore[arg-type]
-
-    async def list_and_count(
-        self,
-        *filters: FilterTypes,
-        **kwargs: Any,
-    ) -> tuple[Sequence[ModelT], int]:
-        """List of records and total count returned by query.
-
-        Args:
-            *filters: arguments for filtering.
-            **kwargs: Keyword arguments for filtering.
-
-        Returns:
-            List of instances and count of total collection, ignoring pagination.
-        """
-        return await self.repository.list_and_count(*filters, **kwargs)
+        data = [(await self.to_model(datum, "create")) for datum in data]
+        return await self.repository.add_many(data)
 
     async def update(self, item_id: Any, data: ModelT | dict[str, Any]) -> ModelT:
         """Wrap repository update operation.
@@ -116,12 +96,13 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Updated representation.
         """
-        if isinstance(data, dict):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
+        data = await self.to_model(data, "update")
         self.repository.set_id_attribute_value(item_id, data)
         return await self.repository.update(data)
 
-    async def update_many(self, data: list[ModelT | dict[str, Any]]) -> Sequence[ModelT]:
+    async def update_many(
+        self, data: list[ModelT | dict[str, Any]] | list[dict[str, Any]] | list[ModelT]
+    ) -> Sequence[ModelT]:
         """Wrap repository bulk instance update.
 
         Args:
@@ -130,13 +111,8 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of updated instances.
         """
-        data = [
-            model_from_dict(model=self.repository.model_type, data=datum)  # type: ignore
-            if isinstance(datum, dict)
-            else datum
-            for datum in data
-        ]
-        return await self.repository.update_many(data)  # type: ignore[arg-type]
+        data = [(await self.to_model(datum, "update")) for datum in data]
+        return await self.repository.update_many(data)
 
     async def upsert(self, item_id: Any, data: ModelT | dict[str, Any]) -> ModelT:
         """Wrap repository upsert operation.
@@ -148,13 +124,12 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Updated or created representation.
         """
-        self.repository.set_id_attribute_value(item_id, data)  # type: ignore[arg-type]
-        if isinstance(data, dict):
-            data = model_from_dict(model=self.repository.model_type, data=data)  # type: ignore[type-var]
+        data = await self.to_model(data, "upsert")
+        self.repository.set_id_attribute_value(item_id, data)
         return await self.repository.upsert(data)
 
-    async def get_one(self, **kwargs: Any) -> ModelT:
-        """Wrap repository scalar operation.
+    async def exists(self, **kwargs: Any) -> bool:
+        """Wrap repository exists operation.
 
         Args:
             **kwargs: Keyword arguments for attribute based filtering.
@@ -162,7 +137,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of instance with identifier `item_id`.
         """
-        return await self.repository.get_one(**kwargs)
+        return bool((await self.repository.count(**kwargs)) > 0)
 
     async def get(self, item_id: Any, **kwargs: Any) -> ModelT:
         """Wrap repository scalar operation.
@@ -176,20 +151,23 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         return await self.repository.get(item_id, **kwargs)
 
-    async def get_or_create(self, **kwargs: Any) -> tuple[ModelT, bool]:
+    async def get_or_create(self, match_fields: list[str] | None = None, **kwargs: Any) -> tuple[ModelT, bool]:
         """Wrap repository instance creation.
 
         Args:
-            data: Representation to be created.
+            match_fields: a list of keys to use to match the existing model.  When empty, all fields are matched.
             **kwargs: Keyword arguments for attribute based filtering.
 
         Returns:
             Representation of created instance.
         """
-        return await self.repository.get_or_create(**kwargs)
+        match_fields = match_fields if match_fields else self.match_fields
+        validated_model = await self.to_model(kwargs, "create")
+        # todo: submit PR with repo enhancements
+        return await self.repository.get_or_create(**validated_model.to_dict())
 
-    async def exists(self, **kwargs: Any) -> bool:
-        """Wrap repository exists operation.
+    async def get_one(self, **kwargs: Any) -> ModelT:
+        """Wrap repository scalar operation.
 
         Args:
             **kwargs: Keyword arguments for attribute based filtering.
@@ -197,7 +175,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         Returns:
             Representation of instance with identifier `item_id`.
         """
-        return bool((await self.repository.count(**kwargs)) > 0)
+        return await self.repository.get_one(**kwargs)
 
     async def get_one_or_none(self, **kwargs: Any) -> ModelT | None:
         """Wrap repository scalar operation.
@@ -232,6 +210,35 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         return await self.repository.delete_many(item_ids)
 
+    async def to_model(self, data: ModelT | dict[str, Any], operation: str | None = None) -> ModelT:
+        """Parse and Convert input into a model.
+
+        Args:
+            data: Representations to be created.
+            operation: Optional operation flag so that you can provide behavior based on CRUD operation
+        Returns:
+            Representation of created instances.
+        """
+        if isinstance(data, dict):
+            return model_from_dict(model=self.repository.model_type, **data)
+        return data
+
+    async def list_and_count(
+        self,
+        *filters: FilterTypes,
+        **kwargs: Any,
+    ) -> tuple[Sequence[ModelT], int]:
+        """List of records and total count returned by query.
+
+        Args:
+            *filters: arguments for filtering.
+            **kwargs: Keyword arguments for filtering.
+
+        Returns:
+            List of instances and count of total collection, ignoring pagination.
+        """
+        return await self.repository.list_and_count(*filters, **kwargs)
+
     async def list(self, *filters: FilterTypes, **kwargs: Any) -> Sequence[ModelT]:
         """Wrap repository scalars operation.
 
@@ -264,7 +271,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             async with async_session_factory() as db_session:
                 yield cls(session=db_session, base_select=base_select)
 
-    def _limit_offset(self, *filters: FilterTypes) -> LimitOffset:
+    def _limit_offset_from_filters(self, *filters: FilterTypes) -> LimitOffset:
         """Get the LimitOffset filter from filters.
 
         Args:

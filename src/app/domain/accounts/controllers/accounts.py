@@ -4,8 +4,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pydantic import parse_obj_as
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload, subqueryload
 from starlite import Controller, delete, get, patch, post
 from starlite.di import Provide
 from starlite.enums import RequestEncodingType
@@ -14,43 +12,22 @@ from starlite.params import Body, Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts import schemas
+from app.domain.accounts.dependencies import provides_user_service
 from app.domain.accounts.guards import requires_superuser
-from app.domain.accounts.models import User
-from app.domain.accounts.services import UserService
-from app.domain.teams.models import TeamMember
 from app.lib import log
 
-__all__ = ["AccountController", "provide_users_service"]
+__all__ = ["AccountController"]
 
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
     from uuid import UUID
 
-    from sqlalchemy.ext.asyncio import AsyncSession
     from starlite.contrib.repository.abc import FilterTypes
+
+    from app.domain.accounts.services import UserService
 
 
 logger = log.get_logger()
-
-
-async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[UserService, None]:
-    """Construct repository and service objects for the request."""
-    async with UserService.new(
-        session=db_session,
-        base_select=select(User).options(
-            noload("*"),
-            subqueryload(User.teams).options(
-                joinedload(TeamMember.team, innerjoin=True).options(
-                    noload("*"),
-                ),
-            ),
-        ),
-    ) as service:
-        try:
-            yield service
-        finally:
-            ...
 
 
 class AccountController(Controller):
@@ -58,7 +35,7 @@ class AccountController(Controller):
 
     tags = ["User Accounts"]
     guards = [requires_superuser]
-    dependencies = {"users_service": Provide(provide_users_service)}
+    dependencies = {"users_service": Provide(provides_user_service)}
 
     @get(
         operation_id="ListUsers",
@@ -73,7 +50,7 @@ class AccountController(Controller):
         """Create a new migration tag."""
         """List collections for a workspace."""
         results, total = await users_service.list_and_count(*filters)
-        limit_offset = users_service._limit_offset(*filters)
+        limit_offset = users_service._limit_offset_from_filters(*filters)
         return OffsetPagination[schemas.User](
             items=parse_obj_as(list[schemas.User], results),
             total=total,

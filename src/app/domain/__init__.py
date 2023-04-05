@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 routes: list[ControllerRouterHandler] = [
     accounts.controllers.AccessController,
     accounts.controllers.AccountController,
-    teams.controllers.TeamController,
-    teams.controllers.TeamInvitationController,
-    teams.controllers.TeamMemberController,
+    # teams.controllers.TeamController,
+    # teams.controllers.TeamInvitationController,
+    # teams.controllers.TeamMemberController,
     web.controllers.WebController,
 ]
 
-__all__ = ["accounts", "examples", "teams", "web", "urls", "security", "routes", "openapi"]
+__all__ = ["accounts", "teams", "web", "urls", "security", "routes", "openapi"]
