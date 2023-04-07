@@ -1,4 +1,4 @@
-from starlite.config.cors import CORSConfig
+from litestar.config.cors import CORSConfig
 
 from app.lib import settings
 

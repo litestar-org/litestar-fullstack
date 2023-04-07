@@ -1,4 +1,4 @@
-"""Starlite-saqlalchemy exception types.
+"""Litestar-saqlalchemy exception types.
 
 Also, defines functions that translate service and repository exceptions
 into HTTP exceptions.
@@ -8,25 +8,25 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
-from starlite.exceptions import (
+from litestar.exceptions import (
     HTTPException,
     InternalServerException,
     NotFoundException,
     PermissionDeniedException,
 )
-from starlite.middleware.exceptions._debug_response import create_debug_response
-from starlite.middleware.exceptions.middleware import create_exception_response
-from starlite.status_codes import HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
+from litestar.middleware.exceptions._debug_response import create_debug_response
+from litestar.middleware.exceptions.middleware import create_exception_response
+from litestar.status_codes import HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from structlog.contextvars import bind_contextvars
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from starlite.connection import Request
-    from starlite.datastructures import State
-    from starlite.middleware.exceptions.middleware import ExceptionResponseContent
-    from starlite.response import Response
-    from starlite.types import Scope
+    from litestar.connection import Request
+    from litestar.datastructures import State
+    from litestar.middleware.exceptions.middleware import ExceptionResponseContent
+    from litestar.response import Response
+    from litestar.types import Scope
 
 __all__ = (
     "AuthorizationError",
@@ -72,7 +72,7 @@ class MissingDependencyError(ApplicationError, ValueError):
         config = config if config else module
         super().__init__(
             f"You enabled {config} configuration but package {module!r} is not installed. "
-            f'You may need to run: "poetry install starlite-saqlalchemy[{config}]"',
+            f'You may need to run: "poetry install litestar-saqlalchemy[{config}]"',
         )
 
 

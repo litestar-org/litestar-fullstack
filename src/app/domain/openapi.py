@@ -1,5 +1,5 @@
-from starlite.openapi.config import OpenAPIConfig
-from starlite.openapi.spec import Contact
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.spec import Contact
 
 from app.domain.security import auth
 from app.lib import settings

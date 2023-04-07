@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from litestar.exceptions import PermissionDeniedException
 from pydantic import SecretStr
-from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository
-from starlite.exceptions import PermissionDeniedException
 
 from app.lib import crypt
+from app.lib.repository import SQLAlchemyRepository
 from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
 
 from .models import User
@@ -24,6 +24,10 @@ class UserService(SQLAlchemyRepositoryService[User]):
     """Handles database operations for users."""
 
     repository_type = UserRepository
+
+    def __init__(self, **repo_kwargs: Any) -> None:
+        self.repository: UserRepository = self.repository_type(**repo_kwargs)
+        self.model_type = self.repository.model_type
 
     async def authenticate(self, username: str, password: SecretStr) -> User:
         """Authenticate a user.
@@ -70,14 +74,10 @@ class UserService(SQLAlchemyRepositoryService[User]):
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
 
-    async def create(
-        self,
-        data: User | dict[str, Any],
-    ) -> User:
-        """Create a new user."""
-        if not isinstance(data, type(self.repository.model_type)):
-            password: SecretStr | str | None = data.pop("password", None)  # type: ignore[union-attr]
+    async def to_model(self, data: User | dict[str, Any], operation: str | None = None) -> User:
+        if isinstance(data, dict) and "password" in data:
+            password: SecretStr | str | None = data.pop("password", None)
             if password is not None:
                 password = SecretStr(password) if isinstance(password, str) else password
-                data.update({"hashed_password": await crypt.get_password_hash(password)})  # type: ignore[union-attr]
-        return await super().create(data)
+                data.update({"hashed_password": await crypt.get_password_hash(password)})
+        return await super().to_model(data, operation)

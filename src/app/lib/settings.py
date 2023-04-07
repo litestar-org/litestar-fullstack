@@ -6,8 +6,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Final, Literal
 
+from litestar.data_extractors import RequestExtractorField, ResponseExtractorField  # noqa: TCH002
 from pydantic import AnyUrl, BaseSettings, PostgresDsn, SecretBytes, ValidationError, parse_obj_as, validator
-from starlite.data_extractors import RequestExtractorField, ResponseExtractorField  # noqa: TCH002
 
 from app import utils
 
@@ -46,9 +46,9 @@ class ServerSettings(BaseSettings):
         env_file = ".env"
         env_prefix = "SERVER_"
 
-    APP_LOC: str = "app.asgi:create_app"
+    APP_LOC: str = "app.asgi:app"
     """Path to app executable, or factory."""
-    APP_LOC_IS_FACTORY: bool = True
+    APP_LOC_IS_FACTORY: bool = False
     """Indicate if APP_LOC points to an executable or factory."""
     HOST: str = "localhost"
     """Server network host."""
@@ -83,7 +83,7 @@ class AppSettings(BaseSettings):
     CHECK_REDIS_READY: bool = True
     """Check for redis readiness on startup."""
     DEBUG: bool = False
-    """Run `Starlite` with `debug=True`."""
+    """Run `Litestar` with `debug=True`."""
     ENVIRONMENT: str = "prod"
     """'dev', 'prod', etc."""
     TEST_ENVIRONMENT_NAME: str = "test"
@@ -176,7 +176,7 @@ class LogSettings(BaseSettings):
     EXCLUDE_PATHS: str = r"\A(?!x)x"
     """Regex to exclude paths from logging."""
     HTTP_EVENT: str = "HTTP"
-    """Log event name for logs from Starlite handlers."""
+    """Log event name for logs from Litestar handlers."""
     INCLUDE_COMPRESSED_BODY: bool = False
     """Include 'body' of compressed responses in log output."""
     LEVEL: int = 20
@@ -214,7 +214,7 @@ class LogSettings(BaseSettings):
         "path_params",
         "body",
     ]
-    """Attributes of the [Request][starlite.connection.request.Request] to be
+    """Attributes of the [Request][litestar.connection.request.Request] to be
     logged."""
     RESPONSE_FIELDS: list[ResponseExtractorField] = [
         "status_code",
@@ -222,7 +222,7 @@ class LogSettings(BaseSettings):
         "headers",
         "body",
     ]
-    """Attributes of the [Response][starlite.response.Response] to be
+    """Attributes of the [Response][litestar.response.Response] to be
     logged."""
     WORKER_EVENT: str = "Worker"
     """Log event name for logs from SAQ worker."""
@@ -249,7 +249,7 @@ class OpenAPISettings(BaseSettings):
     """Name of contact on document."""
     CONTACT_EMAIL: str = "peter.github@proton.me"
     """Email for contact on document."""
-    TITLE: str | None = "My Starlite-SAQAlchemy App"
+    TITLE: str | None = "My Litestar-SAQAlchemy App"
     """Document title."""
     VERSION: str = "v1.0"
     """Document version."""

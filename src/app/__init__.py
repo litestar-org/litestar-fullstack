@@ -13,7 +13,7 @@ rich_tracebacks(
         "click",
         "rich",
         "saq",
-        "starlite",
+        "litestar",
         "rich_click",
     ),
     show_locals=False,

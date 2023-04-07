@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from litestar.contrib.jwt import OAuth2PasswordBearerAuth, Token
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
-from starlite.contrib.jwt import OAuth2PasswordBearerAuth, Token
 
 from app.domain import urls
 from app.domain.accounts.models import User
@@ -13,7 +13,7 @@ from app.domain.teams.models import TeamMember
 from app.lib import settings
 
 if TYPE_CHECKING:
-    from starlite.connection import ASGIConnection, Request
+    from litestar.connection import ASGIConnection, Request
 
 __all__ = ["current_user_from_token", "auth"]
 

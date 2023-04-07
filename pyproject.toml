@@ -13,11 +13,11 @@ classifiers = [
   "Topic :: Software Development",
   "Typing :: Typed",
 ]
-description = "Opinionated template for integrating Starlite with a SPA"
-documentation = "https://cofin.github.io/starlite-full-stack-example"
-homepage = "https://github.com/cofin/starlite-full-stack-example"
+description = "Opinionated template for integrating Litestar with a SPA"
+documentation = "https://cofin.github.io/litestar-fullstack"
+homepage = "https://github.com/cofin/litestar-fullstack"
 include = ["CHANGELOG.md"]
-keywords = ["api", "rest", "http", "asgi", "pydantic", "starlite", "fastapi", "framework", "websocket", "vite", "spa"]
+keywords = ["api", "rest", "http", "asgi", "pydantic", "litestar", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
 name = "app"
@@ -25,7 +25,7 @@ packages = [
   {include = "app", from = "src"},
 ]
 readme = "README.md"
-repository = "https://github.com/cofin/starlite-full-stack-example"
+repository = "https://github.com/cofin/litestar-fullstack"
 version = "0.1.0"
 [tool.poetry.scripts]
 app = "app.__main__:run_cli"
@@ -36,6 +36,7 @@ asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
 hiredis = "*"
 jinja2 = "*"
+litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2'], develop = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -47,7 +48,6 @@ redis = ">=4.4.2"
 rich-click = ">=1.6.0"
 saq = "*"
 sqlalchemy = {version = ">=2.0.0"}
-starlite = {git = "https://github.com/starlite-api/starlite.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2']}
 structlog = ">=22.3.0"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"

@@ -4,13 +4,13 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from starlite.contrib.repository.filters import (
+from litestar.contrib.repository.filters import (
     BeforeAfter,
     CollectionFilter,
     LimitOffset,
 )
-from starlite.di import Provide
-from starlite.params import Dependency, Parameter
+from litestar.di import Provide
+from litestar.params import Dependency, Parameter
 
 from app.lib import constants
 

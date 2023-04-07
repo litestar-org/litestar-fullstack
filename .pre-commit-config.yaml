@@ -11,12 +11,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.259"
+    rev: "v0.0.261"
     hooks:
       - id: ruff
         args: ["--fix"]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -41,7 +41,7 @@ repos:
         exclude: "test_*|docs|migrations"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.1.1"
+    rev: "v1.2.0"
     hooks:
       - id: mypy
         additional_dependencies:
@@ -55,10 +55,7 @@ repos:
             packaging,
             click,
             rich-click,
-            pydantic_factories,
-            pydantic_openapi_schema,
-            git+https://github.com/starlite-api/starlite,
-            starlite_multipart,
+            polyfactory,
             structlog,
             aiosmtplib,
             alembic,
@@ -68,7 +65,7 @@ repos:
             pytest,
             pytest-docker,
             saq,
-            starlite,
+            litestar,
             types-freezegun,
             types-python-jose,
             types-click,

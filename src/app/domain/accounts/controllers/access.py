@@ -3,19 +3,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload, subqueryload
-from starlite import Controller, MediaType, Response, get, post
-from starlite.di import Provide
-from starlite.enums import RequestEncodingType
-from starlite.params import Body
+from litestar import Controller, MediaType, Response, get, post
+from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.params import Body
 
 from app.domain import security, urls
 from app.domain.accounts import schemas
+from app.domain.accounts.dependencies import provides_user_service
 from app.domain.accounts.guards import requires_active_user
-from app.domain.accounts.models import User
-from app.domain.accounts.services import UserService
-from app.domain.teams.models import TeamMember
 from app.lib import log
 
 __all__ = ["AccessController", "provides_user_service"]
@@ -24,29 +20,10 @@ __all__ = ["AccessController", "provides_user_service"]
 logger = log.get_logger()
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
+    from litestar.contrib.jwt import OAuth2Login
 
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from starlite.contrib.jwt import OAuth2Login
-
-
-async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[UserService, None]:
-    """Construct repository and service objects for the request."""
-    async with UserService.new(
-        session=db_session,
-        base_select=select(User).options(
-            noload("*"),
-            subqueryload(User.teams).options(
-                joinedload(TeamMember.team, innerjoin=True).options(
-                    noload("*"),
-                ),
-            ),
-        ),
-    ) as service:
-        try:
-            yield service
-        finally:
-            ...
+    from app.domain.accounts.models import User
+    from app.domain.accounts.services import UserService
 
 
 class AccessController(Controller):

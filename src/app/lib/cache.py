@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
+from litestar.stores.redis import RedisStore
 from redis.asyncio import Redis
-from starlite.config.response_cache import ResponseCacheConfig, default_cache_key_builder
-from starlite.stores.redis import RedisStore
 
 from app.lib import settings
 
@@ -12,7 +12,7 @@ __all__ = ["cache_key_builder", "on_shutdown"]
 
 
 if TYPE_CHECKING:
-    from starlite.connection import Request
+    from litestar.connection import Request
 
 
 redis = Redis.from_url(
@@ -24,7 +24,7 @@ redis = Redis.from_url(
 )
 """Async [`Redis`][redis.Redis] instance, configure via.
 
-[CacheSettings][dma.lib.config.CacheSettings].
+[CacheSettings][app.lib.config.CacheSettings].
 """
 
 

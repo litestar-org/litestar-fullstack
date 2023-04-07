@@ -2,21 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any
 
-from starlite.contrib.sqlalchemy.base import AuditColumns, meta
-from starlite.contrib.sqlalchemy.base import Base as DatabaseModel
+from litestar.contrib.sqlalchemy.base import AuditColumns, meta
+from litestar.contrib.sqlalchemy.base import Base as DatabaseModel
+from litestar.contrib.sqlalchemy.repository import ModelT  # noqa: TCH002
 
 __all__ = ["DatabaseModel", "meta", "model_from_dict", "AuditColumns"]
 
-DatabaseModelT = TypeVar("DatabaseModelT", bound="DatabaseModel")
 
-
-def model_from_dict(model: type[DatabaseModelT], data: dict[str, Any]) -> DatabaseModelT:
+def model_from_dict(model: type[ModelT], **kwargs: Any) -> ModelT:
     """Return ORM Object from Dictionary."""
-    obj_in = {}
-    if model.__table__ is not None:
-        for column in model.__table__.columns:
-            if column.name in data:
-                obj_in.update({column.name: data.get(column.name)})
-    return model(**obj_in)
+    data = {}
+    for column in model.__table__.columns:  # type: ignore[attr-defined]
+        if column.name in kwargs:
+            data.update({column.name: kwargs.get(column.name)})
+    return model(**data)  # type: ignore[return-value]

@@ -1,5 +1,5 @@
 {
-  "name": "starlite-full-stack-example",
+  "name": "litestar-fullstack",
   "private": true,
   "version": "0.0.0",
   "type": "module",
