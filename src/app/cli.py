@@ -13,13 +13,13 @@ import rich_click as click
 from click import Path as ClickPath
 from click import echo
 from jsbeautifier import Beautifier
+from litestar._openapi.typescript_converter.converter import (
+    convert_openapi_to_typescript,
+)
+from litestar.cli._utils import LitestarCLIException
 from pydantic import EmailStr, SecretStr
 from rich import get_console
 from rich.prompt import Confirm
-from starlite._openapi.typescript_converter.converter import (
-    convert_openapi_to_typescript,
-)
-from starlite.cli._utils import StarliteCLIException
 from yaml import dump as dump_yaml
 
 from app.asgi import create_app
@@ -48,7 +48,7 @@ console = get_console()
 logger = log.get_logger()
 
 
-@click.group(help="Starlite Reference Application")
+@click.group(help="Litestar Reference Application")
 def app(**_: dict[str, "Any"]) -> None:
     """CLI application entrypoint."""
     log.config.configure()
@@ -304,7 +304,7 @@ def generate_openapi_schema(output: Path) -> None:
     """Generate an OpenAPI Schema."""
     app = create_app()
     if not app.openapi_schema:  # pragma: no cover
-        raise StarliteCLIException("Starlite application does not have an OpenAPI schema")
+        raise LitestarCLIException("Litestar application does not have an OpenAPI schema")
 
     if output.suffix in (".yml", ".yaml"):
         content = dump_yaml(app.openapi_schema.to_schema(), default_flow_style=False)
@@ -314,7 +314,7 @@ def generate_openapi_schema(output: Path) -> None:
     try:
         output.write_text(content)
     except OSError as e:  # pragma: no cover
-        raise StarliteCLIException(f"failed to write schema to path {output}") from e
+        raise LitestarCLIException(f"failed to write schema to path {output}") from e
 
 
 beautifier = Beautifier()
@@ -333,14 +333,14 @@ def generate_typescript_specs(output: Path, namespace: str) -> None:
     """Generate TypeScript specs from the OpenAPI schema."""
     app = create_app()
     if not app.openapi_schema:  # pragma: no cover
-        raise StarliteCLIException("Starlite application does not have an OpenAPI schema")
+        raise LitestarCLIException("Litestar application does not have an OpenAPI schema")
 
     try:
         specs = convert_openapi_to_typescript(app.openapi_schema, namespace)
         beautified_output = beautifier.beautify(specs.write())
         output.write_text(beautified_output)
     except OSError as e:  # pragma: no cover
-        raise StarliteCLIException(f"failed to write schema to path {output}") from e
+        raise LitestarCLIException(f"failed to write schema to path {output}") from e
 
 
 @management_app.command(name="generate-random-key")

@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from starlite.connection import ASGIConnection
-from starlite.exceptions import NotAuthorizedException
-from starlite.handlers.base import BaseRouteHandler
+from litestar.connection import ASGIConnection
+from litestar.exceptions import NotAuthorizedException
+from litestar.handlers.base import BaseRouteHandler
 
 from app.domain.teams.models import TeamRoles
 

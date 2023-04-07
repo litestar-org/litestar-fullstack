@@ -1,6 +1,6 @@
-from starlite import Controller, get
-from starlite.response_containers import Template
-from starlite.status_codes import HTTP_200_OK
+from litestar import Controller, get
+from litestar.response_containers import Template
+from litestar.status_codes import HTTP_200_OK
 
 from app.domain import urls
 

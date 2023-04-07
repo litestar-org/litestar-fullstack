@@ -7,7 +7,7 @@ import sys
 from typing import TYPE_CHECKING
 
 import structlog
-from starlite.logging.config import LoggingConfig
+from litestar.logging.config import LoggingConfig
 
 from app.lib import settings
 

@@ -3,10 +3,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from starlite import Controller, MediaType, Response, get, post
-from starlite.di import Provide
-from starlite.enums import RequestEncodingType
-from starlite.params import Body
+from litestar import Controller, MediaType, Response, get, post
+from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.params import Body
 
 from app.domain import security, urls
 from app.domain.accounts import schemas
@@ -20,7 +20,7 @@ __all__ = ["AccessController", "provides_user_service"]
 logger = log.get_logger()
 
 if TYPE_CHECKING:
-    from starlite.contrib.jwt import OAuth2Login
+    from litestar.contrib.jwt import OAuth2Login
 
     from app.domain.accounts.models import User
     from app.domain.accounts.services import UserService

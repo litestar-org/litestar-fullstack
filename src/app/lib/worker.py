@@ -57,7 +57,7 @@ redis_client: Redis[bytes] = Redis.from_url(
 )
 """Async [`Redis`][redis.Redis] instance.
 
-Configure via [CacheSettings][starlite_saqlalchemy.settings.RedisSettings].
+Configure via [CacheSettings][litestar_saqlalchemy.settings.RedisSettings].
 This has the addition of setting the default encoder and decoder to msgpack for redis connectivity.
 """
 
@@ -115,7 +115,7 @@ class Queue(saq.Queue):
 
 
 class Worker(saq.Worker):
-    """Modify behavior of saq worker for orchestration by Starlite."""
+    """Modify behavior of saq worker for orchestration by Litestar."""
 
     # same issue: https://github.com/samuelcolvin/arq/issues/182
     SIGNALS: list[Signals] = []
@@ -129,8 +129,8 @@ class Worker(saq.Worker):
 queue = Queue(redis_client)
 """Async worker queue.
 
-[Queue][starlite_saqlalchemy.worker.Queue] instance instantiated with
-[redis][starlite_saqlalchemy.redis.client] instance.
+[Queue][litestar_saqlalchemy.worker.Queue] instance instantiated with
+[redis][litestar_saqlalchemy.redis.client] instance.
 """
 
 

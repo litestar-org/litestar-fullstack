@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from . import accounts, openapi, security, teams, urls, web
 
 if TYPE_CHECKING:
-    from starlite.types import ControllerRouterHandler
+    from litestar.types import ControllerRouterHandler
 
 routes: list[ControllerRouterHandler] = [
     accounts.controllers.AccessController,

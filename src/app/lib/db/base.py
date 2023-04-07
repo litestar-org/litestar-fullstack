@@ -3,11 +3,14 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, cast
 
+from litestar.contrib.sqlalchemy.init_plugin.config import (
+    SQLAlchemyAsyncConfig,
+)
+from litestar.contrib.sqlalchemy.init_plugin.config.common import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS
+from litestar.contrib.sqlalchemy.init_plugin.plugin import SQLAlchemyInitPlugin
+from litestar.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
-from starlite.contrib.sqlalchemy_1.config import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS, SQLAlchemyConfig
-from starlite.contrib.sqlalchemy_1.plugin import SQLAlchemyPlugin
-from starlite.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
 
 from app.lib import constants, serialization, settings
 
@@ -17,9 +20,9 @@ __all__ = ["before_send_handler", "session"]
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
+    from litestar.datastructures.state import State
+    from litestar.types import Message, Scope
     from sqlalchemy.ext.asyncio import AsyncSession
-    from starlite.datastructures.state import State
-    from starlite.types import Message, Scope
 
 
 async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
@@ -66,20 +69,20 @@ async_session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(eng
 
 See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
 """
-config = SQLAlchemyConfig(
-    dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,
+config = SQLAlchemyAsyncConfig(
+    session_dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,
     engine_instance=engine,
-    session_maker_instance=async_session_factory,
+    session_maker=async_session_factory,
     before_send_handler=before_send_handler,
 )
 
 
-plugin = SQLAlchemyPlugin(config=config)
+plugin = SQLAlchemyInitPlugin(config=config)
 
 
 @asynccontextmanager
 async def session() -> AsyncIterator[AsyncSession]:
-    """Use this to get a database session where you can't in starlite.
+    """Use this to get a database session where you can't in litestar.
 
     Returns:
         config.session_class: _description_

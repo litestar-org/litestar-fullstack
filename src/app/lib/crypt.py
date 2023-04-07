@@ -4,8 +4,8 @@ import base64
 import logging
 from typing import TYPE_CHECKING
 
+from litestar.utils.sync import AsyncCallable
 from passlib.context import CryptContext
-from starlite.utils.sync import AsyncCallable
 
 __all__ = ["get_encryption_key", "get_password_hash", "verify_password"]
 

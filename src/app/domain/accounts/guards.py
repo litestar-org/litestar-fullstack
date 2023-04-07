@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from starlite.exceptions import PermissionDeniedException
+from litestar.exceptions import PermissionDeniedException
 
 if TYPE_CHECKING:
-    from starlite.connection import ASGIConnection
-    from starlite.handlers.base import BaseRouteHandler
+    from litestar.connection import ASGIConnection
+    from litestar.handlers.base import BaseRouteHandler
 
 
 __all__ = ["requires_superuser", "requires_active_user"]

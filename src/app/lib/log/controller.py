@@ -12,15 +12,15 @@ from inspect import isawaitable
 from typing import TYPE_CHECKING
 
 import structlog
-from starlite.constants import SCOPE_STATE_RESPONSE_COMPRESSED
-from starlite.data_extractors import ConnectionDataExtractor, ResponseDataExtractor
-from starlite.enums import ScopeType
-from starlite.status_codes import (
+from litestar.constants import SCOPE_STATE_RESPONSE_COMPRESSED
+from litestar.data_extractors import ConnectionDataExtractor, ResponseDataExtractor
+from litestar.enums import ScopeType
+from litestar.status_codes import (
     HTTP_200_OK,
     HTTP_300_MULTIPLE_CHOICES,
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
-from starlite.utils.scope import get_starlite_scope_state
+from litestar.utils.scope import get_litestar_scope_state
 
 from app.lib import settings
 
@@ -30,9 +30,9 @@ __all__ = ["BeforeSendHandler", "drop_health_logs", "middleware_factory"]
 if TYPE_CHECKING:
     from typing import Any, Literal
 
-    from starlite.connection import Request
-    from starlite.datastructures import State
-    from starlite.types.asgi_types import ASGIApp, Message, Receive, Scope, Send
+    from litestar.connection import Request
+    from litestar.datastructures import State
+    from litestar.types.asgi_types import ASGIApp, Message, Receive, Scope, Send
     from structlog.types import EventDict, WrappedLogger
 
 LOGGER = structlog.get_logger()
@@ -187,7 +187,7 @@ class BeforeSendHandler:
         """Create a dictionary of values for the log.
 
         Args:
-            request: A [Request][starlite.connection.request.Request] instance.
+            request: A [Request][litestar.connection.request.Request] instance.
 
         Returns:
             An OrderedDict.
@@ -200,7 +200,7 @@ class BeforeSendHandler:
             if value is missing:  # pragma: no cover
                 continue
             if isawaitable(value):
-                # Prevent Starlite from raising a RuntimeError
+                # Prevent Litestar from raising a RuntimeError
                 # when trying to read an empty request body.
                 try:
                     value = await value
@@ -225,7 +225,7 @@ class BeforeSendHandler:
             messages=(scope["state"][HTTP_RESPONSE_START], scope["state"][HTTP_RESPONSE_BODY]),
         )
         missing = object()
-        response_body_compressed = get_starlite_scope_state(scope, SCOPE_STATE_RESPONSE_COMPRESSED)
+        response_body_compressed = get_litestar_scope_state(scope, SCOPE_STATE_RESPONSE_COMPRESSED)
         for key in settings.log.RESPONSE_FIELDS:
             value = extracted_data.get(key, missing)
             if key == "body" and response_body_compressed and not self.include_compressed_body:

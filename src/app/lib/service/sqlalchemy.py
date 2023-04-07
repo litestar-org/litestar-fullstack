@@ -9,11 +9,11 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar
 
-from starlite.contrib.repository.exceptions import RepositoryError
-from starlite.contrib.repository.filters import (
+from litestar.contrib.repository.exceptions import RepositoryError
+from litestar.contrib.repository.filters import (
     LimitOffset,
 )
-from starlite.contrib.sqlalchemy.repository import ModelT, SQLAlchemyRepository
+from litestar.contrib.sqlalchemy.repository import ModelT
 
 from app.lib.db import async_session_factory
 from app.lib.db.orm import model_from_dict
@@ -22,9 +22,11 @@ from app.lib.service.generic import Service
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Sequence
 
+    from litestar.contrib.repository.abc import FilterTypes
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
-    from starlite.contrib.repository.abc import FilterTypes
+
+    from app.lib.repository import SQLAlchemyRepository
 
 
 __all__ = ["SQLAlchemyRepositoryService"]

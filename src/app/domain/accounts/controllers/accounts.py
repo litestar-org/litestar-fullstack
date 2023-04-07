@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from litestar import Controller, delete, get, patch, post
+from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.pagination import OffsetPagination
+from litestar.params import Body, Dependency, Parameter
 from pydantic import parse_obj_as
-from starlite import Controller, delete, get, patch, post
-from starlite.di import Provide
-from starlite.enums import RequestEncodingType
-from starlite.pagination import OffsetPagination
-from starlite.params import Body, Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts import schemas
@@ -22,7 +22,7 @@ __all__ = ["AccountController"]
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from starlite.contrib.repository.abc import FilterTypes
+    from litestar.contrib.repository.abc import FilterTypes
 
     from app.domain.accounts.services import UserService
 

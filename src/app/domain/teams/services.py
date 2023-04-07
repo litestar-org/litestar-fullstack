@@ -1,4 +1,4 @@
-from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository
+from litestar.contrib.sqlalchemy.repository import SQLAlchemyRepository
 
 from app.domain.teams.models import Team, TeamInvitation, TeamMember
 from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService

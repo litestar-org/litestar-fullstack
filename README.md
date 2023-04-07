@@ -1,15 +1,15 @@
-# Starlite Reference Application
+# Litestar Reference Application
 
-\*\* Update: This repo is referencing the current alpha of Starlite 2.0. Expect things to stabilize as we get closer to a final release.
+\*\* Update: This repo is referencing the current alpha of Litestar 2.0. Expect things to stabilize as we get closer to a final release.
 
-This is a reference application that you can use to get your next Starlite application running quickly.
+This is a reference application that you can use to get your next Litestar application running quickly.
 
 It contains most of the boilerplate required for a production web API.
 
 Features:
 
-- Latest Starlite configured with best practices
-- Integration with SQLAlchemy 2.0, SAQ (Simple Asynchronous Queue), and starlite-saqlalchemy
+- Latest Litestar configured with best practices
+- Integration with SQLAlchemy 2.0, SAQ (Simple Asynchronous Queue), and litestar-saqlalchemy
 - Click based CLI that includes commands for database migrations and deployment
 - Frontend integrated with vitejs and includes Jinja2 templates that integrate with Vite websocket/HMR support
 - Multi-stage docker build using a Google Distroless (distroless/cc) Python 3.11 runtime image.
@@ -23,7 +23,7 @@ Features:
 
  Usage: app [OPTIONS] COMMAND [ARGS]...
 
- Starlite Reference Application
+ Litestar Reference Application
 
 ╭─ Options ────────────────────────────────────────────────────────────────────╮
 │ --help    Show this message and exit.                                        │
@@ -221,7 +221,7 @@ Sample output:
 ```bash
 ❯ npm run build
 
-> starlite-full-stack-example@0.0.0 build
+> litestar-fullstack@0.0.0 build
 > vue-tsc && vite build
 
 vite v4.1.2 building for production...

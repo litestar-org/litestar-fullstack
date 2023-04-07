@@ -25,7 +25,7 @@ ServiceT = TypeVar("ServiceT", bound="Service")
 class Service(Generic[T]):
     """Generic Service object."""
 
-    __id__: ClassVar[str] = "dma.lib.service.generic.Service"
+    __id__: ClassVar[str] = "app.lib.service.generic.Service"
 
     def __init_subclass__(cls, *_: Any, **__: Any) -> None:
         """Map the service object to a unique identifier.

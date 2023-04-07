@@ -4,31 +4,32 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from starlite import Starlite
+    from litestar import Litestar
 
 
 __all__ = ["create_app"]
 
 
-def create_app() -> Starlite:
+def create_app() -> Litestar:
     """Create ASGI application."""
     from datetime import datetime
     from uuid import UUID
 
     from asyncpg.pgproto import pgproto
-    from pydantic import BaseModel, EmailStr, SecretStr
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from starlite import Starlite
-    from starlite.connection import ASGIConnection, Request
-    from starlite.contrib.jwt import OAuth2Login
-    from starlite.contrib.repository.filters import (
+    from litestar import Litestar
+    from litestar.connection import Request
+    from litestar.contrib.jwt import OAuth2Login
+    from litestar.contrib.repository.filters import (
         BeforeAfter,
         CollectionFilter,
         LimitOffset,
     )
-    from starlite.di import Provide
-    from starlite.pagination import OffsetPagination
-    from starlite.stores.registry import StoreRegistry
+    from litestar.di import Provide
+    from litestar.pagination import OffsetPagination
+    from litestar.serialization import DEFAULT_TYPE_ENCODERS
+    from litestar.stores.registry import StoreRegistry
+    from pydantic import BaseModel, EmailStr, SecretStr
+    from sqlalchemy.ext.asyncio import AsyncSession
 
     from app import domain
     from app.domain.accounts.models import User
@@ -38,6 +39,9 @@ def create_app() -> Starlite:
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
     from app.lib.dependencies import FilterTypes, create_collection_dependencies
+    from app.lib.repository import SQLAlchemyRepository, SQLAlchemySlugRepository
+    from app.lib.service.generic import Service
+    from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -45,7 +49,7 @@ def create_app() -> Starlite:
     def _base_model_encoder(value: BaseModel) -> dict[str, Any]:
         return value.dict(by_alias=True)
 
-    return Starlite(
+    return Litestar(
         response_cache_config=cache.config,
         stores=StoreRegistry(default_factory=cache.redis_store_factory),
         compression_config=compression.config,
@@ -59,7 +63,7 @@ def create_app() -> Starlite:
         middleware=[log.controller.middleware_factory],
         logging_config=log.config,
         openapi_config=domain.openapi.config,
-        type_encoders={pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
+        type_encoders={**DEFAULT_TYPE_ENCODERS, pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
         route_handlers=[*domain.routes],
         plugins=[db.plugin],
         on_shutdown=[cache.redis.close],
@@ -69,6 +73,7 @@ def create_app() -> Starlite:
         template_config=template_config,  # type: ignore[arg-type]
         signature_namespace={
             "AsyncSession": AsyncSession,
+            "Service": Service,
             "FilterTypes": FilterTypes,
             "BeforeAfter": BeforeAfter,
             "CollectionFilter": CollectionFilter,
@@ -77,7 +82,6 @@ def create_app() -> Starlite:
             "EmailStr": EmailStr,
             "datetime": datetime,
             "User": User,
-            "ASGIConnection": ASGIConnection,
             "Request": Request,
             "OAuth2Login": OAuth2Login,
             "OffsetPagination": OffsetPagination,
@@ -85,6 +89,9 @@ def create_app() -> Starlite:
             "TeamService": TeamService,
             "TeamInvitationService": TeamInvitationService,
             "TeamMemberService": TeamMemberService,
+            "SQLAlchemyRepositoryService": SQLAlchemyRepositoryService,
+            "SQLAlchemyRepository": SQLAlchemyRepository,
+            "SQLAlchemySlugRepository": SQLAlchemySlugRepository,
         },
     )
 

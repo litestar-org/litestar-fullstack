@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from litestar.exceptions import PermissionDeniedException
 from pydantic import SecretStr
-from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository
-from starlite.exceptions import PermissionDeniedException
 
 from app.lib import crypt
+from app.lib.repository import SQLAlchemyRepository
 from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
 
 from .models import User

@@ -1,4 +1,4 @@
-from starlite.config.csrf import CSRFConfig
+from litestar.config.csrf import CSRFConfig
 
 from app.lib import settings
 

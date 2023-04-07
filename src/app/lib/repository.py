@@ -2,10 +2,12 @@ import random
 import string
 from typing import Any
 
-from starlite.contrib.sqlalchemy.repository import ModelT
-from starlite.contrib.sqlalchemy.repository import SQLAlchemyRepository as _SQLAlchemyRepository
+from litestar.contrib.sqlalchemy.repository import ModelT
+from litestar.contrib.sqlalchemy.repository import SQLAlchemyRepository as _SQLAlchemyRepository
 
 from app.utils import slugify
+
+__all__ = ["SQLAlchemyRepository", "SQLAlchemySlugRepository"]
 
 
 class SQLAlchemyRepository(_SQLAlchemyRepository[ModelT]):
