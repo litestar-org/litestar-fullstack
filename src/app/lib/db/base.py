@@ -9,6 +9,10 @@ from litestar.contrib.sqlalchemy.init_plugin.config import (
 from litestar.contrib.sqlalchemy.init_plugin.config.common import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS
 from litestar.contrib.sqlalchemy.init_plugin.plugin import SQLAlchemyInitPlugin
 from litestar.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
+from litestar.utils import (
+    delete_litestar_scope_state,
+    get_litestar_scope_state,
+)
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
@@ -35,17 +39,17 @@ async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
         _:
         scope: ASGI scope
     """
-    db_session = cast("AsyncSession | None", scope.get(SESSION_SCOPE_KEY))
+    session = cast("AsyncSession | None", get_litestar_scope_state(scope, SESSION_SCOPE_KEY))
     try:
-        if db_session is not None and message["type"] == "http.response.start":
+        if session is not None and message["type"] == "http.response.start":
             if HTTP_200_OK <= message["status"] < HTTP_300_MULTIPLE_CHOICES:
-                await db_session.commit()
+                await session.commit()
             else:
-                await db_session.rollback()
+                await session.rollback()
     finally:
-        if db_session is not None and message["type"] in SESSION_TERMINUS_ASGI_EVENTS:
-            await db_session.close()
-            del scope[SESSION_SCOPE_KEY]  # type:ignore[misc]
+        if session and message["type"] in SESSION_TERMINUS_ASGI_EVENTS:
+            await session.close()
+            delete_litestar_scope_state(scope, SESSION_SCOPE_KEY)
 
 
 engine = create_async_engine(
