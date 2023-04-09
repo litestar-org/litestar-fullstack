@@ -32,7 +32,7 @@ class User(CamelizedBaseModel):
     is_verified: bool
     created: datetime
     updated: datetime
-    teams: list[UserTeam] | None = []
+    teams: list[UserTeam] = []
 
 
 class UserTeam(CamelizedBaseModel):

@@ -14,7 +14,7 @@ __all__ = ["DatabaseModel", "meta", "model_from_dict", "AuditColumns"]
 def model_from_dict(model: type[ModelT], **kwargs: Any) -> ModelT:
     """Return ORM Object from Dictionary."""
     data = {}
-    for column in model.__table__.columns:  # type: ignore[attr-defined]
+    for column in model.__table__.columns:
         if column.name in kwargs:
             data.update({column.name: kwargs.get(column.name)})
     return model(**data)  # type: ignore[return-value]
