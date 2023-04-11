@@ -929,14 +929,14 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "griffe"
-version = "0.26.0"
+version = "0.27.0"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "griffe-0.26.0-py3-none-any.whl", hash = "sha256:38f3f6bbe834501cc199a07b7b7e0e2550aaf19a9d1ee27acf879027e47c9b9e"},
-    {file = "griffe-0.26.0.tar.gz", hash = "sha256:08675ffe8c17139e7769e950dd21f8e98a2e76205cbbd2911d5dec26d2cbf1be"},
+    {file = "griffe-0.27.0-py3-none-any.whl", hash = "sha256:f3a5726e2d5876ac882d48ff9ca1a95c5bc267196a8f114263e66e234141bb84"},
+    {file = "griffe-0.27.0.tar.gz", hash = "sha256:dcf3cc4205f33cbb16095324803a6904e0b293cd1630ceab4b66a9115af6b818"},
 ]
 
 [package.dependencies]
@@ -1339,7 +1339,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "4b82ef8fdc9a9247c07938c31486c10e6f226a52"
+resolved_reference = "7c990386e677c92252558b681ff4ecae4f7c63d9"
 
 [[package]]
 name = "mako"
@@ -2019,14 +2019,14 @@ email = ["email-validator (>=1.0.3)"]
 
 [[package]]
 name = "pygments"
-version = "2.14.0"
+version = "2.15.0"
 description = "Pygments is a syntax highlighting package written in Python."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "Pygments-2.14.0-py3-none-any.whl", hash = "sha256:fa7bd7bd2771287c0de303af8bfdfc731f51bd2c6a47ab69d117138893b82717"},
-    {file = "Pygments-2.14.0.tar.gz", hash = "sha256:b3ed06a9e8ac9a9aae5a6f5dbe78a8a58655d17b43b93c078f094ddc476ae297"},
+    {file = "Pygments-2.15.0-py3-none-any.whl", hash = "sha256:77a3299119af881904cd5ecd1ac6a66214b6e9bed1f2db16993b54adede64094"},
+    {file = "Pygments-2.15.0.tar.gz", hash = "sha256:f7e36cffc4c517fbc252861b9a6e4644ca0e5abadf9a113c72d1358ad09b9500"},
 ]
 
 [package.extras]
@@ -2110,18 +2110,17 @@ pyyaml = "*"
 
 [[package]]
 name = "pytest"
-version = "7.2.2"
+version = "7.3.0"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pytest-7.2.2-py3-none-any.whl", hash = "sha256:130328f552dcfac0b1cec75c12e3f005619dc5f874f0a06e8ff7263f0ee6225e"},
-    {file = "pytest-7.2.2.tar.gz", hash = "sha256:c99ab0c73aceb050f68929bc93af19ab6db0558791c6a0715723abe9d0ade9d4"},
+    {file = "pytest-7.3.0-py3-none-any.whl", hash = "sha256:933051fa1bfbd38a21e73c3960cebdad4cf59483ddba7696c48509727e17f201"},
+    {file = "pytest-7.3.0.tar.gz", hash = "sha256:58ecc27ebf0ea643ebfdf7fb1249335da761a00c9f955bcd922349bcb68ee57d"},
 ]
 
 [package.dependencies]
-attrs = ">=19.2.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
 exceptiongroup = {version = ">=1.0.0rc8", markers = "python_version < \"3.11\""}
 iniconfig = "*"
@@ -2130,7 +2129,7 @@ pluggy = ">=0.12,<2.0"
 tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
-testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
+testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
 name = "pytest-asyncio"

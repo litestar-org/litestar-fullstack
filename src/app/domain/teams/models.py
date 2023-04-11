@@ -22,7 +22,7 @@ class TeamRoles(str, Enum):
     MEMBER = "MEMBER"
 
 
-class Team(orm.DatabaseModel, orm.AuditColumns):
+class Team(orm.DatabaseModel, orm.AuditColumns, orm.SlugKey):
     """Team."""
 
     __tablename__ = "team"  # type: ignore[assignment]
