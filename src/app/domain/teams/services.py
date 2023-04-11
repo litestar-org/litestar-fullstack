@@ -43,7 +43,7 @@ class TeamRepository(SQLAlchemySlugRepository[Team]):
             )
             .execution_options(populate_existing=True)
         )
-        return await self.list_and_count(*filters, statement=statement)
+        return await self.list_and_count(*filters, base_select=statement)
 
 
 class TeamService(SQLAlchemyRepositoryService[Team]):

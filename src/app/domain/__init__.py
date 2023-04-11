@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 routes: list[ControllerRouterHandler] = [
     accounts.controllers.AccessController,
     accounts.controllers.AccountController,
-    # teams.controllers.TeamController,
+    teams.controllers.TeamController,
     # teams.controllers.TeamInvitationController,
     # teams.controllers.TeamMemberController,
     web.controllers.WebController,

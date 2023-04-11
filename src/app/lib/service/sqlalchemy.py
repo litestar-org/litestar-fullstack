@@ -268,10 +268,13 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             The service object instance.
         """
         if session:
-            yield cls(session=session, base_select=base_select)
+            yield cls(base_select=base_select, session=session)
         else:
             async with async_session_factory() as db_session:
-                yield cls(session=db_session, base_select=base_select)
+                yield cls(
+                    base_select=base_select,
+                    session=db_session,
+                )
 
     def _limit_offset_from_filters(self, *filters: FilterTypes) -> LimitOffset:
         """Get the LimitOffset filter from filters.

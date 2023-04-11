@@ -1,8 +1,8 @@
-"""user teams baseline
+"""user teams
 
-Revision ID: dce1bbfed62a
+Revision ID: 385bb841b94e
 Revises: 
-Create Date: 2023-04-10 19:20:53.285777
+Create Date: 2023-04-11 17:53:33.476834
 
 """
 import sqlalchemy as sa
@@ -11,7 +11,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = 'dce1bbfed62a'
+revision = '385bb841b94e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -69,8 +69,8 @@ def upgrade():
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('created', sa.DateTime(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_member_team_id_team'), ondelete='cascade'),
-    sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_team_member_user_id_user_account'), ondelete='cascade'),
+    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_member_team_id_team')),
+    sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_team_member_user_id_user_account')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_team_member')),
     sa.UniqueConstraint('user_id', 'team_id', name=op.f('uq_team_member_user_id'))
     )

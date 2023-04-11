@@ -47,8 +47,7 @@ class AccountController(Controller):
     async def list_users(
         self, users_service: UserService, filters: list[FilterTypes] = Dependency(skip_validation=True)
     ) -> OffsetPagination[schemas.User]:
-        """Create a new migration tag."""
-        """List collections for a workspace."""
+        """List users."""
         results, total = await users_service.list_and_count(*filters)
         limit_offset = users_service._limit_offset_from_filters(*filters)
         return OffsetPagination[schemas.User](
@@ -71,7 +70,7 @@ class AccountController(Controller):
         users_service: UserService,
         data: schemas.UserCreate = Body(media_type=RequestEncodingType.MULTI_PART),
     ) -> schemas.User:
-        """Create a new migration user."""
+        """Create a new user."""
         db_obj = await users_service.create(data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
         return schemas.User.from_orm(db_obj)
 
@@ -89,7 +88,7 @@ class AccountController(Controller):
             description="The user to retrieve.",
         ),
     ) -> schemas.User:
-        """Get a new migration user."""
+        """Get a user."""
         db_obj = await users_service.get(user_id)
         return schemas.User.from_orm(db_obj)
 
@@ -103,7 +102,7 @@ class AccountController(Controller):
         ),
         data: schemas.UserCreate = Body(media_type=RequestEncodingType.MULTI_PART),
     ) -> schemas.User:
-        """Create a new migration user."""
+        """Create a new user."""
         db_obj = await users_service.update(user_id, data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
         return schemas.User.from_orm(db_obj)
 
