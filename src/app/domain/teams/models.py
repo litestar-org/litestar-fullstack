@@ -22,7 +22,7 @@ class TeamRoles(str, Enum):
     MEMBER = "MEMBER"
 
 
-class Team(orm.DatabaseModel, orm.AuditColumns):
+class Team(orm.DatabaseModel, orm.AuditColumns, orm.SlugKey):
     """Team."""
 
     __tablename__ = "team"  # type: ignore[assignment]
@@ -55,8 +55,8 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
 
     __tablename__ = "team_member"  # type: ignore[assignment]
     __table_args__ = (sa.UniqueConstraint("user_id", "team_id"),)
-    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id", ondelete="cascade"))
-    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"))
+    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id"))
+    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id"))
     role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, index=True)
     is_owner: Mapped[bool] = mapped_column(default=False)
 
@@ -68,7 +68,6 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
         foreign_keys="TeamMember.user_id",
         innerjoin=True,
         uselist=False,
-        cascade="all, delete",
         lazy="noload",
     )
     team: Mapped[Team] = relationship(
@@ -76,7 +75,6 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
         foreign_keys="TeamMember.team_id",
         innerjoin=True,
         uselist=False,
-        cascade="all, delete",
         lazy="noload",
     )
 
@@ -94,5 +92,5 @@ class TeamInvitation(orm.DatabaseModel, orm.AuditColumns):
     # -----------
     # ORM Relationships
     # ------------
-    team: Mapped[Team] = relationship(foreign_keys="TeamInvitation.team_id", cascade="all, delete", lazy="noload")
+    team: Mapped[Team] = relationship(foreign_keys="TeamInvitation.team_id", lazy="noload")
     invited_by: Mapped[User] = relationship(foreign_keys="TeamInvitation.invited_by_id", lazy="noload", uselist=False)
