@@ -101,6 +101,11 @@ config = LoggingConfig(
             "level": settings.log.SQLALCHEMY_LEVEL,
             "handlers": ["queue_listener"],
         },
+        "sqlalchemy.pool": {
+            "propagate": False,
+            "level": settings.log.SQLALCHEMY_LEVEL,
+            "handlers": ["queue_listener"],
+        },
     },
 )
 """Pre-configured log config for application deps.
