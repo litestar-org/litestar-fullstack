@@ -25,7 +25,7 @@ async def provides_teams_service(db_session: AsyncSession) -> AsyncGenerator[Tea
     """Construct repository and service objects for the request."""
     async with TeamService.new(
         session=db_session,
-        base_select=select(Team).options(
+        statement=select(Team).options(
             noload("*"),
             selectinload(Team.members).options(
                 joinedload(TeamMember.user, innerjoin=True).options(
@@ -44,7 +44,7 @@ async def provide_team_members_service(db_session: AsyncSession) -> AsyncGenerat
     """Construct repository and service objects for the request."""
     async with TeamMemberService.new(
         session=db_session,
-        base_select=select(TeamMember).options(
+        statement=select(TeamMember).options(
             noload("*"),
             joinedload(TeamMember.team, innerjoin=True).options(
                 noload("*"),
@@ -64,7 +64,7 @@ async def provide_team_invitations_service(db_session: AsyncSession) -> AsyncGen
     """Construct repository and service objects for the request."""
     async with TeamInvitationService.new(
         session=db_session,
-        base_select=select(TeamInvitation).options(
+        statement=select(TeamInvitation).options(
             noload("*"),
             joinedload(TeamInvitation.team, innerjoin=True).options(
                 noload("*"),

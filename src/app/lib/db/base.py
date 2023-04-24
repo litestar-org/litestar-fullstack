@@ -3,11 +3,11 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, cast
 
-from litestar.contrib.sqlalchemy.init_plugin.config import (
+from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
 )
-from litestar.contrib.sqlalchemy.init_plugin.config.common import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS
-from litestar.contrib.sqlalchemy.init_plugin.plugin import SQLAlchemyInitPlugin
+from litestar.contrib.sqlalchemy.plugins.init.config.common import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS
+from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
 from litestar.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
 from litestar.utils import (
     delete_litestar_scope_state,

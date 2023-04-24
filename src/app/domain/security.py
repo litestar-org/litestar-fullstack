@@ -45,7 +45,7 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
         User: User record mapped to the JWT identifier
     """
     async with UserService.new(
-        base_select=select(User).options(
+        statement=select(User).options(
             noload("*"),
             selectinload(User.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(

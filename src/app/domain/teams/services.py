@@ -6,8 +6,8 @@ from sqlalchemy.orm import joinedload, noload, selectinload
 
 from app.domain.teams.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.lib.dependencies import FilterTypes
-from app.lib.repository import SQLAlchemyRepository, SQLAlchemySlugRepository
-from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
+from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
+from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
 __all__ = [
     "TeamInvitationRepository",
@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-class TeamRepository(SQLAlchemySlugRepository[Team]):
+class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
     """Team Repository."""
 
     model_type = Team
@@ -43,10 +43,10 @@ class TeamRepository(SQLAlchemySlugRepository[Team]):
             )
             .execution_options(populate_existing=True)
         )
-        return await self.list_and_count(*filters, base_select=statement)
+        return await self.list_and_count(*filters, statement=statement)
 
 
-class TeamService(SQLAlchemyRepositoryService[Team]):
+class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
     """Team Service."""
 
     repository_type = TeamRepository
@@ -85,25 +85,25 @@ class TeamService(SQLAlchemyRepositoryService[Team]):
         return await super().to_model(data, operation)
 
 
-class TeamMemberRepository(SQLAlchemyRepository[TeamMember]):
+class TeamMemberRepository(SQLAlchemyAsyncRepository[TeamMember]):
     """Team Member Repository."""
 
     model_type = TeamMember
 
 
-class TeamMemberService(SQLAlchemyRepositoryService[TeamMember]):
+class TeamMemberService(SQLAlchemyAsyncRepositoryService[TeamMember]):
     """Team Member Service."""
 
     repository_type = TeamMemberRepository
 
 
-class TeamInvitationRepository(SQLAlchemyRepository[TeamInvitation]):
+class TeamInvitationRepository(SQLAlchemyAsyncRepository[TeamInvitation]):
     """Team Invitation Repository."""
 
     model_type = TeamInvitation
 
 
-class TeamInvitationService(SQLAlchemyRepositoryService[TeamInvitation]):
+class TeamInvitationService(SQLAlchemyAsyncRepositoryService[TeamInvitation]):
     """Team Invitation Service."""
 
     repository_type = TeamInvitationRepository

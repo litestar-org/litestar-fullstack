@@ -39,9 +39,9 @@ def create_app() -> Litestar:
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
     from app.lib.dependencies import FilterTypes, create_collection_dependencies
-    from app.lib.repository import SQLAlchemyRepository, SQLAlchemySlugRepository
+    from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
     from app.lib.service.generic import Service
-    from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
+    from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -89,9 +89,9 @@ def create_app() -> Litestar:
             "TeamService": TeamService,
             "TeamInvitationService": TeamInvitationService,
             "TeamMemberService": TeamMemberService,
-            "SQLAlchemyRepositoryService": SQLAlchemyRepositoryService,
-            "SQLAlchemyRepository": SQLAlchemyRepository,
-            "SQLAlchemySlugRepository": SQLAlchemySlugRepository,
+            "SQLAlchemyAsyncRepositoryService": SQLAlchemyAsyncRepositoryService,
+            "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
+            "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
         },
     )
 

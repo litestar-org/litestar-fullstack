@@ -6,21 +6,21 @@ from litestar.exceptions import PermissionDeniedException
 from pydantic import SecretStr
 
 from app.lib import crypt
-from app.lib.repository import SQLAlchemyRepository
-from app.lib.service.sqlalchemy import SQLAlchemyRepositoryService
+from app.lib.repository import SQLAlchemyAsyncRepository
+from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
 from .models import User
 
 __all__ = ["UserService", "UserRepository"]
 
 
-class UserRepository(SQLAlchemyRepository[User]):
+class UserRepository(SQLAlchemyAsyncRepository[User]):
     """User SQLAlchemy Repository."""
 
     model_type = User
 
 
-class UserService(SQLAlchemyRepositoryService[User]):
+class UserService(SQLAlchemyAsyncRepositoryService[User]):
     """Handles database operations for users."""
 
     repository_type = UserRepository

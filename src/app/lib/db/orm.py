@@ -25,10 +25,10 @@ class SlugKey:
     slug: Mapped[str] = mapped_column(String(length=100), index=True, nullable=False, unique=True, sort_order=-9)
 
 
-def model_from_dict(model: type[ModelT], **kwargs: Any) -> ModelT:
+def model_from_dict(model: ModelT, **kwargs: Any) -> ModelT:
     """Return ORM Object from Dictionary."""
     data = {}
     for column in model.__table__.columns:
         if column.name in kwargs:
             data.update({column.name: kwargs.get(column.name)})
-    return model(**data)  # type: ignore[return-value]
+    return model(**data)  # type: ignore

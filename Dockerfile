@@ -8,11 +8,10 @@ FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
-RUN npm install -g npm@9.5.0 --quiet
+RUN npm install -g npm@9.6.5 --quiet
 COPY package.json package-lock.json  vite.config.ts tsconfig.json tsconfig.node.json LICENSE Makefile ./
-RUN npm ci --quiet && npm cache clean --force --quiet
 COPY src src
-RUN npm run build
+RUN npm ci --quiet && npm cache clean --force --quiet && npm run build
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -55,12 +54,12 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_ALWAYS_COPY=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_VERSION='1.3.2' \
+    POETRY_VERSION='1.4.2' \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add development packages ------------------------------ ##
-RUN apt-get install -y --no-install-recommends build-essential \
+RUN apt-get install -y --no-install-recommends build-essential curl \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /root/.cache \
@@ -70,6 +69,8 @@ RUN apt-get install -y --no-install-recommends build-essential \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
+RUN curl -sSL https://install.python-poetry.org | python - \
+    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 COPY --chown=65532:65532 pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile ./
 RUN python -m venv --copies /workspace/app/.venv
 RUN . /workspace/app/.venv/bin/activate \

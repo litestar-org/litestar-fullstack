@@ -26,20 +26,20 @@ if TYPE_CHECKING:
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    from app.lib.repository import SQLAlchemyRepository
+    from app.lib.repository import SQLAlchemyAsyncRepository
 
 
-__all__ = ["SQLAlchemyRepositoryService"]
+__all__ = ["SQLAlchemyAsyncRepositoryService"]
 
-SQLARepoServiceT = TypeVar("SQLARepoServiceT", bound="SQLAlchemyRepositoryService")
+SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictT: TypeAlias = dict[str, Any] | ModelT
 
 
-class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
+class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
     """Service object that operates on a repository object."""
 
-    __item_id_ = "app.lib.service.sqlalchemy.SQLAlchemyRepositoryService"
-    repository_type: type[SQLAlchemyRepository[ModelT]]
+    __item_id_ = "app.lib.service.sqlalchemy.SQLAlchemyAsyncRepositoryService"
+    repository_type: type[SQLAlchemyAsyncRepository[ModelT]]
     match_fields: list[str] | None = None
 
     def __init__(self, **repo_kwargs: Any) -> None:
@@ -222,7 +222,7 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             Representation of created instances.
         """
         if isinstance(data, dict):
-            return model_from_dict(model=self.repository.model_type, **data)
+            return model_from_dict(model=self.repository.model_type, **data)  # type: ignore[type-var,return-value]
         return data
 
     async def list_and_count(
@@ -256,10 +256,10 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
     @classmethod
     @contextlib.asynccontextmanager
     async def new(
-        cls: type[SQLARepoServiceT],
+        cls: type[SQLAlchemyAsyncRepoServiceT],
         session: AsyncSession | None = None,
-        base_select: Select | None = None,
-    ) -> AsyncIterator[SQLARepoServiceT]:
+        statement: Select | None = None,
+    ) -> AsyncIterator[SQLAlchemyAsyncRepoServiceT]:
         """Context manager that returns instance of service object.
 
         Handles construction of the database session._create_select_for_model
@@ -268,11 +268,11 @@ class SQLAlchemyRepositoryService(Service[ModelT], Generic[ModelT]):
             The service object instance.
         """
         if session:
-            yield cls(base_select=base_select, session=session)
+            yield cls(statement=statement, session=session)
         else:
             async with async_session_factory() as db_session:
                 yield cls(
-                    base_select=base_select,
+                    statement=statement,
                     session=db_session,
                 )
 
