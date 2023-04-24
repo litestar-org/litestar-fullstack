@@ -59,7 +59,7 @@ ENV POETRY_HOME="/opt/poetry" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add development packages ------------------------------ ##
-RUN apt-get install -y --no-install-recommends build-essential \
+RUN apt-get install -y --no-install-recommends build-essential curl \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /root/.cache \
