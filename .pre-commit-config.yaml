@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.262"
+    rev: "v0.0.263"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -65,7 +65,7 @@ repos:
             pytest,
             pytest-docker,
             saq,
-            litestar,
+            https://github.com/litestar-org/litestar/archive/refs/heads/main.zip,
             types-freezegun,
             types-python-jose,
             types-click,

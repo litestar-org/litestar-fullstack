@@ -1,6 +1,6 @@
 from litestar.config.compression import CompressionConfig
 
-from app.utils.module_loader import import_string
+from app.utils import import_string
 
 
 def test_import_string() -> None:

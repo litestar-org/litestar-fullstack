@@ -1,4 +1,4 @@
-from app.utils.text import camel_case, check_email, slugify
+from app.utils import camel_case, check_email, slugify
 
 
 def test_check_email() -> None:

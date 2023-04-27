@@ -217,7 +217,7 @@ class ViteAssetLoader:
         """Generate an URL to and asset served by the Vite development server.
 
         Keyword Arguments:
-            path {Optional[str]}: Path to the asset. (default: {None})
+            path: Path to the asset. (default: {None})
 
         Returns:
             str: Full URL to the asset.

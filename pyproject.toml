@@ -36,7 +36,7 @@ asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
 hiredis = "*"
 jinja2 = "*"
-litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2'], develop = true}
+litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja2'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -49,10 +49,13 @@ rich-click = ">=1.6.0"
 saq = "*"
 sqlalchemy = {version = ">=2.0.0"}
 structlog = ">=22.3.0"
+tenacity = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
+# litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2'], develop = true}
 
 [tool.poetry.group.dev.dependencies]
+asgi-lifespan = "*"
 coverage = {extras = ["toml"], version = "*"}
 cython = "*"
 pytest = "*"
@@ -127,18 +130,20 @@ exclude_lines = [
 ]
 omit = ["*/tests/*"]
 show_missing = true
-
-[tool.coverage.paths]
-source = ["src"]
-
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/*/migrations/**/*.py", "src/app/cli.py"]
+omit = ["tests/*", "**/*/migrations/**/*.py"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=app -v --doctest-modules --doctest-glob=*.md --ignore=migrations"
+addopts = ["-ra", "-p", "no:pytest_dotenv", "--ignore", "migrations"]
 asyncio_mode = "auto"
-env_files = [".env.example"]
+env_files = [".env.test"]
+filterwarnings = [
+  "ignore::DeprecationWarning:pkg_resources",
+  "ignore::DeprecationWarning:google.*",
+  "ignore::DeprecationWarning:passlib.*",
+]
+testpaths = ["tests"]
 
 [tool.ruff]
 exclude = [
@@ -249,3 +254,6 @@ known-first-party = ['tests', 'app']
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.codespell]
+ignore-words-list = "alog"
