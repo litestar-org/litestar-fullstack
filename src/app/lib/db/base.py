@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
@@ -24,7 +24,6 @@ if TYPE_CHECKING:
     from aiosql.queries import Queries
     from litestar.datastructures.state import State
     from litestar.types import Message, Scope
-    from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
 __all__ = ["before_send_handler", "session", "QueryManager"]
 
@@ -96,6 +95,6 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 
 class QueryManager:
-    def __init__(self, db_connection: DBAPIConnection, queries: Queries) -> None:
+    def __init__(self, db_connection: Any, queries: Queries) -> None:
         self.db_connection = db_connection
         self.queries = queries
