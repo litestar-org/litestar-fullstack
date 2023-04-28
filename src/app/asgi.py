@@ -29,6 +29,8 @@ def create_app() -> Litestar:
     from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
     from pydantic import BaseModel, EmailStr, SecretStr
+    from sqlalchemy import PoolProxiedConnection
+    from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from app import domain
@@ -38,6 +40,7 @@ def create_app() -> Litestar:
     from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
+    from app.lib.db.base import SQLAlchemyAiosqlQueryManager
     from app.lib.dependencies import FilterTypes, create_collection_dependencies
     from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
     from app.lib.service.generic import Service
@@ -92,5 +95,8 @@ def create_app() -> Litestar:
             "SQLAlchemyAsyncRepositoryService": SQLAlchemyAsyncRepositoryService,
             "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
             "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
+            "PoolProxiedConnection": PoolProxiedConnection,
+            "SQLAlchemyAiosqlQueryManager": SQLAlchemyAiosqlQueryManager,
+            "DBAPIConnection": DBAPIConnection,
         },
     )

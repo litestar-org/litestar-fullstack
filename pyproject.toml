@@ -31,6 +31,7 @@ version = "0.1.0"
 app = "app.__main__:run_cli"
 
 [tool.poetry.dependencies]
+aiosql = "*"
 alembic = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}

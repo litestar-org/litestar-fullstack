@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from litestar import Controller, MediaType, Response, get, post
+from litestar import Controller, MediaType, Response, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
@@ -11,7 +11,6 @@ from litestar.params import Body
 from app.domain import security, urls
 from app.domain.accounts import schemas
 from app.domain.accounts.dependencies import provides_user_service
-from app.domain.accounts.guards import requires_active_user
 from app.lib import log
 
 __all__ = ["AccessController", "provides_user_service"]
@@ -22,7 +21,6 @@ logger = log.get_logger()
 if TYPE_CHECKING:
     from litestar.contrib.jwt import OAuth2Login
 
-    from app.domain.accounts.models import User
     from app.domain.accounts.services import UserService
 
 
@@ -62,15 +60,3 @@ class AccessController(Controller):
         obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
         user = await user_service.create(obj)
         return schemas.User.from_orm(user)
-
-    @get(
-        operation_id="AccountProfile",
-        name="account:profile",
-        path=urls.ACCOUNT_PROFILE,
-        guards=[requires_active_user],
-        summary="User Profile",
-        description="User profile information.",
-    )
-    async def profile(self, current_user: User) -> schemas.User:
-        """User Profile."""
-        return schemas.User.from_orm(current_user)

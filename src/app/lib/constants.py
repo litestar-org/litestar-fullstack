@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 DB_SESSION_DEPENDENCY_KEY = "db_session"
 """The name of the key used for dependency injection of the database
 session."""
+DB_CONNECTION_DEPENDENCY_KEY = "db_connection"
+"""The name of the key used for dependency injection of the raw database
+connection."""
 USER_DEPENDENCY_KEY = "current_user"
 """The name of the key used for dependency injection of the database
 session."""
