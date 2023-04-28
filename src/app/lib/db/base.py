@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
@@ -17,6 +18,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
+from app.lib.exceptions import ApplicationError
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -25,7 +27,9 @@ if TYPE_CHECKING:
     from litestar.datastructures.state import State
     from litestar.types import Message, Scope
     from sqlalchemy.ext.asyncio import AsyncSession
-__all__ = ["before_send_handler", "session", "QueryManager"]
+__all__ = ["before_send_handler", "session", "SQLAlchemyAiosqlQueryManager"]
+
+SQLAlchemyAiosqlQueryManagerT = TypeVar("SQLAlchemyAiosqlQueryManagerT", bound="SQLAlchemyAiosqlQueryManager")
 
 
 async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
@@ -94,7 +98,49 @@ async def session() -> AsyncIterator[AsyncSession]:
         yield session
 
 
-class QueryManager:
-    def __init__(self, db_connection: Any, queries: Queries) -> None:
-        self.db_connection = db_connection
+class SQLAlchemyAiosqlQueryManager:
+    def __init__(self, session: AsyncSession, queries: Queries) -> None:
+        self.session = session
         self.queries = queries
+
+    @classmethod
+    @contextlib.asynccontextmanager
+    async def from_session(
+        cls: type[SQLAlchemyAiosqlQueryManagerT],
+        queries: Queries,
+        session: AsyncSession | None = None,
+    ) -> AsyncIterator[SQLAlchemyAiosqlQueryManagerT]:
+        """Context manager that returns instance of query manager object.
+
+        Returns:
+            The service object instance.
+        """
+        if session:
+            yield cls(session=session, queries=queries)
+        else:
+            async with async_session_factory() as db_session:
+                yield cls(session=db_session, queries=queries)
+
+    async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
+        try:
+            fn = getattr(self.queries, method)
+        except AttributeError as exc:
+            raise NotImplementedError("%s was not found", method) from exc
+        data = await fn(conn=(await self.get_connection_from_session(self.session)), **binds)
+        return [dict(row) for row in data]
+
+    async def select_one(self, method: str, **binds: Any) -> dict[str, Any]:
+        try:
+            fn = getattr(self.queries, method)
+        except AttributeError as exc:
+            raise NotImplementedError("%s was not found", method) from exc
+        data = await fn(conn=(await self.get_connection_from_session(self.session)), **binds)
+        return dict(data)
+
+    @staticmethod
+    async def get_connection_from_session(session: AsyncSession) -> Any:
+        db_connection = await session.connection()
+        raw_connection = await db_connection.get_raw_connection()
+        if raw_connection.driver_connection:
+            return raw_connection.driver_connection
+        return ApplicationError("Unable to fetch raw connection from session.")
