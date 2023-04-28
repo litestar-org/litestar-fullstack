@@ -108,5 +108,6 @@ class UserAnalyticQueryManager(QueryManager):
     def __init__(self, db_connection: Any, queries: Queries = user_analytic_queries) -> None:
         super().__init__(db_connection, queries)
 
-    async def users_by_week(self) -> dict[str, Any]:
-        return await self.queries.users_by_week(conn=self.db_connection)  # type: ignore[attr-defined,no-any-return]
+    async def users_by_week(self) -> list[dict[str, Any]]:
+        data = await self.queries.users_by_week(conn=self.db_connection)  # type: ignore[attr-defined,no-any-return]
+        return [dict(row) for row in data]

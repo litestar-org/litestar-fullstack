@@ -79,6 +79,6 @@ class AccessController(Controller):
         return schemas.User.from_orm(current_user)
 
     @get(operation_id="AccountQuery", name="account:query-test", path="/test", opt={"exclude_from_auth": True})
-    async def users_by_week(self, user_analytics_service: UserAnalyticQueryManager) -> dict[str, Any]:
+    async def users_by_week(self, user_analytics_service: UserAnalyticQueryManager) -> list[dict[str, Any]]:
         """Users by week."""
         return await user_analytics_service.users_by_week()
