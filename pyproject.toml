@@ -135,7 +135,7 @@ branch = true
 omit = ["tests/*", "**/*/migrations/**/*.py"]
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "-p", "no:pytest_dotenv", "--ignore", "migrations"]
+addopts = ["-ra", "--ignore", "migrations"]
 asyncio_mode = "auto"
 env_files = [".env.test"]
 filterwarnings = [

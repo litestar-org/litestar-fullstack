@@ -37,7 +37,7 @@
     "--rcfile=pylintrc"
   ],
   "python.linting.enabled": true,
-  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestArgs": ["tests/unit", "tests/integration"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.envFile": "${workspaceFolder}/.env",

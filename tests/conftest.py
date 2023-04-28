@@ -80,6 +80,14 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
             "is_superuser": False,
             "is_active": True,
         },
+        {
+            "id": "7ef29f3c-3560-4d15-ba6b-a2e5c721e4e1",
+            "email": "inactive@example.com",
+            "name": "Inactive User",
+            "password": "Old_Password2!",
+            "is_superuser": False,
+            "is_active": False,
+        },
     ]
 
 
@@ -93,6 +101,7 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
             "slug": "test-assessment-team",
             "name": "Test Assessment Team",
             "description": "This is a description for a migration team.",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         }
     ]
 

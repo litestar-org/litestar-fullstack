@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.pool import NullPool
 
 from app.domain.accounts.models import User
+from app.domain.security import auth
 from app.domain.teams.models import Team
 from app.lib import db, worker
 
@@ -191,6 +192,7 @@ async def _seed_db(
 
     metadata = orm.DatabaseModel.registry.metadata
     async with engine.begin() as conn:
+        await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
     async with UserService.new(async_sessionmaker(engine)()) as users_service:
         await users_service.create_many(raw_users)
@@ -200,8 +202,6 @@ async def _seed_db(
         await teams_services.repository.session.commit()
 
     yield
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
 
 
 @pytest.fixture(autouse=True)
@@ -238,15 +238,13 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
 async def fx_superuser_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     """Async client that calls requests on the app.
 
-
     ```text
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
-
     """
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
-        login_response = await client.post(
-            "/api/access/login", data={"username": "superuser@example.com", "password": "Test_Password1!"}
-        )
-        client.cookies = login_response.cookies
+    superuser_token = auth.create_token(identifier="superuser@example.com")
+
+    async with AsyncClient(
+        app=app, base_url="http://testserver", headers={"Authorization": f"Bearer {superuser_token}"}
+    ) as client:
         yield client

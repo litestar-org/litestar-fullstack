@@ -46,9 +46,9 @@ class ServerSettings(BaseSettings):
         env_file = ".env"
         env_prefix = "SERVER_"
 
-    APP_LOC: str = "app.asgi:app"
+    APP_LOC: str = "app.asgi:create_app"
     """Path to app executable, or factory."""
-    APP_LOC_IS_FACTORY: bool = False
+    APP_LOC_IS_FACTORY: bool = True
     """Indicate if APP_LOC points to an executable or factory."""
     HOST: str = "localhost"
     """Server network host."""

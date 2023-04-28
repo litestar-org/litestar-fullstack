@@ -94,6 +94,3 @@ def create_app() -> Litestar:
             "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
         },
     )
-
-
-app = create_app()
