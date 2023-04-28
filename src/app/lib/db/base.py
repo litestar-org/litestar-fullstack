@@ -18,15 +18,15 @@ from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
 
-__all__ = ["before_send_handler", "session"]
-
-
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
+    from aiosql.queries import Queries
     from litestar.datastructures.state import State
     from litestar.types import Message, Scope
+    from sqlalchemy import PoolProxiedConnection
     from sqlalchemy.ext.asyncio import AsyncSession
+__all__ = ["before_send_handler", "session", "provide_raw_connection", "QueryManager"]
 
 
 async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
@@ -89,7 +89,13 @@ async def session() -> AsyncIterator[AsyncSession]:
     """Use this to get a database session where you can't in litestar.
 
     Returns:
-        config.session_class: _description_
+        AsyncIterator[AsyncSession]
     """
     async with async_session_factory() as session:
         yield session
+
+
+class QueryManager:
+    def __init__(self, db_connection: PoolProxiedConnection, queries: Queries) -> None:
+        self.db_connection = db_connection
+        self.queries = queries

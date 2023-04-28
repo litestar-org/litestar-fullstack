@@ -2,16 +2,20 @@ from __future__ import annotations
 
 from typing import Any
 
+import aiosql
+from aiosql.queries import Queries
 from litestar.exceptions import PermissionDeniedException
 from pydantic import SecretStr
+from sqlalchemy import PoolProxiedConnection
 
 from app.lib import crypt
+from app.lib.db.base import QueryManager
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
 from .models import User
 
-__all__ = ["UserService", "UserRepository"]
+__all__ = ["UserService", "UserRepository", "user_analytic_queries", "UserAnalyticQueryManager"]
 
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):
@@ -81,3 +85,26 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
                 password = SecretStr(password) if isinstance(password, str) else password
                 data.update({"hashed_password": await crypt.get_password_hash(password)})
         return await super().to_model(data, operation)
+
+
+user_analytic_queries = aiosql.from_str(
+    """
+--name: users-by-week
+select a.week, count(a.user_id) as new_users
+from (
+    select date_trunc('week', user_account.joined_at) as week, user_account.id as user_id
+    from user_account
+) a
+group by a.week
+order by a.week
+""",
+    driver_adapter="asyncpg",
+)
+
+
+class UserAnalyticQueryManager(QueryManager):
+    def __init__(self, db_connection: PoolProxiedConnection, queries: Queries = user_analytic_queries) -> None:
+        super().__init__(db_connection, queries)
+
+    async def users_by_week(self) -> dict[str, Any]:
+        return await self.queries.users_by_week(conn=self.db_connection)  # type: ignore[attr-defined,no-any-return]

@@ -29,15 +29,17 @@ def create_app() -> Litestar:
     from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
     from pydantic import BaseModel, EmailStr, SecretStr
+    from sqlalchemy import PoolProxiedConnection
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from app import domain
     from app.domain.accounts.models import User
-    from app.domain.accounts.services import UserService
+    from app.domain.accounts.services import UserAnalyticQueryManager, UserService
     from app.domain.security import provide_user
     from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
+    from app.lib.db.base import QueryManager
     from app.lib.dependencies import FilterTypes, create_collection_dependencies
     from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
     from app.lib.service.generic import Service
@@ -92,5 +94,8 @@ def create_app() -> Litestar:
             "SQLAlchemyAsyncRepositoryService": SQLAlchemyAsyncRepositoryService,
             "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
             "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
+            "PoolProxiedConnection": PoolProxiedConnection,
+            "QueryManager": QueryManager,
+            "UserAnalyticQueryManager": UserAnalyticQueryManager,
         },
     )

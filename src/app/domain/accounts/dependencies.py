@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
 from app.domain.accounts.models import User
-from app.domain.accounts.services import UserService
+from app.domain.accounts.services import UserAnalyticQueryManager, UserService, user_analytic_queries
 from app.domain.teams.models import TeamMember
 from app.lib import log
 
@@ -39,3 +39,13 @@ async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[User
             yield service
         finally:
             ...
+
+
+async def provides_user_analytic_queries(db_session: AsyncSession) -> AsyncGenerator[UserAnalyticQueryManager, None]:
+    """Construct repository and service objects for the request."""
+    db_connection = await db_session.connection()
+    try:
+        raw_connection = await db_connection.get_raw_connection()
+        yield UserAnalyticQueryManager(raw_connection, user_analytic_queries)
+    finally:
+        await db_connection.close()
