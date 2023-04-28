@@ -24,9 +24,9 @@ if TYPE_CHECKING:
     from aiosql.queries import Queries
     from litestar.datastructures.state import State
     from litestar.types import Message, Scope
-    from sqlalchemy import PoolProxiedConnection
+    from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
-__all__ = ["before_send_handler", "session", "provide_raw_connection", "QueryManager"]
+__all__ = ["before_send_handler", "session", "QueryManager"]
 
 
 async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
@@ -96,6 +96,6 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 
 class QueryManager:
-    def __init__(self, db_connection: PoolProxiedConnection, queries: Queries) -> None:
+    def __init__(self, db_connection: DBAPIConnection, queries: Queries) -> None:
         self.db_connection = db_connection
         self.queries = queries

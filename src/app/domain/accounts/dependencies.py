@@ -44,8 +44,6 @@ async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[User
 async def provides_user_analytic_queries(db_session: AsyncSession) -> AsyncGenerator[UserAnalyticQueryManager, None]:
     """Construct repository and service objects for the request."""
     db_connection = await db_session.connection()
-    try:
-        raw_connection = await db_connection.get_raw_connection()
-        yield UserAnalyticQueryManager(raw_connection, user_analytic_queries)
-    finally:
-        await db_connection.close()
+    raw_connection = await db_connection.get_raw_connection()
+    if raw_connection.dbapi_connection:
+        yield UserAnalyticQueryManager(raw_connection.dbapi_connection, user_analytic_queries)

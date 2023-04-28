@@ -30,6 +30,7 @@ def create_app() -> Litestar:
     from litestar.stores.registry import StoreRegistry
     from pydantic import BaseModel, EmailStr, SecretStr
     from sqlalchemy import PoolProxiedConnection
+    from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from app import domain
@@ -97,5 +98,6 @@ def create_app() -> Litestar:
             "PoolProxiedConnection": PoolProxiedConnection,
             "QueryManager": QueryManager,
             "UserAnalyticQueryManager": UserAnalyticQueryManager,
+            "DBAPIConnection": DBAPIConnection,
         },
     )

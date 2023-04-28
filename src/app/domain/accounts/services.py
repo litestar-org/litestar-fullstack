@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import aiosql
-from aiosql.queries import Queries
 from litestar.exceptions import PermissionDeniedException
 from pydantic import SecretStr
-from sqlalchemy import PoolProxiedConnection
 
 from app.lib import crypt
 from app.lib.db.base import QueryManager
@@ -14,6 +12,11 @@ from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
 from .models import User
+
+if TYPE_CHECKING:
+    from aiosql.queries import Queries
+    from sqlalchemy.engine.interfaces import DBAPIConnection
+
 
 __all__ = ["UserService", "UserRepository", "user_analytic_queries", "UserAnalyticQueryManager"]
 
@@ -103,7 +106,7 @@ order by a.week
 
 
 class UserAnalyticQueryManager(QueryManager):
-    def __init__(self, db_connection: PoolProxiedConnection, queries: Queries = user_analytic_queries) -> None:
+    def __init__(self, db_connection: DBAPIConnection, queries: Queries = user_analytic_queries) -> None:
         super().__init__(db_connection, queries)
 
     async def users_by_week(self) -> dict[str, Any]:
