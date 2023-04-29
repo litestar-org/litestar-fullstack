@@ -20,7 +20,7 @@ def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
         app: The test Litestar instance
         redis: The test Redis client instance.
     """
-    assert cast("RedisStore", app.stores.get("cache"))._redis is redis
+    assert cast("RedisStore", app.stores.get("response_cache"))._redis is redis
 
 
 def test_engine_on_app(app: "Litestar", engine: "AsyncEngine") -> None:

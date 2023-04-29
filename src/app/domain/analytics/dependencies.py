@@ -35,4 +35,5 @@ async def provides_user_analytic_queries(
     db_session: AsyncSession,
 ) -> AsyncGenerator[SQLAlchemyAiosqlQueryManager, None]:
     """Construct repository and service objects for the request."""
-    yield SQLAlchemyAiosqlQueryManager(db_session, user_analytic_queries)
+    async with SQLAlchemyAiosqlQueryManager.from_session(user_analytic_queries, session=db_session) as query_manager:
+        yield query_manager

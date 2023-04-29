@@ -210,7 +210,7 @@ def _patch_db(app: "Litestar", engine: AsyncEngine, monkeypatch: pytest.MonkeyPa
     monkeypatch.setitem(
         app.state,
         db.config.session_maker_app_state_key,
-        async_sessionmaker(bind=engine),
+        async_sessionmaker(bind=engine, expire_on_commit=False),
     )
 
 
@@ -234,17 +234,35 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
         yield client
 
 
+@pytest.fixture(name="superuser_token_headers")
+def fx_superuser_token_headers() -> dict[str, str]:
+    """Valid superuser token.
+
+    ```text
+    ValueError: The future belongs to a different loop than the one specified as the loop argument
+    ```
+    """
+    return {"Authorization": f"Bearer {auth.create_token(identifier='superuser@example.com')}"}
+
+
+@pytest.fixture(name="user_token_headers")
+def fx_user_token_headers() -> dict[str, str]:
+    """Valid user token.
+
+    ```text
+    ValueError: The future belongs to a different loop than the one specified as the loop argument
+    ```
+    """
+    return {"Authorization": f"Bearer {auth.create_token(identifier='user@example.com')}"}
+
+
 @pytest.fixture(name="superuser_client")
-async def fx_superuser_client(app: Litestar) -> AsyncIterator[AsyncClient]:
+async def fx_superuser_client(app: Litestar, superuser_token_headers: dict[str, str]) -> AsyncIterator[AsyncClient]:
     """Async client that calls requests on the app.
 
     ```text
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    superuser_token = auth.create_token(identifier="superuser@example.com")
-
-    async with AsyncClient(
-        app=app, base_url="http://testserver", headers={"Authorization": f"Bearer {superuser_token}"}
-    ) as client:
+    async with AsyncClient(app=app, base_url="http://testserver", headers=superuser_token_headers) as client:
         yield client
