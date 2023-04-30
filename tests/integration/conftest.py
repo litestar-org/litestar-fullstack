@@ -167,24 +167,32 @@ async def fx_engine(docker_ip: str) -> AsyncEngine:
     )
 
 
+@pytest.fixture(name="sessionmaker")
+def fx_session_maker_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+    return async_sessionmaker(bind=engine, expire_on_commit=False)
+
+
 @pytest.fixture(name="session")
-def fx_session(engine: AsyncEngine) -> AsyncSession:
-    return async_sessionmaker(bind=engine)()
+def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncSession:
+    return sessionmaker()
 
 
 @pytest.fixture(autouse=True)
 async def _seed_db(
-    engine: AsyncEngine, raw_users: list[User | dict[str, Any]], raw_teams: list[Team | dict[str, Any]]
+    engine: AsyncEngine,
+    sessionmaker: async_sessionmaker[AsyncSession],
+    raw_users: list[User | dict[str, Any]],
+    raw_teams: list[Team | dict[str, Any]],
 ) -> AsyncIterator[None]:
     """Populate test database with.
 
     Args:
         engine: The SQLAlchemy engine instance.
+        sessionmaker: The SQLAlchemy sessionmaker factory.
         raw_users: Test users to add to the database
         raw_teams: Test teams to add to the database
 
     """
-    from sqlalchemy.ext.asyncio import async_sessionmaker
 
     from app.domain.accounts.services import UserService
     from app.domain.teams.services import TeamService
@@ -194,10 +202,10 @@ async def _seed_db(
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
-    async with UserService.new(async_sessionmaker(engine)()) as users_service:
+    async with UserService.new(sessionmaker()) as users_service:
         await users_service.create_many(raw_users)
         await users_service.repository.session.commit()
-    async with TeamService.new(async_sessionmaker(engine)()) as teams_services:
+    async with TeamService.new(sessionmaker()) as teams_services:
         await teams_services.create_many(raw_teams)
         await teams_services.repository.session.commit()
 
@@ -205,7 +213,14 @@ async def _seed_db(
 
 
 @pytest.fixture(autouse=True)
-def _patch_db(app: "Litestar", engine: AsyncEngine, monkeypatch: pytest.MonkeyPatch) -> None:
+def _patch_db(
+    app: "Litestar",
+    engine: AsyncEngine,
+    sessionmaker: async_sessionmaker[AsyncSession],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(db, "async_session_factory", sessionmaker)
+    monkeypatch.setattr(db.base, "async_session_factory", sessionmaker)
     monkeypatch.setitem(app.state, db.config.engine_app_state_key, engine)
     monkeypatch.setitem(
         app.state,
@@ -254,15 +269,3 @@ def fx_user_token_headers() -> dict[str, str]:
     ```
     """
     return {"Authorization": f"Bearer {auth.create_token(identifier='user@example.com')}"}
-
-
-@pytest.fixture(name="superuser_client")
-async def fx_superuser_client(app: Litestar, superuser_token_headers: dict[str, str]) -> AsyncIterator[AsyncClient]:
-    """Async client that calls requests on the app.
-
-    ```text
-    ValueError: The future belongs to a different loop than the one specified as the loop argument
-    ```
-    """
-    async with AsyncClient(app=app, base_url="http://testserver", headers=superuser_token_headers) as client:
-        yield client

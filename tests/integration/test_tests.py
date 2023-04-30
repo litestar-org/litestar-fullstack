@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from litestar.stores.redis import RedisStore
     from redis.asyncio import Redis as AsyncRedis
-    from sqlalchemy.ext.asyncio import AsyncEngine
+    from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
 
 def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
@@ -31,6 +31,17 @@ def test_engine_on_app(app: "Litestar", engine: "AsyncEngine") -> None:
         engine: The test SQLAlchemy engine instance.
     """
     assert app.state[db.config.engine_app_state_key] is engine
+
+
+def test_sessionmaker(app: "Litestar", sessionmaker: "async_sessionmaker[AsyncSession]") -> None:
+    """Test that the sessionmaker is patched.
+
+    Args:
+        app: The test Litestar instance
+        sessionmaker: The test SQLAlchemy sessionmaker factory.
+    """
+    assert db.async_session_factory is sessionmaker
+    assert db.base.async_session_factory is sessionmaker
 
 
 async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> None:

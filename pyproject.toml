@@ -37,7 +37,6 @@ asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
 hiredis = "*"
 jinja2 = "*"
-litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja2'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -53,7 +52,8 @@ structlog = ">=22.3.0"
 tenacity = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
-# litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2'], develop = true}
+#litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja2'], allow-prereleases = true}
+litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja2'], develop = true}
 
 [tool.poetry.group.dev.dependencies]
 asgi-lifespan = "*"

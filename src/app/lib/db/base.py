@@ -99,8 +99,12 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 
 class SQLAlchemyAiosqlQueryManager:
-    def __init__(self, session: AsyncSession, queries: Queries) -> None:
-        self.session = session
+    queries: Queries
+    session: AsyncSession | None
+    connection: Any
+
+    def __init__(self, connection: Any, queries: Queries) -> None:
+        self.connection = connection
         self.queries = queries
 
     @classmethod
@@ -116,17 +120,17 @@ class SQLAlchemyAiosqlQueryManager:
             The service object instance.
         """
         if session:
-            yield cls(session=session, queries=queries)
+            yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
         else:
-            async with async_session_factory() as db_session:
-                yield cls(session=db_session, queries=queries)
+            async with async_session_factory() as session:
+                yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
 
     async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
         try:
             fn = getattr(self.queries, method)
         except AttributeError as exc:
             raise NotImplementedError("%s was not found", method) from exc
-        data = await fn(conn=(await self.get_connection_from_session(self.session)), **binds)
+        data = await fn(conn=self.connection, **binds)
         return [dict(row) for row in data]
 
     async def select_one(self, method: str, **binds: Any) -> dict[str, Any]:
@@ -134,8 +138,17 @@ class SQLAlchemyAiosqlQueryManager:
             fn = getattr(self.queries, method)
         except AttributeError as exc:
             raise NotImplementedError("%s was not found", method) from exc
-        data = await fn(conn=(await self.get_connection_from_session(self.session)), **binds)
+        data = await fn(conn=self.connection, **binds)
         return dict(data)
+
+    async def execute(self, method: str, **binds: Any) -> Any:
+        return await self.fn(method)(conn=self.connection, **binds)
+
+    def fn(self, method: str) -> Any:
+        try:
+            return getattr(self.queries, method)
+        except AttributeError as exc:
+            raise NotImplementedError("%s was not found", method) from exc
 
     @staticmethod
     async def get_connection_from_session(session: AsyncSession) -> Any:
@@ -143,4 +156,4 @@ class SQLAlchemyAiosqlQueryManager:
         raw_connection = await db_connection.get_raw_connection()
         if raw_connection.driver_connection:
             return raw_connection.driver_connection
-        return ApplicationError("Unable to fetch raw connection from session.")
+        raise ApplicationError("Unable to fetch raw connection from session.")

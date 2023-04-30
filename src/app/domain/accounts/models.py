@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.lib import dto
 from app.lib.db import orm
 
 if TYPE_CHECKING:
@@ -21,10 +22,10 @@ class User(orm.DatabaseModel, orm.AuditColumns):
     __table_args__ = {"comment": "User accounts for application access"}
     email: Mapped[str] = mapped_column(unique=True, index=True)
     name: Mapped[str | None]
-    hashed_password: Mapped[str | None] = mapped_column(String(length=255))
+    hashed_password: Mapped[str | None] = mapped_column(String(length=255), info=dto.dto_field("private"))
     is_active: Mapped[bool] = mapped_column(default=True)
     is_superuser: Mapped[bool] = mapped_column(default=False)
-    is_verified: Mapped[bool] = mapped_column(default=False)
+    is_verified: Mapped[bool] = mapped_column(default=False, info=dto.dto_field("read-only"))
     verified_at: Mapped[datetime | None]
     # -----------
     # ORM Relationships

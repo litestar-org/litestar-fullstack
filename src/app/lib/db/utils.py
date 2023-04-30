@@ -7,7 +7,7 @@ from sqlalchemy.schema import DropTable
 from app.lib import log, settings
 
 from .base import engine
-from .orm import DatabaseModel, meta
+from .orm import DatabaseModel, orm_registry
 
 __all__ = [
     "create_database",
@@ -68,7 +68,7 @@ async def drop_tables() -> None:
 
         await db.execute(
             DropTable(
-                element=Table(settings.db.MIGRATION_DDL_VERSION_TABLE, meta),
+                element=Table(settings.db.MIGRATION_DDL_VERSION_TABLE, orm_registry.metadata),
                 if_exists=True,
             ),
         )

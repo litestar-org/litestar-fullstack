@@ -1324,34 +1324,31 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.0.0a5"
+version = "2.0.0alpha5"
 description = "Performant, light and flexible ASGI API Framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
-files = [
-    {file = "litestar-2.0.0a5-py3-none-any.whl", hash = "sha256:ee3d332135cb0398c8b01aad64e7c149d3122938e341f76997b3cd7a7f11bad0"},
-    {file = "litestar-2.0.0a5.tar.gz", hash = "sha256:1e22b72219e468d3cabd9b5800461fa3e4c2b5c5a1b515616f4cfd81ad186f1b"},
-]
+files = []
+develop = true
 
 [package.dependencies]
 anyio = ">=3"
-click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
-cryptography = {version = "*", optional = true, markers = "extra == \"cryptography\" or extra == \"jwt\" or extra == \"full\""}
+click = {version = "*", optional = true}
+cryptography = {version = "*", optional = true}
 fast-query-parsers = "*"
 httpx = ">=0.22"
-jsbeautifier = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
-mako = ">=1.2.4"
+jsbeautifier = {version = "*", optional = true}
 msgspec = "*"
 multidict = ">=6.0.2"
 polyfactory = ">=2"
 pydantic = "<2"
-python-jose = {version = "*", optional = true, markers = "extra == \"jwt\" or extra == \"full\""}
+python-jose = {version = "*", optional = true}
 pyyaml = "*"
-redis = {version = ">=4.4.4,<4.5.0 || >4.5.0,<4.5.1 || >4.5.1,<4.5.2 || >4.5.2,<4.5.3 || >4.5.3", extras = ["hiredis"], optional = true, markers = "extra == \"redis\" or extra == \"full\""}
-rich = {version = ">=13.0.0", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+redis = {version = ">=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3", extras = ["hiredis"], optional = true}
+rich = {version = ">=13.0.0", optional = true}
 typing-extensions = "*"
-uvicorn = {version = ">=0.21.1,<0.22.0", extras = ["standard"], optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+uvicorn = {version = "^0.21.1", extras = ["standard"], optional = true}
 
 [package.extras]
 attrs = ["attrs", "cattrs", "python-dateutil", "pytimeparse"]
@@ -1367,6 +1364,13 @@ redis = ["redis[hiredis] (>=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3)"]
 sqlalchemy = ["alembic", "sqlalchemy (>=2.0.4)"]
 standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
 structlog = ["structlog"]
+tortoise-orm = []
+
+[package.source]
+type = "git"
+url = "https://github.com/litestar-org/litestar.git"
+reference = "main"
+resolved_reference = "853111a64467ec326553c077ca679c53547e7f66"
 
 [[package]]
 name = "mako"
@@ -3230,4 +3234,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "ef1bc860d444195c175992882299befcc4260aec8434aa5fe06ef4fc6f0139c8"
+content-hash = "2c01f663ef875b3a05768b626d84cf9f18076a258887bf2b243daefe6bb989a6"
