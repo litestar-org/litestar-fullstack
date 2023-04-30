@@ -60,7 +60,8 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
     team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id"))
     role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, index=True)
     is_owner: Mapped[bool] = mapped_column(default=False)
-    member_name: AssociationProxy[str] = association_proxy("user", "name")
+    user_name: AssociationProxy[str] = association_proxy("user", "name")
+    user_email: AssociationProxy[str] = association_proxy("user", "email")
     team_name: AssociationProxy[str] = association_proxy("team", "name")
     # -----------
     # ORM Relationships

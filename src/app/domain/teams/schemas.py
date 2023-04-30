@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID  # noqa: TCH003
 
 from pydantic import EmailStr  # noqa: TCH002
@@ -16,10 +15,6 @@ __all__ = [
     "TeamMemberUpdate",
     "TeamUpdate",
 ]
-
-
-if TYPE_CHECKING:
-    from app.domain.accounts.models import User
 
 
 # Properties to receive via API on creation
@@ -46,19 +41,7 @@ class Team(CamelizedBaseModel):
     slug: str
     name: str
     description: str | None
-    members: list[TeamMember] | None = []
-    member_count: int = 0
-
-    @classmethod
-    def from_orm(cls, obj: Any) -> Team:
-        """From ORM.
-
-        Append the member count.
-        """
-        # `obj` is the orm model instance
-        if obj.members:
-            obj.member_count = len(obj.members)
-        return super().from_orm(obj)
+    members: list[TeamMember] = []
 
 
 # #################################
@@ -91,24 +74,10 @@ class TeamMember(CamelizedBaseModel):
 
     id: UUID
     user_id: UUID
-    email: EmailStr | None
-    name: str | None
-    role: TeamRoles | None = TeamRoles.MEMBER
-    is_owner: bool | None = False
-
-    @classmethod
-    def from_orm(cls, obj: Any) -> TeamMember:
-        """From ORM.
-
-        flattens user and email to the outgoing TeamMember object.
-        """
-        # `obj` is the orm model instance
-
-        if obj.user:
-            user = cast("User", obj.user)
-            obj.name = user.name
-            obj.email = user.email
-        return super().from_orm(obj)
+    user_email: EmailStr
+    user_name: str | None
+    role: TeamRoles = TeamRoles.MEMBER
+    is_owner: bool = False
 
 
 Team.update_forward_refs()
