@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from litestar import Litestar
+    from pydantic import BaseModel
 
 
 __all__ = ["create_app"]
@@ -48,9 +49,6 @@ def create_app() -> Litestar:
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
-
-    def _base_model_encoder(value: BaseModel) -> dict[str, Any]:
-        return value.dict(by_alias=True)
 
     return Litestar(
         response_cache_config=cache.config,
@@ -100,3 +98,7 @@ def create_app() -> Litestar:
             "DBAPIConnection": DBAPIConnection,
         },
     )
+
+
+def _base_model_encoder(value: BaseModel) -> dict[str, Any]:
+    return value.dict(by_alias=True)

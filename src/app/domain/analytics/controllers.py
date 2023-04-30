@@ -40,6 +40,7 @@ class StatsController(Controller):
         path=urls.STATS_WEEKLY_NEW_USERS,
         summary="Weekly New Users",
         description="List New Users by Week.",
+        cache=1000,
     )
     async def weekly_new_users(
         self, user_analytics_service: SQLAlchemyAiosqlQueryManager
