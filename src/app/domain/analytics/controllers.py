@@ -5,17 +5,18 @@ from typing import TYPE_CHECKING
 
 from litestar import Controller, get
 from litestar.di import Provide
-from litestar.pagination import OffsetPagination
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
-from app.domain.analytics.dependencies import provides_user_analytic_queries
+from app.domain.analytics.dependencies import provides_analytic_queries
 from app.lib import log
 from app.utils import paginated
 
 from .schemas import NewUsersByWeek
 
 if TYPE_CHECKING:
+    from litestar.pagination import OffsetPagination
+
     from app.lib.db.base import SQLAlchemyAiosqlQueryManager
 
 
@@ -31,7 +32,7 @@ class StatsController(Controller):
     tags = ["Statistics"]
     guards = [requires_active_user]
     dependencies = {
-        "user_analytics_service": Provide(provides_user_analytic_queries),
+        "analytic_queries": Provide(provides_analytic_queries),
     }
 
     @get(
@@ -43,8 +44,8 @@ class StatsController(Controller):
         cache=1000,
     )
     async def weekly_new_users(
-        self, user_analytics_service: SQLAlchemyAiosqlQueryManager
+        self, analytic_queries: SQLAlchemyAiosqlQueryManager
     ) -> OffsetPagination[NewUsersByWeek]:
         """New Users by week."""
-        results = await user_analytics_service.select("users_by_week")
+        results = await analytic_queries.select("users_by_week")
         return paginated(NewUsersByWeek, results)

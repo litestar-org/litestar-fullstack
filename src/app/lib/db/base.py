@@ -106,6 +106,7 @@ class SQLAlchemyAiosqlQueryManager:
     def __init__(self, connection: Any, queries: Queries) -> None:
         self.connection = connection
         self.queries = queries
+        self._queries: list[Queries] = [queries] if queries else []
 
     @classmethod
     @contextlib.asynccontextmanager
@@ -126,19 +127,11 @@ class SQLAlchemyAiosqlQueryManager:
                 yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
 
     async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
-        try:
-            fn = getattr(self.queries, method)
-        except AttributeError as exc:
-            raise NotImplementedError("%s was not found", method) from exc
-        data = await fn(conn=self.connection, **binds)
+        data = await self.fn(method)(conn=self.connection, **binds)
         return [dict(row) for row in data]
 
     async def select_one(self, method: str, **binds: Any) -> dict[str, Any]:
-        try:
-            fn = getattr(self.queries, method)
-        except AttributeError as exc:
-            raise NotImplementedError("%s was not found", method) from exc
-        data = await fn(conn=self.connection, **binds)
+        data = await self.fn(method)(conn=self.connection, **binds)
         return dict(data)
 
     async def execute(self, method: str, **binds: Any) -> Any:
@@ -149,6 +142,14 @@ class SQLAlchemyAiosqlQueryManager:
             return getattr(self.queries, method)
         except AttributeError as exc:
             raise NotImplementedError("%s was not found", method) from exc
+
+    @property
+    def available_queries(self) -> list[str]:
+        """Get available queries.
+
+        Returns a sorted list of available functions found in aiosql
+        """
+        return sorted([q for q in self.queries.available_queries if not q.endswith("_cursor")])
 
     @staticmethod
     async def get_connection_from_session(session: AsyncSession) -> Any:

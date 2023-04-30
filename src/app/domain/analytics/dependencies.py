@@ -9,7 +9,7 @@ import aiosql
 from app.lib.db.base import SQLAlchemyAiosqlQueryManager
 from app.lib.settings import BASE_DIR
 
-__all__ = ["provides_user_analytic_queries"]
+__all__ = ["provides_analytic_queries"]
 
 
 if TYPE_CHECKING:
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 analytics_queries = aiosql.from_path(Path(BASE_DIR / "domain" / "analytics" / "sql"), driver_adapter="asyncpg")
 
 
-async def provides_user_analytic_queries(
+async def provides_analytic_queries(
     db_session: AsyncSession,
 ) -> AsyncGenerator[SQLAlchemyAiosqlQueryManager, None]:
     """Construct repository and service objects for the request."""
