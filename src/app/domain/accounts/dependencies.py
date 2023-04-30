@@ -31,7 +31,7 @@ async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[User
             selectinload(User.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(
                     noload("*"),
-                ),
+                )
             ),
         ),
     ) as service:

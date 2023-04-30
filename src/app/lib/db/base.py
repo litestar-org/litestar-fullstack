@@ -100,7 +100,6 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 class SQLAlchemyAiosqlQueryManager:
     queries: Queries
-    session: AsyncSession | None
     connection: Any
 
     def __init__(self, connection: Any, queries: Queries) -> None:

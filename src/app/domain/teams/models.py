@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from uuid import UUID  # noqa: TCH003
 
 import sqlalchemy as sa
+from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.lib.db import orm
@@ -59,7 +60,8 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
     team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id"))
     role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, index=True)
     is_owner: Mapped[bool] = mapped_column(default=False)
-
+    member_name: AssociationProxy[str] = association_proxy("user", "name")
+    team_name: AssociationProxy[str] = association_proxy("team", "name")
     # -----------
     # ORM Relationships
     # ------------

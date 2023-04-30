@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime  # noqa: TCH003
-from typing import Any
 
 from pydantic import UUID4, EmailStr  # noqa: TCH002
 from pydantic.types import SecretStr  # noqa: TCH002
@@ -41,17 +40,10 @@ class UserTeam(CamelizedBaseModel):
     This is nested in the User Model for 'team'
     """
 
-    team_id: UUID4 | None = None
-    name: str | None = None
-    is_owner: bool | None = False
-    role: TeamRoles | None = TeamRoles.MEMBER
-
-    @classmethod
-    def from_orm(cls, obj: Any) -> UserTeam:
-        """Flatten team details to the user membership object."""
-        if getattr(obj, "team", None) and getattr(obj.team, "name", None):
-            obj.name = obj.team.name
-        return super().from_orm(obj)
+    team_id: UUID4
+    team_name: str
+    is_owner: bool = False
+    role: TeamRoles = TeamRoles.MEMBER
 
 
 class UserRegister(CamelizedBaseModel):
