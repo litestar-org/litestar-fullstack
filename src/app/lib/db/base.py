@@ -106,7 +106,6 @@ class SQLAlchemyAiosqlQueryManager:
     def __init__(self, connection: Any, queries: Queries) -> None:
         self.connection = connection
         self.queries = queries
-        self._queries: list[Queries] = [queries] if queries else []
 
     @classmethod
     @contextlib.asynccontextmanager
