@@ -139,6 +139,7 @@ omit = ["tests/*", "**/*/migrations/**/*.py"]
 addopts = ["-ra", "--ignore", "migrations"]
 asyncio_mode = "auto"
 env_files = [".env.test"]
+env_override_existing_values = 1
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
@@ -243,6 +244,7 @@ classmethod-decorators = [
   "pydantic.root_validator",
   "sqlalchemy.ext.declarative.declared_attr",
   "sqlalchemy.orm.declared_attr.directive",
+  "sqlalchemy.orm.declared_attr",
 ]
 
 [tool.ruff.per-file-ignores]

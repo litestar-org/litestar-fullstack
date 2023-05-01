@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.enums import RequestEncodingType
 from litestar.pagination import OffsetPagination
-from litestar.params import Body, Dependency, Parameter
+from litestar.params import Dependency, Parameter
 from pydantic import parse_obj_as
 
 from app.domain import urls
@@ -68,7 +67,7 @@ class TeamController(Controller):
         self,
         teams_service: TeamService,
         current_user: User,
-        data: schemas.TeamCreate = Body(media_type=RequestEncodingType.MULTI_PART),
+        data: schemas.TeamCreate,
     ) -> schemas.Team:
         """Create a new team."""
         obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
@@ -103,12 +102,12 @@ class TeamController(Controller):
     )
     async def update_team(
         self,
+        data: schemas.TeamUpdate,
         teams_service: TeamService,
         team_id: UUID = Parameter(
             title="Team ID",
             description="The team to update.",
         ),
-        data: schemas.TeamUpdate = Body(media_type=RequestEncodingType.MULTI_PART),
     ) -> schemas.Team:
         """Update a migration team."""
         db_obj = await teams_service.update(

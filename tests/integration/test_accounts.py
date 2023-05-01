@@ -16,9 +16,9 @@ async def test_update_user(client: "AsyncClient", user_token_headers: dict[str, 
     assert response.status_code == 403
 
 
-async def test_update_user_superuser(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
+async def test_delete_user(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
     response = await client.delete(
         "/api/users/5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         headers=superuser_token_headers,
     )
-    assert response.status_code == 200
+    assert response.status_code == 204
