@@ -349,12 +349,12 @@ class DatabaseSettings(BaseSettings):
         "postgresql+asyncpg://postgres:mysecretpassword@localhost:5432/postgres",
     )
 
-    DB_ENGINE: str | None = None
-    DB_USER: str | None = None
-    DB_PASSWORD: str | None = None
-    DB_HOST: str | None = None
-    DB_PORT: str | None = None
-    DB_NAME: str | None = None
+    ENGINE: str | None = None
+    USER: str | None = None
+    PASSWORD: str | None = None
+    HOST: str | None = None
+    PORT: str | None = None
+    NAME: str | None = None
     MIGRATION_CONFIG: str = f"{BASE_DIR}/lib/db/alembic.ini"
     MIGRATION_PATH: str = f"{BASE_DIR}/lib/db/migrations"
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
