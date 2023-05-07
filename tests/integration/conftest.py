@@ -206,7 +206,8 @@ async def _seed_db(
         await users_service.create_many(raw_users)
         await users_service.repository.session.commit()
     async with TeamService.new(sessionmaker()) as teams_services:
-        await teams_services.create_many(raw_teams)
+        for raw_team in raw_teams:
+            await teams_services.create(raw_team)
         await teams_services.repository.session.commit()
 
     yield

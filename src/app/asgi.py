@@ -20,16 +20,11 @@ def create_app() -> Litestar:
     from litestar import Litestar
     from litestar.connection import Request
     from litestar.contrib.jwt import OAuth2Login
-    from litestar.contrib.repository.filters import (
-        BeforeAfter,
-        CollectionFilter,
-        LimitOffset,
-    )
     from litestar.di import Provide
     from litestar.pagination import OffsetPagination
     from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
-    from pydantic import BaseModel, EmailStr, SecretStr
+    from pydantic import UUID4, BaseModel, EmailStr, SecretStr
     from sqlalchemy import PoolProxiedConnection
     from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -42,7 +37,15 @@ def create_app() -> Litestar:
     from app.domain.web.vite import template_config
     from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
     from app.lib.db.base import SQLAlchemyAiosqlQueryManager
-    from app.lib.dependencies import FilterTypes, create_collection_dependencies
+    from app.lib.dependencies import (
+        BeforeAfter,
+        CollectionFilter,
+        FilterTypes,
+        LimitOffset,
+        OrderBy,
+        SearchFilter,
+        create_collection_dependencies,
+    )
     from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
     from app.lib.service.generic import Service
     from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
@@ -79,6 +82,9 @@ def create_app() -> Litestar:
             "BeforeAfter": BeforeAfter,
             "CollectionFilter": CollectionFilter,
             "LimitOffset": LimitOffset,
+            "OrderBy": OrderBy,
+            "SearchFilter": SearchFilter,
+            "UUID4": UUID4,
             "UUID": UUID,
             "EmailStr": EmailStr,
             "datetime": datetime,

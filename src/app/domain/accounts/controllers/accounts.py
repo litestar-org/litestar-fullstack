@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.enums import RequestEncodingType
 from litestar.pagination import OffsetPagination
-from litestar.params import Body, Dependency, Parameter
+from litestar.params import Dependency, Parameter
 from pydantic import parse_obj_as
 
 from app.domain import urls
@@ -68,7 +67,7 @@ class AccountController(Controller):
     async def create_user(
         self,
         users_service: UserService,
-        data: schemas.UserCreate = Body(media_type=RequestEncodingType.MULTI_PART),
+        data: schemas.UserCreate,
     ) -> schemas.User:
         """Create a new user."""
         db_obj = await users_service.create(data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
@@ -95,12 +94,12 @@ class AccountController(Controller):
     @patch(operation_id="UpdateUser", name="users:update", path=urls.ACCOUNT_UPDATE)
     async def update_user(
         self,
+        data: schemas.UserUpdate,
         users_service: UserService,
         user_id: UUID = Parameter(
             title="User ID",
             description="The user to update.",
         ),
-        data: schemas.UserCreate = Body(media_type=RequestEncodingType.MULTI_PART),
     ) -> schemas.User:
         """Create a new user."""
         db_obj = await users_service.update(user_id, data.dict(exclude_unset=True, by_alias=False, exclude_none=True))

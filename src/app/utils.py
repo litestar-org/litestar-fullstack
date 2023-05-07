@@ -10,10 +10,7 @@ from functools import lru_cache
 from importlib import import_module
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar
-
-from litestar.pagination import OffsetPagination
-from pydantic import parse_obj_as
+from typing import TYPE_CHECKING, Any
 
 __all__ = [
     "camel_case",
@@ -23,30 +20,11 @@ __all__ = [
     "import_string",
     "module_to_os_path",
     "slugify",
-    "paginated",
 ]
 
 
 if TYPE_CHECKING:
     from types import ModuleType
-
-SchemaT = TypeVar("SchemaT")
-
-
-def paginated(
-    parse_items_as: type[SchemaT],
-    items: Any,
-    total: int | None = None,
-    limit: int | None = None,
-    offset: int | None = None,
-) -> OffsetPagination[SchemaT]:
-    """Format a list of pydantic models as an offset paginated object."""
-    return OffsetPagination[SchemaT](
-        items=parse_obj_as(list[SchemaT], items),
-        total=total or len(items),
-        limit=limit or len(items),
-        offset=offset or 0,
-    )
 
 
 def check_email(email: str) -> str:

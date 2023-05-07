@@ -56,8 +56,8 @@ class TeamMember(orm.DatabaseModel, orm.AuditColumns):
 
     __tablename__ = "team_member"  # type: ignore[assignment]
     __table_args__ = (sa.UniqueConstraint("user_id", "team_id"),)
-    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id"))
-    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id"))
+    user_id: Mapped[UUID] = mapped_column(sa.ForeignKey("user_account.id", ondelete="cascade"))
+    team_id: Mapped[UUID] = mapped_column(sa.ForeignKey("team.id", ondelete="cascade"))
     role: Mapped[TeamRoles] = mapped_column(sa.String(length=50), default=TeamRoles.MEMBER, index=True)
     is_owner: Mapped[bool] = mapped_column(default=False)
     user_name: AssociationProxy[str] = association_proxy("user", "name")

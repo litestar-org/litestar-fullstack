@@ -8,7 +8,12 @@ Create Date: ${create_date}
 import sqlalchemy as sa
 from alembic import op
 
+from litestar.contrib.sqlalchemy.types import GUID, JSON
+
 ${imports if imports else ""}
+
+sa.GUID = GUID
+sa.JSON = JSON
 
 # revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}

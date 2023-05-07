@@ -2,17 +2,16 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
-from litestar.contrib.repository.filters import (
-    BeforeAfter,
-    CollectionFilter,
-    LimitOffset,
-)
+from litestar.contrib.repository.filters import BeforeAfter, CollectionFilter, LimitOffset, OrderBy, SearchFilter
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
 from app.lib import constants
+
+if TYPE_CHECKING:
+    from uuid import UUID
 
 __all__ = [
     "create_collection_dependencies",
@@ -21,21 +20,27 @@ __all__ = [
     "provide_id_filter",
     "provide_limit_offset_pagination",
     "provide_updated_filter",
+    "provide_search_filter",
+    "provide_order_by",
+    "BeforeAfter",
+    "CollectionFilter",
+    "LimitOffset",
+    "OrderBy",
+    "SearchFilter",
+    "FilterTypes",
 ]
 
-
 DTorNone = datetime | None
-
-FilterTypes = BeforeAfter | CollectionFilter[Any] | LimitOffset
+StringOrNone = str | None
+FilterTypes = BeforeAfter | CollectionFilter[Any] | LimitOffset | SearchFilter | OrderBy
 """Aggregate type alias of the types supported for collection filtering."""
-CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
 FILTERS_DEPENDENCY_KEY = "filters"
+CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
 ID_FILTER_DEPENDENCY_KEY = "id_filter"
 LIMIT_OFFSET_DEPENDENCY_KEY = "limit_offset"
 UPDATED_FILTER_DEPENDENCY_KEY = "updated_filter"
-
-if TYPE_CHECKING:
-    from uuid import UUID
+ORDER_BY_DEPENDENCY_KEY = "order_by"
+SEARCH_FILTER_DEPENDENCY_KEY = "search_filter"
 
 
 def provide_id_filter(
@@ -69,6 +74,47 @@ def provide_created_filter(
         Filter for records updated after this date/time.
     """
     return BeforeAfter("created", before, after)
+
+
+def provide_search_filter(
+    field: str = Parameter(title="Field to search", query="searchField", default=None, required=False),
+    search: str = Parameter(title="Field to search", query="searchString", default=None, required=False),
+    ignore_case: bool = Parameter(
+        title="Search should be case sensitive", query="searchIgnoreCase", default=None, required=False
+    ),
+) -> SearchFilter:
+    """Add offset/limit pagination.
+
+    Return type consumed by `Repository.apply_search_filter()`.
+
+    Parameters
+    ----------
+    current_page : int
+        LIMIT to apply to select.
+    page_size : int
+        OFFSET to apply to select.
+    """
+    return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)
+
+
+def provide_order_by(
+    field_name: str = Parameter(title="Order by field", query="orderBy", default=None, required=False),
+    sort_order: Literal["asc", "desc"] = Parameter(
+        title="Field to search", query="sortOrder", default="desc", required=False
+    ),
+) -> OrderBy:
+    """Add offset/limit pagination.
+
+    Return type consumed by `Repository.apply_order_by()`.
+
+    Parameters
+    ----------
+    field_name : str
+        Field name to order by.
+    sort_order : str
+        Order field ascending ('asc') or descending ('desc)
+    """
+    return OrderBy(field_name=field_name, sort_order=sort_order)
 
 
 def provide_updated_filter(
@@ -117,6 +163,8 @@ def provide_filter_dependencies(
     updated_filter: BeforeAfter = Dependency(skip_validation=True),
     id_filter: CollectionFilter = Dependency(skip_validation=True),
     limit_offset: LimitOffset = Dependency(skip_validation=True),
+    search_filter: SearchFilter = Dependency(skip_validation=True),
+    order_by: OrderBy = Dependency(skip_validation=True),
 ) -> list[FilterTypes]:
     """Provide common collection route filtering dependencies.
 
@@ -138,18 +186,23 @@ def provide_filter_dependencies(
         Filter for scoping query to instance update date/time.
     limit_offset : repository.LimitOffset
         Filter for query pagination.
+    search_filter : repository.SearchFilter
+        Filter for searching fields.
+    order_by : repository.OrderBy
+        Order by for query.
+
 
     Returns:
     -------
     list[FilterTypes]
         List of filters parsed from connection.
     """
-    return [
-        created_filter,
-        id_filter,
-        limit_offset,
-        updated_filter,
-    ]
+    filters: list[FilterTypes] = [created_filter, id_filter, limit_offset, updated_filter]
+    if search_filter.field_name is not None and search_filter.value is not None:
+        filters.append(search_filter)
+    if order_by.field_name is not None:
+        filters.append(order_by)
+    return filters
 
 
 def create_collection_dependencies() -> dict[str, Provide]:
@@ -166,5 +219,7 @@ def create_collection_dependencies() -> dict[str, Provide]:
         UPDATED_FILTER_DEPENDENCY_KEY: Provide(provide_updated_filter),
         CREATED_FILTER_DEPENDENCY_KEY: Provide(provide_created_filter),
         ID_FILTER_DEPENDENCY_KEY: Provide(provide_id_filter),
+        SEARCH_FILTER_DEPENDENCY_KEY: Provide(provide_search_filter),
+        ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by),
         FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies),
     }

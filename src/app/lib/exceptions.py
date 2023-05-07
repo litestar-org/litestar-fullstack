@@ -8,6 +8,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
+from litestar.contrib.repository.exceptions import ConflictError, NotFoundError
 from litestar.exceptions import (
     HTTPException,
     InternalServerException,
@@ -30,10 +31,8 @@ if TYPE_CHECKING:
 
 __all__ = (
     "AuthorizationError",
-    "ConflictError",
     "HealthCheckConfigurationError",
     "MissingDependencyError",
-    "NotFoundError",
     "ApplicationError",
     "after_exception_hook_handler",
 )
@@ -45,14 +44,6 @@ class ApplicationError(Exception):
 
 class ApplicationClientError(ApplicationError):
     """Base exception type for client errors."""
-
-
-class ConflictError(ApplicationClientError):
-    """Exception for data integrity errors."""
-
-
-class NotFoundError(ApplicationClientError):
-    """Referenced identity doesn't exist."""
 
 
 class AuthorizationError(ApplicationClientError):

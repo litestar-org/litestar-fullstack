@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from litestar.handlers.base import BaseRouteHandler
 
 
-__all__ = ["requires_superuser", "requires_active_user"]
+__all__ = ["requires_superuser", "requires_active_user", "requires_verified_user"]
 
 
 def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -45,3 +45,21 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     if connection.user.is_superuser:
         return
     raise PermissionDeniedException(detail="Insufficient privileges")
+
+
+def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
+    """Verify the connection user is a superuser.
+
+    Args:
+        connection (ASGIConnection): Request/Connection object.
+        _ (BaseRouteHandler): Route handler.
+
+    Raises:
+        PermissionDeniedException: Not authorized
+
+    Returns:
+        None: _description_
+    """
+    if connection.user.is_verified:
+        return
+    raise PermissionDeniedException(detail="User account is not verified.")

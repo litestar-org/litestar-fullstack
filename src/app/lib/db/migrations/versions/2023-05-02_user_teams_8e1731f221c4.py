@@ -1,18 +1,22 @@
 """user teams
 
-Revision ID: 385bb841b94e
+Revision ID: 8e1731f221c4
 Revises:
-Create Date: 2023-04-11 17:53:33.476834
+Create Date: 2023-05-02 12:04:37.239538
 
 """
 import sqlalchemy as sa
 from alembic import op
+from litestar.contrib.sqlalchemy.types import GUID, JSON
 
 __all__ = ["downgrade", "upgrade"]
 
 
+sa.GUID = GUID
+sa.JSON = JSON
+
 # revision identifiers, used by Alembic.
-revision = "385bb841b94e"
+revision = "8e1731f221c4"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,7 +30,8 @@ def upgrade():
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(length=500), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.GUID(), nullable=False),
+        sa.Column("_sentinel", sa.Integer(), nullable=True),
         sa.Column("created", sa.DateTime(), nullable=False),
         sa.Column("updated", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_team")),
@@ -42,7 +47,8 @@ def upgrade():
         sa.Column("is_superuser", sa.Boolean(), nullable=False),
         sa.Column("is_verified", sa.Boolean(), nullable=False),
         sa.Column("verified_at", sa.DateTime(), nullable=True),
-        sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.GUID(), nullable=False),
+        sa.Column("_sentinel", sa.Integer(), nullable=True),
         sa.Column("created", sa.DateTime(), nullable=False),
         sa.Column("updated", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_user_account")),
@@ -51,13 +57,14 @@ def upgrade():
     op.create_index(op.f("ix_user_account_email"), "user_account", ["email"], unique=True)
     op.create_table(
         "team_invitation",
-        sa.Column("team_id", sa.Uuid(), nullable=False),
+        sa.Column("team_id", sa.GUID(), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("role", sa.String(length=50), nullable=False),
         sa.Column("is_accepted", sa.Boolean(), nullable=False),
-        sa.Column("invited_by_id", sa.Uuid(), nullable=True),
+        sa.Column("invited_by_id", sa.GUID(), nullable=True),
         sa.Column("invited_by_email", sa.String(), nullable=False),
-        sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.GUID(), nullable=False),
+        sa.Column("_sentinel", sa.Integer(), nullable=True),
         sa.Column("created", sa.DateTime(), nullable=False),
         sa.Column("updated", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
@@ -74,15 +81,18 @@ def upgrade():
     op.create_index(op.f("ix_team_invitation_email"), "team_invitation", ["email"], unique=False)
     op.create_table(
         "team_member",
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("team_id", sa.Uuid(), nullable=False),
+        sa.Column("user_id", sa.GUID(), nullable=False),
+        sa.Column("team_id", sa.GUID(), nullable=False),
         sa.Column("role", sa.String(length=50), nullable=False),
         sa.Column("is_owner", sa.Boolean(), nullable=False),
-        sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.GUID(), nullable=False),
+        sa.Column("_sentinel", sa.Integer(), nullable=True),
         sa.Column("created", sa.DateTime(), nullable=False),
         sa.Column("updated", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["team_id"], ["team.id"], name=op.f("fk_team_member_team_id_team")),
-        sa.ForeignKeyConstraint(["user_id"], ["user_account.id"], name=op.f("fk_team_member_user_id_user_account")),
+        sa.ForeignKeyConstraint(["team_id"], ["team.id"], name=op.f("fk_team_member_team_id_team"), ondelete="cascade"),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["user_account.id"], name=op.f("fk_team_member_user_id_user_account"), ondelete="cascade"
+        ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_team_member")),
         sa.UniqueConstraint("user_id", "team_id", name=op.f("uq_team_member_user_id")),
     )

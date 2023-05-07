@@ -8,7 +8,7 @@ import structlog
 
 from app.lib import settings
 
-__all__ = ["after_process", "before_process"]
+__all__ = ["after_process", "before_process", "on_shutdown", "on_startup"]
 
 
 if TYPE_CHECKING:
@@ -19,6 +19,16 @@ if TYPE_CHECKING:
 LOGGER = structlog.get_logger()
 
 Context: TypeAlias = "dict[str, Any]"
+
+
+async def on_shutdown(_: Context) -> None:
+    """Shutdown events for each worker.."""
+    await LOGGER.ainfo("Worker is shutting down.")
+
+
+async def on_startup(_: Context) -> None:
+    """Startup events for each worker."""
+    await LOGGER.ainfo("Worker is starting up.")
 
 
 async def before_process(_: Context) -> None:
