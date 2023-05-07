@@ -16,7 +16,8 @@ from jsbeautifier import Beautifier
 from litestar._openapi.typescript_converter.converter import (
     convert_openapi_to_typescript,
 )
-from litestar.cli._utils import LitestarCLIException
+from litestar.cli._utils import LitestarCLIException, show_app_info
+from litestar.cli.main import litestar_group
 from pydantic import EmailStr, SecretStr
 from rich import get_console
 from rich.prompt import Confirm
@@ -153,7 +154,7 @@ def run_server(
             ["uvicorn", settings.server.APP_LOC, *_convert_uvicorn_args(process_args)], check=True  # noqa: S603, S607
         )
     finally:
-        vite_process.terminate()
+        vite_process.kill()
         for process in multiprocessing.active_children():
             process.kill()
         logger.info("⏏️  Shutdown complete")
@@ -189,6 +190,12 @@ def run_worker(
 @click.pass_context
 def management_app(_: dict[str, Any]) -> None:
     """System Administration Commands."""
+
+
+@management_app.command(name="app-info", help="Print application information.")
+def print_app_info() -> None:
+    """Print application configuration information."""
+    show_app_info(create_app())
 
 
 @management_app.command(name="create-user", help="Create a user")
@@ -430,8 +437,10 @@ def show_database_revision() -> None:
     db.utils.show_database_revision()
 
 
+app.add_command(litestar_group, name="litestar")
 app.add_command(management_app, name="manage")
 app.add_command(run_app, name="run")
+app.add_command(print_app_info, name="info")
 
 
 def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
