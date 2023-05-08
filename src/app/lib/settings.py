@@ -117,7 +117,7 @@ class AppSettings(BaseSettings):
         Returns:
             `self.NAME`, all lowercase and hyphens instead of spaces.
         """
-        return "-".join(s.lower() for s in self.NAME.split())
+        return utils.slugify(self.NAME)
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(

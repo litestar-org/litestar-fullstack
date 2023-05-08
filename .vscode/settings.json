@@ -6,7 +6,7 @@
     },
     ".mypy_cache": true,
     "**/__pycache__": true,
-    ".venv": true,
+    ".venv": false,
     ".idea": true,
     ".run": true,
     ".pytest_cache": true,

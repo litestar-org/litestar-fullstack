@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from litestar.contrib.sqlalchemy.base import AuditBase as TimestampedDatabaseModel
 from litestar.contrib.sqlalchemy.base import AuditColumns, orm_registry
 from litestar.contrib.sqlalchemy.base import Base as DatabaseModel
 from litestar.contrib.sqlalchemy.repository import ModelT  # noqa: TCH002
@@ -14,7 +15,7 @@ from sqlalchemy.orm import (
     mapped_column,
 )
 
-__all__ = ["DatabaseModel", "orm_registry", "model_from_dict", "AuditColumns", "SlugKey"]
+__all__ = ["DatabaseModel", "TimestampedDatabaseModel", "orm_registry", "model_from_dict", "AuditColumns", "SlugKey"]
 
 
 @declarative_mixin
