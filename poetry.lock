@@ -810,14 +810,14 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "18.6.2"
+version = "18.7.0"
 description = "Faker is a Python package that generates fake data for you."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.6.2-py3-none-any.whl", hash = "sha256:6385386ba8d5aa255bec72f5392c2b795fcec8bebf975a9953488948d54bce35"},
-    {file = "Faker-18.6.2.tar.gz", hash = "sha256:ef61bbf266d30819e83bab4a6c74a0f5979ce4d19d4c9305719dd26cb7d8d51c"},
+    {file = "Faker-18.7.0-py3-none-any.whl", hash = "sha256:38dbc3b80e655d7301e190426ab30f04b6b7f6ca4764c5dd02772ffde0fa6dcd"},
+    {file = "Faker-18.7.0.tar.gz", hash = "sha256:f02c6d3fdb5bc781f80b440cf2bdec336ed47ecfb8d620b20c3d4188ed051831"},
 ]
 
 [package.dependencies]
@@ -1367,7 +1367,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "bf0f817291509031fa8f964986df046a4b6f646a"
+resolved_reference = "fd54ce598ae09288da5d668d94af249af372b12a"
 
 [[package]]
 name = "mako"
@@ -1571,14 +1571,14 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.1.9"
+version = "9.1.11"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mkdocs_material-9.1.9-py3-none-any.whl", hash = "sha256:7db24261cb17400e132c46d17eea712bfe71056d892a9beba32cf68210297141"},
-    {file = "mkdocs_material-9.1.9.tar.gz", hash = "sha256:74d8da1371ab3a326868fe47bae3cbc4aa22e93c048b4ca5117e6817b88bd734"},
+    {file = "mkdocs_material-9.1.11-py3-none-any.whl", hash = "sha256:fbc86d50ec2cf34d40d5c4365780f290ceedde23f1a0704323b34e7f16b0c0dd"},
+    {file = "mkdocs_material-9.1.11.tar.gz", hash = "sha256:f5d473eb79d6640a5e668d4b2ab5b9de5e76ae0a0e2d864112df0cfe9016dc1d"},
 ]
 
 [package.dependencies]
@@ -2370,18 +2370,18 @@ pyyaml = "*"
 
 [[package]]
 name = "redis"
-version = "4.5.4"
+version = "4.5.5"
 description = "Python client for Redis database and key-value store"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "redis-4.5.4-py3-none-any.whl", hash = "sha256:2c19e6767c474f2e85167909061d525ed65bea9301c0770bb151e041b7ac89a2"},
-    {file = "redis-4.5.4.tar.gz", hash = "sha256:73ec35da4da267d6847e47f68730fdd5f62e2ca69e3ef5885c6a78a9374c3893"},
+    {file = "redis-4.5.5-py3-none-any.whl", hash = "sha256:77929bc7f5dab9adf3acba2d3bb7d7658f1e0c2f1cafe7eb36434e751c471119"},
+    {file = "redis-4.5.5.tar.gz", hash = "sha256:dc87a0bdef6c8bfe1ef1e1c40be7034390c2ae02d92dcd0c7ca1729443899880"},
 ]
 
 [package.dependencies]
-async-timeout = {version = ">=4.0.2", markers = "python_version <= \"3.11.2\""}
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
 hiredis = {version = ">=1.0.0", optional = true, markers = "extra == \"hiredis\""}
 
 [package.extras]

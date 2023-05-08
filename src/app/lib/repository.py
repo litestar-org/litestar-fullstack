@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 import string
 from typing import TYPE_CHECKING, Any
@@ -9,7 +11,7 @@ from app.utils import slugify
 
 if TYPE_CHECKING:
     from litestar.config.app import AppConfig
-__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository"]
+__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository", "on_app_init"]
 
 
 def on_app_init(app_config: "AppConfig") -> "AppConfig":
