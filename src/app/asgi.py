@@ -25,6 +25,7 @@ def create_app() -> Litestar:
     from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
     from pydantic import UUID4, BaseModel, EmailStr, SecretStr
+    from saq.types import QueueInfo
     from sqlalchemy import PoolProxiedConnection
     from sqlalchemy.engine.interfaces import DBAPIConnection
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,7 +36,19 @@ def create_app() -> Litestar:
     from app.domain.security import provide_user
     from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
-    from app.lib import cache, compression, constants, cors, db, exceptions, log, repository, settings, static_files
+    from app.lib import (
+        cache,
+        compression,
+        constants,
+        cors,
+        db,
+        exceptions,
+        log,
+        repository,
+        settings,
+        static_files,
+        worker,
+    )
     from app.lib.db.base import SQLAlchemyAiosqlQueryManager
     from app.lib.dependencies import (
         FilterTypes,
@@ -92,6 +105,9 @@ def create_app() -> Litestar:
             "PoolProxiedConnection": PoolProxiedConnection,
             "SQLAlchemyAiosqlQueryManager": SQLAlchemyAiosqlQueryManager,
             "DBAPIConnection": DBAPIConnection,
+            "Queue": worker.Queue,
+            "QueueInfo": QueueInfo,
+            "Job": worker.Job,
         },
     )
 

@@ -3,18 +3,26 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from litestar import Controller, MediaType, get, post
+from litestar.di import Provide
 
-from app.domain import urls
+from . import dependencies, urls
 
 if TYPE_CHECKING:
     from uuid import UUID
 
+    from saq.types import QueueInfo
+
+    from .base import Job, Queue
 
 __all__ = ["WorkerController"]
 
 
 class WorkerController(Controller):
     tags = ["Worker"]
+    dependencies = {
+        "queue": Provide(dependencies.provide_queue),
+        "job": Provide(dependencies.provide_job),
+    }
 
     @get(
         operation_id="WorkerQueueList",
@@ -25,9 +33,9 @@ class WorkerController(Controller):
         summary="Queue List",
         description="List configured worker queues.",
     )
-    async def queue_list(self) -> dict:
+    async def queue_list(self, queue: Queue) -> QueueInfo:
         """Get Worker queues."""
-        return {}
+        return await queue.info()
 
     @get(
         operation_id="WorkerQueueDetail",
@@ -38,9 +46,9 @@ class WorkerController(Controller):
         summary="Queue Detail",
         description="List queue details.",
     )
-    async def queue_detail(self, queue_id: UUID) -> dict:
+    async def queue_detail(self, queue: Queue, queue_id: UUID) -> QueueInfo:
         """Get queue information."""
-        return {}
+        return await queue.info()
 
     @get(
         operation_id="WorkerJobDetail",
@@ -51,9 +59,14 @@ class WorkerController(Controller):
         summary="Job Details",
         description="List job details.",
     )
-    async def job_detail(self, queue_id: UUID, job_id: UUID) -> dict:
+    async def job_detail(self, queue: Queue, job: Job, queue_id: UUID, job_id: UUID) -> dict:
         """Get job information."""
-        return {}
+        job_dict = job.to_dict()
+        if "kwargs" in job_dict:
+            job_dict["kwargs"] = repr(job_dict["kwargs"])
+        if "result" in job_dict:
+            job_dict["result"] = repr(job_dict["result"])
+        return {"job": job_dict}
 
     @post(
         operation_id="WorkerJobRetry",
@@ -64,8 +77,9 @@ class WorkerController(Controller):
         summary="Job Retry",
         description="Retry a failed job..",
     )
-    async def job_retry(self, queue_id: UUID, job_id: UUID) -> dict:
+    async def job_retry(self, queue: Queue, job: Job, queue_id: UUID, job_id: UUID) -> dict:
         """Retry job."""
+        await job.retry("retried from ui")
         return {}
 
     @post(
@@ -77,8 +91,9 @@ class WorkerController(Controller):
         summary="Job Abort",
         description="Abort active job.",
     )
-    async def job_abort(self, queue_id: UUID, job_id: UUID) -> dict:
+    async def job_abort(self, queue: Queue, job: Job, queue_id: UUID, job_id: UUID) -> dict:
         """Abort job."""
+        await job.abort("aborted from ui")
         return {}
 
     # static site

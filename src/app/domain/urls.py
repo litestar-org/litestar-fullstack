@@ -22,13 +22,3 @@ TEAM_INVITATION_LIST = "/api/workspaces/{team_id:uuid}/invitations"
 
 
 STATS_WEEKLY_NEW_USERS = "/api/stats/weekly-new-users"
-
-WORKER_ROOT = "/worker"
-WORKER_QUEUE_ROOT = "/queues/{queue_id:uuid}"
-WORKER_JOB_ROOT = "/queues/{queue_id:uuid}/jobs/{job_id:uuid}"
-WORKER_HEALTH = "/worker/health"
-WORKER_QUEUE_LIST = "/api/queues/"
-WORKER_QUEUE_DETAIL = "/api/queues/{queue_id:uuid}/"
-WORKER_JOB_DETAIL = "/api/queues/{queue_id:uuid}/jobs/{job_id:uuid}"
-WORKER_JOB_RETRY = "/api/queues/{queue_id:uuid}/jobs/{job_id:uuid}/retry"
-WORKER_JOB_ABORT = "/api/queues/{queue_id:uuid}/jobs/{job_id:uuid}/abort"
