@@ -59,3 +59,8 @@ def convert_datetime_to_gmt(dt: datetime.datetime) -> str:
     if not dt.tzinfo:
         dt = dt.replace(tzinfo=datetime.UTC)
     return dt.isoformat().replace("+00:00", "Z")
+
+
+def convert_date_to_gmt(dt: datetime.date) -> str:
+    """Handle datetime serialization for nested timestamps."""
+    return dt.isoformat()

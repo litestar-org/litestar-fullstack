@@ -47,7 +47,7 @@ class SystemController(Controller):
         db_status = "online" if db_ping else "offline"
         cache_ping = await redis.ping()
         cache_status = "online" if cache_ping else "offline"
-        worker_ping = await worker.is_healthy()
+        worker_ping = await worker.info.is_healthy()
         worker_status = "online" if worker_ping else "offline"
         healthy = bool(worker_ping and cache_ping and db_ping)
         if healthy:

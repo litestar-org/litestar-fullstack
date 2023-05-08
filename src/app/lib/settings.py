@@ -58,7 +58,7 @@ class ServerSettings(BaseSettings):
     """Server port."""
     RELOAD: bool | None = None
     """Turn on hot reloading."""
-    RELOAD_DIRS: list[str] = ["src/"]
+    RELOAD_DIRS: list[str] = [f"{BASE_DIR}"]
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = None
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
@@ -226,7 +226,7 @@ class LogSettings(BaseSettings):
     logged."""
     WORKER_EVENT: str = "Worker"
     """Log event name for logs from SAQ worker."""
-    SAQ_LEVEL: int = 30
+    SAQ_LEVEL: int = 50
     """Level to log SAQ logs."""
     SQLALCHEMY_LEVEL: int = 30
     """Level to log SQLAlchemy logs."""

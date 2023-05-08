@@ -42,6 +42,7 @@ class AccountController(Controller):
         summary="List Users",
         description="Retrieve the users.",
         path=urls.ACCOUNT_LIST,
+        cache=60,
     )
     async def list_users(
         self, users_service: UserService, filters: list[FilterTypes] = Dependency(skip_validation=True)
