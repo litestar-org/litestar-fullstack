@@ -35,15 +35,10 @@ def create_app() -> Litestar:
     from app.domain.security import provide_user
     from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
-    from app.lib import cache, compression, constants, cors, db, exceptions, log, settings, static_files
+    from app.lib import cache, compression, constants, cors, db, exceptions, log, repository, settings, static_files
     from app.lib.db.base import SQLAlchemyAiosqlQueryManager
     from app.lib.dependencies import (
-        BeforeAfter,
-        CollectionFilter,
         FilterTypes,
-        LimitOffset,
-        OrderBy,
-        SearchFilter,
         create_collection_dependencies,
     )
     from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
@@ -72,18 +67,13 @@ def create_app() -> Litestar:
         plugins=[db.plugin],
         on_shutdown=[cache.redis.close],
         on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
-        on_app_init=[domain.security.auth.on_app_init],
+        on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
         static_files_config=static_files.config,
         template_config=template_config,  # type: ignore[arg-type]
         signature_namespace={
             "AsyncSession": AsyncSession,
             "Service": Service,
             "FilterTypes": FilterTypes,
-            "BeforeAfter": BeforeAfter,
-            "CollectionFilter": CollectionFilter,
-            "LimitOffset": LimitOffset,
-            "OrderBy": OrderBy,
-            "SearchFilter": SearchFilter,
             "UUID4": UUID4,
             "UUID": UUID,
             "EmailStr": EmailStr,
