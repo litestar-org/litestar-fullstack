@@ -1,12 +1,22 @@
+from __future__ import annotations
+
 import random
 import string
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+from litestar.contrib.repository.handlers import on_app_init as _on_app_init
 from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
 
 from app.utils import slugify
 
-__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository"]
+if TYPE_CHECKING:
+    from litestar.config.app import AppConfig
+__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository", "on_app_init"]
+
+
+def on_app_init(app_config: "AppConfig") -> "AppConfig":
+    """Executes on application init.  Injects signature namespaces."""
+    return _on_app_init(app_config)
 
 
 class SQLAlchemyAsyncSlugRepository(

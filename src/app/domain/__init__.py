@@ -3,6 +3,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from app.lib import settings
+from app.lib.worker.controllers import WorkerController
+
 from . import accounts, analytics, openapi, security, system, teams, urls, web
 
 if TYPE_CHECKING:
@@ -22,6 +25,9 @@ routes: list[ControllerRouterHandler] = [
     system.controllers.SystemController,
     web.controllers.WebController,
 ]
+
+if settings.worker.WEB_ENABLED:
+    routes.append(WorkerController)
 
 __all__ = [
     "tasks",

@@ -8,7 +8,6 @@ from pydantic import BaseModel
 
 __all__ = [
     "convert_datetime_to_gmt",
-    "convert_string_to_camel_case",
     "from_json",
     "from_msgpack",
     "to_json",
@@ -62,13 +61,6 @@ def convert_datetime_to_gmt(dt: datetime.datetime) -> str:
     return dt.isoformat().replace("+00:00", "Z")
 
 
-def convert_string_to_camel_case(string: str) -> str:
-    """Convert a string to camel case.
-
-    Args:
-        string (str): The string to convert
-
-    Returns:
-        str: The string converted to camel case
-    """
-    return "".join(word if index == 0 else word.capitalize() for index, word in enumerate(string.split("_")))
+def convert_date_to_gmt(dt: datetime.date) -> str:
+    """Handle datetime serialization for nested timestamps."""
+    return dt.isoformat()

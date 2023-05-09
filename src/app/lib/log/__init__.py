@@ -55,8 +55,7 @@ if sys.stderr.isatty() or "pytest" in sys.modules:  # pragma: no cover
     stdlib_processors.append(console_processor)
 else:
     LoggerFactory = structlog.BytesLoggerFactory
-    default_processors.extend([structlog.processors.dict_tracebacks, msgspec_json_renderer])
-    stdlib_processors.append(structlog.processors.dict_tracebacks)
+    default_processors.extend([msgspec_json_renderer])
 
 
 def configure(processors: Sequence[Processor]) -> None:
