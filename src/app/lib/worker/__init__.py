@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from . import controllers, info
-from .base import BackgroundTaskError, Job, Queue, Worker, WorkerFunction, queue
+from .base import BackgroundTaskError, Job, Queue, Worker, WorkerFunction, queues
 from .commands import create_worker_instance, run_worker
 
 __all__ = [
@@ -10,7 +10,7 @@ __all__ = [
     "Worker",
     "WorkerFunction",
     "create_worker_instance",
-    "queue",
+    "queues",
     "BackgroundTaskError",
     "run_worker",
     "info",

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from signal import Signals
 
 
-__all__ = ["Queue", "Worker", "WorkerFunction", "queue", "BackgroundTaskError"]
+__all__ = ["Queue", "Worker", "WorkerFunction", "queues", "BackgroundTaskError"]
 
 
 WorkerFunction = abc.Callable[..., abc.Awaitable[Any]]
@@ -80,8 +80,11 @@ redis = Redis.from_url(
     health_check_interval=5,
 )
 
-queue = Queue(redis)
+queues = {
+    "background-worker": Queue(redis, name="background-worker"),
+    "high-priority": Queue(redis, name="high-priority"),
+}
 """
-[Queue][app.lib.worker.Queue] instance instantiated with a Redis config
+[list[Queue]][app.lib.worker.Queue] instances instantiated with a Redis config
 instance.
 """

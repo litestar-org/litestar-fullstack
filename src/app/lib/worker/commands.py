@@ -10,18 +10,19 @@ import uvloop
 
 from app.lib import settings
 
-from .base import Worker, queue
+from .base import Queue, Worker
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Collection
 
     import saq
-    from aiohttp.web_app import Application
+
 
 __all__ = ["create_worker_instance", "run_worker"]
 
 
 def create_worker_instance(
+    queue: Queue,
     tasks: Collection[Callable[..., Any] | tuple[str, Callable]],
     scheduled_tasks: Collection[saq.CronJob] | None = None,
     startup: Callable[[dict[str, Any]], Awaitable[Any]] | None = None,
@@ -33,6 +34,7 @@ def create_worker_instance(
     """Create worker instance.
 
     Args:
+        queue: Queue: The queue instance to use for the worker
         tasks: Collection[Callable[..., Any] | tuple[str, Callable]]: Functions to be called via the async workers
         scheduled_tasks (Collection[saq.CronJob] | None, optional): Scheduled functions to be called via the async workers. Defaults to None.
         startup (Callable[[dict[str, Any]], Awaitable[Any]] | None, optional): Async function called on startup. Defaults to None.
@@ -66,35 +68,29 @@ def run_worker() -> None:
     from app.lib.log.worker import before_process as before_logging_process
     from app.lib.log.worker import on_shutdown as shutdown_logging_process
     from app.lib.log.worker import on_startup as startup_logging_process
+    from app.lib.worker import queues
 
     if threading.current_thread() is not threading.main_thread():
         atexit.unregister(_exit_function)
     logger = log.get_logger()
     logger.info("Starting working pool")
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    worker_kwargs: dict[str, Any] = {
-        "tasks": tasks,
-        "scheduled_tasks": scheduled_tasks,
-        "startup": startup_logging_process,
-        "shutdown": shutdown_logging_process,
-        "after_process": after_logging_process,
-        "before_process": before_logging_process,
-    }
-    worker_instance = create_worker_instance(**worker_kwargs)
+    worker_instances: list[Worker] = [
+        create_worker_instance(
+            queue=queue,
+            tasks=tasks,
+            scheduled_tasks=scheduled_tasks,
+            startup=startup_logging_process,
+            shutdown=shutdown_logging_process,
+            after_process=after_logging_process,
+            before_process=before_logging_process,
+        )
+        for queue in queues.values()
+    ]
     loop = asyncio.new_event_loop()
-    if settings.worker.WEB_ENABLED:
-        import aiohttp.web
-        from saq.web import create_app
-
-        async def shutdown(_app: Application) -> None:
-            await worker_instance.stop()
-
-        app = create_app([queue])
-        app.on_shutdown.append(shutdown)
-        loop.create_task(worker_instance.start())
-        aiohttp.web.run_app(app, port=settings.worker.WEB_PORT, loop=loop)
-    else:
-        try:
+    try:
+        for worker_instance in worker_instances:
             loop.run_until_complete(worker_instance.start())
-        except KeyboardInterrupt:
+    except KeyboardInterrupt:
+        for worker_instance in worker_instances:
             loop.run_until_complete(worker_instance.stop())
