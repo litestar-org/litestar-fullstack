@@ -38,7 +38,6 @@ def create_app() -> Litestar:
     from app.domain.web.vite import template_config
     from app.lib import (
         cache,
-        compression,
         constants,
         cors,
         db,
@@ -64,7 +63,6 @@ def create_app() -> Litestar:
     return Litestar(
         response_cache_config=cache.config,
         stores=StoreRegistry(default_factory=cache.redis_store_factory),
-        compression_config=compression.config,
         cors_config=cors.config,
         dependencies=dependencies,
         exception_handlers={

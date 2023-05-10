@@ -124,6 +124,23 @@ class SQLAlchemyAiosqlQueryManager:
             async with async_session_factory() as session:
                 yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
 
+    @classmethod
+    @contextlib.asynccontextmanager
+    async def from_connection(
+        cls: type[SQLAlchemyAiosqlQueryManagerT],
+        queries: Queries,
+        connection: Any,
+    ) -> AsyncIterator[SQLAlchemyAiosqlQueryManagerT]:
+        """Context manager that returns instance of query manager object.
+
+        Returns:
+            The service object instance.
+        """
+        try:
+            yield cls(connection=connection, queries=queries)
+        finally:
+            ...
+
     async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
         data = await self.fn(method)(conn=self.connection, **binds)
         return [dict(row) for row in data]

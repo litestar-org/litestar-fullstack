@@ -235,7 +235,8 @@ def _patch_redis(app: "Litestar", redis: Redis, monkeypatch: pytest.MonkeyPatch)
     cache_config = app.response_cache_config
     assert cache_config is not None
     monkeypatch.setattr(app.stores.get(cache_config.store), "_redis", redis)
-    monkeypatch.setattr(worker.queue, "redis", redis)
+    for queue in worker.queues.values():
+        monkeypatch.setattr(queue, "redis", redis)
 
 
 @pytest.fixture(name="client")

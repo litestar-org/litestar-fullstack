@@ -8,7 +8,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
-from litestar.contrib.repository.exceptions import ConflictError, NotFoundError
+from litestar.contrib.repository.exceptions import ConflictError, NotFoundError, RepositoryError
 from litestar.exceptions import (
     HTTPException,
     InternalServerException,
@@ -97,7 +97,7 @@ async def after_exception_hook_handler(exc: Exception, _scope: Scope, _state: St
 
 def exception_to_http_response(
     request: Request[Any, Any, Any],
-    exc: ApplicationError,
+    exc: ApplicationError | RepositoryError,
 ) -> Response[ExceptionResponseContent]:
     """Transform repository exceptions to HTTP exceptions.
 
@@ -111,12 +111,12 @@ def exception_to_http_response(
     http_exc: type[HTTPException]
     if isinstance(exc, NotFoundError):
         http_exc = NotFoundException
-    elif isinstance(exc, ConflictError):
+    elif isinstance(exc, ConflictError | RepositoryError):
         http_exc = _HTTPConflictException
     elif isinstance(exc, AuthorizationError):
         http_exc = PermissionDeniedException
     else:
         http_exc = InternalServerException
-    if http_exc is InternalServerException and request.app.debug:
+    if request.app.debug:
         return create_debug_response(request, exc)
-    return create_exception_response(http_exc())
+    return create_exception_response(http_exc(detail=str(exc.__cause__)))
