@@ -89,8 +89,11 @@ def run_worker() -> None:
     ]
     loop = asyncio.new_event_loop()
     try:
-        for worker_instance in worker_instances:
-            loop.run_until_complete(worker_instance.start())
+        for i, worker_instance in enumerate(worker_instances):
+            if i < len(worker_instances) - 1:
+                loop.create_task(worker_instance.start())
+            else:
+                loop.run_until_complete(worker_instance.start())
     except KeyboardInterrupt:
         for worker_instance in worker_instances:
             loop.run_until_complete(worker_instance.stop())

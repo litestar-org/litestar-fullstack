@@ -96,14 +96,14 @@ const home_view = function (data) {
           h("tr", [
             h(
               "td",
-              link({ props: { href: "/queues/" + queue.name } }, queue.name)
+              link({ props: { href: "/queues/" + queue.name } }, queue.name),
             ),
             h("td", queue.active),
             h("td", queue.queued),
             h("td", queue.scheduled),
             h("td", Object.keys(queue["workers"]).length),
-          ])
-        )
+          ]),
+        ),
       ),
     ]),
   ]);
@@ -142,7 +142,7 @@ const queue_view = function (data, queue_name) {
           h("td", queue.active),
           h("td", queue.queued),
           h("td", queue.scheduled),
-        ])
+        ]),
       ),
     ]),
     h("h2", "Workers"),
@@ -165,8 +165,8 @@ const queue_view = function (data, queue_name) {
             h("td", worker.retried),
             h("td", worker.failed),
             h("td", worker.uptime / 1000),
-          ])
-        )
+          ]),
+        ),
       ),
     ]),
     h("h2", "Jobs"),
@@ -182,11 +182,11 @@ const queue_view = function (data, queue_name) {
                   href: "/queues/" + queue_name + "/jobs/" + job.key,
                 },
               },
-              h("td", job.key)
+              h("td", job.key),
             ),
             ...job_columns(job),
-          ])
-        )
+          ]),
+        ),
       ),
     ]),
   ]);
@@ -198,7 +198,7 @@ const job_view = function (data, queue_name, job_key) {
     button(
       "Retry",
       (event) => post("/queues/" + queue_name + "/jobs/" + job_key + "/retry"),
-      { style: { marginRight: "1rem" } }
+      { style: { marginRight: "1rem" } },
     ),
   ];
 
@@ -208,8 +208,8 @@ const job_view = function (data, queue_name, job_key) {
         "Abort",
         (event) =>
           post("/queues/" + queue_name + "/jobs/" + job_key + "/abort"),
-        { style: { borderColor: "#d81b60", backgroundColor: "#d81b60" } }
-      )
+        { style: { borderColor: "#d81b60", backgroundColor: "#d81b60" } },
+      ),
     );
   }
 
@@ -226,7 +226,7 @@ const job_view = function (data, queue_name, job_key) {
             h("td", "Queue"),
             h("td", "Progress"),
             h("td", "Attempts"),
-          ])
+          ]),
         ),
         h(
           "tbody",
@@ -234,16 +234,16 @@ const job_view = function (data, queue_name, job_key) {
             ...job_columns(job),
             h(
               "td",
-              link({ props: { href: "/queues/" + job.queue } }, job.queue)
+              link({ props: { href: "/queues/" + job.queue } }, job.queue),
             ),
             h(
               "td",
-              h("progress", { props: { value: job.progress || 0, max: 1.0 } })
+              h("progress", { props: { value: job.progress || 0, max: 1.0 } }),
             ),
             h("td", job.attempts),
-          ])
+          ]),
         ),
-      ])
+      ]),
     ),
     h("details", { props: { open: true } }, [
       h("summary", "Result"),
@@ -295,12 +295,12 @@ const page = async function (path) {
     h("nav.container", [
       h(
         "ul",
-        h("li", link({ props: { href: "/worker/" } }, h("strong", "SAQ")))
+        h("li", link({ props: { href: "/worker/" } }, h("strong", "SAQ"))),
       ),
       h("ul", [
         h(
           "li",
-          h("a", { props: { href: "https://github.com/tobymao/saq" } }, "Docs")
+          h("a", { props: { href: "https://github.com/tobymao/saq" } }, "Docs"),
         ),
       ]),
     ]),

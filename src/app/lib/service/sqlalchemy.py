@@ -14,6 +14,7 @@ from litestar.contrib.repository.filters import (
     LimitOffset,
 )
 from litestar.contrib.sqlalchemy.repository import ModelT
+from pydantic import BaseModel
 
 from app.lib.db import async_session_factory
 from app.lib.db.orm import model_from_dict
@@ -33,6 +34,7 @@ __all__ = ["SQLAlchemyAsyncRepositoryService"]
 
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictT: TypeAlias = dict[str, Any] | ModelT
+PydanticDTOT = TypeVar("PydanticDTOT", bound=BaseModel)
 
 
 class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
@@ -275,6 +277,23 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
                     statement=statement,
                     session=db_session,
                 )
+
+    @staticmethod
+    def get_filter(match: type[FilterTypes], *filters: FilterTypes) -> FilterTypes:
+        """Get the first matching item from ``filters`` that is the type of ``match``
+
+        Args:
+            match: filter type to find in filters
+            *filters: filter types to apply to the query
+
+        Returns:
+            The LimitOffset instance.
+        """
+        for filter_ in filters:
+            if isinstance(filter_, match):
+                return filter_
+
+        raise RepositoryError(f"Unexpected filter: {filter_}")
 
     def _limit_offset_from_filters(self, *filters: FilterTypes) -> LimitOffset:
         """Get the LimitOffset filter from filters.

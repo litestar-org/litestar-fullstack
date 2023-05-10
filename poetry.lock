@@ -1367,7 +1367,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "fd54ce598ae09288da5d668d94af249af372b12a"
+resolved_reference = "6f880311e1a68c185060cd0aec90de2d5cb39117"
 
 [[package]]
 name = "mako"

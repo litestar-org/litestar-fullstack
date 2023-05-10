@@ -3,6 +3,8 @@ from pathlib import Path
 
 from litestar.static_files.config import StaticFilesConfig
 
+from app import utils
+
 from . import settings
 
 SAQ_INSTALLED = False
@@ -23,9 +25,9 @@ if SAQ_INSTALLED and settings.worker.WEB_ENABLED:
 
     This correctly finds and serves the files.  However, the some of the assets are already gzipped.  These are corrupted and unreadable by the browser.
     todo: investigate why Litestar doesn't serve those files correctly.
-
+    # STATIC_DIRS.append(Path(settings.BASE_DIR / "lib" / "worker" / "static"))
     """
-    STATIC_DIRS.append(Path(settings.BASE_DIR / "lib" / "worker" / "static"))
+    STATIC_DIRS.append(Path(utils.module_to_os_path("saq") / "static"))
 
 
 config = [

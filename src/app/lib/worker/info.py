@@ -7,6 +7,9 @@ from app.lib.exceptions import ApplicationError
 
 from .base import Job, redis
 
+__all__ = ["active_workers", "is_healthy", "job"]
+
+
 if TYPE_CHECKING:
     from .base import Queue
 

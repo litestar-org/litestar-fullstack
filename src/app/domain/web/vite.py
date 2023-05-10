@@ -370,6 +370,9 @@ async def _run_vite() -> None:
     Args:
         vite_config (ViteConfig): _description_
     """
-    async with await open_process(template_config.config.run_command) as vite_process:
-        async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
-            await logger.ainfo("Vite", message=text.replace("\n", ""))
+    try:
+        async with await open_process(template_config.config.run_command) as vite_process:
+            async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
+                await logger.ainfo("Vite", message=text.replace("\n", ""))
+    finally:
+        ...
