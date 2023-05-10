@@ -10,6 +10,9 @@ from saq.types import QueueInfo
 
 from app.lib.worker import Job, Queue, Worker, dependencies
 
+__all__ = ["SAQConfig", "SAQPlugin"]
+
+
 if TYPE_CHECKING:
     from typing import Any
 
