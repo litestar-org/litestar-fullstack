@@ -89,14 +89,6 @@ def test_provided_filters(app: Litestar, client: TestClient) -> None:
     @get(
         path,
         opt={"exclude_from_auth": True},
-        signature_namespace={
-            "BeforeAfter": BeforeAfter,
-            "CollectionFilter": CollectionFilter,
-            "LimitOffset": LimitOffset,
-            "OrderBy": OrderBy,
-            "SearchFilter": SearchFilter,
-        },
-        dependencies=dependencies.create_collection_dependencies(),
     )
     def filtered_collection_route(
         created_filter: BeforeAfter,
@@ -133,7 +125,7 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     path = "/1/2/3/testing"
     ids = [uuid4() for _ in range(2)]
 
-    @get(path, opt={"exclude_from_auth": True}, signature_namespace={})
+    @get(path, opt={"exclude_from_auth": True})
     def filtered_collection_route(filters: list[FilterTypes]) -> None:
         nonlocal called
         assert filters == [
