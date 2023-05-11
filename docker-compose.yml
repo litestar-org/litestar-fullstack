@@ -67,20 +67,20 @@ services:
       - static-data:/workspace/app/static:cached
       - upload-data:/workspace/app/media:cached
 
-  # migrator:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   image: app:latest
-  #   restart: no
-  #   command: app manage upgrade-database
-  #   env_file:
-  #     - .env.example
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     cache:
-  #       condition: service_healthy
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: app:latest
+    restart: "no"
+    command: manage upgrade-database
+    env_file:
+      - .env.example
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
 volumes:
   db-data: {}
   cache-data: {}

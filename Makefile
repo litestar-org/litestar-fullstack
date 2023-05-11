@@ -105,13 +105,8 @@ clean:       ## remove all build, testing, and static documentation files
 	rm -fr .mypy_cache
 	rm -fr site
 
-.PHONY: .PHONY
-download-backend-deps:      ## download wheel files
-	@poetry export --without-hashes --only=main -f requirements.txt --output dist/requirements.txt && rm -Rf dist/wheels && poetry run pip download -r dist/requirements.txt -d dist/wheels
-
 .PHONY: build
-build: download-backend-deps
-
+build:
 	npm run build
 	poetry build
 
