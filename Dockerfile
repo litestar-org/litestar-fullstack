@@ -37,7 +37,7 @@ RUN apt-get update \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN pip install --upgrade pip wheel setuptools cython virtualenv poetry
+RUN pip install --upgrade pip wheel setuptools cython virtualenv
 RUN mkdir -p /workspace/app \
     && addgroup --system --gid 65532 nonroot \
     && adduser --no-create-home --system --uid 65532 nonroot \
