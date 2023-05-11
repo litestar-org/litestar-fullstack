@@ -18,7 +18,7 @@ services:
       - ./pyproject.toml:/workspace/app/pyproject.toml
       - ./poetry.lock:/workspace/app/poetry.lock
       - ./mkdocs.yml:/workspace/app/mkdocs.yml
-    command: app api run --reload
+    command: app run server --reload
 
   localmail:
     image: mailhog/mailhog:v1.0.0
