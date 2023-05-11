@@ -63,9 +63,6 @@ services:
       - "8000:8000"
     env_file:
       - .env.example
-    volumes:
-      - static-data:/workspace/app/static:cached
-      - upload-data:/workspace/app/media:cached
 
   migrator:
     build:
@@ -84,5 +81,3 @@ services:
 volumes:
   db-data: {}
   cache-data: {}
-  static-data: {}
-  upload-data: {}

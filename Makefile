@@ -47,7 +47,7 @@ install:          ## Install the project in dev mode.
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
 	if [ "$(USING_NPM)" ]; then npm ci && npm run build; fi
 	if [ "$(USING_YARN)" ]; then yarn install && yarn run build; fi
 	if [ "$(USING_PNPM)" ]; then pnpm install && pnpm run build; fi
@@ -61,7 +61,7 @@ runtime-only:	 ## Install the project in production mode.
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true  && poetry config virtualenvs.options.always-copy true && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --only main && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
 	if [ "$(USING_NPM)" ]; then npm ci && npm run build; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make runtime'"
 
@@ -74,7 +74,7 @@ migrations:       ## Generate database migrations
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src .venv/bin/app manage upgrade-database
+	@env PYTHONPATH=src $(ENV_PREFIX)/app manage upgrade-database
 
 .PHONY: squash-migrations
 squash-migrations:       ## Generate database migrations
@@ -82,7 +82,7 @@ squash-migrations:       ## Generate database migrations
 	@env PYTHONPATH=src poetry run app manage purge-database --no-prompt
 	rm -Rf src/app/lib/db/migrations/versions/*.py
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Initial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src .venv/bin/alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src $(ENV_PREFIX)/alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: clean
 clean:       ## remove all build, testing, and static documentation files
@@ -114,17 +114,17 @@ build:
 # docs        #
 ###############
 gen-docs:       ## generate HTML documentation
-	.venv/bin/mkdocs build
+	$(ENV_PREFIX)mkdocs build
 
 .PHONY: docs
 docs:       ## generate HTML documentation and serve it to the browser
-	.venv/bin/mkdocs build
-	.venv/bin/mkdocs serve
+	$(ENV_PREFIX)mkdocs build
+	$(ENV_PREFIX)mkdocs serve
 
 .PHONY: pre-release
 pre-release:       ## bump the version and create the release tag
 	make gen-docs
 	make clean
-	.venv/bin/bump2version $(increment)
+	$(ENV_PREFIX)bump2version $(increment)
 	git describe --tags --abbrev=0
 	head pyproject.toml | grep version
