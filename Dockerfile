@@ -9,7 +9,7 @@ ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
 RUN npm install -g npm@9.6.5 --quiet
-COPY package.json package-lock.json  vite.config.ts tsconfig.json tsconfig.node.json LICENSE Makefile ./
+COPY package.json package-lock.json  vite.config.ts tsconfig.json LICENSE Makefile ./
 COPY src src
 RUN npm ci --quiet && npm cache clean --force --quiet && npm run build
 
@@ -37,7 +37,7 @@ RUN apt-get update \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN pip install --upgrade pip wheel setuptools cython virtualenv poetry
+RUN pip install --upgrade pip wheel setuptools cython virtualenv
 RUN mkdir -p /workspace/app \
     && addgroup --system --gid 65532 nonroot \
     && adduser --no-create-home --system --uid 65532 nonroot \

@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Literal
 
+from litestar.contrib.repository.abc import FilterTypes
 from litestar.contrib.repository.filters import BeforeAfter, CollectionFilter, LimitOffset, OrderBy, SearchFilter
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
@@ -32,7 +33,6 @@ __all__ = [
 
 DTorNone = datetime | None
 StringOrNone = str | None
-FilterTypes = BeforeAfter | CollectionFilter[Any] | LimitOffset | SearchFilter | OrderBy
 """Aggregate type alias of the types supported for collection filtering."""
 FILTERS_DEPENDENCY_KEY = "filters"
 CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
