@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from litestar.contrib.sqlalchemy.base import AuditBase as TimestampedDatabaseModel
 from litestar.contrib.sqlalchemy.base import AuditColumns, orm_registry
-from litestar.contrib.sqlalchemy.base import Base as DatabaseModel
+from litestar.contrib.sqlalchemy.base import UUIDAuditBase as TimestampedDatabaseModel
+from litestar.contrib.sqlalchemy.base import UUIDBase as DatabaseModel
 from litestar.contrib.sqlalchemy.repository import ModelT  # noqa: TCH002
 from sqlalchemy import String
 from sqlalchemy.orm import (
