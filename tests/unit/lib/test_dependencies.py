@@ -129,10 +129,10 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     def filtered_collection_route(filters: list[FilterTypes]) -> None:
         nonlocal called
         assert filters == [
-            LimitOffset(limit=2, offset=18),
-            BeforeAfter(field_name="updated", before=datetime.max, after=datetime.min),
             BeforeAfter(field_name="created", before=datetime.max, after=datetime.min),
             CollectionFilter(field_name="id", values=ids),
+            LimitOffset(limit=2, offset=18),
+            BeforeAfter(field_name="updated", before=datetime.max, after=datetime.min),
             SearchFilter(field_name="my_field", value="SearchString"),
             OrderBy(field_name="my_col", sort_order="desc"),
         ]
