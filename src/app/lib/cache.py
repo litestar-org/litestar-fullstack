@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 redis = Redis.from_url(
     settings.redis.URL,
     encoding="utf-8",
+    decode_responses=False,
     socket_connect_timeout=2,
     socket_keepalive=5,
     health_check_interval=5,

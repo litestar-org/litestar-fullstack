@@ -39,8 +39,8 @@ class Queue(saq.Queue):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize a new queue."""
-        kwargs.setdefault("dump", serialization.to_msgpack)
-        kwargs.setdefault("load", serialization.from_msgpack)
+        kwargs.setdefault("dump", serialization.to_json)
+        kwargs.setdefault("load", serialization.from_json)
         kwargs.setdefault("name", "background-worker")
         super().__init__(*args, **kwargs)
 

@@ -20,6 +20,10 @@ def _default(value: Any) -> str:
         return str(value.dict(by_alias=True))
     if isinstance(value, pgproto.UUID | UUID):
         return str(value)
+    if isinstance(value, datetime.datetime):
+        return convert_datetime_to_gmt(value)
+    if isinstance(value, datetime.date):
+        return convert_date_to_iso(value)
     try:
         val = str(value)
     except Exception as exc:  # noqa: BLE001
@@ -61,6 +65,6 @@ def convert_datetime_to_gmt(dt: datetime.datetime) -> str:
     return dt.isoformat().replace("+00:00", "Z")
 
 
-def convert_date_to_gmt(dt: datetime.date) -> str:
+def convert_date_to_iso(dt: datetime.date) -> str:
     """Handle datetime serialization for nested timestamps."""
     return dt.isoformat()
