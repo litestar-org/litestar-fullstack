@@ -16,8 +16,8 @@ __all__ = ["SAQConfig", "SAQPlugin"]
 if TYPE_CHECKING:
     from typing import Any
 
+    from litestar import Litestar
     from litestar.config.app import AppConfig
-    from litestar.datastructures.state import State
 
 T = TypeVar("T")
 
@@ -37,11 +37,11 @@ class SAQConfig(Generic[T]):
         """
         return {"Queue": Queue, "Worker": Worker, "QueueInfo": QueueInfo, "Job": Job}
 
-    async def on_shutdown(self, state: State) -> None:
+    async def on_shutdown(self, app: Litestar) -> None:
         """Disposes of the SQLAlchemy engine.
 
         Args:
-            state: The ``Litestar.state`` instance.
+            app: The ``Litestar`` instance.
 
         Returns:
             None

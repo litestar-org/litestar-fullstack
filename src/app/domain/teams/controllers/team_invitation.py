@@ -13,4 +13,4 @@ class TeamInvitationController(Controller):
     """Team Invitations."""
 
     tags = ["Teams"]
-    dependencies = {"team_invitations_service": Provide(provide_team_invitations_service)}
+    dependencies = {"team_invitations_service": Provide(provide_team_invitations_service, sync_to_thread=False)}

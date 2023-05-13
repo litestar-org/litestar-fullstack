@@ -31,7 +31,7 @@ class StatsController(Controller):
     tags = ["Statistics"]
     guards = [requires_active_user]
     dependencies = {
-        "analytic_queries": Provide(provides_analytic_queries),
+        "analytic_queries": Provide(provides_analytic_queries, sync_to_thread=False),
     }
 
     @get(

@@ -34,7 +34,7 @@ class AccountController(Controller):
 
     tags = ["User Accounts"]
     guards = [requires_superuser]
-    dependencies = {"users_service": Provide(provides_user_service)}
+    dependencies = {"users_service": Provide(provides_user_service, sync_to_thread=False)}
 
     @get(
         operation_id="ListUsers",

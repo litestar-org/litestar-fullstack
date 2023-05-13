@@ -29,7 +29,7 @@ class TeamController(Controller):
     """Teams."""
 
     tags = ["Teams"]
-    dependencies = {"teams_service": Provide(provides_teams_service)}
+    dependencies = {"teams_service": Provide(provides_teams_service, sync_to_thread=False)}
     guards = [requires_active_user]
 
     @get(

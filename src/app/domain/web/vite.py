@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import atexit
-import contextlib
 import json
 import threading
 from dataclasses import dataclass, field
@@ -65,7 +64,7 @@ class ViteConfig(BaseModel):
     host: str = "localhost"
     protocol: str = "http"
     port: int = 3000
-    run_command: list[str] = ["npm", "run", "dev"]
+    run_command: str = "npm run dev"
     build_command: list = ["npm", "run", "build"]
 
 
@@ -351,28 +350,18 @@ logger = log.get_logger()
 
 
 def run_vite() -> None:
-    """Run Vite in a subprocess.
-
-    Args:
-        vite_config (ViteConfig): _description_
-    """
-    log.config.configure()
-    with contextlib.suppress(KeyboardInterrupt):
-        try:
-            anyio.run(_run_vite, backend="asyncio", backend_options={"use_uvloop": True})
-        finally:
-            logger.info("Vite Service stopped.")
+    """Run Vite in a subprocess."""
+    try:
+        anyio.run(_run_vite, backend="asyncio", backend_options={"use_uvloop": True})
+    except KeyboardInterrupt:
+        logger.info("Stopping typescript development services.")
+    finally:
+        logger.info("Vite Service stopped.")
 
 
 async def _run_vite() -> None:
-    """Run Vite in a subprocess.
-
-    Args:
-        vite_config (ViteConfig): _description_
-    """
-    try:
-        async with await open_process(template_config.config.run_command) as vite_process:
-            async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
-                await logger.ainfo("Vite", message=text.replace("\n", ""))
-    finally:
-        ...
+    """Run Vite in a subprocess."""
+    log.config.configure()
+    async with await open_process(template_config.config.run_command) as vite_process:
+        async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
+            await logger.ainfo("Vite", message=text.replace("\n", ""))

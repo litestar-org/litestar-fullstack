@@ -338,7 +338,7 @@ async def test_exception_in_before_send_handler(
     """
 
     @get(path="/a/b/a/d", media_type="text/plain", opt={"exclude_from_auth": True})
-    def test_handler() -> str:
+    async def test_handler() -> str:
         return "Hello"
 
     monkeypatch.setattr(
@@ -371,7 +371,7 @@ async def test_exception_in_before_send_handler_read_empty_body(
         settings.log.RESPONSE_FIELDS.append("body")
 
     @post(path="/1/2/3/4", media_type="text/plain", opt={"exclude_from_auth": True})
-    def test_handler() -> str:
+    async def test_handler() -> str:
         return "Hello"
 
     request: Request = Request(http_scope, receive=empty_receive)
@@ -399,7 +399,7 @@ async def test_log_request_with_invalid_json_payload(client: TestClient[Litestar
         settings.log.RESPONSE_FIELDS.append("body")
 
     @post(opt={"exclude_from_auth": True})
-    def test_handler(data: dict[str, Any]) -> dict[str, Any]:
+    async def test_handler(data: dict[str, Any]) -> dict[str, Any]:
         return data
 
     client.app.register(test_handler)

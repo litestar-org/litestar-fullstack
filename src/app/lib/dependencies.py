@@ -215,11 +215,11 @@ def create_collection_dependencies() -> dict[str, Provide]:
     dict[str, Provide]
     """
     return {
-        LIMIT_OFFSET_DEPENDENCY_KEY: Provide(provide_limit_offset_pagination),
-        UPDATED_FILTER_DEPENDENCY_KEY: Provide(provide_updated_filter),
-        CREATED_FILTER_DEPENDENCY_KEY: Provide(provide_created_filter),
-        ID_FILTER_DEPENDENCY_KEY: Provide(provide_id_filter),
-        SEARCH_FILTER_DEPENDENCY_KEY: Provide(provide_search_filter),
-        ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by),
-        FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies),
+        LIMIT_OFFSET_DEPENDENCY_KEY: Provide(provide_limit_offset_pagination, sync_to_thread=False),
+        UPDATED_FILTER_DEPENDENCY_KEY: Provide(provide_updated_filter, sync_to_thread=False),
+        CREATED_FILTER_DEPENDENCY_KEY: Provide(provide_created_filter, sync_to_thread=False),
+        ID_FILTER_DEPENDENCY_KEY: Provide(provide_id_filter, sync_to_thread=False),
+        SEARCH_FILTER_DEPENDENCY_KEY: Provide(provide_search_filter, sync_to_thread=False),
+        ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by, sync_to_thread=False),
+        FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies, sync_to_thread=False),
     }

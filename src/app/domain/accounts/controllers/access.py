@@ -30,7 +30,7 @@ class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
-    dependencies = {"user_service": Provide(provides_user_service)}
+    dependencies = {"user_service": Provide(provides_user_service, sync_to_thread=False)}
 
     @post(
         operation_id="AccountLogin",

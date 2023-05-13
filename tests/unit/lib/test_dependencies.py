@@ -90,7 +90,7 @@ def test_provided_filters(app: Litestar, client: TestClient) -> None:
         path,
         opt={"exclude_from_auth": True},
     )
-    def filtered_collection_route(
+    async def filtered_collection_route(
         created_filter: BeforeAfter,
         updated_filter: BeforeAfter,
         limit_offset: LimitOffset,
@@ -126,7 +126,7 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     ids = [uuid4() for _ in range(2)]
 
     @get(path, opt={"exclude_from_auth": True})
-    def filtered_collection_route(filters: list[FilterTypes]) -> None:
+    async def filtered_collection_route(filters: list[FilterTypes]) -> None:
         nonlocal called
         assert filters == [
             BeforeAfter(field_name="created", before=datetime.max, after=datetime.min),

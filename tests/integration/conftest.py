@@ -29,19 +29,6 @@ here = Path(__file__).parent
 
 
 @pytest.fixture(scope="session")
-def event_loop() -> "abc.Iterator[asyncio.AbstractEventLoop]":
-    """Scoped Event loop.
-
-    Need the event loop scoped to the session so that we can use it to check
-    containers are ready in session scoped containers fixture.
-    """
-    policy = asyncio.get_event_loop_policy()
-    loop = policy.new_event_loop()
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(scope="session")
 def docker_compose_file() -> Path:
     """Load docker compose file.
 

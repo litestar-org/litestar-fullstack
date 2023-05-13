@@ -13,4 +13,4 @@ class TeamMemberController(Controller):
     """Team Members."""
 
     tags = ["Teams"]
-    dependencies = {"team_members_service": Provide(provide_team_members_service)}
+    dependencies = {"team_members_service": Provide(provide_team_members_service, sync_to_thread=False)}

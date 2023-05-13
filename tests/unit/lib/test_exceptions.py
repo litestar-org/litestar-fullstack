@@ -26,7 +26,7 @@ def test_after_exception_hook_handler_called(monkeypatch: pytest.MonkeyPatch) ->
     exc = RuntimeError()
 
     @get("/error")
-    def raises() -> None:
+    async def raises() -> None:
         raise exc
 
     with create_test_client(
