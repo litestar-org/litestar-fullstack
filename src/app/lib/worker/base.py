@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import abc
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import saq
@@ -13,11 +14,26 @@ if TYPE_CHECKING:
     from signal import Signals
 
 
-__all__ = ["Queue", "Worker", "WorkerFunction", "queues", "BackgroundTaskError"]
+__all__ = ["Queue", "Worker", "WorkerFunction", "queues", "BackgroundTaskError", "CronJob"]
 
 
 WorkerFunction = abc.Callable[..., abc.Awaitable[Any]]
-Job = saq.Job
+
+
+@dataclass
+class Job(saq.Job):
+    """Job Details"""
+
+    job_name: str | None = None
+    job_description: str | None = None
+
+
+@dataclass
+class CronJob(saq.CronJob):
+    """Cron Job Details"""
+
+    job_name: str | None = None
+    job_description: str | None = None
 
 
 class BackgroundTaskError(Exception):
@@ -80,9 +96,9 @@ redis = Redis.from_url(
     health_check_interval=5,
 )
 
-queues = {
+queues: dict[str, Queue] = {
     "background-worker": Queue(redis, name="background-worker"),
-    "high-priority": Queue(redis, name="high-priority"),
+    "system": Queue(redis, name="system"),
 }
 """
 [list[Queue]][app.lib.worker.Queue] instances instantiated with a Redis config

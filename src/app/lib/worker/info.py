@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from app.lib import settings
 from app.lib.exceptions import ApplicationError
@@ -29,4 +29,4 @@ async def job(queue: Queue, job_id: str) -> Job:
     job = await queue._get_job_by_id(str(job_id))
     if not job:
         raise ApplicationError("Could not find job ID %s", job_id)
-    return job
+    return cast("Job", job)

@@ -78,8 +78,8 @@ def run_worker() -> None:
     worker_instances: list[Worker] = [
         create_worker_instance(
             queue=queue,
-            tasks=tasks,
-            scheduled_tasks=scheduled_tasks,
+            tasks=tasks.get(queue, []),
+            scheduled_tasks=scheduled_tasks.get(queue, []),
             startup=startup_logging_process,
             shutdown=shutdown_logging_process,
             after_process=after_logging_process,
