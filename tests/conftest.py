@@ -12,7 +12,7 @@ from structlog.testing import CapturingLogger
 
 if TYPE_CHECKING:
     from collections import abc
-    from collections.abc import Generator
+    from collections.abc import Generator, Iterator
 
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
@@ -144,13 +144,18 @@ def _patch_sqlalchemy_plugin(is_unit_test: bool, monkeypatch: MonkeyPatch) -> No
 
 
 @pytest.fixture()
-def _patch_worker(is_unit_test: bool, monkeypatch: MonkeyPatch) -> None:
+def _patch_worker(
+    is_unit_test: bool, monkeypatch: MonkeyPatch, event_loop: Iterator[asyncio.AbstractEventLoop]
+) -> None:
     """We don't want the worker to start for unit tests."""
     if is_unit_test:
         from app.lib import worker
 
         monkeypatch.setattr(worker.Worker, "on_app_startup", MagicMock())
         monkeypatch.setattr(worker.Worker, "stop", MagicMock())
+    from app.lib.worker import commands
+
+    monkeypatch.setattr(commands, "_create_event_loop", event_loop)
 
 
 @pytest.fixture(name="cap_logger")

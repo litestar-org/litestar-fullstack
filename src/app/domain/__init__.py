@@ -40,27 +40,19 @@ __all__ = [
     "analytics",
 ]
 tasks: dict[worker.Queue, list[worker.WorkerFunction]] = {
-    worker.queues.get("system"): [  # type: ignore[dict-item]
+    worker.queues.get("system-tasks"): [  # type: ignore[dict-item]
         worker.tasks.system_task,
         worker.tasks.system_upkeep,
     ],
-    worker.queues.get("background-worker"): [  # type: ignore[dict-item]
+    worker.queues.get("background-tasks"): [  # type: ignore[dict-item]
         worker.tasks.background_worker_task,
     ],
 }
 scheduled_tasks: dict[worker.Queue, list[worker.CronJob]] = {
-    worker.queues.get("system"): [  # type: ignore[dict-item]
-        worker.CronJob(
-            function=worker.tasks.system_upkeep,
-            unique=True,
-            cron="0 * * * *",
-        ),
+    worker.queues.get("system-tasks"): [  # type: ignore[dict-item]
+        worker.CronJob(function=worker.tasks.system_upkeep, unique=True, cron="0 * * * *", timeout=500),
     ],
-    worker.queues.get("background-worker"): [  # type: ignore[dict-item]
-        worker.CronJob(
-            function=worker.tasks.background_worker_task,
-            unique=True,
-            cron="* * * * *",
-        ),
+    worker.queues.get("background-tasks"): [  # type: ignore[dict-item]
+        worker.CronJob(function=worker.tasks.background_worker_task, unique=True, cron="* * * * *", timeout=300),
     ],
 }

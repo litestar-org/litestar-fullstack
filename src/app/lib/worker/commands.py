@@ -87,7 +87,7 @@ def run_worker() -> None:
         )
         for queue in queues.values()
     ]
-    loop = asyncio.new_event_loop()
+    loop = _create_event_loop()
     try:
         for i, worker_instance in enumerate(worker_instances):
             if i < len(worker_instances) - 1:
@@ -97,3 +97,8 @@ def run_worker() -> None:
     except KeyboardInterrupt:
         for worker_instance in worker_instances:
             loop.run_until_complete(worker_instance.stop())
+
+
+def _create_event_loop() -> asyncio.AbstractEventLoop:
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    return asyncio.new_event_loop()

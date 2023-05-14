@@ -57,7 +57,7 @@ class Queue(saq.Queue):
         """Initialize a new queue."""
         kwargs.setdefault("dump", serialization.to_json)
         kwargs.setdefault("load", serialization.from_json)
-        kwargs.setdefault("name", "background-worker")
+        kwargs.setdefault("name", "background-tasks")
         super().__init__(*args, **kwargs)
 
     def namespace(self, key: str) -> str:
@@ -97,8 +97,8 @@ redis = Redis.from_url(
 )
 
 queues: dict[str, Queue] = {
-    "background-worker": Queue(redis, name="background-worker"),
-    "system": Queue(redis, name="system"),
+    "background-tasks": Queue(redis, name="background-tasks"),
+    "system-tasks": Queue(redis, name="system-tasks"),
 }
 """
 [list[Queue]][app.lib.worker.Queue] instances instantiated with a Redis config
