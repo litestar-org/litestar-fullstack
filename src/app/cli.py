@@ -154,9 +154,8 @@ def run_server(
             ["uvicorn", settings.server.APP_LOC, *_convert_uvicorn_args(process_args)], check=True  # noqa: S603, S607
         )
     finally:
-        vite_process.kill()
         for process in multiprocessing.active_children():
-            process.kill()
+            process.terminate()
         logger.info("⏏️  Shutdown complete")
         sys.exit()
 

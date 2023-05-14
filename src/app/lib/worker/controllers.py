@@ -129,13 +129,13 @@ SITE_BODY = """
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="/static/pico.min.css.gz">
+        <link rel="stylesheet" type="text/css" href="/static/pico.min.css">
         <title>SAQ</title>
         <base href="/worker/" />
     </head>
     <body>
         <div id="app"></div>
-        <script src="/static/snabbdom.js.gz"></script>
+        <script src="/static/snabbdom.js"></script>
         <script src="/static/app.js"></script>
     </body>
 </html>

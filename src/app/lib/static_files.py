@@ -27,15 +27,14 @@ if SAQ_INSTALLED and settings.worker.WEB_ENABLED:
     todo: investigate why Litestar doesn't serve those files correctly.
     # STATIC_DIRS.append(Path(settings.BASE_DIR / "lib" / "worker" / "static"))
     """
-    STATIC_DIRS.append(Path(utils.module_to_os_path("saq") / "static"))
-
+    STATIC_DIRS.append(Path(settings.BASE_DIR / "lib" / "worker" / "static"))
 
 config = [
     StaticFilesConfig(
         directories=STATIC_DIRS,  # type: ignore[arg-type]
         path=settings.app.STATIC_URL,
         name="web",
-        html_mode=True,
+        html_mode=False,
         opt={"exclude_from_auth": True},
     ),
 ]

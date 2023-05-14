@@ -1321,7 +1321,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.0.0alpha6"
+version = "2.0.0alpha7"
 description = "Performant, light and flexible ASGI API Framework"
 category = "main"
 optional = false
@@ -1367,7 +1367,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "064c234d955ef0ca9b061debb90039d087958d95"
+resolved_reference = "25eecfa48b35230e41026e75d59bd6615e6c15b5"
 
 [[package]]
 name = "mako"
