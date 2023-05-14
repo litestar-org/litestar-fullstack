@@ -74,7 +74,7 @@ def run_worker() -> None:
         atexit.unregister(_exit_function)
     logger = log.get_logger()
     logger.info("Starting working pool")
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    loop = _create_event_loop()
     worker_instances: list[Worker] = [
         create_worker_instance(
             queue=queue,
@@ -87,7 +87,6 @@ def run_worker() -> None:
         )
         for queue in queues.values()
     ]
-    loop = _create_event_loop()
     try:
         for i, worker_instance in enumerate(worker_instances):
             if i < len(worker_instances) - 1:
