@@ -72,6 +72,6 @@ class SAQPlugin(InitPluginProtocol, _slots_base.SlotsBase):
                 self._config.queues_dependency_key: Provide(dependency=dependencies.provide_queues),
             }
         )
-        app_config.on_shutdown.append(self._config.on_shutdown)
+        app_config.on_shutdown.append(self._config.on_shutdown)  # type: ignore[arg-type]
         app_config.signature_namespace.update(self._config.signature_namespace)
         return app_config

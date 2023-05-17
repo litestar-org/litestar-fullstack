@@ -3,8 +3,6 @@ from pathlib import Path
 
 from litestar.static_files.config import StaticFilesConfig
 
-from app import utils
-
 from . import settings
 
 SAQ_INSTALLED = False

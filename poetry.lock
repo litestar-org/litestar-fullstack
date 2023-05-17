@@ -17,14 +17,14 @@ setuptools = "*"
 
 [[package]]
 name = "alembic"
-version = "1.10.4"
+version = "1.11.0"
 description = "A database migration tool for SQLAlchemy."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "alembic-1.10.4-py3-none-any.whl", hash = "sha256:43942c3d4bf2620c466b91c0f4fca136fe51ae972394a0cc8b90810d664e4f5c"},
-    {file = "alembic-1.10.4.tar.gz", hash = "sha256:295b54bbb92c4008ab6a7dcd1e227e668416d6f84b98b3c4446a2bc6214a556b"},
+    {file = "alembic-1.11.0-py3-none-any.whl", hash = "sha256:f0e74af5a6ade86b72770790188aaf64122c9cba64efd1d7ff3323ac3fdb75e0"},
+    {file = "alembic-1.11.0.tar.gz", hash = "sha256:d8bf706124e96e526889ac9c87a0d50debd9ef325ef32ae5391cf0315bdab4e1"},
 ]
 
 [package.dependencies]
@@ -810,14 +810,14 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "18.7.0"
+version = "18.9.0"
 description = "Faker is a Python package that generates fake data for you."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.7.0-py3-none-any.whl", hash = "sha256:38dbc3b80e655d7301e190426ab30f04b6b7f6ca4764c5dd02772ffde0fa6dcd"},
-    {file = "Faker-18.7.0.tar.gz", hash = "sha256:f02c6d3fdb5bc781f80b440cf2bdec336ed47ecfb8d620b20c3d4188ed051831"},
+    {file = "Faker-18.9.0-py3-none-any.whl", hash = "sha256:defe9ed618a67ebf0f3eb1895e198c2355a7128a09087a6dce342ef2253263ea"},
+    {file = "Faker-18.9.0.tar.gz", hash = "sha256:80a5ea1464556c06b98bf47ea3adc7f33811a1182518d847860b1874080bd3c9"},
 ]
 
 [package.dependencies]
@@ -959,14 +959,14 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "griffe"
-version = "0.27.5"
+version = "0.28.0"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "griffe-0.27.5-py3-none-any.whl", hash = "sha256:15b48fc3cebfc1c1a1a2f6e8177f6644a4a54517322e08e224fdf671454b34d7"},
-    {file = "griffe-0.27.5.tar.gz", hash = "sha256:96fbc7a264bdb32b4da227bed6a16f2509e028a12d7471dbb48c2785bb01817f"},
+    {file = "griffe-0.28.0-py3-none-any.whl", hash = "sha256:42823aafa666e38bc14d6ab3c955e5eccadd5ada61a8b780f580c8e763a34327"},
+    {file = "griffe-0.28.0.tar.gz", hash = "sha256:f2253359bdf84427a46c04c28d59680195863f94cc9453af2a7728cb3d92b7d6"},
 ]
 
 [package.dependencies]
@@ -1367,7 +1367,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "25eecfa48b35230e41026e75d59bd6615e6c15b5"
+resolved_reference = "e1b07f6ed7a273efc0bd1d38eeb1b7fc5a1fc86f"
 
 [[package]]
 name = "mako"
@@ -1571,14 +1571,14 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.1.12"
+version = "9.1.13"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mkdocs_material-9.1.12-py3-none-any.whl", hash = "sha256:68c57d95d10104179c8c3ce9a88ee9d2322a5145b3d0f1f38ff686253fb5ec98"},
-    {file = "mkdocs_material-9.1.12.tar.gz", hash = "sha256:d4ebe9b5031ce63a265c19fb5eab4d27ea4edadb05de206372e831b2b7570fb5"},
+    {file = "mkdocs_material-9.1.13-py3-none-any.whl", hash = "sha256:5705cf8cb6c47c747606bd914bb6c01993ff141295cd259475559a1f09f07d5d"},
+    {file = "mkdocs_material-9.1.13.tar.gz", hash = "sha256:9102e7604d73e507021847601b0a8b4fe9035422788390183f464fa3b30dd508"},
 ]
 
 [package.dependencies]
@@ -2091,14 +2091,14 @@ testutils = ["gitpython (>3)"]
 
 [[package]]
 name = "pylint-plugin-utils"
-version = "0.7"
+version = "0.8.1"
 description = "Utilities and helpers for writing Pylint plugins"
 category = "dev"
 optional = false
-python-versions = ">=3.6.2"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "pylint-plugin-utils-0.7.tar.gz", hash = "sha256:ce48bc0516ae9415dd5c752c940dfe601b18fe0f48aa249f2386adfa95a004dd"},
-    {file = "pylint_plugin_utils-0.7-py3-none-any.whl", hash = "sha256:b3d43e85ab74c4f48bb46ae4ce771e39c3a20f8b3d56982ab17aa73b4f98d535"},
+    {file = "pylint_plugin_utils-0.8.1-py3-none-any.whl", hash = "sha256:8d753118eb4189b0f5d07483ab6bbc5770dcd52799ceb6456b0e96309218c80c"},
+    {file = "pylint_plugin_utils-0.8.1.tar.gz", hash = "sha256:a595517d238d2ebe586fd867325cc656d4fac8d22b99421ff4cfb51b8c823a93"},
 ]
 
 [package.dependencies]
@@ -2122,14 +2122,14 @@ pylint-plugin-utils = "*"
 
 [[package]]
 name = "pymdown-extensions"
-version = "9.11"
+version = "10.0.1"
 description = "Extension pack for Python Markdown."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pymdown_extensions-9.11-py3-none-any.whl", hash = "sha256:a499191d8d869f30339de86fcf072a787e86c42b6f16f280f5c2cf174182b7f3"},
-    {file = "pymdown_extensions-9.11.tar.gz", hash = "sha256:f7e86c1d3981f23d9dc43294488ecb54abadd05b0be4bf8f0e15efc90f7853ff"},
+    {file = "pymdown_extensions-10.0.1-py3-none-any.whl", hash = "sha256:ae66d84013c5d027ce055693e09a4628b67e9dec5bce05727e45b0918e36f274"},
+    {file = "pymdown_extensions-10.0.1.tar.gz", hash = "sha256:b44e1093a43b8a975eae17b03c3a77aad4681b3b56fce60ce746dbef1944c8cb"},
 ]
 
 [package.dependencies]
@@ -2590,19 +2590,19 @@ files = [
 
 [[package]]
 name = "saq"
-version = "0.9.1"
+version = "0.9.4"
 description = "Distributed Python job queue with asyncio and redis"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "saq-0.9.1-py3-none-any.whl", hash = "sha256:f8f2bff790de6b128a767f5a23cbaa36014c164128beae2910e6e3d5d1c3689c"},
-    {file = "saq-0.9.1.tar.gz", hash = "sha256:071348f2132d997f7bbbcfe0628554936a7080b4ae284c0220f9e2e3c945d84b"},
+    {file = "saq-0.9.4-py3-none-any.whl", hash = "sha256:48c6c636faad266b5764c38893284ffadf62285d112930112cc38732a55cb79b"},
+    {file = "saq-0.9.4.tar.gz", hash = "sha256:b542fc2464b54c62f1de2ad21b382dea07a02961e39dda15a2ebfe599f05a61b"},
 ]
 
 [package.dependencies]
 croniter = ">=0.3.18"
-redis = ">=4.2.0"
+redis = ">=4.2,<5.0"
 
 [package.extras]
 dev = ["black", "mypy", "pylint", "types-croniter", "types-redis", "types-setuptools"]
