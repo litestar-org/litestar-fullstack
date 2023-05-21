@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import contextlib
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
@@ -14,22 +13,19 @@ from litestar.utils import (
     delete_litestar_scope_state,
     get_litestar_scope_state,
 )
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
-from app.lib.exceptions import ApplicationError
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from aiosql.queries import Queries
     from litestar.datastructures.state import State
     from litestar.types import Message, Scope
     from sqlalchemy.ext.asyncio import AsyncSession
-__all__ = ["before_send_handler", "session", "SQLAlchemyAiosqlQueryManager"]
-
-SQLAlchemyAiosqlQueryManagerT = TypeVar("SQLAlchemyAiosqlQueryManagerT", bound="SQLAlchemyAiosqlQueryManager")
+__all__ = ["before_send_handler", "session"]
 
 
 async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
@@ -76,6 +72,47 @@ async_session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(eng
 
 See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
 """
+
+
+@event.listens_for(engine.sync_engine, "connect")
+def _sqla_on_connect(dbapi_connection: Any, _: Any) -> Any:  # pragma: no cover
+    """Using msgspec for serialization of the json column values means that the
+    output is binary, not `str` like `json.dumps` would output.
+    SQLAlchemy expects that the json serializer returns `str` and calls `.encode()` on the value to
+    turn it to bytes before writing to the JSONB column. I'd need to either wrap `serialization.to_json` to
+    return a `str` so that SQLAlchemy could then convert it to binary, or do the following, which
+    changes the behaviour of the dialect to expect a binary value from the serializer.
+    See Also https://github.com/sqlalchemy/sqlalchemy/blob/14bfbadfdf9260a1c40f63b31641b27fe9de12a0/lib/sqlalchemy/dialects/postgresql/asyncpg.py#L934  pylint: disable=line-too-long
+    """
+
+    def encoder(bin_value: bytes) -> bytes:
+        return b"\x01" + serialization.to_json(bin_value)
+
+    def decoder(bin_value: bytes) -> Any:
+        # the byte is the \x01 prefix for jsonb used by PostgreSQL.
+        # asyncpg returns it when format='binary'
+        return serialization.from_json(bin_value[1:])
+
+    dbapi_connection.await_(
+        dbapi_connection.driver_connection.set_type_codec(
+            "jsonb",
+            encoder=encoder,
+            decoder=decoder,
+            schema="pg_catalog",
+            format="binary",
+        )
+    )
+    dbapi_connection.await_(
+        dbapi_connection.driver_connection.set_type_codec(
+            "json",
+            encoder=encoder,
+            decoder=decoder,
+            schema="pg_catalog",
+            format="binary",
+        )
+    )
+
+
 config = SQLAlchemyAsyncConfig(
     session_dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,
     engine_instance=engine,
@@ -96,80 +133,3 @@ async def session() -> AsyncIterator[AsyncSession]:
     """
     async with async_session_factory() as session:
         yield session
-
-
-class SQLAlchemyAiosqlQueryManager:
-    queries: Queries
-    connection: Any
-
-    def __init__(self, connection: Any, queries: Queries) -> None:
-        self.connection = connection
-        self.queries = queries
-
-    @classmethod
-    @contextlib.asynccontextmanager
-    async def from_session(
-        cls: type[SQLAlchemyAiosqlQueryManagerT],
-        queries: Queries,
-        session: AsyncSession | None = None,
-    ) -> AsyncIterator[SQLAlchemyAiosqlQueryManagerT]:
-        """Context manager that returns instance of query manager object.
-
-        Returns:
-            The service object instance.
-        """
-        if session:
-            yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
-        else:
-            async with async_session_factory() as session:
-                yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
-
-    @classmethod
-    @contextlib.asynccontextmanager
-    async def from_connection(
-        cls: type[SQLAlchemyAiosqlQueryManagerT],
-        queries: Queries,
-        connection: Any,
-    ) -> AsyncIterator[SQLAlchemyAiosqlQueryManagerT]:
-        """Context manager that returns instance of query manager object.
-
-        Returns:
-            The service object instance.
-        """
-        try:
-            yield cls(connection=connection, queries=queries)
-        finally:
-            ...
-
-    async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
-        data = await self.fn(method)(conn=self.connection, **binds)
-        return [dict(row) for row in data]
-
-    async def select_one(self, method: str, **binds: Any) -> dict[str, Any]:
-        data = await self.fn(method)(conn=self.connection, **binds)
-        return dict(data)
-
-    async def execute(self, method: str, **binds: Any) -> Any:
-        return await self.fn(method)(conn=self.connection, **binds)
-
-    def fn(self, method: str) -> Any:
-        try:
-            return getattr(self.queries, method)
-        except AttributeError as exc:
-            raise NotImplementedError("%s was not found", method) from exc
-
-    @property
-    def available_queries(self) -> list[str]:
-        """Get available queries.
-
-        Returns a sorted list of available functions found in aiosql
-        """
-        return sorted([q for q in self.queries.available_queries if not q.endswith("_cursor")])
-
-    @staticmethod
-    async def get_connection_from_session(session: AsyncSession) -> Any:
-        db_connection = await session.connection()
-        raw_connection = await db_connection.get_raw_connection()
-        if raw_connection.driver_connection:
-            return raw_connection.driver_connection
-        raise ApplicationError("Unable to fetch raw connection from session.")

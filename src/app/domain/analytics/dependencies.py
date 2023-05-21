@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import aiosql
 
-from app.lib.db.base import SQLAlchemyAiosqlQueryManager
+from app.lib.aiosql import AiosqlQueryManager
 from app.lib.settings import BASE_DIR
 
 __all__ = ["provides_analytic_queries"]
@@ -23,7 +23,7 @@ analytics_queries = aiosql.from_path(Path(BASE_DIR / "domain" / "analytics" / "s
 
 async def provides_analytic_queries(
     db_session: AsyncSession,
-) -> AsyncGenerator[SQLAlchemyAiosqlQueryManager, None]:
+) -> AsyncGenerator[AiosqlQueryManager, None]:
     """Construct repository and service objects for the request."""
-    async with SQLAlchemyAiosqlQueryManager.from_session(analytics_queries, session=db_session) as query_manager:
+    async with AiosqlQueryManager.from_session(analytics_queries, session=db_session) as query_manager:
         yield query_manager

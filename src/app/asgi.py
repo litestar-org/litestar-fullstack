@@ -13,28 +13,16 @@ __all__ = ["create_app"]
 
 def create_app() -> Litestar:
     """Create ASGI application."""
-    from datetime import datetime
-    from uuid import UUID
 
     from asyncpg.pgproto import pgproto
     from litestar import Litestar
-    from litestar.connection import Request
-    from litestar.contrib.jwt import OAuth2Login
     from litestar.di import Provide
-    from litestar.pagination import OffsetPagination
     from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
-    from pydantic import UUID4, BaseModel, EmailStr, SecretStr
-    from saq.types import QueueInfo
-    from sqlalchemy import PoolProxiedConnection
-    from sqlalchemy.engine.interfaces import DBAPIConnection
-    from sqlalchemy.ext.asyncio import AsyncSession
+    from pydantic import BaseModel, SecretStr
 
     from app import domain
-    from app.domain.accounts.models import User
-    from app.domain.accounts.services import UserService
     from app.domain.security import provide_user
-    from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
     from app.domain.web.vite import template_config
     from app.lib import (
         cache,
@@ -46,16 +34,10 @@ def create_app() -> Litestar:
         repository,
         settings,
         static_files,
-        worker,
     )
-    from app.lib.db.base import SQLAlchemyAiosqlQueryManager
     from app.lib.dependencies import (
-        FilterTypes,
         create_collection_dependencies,
     )
-    from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
-    from app.lib.service.generic import Service
-    from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -81,32 +63,7 @@ def create_app() -> Litestar:
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
         static_files_config=static_files.config,
         template_config=template_config,  # type: ignore[arg-type]
-        signature_namespace={
-            "AsyncSession": AsyncSession,
-            "Service": Service,
-            "FilterTypes": FilterTypes,
-            "UUID4": UUID4,
-            "UUID": UUID,
-            "EmailStr": EmailStr,
-            "datetime": datetime,
-            "User": User,
-            "Request": Request,
-            "OAuth2Login": OAuth2Login,
-            "OffsetPagination": OffsetPagination,
-            "UserService": UserService,
-            "TeamService": TeamService,
-            "TeamInvitationService": TeamInvitationService,
-            "TeamMemberService": TeamMemberService,
-            "SQLAlchemyAsyncRepositoryService": SQLAlchemyAsyncRepositoryService,
-            "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
-            "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
-            "PoolProxiedConnection": PoolProxiedConnection,
-            "SQLAlchemyAiosqlQueryManager": SQLAlchemyAiosqlQueryManager,
-            "DBAPIConnection": DBAPIConnection,
-            "Queue": worker.Queue,
-            "QueueInfo": QueueInfo,
-            "Job": worker.Job,
-        },
+        signature_namespace=domain.signature_namespace,
     )
 
 

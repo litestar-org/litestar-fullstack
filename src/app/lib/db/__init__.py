@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from app.lib.db import orm, utils
 from app.lib.db.base import (
-    SQLAlchemyAiosqlQueryManager,
     async_session_factory,
     before_send_handler,
     config,
@@ -21,5 +20,4 @@ __all__ = [
     "session",
     "async_session_factory",
     "orm",
-    "SQLAlchemyAiosqlQueryManager",
 ]

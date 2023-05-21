@@ -66,5 +66,5 @@ def convert_datetime_to_gmt(dt: datetime.datetime) -> str:
 
 
 def convert_date_to_iso(dt: datetime.date) -> str:
-    """Handle datetime serialization for nested timestamps."""
+    """Handle date serialization for nested dates."""
     return dt.isoformat()
