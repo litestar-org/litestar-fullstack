@@ -49,7 +49,8 @@ __all__ = [
     "security",
     "routes",
     "openapi",
-    "analytics","plugins",
+    "analytics",
+    "plugins",
     "signature_namespace",
 ]
 tasks: dict[worker.Queue, list[worker.WorkerFunction]] = {
