@@ -61,7 +61,7 @@ def from_msgpack(value: bytes) -> Any:
 def convert_datetime_to_gmt(dt: datetime.datetime) -> str:
     """Handle datetime serialization for nested timestamps."""
     if not dt.tzinfo:
-        dt = dt.replace(tzinfo=datetime.UTC)
+        dt = dt.replace(tzinfo=datetime.UTC)  # type: ignore[attr-defined]
     return dt.isoformat().replace("+00:00", "Z")
 
 
