@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - uses: pre-commit/action@v3.0.0
   test:
     needs: validate
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.11"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -42,17 +42,14 @@ jobs:
         run: poetry install --no-interaction --no-root --extras="brotli"
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
-      - name: Test
-        run: poetry run pytest
-        if: matrix.python-version != '3.10'
       - name: Test with Coverage
         run: poetry run pytest --cov=. --cov-report=xml
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
       - uses: actions/upload-artifact@v3
         with:
           name: coverage-xml
           path: coverage.xml
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
   sonar:
     needs: test
     if: github.event.pull_request.head.repo.fork == false
