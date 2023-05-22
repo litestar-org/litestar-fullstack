@@ -57,7 +57,7 @@ def create_app() -> Litestar:
         openapi_config=domain.openapi.config,
         type_encoders={**DEFAULT_TYPE_ENCODERS, pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
         route_handlers=[*domain.routes],
-        plugins=[db.plugin],
+        plugins=[db.plugin, domain.plugins.aiosql],
         on_shutdown=[cache.redis.close],
         on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],

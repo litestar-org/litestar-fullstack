@@ -959,14 +959,14 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "griffe"
-version = "0.28.0"
+version = "0.28.1"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "griffe-0.28.0-py3-none-any.whl", hash = "sha256:42823aafa666e38bc14d6ab3c955e5eccadd5ada61a8b780f580c8e763a34327"},
-    {file = "griffe-0.28.0.tar.gz", hash = "sha256:f2253359bdf84427a46c04c28d59680195863f94cc9453af2a7728cb3d92b7d6"},
+    {file = "griffe-0.28.1-py3-none-any.whl", hash = "sha256:a39fc547c964fcf2c0569834efce4978b7c528ef5a67eb9bdf6d0388ebced5a9"},
+    {file = "griffe-0.28.1.tar.gz", hash = "sha256:2990f97f1e94dcfc444756c3f1350ef78465f6238594a292b0c426ab62c00479"},
 ]
 
 [package.dependencies]
@@ -1370,7 +1370,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "e277a66f1f2f0902c4ffd8eeb7b73c9c7b036b1d"
+resolved_reference = "efbded3d9967c628b4477180d3e97d5add1bfd00"
 
 [[package]]
 name = "mako"
@@ -2491,14 +2491,14 @@ files = [
 
 [[package]]
 name = "requests"
-version = "2.30.0"
+version = "2.31.0"
 description = "Python HTTP for Humans."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "requests-2.30.0-py3-none-any.whl", hash = "sha256:10e94cc4f3121ee6da529d358cdaeaff2f1c409cd377dbc72b825852f2f7e294"},
-    {file = "requests-2.30.0.tar.gz", hash = "sha256:239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4"},
+    {file = "requests-2.31.0-py3-none-any.whl", hash = "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"},
+    {file = "requests-2.31.0.tar.gz", hash = "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"},
 ]
 
 [package.dependencies]
@@ -2872,14 +2872,14 @@ types-pyasn1 = "*"
 
 [[package]]
 name = "types-pyyaml"
-version = "6.0.12.9"
+version = "6.0.12.10"
 description = "Typing stubs for PyYAML"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-PyYAML-6.0.12.9.tar.gz", hash = "sha256:c51b1bd6d99ddf0aa2884a7a328810ebf70a4262c292195d3f4f9a0005f9eeb6"},
-    {file = "types_PyYAML-6.0.12.9-py3-none-any.whl", hash = "sha256:5aed5aa66bd2d2e158f75dda22b059570ede988559f030cf294871d3b647e3e8"},
+    {file = "types-PyYAML-6.0.12.10.tar.gz", hash = "sha256:ebab3d0700b946553724ae6ca636ea932c1b0868701d4af121630e78d695fc97"},
+    {file = "types_PyYAML-6.0.12.10-py3-none-any.whl", hash = "sha256:662fa444963eff9b68120d70cda1af5a5f2aa57900003c2006d7626450eaae5f"},
 ]
 
 [[package]]

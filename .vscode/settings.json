@@ -74,5 +74,6 @@
   "ruff.fixAll": true,
   "[toml]": {
     "editor.defaultFormatter": "be5invis.toml"
-  }
+  },
+  "ansible.python.interpreterPath": "${workspaceFolder}/.venv/bin/python"
 }

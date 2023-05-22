@@ -9,18 +9,13 @@ from litestar.contrib.repository.abc import FilterTypes
 from litestar.pagination import OffsetPagination
 from pydantic import UUID4, EmailStr
 from saq.types import QueueInfo
-from sqlalchemy import PoolProxiedConnection
-from sqlalchemy.engine.interfaces import DBAPIConnection
 
 from app.domain.accounts.models import User
 from app.lib import settings, worker
-from app.lib.aiosql.service import AiosqlQueryManager
-from app.lib.repository import SQLAlchemyAsyncSlugRepository
 from app.lib.service.generic import Service
-from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
 from app.lib.worker.controllers import WorkerController
 
-from . import accounts, analytics, openapi, security, system, teams, urls, web
+from . import accounts, analytics, openapi, plugins, security, system, teams, urls, web
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -54,7 +49,7 @@ __all__ = [
     "security",
     "routes",
     "openapi",
-    "analytics",
+    "analytics","plugins",
     "signature_namespace",
 ]
 tasks: dict[worker.Queue, list[worker.WorkerFunction]] = {
@@ -89,11 +84,6 @@ signature_namespace: Mapping[str, Any] = {
     "TeamService": teams.services.TeamService,
     "TeamInvitationService": teams.services.TeamInvitationService,
     "TeamMemberService": teams.services.TeamMemberService,
-    "SQLAlchemyAsyncRepositoryService": SQLAlchemyAsyncRepositoryService,
-    "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
-    "PoolProxiedConnection": PoolProxiedConnection,
-    "AiosqlQueryManager": AiosqlQueryManager,
-    "DBAPIConnection": DBAPIConnection,
     "Queue": worker.Queue,
     "QueueInfo": QueueInfo,
     "Job": worker.Job,
