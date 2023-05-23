@@ -16,6 +16,12 @@ __all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository", "on_app
 
 def on_app_init(app_config: "AppConfig") -> "AppConfig":
     """Executes on application init.  Injects signature namespaces."""
+    app_config.signature_namespace.update(
+        {
+            "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
+            "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
+        }
+    )
     return _on_app_init(app_config)
 
 
