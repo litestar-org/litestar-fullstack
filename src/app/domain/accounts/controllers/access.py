@@ -30,7 +30,7 @@ class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
-    dependencies = {"user_service": Provide(provides_user_service, sync_to_thread=False)}
+    dependencies = {"users_service": Provide(provides_user_service)}
 
     @post(
         operation_id="AccountLogin",
@@ -42,11 +42,11 @@ class AccessController(Controller):
     )
     async def login(
         self,
-        user_service: UserService,
+        users_service: UserService,
         data: schemas.UserLogin = Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED),
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        user = await user_service.authenticate(data.username, data.password)
+        user = await users_service.authenticate(data.username, data.password)
         return security.auth.login(user.email)
 
     @post(
@@ -57,11 +57,11 @@ class AccessController(Controller):
         summary="Create User",
         description="Register a new account.",
     )
-    async def signup(self, user_service: UserService, data: schemas.UserRegister) -> schemas.User:
+    async def signup(self, users_service: UserService, data: schemas.UserRegister) -> schemas.User:
         """User Signup."""
         obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
-        user = await user_service.create(obj)
-        return schemas.User.from_orm(user)
+        user = await users_service.create(obj)
+        return users_service.to_dto(schemas.User, user)
 
     @get(
         operation_id="AccountProfile",
@@ -71,6 +71,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, current_user: User) -> schemas.User:
+    async def profile(self, current_user: User, users_service: UserService) -> schemas.User:
         """User Profile."""
-        return schemas.User.from_orm(current_user)
+        return users_service.to_dto(schemas.User, current_user)

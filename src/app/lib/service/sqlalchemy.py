@@ -7,40 +7,42 @@ should be a SQLAlchemy model.
 from __future__ import annotations
 
 import contextlib
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar
+from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, cast, overload
 
-from litestar.contrib.repository.exceptions import RepositoryError
+from litestar.contrib.repository.abc import FilterTypes
 from litestar.contrib.repository.filters import (
     LimitOffset,
 )
-from litestar.contrib.sqlalchemy.repository import ModelT
-from pydantic import BaseModel
+from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
+from litestar.pagination import OffsetPagination
+from pydantic import parse_obj_as
 
 from app.lib.db import async_session_factory
 from app.lib.db.orm import model_from_dict
-from app.lib.service.generic import Service
+
+from .generic import Service
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator, Sequence
+    from collections.abc import AsyncIterator
 
-    from litestar.contrib.repository.abc import FilterTypes
+    from pydantic import BaseModel
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
-
-    from app.lib.repository import SQLAlchemyAsyncRepository
-
 
 __all__ = ["SQLAlchemyAsyncRepositoryService"]
 
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictT: TypeAlias = dict[str, Any] | ModelT
-PydanticDTOT = TypeVar("PydanticDTOT", bound=BaseModel)
+ModelDictListT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]]
+ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")
+FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
 
 
 class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
     """Service object that operates on a repository object."""
 
-    __item_id_ = "app.lib.service.sqlalchemy.SQLAlchemyAsyncRepositoryService"
+    __item_id_ = "dma.lib.service.sqlalchemy.SQLAlchemyAsyncRepositoryService"
     repository_type: type[SQLAlchemyAsyncRepository[ModelT]]
     match_fields: list[str] | None = None
 
@@ -243,17 +245,49 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         return await self.repository.list_and_count(*filters, **kwargs)
 
-    async def list(self, *filters: FilterTypes, **kwargs: Any) -> Sequence[ModelT]:
-        """Wrap repository scalars operation.
+    @overload
+    def to_dto(self, dto: type[ModelDTOT], data: ModelT) -> ModelDTOT:
+        ...
+
+    @overload
+    def to_dto(
+        self,
+        dto: type[ModelDTOT],
+        data: Sequence[ModelT],
+        total: int | None = None,
+        *filters: FilterTypes,
+    ) -> OffsetPagination[ModelDTOT]:
+        ...
+
+    def to_dto(
+        self,
+        dto: type[ModelDTOT],
+        data: ModelT | Sequence[ModelT],
+        total: int | None = None,
+        *filters: FilterTypes,
+    ) -> ModelDTOT | OffsetPagination[ModelDTOT]:
+        """Convert the object to a response schema.
 
         Args:
+            dto: Collection route filters.
+            data: The return from one of the service calls.
+            total: the total number of rows in the data
             *filters: Collection route filters.
-            **kwargs: Keyword arguments for attribute based filtering.
 
         Returns:
             The list of instances retrieved from the repository.
         """
-        return await self.repository.list(*filters, **kwargs)
+        if not isinstance(data, Sequence | list):
+            return parse_obj_as(dto, data)
+        limit_offset = self.find_filter(LimitOffset, *filters)
+        total = total if total else len(data)
+        limit_offset = limit_offset if limit_offset is not None else LimitOffset(limit=len(data), offset=0)
+        return OffsetPagination[dto](  # type: ignore[valid-type]
+            items=parse_obj_as(list[dto], data),  # type: ignore[valid-type]
+            limit=limit_offset.limit,
+            offset=limit_offset.offset,
+            total=total,
+        )
 
     @classmethod
     @contextlib.asynccontextmanager
@@ -279,33 +313,29 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
                 )
 
     @staticmethod
-    def get_filter(match: type[FilterTypes], *filters: FilterTypes) -> FilterTypes:
-        """Get the first matching item from ``filters`` that is the type of ``match``
+    def find_filter(filter_type: type[FilterTypeT], *filters: FilterTypes) -> FilterTypeT | None:
+        """Get the filter specified by filter type from the filters.
 
         Args:
-            match: filter type to find in filters
+            filter_type: The type of filter to find.
             *filters: filter types to apply to the query
 
         Returns:
-            The LimitOffset instance.
+            The match filter instance or None
         """
         for filter_ in filters:
-            if isinstance(filter_, match):
-                return filter_
+            if isinstance(filter_, filter_type):
+                return cast("FilterTypeT | None", filter_)
+        return None
 
-        raise RepositoryError(f"Unexpected filter: {filter_}")
-
-    def _limit_offset_from_filters(self, *filters: FilterTypes) -> LimitOffset:
-        """Get the LimitOffset filter from filters.
+    async def list(self, *filters: FilterTypes, **kwargs: Any) -> Sequence[ModelT]:
+        """Wrap repository scalars operation.
 
         Args:
-            *filters: filter types to apply to the query
+            *filters: Collection route filters.
+            **kwargs: Keyword arguments for attribute based filtering.
 
         Returns:
-            The LimitOffset instance.
+            The list of instances retrieved from the repository.
         """
-        for filter_ in filters:
-            if isinstance(filter_, LimitOffset):
-                return filter_
-
-        raise RepositoryError(f"Unexpected filter: {filter_}")
+        return await self.repository.list(*filters, **kwargs)

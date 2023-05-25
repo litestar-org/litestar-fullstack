@@ -19,7 +19,7 @@ __all__ = ["WorkerController"]
 class WorkerController(Controller):
     tags = ["Worker"]
     dependencies = {
-        "queues": Provide(dependencies.provide_queues, sync_to_thread=False),
+        "queues": Provide(dependencies.provide_queues),
     }
 
     @get(

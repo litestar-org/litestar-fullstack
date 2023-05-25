@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.pagination import OffsetPagination
 from litestar.params import Dependency, Parameter
-from pydantic import parse_obj_as
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
@@ -17,6 +15,8 @@ from app.domain.teams.guards import requires_team_admin, requires_team_membershi
 
 if TYPE_CHECKING:
     from uuid import UUID
+
+    from litestar.pagination import OffsetPagination
 
     from app.domain.accounts.models import User
     from app.domain.teams.services import TeamService
@@ -29,7 +29,7 @@ class TeamController(Controller):
     """Teams."""
 
     tags = ["Teams"]
-    dependencies = {"teams_service": Provide(provides_teams_service, sync_to_thread=False)}
+    dependencies = {"teams_service": Provide(provides_teams_service)}
     guards = [requires_active_user]
 
     @get(
@@ -49,13 +49,7 @@ class TeamController(Controller):
             results, total = await teams_service.list_and_count(*filters)
         else:
             results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
-        limit_offset = teams_service._limit_offset_from_filters(*filters)
-        return OffsetPagination[schemas.Team](
-            items=parse_obj_as(list[schemas.Team], results),
-            total=total,
-            limit=limit_offset.limit,
-            offset=limit_offset.offset,
-        )
+        return teams_service.to_dto(schemas.Team, results, total, *filters)
 
     @post(
         operation_id="CreateTeam",
@@ -73,7 +67,7 @@ class TeamController(Controller):
         obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
         obj.update({"owner_id": current_user.id})
         db_obj = await teams_service.create(obj)
-        return schemas.Team.from_orm(db_obj)
+        return teams_service.to_dto(schemas.Team, db_obj)
 
     @get(
         operation_id="GetTeam",
@@ -92,7 +86,7 @@ class TeamController(Controller):
     ) -> schemas.Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
-        return schemas.Team.from_orm(db_obj)
+        return teams_service.to_dto(schemas.Team, db_obj)
 
     @patch(
         operation_id="UpdateTeam",
@@ -114,7 +108,7 @@ class TeamController(Controller):
             team_id,
             data.dict(exclude_unset=True, by_alias=False, exclude_none=True),
         )
-        return schemas.Team.from_orm(db_obj)
+        return teams_service.to_dto(schemas.Team, db_obj)
 
     @delete(
         operation_id="DeleteTeam",

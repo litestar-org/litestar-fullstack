@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.pagination import OffsetPagination
 from litestar.params import Dependency, Parameter
-from pydantic import parse_obj_as
 
 from app.domain import urls
 from app.domain.accounts import schemas
@@ -22,6 +20,7 @@ if TYPE_CHECKING:
     from uuid import UUID
 
     from litestar.contrib.repository.abc import FilterTypes
+    from litestar.pagination import OffsetPagination
 
     from app.domain.accounts.services import UserService
 
@@ -34,7 +33,7 @@ class AccountController(Controller):
 
     tags = ["User Accounts"]
     guards = [requires_superuser]
-    dependencies = {"users_service": Provide(provides_user_service, sync_to_thread=False)}
+    dependencies = {"users_service": Provide(provides_user_service)}
 
     @get(
         operation_id="ListUsers",
@@ -49,13 +48,7 @@ class AccountController(Controller):
     ) -> OffsetPagination[schemas.User]:
         """List users."""
         results, total = await users_service.list_and_count(*filters)
-        limit_offset = users_service._limit_offset_from_filters(*filters)
-        return OffsetPagination[schemas.User](
-            items=parse_obj_as(list[schemas.User], results),
-            total=total,
-            limit=limit_offset.limit,
-            offset=limit_offset.offset,
-        )
+        return users_service.to_dto(schemas.User, results, total, *filters)
 
     @post(
         operation_id="CreateUser",
@@ -72,7 +65,7 @@ class AccountController(Controller):
     ) -> schemas.User:
         """Create a new user."""
         db_obj = await users_service.create(data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
-        return schemas.User.from_orm(db_obj)
+        return users_service.to_dto(schemas.User, db_obj)
 
     @get(
         operation_id="GetUser",
@@ -90,7 +83,7 @@ class AccountController(Controller):
     ) -> schemas.User:
         """Get a user."""
         db_obj = await users_service.get(user_id)
-        return schemas.User.from_orm(db_obj)
+        return users_service.to_dto(schemas.User, db_obj)
 
     @patch(operation_id="UpdateUser", name="users:update", path=urls.ACCOUNT_UPDATE)
     async def update_user(
@@ -104,7 +97,7 @@ class AccountController(Controller):
     ) -> schemas.User:
         """Create a new user."""
         db_obj = await users_service.update(user_id, data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
-        return schemas.User.from_orm(db_obj)
+        return users_service.to_dto(schemas.User, db_obj)
 
     @delete(
         operation_id="DeleteUser",
