@@ -22,13 +22,12 @@ from app.lib import constants, serialization, settings
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from litestar.datastructures.state import State
     from litestar.types import Message, Scope
     from sqlalchemy.ext.asyncio import AsyncSession
 __all__ = ["before_send_handler", "session"]
 
 
-async def before_send_handler(message: Message, _: State, scope: Scope) -> None:
+async def before_send_handler(message: Message, scope: Scope) -> None:
     """Handle database connection before sending response.
 
     Custom `before_send_handler` for SQLAlchemy plugin that inspects the status of response and commits, or rolls back the database.
