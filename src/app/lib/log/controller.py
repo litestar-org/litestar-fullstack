@@ -31,7 +31,6 @@ if TYPE_CHECKING:
     from typing import Any, Literal
 
     from litestar.connection import Request
-    from litestar.datastructures import State
     from litestar.types.asgi_types import ASGIApp, Message, Receive, Scope, Send
     from structlog.types import EventDict, WrappedLogger
 
@@ -128,7 +127,7 @@ class BeforeSendHandler:
             obfuscate_headers=settings.log.OBFUSCATE_HEADERS,
         )
 
-    async def __call__(self, message: Message, _: State, scope: Scope) -> None:
+    async def __call__(self, message: Message, scope: Scope) -> None:
         """Receives ASGI response messages and scope, and logs per
         configuration.
 

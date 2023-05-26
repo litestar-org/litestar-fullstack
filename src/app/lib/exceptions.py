@@ -24,7 +24,6 @@ if TYPE_CHECKING:
     from typing import Any
 
     from litestar.connection import Request
-    from litestar.datastructures import State
     from litestar.middleware.exceptions.middleware import ExceptionResponseContent
     from litestar.response import Response
     from litestar.types import Scope
@@ -77,7 +76,7 @@ class _HTTPConflictException(HTTPException):
     status_code = HTTP_409_CONFLICT
 
 
-async def after_exception_hook_handler(exc: Exception, _scope: Scope, _state: State) -> None:
+async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
     """Binds `exc_info` key with exception instance as value to structlog
     context vars.
 
@@ -86,7 +85,6 @@ async def after_exception_hook_handler(exc: Exception, _scope: Scope, _state: St
     Args:
         exc: the exception that was raised.
         _scope: scope of the request
-        _state: application state
     """
     if isinstance(exc, ApplicationError):
         return

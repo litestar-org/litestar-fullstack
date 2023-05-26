@@ -25,7 +25,7 @@ async def test_before_send_handler_success_response(
     namespace.update({SESSION_SCOPE_KEY: mock_session})
     http_scope["state"][SESSION_SCOPE_KEY] = mock_session
     http_response_start["status"] = random.randint(200, 299)  # noqa: S311
-    await db.before_send_handler(http_response_start, app.state, http_scope)
+    await db.before_send_handler(http_response_start, http_scope)
     mock_session.commit.assert_awaited_once()
 
 
@@ -38,5 +38,5 @@ async def test_before_send_handler_error_response(
     namespace.update({SESSION_SCOPE_KEY: mock_session})
     http_scope["state"][SESSION_SCOPE_KEY] = mock_session
     http_response_start["status"] = random.randint(300, 599)  # noqa: S311
-    await db.before_send_handler(http_response_start, app.state, http_scope)
+    await db.before_send_handler(http_response_start, http_scope)
     mock_session.rollback.assert_awaited_once()

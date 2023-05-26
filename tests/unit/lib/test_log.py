@@ -116,7 +116,7 @@ async def test_before_send_handler_exclude_paths(
     async def call_handler(path_: str) -> dict[str, Any]:
         http_scope["path"] = path_
         http_scope["state"] = {}
-        await before_send_handler(http_response_start, state, http_scope)
+        await before_send_handler(http_response_start, http_scope)
         return http_scope["state"]
 
     for path in excluded:
@@ -152,7 +152,7 @@ async def test_before_send_handler_http_response_start(
     """
     http_response_start["status"] = status
     assert http_scope["state"] == {}
-    await before_send_handler(http_response_start, state, http_scope)
+    await before_send_handler(http_response_start, http_scope)
     assert http_scope["state"]["log_level"] == level
     assert http_scope["state"]["http.response.start"] == http_response_start
 
@@ -166,7 +166,7 @@ async def test_before_send_handler_http_response_body_with_more_body(
 ) -> None:
     """We ignore intermediate response body messages, so should be a noop."""
     http_response_body["more_body"] = True
-    await before_send_handler(http_response_body, state, http_scope)
+    await before_send_handler(http_response_body, http_scope)
     assert [] == cap_logger.calls
 
 
@@ -187,7 +187,7 @@ async def test_before_send_handler_http_response_body_without_more_body(
     http_scope["state"]["log_level"] = logging.INFO
 
     assert http_response_body["more_body"] is False
-    await before_send_handler(http_response_body, state, http_scope)
+    await before_send_handler(http_response_body, http_scope)
 
     log_request_mock.assert_called_once_with(http_scope)
     log_response_mock.assert_called_once_with(http_scope)
@@ -213,7 +213,7 @@ async def test_before_send_handler_http_response_body_without_more_body_do_log_r
     assert http_response_body["more_body"] is False
     before_send_handler.do_log_request = False
     before_send_handler.do_log_response = False
-    await before_send_handler(http_response_body, state, http_scope)
+    await before_send_handler(http_response_body, http_scope)
 
     log_request_mock.assert_not_called()
     log_response_mock.assert_not_called()
@@ -228,7 +228,7 @@ async def test_before_send_handler_does_nothing_with_other_message_types(
 ) -> None:
     """We are only interested in the `http.response.{start,body}` messages."""
     message = {"type": "cats.and.dogs"}
-    await before_send_handler(message, state, http_scope)  # type:ignore[arg-type]
+    await before_send_handler(message, http_scope)  # type:ignore[arg-type]
     assert [] == cap_logger.calls
 
 
