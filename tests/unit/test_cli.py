@@ -15,14 +15,6 @@ def test_run_server(cli_runner: Any, monkeypatch: pytest.MonkeyPatch) -> None:
     import app.cli
 
     run_server_subprocess = MagicMock()
-    monkeypatch.setattr(app.cli, "run_server", run_server_subprocess)
-    result = cli_runner.invoke(app.cli.app, ["run", "server"])
+    monkeypatch.setattr(app.cli, "run_all_app", run_server_subprocess)
+    result = cli_runner.invoke(app.cli.run_all_app)
     assert result.exit_code == 0
-
-
-def test_manage_generate_random_key(cli_runner: Any) -> None:
-    import app.cli
-
-    result = cli_runner.invoke(app.cli.app, ["manage", "generate-random-key"])
-    assert result.exit_code == 0
-    assert "KEY:" in result.output

@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile
     image: app:latest
     restart: "no"
-    command: manage upgrade-database
+    command: database upgrade-database
     env_file:
       - .env.example
     depends_on:

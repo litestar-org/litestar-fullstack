@@ -1,75 +1,70 @@
-import binascii
 import multiprocessing
-import os
-import platform
 import subprocess
 import sys
-from json import dumps
-from pathlib import Path
 from typing import Any
 
 import anyio
-import rich_click as click
-from click import Path as ClickPath
+import click
 from click import echo
-from jsbeautifier import Beautifier
-from litestar._openapi.typescript_converter.converter import (
-    convert_openapi_to_typescript,
-)
-from litestar.cli._utils import LitestarCLIException, show_app_info
-from litestar.cli.main import litestar_group
 from pydantic import EmailStr, SecretStr
 from rich import get_console
 from rich.prompt import Confirm
-from yaml import dump as dump_yaml
 
-from app.asgi import create_app
 from app.domain.accounts.schemas import UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
 from app.domain.web.vite import run_vite
 from app.lib import db, log, settings, worker
 
-__all__ = ["app"]
+__all__ = [
+    "create_database",
+    "create_user",
+    "database_management_app",
+    "promote_to_superuser",
+    "purge_database",
+    "reset_database",
+    "run_all_app",
+    "run_app",
+    "run_worker",
+    "show_database_revision",
+    "upgrade_database",
+    "user_management_app",
+    "worker_management_app",
+]
 
 
-click.rich_click.USE_RICH_MARKUP = True
-click.rich_click.SHOW_ARGUMENTS = True
-click.rich_click.GROUP_ARGUMENTS_OPTIONS = True
-click.rich_click.SHOW_ARGUMENTS = True
-click.rich_click.GROUP_ARGUMENTS_OPTIONS = True
-click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
-click.rich_click.ERRORS_SUGGESTION = "Try running the '--help' flag for more information."
-click.rich_click.ERRORS_EPILOGUE = ""
-click.rich_click.MAX_WIDTH = 80
-click.rich_click.SHOW_METAVARS_COLUMN = False
-click.rich_click.APPEND_METAVARS_HELP = True
 console = get_console()
 """Pre-configured CLI Console."""
 
 logger = log.get_logger()
 
 
-@click.group(help="Litestar Reference Application")
-def app(**_: dict[str, "Any"]) -> None:
-    """CLI application entrypoint."""
-    log.config.configure()
-    if platform.system() == "Darwin":
-        multiprocessing.set_start_method("fork", force=True)
-
-
-# API App
-#
-#
-#
-
-
-@click.group(name="run", invoke_without_command=False, help="Run application services.")
+@click.group(name="serve", invoke_without_command=False, help="Run application services.")
 @click.pass_context
 def run_app(_: dict[str, Any]) -> None:
     """Launch Application Components."""
 
 
-@run_app.command(name="server", help="Starts the application server")
+@click.group(name="database", invoke_without_command=False, help="Manage the configured database backend.")
+@click.pass_context
+def database_management_app(_: dict[str, Any]) -> None:
+    """Manage the configured database backend."""
+
+
+@click.group(name="users", invoke_without_command=False, help="Manage application users.")
+@click.pass_context
+def user_management_app(_: dict[str, Any]) -> None:
+    """Manage application users."""
+
+
+@click.group(name="worker", invoke_without_command=False, help="Manage application background workers.")
+@click.pass_context
+def worker_management_app(_: dict[str, Any]) -> None:
+    """Manage application users."""
+
+
+@click.group(
+    name="run-all", invoke_without_command=True, help="Starts the application server & worker in a single command."
+)
 @click.option(
     "--host",
     help="Host interface to listen on.  Use 0.0.0.0 for all available interfaces.",
@@ -106,7 +101,7 @@ def run_app(_: dict[str, Any]) -> None:
 @click.option("-r", "--reload", help="Enable reload", is_flag=True, default=False, type=bool)
 @click.option("-v", "--verbose", help="Enable verbose logging.", is_flag=True, default=False, type=bool)
 @click.option("-d", "--debug", help="Enable debugging.", is_flag=True, default=False, type=bool)
-def run_server(
+def run_all_app(
     host: str,
     port: int | None,
     http_workers: int | None,
@@ -160,7 +155,7 @@ def run_server(
         sys.exit()
 
 
-@run_app.command(name="worker", help="Starts the background workers")
+@worker_management_app.command(name="run", help="Starts the background workers.")
 @click.option(
     "--worker-concurrency",
     help="The number of simultaneous jobs a worker process can execute.",
@@ -185,19 +180,7 @@ def run_worker(
     worker.run_worker()
 
 
-@click.group(name="manage", invoke_without_command=False, help="Application Management Commands")
-@click.pass_context
-def management_app(_: dict[str, Any]) -> None:
-    """System Administration Commands."""
-
-
-@management_app.command(name="app-info", help="Print application information.")
-def print_app_info() -> None:
-    """Print application configuration information."""
-    show_app_info(create_app())
-
-
-@management_app.command(name="create-user", help="Create a user")
+@user_management_app.command(name="create-user", help="Create a user")
 @click.option(
     "--email",
     help="Email of the new user",
@@ -262,7 +245,7 @@ def create_user(
     anyio.run(_create_user, email, name, password, superuser)
 
 
-@management_app.command(name="promote-to-superuser", help="Promotes a user to application superuser")
+@user_management_app.command(name="promote-to-superuser", help="Promotes a user to application superuser")
 @click.option(
     "--email",
     help="Email of the user",
@@ -298,73 +281,7 @@ def promote_to_superuser(email: EmailStr) -> None:
     anyio.run(_promote_to_superuser, email)
 
 
-@management_app.command("export-openapi")
-@click.option(
-    "--output",
-    help="Path to export the openapi schema.",
-    type=ClickPath(dir_okay=False, path_type=Path),  # type: ignore[type-var]
-    default=Path("openapi_schema.json"),
-    show_default=True,
-)
-def generate_openapi_schema(output: Path) -> None:
-    """Generate an OpenAPI Schema."""
-    app = create_app()
-    if not app.openapi_schema:  # pragma: no cover
-        raise LitestarCLIException("Litestar application does not have an OpenAPI schema")
-
-    if output.suffix in (".yml", ".yaml"):
-        content = dump_yaml(app.openapi_schema.to_schema(), default_flow_style=False)
-    else:
-        content = dumps(app.openapi_schema.to_schema(), indent=4)
-
-    try:
-        output.write_text(content)
-    except OSError as e:  # pragma: no cover
-        raise LitestarCLIException(f"failed to write schema to path {output}") from e
-
-
-beautifier = Beautifier()
-
-
-@management_app.command("export-typescript-types")
-@click.option(
-    "--output",
-    help="output file path",
-    type=ClickPath(dir_okay=False, path_type=Path),  # type: ignore[type-var]
-    default=Path("api-specs.d.ts"),
-    show_default=True,
-)
-@click.option("--namespace", help="namespace to use for the typescript specs", type=str, default="API")
-def generate_typescript_specs(output: Path, namespace: str) -> None:
-    """Generate TypeScript specs from the OpenAPI schema."""
-    app = create_app()
-    if not app.openapi_schema:  # pragma: no cover
-        raise LitestarCLIException("Litestar application does not have an OpenAPI schema")
-
-    try:
-        specs = convert_openapi_to_typescript(app.openapi_schema, namespace)
-        beautified_output = beautifier.beautify(specs.write())
-        output.write_text(beautified_output)
-    except OSError as e:  # pragma: no cover
-        raise LitestarCLIException(f"failed to write schema to path {output}") from e
-
-
-@management_app.command(name="generate-random-key")
-@click.option(
-    "--length",
-    "-l",
-    help="Length of random key to generate",
-    type=click.INT,
-    default=32,
-    required=False,
-    show_default=False,
-)
-def generate_random_key(length: int) -> None:
-    """Admin helper to generate random character string."""
-    console.print(f"KEY: {binascii.hexlify(os.urandom(length)).decode()}")
-
-
-@management_app.command(
+@database_management_app.command(
     name="create-database",
     help="Creates an empty postgres database and executes migrations",
 )
@@ -373,7 +290,7 @@ def create_database() -> None:
     db.utils.create_database()
 
 
-@management_app.command(
+@database_management_app.command(
     name="upgrade-database",
     help="Executes migrations to apply any outstanding database structures.",
 )
@@ -382,7 +299,7 @@ def upgrade_database() -> None:
     db.utils.upgrade_database()
 
 
-@management_app.command(
+@database_management_app.command(
     name="reset-database",
     help="Executes migrations to apply any outstanding database structures.",
 )
@@ -402,7 +319,7 @@ def reset_database(no_prompt: bool) -> None:
     db.utils.reset_database()
 
 
-@management_app.command(
+@database_management_app.command(
     name="purge-database",
     help="Drops all tables.",
 )
@@ -427,19 +344,13 @@ def purge_database(no_prompt: bool) -> None:
     db.utils.purge_database()
 
 
-@management_app.command(
+@database_management_app.command(
     name="show-current-database-revision",
     help="Shows the current revision for the database.",
 )
 def show_database_revision() -> None:
     """Show current database revision."""
     db.utils.show_database_revision()
-
-
-app.add_command(litestar_group, name="litestar")
-app.add_command(management_app, name="manage")
-app.add_command(run_app, name="run")
-app.add_command(print_app_info, name="info")
 
 
 def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:

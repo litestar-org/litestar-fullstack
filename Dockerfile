@@ -8,7 +8,7 @@ FROM node:${NODE_BUILDER_IMAGE} as ui-image
 ARG STATIC_URL=/static/
 ENV STATIC_URL="${STATIC_URL}"
 WORKDIR /workspace/app
-RUN npm install -g npm@9.6.5 --quiet
+RUN npm install -g --quiet npm@9.6.7
 COPY package.json package-lock.json  vite.config.ts tsconfig.json LICENSE Makefile ./
 COPY src src
 RUN npm ci --quiet && npm cache clean --force --quiet && npm run build
@@ -54,7 +54,7 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_ALWAYS_COPY=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_VERSION='1.4.2' \
+    POETRY_VERSION='1.5.1' \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
@@ -82,7 +82,7 @@ COPY --chown=65532:65532 src ./src
 RUN chown -R 65532:65532 /workspace && . /workspace/app/.venv/bin/activate  && poetry install $POETRY_INSTALL_ARGS
 COPY --from=ui-image --chown=65532:65532 /workspace/app/src/app/domain/web/public /workspace/app/src/app/domain/web/public
 EXPOSE 8000
-
+VOLUME /workspace/app
 
 
 ## ---------------------------------------------------------------------------------- ##
@@ -128,5 +128,6 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     LC_ALL=C.UTF-8
 STOPSIGNAL SIGINT
 EXPOSE 8000/tcp
-ENTRYPOINT [ "app" ]
-CMD [ "run", "server"]
+ENTRYPOINT ["/workspace/app/.venv/bin/litestar" ]
+CMD [ "run-all"]
+VOLUME /workspace/app

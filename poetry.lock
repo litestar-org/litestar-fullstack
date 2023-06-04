@@ -1347,6 +1347,7 @@ click = {version = "*", optional = true}
 cryptography = {version = "*", optional = true}
 fast-query-parsers = "*"
 httpx = ">=0.22"
+jinja2 = {version = ">=3.1.2", optional = true}
 jsbeautifier = {version = "*", optional = true}
 msgspec = "*"
 multidict = ">=6.0.2"
@@ -1356,6 +1357,7 @@ python-jose = {version = "*", optional = true}
 pyyaml = "*"
 redis = {version = ">=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3,!=4.5.5", extras = ["hiredis"], optional = true}
 rich = {version = ">=13.0.0", optional = true}
+rich-click = {version = "*", optional = true}
 sqlalchemy = {version = ">=2.0.12", optional = true}
 structlog = {version = "*", optional = true}
 typing-extensions = "*"
@@ -1364,7 +1366,7 @@ uvicorn = {version = "^0.21.1", extras = ["standard"], optional = true}
 [package.extras]
 attrs = ["attrs", "cattrs", "python-dateutil", "pytimeparse"]
 brotli = ["brotli"]
-cli = ["click", "jsbeautifier", "rich (>=13.0.0)", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
+cli = ["click", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
 cryptography = ["cryptography"]
 full = ["alembic", "attrs", "brotli", "cattrs", "click", "cryptography", "jinja2 (>=3.1.2)", "jsbeautifier", "opentelemetry-instrumentation-asgi", "python-jose", "pytimeparse", "redis[hiredis] (>=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3,!=4.5.5)", "rich (>=13.0.0)", "sqlalchemy (>=2.0.12)", "structlog", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
 jinja = ["jinja2 (>=3.1.2)"]
@@ -1373,7 +1375,7 @@ opentelemetry = ["opentelemetry-instrumentation-asgi"]
 picologging = ["picologging"]
 redis = ["redis[hiredis] (>=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3,!=4.5.5)"]
 sqlalchemy = ["alembic", "sqlalchemy (>=2.0.12)"]
-standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
+standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.21.1,<0.22.0)"]
 structlog = ["structlog"]
 tortoise-orm = []
 
@@ -1381,7 +1383,7 @@ tortoise-orm = []
 type = "git"
 url = "https://github.com/cofin/litestar.git"
 reference = "repository-update"
-resolved_reference = "df7b2b66aadf8d1c7eae1f46e1eaf6c493b0f066"
+resolved_reference = "bdbd201cb4be6ed24b54e6a15f39d27937a93055"
 
 [[package]]
 name = "mako"
@@ -3275,4 +3277,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "4bb3066e0ec10f489ef14eec388cede12b9c2e330431c2e59ab1c8f37d0e725d"
+content-hash = "58ec26ac00e3a2b5a764da1e0fc17271ebcf25dcfa0b40ede674fbb9290fd873"

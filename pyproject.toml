@@ -27,16 +27,21 @@ packages = [
 readme = "README.md"
 repository = "https://github.com/cofin/litestar-fullstack"
 version = "0.1.0"
+
 [tool.poetry.scripts]
-app = "app.__main__:run_cli"
+app = "litestar.__main__:run_cli"
+
+[tool.poetry.plugins."litestar.commands"]
+database = "app.cli:database_management_app"
+run-all = "app.cli:run_all_app"
+users = "app.cli:user_management_app"
+worker = "app.cli:worker_management_app"
 
 [tool.poetry.dependencies]
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-hiredis = "*"
-jinja2 = "*"
-litestar = {git = "https://github.com/cofin/litestar.git", branch = "repository-update", extras = ["jwt", 'cli', 'redis', 'jinja2', 'sqlalchemy', 'structlog']}
+litestar = {git = "https://github.com/cofin/litestar.git", branch = "repository-update", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog']}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -44,7 +49,6 @@ pydantic = {version = ">=1.9.0", extras = [
   "email",
 ]}
 python = ">=3.10,<3.12"
-rich-click = ">=1.6.0"
 saq = "*"
 tenacity = "*"
 uvicorn = {extras = ["standard"], version = "*"}
