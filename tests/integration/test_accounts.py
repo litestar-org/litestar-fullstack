@@ -70,6 +70,7 @@ async def test_user_update(client: "AsyncClient", superuser_token_headers: dict[
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
+    assert response.json()["name"] == "Name Changed"
 
 
 async def test_accounts_delete(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:

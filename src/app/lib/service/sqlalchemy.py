@@ -103,7 +103,7 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
             Updated representation.
         """
         data = await self.to_model(data, "update")
-        self.repository.set_id_attribute_value(item_id, data)
+        data = self.repository.set_id_attribute_value(item_id, data)
         return await self.repository.update(data)
 
     async def update_many(
