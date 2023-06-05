@@ -1381,9 +1381,9 @@ tortoise-orm = []
 
 [package.source]
 type = "git"
-url = "https://github.com/cofin/litestar.git"
-reference = "repository-update"
-resolved_reference = "bdbd201cb4be6ed24b54e6a15f39d27937a93055"
+url = "https://github.com/litestar-org/litestar.git"
+reference = "main"
+resolved_reference = "c0a98e51ee09efb15f5892e6143d0a6fa5fd7cd9"
 
 [[package]]
 name = "mako"
@@ -3277,4 +3277,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "58ec26ac00e3a2b5a764da1e0fc17271ebcf25dcfa0b40ede674fbb9290fd873"
+content-hash = "cd9d45cd0451f839d4b991c61196b380cbfc54bca06ab827ef3e1942664b6685"
