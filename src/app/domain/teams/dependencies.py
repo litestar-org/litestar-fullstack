@@ -25,7 +25,9 @@ async def provides_teams_service(db_session: AsyncSession) -> AsyncGenerator[Tea
     """Construct repository and service objects for the request."""
     async with TeamService.new(
         session=db_session,
-        statement=select(Team).options(
+        statement=select(Team)
+        .order_by(Team.name)
+        .options(
             noload("*"),
             selectinload(Team.members).options(
                 joinedload(TeamMember.user, innerjoin=True).options(

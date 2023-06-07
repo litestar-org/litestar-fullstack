@@ -17,7 +17,6 @@ def create_app() -> Litestar:
     from asyncpg.pgproto import pgproto
     from litestar import Litestar
     from litestar.di import Provide
-    from litestar.serialization import DEFAULT_TYPE_ENCODERS
     from litestar.stores.registry import StoreRegistry
     from pydantic import BaseModel, SecretStr
 
@@ -55,7 +54,7 @@ def create_app() -> Litestar:
         middleware=[log.controller.middleware_factory],
         logging_config=log.config,
         openapi_config=domain.openapi.config,
-        type_encoders={**DEFAULT_TYPE_ENCODERS, pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
+        type_encoders={pgproto.UUID: str, BaseModel: _base_model_encoder, SecretStr: str},
         route_handlers=[*domain.routes],
         plugins=[db.plugin, domain.plugins.aiosql],
         on_shutdown=[cache.redis.close],

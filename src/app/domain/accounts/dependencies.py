@@ -26,7 +26,9 @@ async def provides_user_service(db_session: AsyncSession) -> AsyncGenerator[User
     """Construct repository and service objects for the request."""
     async with UserService.new(
         session=db_session,
-        statement=select(User).options(
+        statement=select(User)
+        .order_by(User.email)
+        .options(
             noload("*"),
             selectinload(User.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(
