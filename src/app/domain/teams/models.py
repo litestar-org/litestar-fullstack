@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 from uuid import UUID  # noqa: TCH003
 
 import sqlalchemy as sa
@@ -12,8 +12,9 @@ from app.lib.db import orm
 
 if TYPE_CHECKING:
     from app.domain.accounts.models import User
+    from app.domain.tags.models import Tag
 
-__all__ = ["Team", "TeamInvitation", "TeamMember", "TeamRoles"]
+__all__ = ["Team", "TeamInvitation", "TeamMember", "TeamRoles", "team_tag"]
 
 
 class TeamRoles(str, Enum):
@@ -48,6 +49,13 @@ class Team(orm.DatabaseModel, orm.AuditColumns, orm.SlugKey):
         primaryjoin="and_(TeamInvitation.team_id==Team.id, TeamInvitation.is_accepted == False)",
         viewonly=True,
         lazy="noload",
+    )
+    tags: Mapped[list[Tag]] = relationship(
+        secondary=lambda: team_tag,
+        back_populates="teams",
+        cascade="all, delete",
+        passive_deletes=True,
+        lazy="selectin",
     )
 
 
@@ -97,3 +105,11 @@ class TeamInvitation(orm.DatabaseModel, orm.AuditColumns):
     # ------------
     team: Mapped[Team] = relationship(foreign_keys="TeamInvitation.team_id", lazy="noload")
     invited_by: Mapped[User] = relationship(foreign_keys="TeamInvitation.invited_by_id", lazy="noload", uselist=False)
+
+
+team_tag: Final[sa.Table] = sa.Table(
+    "team_tag",
+    orm.DatabaseModel.metadata,
+    sa.Column("team_id", sa.ForeignKey("team.id", ondelete="CASCADE"), primary_key=True),
+    sa.Column("tag_id", sa.ForeignKey("tag.id", ondelete="CASCADE"), primary_key=True),
+)

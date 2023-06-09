@@ -42,7 +42,7 @@ FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
 class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
     """Service object that operates on a repository object."""
 
-    __item_id_ = "dma.lib.service.sqlalchemy.SQLAlchemyAsyncRepositoryService"
+    __item_id_ = "app.lib.service.sqlalchemy.SQLAlchemyAsyncRepositoryService"
     repository_type: type[SQLAlchemyAsyncRepository[ModelT]]
     match_fields: list[str] | None = None
 

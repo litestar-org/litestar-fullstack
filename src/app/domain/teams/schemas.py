@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import UUID  # noqa: TCH003
 
-from pydantic import EmailStr  # noqa: TCH002
+from pydantic import EmailStr, validator
 
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
+
+if TYPE_CHECKING:
+    from app.domain.tags.schemas import Tag
 
 __all__ = [
     "Team",
@@ -23,6 +27,18 @@ class TeamCreate(CamelizedBaseModel):
 
     name: str
     description: str | None
+    tags: list[str] | None = []
+
+    @validator("tags", pre=True, allow_reuse=True)
+    def parse_tags(cls, value: str | list[str] | None) -> list[str]:
+        """Parse a list of tags."""
+        if not value:
+            return []
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            return value.split(",")
+        raise ValueError(value)
 
 
 # Properties to receive via API on update
@@ -30,7 +46,8 @@ class TeamUpdate(CamelizedBaseModel):
     """Team properties received on update."""
 
     name: str | None = None
-    description: str | None
+    description: str | None = None
+    tags: list[str] | None = []
 
 
 # Additional properties to return via API
@@ -42,6 +59,7 @@ class Team(CamelizedBaseModel):
     name: str
     description: str | None
     members: list[TeamMember] = []
+    tags: list[Tag] = []
 
 
 # #################################

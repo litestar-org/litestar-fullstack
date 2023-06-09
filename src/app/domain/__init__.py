@@ -15,7 +15,7 @@ from app.lib import settings, worker
 from app.lib.service.generic import Service
 from app.lib.worker.controllers import WorkerController
 
-from . import accounts, analytics, openapi, plugins, security, system, teams, urls, web
+from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -31,6 +31,7 @@ routes: list[ControllerRouterHandler] = [
     # teams.controllers.TeamInvitationController,
     # teams.controllers.TeamMemberController,
     analytics.controllers.StatsController,
+    tags.controllers.TagController,
     system.controllers.SystemController,
     web.controllers.WebController,
 ]
@@ -46,6 +47,7 @@ __all__ = [
     "teams",
     "web",
     "urls",
+    "tags",
     "security",
     "routes",
     "openapi",
@@ -83,6 +85,7 @@ signature_namespace: Mapping[str, Any] = {
     "OffsetPagination": OffsetPagination,
     "UserService": accounts.services.UserService,
     "TeamService": teams.services.TeamService,
+    "TagService": tags.services.TagService,
     "TeamInvitationService": teams.services.TeamInvitationService,
     "TeamMemberService": teams.services.TeamMemberService,
     "Queue": worker.Queue,

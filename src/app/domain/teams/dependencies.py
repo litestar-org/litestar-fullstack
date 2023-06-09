@@ -28,11 +28,9 @@ async def provides_teams_service(db_session: AsyncSession) -> AsyncGenerator[Tea
         statement=select(Team)
         .order_by(Team.name)
         .options(
-            noload("*"),
+            selectinload(Team.tags).options(noload("*")),
             selectinload(Team.members).options(
-                joinedload(TeamMember.user, innerjoin=True).options(
-                    noload("*"),
-                ),
+                joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
             ),
         ),
     ) as service:
@@ -48,12 +46,8 @@ async def provide_team_members_service(db_session: AsyncSession) -> AsyncGenerat
         session=db_session,
         statement=select(TeamMember).options(
             noload("*"),
-            joinedload(TeamMember.team, innerjoin=True).options(
-                noload("*"),
-            ),
-            joinedload(TeamMember.user, innerjoin=True).options(
-                noload("*"),
-            ),
+            joinedload(TeamMember.team, innerjoin=True).options(noload("*")),
+            joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
         ),
     ) as service:
         try:
@@ -68,12 +62,8 @@ async def provide_team_invitations_service(db_session: AsyncSession) -> AsyncGen
         session=db_session,
         statement=select(TeamInvitation).options(
             noload("*"),
-            joinedload(TeamInvitation.team, innerjoin=True).options(
-                noload("*"),
-            ),
-            joinedload(TeamInvitation.invited_by, innerjoin=True).options(
-                noload("*"),
-            ),
+            joinedload(TeamInvitation.team, innerjoin=True).options(noload("*")),
+            joinedload(TeamInvitation.invited_by, innerjoin=True).options(noload("*")),
         ),
     ) as service:
         try:
