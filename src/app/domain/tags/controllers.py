@@ -8,16 +8,18 @@ from litestar.params import Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
-from app.domain.tags import schemas
 from app.domain.tags.dependencies import provide_tags_service
+from app.domain.tags.dtos import TagCreateDTO, TagDTO
 from app.lib import log
 
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.contrib.repository.abc import FilterTypes
+    from litestar.contrib.repository.filters import FilterTypes
+    from litestar.dto.factory import DTOData
     from litestar.pagination import OffsetPagination
 
+    from app.domain.tags.models import Tag
     from app.domain.tags.services import TagService
 
 
@@ -33,6 +35,7 @@ class TagController(Controller):
     guards = [requires_active_user]
     dependencies = {"tags_service": Provide(provide_tags_service)}
     tags = ["Tags"]
+    return_dto = TagDTO
 
     @get(
         operation_id="ListTags",
@@ -43,28 +46,10 @@ class TagController(Controller):
     )
     async def list_tags(
         self, tags_service: TagService, filters: list[FilterTypes] = Dependency(skip_validation=True)
-    ) -> OffsetPagination[schemas.Tag]:
+    ) -> OffsetPagination[Tag]:
         """List tags."""
         results, total = await tags_service.list_and_count(*filters)
-        return tags_service.to_dto(schemas.Tag, results, total, *filters)
-
-    @post(
-        operation_id="CreateTag",
-        name="tags:create",
-        summary="Create a new tag.",
-        cache_control=None,
-        description="A tag is a place where you can upload and group collections of databases.",
-        guards=[requires_superuser],
-        path=urls.TAG_CREATE,
-    )
-    async def create_tag(
-        self,
-        tags_service: TagService,
-        data: schemas.TagCreate,
-    ) -> schemas.Tag:
-        """Create a new tag."""
-        db_obj = await tags_service.create(data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
-        return tags_service.to_dto(schemas.Tag, db_obj)
+        return tags_service.to_dto(results, total, *filters)
 
     @get(
         operation_id="GetTag",
@@ -79,10 +64,29 @@ class TagController(Controller):
             title="Tag ID",
             description="The tag to retrieve.",
         ),
-    ) -> schemas.Tag:
+    ) -> Tag:
         """Get a new migration tag."""
         db_obj = await tags_service.get(tag_id)
-        return tags_service.to_dto(schemas.Tag, db_obj)
+        return tags_service.to_dto(db_obj)
+
+    @post(
+        operation_id="CreateTag",
+        name="tags:create",
+        summary="Create a new tag.",
+        cache_control=None,
+        description="A tag is a place where you can upload and group collections of databases.",
+        guards=[requires_superuser],
+        path=urls.TAG_CREATE,
+        dto=TagCreateDTO,
+    )
+    async def create_tag(
+        self,
+        tags_service: TagService,
+        data: DTOData[Tag],
+    ) -> Tag:
+        """Create a new tag."""
+        db_obj = await tags_service.create(data.create_instance())
+        return tags_service.to_dto(db_obj)
 
     @patch(
         operation_id="UpdateTag",
@@ -93,15 +97,15 @@ class TagController(Controller):
     async def update_tag(
         self,
         tags_service: TagService,
-        data: schemas.TagUpdate,
+        data: DTOData[Tag],
         tag_id: UUID = Parameter(
             title="Tag ID",
             description="The tag to update.",
         ),
-    ) -> schemas.Tag:
+    ) -> Tag:
         """Update a tag."""
-        db_obj = await tags_service.update(tag_id, data.dict(exclude_unset=True, by_alias=False, exclude_none=True))
-        return tags_service.to_dto(schemas.Tag, db_obj)
+        db_obj = await tags_service.update(tag_id, data.create_instance())
+        return tags_service.to_dto(db_obj)
 
     @delete(
         operation_id="DeleteTag",
@@ -110,6 +114,7 @@ class TagController(Controller):
         summary="Remove Tag",
         description="Removes a tag and its associations",
         guards=[requires_superuser],
+        return_dto=None,
     )
     async def delete_tag(
         self,

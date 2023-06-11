@@ -29,7 +29,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         self.repository: UserRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def authenticate(self, username: str, password: SecretStr) -> User:
+    async def authenticate(self, username: str, password: SecretStr | str) -> User:
         """Authenticate a user.
 
         Args:

@@ -40,7 +40,7 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
         PermissionDeniedException: Permission denied exception
 
     Returns:
-        None: No Return
+        None: Returns None when successful
     """
     if connection.user.is_superuser:
         return
@@ -58,7 +58,7 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
         PermissionDeniedException: Not authorized
 
     Returns:
-        None: _description_
+        None: Returns None when successful
     """
     if connection.user.is_verified:
         return

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
@@ -15,12 +14,12 @@ if TYPE_CHECKING:
 __all__ = ["config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO"]
 
 
-@lru_cache
 def config(
     exclude: Set[str] | None = None,
     rename_fields: dict[str, str] | None = None,
     rename_strategy: RenameStrategy | None = None,
     max_nested_depth: int | None = None,
+    partial: bool | None = None,
 ) -> DTOConfig:
     """_summary_
 
@@ -36,4 +35,6 @@ def config(
         default_kwargs.update({"rename_strategy": rename_strategy})
     if max_nested_depth:
         default_kwargs.update({"max_nested_depth": max_nested_depth})
+    if partial:
+        default_kwargs.update({"partial": partial})
     return DTOConfig(**default_kwargs)

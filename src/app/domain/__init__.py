@@ -5,12 +5,17 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from litestar.contrib.jwt import OAuth2Login
-from litestar.contrib.repository.abc import FilterTypes
+from litestar.contrib.repository.filters import FilterTypes
+from litestar.dto.factory import DTOData
 from litestar.pagination import OffsetPagination
-from pydantic import UUID4, EmailStr
+from litestar.types import TypeEncodersMap
 from saq.types import QueueInfo
 
+from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserCreate, UserUpdate
 from app.domain.accounts.models import User
+from app.domain.analytics.dtos import NewUsersByWeek
+from app.domain.tags.models import Tag
+from app.domain.teams.models import Team
 from app.lib import settings, worker
 from app.lib.service.generic import Service
 from app.lib.worker.controllers import WorkerController
@@ -77,10 +82,15 @@ scheduled_tasks: dict[worker.Queue, list[worker.CronJob]] = {
 signature_namespace: Mapping[str, Any] = {
     "Service": Service,
     "FilterTypes": FilterTypes,
-    "UUID4": UUID4,
     "UUID": UUID,
-    "EmailStr": EmailStr,
     "User": User,
+    "Team": Team,
+    "UserCreate": UserCreate,
+    "UserUpdate": UserUpdate,
+    "AccountLogin": AccountLogin,
+    "AccountRegister": AccountRegister,
+    "NewUsersByWeek": NewUsersByWeek,
+    "Tag": Tag,
     "OAuth2Login": OAuth2Login,
     "OffsetPagination": OffsetPagination,
     "UserService": accounts.services.UserService,
@@ -91,4 +101,6 @@ signature_namespace: Mapping[str, Any] = {
     "Queue": worker.Queue,
     "QueueInfo": QueueInfo,
     "Job": worker.Job,
+    "DTOData": DTOData,
+    "TypeEncodersMap": TypeEncodersMap,
 }

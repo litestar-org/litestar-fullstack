@@ -11,9 +11,10 @@ from pydantic import parse_obj_as
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
 from app.domain.analytics.dependencies import provides_analytic_queries
+from app.domain.analytics.dtos import NewUsersByWeekDTO
 from app.lib import log
 
-from .schemas import NewUsersByWeek
+from .dtos import NewUsersByWeek
 
 if TYPE_CHECKING:
     from app.lib.aiosql import AiosqlQueryManager
@@ -41,6 +42,7 @@ class StatsController(Controller):
         summary="Weekly New Users",
         description="List New Users by Week.",
         cache=1000,
+        return_dto=NewUsersByWeekDTO,
     )
     async def weekly_new_users(self, analytic_queries: AiosqlQueryManager) -> OffsetPagination[NewUsersByWeek]:
         """New Users by week."""

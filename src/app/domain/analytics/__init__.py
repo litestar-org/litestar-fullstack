@@ -1,3 +1,3 @@
-from . import controllers, dependencies, queries, schemas
+from . import controllers, dependencies, dtos, queries
 
-__all__ = ["controllers", "dependencies", "schemas", "queries"]
+__all__ = ["controllers", "dependencies", "dtos", "queries"]
