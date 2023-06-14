@@ -5,6 +5,8 @@ from litestar.dto.factory.stdlib.dataclass import DataclassDTO
 
 from app.lib import dto, settings
 
+__all__ = ["SystemHealth", "SystemHealthDTO"]
+
 
 @dataclass
 class SystemHealth:

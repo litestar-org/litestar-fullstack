@@ -7,12 +7,13 @@ Create Date: ${create_date}
 """
 import sqlalchemy as sa
 from alembic import op
-
-from litestar.contrib.sqlalchemy.types import GUID
+from litestar.contrib.sqlalchemy.types import GUID, ORA_JSONB, DateTimeUTC
 
 ${imports if imports else ""}
 
 sa.GUID = GUID
+sa.DateTimeUTC = DateTimeUTC
+sa.ORA_JSONB = ORA_JSONB
 
 # revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}

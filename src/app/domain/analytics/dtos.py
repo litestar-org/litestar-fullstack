@@ -5,6 +5,8 @@ from litestar.dto.factory.stdlib.dataclass import DataclassDTO
 
 from app.lib import dto
 
+__all__ = ["NewUsersByWeek", "NewUsersByWeekDTO"]
+
 
 @dataclass
 class NewUsersByWeek:

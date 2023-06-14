@@ -3,6 +3,9 @@ from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
 from app.domain.tags.models import Tag
 from app.lib import dto
 
+__all__ = ["TagCreateDTO", "TagDTO", "TagUpdateDTO"]
+
+
 # database model
 
 
