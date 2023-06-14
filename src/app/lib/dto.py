@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar, overload
 
 from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
 from litestar.dto.factory import DTOConfig, dto_field
 from litestar.dto.factory.stdlib.dataclass import DataclassDTO
+from litestar.types.protocols import DataclassProtocol
+from sqlalchemy.orm import DeclarativeBase
 
 if TYPE_CHECKING:
     from collections.abc import Set
@@ -12,6 +14,12 @@ if TYPE_CHECKING:
     from litestar.dto.factory.types import RenameStrategy
 
 __all__ = ["config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO"]
+
+DTOT = TypeVar("DTOT", bound=DataclassProtocol | DeclarativeBase)
+DTOFactoryT = TypeVar("DTOFactoryT", bound=DataclassDTO | SQLAlchemyDTO)
+SQLAlchemyModelT = TypeVar("SQLAlchemyModelT", bound=DeclarativeBase)
+DataclassModelT = TypeVar("DataclassModelT", bound=DataclassProtocol)
+ModelT = SQLAlchemyModelT | DataclassModelT
 
 
 def config(
@@ -38,3 +46,20 @@ def config(
     if partial:
         default_kwargs.update({"partial": partial})
     return DTOConfig(**default_kwargs)
+
+
+@overload
+def builder(dto: DeclarativeBase) -> DataclassDTO[DTOT]:
+    ...
+
+
+@overload
+def builder(dto: DataclassModelT) -> SQLAlchemyDTO[DTOT]:
+    ...
+
+
+def builder(dto: ModelT) -> DTOFactoryT[ModelT]:
+    """Construct a DTO."""
+    if issubclass(dto, DeclarativeBase):
+        return SQLAlchemyDTO[dto]
+    return DataclassDTO[dto]
