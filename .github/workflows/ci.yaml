@@ -40,6 +40,8 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with lint,dev,docs
+      - name: Install NPM
+        run: npm ci && npm run build
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD:src:$PWD/src" >> $GITHUB_ENV
       - name: Test with Coverage
