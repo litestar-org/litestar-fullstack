@@ -204,7 +204,7 @@ To deploy migration to the database, execute:
 
 ### Starting the server
 
-#### Starting the server in `DEV_MODE` mode (development mode)
+#### Starting the server in development mode
 
 if `DEV_MODE` is set to true, the base template expects that Vite will be running. When you start the application, it will try to start the vite service with the HMR websocket connection enabled.
 
