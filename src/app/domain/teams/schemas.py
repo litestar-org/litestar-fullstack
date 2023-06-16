@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from uuid import UUID  # noqa: TCH003
 
 from pydantic import EmailStr, validator
 
+from app.domain.tags.schemas import Tag  # noqa: TCH001
 from app.domain.teams.models import TeamRoles
 from app.lib.schema import CamelizedBaseModel
-
-if TYPE_CHECKING:
-    from app.domain.tags.schemas import Tag
 
 __all__ = [
     "Team",

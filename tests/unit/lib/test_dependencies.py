@@ -7,8 +7,14 @@ from uuid import uuid4
 
 import pytest
 from litestar import Litestar, get
-from litestar.contrib.repository.abc import FilterTypes  # noqa: TCH002
-from litestar.contrib.repository.filters import BeforeAfter, CollectionFilter, LimitOffset, OrderBy, SearchFilter
+from litestar.contrib.repository.filters import (
+    BeforeAfter,
+    CollectionFilter,
+    FilterTypes,
+    LimitOffset,
+    OrderBy,
+    SearchFilter,
+)
 from litestar.testing import RequestFactory, TestClient
 
 from app.domain import security

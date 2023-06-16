@@ -1,21 +1,25 @@
-"""baseline
+"""
 
-Revision ID: 3ffc83863bd8
+Revision ID: d353a07b0a49
 Revises: 
-Create Date: 2023-06-08 18:42:11.816275
+Create Date: 2023-06-16 11:43:23.450767
 
 """
 import sqlalchemy as sa
 from alembic import op
 
-from litestar.contrib.sqlalchemy.types import GUID
+import sqlalchemy as sa
+from alembic import op
+from litestar.contrib.sqlalchemy.types import GUID, ORA_JSONB, DateTimeUTC
 
 
 
 sa.GUID = GUID
+sa.DateTimeUTC = DateTimeUTC
+sa.ORA_JSONB = ORA_JSONB
 
 # revision identifiers, used by Alembic.
-revision = '3ffc83863bd8'
+revision = 'd353a07b0a49'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,8 +32,8 @@ def upgrade():
     sa.Column('description', sa.String(length=255), nullable=True),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created', sa.DateTime(), nullable=False),
-    sa.Column('updated', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_tag')),
     comment='Tags that can be applied to various objects'
     )
@@ -40,8 +44,8 @@ def upgrade():
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created', sa.DateTime(), nullable=False),
-    sa.Column('updated', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_team'))
     )
     op.create_index(op.f('ix_team_name'), 'team', ['name'], unique=False)
@@ -53,11 +57,11 @@ def upgrade():
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.Column('is_verified', sa.Boolean(), nullable=False),
-    sa.Column('verified_at', sa.DateTime(), nullable=True),
+    sa.Column('verified_at', sa.DateTimeUTC(timezone=True), nullable=True),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created', sa.DateTime(), nullable=False),
-    sa.Column('updated', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user_account')),
     sa.UniqueConstraint('email', name=op.f('uq_user_account_email')),
     comment='User accounts for application access'
@@ -71,8 +75,8 @@ def upgrade():
     sa.Column('invited_by_email', sa.String(), nullable=False),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created', sa.DateTime(), nullable=False),
-    sa.Column('updated', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['invited_by_id'], ['user_account.id'], name=op.f('fk_team_invitation_invited_by_id_user_account'), ondelete='set null'),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_invitation_team_id_team'), ondelete='cascade'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_team_invitation'))
@@ -85,8 +89,8 @@ def upgrade():
     sa.Column('is_owner', sa.Boolean(), nullable=False),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created', sa.DateTime(), nullable=False),
-    sa.Column('updated', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_member_team_id_team'), ondelete='cascade'),
     sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_team_member_user_id_user_account'), ondelete='cascade'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_team_member')),

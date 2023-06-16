@@ -1,5 +1,5 @@
 from litestar import Controller, get
-from litestar.response_containers import Template
+from litestar.response import Template
 from litestar.status_codes import HTTP_200_OK
 
 from app.domain import urls
@@ -22,4 +22,4 @@ class WebController(Controller):
     )
     async def index(self) -> Template:
         """Serve site root."""
-        return Template(name="site/index.html.j2")
+        return Template(template_name="site/index.html.j2")

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from litestar.contrib.jwt import OAuth2Login
-from litestar.contrib.repository.abc import FilterTypes
+from litestar.contrib.repository.filters import FilterTypes
 from litestar.pagination import OffsetPagination
 from pydantic import UUID4, EmailStr
 from saq.types import QueueInfo
