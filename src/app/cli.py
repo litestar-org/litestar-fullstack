@@ -253,20 +253,20 @@ def create_user(
     required=False,
     show_default=False,
 )
-def promote_to_superuser(email: EmailStr) -> None:
+def promote_to_superuser(email: str) -> None:
     """Promote to Superuser.
 
     Args:
-        email (EmailStr): _description_
+        email (str): _description_
     """
 
-    async def _promote_to_superuser(email: EmailStr) -> None:
+    async def _promote_to_superuser(email: str) -> None:
         async with UserService.new() as users_service:
             user = await users_service.get_one_or_none(email=email)
             if user:
                 logger.info("Promoting user: %s", user.email)
                 user_in = UserUpdate(
-                    email=EmailStr(user.email),
+                    email=user.email,
                     is_superuser=True,
                 )
                 user = await users_service.update(

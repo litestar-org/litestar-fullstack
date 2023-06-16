@@ -6,7 +6,17 @@ from litestar.dto.factory.stdlib.dataclass import DataclassDTO
 from app.domain.accounts.models import User
 from app.lib import dto
 
-__all__ = ["AccountLogin", "AccountLoginDTO", "AccountRegister", "AccountRegisterDTO", "UserCreate", "UserCreateDTO", "UserDTO", "UserUpdate", "UserUpdateDTO"]
+__all__ = [
+    "AccountLogin",
+    "AccountLoginDTO",
+    "AccountRegister",
+    "AccountRegisterDTO",
+    "UserCreate",
+    "UserCreateDTO",
+    "UserDTO",
+    "UserUpdate",
+    "UserUpdateDTO",
+]
 
 
 # database model
@@ -49,12 +59,12 @@ class UserCreateDTO(DataclassDTO[UserCreate]):
 
 @dataclass
 class UserUpdate:
-    email: str
-    password: str
-    name: str
-    is_superuser: bool
-    is_active: bool
-    is_verified: bool
+    email: str | None = None
+    password: str | None = None
+    name: str | None = None
+    is_superuser: bool | None = None
+    is_active: bool | None = None
+    is_verified: bool | None = None
 
 
 class UserUpdateDTO(DataclassDTO[UserUpdate]):
