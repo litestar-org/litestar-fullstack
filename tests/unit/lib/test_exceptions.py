@@ -86,4 +86,4 @@ def test_exception_serves_debug_middleware_response(
     app = Litestar(route_handlers=[], debug=True)
     request = RequestFactory(app=app, server="testserver").get("/wherever")
     response = fn(request, exc)
-    assert response.body == expected_message
+    assert response.content == expected_message.decode()

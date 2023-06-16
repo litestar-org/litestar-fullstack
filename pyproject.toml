@@ -41,7 +41,7 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "1798-dto-pagination", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog']}
+litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = [
   "dotenv",
@@ -50,10 +50,8 @@ pydantic = {version = ">=1.9.0", extras = [
 ]}
 python = ">=3.10,<3.12"
 saq = "*"
-tenacity = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 uvloop = "*"
-# litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja2'], allow-prereleases = true}
 
 [tool.poetry.group.dev.dependencies]
 asgi-lifespan = "*"
