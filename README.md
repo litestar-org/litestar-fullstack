@@ -10,7 +10,7 @@ Features:
 
 - Latest Litestar configured with best practices
 - Integration with SQLAlchemy 2.0, SAQ (Simple Asynchronous Queue), and litestar-saqlalchemy
-- Click based CLI that includes commands for database migrations and deployment
+- Extends built-in litestar click CLI
 - Frontend integrated with vitejs and includes Jinja2 templates that integrate with Vite websocket/HMR support
 - Multi-stage docker build using a Google Distroless (distroless/cc) Python 3.11 runtime image.
 - pre-configured user model that includes teams and associated team roles
@@ -19,118 +19,138 @@ Features:
 ## App Commands
 
 ```bash
-❯ poetry run app
+❯ poetry shell
+Virtual environment already activated: .venv
+❯ app
 
  Usage: app [OPTIONS] COMMAND [ARGS]...
 
- Litestar Reference Application
+ Litestar CLI.
 
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --help    Show this message and exit.                                        │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────╮
-│ manage         Application Management Commands                               │
-│ run            Run application services.                                     │
-╰──────────────────────────────────────────────────────────────────────────────╯
-
-
-```
-
-## Management Commands
-
-```bash
-❯ poetry run app manage
-
- Usage: app manage [OPTIONS] COMMAND [ARGS]...
-
- Application Management Commands
-
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --help    Show this message and exit.                                        │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────╮
-│ create-database                 Creates an empty postgres database and       │
-│                                 executes migrations                          │
-│ create-user                     Create a user                                │
-│ export-openapi                  Generate an OpenAPI Schema.                  │
-│ export-typescript-types         Generate TypeScript specs from the OpenAPI   │
-│                                 schema.                                      │
-│ generate-random-key             Admin helper to generate random character    │
-│                                 string.                                      │
-│ promote-to-superuser            Promotes a user to application superuser     │
-│ purge-database                  Drops all tables.                            │
-│ reset-database                  Executes migrations to apply any outstanding │
-│                                 database structures.                         │
-│ show-current-database-revision  Shows the current revision for the database. │
-│ upgrade-database                Executes migrations to apply any outstanding │
-│                                 database structures.                         │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --app        TEXT       Module path to a Litestar application (TEXT)                             │
+│ --app-dir    DIRECTORY  Look for APP in the specified directory, by adding this to the           │
+│                         PYTHONPATH. Defaults to the current working directory.                   │
+│                         (DIRECTORY)                                                              │
+│ --help                  Show this message and exit.                                              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
+│ database      Manage the configured database backend.                                            │
+│ info          Show information about the detected Litestar app.                                  │
+│ routes        Display information about the application's routes.                                │
+│ run           Run a Litestar app.                                                                │
+│ run-all       Starts the application server & worker in a single command.                        │
+│ schema        Manage server-side OpenAPI schemas.                                                │
+│ sessions      Manage server-side sessions.                                                       │
+│ users         Manage application users.                                                          │
+│ version       Show the currently installed Litestar version.                                     │
+│ worker        Manage application background workers.                                             │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
-## Run Commands
+## Database Commands
 
 ```bash
-❯ poetry run app run
+❯ app database
 
- Usage: app run [OPTIONS] COMMAND [ARGS]...
+ Usage: app database [OPTIONS] COMMAND [ARGS]...
 
- Run application services.
+ Manage the configured database backend.
 
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --help    Show this message and exit.                                        │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────╮
-│ server          Starts the application server                                │
-│ worker          Starts the background workers                                │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help      Show this message and exit.                                                          │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
+│ create-database                 Creates an empty postgres database and executes migrations       │
+│ purge-database                  Drops all tables.                                                │
+│ reset-database                  Executes migrations to apply any outstanding database            │
+│                                 structures.                                                      │
+│ show-current-database-revision  Shows the current revision for the database.                     │
+│ upgrade-database                Executes migrations to apply any outstanding database            │
+│                                 structures.                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+```
+
+## Worker Commands
+
+```bash
+❯ app worker
+
+ Usage: app worker [OPTIONS] COMMAND [ARGS]...
+
+ Manage application background workers.
+
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help      Show this message and exit.                                                          │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
+│ run         Starts the background workers.                                                       │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+```bash
+❯ app run --help
+
+ Usage: app run [OPTIONS]
+
+ Run a Litestar app.
+ The app can be either passed as a module path in the form of <module name>.<submodule>:<app
+ instance or factory>, set as an environment variable LITESTAR_APP with the same format or
+ automatically discovered from one of these canonical paths: app.py, asgi.py, application.py or
+ app/__init__.py. When auto-discovering application factories, functions with the name
+ ``create_app`` are considered, or functions that are annotated as returning a ``Litestar``
+ instance.
+
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --reload                    -r                             Reload server on changes              │
+│ --port                      -p   INTEGER                   Serve under this port (INTEGER)       │
+│                                                            [default: 8000]                       │
+│ --web-concurrency           -wc  INTEGER RANGE [1<=x<=11]  The number of HTTP workers to launch  │
+│                                                            (INTEGER RANGE)                       │
+│                                                            [default: 1; 1<=x<=11]                │
+│ --host                           TEXT                      Server under this host (TEXT)         │
+│                                                            [default: 127.0.0.1]                  │
+│ --fd,--file-descriptor           INTEGER                   Bind to a socket from this file       │
+│                                                            descriptor.                           │
+│                                                            (INTEGER)                             │
+│ --uds,--unix-domain-socket       TEXT                      Bind to a UNIX domain socket. (TEXT)  │
+│ --debug                                                    Run app in debug mode                 │
+│ --pdb                                                      Drop into PDB on an exception         │
+│ --reload-dir                     TEXT                      Directories to watch for file changes │
+│                                                            (TEXT)                                │
+│ --help                                                     Show this message and exit.           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
 ```bash
-❯ poetry run app run server --help
+❯ app run-all --help
 
- Usage: app run server [OPTIONS]
+ Usage: app run-all [OPTIONS] COMMAND [ARGS]...
 
- Starts the application server
+ Starts the application server & worker in a single command.
 
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --host                    Host interface to listen on.  Use 0.0.0.0 for all  │
-│                           available interfaces.                              │
-│                           (TEXT)                                             │
-│                           [default: 0.0.0.0]                                 │
-│ --port                -p  Port to bind. (INTEGER) [default: 8000]            │
-│ --http-workers            The number of HTTP worker processes for handling   │
-│                           requests.                                          │
-│                           (INTEGER RANGE)                                    │
-│                           [default: 7; 1<=x<=7]                              │
-│ --worker-concurrency      The number of simultaneous jobs a worker process   │
-│                           can execute.                                       │
-│                           (INTEGER RANGE)                                    │
-│                           [default: 10; x>=1]                                │
-│ --reload              -r  Enable reload                                      │
-│ --verbose             -v  Enable verbose logging.                            │
-│ --debug               -d  Enable debugging.                                  │
-│ --help                    Show this message and exit.                        │
-╰──────────────────────────────────────────────────────────────────────────────╯
-```
-
-```bash
-❯ poetry run app run worker --help
-
- Usage: app run worker [OPTIONS]
-
- Starts the background workers
-
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --worker-concurrency      The number of simultaneous jobs a worker process   │
-│                           can execute.                                       │
-│                           (INTEGER RANGE)                                    │
-│                           [default: 1; x>=1]                                 │
-│ --verbose             -v  Enable verbose logging.                            │
-│ --debug               -d  Enable debugging.                                  │
-│ --help                    Show this message and exit.                        │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --host                    TEXT                      Host interface to listen on.  Use 0.0.0.0    │
+│                                                     for all available interfaces.                │
+│                                                     (TEXT)                                       │
+│                                                     [default: 0.0.0.0]                           │
+│ --port                -p  INTEGER                   Port to bind. (INTEGER) [default: 8000]      │
+│ --http-workers            INTEGER RANGE [1<=x<=11]  The number of HTTP worker processes for      │
+│                                                     handling requests.                           │
+│                                                     (INTEGER RANGE)                              │
+│                                                     [default: 11; 1<=x<=11]                      │
+│ --worker-concurrency      INTEGER RANGE [x>=1]      The number of simultaneous jobs a worker     │
+│                                                     process can execute.                         │
+│                                                     (INTEGER RANGE)                              │
+│                                                     [default: 1; x>=1]                           │
+│ --reload              -r                            Enable reload                                │
+│ --verbose             -v                            Enable verbose logging.                      │
+│ --debug               -d                            Enable debugging.                            │
+│ --help                                              Show this message and exit.                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Installation and Configuration
@@ -165,8 +185,9 @@ cp env.example .env
 You can generate a `SECRET_KEY` by running:
 
 ```bash
-❯ poetry run app manage generate-random-key
-KEY: 5c5f2230767976c332b6f933b63b483a35148b2218e2cdfd0da992d859feae19
+❯ openssl rand -base64 32
+
++U9UcN0meCsxkShMINkqZ7pcwpEpOC9AwOArZI6mYDU=
 ```
 
 ### Deploy Database Migrations
@@ -174,46 +195,47 @@ KEY: 5c5f2230767976c332b6f933b63b483a35148b2218e2cdfd0da992d859feae19
 You can run most of the database commands with the integrated CLI tool.
 
 To deploy migration to the database, execute:
-`poetry run app manage upgrade-database`
+
+```bash
+❯ app database upgrade-database
+2023-06-16T16:55:17.048183Z [info     ] Context impl PostgresqlImpl.
+2023-06-16T16:55:17.048251Z [info     ] Will assume transactional DDL.
+```
 
 ### Starting the server
 
-#### Starting the server in `DEBUG` mode (development mode)
+#### Starting the server in development mode
 
-if `DEBUG` is set to true, the base template expects that Vite will be running. You'll need to open 2 terminal shells at the moment to get the environment running.
-
-in terminal one, run:
+if `DEV_MODE` is set to true, the base template expects that Vite will be running. When you start the application, it will try to start the vite service with the HMR websocket connection enabled.
 
 ```bash
-❯ npm run dev
-> vite
-
-Forced re-optimization of dependencies
-
-  VITE v4.1.2  ready in 537 ms
-
-  ➜  Local:   http://127.0.0.1:3000/static/
-  ➜  Network: use --host to expose
-  ➜  press h to show help
-```
-
-in the second terminal, run:
-
-```bash
-❯ poetry run app run server --reload
-2023-02-19 22:51:46 [info     ] starting application.
-2023-02-19 22:51:46 [info     ] starting Background worker processes.
-2023-02-19 22:51:46 [info     ] Starting HTTP Server.
+❯ app run-all -p 8080
+2023-06-16T16:58:38.049014Z [info     ] starting all application services.
+2023-06-16T16:58:38.049058Z [info     ] starting Background worker processes.
+2023-06-16T16:58:38.055247Z [info     ] starting Vite
+2023-06-16T16:58:38.056850Z [info     ] Starting HTTP Server.
+2023-06-16T16:58:38.791943Z [info     ] Started server process [29108]
+2023-06-16T16:58:38.792012Z [info     ] Waiting for application startup.
+2023-06-16T16:58:38.794260Z [info     ] Application startup complete.
+2023-06-16T16:58:38.794876Z [info     ] Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+2023-06-16T16:58:38.803751Z [info     ] Starting working pool
+2023-06-16T16:58:38.804423Z [info     ] Worker is starting up.
+2023-06-16T16:58:38.804519Z [info     ] Worker is starting up.
+2023-06-16T16:58:38.816324Z [info     ] Performing background worker task.
+2023-06-16T16:58:39.188218Z [info     ] Vite                           message=> litestar-fullstack@0.0.0 dev> vite
+2023-06-16T16:58:39.894411Z [info     ] Vite                           message=Forced re-optimization of dependencies
+2023-06-16T16:58:39.923813Z [info     ] Vite                           message=  VITE v4.3.9  ready in 676 ms
+2023-06-16T16:58:39.924023Z [info     ] Vite                           message=  ➜  Local:   http://localhost:3000/static/  ➜  Network: use --host to expose
 ```
 
 #### start the server in production mode
 
-if DEBUG is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting th server.
+if `DEV_MODE` is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting th server.
 
 ```bash
 npm run build # generates static assets from vite and
 # files from the above command can be found in `src/app/domain/web/public`.
-poetry run app run server
+app run-all
 ```
 
 Sample output:
@@ -233,11 +255,10 @@ Generated an empty chunk: "vue".
 ../public/assets/vue-4ed993c7.js     0.00 kB │ gzip:  0.02 kB
 ../public/assets/main-17f9b70b.js    1.50 kB │ gzip:  0.80 kB
 ../public/assets/@vue-5be96905.js   52.40 kB │ gzip: 21.07 kB
-❯ poetry run app run server
+❯ app run-all
 2023-02-19 22:53:08 [info     ] starting application.
 2023-02-19 22:53:08 [info     ] starting Background worker processes.
 2023-02-19 22:53:08 [info     ] Starting HTTP Server.
-^C2023-02-19 22:53:09 [info     ] ⏏️  Shutdown complete
 ```
 
 ## Make Commands

@@ -14,6 +14,8 @@ ${imports if imports else ""}
 sa.GUID = GUID
 sa.DateTimeUTC = DateTimeUTC
 sa.ORA_JSONB = ORA_JSONB
+sa.DateTimeUTC = DateTimeUTC
+sa.ORA_JSONB = ORA_JSONB
 
 # revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}
