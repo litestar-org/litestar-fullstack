@@ -13,8 +13,4 @@ config = OpenAPIConfig(
     use_handler_docstrings=True,
     root_schema_site="swagger",
 )
-"""OpenAPI config for app.  See OpenAPISettings for configuration.
-
-Defaults to 'elements' for the documentation.  It has an interactive 3.1
-compliant web app and Swagger does not yet support 3.1
-"""
+"""OpenAPI config for app.  See OpenAPISettings for configuration."""
