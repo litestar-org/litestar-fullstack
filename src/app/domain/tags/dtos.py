@@ -14,8 +14,8 @@ class TagDTO(SQLAlchemyDTO[Tag]):
 
 
 class TagCreateDTO(SQLAlchemyDTO[Tag]):
-    config = dto.config(max_nested_depth=0, exclude={"id", "created", "updated", "teams"})
+    config = dto.config(max_nested_depth=0, exclude={"id", "created_at", "updated_at", "teams"})
 
 
 class TagUpdateDTO(SQLAlchemyDTO[Tag]):
-    config = dto.config(max_nested_depth=0, exclude={"id", "created", "updated", "teams"}, partial=True)
+    config = dto.config(max_nested_depth=0, exclude={"id", "created_at", "updated_at", "teams"}, partial=True)

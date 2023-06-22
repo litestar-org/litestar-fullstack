@@ -79,7 +79,7 @@ def provide_created_filter(
     after : datetime | None
         Filter for records updated after this date/time.
     """
-    return BeforeAfter("created", before, after)
+    return BeforeAfter("created_at", before, after)
 
 
 def provide_search_filter(
@@ -138,7 +138,7 @@ def provide_updated_filter(
     after : datetime | None
         Filter for records updated after this date/time.
     """
-    return BeforeAfter("updated", before, after)
+    return BeforeAfter("updated_at", before, after)
 
 
 def provide_limit_offset_pagination(

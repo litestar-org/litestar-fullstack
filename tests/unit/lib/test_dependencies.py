@@ -43,7 +43,7 @@ def test_id_filter() -> None:
 
 @pytest.mark.parametrize(
     ("filter_", "field_name"),
-    [(dependencies.provide_created_filter, "created"), (dependencies.provide_updated_filter, "updated")],
+    [(dependencies.provide_created_filter, "created_at"), (dependencies.provide_updated_filter, "updated_at")],
 )
 def test_before_after_filters(filter_: "abc.Callable[[datetime, datetime], BeforeAfter]", field_name: str) -> None:
     assert filter_(datetime.max, datetime.min) == BeforeAfter(
@@ -103,8 +103,8 @@ def test_provided_filters(app: Litestar, client: TestClient) -> None:
         id_filter: CollectionFilter,
     ) -> MessageTest:
         nonlocal called
-        assert created_filter == BeforeAfter("created", datetime.max, datetime.min)
-        assert updated_filter == BeforeAfter("updated", datetime.max, datetime.min)
+        assert created_filter == BeforeAfter("created_at", datetime.max, datetime.min)
+        assert updated_filter == BeforeAfter("updated_at", datetime.max, datetime.min)
         assert limit_offset == LimitOffset(2, 18)
         assert id_filter == CollectionFilter("id", ids)
         called = True
@@ -135,10 +135,10 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     async def filtered_collection_route(filters: list[FilterTypes]) -> None:
         nonlocal called
         assert filters == [
-            BeforeAfter(field_name="created", before=datetime.max, after=datetime.min),
+            BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),
             CollectionFilter(field_name="id", values=ids),
             LimitOffset(limit=2, offset=18),
-            BeforeAfter(field_name="updated", before=datetime.max, after=datetime.min),
+            BeforeAfter(field_name="updated_at", before=datetime.max, after=datetime.min),
             SearchFilter(field_name="my_field", value="SearchString"),
             OrderBy(field_name="my_col", sort_order="desc"),
         ]

@@ -18,8 +18,8 @@ class TeamDTO(SQLAlchemyDTO[Team]):
             "hashed_password",
             "members.team",
             "members.user",
-            "members.created",
-            "members.updated",
+            "members.created_at",
+            "members.updated_at",
             "members.id",
             "members.user_name",
             "members.user_email",
@@ -43,12 +43,12 @@ class TeamCreateDTO(DataclassDTO[TeamCreate]):
 
 @dataclass
 class TeamUpdate:
-    name: str
-    description: str
-    tags: list[str]
+    name: str | None = None
+    description: str | None = None
+    tags: list[str] | None = None
 
 
 class TeamUpdateDTO(DataclassDTO[TeamUpdate]):
     """Team Update."""
 
-    config = dto.config(partial=True)
+    config = dto.config()

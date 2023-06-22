@@ -28,8 +28,8 @@ class UserDTO(SQLAlchemyDTO[User]):
             "hashed_password",
             "teams.team",
             "teams.user",
-            "teams.created",
-            "teams.updated",
+            "teams.created_at",
+            "teams.updated_at",
             "teams.id",
             "teams.user_name",
             "teams.user_email",
@@ -70,7 +70,7 @@ class UserUpdate:
 class UserUpdateDTO(DataclassDTO[UserUpdate]):
     """User Update."""
 
-    config = dto.config(partial=True)
+    config = dto.config()
 
 
 @dataclass
