@@ -142,6 +142,7 @@ filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
   "ignore::DeprecationWarning:passlib.*",
+  "ignore::DeprecationWarning:aiosql.*",
 ]
 testpaths = ["tests"]
 
