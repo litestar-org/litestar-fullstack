@@ -30,6 +30,7 @@ def model_from_dict(model: ModelT, **kwargs: Any) -> ModelT:
     """Return ORM Object from Dictionary."""
     data = {}
     for column in model.__table__.columns:
-        if column.name in kwargs:
-            data.update({column.name: kwargs.get(column.name)})
+        column_val = kwargs.get(column.name, None)
+        if column_val is not None:
+            data.update({column.name: column_val})
     return model(**data)  # type: ignore

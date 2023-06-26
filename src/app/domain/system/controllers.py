@@ -7,7 +7,7 @@ from litestar.response import Response
 from sqlalchemy import text
 
 from app.domain import urls
-from app.domain.system import schemas
+from app.domain.system.dtos import SystemHealth
 from app.lib import log, worker
 from app.lib.cache import redis
 
@@ -35,8 +35,9 @@ class SystemController(Controller):
         tags=["System"],
         summary="Health Check",
         description="Execute a health check against backend components.  Returns system information including database and cache status.",
+        signature_namespace={"SystemHealth": SystemHealth},
     )
-    async def check_system_health(self, db_session: AsyncSession) -> Response[schemas.SystemHealth]:
+    async def check_system_health(self, db_session: AsyncSession) -> Response[SystemHealth]:
         """Check database available and returns app config info."""
         try:
             await db_session.execute(text("select 1"))
@@ -66,9 +67,7 @@ class SystemController(Controller):
             )
 
         return Response(
-            content=schemas.SystemHealth.parse_obj(
-                {"database_status": db_status, "cache_status": cache_status, "worker_status": worker_status},
-            ),
+            content=SystemHealth(database_status=db_status, cache_status=cache_status, worker_status=worker_status),  # type: ignore
             status_code=200 if db_ping and cache_ping and worker_ping else 500,
             media_type=MediaType.JSON,
         )

@@ -9,16 +9,18 @@ from litestar.params import Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
-from app.domain.teams import schemas
 from app.domain.teams.dependencies import provides_teams_service
+from app.domain.teams.dtos import TeamCreate, TeamCreateDTO, TeamDTO, TeamUpdate, TeamUpdateDTO
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 
 if TYPE_CHECKING:
     from uuid import UUID
 
+    from litestar.dto.factory import DTOData
     from litestar.pagination import OffsetPagination
 
     from app.domain.accounts.models import User
+    from app.domain.teams.models import Team
     from app.domain.teams.services import TeamService
     from app.lib.dependencies import FilterTypes
 
@@ -31,6 +33,8 @@ class TeamController(Controller):
     tags = ["Teams"]
     dependencies = {"teams_service": Provide(provides_teams_service)}
     guards = [requires_active_user]
+    return_dto = TeamDTO
+    signature_namespace = {"TeamUpdate": TeamUpdate, "TeamCreate": TeamCreate}
 
     @get(
         operation_id="ListTeams",
@@ -43,31 +47,32 @@ class TeamController(Controller):
         teams_service: TeamService,
         current_user: User,
         filters: list[FilterTypes] = Dependency(skip_validation=True),
-    ) -> OffsetPagination[schemas.Team]:
+    ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
         if current_user.is_superuser:
             results, total = await teams_service.list_and_count(*filters)
         else:
             results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
-        return teams_service.to_dto(schemas.Team, results, total, *filters)
+        return teams_service.to_dto(results, total, *filters)
 
     @post(
         operation_id="CreateTeam",
         name="teams:create",
         summary="Create a new team.",
         path=urls.TEAM_CREATE,
+        dto=TeamCreateDTO,
     )
     async def create_team(
         self,
         teams_service: TeamService,
         current_user: User,
-        data: schemas.TeamCreate,
-    ) -> schemas.Team:
+        data: DTOData[TeamCreate],
+    ) -> Team:
         """Create a new team."""
-        obj = data.dict(exclude_unset=True, by_alias=False, exclude_none=True)
+        obj = data.create_instance().__dict__
         obj.update({"owner_id": current_user.id})
         db_obj = await teams_service.create(obj)
-        return teams_service.to_dto(schemas.Team, db_obj)
+        return teams_service.to_dto(db_obj)
 
     @get(
         operation_id="GetTeam",
@@ -83,32 +88,33 @@ class TeamController(Controller):
             title="Team ID",
             description="The team to retrieve.",
         ),
-    ) -> schemas.Team:
+    ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
-        return teams_service.to_dto(schemas.Team, db_obj)
+        return teams_service.to_dto(db_obj)
 
     @patch(
         operation_id="UpdateTeam",
         name="teams:update",
         guards=[requires_team_admin],
         path=urls.TEAM_UPDATE,
+        dto=TeamUpdateDTO,
     )
     async def update_team(
         self,
-        data: schemas.TeamUpdate,
+        data: DTOData[TeamUpdate],
         teams_service: TeamService,
         team_id: UUID = Parameter(
             title="Team ID",
             description="The team to update.",
         ),
-    ) -> schemas.Team:
+    ) -> Team:
         """Update a migration team."""
         db_obj = await teams_service.update(
             team_id,
-            data.dict(exclude_unset=True, by_alias=False, exclude_none=True),
+            data.create_instance().__dict__,
         )
-        return teams_service.to_dto(schemas.Team, db_obj)
+        return teams_service.to_dto(db_obj)
 
     @delete(
         operation_id="DeleteTeam",
@@ -116,6 +122,7 @@ class TeamController(Controller):
         guards=[requires_team_admin],
         summary="Remove Team",
         path=urls.TEAM_DELETE,
+        return_dto=None,
     )
     async def delete_team(
         self,

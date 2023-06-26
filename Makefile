@@ -40,7 +40,6 @@ upgrade:       ## Upgrade all dependencies to the latest stable versions
 
 .PHONY: install
 install:          ## Install the project in dev mode.
-	git update-index --assume-unchanged src/app/domain/web/public/.gitkeep
 	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi

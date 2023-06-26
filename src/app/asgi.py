@@ -46,7 +46,7 @@ def create_app() -> Litestar:
         cors_config=cors.config,
         dependencies=dependencies,
         exception_handlers={
-            exceptions.ApplicationError: exceptions.exception_to_http_response,
+            exceptions.ApplicationError: exceptions.exception_to_http_response,  # type: ignore[dict-item]
         },
         debug=settings.app.DEBUG,
         before_send=[log.controller.BeforeSendHandler()],

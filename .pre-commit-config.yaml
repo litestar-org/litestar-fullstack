@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.274"
+    rev: "v0.0.275"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -41,7 +41,7 @@ repos:
         exclude: "test_*|docs|migrations"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.4.0"
+    rev: "v1.4.1"
     hooks:
       - id: mypy
         additional_dependencies:

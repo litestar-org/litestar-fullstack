@@ -96,7 +96,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         """
         tags_updated: list[str] = []
         if isinstance(data, dict):
-            tags_updated.extend(data.pop("tags", []))
+            tags_updated.extend(data.pop("tags", None) or [])
             data["id"] = item_id
             data = await super().update(item_id, data)
             tags_service = await anext(provide_tags_service(db_session=self.repository.session))
