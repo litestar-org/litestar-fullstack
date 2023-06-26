@@ -1332,36 +1332,39 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.0.0beta2"
+version = "2.0.0b2"
 description = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
-files = []
-develop = false
+files = [
+    {file = "litestar-2.0.0b2-py3-none-any.whl", hash = "sha256:a041c27a1f8ea2081a67fa94ac88f8e74a0e5a2cd33031c3bc10e88f4f47ef88"},
+    {file = "litestar-2.0.0b2.tar.gz", hash = "sha256:874162d8d26963c3a8c4b7405b8facde45c599c472487929bb7e70b96fcec5e0"},
+]
 
 [package.dependencies]
-alembic = {version = "*", optional = true}
+alembic = {version = "*", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"full\""}
 anyio = ">=3"
-click = {version = "*", optional = true}
-cryptography = {version = "*", optional = true}
+click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+cryptography = {version = "*", optional = true, markers = "extra == \"cryptography\" or extra == \"jwt\" or extra == \"full\""}
 fast-query-parsers = "*"
 httpx = ">=0.22"
-jinja2 = {version = ">=3.1.2", optional = true}
-jsbeautifier = {version = "*", optional = true}
+jinja2 = {version = ">=3.1.2", optional = true, markers = "extra == \"jinja\" or extra == \"standard\" or extra == \"full\""}
+jsbeautifier = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+mako = ">=1.2.4"
 msgspec = ">=0.16.0"
 multidict = ">=6.0.2"
 polyfactory = ">=2.3.2"
 pydantic = "<2"
-python-jose = {version = "*", optional = true}
+python-jose = {version = "*", optional = true, markers = "extra == \"jwt\" or extra == \"full\""}
 pyyaml = "*"
-redis = {version = ">=4.4.4,!=4.5.0,!=4.5.1,!=4.5.2,!=4.5.3,!=4.5.5", extras = ["hiredis"], optional = true}
-rich = {version = ">=13.0.0", optional = true}
-rich-click = {version = "*", optional = true}
-sqlalchemy = {version = ">=2.0.12", optional = true}
-structlog = {version = "*", optional = true}
+redis = {version = ">=4.4.4,<4.5.0 || >4.5.0,<4.5.1 || >4.5.1,<4.5.2 || >4.5.2,<4.5.3 || >4.5.3,<4.5.5 || >4.5.5", extras = ["hiredis"], optional = true, markers = "extra == \"redis\" or extra == \"full\""}
+rich = {version = ">=13.0.0", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+rich-click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\""}
+sqlalchemy = {version = ">=2.0.12", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"full\""}
+structlog = {version = "*", optional = true, markers = "extra == \"structlog\" or extra == \"full\""}
 typing-extensions = "*"
-uvicorn = {version = ">=0.22.0", extras = ["standard"], optional = true}
+uvicorn = {version = ">=0.22.0", extras = ["standard"], optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
 
 [package.extras]
 annotated-types = ["annotated-types"]
@@ -1380,12 +1383,6 @@ sqlalchemy = ["alembic", "sqlalchemy (>=2.0.12)"]
 standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.22.0)"]
 structlog = ["structlog"]
 tortoise-orm = ["tortoise-orm (>=0.17.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/litestar-org/litestar.git"
-reference = "cofin/issue1835"
-resolved_reference = "bda45e42bfee77ca4456922dd562e174c613a5e6"
 
 [[package]]
 name = "mako"
@@ -3265,4 +3262,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "9c3c0fc66a960aea8ba8aa8f9ad96cdd2c6fa45c876fc3b8997e90b319512885"
+content-hash = "e5da4d4db777cde8eccb3a7d1aca19169fcf1df1ca2b8a523b57ff442de3725c"
