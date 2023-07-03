@@ -44,7 +44,7 @@ install:          ## Install the project in dev mode.
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p {./src/app/domain/web/public,./src/app/domain/web/resources}; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && . .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs && mkdir -p ./src/app/domain/web/public && mkdir -p ./src/app/domain/web/resources; fi
 	if [ "$(USING_NPM)" ]; then npm ci && npm run build; fi
 	if [ "$(USING_YARN)" ]; then yarn install && yarn run build; fi
 	if [ "$(USING_PNPM)" ]; then pnpm install && pnpm run build; fi

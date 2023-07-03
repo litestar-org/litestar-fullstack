@@ -62,7 +62,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env.example
+      - .env
 
   migrator:
     build:
@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile
     image: app:latest
     restart: "no"
-    command: database upgrade-database
+    command: app database upgrade-database
     env_file:
       - .env.example
     depends_on:
