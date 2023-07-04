@@ -3,13 +3,13 @@ services:
   app:
     build:
       context: .
-      target: build-image
+      target: dev-image
       dockerfile: ./Dockerfile
       args:
         # remove this to build for production.
         POETRY_INSTALL_ARGS: --with=dev,docs,lint
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./docs:/workspace/app/docs/
       - ./tests:/workspace/app/tests/
@@ -18,7 +18,9 @@ services:
       - ./pyproject.toml:/workspace/app/pyproject.toml
       - ./poetry.lock:/workspace/app/poetry.lock
       - ./mkdocs.yml:/workspace/app/mkdocs.yml
-    command: run-all --reload
+      - ./tsconfig.json:/workspace/app/tsconfig.json
+      - ./package.json:/workspace/app/tsconfig.json
+    command: litestar run --reload
 
   localmail:
     image: mailhog/mailhog:v1.0.0

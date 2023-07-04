@@ -21,9 +21,7 @@ keywords = ["api", "rest", "http", "asgi", "pydantic", "litestar", "fastapi", "f
 license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
 name = "app"
-packages = [
-  {include = "app", from = "src"},
-]
+packages = [{include = "app", from = "src"}]
 readme = "README.md"
 repository = "https://github.com/cofin/litestar-fullstack"
 version = "0.1.0"
@@ -41,22 +39,18 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog']}
+litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
-pydantic = {version = ">=1.9.0", extras = [
-  "dotenv",
-  "typing_extensions",
-  "email",
-]}
+pydantic = {version = ">=1.9.0", extras = ["dotenv", "email"]}
 python = ">=3.10,<3.12"
 saq = "*"
-uvicorn = {extras = ["standard"], version = "*"}
-uvloop = "*"
+uvicorn = {version = "*", extras = ['standard']}
 
 [tool.poetry.group.dev.dependencies]
 asgi-lifespan = "*"
 coverage = {extras = ["toml"], version = "*"}
 cython = "*"
+nodeenv = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
@@ -92,9 +86,13 @@ types-python-jose = "*"
 types-pyyaml = "*"
 types-redis = "*"
 
+[tool.poetry.build]
+generate-setup-file = false
+script = "scripts/pre-build.py"
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core", "setuptools", "cython"]
+requires = ["poetry-core", "setuptools", "cython", "nodeenv"]
 
 [tool.black]
 exclude = '''
@@ -131,7 +129,7 @@ omit = ["*/tests/*"]
 show_missing = true
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/*/migrations/**/*.py"]
+omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--ignore", "migrations"]
