@@ -35,7 +35,7 @@ install:          ## Install the project in dev mode.
 	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && source .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs; fi
+	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && . .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs; fi
 	if [ "$(USING_NPM)" ]; then npm ci; fi
 	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
 
