@@ -1,29 +1,54 @@
 version: "3.3"
+x-development-volumes: &development-volumes
+  volumes:
+    - ./docs:/workspace/app/docs/
+    - ./tests:/workspace/app/tests/
+    - ./src:/workspace/app/src/
+    - ./Makefile:/workspace/app/Makefile
+    - ./pyproject.toml:/workspace/app/pyproject.toml
+    - ./poetry.lock:/workspace/app/poetry.lock
+    - ./mkdocs.yml:/workspace/app/mkdocs.yml
+    - ./tsconfig.json:/workspace/app/tsconfig.json
+    - ./package.json:/workspace/app/package.json
+    - ./vite.config.ts:/workspace/app/vite.config.ts
 services:
-  app:
-    build:
-      context: .
-      target: build-image
-      dockerfile: ./Dockerfile
-      args:
-        # remove this to build for production.
-        POETRY_INSTALL_ARGS: --with=dev,docs,lint
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./docs:/workspace/app/docs/
-      - ./tests:/workspace/app/tests/
-      - ./src:/workspace/app/src/
-      - ./Makefile:/workspace/app/Makefile
-      - ./pyproject.toml:/workspace/app/pyproject.toml
-      - ./poetry.lock:/workspace/app/poetry.lock
-      - ./mkdocs.yml:/workspace/app/mkdocs.yml
-    command: app run-all --reload
-    env_file:
-      - .env
-
   localmail:
     image: mailhog/mailhog:v1.0.0
     container_name: localmail
     ports:
       - "8025:8025"
+  app:
+    build:
+      context: .
+      dockerfile: deploy/docker/dev/Dockerfile
+      args:
+        # remove this to build for production.
+        POETRY_INSTALL_ARGS: --with=dev,docs,lint
+    image: app:latest-dev
+    command: litestar run --reload
+    restart: always
+    <<: *development-volumes
+  worker:
+    image: app:latest-dev
+    command: litestar worker run
+    restart: always
+    <<: *development-volumes
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    env_file:
+      - .env.example
+  migrator:
+    image: app:latest-dev
+    command: litestar database upgrade-database
+    restart: "no"
+    <<: *development-volumes
+    env_file:
+      - .env.example
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy

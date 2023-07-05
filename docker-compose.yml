@@ -51,7 +51,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: deploy/docker/run/Dockerfile
     image: app:latest
     restart: always
     depends_on:
@@ -62,15 +62,22 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
-
+      - .env.example
+  worker:
+    image: app:latest
+    command: litestar worker run
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    env_file:
+      - .env.example
   migrator:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: app:latest
     restart: "no"
-    command: app database upgrade-database
+    command: litestar database upgrade-database
     env_file:
       - .env.example
     depends_on:
