@@ -25,7 +25,6 @@ RUN apt-get update \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN pip install --upgrade pip wheel setuptools cython virtualenv
 RUN mkdir -p /workspace/app \
     && addgroup --system --gid 65532 nonroot \
     && adduser --no-create-home --system --uid 65532 nonroot \
@@ -45,7 +44,7 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VERSION='1.5.1' \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
-    PATH="/workspace/app/.venv/bin:/usr/local/bin:/opt/poetry/bin:$PATH"
+    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add development packages ------------------------------ ##
 RUN apt-get install -y --no-install-recommends build-essential curl \
     && apt-get autoremove -y \
@@ -59,32 +58,19 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 WORKDIR /workspace/app
 RUN curl -sSL https://install.python-poetry.org | python - \
     && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
-COPY --chown=65532:65532 pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile \
+COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json \
     ./
 RUN python -m venv --copies /workspace/app/.venv
-COPY --chown=65532:65532 scripts ./scripts/
+COPY scripts ./scripts/
 RUN /workspace/app/.venv/bin/pip install -U cython nodeenv \
     && poetry install $POETRY_INSTALL_ARGS --no-root
-COPY --chown=65532:65532 docs ./docs/
-COPY --chown=65532:65532 tests ./tests/
-COPY --chown=65532:65532 src ./src/
-RUN poetry build
 
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- development build ------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- use builder base --------------------------------------- ##
 FROM build-base as dev-image
-RUN poetry install $POETRY_INSTALL_ARGS
-
-
-## ---------------------------------------------------------------------------------- ##
-## -------------------------------- runtime build ----------------------------------- ##
-## ---------------------------------------------------------------------------------- ##
-## ------------------------- use base image  ---------------------------------------- ##
-
-FROM python-base as run-image
 ARG ENV_SECRETS="runtime-secrets"
 ## --------------------------- standardize execution env ----------------------------- ##
 ENV PATH="/workspace/app/.venv/bin:$PATH" \
@@ -99,11 +85,11 @@ ENV PATH="/workspace/app/.venv/bin:$PATH" \
     PYTHONHASHSEED=random \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
-## -------------------------- add application ---------------------------------------- ##
-COPY --from=build-base --chown=65532:65532 /workspace/app/.venv /workspace/app/.venv
-COPY --from=build-base --chown=65532:65532 /workspace/app/dist /workspace/app/dist
-USER nonroot
-RUN pip install dist/*.whl
+WORKDIR /workspace/app
+COPY docs/ docs/
+COPY tests/ tests/
+COPY src src/
+RUN poetry install $POETRY_INSTALL_ARGS
 STOPSIGNAL SIGINT
 EXPOSE 8000/tcp
 ENTRYPOINT ["tini","--" ]

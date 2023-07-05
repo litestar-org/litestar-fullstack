@@ -51,7 +51,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: deploy/docker/run/Dockerfile
     image: app:latest
     restart: always
     depends_on:
@@ -65,6 +65,7 @@ services:
       - .env.example
   worker:
     image: app:latest
+    command: litestar worker run
     restart: always
     depends_on:
       db:

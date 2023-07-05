@@ -16,7 +16,12 @@ classifiers = [
 description = "Opinionated template for integrating Litestar with a SPA"
 documentation = "https://cofin.github.io/litestar-fullstack"
 homepage = "https://github.com/cofin/litestar-fullstack"
-include = ["CHANGELOG.md"]
+include = [
+  "CHANGELOG.md",
+  "src/server/app/domain/web/public/**/*",
+  "src/server/app/**/*.sql",
+  "src/server/app/lib/db/**/*.ini",
+]
 keywords = ["api", "rest", "http", "asgi", "pydantic", "litestar", "fastapi", "framework", "websocket", "vite", "spa"]
 license = "MIT"
 maintainers = ["Cody Fincher <cody.fincher@gmail.com>"]
