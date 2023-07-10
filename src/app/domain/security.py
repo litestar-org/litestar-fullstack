@@ -65,6 +65,7 @@ auth = OAuth2PasswordBearerAuth[User](
     token_secret=settings.app.SECRET_KEY.get_secret_value().decode(),
     token_url=urls.ACCOUNT_LOGIN,
     exclude=[
+        ".",
         urls.OPENAPI_SCHEMA,
         urls.SYSTEM_HEALTH,
         urls.ACCOUNT_LOGIN,

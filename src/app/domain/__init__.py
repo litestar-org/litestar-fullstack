@@ -16,11 +16,12 @@ from app.domain.accounts.models import User
 from app.domain.analytics.dtos import NewUsersByWeek
 from app.domain.tags.models import Tag
 from app.domain.teams.models import Team
+from app.domain.cpe.models import CPE
 from app.lib import settings, worker
 from app.lib.service.generic import Service
 from app.lib.worker.controllers import WorkerController
 
-from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web
+from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web, cpe
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -39,6 +40,7 @@ routes: list[ControllerRouterHandler] = [
     tags.controllers.TagController,
     system.controllers.SystemController,
     web.controllers.WebController,
+    cpe.controllers.CpeController,
 ]
 
 if settings.worker.WEB_ENABLED:
@@ -51,6 +53,7 @@ __all__ = [
     "accounts",
     "teams",
     "web",
+    "cpe",
     "urls",
     "tags",
     "security",
@@ -103,4 +106,6 @@ signature_namespace: Mapping[str, Any] = {
     "Job": worker.Job,
     "DTOData": DTOData,
     "TypeEncodersMap": TypeEncodersMap,
+    "CPE": CPE,
+    "CpeService": cpe.services.CpeService,
 }

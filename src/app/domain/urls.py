@@ -28,3 +28,8 @@ TEAM_INVITATION_LIST = "/api/workspaces/{team_id:uuid}/invitations"
 
 
 STATS_WEEKLY_NEW_USERS = "/api/stats/weekly-new-users"
+
+
+########## CPES
+
+CREATE_CPE = "/api/cpes"
