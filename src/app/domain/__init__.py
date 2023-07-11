@@ -14,14 +14,14 @@ from saq.types import QueueInfo
 from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserCreate, UserUpdate
 from app.domain.accounts.models import User
 from app.domain.analytics.dtos import NewUsersByWeek
+from app.domain.cpe.models import CPE
 from app.domain.tags.models import Tag
 from app.domain.teams.models import Team
-from app.domain.cpe.models import CPE
 from app.lib import settings, worker
 from app.lib.service.generic import Service
 from app.lib.worker.controllers import WorkerController
 
-from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web, cpe
+from . import accounts, analytics, cpe, openapi, plugins, security, system, tags, teams, urls, web
 
 if TYPE_CHECKING:
     from collections.abc import Mapping

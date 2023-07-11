@@ -12,6 +12,7 @@ __all__ = [
     "CreateCpeDTO",
 ]
 
+
 class CpeDTO(SQLAlchemyDTO[CPE]):
     config = dto.config(
         exclude={
@@ -19,6 +20,7 @@ class CpeDTO(SQLAlchemyDTO[CPE]):
         },
         max_nested_depth=1,
     )
+
 
 @dataclass
 class CreateCPE:

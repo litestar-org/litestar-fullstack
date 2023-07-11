@@ -3,21 +3,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from litestar import Controller, post, get, delete
+from litestar import Controller, delete, get, post
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
-from app.domain.cpe.dependencies import provides_cpe_service
-from app.lib import log
 from app.domain import urls
-from app.domain.cpe.dtos import CreateCpeDTO, CreateCPE, CpeDTO
+from app.domain.cpe.dependencies import provides_cpe_service
+from app.domain.cpe.dtos import CpeDTO, CreateCPE, CreateCpeDTO
+from app.lib import log
 
-__all__ = ['CpeController']
+__all__ = ["CpeController"]
 
 if TYPE_CHECKING:
     from litestar.contrib.repository.filters import FilterTypes
-    from litestar.pagination import OffsetPagination
     from litestar.dto.factory import DTOData
+    from litestar.pagination import OffsetPagination
 
     from app.domain.cpe.models import CPE
     from app.domain.cpe.services import CpeService
@@ -46,7 +46,6 @@ class CpeController(Controller):
         """List users."""
         results, total = await cpes_service.list_and_count(*filters)
         return cpes_service.to_dto(results, total, *filters)
-
 
     @post(
         operation_id="CreateCPE",
