@@ -50,6 +50,7 @@ pydantic = {version = ">=1.9.0", extras = ["dotenv", "email"]}
 python = ">=3.10,<3.12"
 saq = "*"
 uvicorn = {version = "*", extras = ['standard']}
+pytest-postgresql = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]
 asgi-lifespan = "*"
@@ -62,6 +63,7 @@ pytest-cov = "*"
 pytest-docker = "*"
 pytest-dotenv = "*"
 pytest-mock = "*"
+pytest-postgresql = {version = "^5.0.0", extras = ['binary']}
 
 [tool.poetry.group.docs]
 optional = true

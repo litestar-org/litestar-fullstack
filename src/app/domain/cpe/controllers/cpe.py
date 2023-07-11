@@ -36,9 +36,9 @@ class CpeController(Controller):
         operation_id="ListCPEs",
         name="cpes:list",
         summary="List CPEs",
+        cache_control=None,
         description="Retrieve the cpe's",
         path=urls.LIST_CPES,
-        cache=60,
     )
     async def list_cpes(
         self, cpes_service: CpeService, filters: list[FilterTypes] = Dependency(skip_validation=True)
