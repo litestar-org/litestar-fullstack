@@ -32,4 +32,6 @@ STATS_WEEKLY_NEW_USERS = "/api/stats/weekly-new-users"
 
 ########## CPES
 
+LIST_CPES = "/api/cpes"
 CREATE_CPE = "/api/cpes"
+DELETE_CPE = "/api/cpes/{device_id:str}"

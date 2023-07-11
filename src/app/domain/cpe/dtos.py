@@ -24,6 +24,7 @@ class CpeDTO(SQLAlchemyDTO[CPE]):
 class CreateCPE:
     device_id: str
     routername: str
+    os: str
     mgmt_ip: str
     sec_mgmt_ip: str | None = None
 
