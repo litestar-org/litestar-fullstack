@@ -4,6 +4,7 @@ x-development-volumes: &development-volumes
     - ./docs:/workspace/app/docs/
     - ./tests:/workspace/app/tests/
     - ./src:/workspace/app/src/
+    - ./ssh_files:/workspace/app/ssh_files/
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
     - ./poetry.lock:/workspace/app/poetry.lock

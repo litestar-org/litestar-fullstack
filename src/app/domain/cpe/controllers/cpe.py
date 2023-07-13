@@ -8,8 +8,9 @@ from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
 from app.domain import urls
+from app.domain.cpe.business_logic import readout_cpe
 from app.domain.cpe.dependencies import provides_cpe_service
-from app.domain.cpe.dtos import CpeDTO, CreateCPE, CreateCpeDTO
+from app.domain.cpe.dtos import CpeDTO, CreateCPE, CreateCpeDTO, ReadoutCPE, ReadoutCpeDTO
 from app.lib import log
 
 __all__ = ["CpeController"]
@@ -85,3 +86,23 @@ class CpeController(Controller):
     ) -> None:
         """Delete a cpe from the system."""
         _ = await cpes_service.delete(device_id)
+
+    @post(
+        operation_id="ReadoutCPE",
+        name="cpes:readout",
+        summary="Perform a readout of a CPE",
+        cache_control=None,
+        description="readout cpe",
+        path=urls.READOUT_CPE,
+        dto=ReadoutCpeDTO,
+    )
+    async def readout_cpe(
+        self,
+        cpes_service: CpeService,
+        data: DTOData[ReadoutCPE],
+    ) -> CPE:
+        obj = data.create_instance()
+        db_obj = await cpes_service.get(obj.device_id)
+        await readout_cpe(db_obj.mgmt_ip, db_obj.os)
+        """Readout a CPE"""
+        return obj

@@ -10,6 +10,8 @@ __all__ = [
     "CpeDTO",
     "CreateCPE",
     "CreateCpeDTO",
+    "ReadoutCPE",
+    "ReadoutCpeDTO",
 ]
 
 
@@ -31,7 +33,18 @@ class CreateCPE:
     sec_mgmt_ip: str | None = None
 
 
+@dataclass
+class ReadoutCPE:
+    device_id: str
+
+
 class CreateCpeDTO(DataclassDTO[CreateCPE]):
     """Create CPE."""
+
+    config = dto.config(rename_strategy="lower")
+
+
+class ReadoutCpeDTO(DataclassDTO[ReadoutCPE]):
+    """Readout CPE."""
 
     config = dto.config(rename_strategy="lower")
