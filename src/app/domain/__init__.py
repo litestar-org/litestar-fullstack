@@ -70,6 +70,7 @@ tasks: dict[worker.Queue, list[worker.WorkerFunction]] = {
     ],
     worker.queues.get("background-tasks"): [  # type: ignore[dict-item]
         worker.tasks.background_worker_task,
+        cpe.business_logic.communicate_with_cpe,
     ],
 }
 scheduled_tasks: dict[worker.Queue, list[worker.CronJob]] = {
