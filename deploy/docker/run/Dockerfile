@@ -7,15 +7,13 @@ FROM python:${PYTHON_BUILDER_IMAGE} as python-base
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
-WORKDIR /workspace/app
-
-## -------------------------- add common compiled libraries --------------------------- ##
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends git tini \
@@ -24,11 +22,9 @@ RUN apt-get update \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN mkdir -p /workspace/app \
-    && addgroup --system --gid 65532 nonroot \
-    && adduser --no-create-home --system --uid 65532 nonroot \
-    && chown -R nonroot:nonroot /workspace
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false\
+    && mkdir -p /workspace/app \
+    && pip install --quiet -U pip wheel setuptools virtualenv
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python build base -------------------------------------- ##
@@ -52,21 +48,23 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && curl -sSL https://install.python-poetry.org | python - \
+    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-RUN curl -sSL https://install.python-poetry.org | python - \
-    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json \
     ./
-RUN python -m venv --copies /workspace/app/.venv
 COPY scripts ./scripts/
-RUN /workspace/app/.venv/bin/pip install -U cython nodeenv \
-    && poetry install $POETRY_INSTALL_ARGS --no-root
+RUN python -m venv --copies /workspace/app/.venv \
+    && /workspace/app/.venv/bin/pip install --quiet nodeenv cython  \
+    && poetry install ${POETRY_INSTALL_ARGS} --no-root --quiet \
+    && poetry export ${POETRY_INSTALL_ARGS} --quiet --without-hashes --output=requirements.txt
 COPY src ./src/
-RUN poetry build
+RUN poetry build --quiet
+
 
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- runtime build ----------------------------------- ##
@@ -76,10 +74,15 @@ RUN poetry build
 FROM python-base as run-image
 ARG ENV_SECRETS="runtime-secrets"
 ENV ENV_SECRETS="${ENV_SECRETS}"
+RUN addgroup --system --gid 65532 nonroot \
+    && adduser --no-create-home --system --uid 65532 nonroot \
+    && chown -R nonroot:nonroot /workspace
 ## -------------------------- install application ----------------------------------- ##
+COPY --from=build-base --chown=65532:65532 /workspace/app/requirements.txt /tmp/requirements.txt
 COPY --from=build-base --chown=65532:65532 /workspace/app/dist /tmp/
 WORKDIR /workspace/app
-RUN pip install /tmp/*.whl
+RUN pip install --quiet --disable-pip-version-check --no-deps --requirement=/tmp/requirements.txt
+RUN pip install --quiet --disable-pip-version-check --no-deps /tmp/*.whl
 USER nonroot
 STOPSIGNAL SIGINT
 EXPOSE 8000/tcp
