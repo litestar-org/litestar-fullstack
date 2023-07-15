@@ -44,7 +44,7 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {git = "https://github.com/cofin/litestar.git", branch = "spanner-fixes", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog'], allow-prereleases = true}
+litestar = {git = "https://github.com/cofin/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic = {version = ">=1.9.0", extras = ["dotenv", "email"]}
 python = ">=3.10,<3.12"

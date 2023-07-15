@@ -1,5 +1,4 @@
 # type: ignore
-
 """${message}
 
 Revision ID: ${up_revision}
@@ -51,8 +50,6 @@ def schema_downgrades():
 
 def data_upgrades():
     """Add any optional data upgrade migrations here!"""
-    pass
 
 def data_downgrades():
     """Add any optional data downgrade migrations here!"""
-    pass

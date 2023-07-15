@@ -1,10 +1,10 @@
 # type: ignore
 
-"""init
+"""Initial models
 
-Revision ID: cc29e64ab638
+Revision ID: ddc1b07aa56f
 Revises:
-Create Date: 2023-07-11 14:04:06.719743
+Create Date: 2023-07-14 21:03:13.878717
 
 """
 import warnings
@@ -20,7 +20,7 @@ sa.DateTimeUTC = DateTimeUTC
 sa.ORA_JSONB = ORA_JSONB
 
 # revision identifiers, used by Alembic.
-revision = "cc29e64ab638"
+revision = "ddc1b07aa56f"
 down_revision = None
 branch_labels = None
 depends_on = None
