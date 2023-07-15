@@ -15,6 +15,7 @@ from litestar.contrib.repository.filters import (
     OrderBy,
     SearchFilter,
 )
+from litestar.params import Dependency
 from litestar.testing import RequestFactory, TestClient
 
 from app.domain import security
@@ -114,10 +115,10 @@ def test_provided_filters(app: Litestar, client: TestClient) -> None:
     _response = client.get(
         path,
         params={
-            "createdBefore": str(datetime.max),
-            "createdAfter": str(datetime.min),
-            "updatedBefore": str(datetime.max),
-            "updatedAfter": str(datetime.min),
+            "createdBefore": datetime.max.isoformat(),
+            "createdAfter": datetime.min.isoformat(),
+            "updatedBefore": datetime.max.isoformat(),
+            "updatedAfter": datetime.min.isoformat(),
             "currentPage": 10,
             "pageSize": 2,
             "ids": [str(id_) for id_ in ids],
@@ -128,11 +129,11 @@ def test_provided_filters(app: Litestar, client: TestClient) -> None:
 
 def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     called = False
-    path = "/1/2/3/testing"
+    path = f"/{uuid4()}"
     ids = [uuid4() for _ in range(2)]
 
-    @get(path, opt={"exclude_from_auth": True})
-    async def filtered_collection_route(filters: list[FilterTypes]) -> None:
+    @get(path=path, opt={"exclude_from_auth": True})
+    async def filtered_collection_route(filters: list[FilterTypes] = Dependency(skip_validation=True)) -> MessageTest:
         nonlocal called
         assert filters == [
             BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),
@@ -143,21 +144,23 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
             OrderBy(field_name="my_col", sort_order="desc"),
         ]
         called = True
+        return MessageTest(test_attr="yay")
 
+    app.debug = True
     app.register(filtered_collection_route)
-    client.get(
-        "/1/2/3/testing",
+    _response = client.get(
+        path,
         params={
-            "createdBefore": str(datetime.max),
-            "createdAfter": str(datetime.min),
-            "updatedBefore": str(datetime.max),
-            "updatedAfter": str(datetime.min),
+            "createdBefore": datetime.max.isoformat(),
+            "createdAfter": datetime.min.isoformat(),
+            "updatedBefore": datetime.max.isoformat(),
+            "updatedAfter": datetime.min.isoformat(),
             "currentPage": 10,
             "pageSize": 2,
             "ids": [str(id_) for id_ in ids],
+            "orderBy": "my_col",
             "searchField": "my_field",
             "searchString": "SearchString",
-            "orderBy": "my_col",
         },
     )
     assert called

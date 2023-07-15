@@ -6,9 +6,8 @@ from litestar import Controller, MediaType, get
 from litestar.response import Response
 from sqlalchemy import text
 
-from app.domain import urls
 from app.domain.system.dtos import SystemHealth
-from app.lib import log, worker
+from app.lib import constants, log, worker
 from app.lib.cache import redis
 
 if TYPE_CHECKING:
@@ -29,7 +28,7 @@ class SystemController(Controller):
     @get(
         operation_id="SystemHealth",
         name="system:health",
-        path=urls.SYSTEM_HEALTH,
+        path=constants.SYSTEM_HEALTH,
         media_type=MediaType.JSON,
         cache=False,
         tags=["System"],

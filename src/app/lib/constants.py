@@ -22,3 +22,7 @@ DEFAULT_PAGINATION_SIZE = 20
 """Default page size to use."""
 SERVICE_OBJECT_IDENTITY_MAP: MutableMapping[str, type[Service[Any]]] = {}
 """Used by the worker to lookup methods for service object callbacks."""
+CACHE_EXPIRATION: int = 60
+"""Default cache key expiration in seconds."""
+SYSTEM_HEALTH: str = "/health"
+"""Default path for the service health check endpoint."""

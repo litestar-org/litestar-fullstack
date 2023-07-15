@@ -47,6 +47,7 @@ repos:
         additional_dependencies:
           [
             pydantic,
+            pydantic-settings,
             pylint-pydantic,
             jinja2,
             hiredis,
