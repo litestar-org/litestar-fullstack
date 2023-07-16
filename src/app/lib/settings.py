@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -36,6 +37,7 @@ DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
 STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
+version = importlib.metadata.version(DEFAULT_MODULE_NAME)
 
 
 class ServerSettings(BaseSettings):
@@ -222,7 +224,7 @@ class OpenAPISettings(BaseSettings):
     """Email for contact on document."""
     TITLE: str | None = "Litestar Fullstack"
     """Document title."""
-    VERSION: str = "v1.0"
+    VERSION: str = f"v{version}"
     """Document version."""
 
 

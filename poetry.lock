@@ -1315,7 +1315,7 @@ tortoise-orm = ["tortoise-orm (>=0.17.0)"]
 type = "git"
 url = "https://github.com/litestar-org/litestar.git"
 reference = "main"
-resolved_reference = "5af6e4a60f9b584f51616e2cb3db84b0e5b67507"
+resolved_reference = "b3799dcbf7219aedecee2415e46e80cbadf8becb"
 
 [[package]]
 name = "mako"
@@ -2694,7 +2694,7 @@ sqlcipher = ["sqlcipher3_binary"]
 type = "git"
 url = "https://github.com/sqlalchemy/sqlalchemy.git"
 reference = "main"
-resolved_reference = "eab7782f27825c2c6facfa1e3414e2b6eba324ae"
+resolved_reference = "f23c617e1060fc44c90528d2bfe7a6bd77f5d010"
 
 [[package]]
 name = "structlog"
