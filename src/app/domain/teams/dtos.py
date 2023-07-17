@@ -15,7 +15,6 @@ __all__ = ["TeamCreate", "TeamCreateDTO", "TeamDTO", "TeamUpdate", "TeamUpdateDT
 class TeamDTO(SQLAlchemyDTO[Team]):
     config = dto.config(
         exclude={
-            "hashed_password",
             "members.team",
             "members.user",
             "members.created_at",
@@ -23,6 +22,8 @@ class TeamDTO(SQLAlchemyDTO[Team]):
             "members.id",
             "members.user_name",
             "members.user_email",
+            "invitations",
+            "pending_invitations",
         },
         max_nested_depth=1,
     )

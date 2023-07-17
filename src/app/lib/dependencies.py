@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
+from uuid import UUID
 
 from litestar.contrib.repository.filters import (
     BeforeAfter,
@@ -16,9 +17,6 @@ from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
 from app.lib import constants
-
-if TYPE_CHECKING:
-    from uuid import UUID
 
 __all__ = [
     "create_collection_dependencies",
@@ -39,6 +37,9 @@ __all__ = [
 
 DTorNone = datetime | None
 StringOrNone = str | None
+UuidOrNone = UUID | None
+BooleanOrNone = bool | None
+SortOrderOrNone = Literal["asc", "desc"] | None
 """Aggregate type alias of the types supported for collection filtering."""
 FILTERS_DEPENDENCY_KEY = "filters"
 CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
@@ -83,9 +84,9 @@ def provide_created_filter(
 
 
 def provide_search_filter(
-    field: str = Parameter(title="Field to search", query="searchField", default=None, required=False),
-    search: str = Parameter(title="Field to search", query="searchString", default=None, required=False),
-    ignore_case: bool = Parameter(
+    field: StringOrNone = Parameter(title="Field to search", query="searchField", default=None, required=False),
+    search: StringOrNone = Parameter(title="Field to search", query="searchString", default=None, required=False),
+    ignore_case: BooleanOrNone = Parameter(
         title="Search should be case sensitive", query="searchIgnoreCase", default=None, required=False
     ),
 ) -> SearchFilter:
@@ -95,19 +96,17 @@ def provide_search_filter(
 
     Parameters
     ----------
-    current_page : int
+    field : int
         LIMIT to apply to select.
     page_size : int
         OFFSET to apply to select.
     """
-    return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)
+    return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)  # type: ignore[arg-type]
 
 
 def provide_order_by(
-    field_name: str = Parameter(title="Order by field", query="orderBy", default=None, required=False),
-    sort_order: Literal["asc", "desc"] = Parameter(
-        title="Field to search", query="sortOrder", default="desc", required=False
-    ),
+    field_name: StringOrNone = Parameter(title="Order by field", query="orderBy", default=None, required=False),
+    sort_order: SortOrderOrNone = Parameter(title="Field to search", query="sortOrder", default="desc", required=False),
 ) -> OrderBy:
     """Add offset/limit pagination.
 
@@ -120,7 +119,7 @@ def provide_order_by(
     sort_order : str
         Order field ascending ('asc') or descending ('desc)
     """
-    return OrderBy(field_name=field_name, sort_order=sort_order)
+    return OrderBy(field_name=field_name, sort_order=sort_order)  # type: ignore[arg-type]
 
 
 def provide_updated_filter(

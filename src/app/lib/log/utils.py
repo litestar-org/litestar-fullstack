@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import msgspec
+from app.lib.serialization import _msgspec_json_encoder
 
 __all__ = ["EventFilter", "msgspec_json_renderer"]
 
@@ -23,9 +23,6 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from structlog.typing import EventDict, WrappedLogger
-
-
-_encoder = msgspec.json.Encoder()
 
 
 def msgspec_json_renderer(_: WrappedLogger, __: str, event_dict: EventDict) -> bytes:
@@ -39,7 +36,7 @@ def msgspec_json_renderer(_: WrappedLogger, __: str, event_dict: EventDict) -> b
     Returns:
         The log event encoded to JSON by msgspec.
     """
-    return _encoder.encode(event_dict)
+    return _msgspec_json_encoder.encode(event_dict)
 
 
 class EventFilter:

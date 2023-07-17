@@ -6,7 +6,7 @@ from litestar.config.response_cache import ResponseCacheConfig, default_cache_ke
 from litestar.stores.redis import RedisStore
 from redis.asyncio import Redis
 
-from app.lib import settings
+from app.lib import constants, settings
 
 __all__ = ["cache_key_builder", "on_shutdown"]
 
@@ -55,7 +55,7 @@ def redis_store_factory(name: str) -> RedisStore:
 
 
 config = ResponseCacheConfig(
-    default_expiration=settings.api.CACHE_EXPIRATION,
+    default_expiration=constants.CACHE_EXPIRATION,
     key_builder=cache_key_builder,
 )
 """Cache configuration for application."""

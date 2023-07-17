@@ -19,7 +19,8 @@ async def communicate_with_cpe(ctx, *, ip, os):
         await conn.get_startup_config()
         await conn.get_boot_files()
         await conn.genie_parse_output()  # for this one we will later make an override.
-        # because pyats is very slow upgrading to higher python versions. and i want to keep the project up to date because of the speed improvements in python itself
+        # because pyats is very slow upgrading to higher python versions.
+        # and i want to keep the project up to date because of the speed improvements in python itself
 
         await conn.send_interactive_command(
             [("copy run start", "Destination filename [startup-config]?", False), ("\n", "[OK]", False)]

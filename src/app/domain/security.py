@@ -10,7 +10,7 @@ from app.domain import urls
 from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
-from app.lib import settings
+from app.lib import constants, db, settings
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection, Request
@@ -44,7 +44,9 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     Returns:
         User: User record mapped to the JWT identifier
     """
+
     async with UserService.new(
+        session=db.config.provide_session(connection.app.state, connection.scope),
         statement=select(User).options(
             noload("*"),
             selectinload(User.teams).options(
@@ -62,11 +64,11 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
 
 auth = OAuth2PasswordBearerAuth[User](
     retrieve_user_handler=current_user_from_token,
-    token_secret=settings.app.SECRET_KEY.get_secret_value().decode(),
+    token_secret=settings.app.SECRET_KEY,
     token_url=urls.ACCOUNT_LOGIN,
     exclude=[
         urls.OPENAPI_SCHEMA,
-        urls.SYSTEM_HEALTH,
+        constants.SYSTEM_HEALTH,
         urls.ACCOUNT_LOGIN,
         urls.ACCOUNT_REGISTER,
     ],

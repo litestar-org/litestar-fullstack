@@ -22,7 +22,7 @@ from litestar.status_codes import (
 )
 from litestar.utils.scope import get_litestar_scope_state
 
-from app.lib import settings
+from app.lib import constants, settings
 
 __all__ = ["BeforeSendHandler", "drop_health_logs", "middleware_factory"]
 
@@ -53,7 +53,7 @@ def drop_health_logs(_: WrappedLogger, __: str, event_dict: EventDict) -> EventD
         `event_dict` for further processing if it does not represent a successful health check.
     """
     is_http_log = event_dict["event"] == settings.log.HTTP_EVENT
-    is_health_log = event_dict.get("request", {}).get("path") == settings.api.HEALTH_PATH
+    is_health_log = event_dict.get("request", {}).get("path") == constants.SYSTEM_HEALTH
     is_success_status = HTTP_200_OK <= event_dict.get("response", {}).get("status_code", 0) < HTTP_300_MULTIPLE_CHOICES
     if is_http_log and is_health_log and is_success_status:
         raise structlog.DropEvent

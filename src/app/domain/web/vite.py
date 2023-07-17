@@ -18,7 +18,6 @@ from anyio.streams.text import TextReceiveStream
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.exceptions import ImproperlyConfiguredException
 from litestar.template import TemplateEngineProtocol
-from pydantic import BaseModel
 
 from app.lib import log, settings
 
@@ -39,9 +38,12 @@ T = TypeVar("T", bound=TemplateEngineProtocol)
 
 # generic template is provided at `/templates/site/index.html`
 MANIFEST_NAME: Final = "manifest.json"
+BUILD_COMMAND: str = "npm run build"
+RUN_COMMAND: str = "npm run dev"
 
 
-class ViteConfig(BaseModel):
+@dataclass
+class ViteConfig:
     """Configuration for ViteJS support.
 
     To enable Vite integration, pass an instance of this class to the
@@ -49,27 +51,30 @@ class ViteConfig(BaseModel):
     'plugins' key.
     """
 
+    static_dir: Path
+    """Location of the manifest file.
+
+    The path relative to the `static_url` location
+    """
     hot_reload: bool = False
     is_react: bool = False
+
     static_url: str = "/static/"
     """Base URL to generate for static asset references.
 
     This should match what you have for the STATIC_URL
     """
-    static_dir: Path
-    """Location of the manifest file.
-
-    The path relative to the `assets_path` location
-    """
     host: str = "localhost"
     protocol: str = "http"
     port: int = 3000
-    run_command: str = "npm run dev"
-    build_command: list = ["npm", "run", "build"]
+    run_command: str = RUN_COMMAND
+    build_command: str = BUILD_COMMAND
 
 
-vite_config = ViteConfig.parse_obj(
-    {"hot_reload": settings.app.DEBUG, "assets_path": settings.app.STATIC_URL, "static_dir": settings.app.STATIC_DIR},
+vite_config = ViteConfig(
+    hot_reload=settings.app.DEBUG,
+    static_url=settings.app.STATIC_URL,
+    static_dir=settings.app.STATIC_DIR,
 )
 
 
@@ -221,11 +226,7 @@ class ViteAssetLoader:
         Returns:
             str: Full URL to the asset.
         """
-        base_path = "{protocol}://{host}:{port}".format(
-            protocol=vite_config.protocol,
-            host=vite_config.host,
-            port=vite_config.port,
-        )
+        base_path = f"{vite_config.protocol}://{vite_config.host}:{vite_config.port}"
         return urljoin(
             base_path,
             urljoin(vite_config.static_url, path if path is not None else ""),

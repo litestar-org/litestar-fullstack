@@ -17,7 +17,7 @@ __all__ = [
 
 def _default(value: Any) -> str:
     if isinstance(value, BaseModel):
-        return str(value.dict(by_alias=True))
+        return value.model_dump_json(by_alias=True)
     if isinstance(value, pgproto.UUID | UUID):
         return str(value)
     if isinstance(value, datetime.datetime):

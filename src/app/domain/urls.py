@@ -1,7 +1,6 @@
 INDEX = "/"
 SITE_ROOT = "/{path:str}"
 OPENAPI_SCHEMA = "/schema"
-SYSTEM_HEALTH = "/health"
 
 TAG_LIST = "/api/tags"
 TAG_CREATE = "/api/tags"

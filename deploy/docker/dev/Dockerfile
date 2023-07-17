@@ -7,6 +7,7 @@ FROM python:${PYTHON_BUILDER_IMAGE} as python-base
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
@@ -14,9 +15,6 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     APPLICATION_RUN_TYPE=development
-WORKDIR /workspace/app
-
-## -------------------------- add common compiled libraries --------------------------- ##
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends git tini openssh-server \
@@ -25,11 +23,9 @@ RUN apt-get update \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-RUN mkdir -p /workspace/app \
-    && addgroup --system --gid 65532 nonroot \
-    && adduser --no-create-home --system --uid 65532 nonroot \
-    && chown -R nonroot:nonroot /workspace
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false\
+    && mkdir -p /workspace/app \
+    && pip install --quiet -U pip wheel setuptools virtualenv
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python build base -------------------------------------- ##
@@ -46,26 +42,27 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
-## -------------------------- add development packages ------------------------------ ##
+## -------------------------- add build packages ----------------------------------- ##
 RUN apt-get install -y --no-install-recommends build-essential curl \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && curl -sSL https://install.python-poetry.org | python - \
+    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-RUN curl -sSL https://install.python-poetry.org | python - \
-    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json \
     ./
-RUN python -m venv --copies /workspace/app/.venv
 COPY scripts ./scripts/
-RUN /workspace/app/.venv/bin/pip install -U cython nodeenv \
-    && poetry install $POETRY_INSTALL_ARGS --no-root
+RUN python -m venv --copies /workspace/app/.venv \
+    && /workspace/app/.venv/bin/pip install --quiet nodeenv cython  \
+    && poetry install ${POETRY_INSTALL_ARGS} --no-root --quiet
+COPY src ./src/
 
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- development build ------------------------------- ##
