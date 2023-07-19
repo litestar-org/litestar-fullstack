@@ -3,15 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeVar, overload
 
 from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
-from litestar.dto.factory import DTOConfig, dto_field
-from litestar.dto.factory.stdlib.dataclass import DataclassDTO
+from litestar.dto import DataclassDTO, DTOConfig, dto_field
 from litestar.types.protocols import DataclassProtocol
 from sqlalchemy.orm import DeclarativeBase
 
 if TYPE_CHECKING:
     from collections.abc import Set
 
-    from litestar.dto.factory.types import RenameStrategy
+    from litestar.dto import RenameStrategy
 
 __all__ = ["config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO"]
 

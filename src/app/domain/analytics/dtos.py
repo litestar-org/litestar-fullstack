@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from litestar.dto.factory.stdlib.dataclass import DataclassDTO
+from litestar.dto import DataclassDTO
 
 from app.lib import dto
 

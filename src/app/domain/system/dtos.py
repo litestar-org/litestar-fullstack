@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
-from litestar.dto.factory.stdlib.dataclass import DataclassDTO
+from litestar.dto import DataclassDTO
 
 from app.lib import dto, settings
 

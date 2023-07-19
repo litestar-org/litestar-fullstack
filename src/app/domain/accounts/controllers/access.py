@@ -21,7 +21,7 @@ logger = log.get_logger()
 
 if TYPE_CHECKING:
     from litestar.contrib.jwt import OAuth2Login
-    from litestar.dto.factory import DTOData
+    from litestar.dto import DTOData
 
     from app.domain.accounts.models import User
     from app.domain.accounts.services import UserService

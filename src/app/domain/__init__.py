@@ -6,7 +6,7 @@ from uuid import UUID
 
 from litestar.contrib.jwt import OAuth2Login
 from litestar.contrib.repository.filters import FilterTypes
-from litestar.dto.factory import DTOData
+from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from litestar.types import TypeEncodersMap
 from saq.types import QueueInfo
