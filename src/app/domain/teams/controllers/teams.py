@@ -16,7 +16,7 @@ from app.domain.teams.guards import requires_team_admin, requires_team_membershi
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.dto.factory import DTOData
+    from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
 
     from app.domain.accounts.models import User

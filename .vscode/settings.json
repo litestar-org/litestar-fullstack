@@ -65,7 +65,7 @@
   "python.linting.mypyEnabled": true,
   "mypy.runUsingActiveInterpreter": true,
   "mypy.targets": ["src"],
-  "mypy.configFile": "",
+  "mypy.configFile": "./pyproject.toml",
   "mypy.debugLogging": false,
   "ruff.args": [],
   "ruff.importStrategy": "fromEnvironment",

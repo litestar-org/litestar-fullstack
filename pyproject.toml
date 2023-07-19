@@ -44,13 +44,13 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog'], allow-prereleases = true}
+litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic'], allow-prereleases = true}
 passlib = {version = "*", extras = ["argon2"]}
-pydantic = {version = ">=1.9.0", extras = ["dotenv", "email"]}
 pydantic-settings = "*"
 python = ">=3.10,<3.12"
+python-dotenv = "*"
 saq = "*"
-sqlalchemy = {git = "https://github.com/sqlalchemy/sqlalchemy.git", branch = "main"}
+sqlalchemy = ">=2.0.19"
 uvicorn = {version = "*", extras = ['standard']}
 
 [tool.poetry.group.dev.dependencies]
@@ -266,3 +266,48 @@ convention = "google"
 
 [tool.codespell]
 ignore-words-list = "alog"
+
+[tool.mypy]
+disallow_any_generics = false
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+exclude = '''(?x)(
+^build/
+|^dist/
+|^.venv/
+|^node_modules/
+|^migrations/
+)
+'''
+implicit_reexport = false
+plugins = ['pydantic.mypy']
+show_error_codes = true
+strict = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[[tool.mypy.overrides]]
+disallow_untyped_decorators = false
+module = ["tests.*"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*"]
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = ["app.lib.db.migrations.*", "app.lib.dto.*"]
+
+
+[tool.pyright]
+include = ["src/app", "tests"]
