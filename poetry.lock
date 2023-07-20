@@ -240,24 +240,6 @@ asyncpg = ">=0.28,<0.29"
 typing-extensions = ">=4.2.0,<5.0.0"
 
 [[package]]
-name = "attrs"
-version = "23.1.0"
-description = "Classes Without Boilerplate"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
-    {file = "attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
-]
-
-[package.extras]
-cov = ["attrs[tests]", "coverage[toml] (>=5.3)"]
-dev = ["attrs[docs,tests]", "pre-commit"]
-docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-towncrier", "towncrier", "zope-interface"]
-tests = ["attrs[tests-no-zope]", "zope-interface"]
-tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "pytest-xdist[psutil]"]
-
-[[package]]
 name = "black"
 version = "23.7.0"
 description = "The uncompromising code formatter."
@@ -773,6 +755,17 @@ trio = ["trio (>=0.14,<0.23)"]
 wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
 [[package]]
+name = "docstring-parser"
+version = "0.15"
+description = "Parse Python docstrings in reST, Google and Numpydoc format"
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "docstring_parser-0.15-py3-none-any.whl", hash = "sha256:d1679b86250d269d06a99670924d6bce45adc00b08069dae8c47d98e89b667a9"},
+    {file = "docstring_parser-0.15.tar.gz", hash = "sha256:48ddc093e8b1865899956fcc03b03e66bb7240c310fac5af81814580c55bf682"},
+]
+
+[[package]]
 name = "ecdsa"
 version = "0.18.0"
 description = "ECDSA cryptographic signature library (pure python)"
@@ -846,27 +839,27 @@ python-dateutil = ">=2.4"
 
 [[package]]
 name = "fast-query-parsers"
-version = "1.0.0"
+version = "1.0.2"
 description = "Ultra-fast query string and url-encoded form-data parsers"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-macosx_10_7_x86_64.whl", hash = "sha256:0e79684c696ca4db6b8a674961d6dc401f7c26472fdd11c8030c02cfc7cd8e50"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:612a58d5af661472093cf91624d322298b40dd76cc18fef86f26a39a65a57d97"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:75d188ee816ac8547d2d86672917a350393326acecdf965d3c1d02bf7fcb4e32"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4a6c95552c6e3f33292c2f957e9583b460f959936b117e8fdf72f84303aa4591"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:6761c582d112f3501bd468ab1788d6227d62f918d3bd0f598cf03dd39bf45420"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:66a1aef9314c2d60dd366f32fefca05124ee6c3cc2565d0afce72cad76f74128"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:f3816e00cff6c08ca7962359afa6f9b0504bd2b716cda74db0f36b0a9d7e0f06"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:44f2694643f9ca7868a07943d70758ffff6f56ce921e3875169d419ed97fa519"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:cfc0df87c48b0f22f97c8e3c1a12bed33e4dba15009feefff66ec13c154fac37"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:4b8a15f3fa03638dbf997f2071a84f3ffe2877742712eff3435591adf41aab1f"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:4c321c87895e286e08a836139a78d035dab3ac4ce77f9906dbb2f46c5675f326"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-musllinux_1_2_i686.whl", hash = "sha256:f96b29d6b91cf629c4a7cd20b89068e345effdf589ec4573ef669f2e156214df"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:3f76e8be49354be7dbbe6040efea87f21f16effe03e903a369f78fa0f956b306"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-win32.whl", hash = "sha256:6a95f32c4286c8cc56e6d1ef2fd68ae0bf45d4cb142c8119a7de7e0c5e0ce0de"},
-    {file = "fast_query_parsers-1.0.0-cp38-abi3-win_amd64.whl", hash = "sha256:af3d959da3fdb2a3df1ba22d1db9da21fda3c6537ab3cb6d26bc871586ae0002"},
-    {file = "fast_query_parsers-1.0.0.tar.gz", hash = "sha256:76f32c69c13a0a690111e9e3d8b6f63898aa45d604950e91d5c6a6b2abad6aea"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-macosx_10_7_x86_64.whl", hash = "sha256:203680ea5b0f249666ac5e6ca483e4afbae1b4d74dbddc89f217e57d615a824b"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:634e17da63f9ba2caa57f9886deeba5b2bdb8098a0d4d0ee0a99cf93d8ab327a"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9fb9c79126d16a26e9bdfefbe548b026a82f04bc6dac93663cf3b07b1ae5e08b"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:9c8dff92f8453ee4ceab37be20fd1e9cf1330996a4dd9d393303526fc3682f9d"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:51ffc6e14b9c6d05197ac13859bdca7d6f2586a1cc8689f4fc2cc20d480cd839"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:ceec861ed4b83cda9360873d31e23bb6226d257dfb2daef445aa537f429c99ca"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:2afa643626ed121a3d62082a22ca61a4e307020c429f9a823e404caaa416c9e7"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c511b436f9102797e8935889f52364207b57b2ea4a72d2b5dfcd88f448e50560"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:f14c490e1dc43e1471e9b29e102d5bc64ac4285aafb055fd15291f13c74bc535"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:a21f4c1de1936814bc0b1a6a3a39ccb0a737c9a6a92de99e65d0c0d05f191182"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:d9b4b644d32fc696ed6e658f5240f016f05902d899067119e1e041729ca816ad"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-musllinux_1_2_i686.whl", hash = "sha256:70adbcd9f2df2fa7efd3eb2a6901bdc788524a07b08253e5b4e5ef1cb33455d2"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:53b6e4f72cedb2c2291e20a6744891e47a0080aae0caa62ac906853045c74ddd"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-win32.whl", hash = "sha256:2b36e7b2727ec645dc4ae3b929fe348b50c6b38626b5bc4da5d93166edf87ccb"},
+    {file = "fast_query_parsers-1.0.2-cp38-abi3-win_amd64.whl", hash = "sha256:89dd3a07f4b84660891fb6c0279cb9aa9be1f1c976b41c15f852bf3b7a950e20"},
+    {file = "fast_query_parsers-1.0.2.tar.gz", hash = "sha256:c3f3f66e2d139a003ebb061963a72d3becf24e3a207d07c7b7c454446a5ebbfb"},
 ]
 
 [[package]]
@@ -1190,13 +1183,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "identify"
-version = "2.5.24"
+version = "2.5.25"
 description = "File identification library for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "identify-2.5.24-py2.py3-none-any.whl", hash = "sha256:986dbfb38b1140e763e413e6feb44cd731faf72d1909543178aa79b0e258265d"},
-    {file = "identify-2.5.24.tar.gz", hash = "sha256:0aac67d5b4812498056d28a9a512a483f5085cc28640b02b258a59dac34301d4"},
+    {file = "identify-2.5.25-py2.py3-none-any.whl", hash = "sha256:9df2489842707d431b38ce3410ef8df40da5b10a3e28a3fcac1a42523e956409"},
+    {file = "identify-2.5.25.tar.gz", hash = "sha256:db4de0e758c0db8f81996816cd2f3f2f8c5c8d49a7fd02f3b4109aac6fd80e29"},
 ]
 
 [package.extras]
@@ -1211,6 +1204,17 @@ python-versions = ">=3.5"
 files = [
     {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
     {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
+]
+
+[[package]]
+name = "inflection"
+version = "0.5.1"
+description = "A port of Ruby on Rails inflector to Python"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"},
+    {file = "inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417"},
 ]
 
 [[package]]
@@ -1260,12 +1264,12 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "jsbeautifier"
-version = "1.14.8"
+version = "1.14.9"
 description = "JavaScript unobfuscator and beautifier."
 optional = false
 python-versions = "*"
 files = [
-    {file = "jsbeautifier-1.14.8.tar.gz", hash = "sha256:d4c4e263a42dd6194afb9dbe54710be3c5604492cbec3e89c92dd98513f98b9f"},
+    {file = "jsbeautifier-1.14.9.tar.gz", hash = "sha256:c738ebc36b47bd94e4ca6dd17a9004c3cc74edad582ca1d60e0e5d5945a63cb9"},
 ]
 
 [package.dependencies]
@@ -1319,35 +1323,39 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.0.0beta2"
+version = "2.0.0b3"
 description = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 optional = false
 python-versions = ">=3.8,<4.0"
-files = []
-develop = false
+files = [
+    {file = "litestar-2.0.0b3-py3-none-any.whl", hash = "sha256:516ab1622e1b80edcfff62470c6b1b44ecd0d9673baf9c9cb0ae7d55464214e4"},
+    {file = "litestar-2.0.0b3.tar.gz", hash = "sha256:df19e1ccf0f96b17f1cc0b305e034ef71e8d4f42e3ab921cc951d4348d55416a"},
+]
 
 [package.dependencies]
-alembic = {version = "*", optional = true}
+alembic = {version = "*", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"full\""}
 anyio = ">=3"
-click = {version = "*", optional = true}
-cryptography = {version = "*", optional = true}
-fast-query-parsers = ">=1.0.0"
+click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+cryptography = {version = "*", optional = true, markers = "extra == \"cryptography\" or extra == \"jwt\" or extra == \"full\""}
+fast-query-parsers = ">=1.0.2"
 httpx = ">=0.22"
-jinja2 = {version = ">=3.1.2", optional = true}
-jsbeautifier = {version = "*", optional = true}
+jinja2 = {version = ">=3.1.2", optional = true, markers = "extra == \"jinja\" or extra == \"standard\" or extra == \"full\""}
+jsbeautifier = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+mako = ">=1.2.4"
 msgspec = ">=0.17.0"
 multidict = ">=6.0.2"
+piccolo = "*"
 polyfactory = ">=2.3.2"
-pydantic = {version = "*", extras = ["email"], optional = true}
-python-jose = {version = "*", optional = true}
+pydantic = {version = "*", extras = ["email"], optional = true, markers = "extra == \"pydantic\""}
+python-jose = {version = "*", optional = true, markers = "extra == \"jwt\" or extra == \"full\""}
 pyyaml = "*"
-redis = {version = ">=4.4.4, <4.5.0", extras = ["hiredis"], optional = true}
-rich = {version = ">=13.0.0", optional = true}
-rich-click = {version = "*", optional = true}
-sqlalchemy = {version = ">=2.0.12", optional = true}
-structlog = {version = "*", optional = true}
+redis = {version = ">=4.4.4,<4.5.0", extras = ["hiredis"], optional = true, markers = "extra == \"redis\" or extra == \"full\""}
+rich = {version = ">=13.0.0", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
+rich-click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\""}
+sqlalchemy = {version = ">=2.0.12", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"full\""}
+structlog = {version = "*", optional = true, markers = "extra == \"structlog\" or extra == \"full\""}
 typing-extensions = "*"
-uvicorn = {version = ">=0.22.0", extras = ["standard"], optional = true}
+uvicorn = {version = ">=0.22.0", extras = ["standard"], optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
 
 [package.extras]
 annotated-types = ["annotated-types"]
@@ -1367,12 +1375,6 @@ sqlalchemy = ["alembic", "sqlalchemy (>=2.0.12)"]
 standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.22.0)"]
 structlog = ["structlog"]
 tortoise-orm = ["tortoise-orm (>=0.17.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/litestar-org/litestar.git"
-reference = "main"
-resolved_reference = "8881eef4808ff5dd0fee1e7d0dcc9682936bef0d"
 
 [[package]]
 name = "mako"
@@ -1624,13 +1626,13 @@ python-legacy = ["mkdocstrings-python-legacy (>=0.2.1)"]
 
 [[package]]
 name = "mkdocstrings-python"
-version = "1.2.0"
+version = "1.2.1"
 description = "A Python handler for mkdocstrings."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocstrings_python-1.2.0-py3-none-any.whl", hash = "sha256:2924c9c4286fd236bdae64402b5cc5010dee13779b3edf1a65d97bc02303657b"},
-    {file = "mkdocstrings_python-1.2.0.tar.gz", hash = "sha256:e16bedc236a3a6aa04c916ae6b9d37d2299c80c6e7169fc481a30ed9f8f362a4"},
+    {file = "mkdocstrings_python-1.2.1-py3-none-any.whl", hash = "sha256:7c08f33e9ba7b1655e9cf0608eba3ce7a9513bd8b42a68a8d24ffaf4a6a50cfc"},
+    {file = "mkdocstrings_python-1.2.1.tar.gz", hash = "sha256:ae40825b3b676a94626882901ed9c8fcf9a7f0330e466ffe37ce15c525987aa9"},
 ]
 
 [package.dependencies]
@@ -1877,6 +1879,34 @@ files = [
     {file = "pathspec-0.11.1-py3-none-any.whl", hash = "sha256:d8af70af76652554bd134c22b3e8a1cc46ed7d91edcdd721ef1a0c51a84a5293"},
     {file = "pathspec-0.11.1.tar.gz", hash = "sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687"},
 ]
+
+[[package]]
+name = "piccolo"
+version = "0.116.0"
+description = "A fast, user friendly ORM and query builder which supports asyncio."
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "piccolo-0.116.0-py3-none-any.whl", hash = "sha256:c32d50425c283adaa3df3c57fa08df83a076babecf71b46d23ab85c5f29bfadd"},
+    {file = "piccolo-0.116.0.tar.gz", hash = "sha256:e41440a89dc3b7a5706f71497375f620279de0845789fdb9a962b690451d760b"},
+]
+
+[package.dependencies]
+black = "*"
+colorama = ">=0.4.0"
+inflection = ">=0.5.1"
+Jinja2 = ">=2.11.0"
+pydantic = {version = ">=1.6", extras = ["email"]}
+targ = ">=0.3.7"
+typing-extensions = ">=4.3.0"
+
+[package.extras]
+all = ["aiosqlite (>=0.16.0)", "asyncpg (>=0.21.0)", "ipython", "orjson (>=3.5.1)", "uvloop (>=0.12.0)"]
+orjson = ["orjson (>=3.5.1)"]
+playground = ["ipython"]
+postgres = ["asyncpg (>=0.21.0)"]
+sqlite = ["aiosqlite (>=0.16.0)"]
+uvloop = ["uvloop (>=0.12.0)"]
 
 [[package]]
 name = "platformdirs"
@@ -2260,25 +2290,6 @@ pytest = ">=4.6"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
-
-[[package]]
-name = "pytest-docker"
-version = "1.0.1"
-description = "Simple pytest fixtures for Docker and docker-compose based tests"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "pytest-docker-1.0.1.tar.gz", hash = "sha256:f6e8a1e660e2ba63a5bd28703cbb13636e0febd4623dafe047afa8254fb9db8f"},
-    {file = "pytest_docker-1.0.1-py3-none-any.whl", hash = "sha256:5dd39b10747f166d04946ba5b2bfb64e105b692679ca7191de9869d8f8f0640b"},
-]
-
-[package.dependencies]
-attrs = ">=19.2.0"
-pytest = ">=4.0,<8.0"
-
-[package.extras]
-docker-compose-v1 = ["docker-compose (>=1.27.3,<2.0)"]
-tests = ["pytest-pycodestyle (>=2.0.0,<3.0)", "pytest-pylint (>=0.14.1,<1.0)", "requests (>=2.22.0,<3.0)"]
 
 [[package]]
 name = "pytest-dotenv"
@@ -2806,6 +2817,21 @@ tests = ["coverage[toml]", "freezegun (>=0.2.8)", "pretend", "pytest (>=6.0)", "
 typing = ["mypy", "rich", "twisted"]
 
 [[package]]
+name = "targ"
+version = "0.3.8"
+description = "Build a Python CLI for your app, just using type hints and docstrings."
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "targ-0.3.8-py3-none-any.whl", hash = "sha256:cabee4dc7f4aa5c858dbf4ff6b948746a245616c6a370774aaf23afbabdd2676"},
+    {file = "targ-0.3.8.tar.gz", hash = "sha256:6e32e0cd76ab90ead61ed164f4a7131279f8a3721000f419bf219821727253bb"},
+]
+
+[package.dependencies]
+colorama = "==0.4.*"
+docstring-parser = ">=0.12"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -2851,24 +2877,24 @@ files = [
 
 [[package]]
 name = "types-pyasn1"
-version = "0.4.0.5"
+version = "0.4.0.6"
 description = "Typing stubs for pyasn1"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-pyasn1-0.4.0.5.tar.gz", hash = "sha256:d88aca717d15032a6e32050f473fbc73d880b81cb6408bfbea75a3a0bd43a0bd"},
-    {file = "types_pyasn1-0.4.0.5-py3-none-any.whl", hash = "sha256:c5d661b820922b9a99b984b6c2c051734b5ceaa8732206f7196055b5f799ddb6"},
+    {file = "types-pyasn1-0.4.0.6.tar.gz", hash = "sha256:8f1965d0b79152f9d1efc89f9aa9a8cdda7cd28b2619df6737c095cbedeff98b"},
+    {file = "types_pyasn1-0.4.0.6-py3-none-any.whl", hash = "sha256:dd5fc818864e63a66cd714be0a7a59a493f4a81b87ee9ac978c41f1eaa9a0cef"},
 ]
 
 [[package]]
 name = "types-pyopenssl"
-version = "23.2.0.1"
+version = "23.2.0.2"
 description = "Typing stubs for pyOpenSSL"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-pyOpenSSL-23.2.0.1.tar.gz", hash = "sha256:beeb5d22704c625a1e4b6dc756355c5b4af0b980138b702a9d9f932acf020903"},
-    {file = "types_pyOpenSSL-23.2.0.1-py3-none-any.whl", hash = "sha256:0568553f104466f1b8e0db3360fbe6770137d02e21a1a45c209bf2b1b03d90d4"},
+    {file = "types-pyOpenSSL-23.2.0.2.tar.gz", hash = "sha256:6a010dac9ecd42b582d7dd2cc3e9e40486b79b3b64bb2fffba1474ff96af906d"},
+    {file = "types_pyOpenSSL-23.2.0.2-py3-none-any.whl", hash = "sha256:19536aa3debfbe25a918cf0d898e9f5fbbe6f3594a429da7914bf331deb1b342"},
 ]
 
 [package.dependencies]
@@ -2876,13 +2902,13 @@ cryptography = ">=35.0.0"
 
 [[package]]
 name = "types-python-jose"
-version = "3.3.4.7"
+version = "3.3.4.8"
 description = "Typing stubs for python-jose"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-python-jose-3.3.4.7.tar.gz", hash = "sha256:33c033d313a02457b09874a7e516c75da2538069ffe30f779968482bd6f3b123"},
-    {file = "types_python_jose-3.3.4.7-py3-none-any.whl", hash = "sha256:896ba4b99c2da8f3546ef02db32e39d69f4ea75c0e9ed8ae3664bc40bc72c7d8"},
+    {file = "types-python-jose-3.3.4.8.tar.gz", hash = "sha256:3c316675c3cee059ccb9aff87358254344915239fa7f19cee2787155a7db14ac"},
+    {file = "types_python_jose-3.3.4.8-py3-none-any.whl", hash = "sha256:95592273443b45dc5cc88f7c56aa5a97725428753fb738b794e63ccb4904954e"},
 ]
 
 [package.dependencies]
@@ -2890,24 +2916,24 @@ types-pyasn1 = "*"
 
 [[package]]
 name = "types-pyyaml"
-version = "6.0.12.10"
+version = "6.0.12.11"
 description = "Typing stubs for PyYAML"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-PyYAML-6.0.12.10.tar.gz", hash = "sha256:ebab3d0700b946553724ae6ca636ea932c1b0868701d4af121630e78d695fc97"},
-    {file = "types_PyYAML-6.0.12.10-py3-none-any.whl", hash = "sha256:662fa444963eff9b68120d70cda1af5a5f2aa57900003c2006d7626450eaae5f"},
+    {file = "types-PyYAML-6.0.12.11.tar.gz", hash = "sha256:7d340b19ca28cddfdba438ee638cd4084bde213e501a3978738543e27094775b"},
+    {file = "types_PyYAML-6.0.12.11-py3-none-any.whl", hash = "sha256:a461508f3096d1d5810ec5ab95d7eeecb651f3a15b71959999988942063bf01d"},
 ]
 
 [[package]]
 name = "types-redis"
-version = "4.6.0.2"
+version = "4.6.0.3"
 description = "Typing stubs for redis"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-redis-4.6.0.2.tar.gz", hash = "sha256:d0efcd96f65fd2036437c29d8c12566cfdc549345d73eddacb0488b81aff9f9e"},
-    {file = "types_redis-4.6.0.2-py3-none-any.whl", hash = "sha256:a98f3386f44d045057696f3efc8869c53dda0060610e0fe3d8a4d391e2a8916a"},
+    {file = "types-redis-4.6.0.3.tar.gz", hash = "sha256:efdef37dc0c04bf5786195651fd694f8bfdd693eac09ec4af46d90f72652558f"},
+    {file = "types_redis-4.6.0.3-py3-none-any.whl", hash = "sha256:67c44c14369c33c2a300da2a50b5607c0fc888f7b85eeb7c73e15c78a0f05edd"},
 ]
 
 [package.dependencies]
@@ -2927,13 +2953,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.0.3"
+version = "2.0.4"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "urllib3-2.0.3-py3-none-any.whl", hash = "sha256:48e7fafa40319d358848e1bc6809b208340fafe2096f1725d05d67443d0483d1"},
-    {file = "urllib3-2.0.3.tar.gz", hash = "sha256:bee28b5e56addb8226c96f7f13ac28cb4c301dd5ea8a6ca179c0b9835e032825"},
+    {file = "urllib3-2.0.4-py3-none-any.whl", hash = "sha256:de7df1803967d2c2a98e4b11bb7d6bd9210474c46e8a0401514e3a42a75ebde4"},
+    {file = "urllib3-2.0.4.tar.gz", hash = "sha256:8d22f86aae8ef5e410d4f539fde9ce6b2113a001bb4d189e0aed70642d602b11"},
 ]
 
 [package.extras]
@@ -3014,13 +3040,13 @@ test = ["Cython (>=0.29.32,<0.30.0)", "aiohttp", "flake8 (>=3.9.2,<3.10.0)", "my
 
 [[package]]
 name = "virtualenv"
-version = "20.24.0"
+version = "20.24.1"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "virtualenv-20.24.0-py3-none-any.whl", hash = "sha256:18d1b37fc75cc2670625702d76849a91ebd383768b4e91382a8d51be3246049e"},
-    {file = "virtualenv-20.24.0.tar.gz", hash = "sha256:e2a7cef9da880d693b933db7654367754f14e20650dc60e8ee7385571f8593a3"},
+    {file = "virtualenv-20.24.1-py3-none-any.whl", hash = "sha256:01aacf8decd346cf9a865ae85c0cdc7f64c8caa07ff0d8b1dfc1733d10677442"},
+    {file = "virtualenv-20.24.1.tar.gz", hash = "sha256:2ef6a237c31629da6442b0bcaa3999748108c7166318d1f55cc9f8d7294e97bd"},
 ]
 
 [package.dependencies]
@@ -3271,4 +3297,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "7a5a4257784e0733717a5d6fe506afd352f3ffbcaa609f4c47be65a21121dd96"
+content-hash = "d2c48e74bd6855a99167b9082560182e8f392e12f243478c30e164adc0cfe4ed"

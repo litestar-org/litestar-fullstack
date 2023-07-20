@@ -106,8 +106,7 @@ class AccountController(Controller):
         ),
     ) -> User:
         """Create a new user."""
-        obj = data.create_instance()
-        db_obj = await users_service.update(user_id, obj.__dict__)
+        db_obj = await users_service.update(user_id, data.as_builtins())
         return users_service.to_dto(db_obj)
 
     @delete(

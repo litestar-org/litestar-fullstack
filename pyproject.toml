@@ -44,7 +44,7 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic'], allow-prereleases = true}
+litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic-settings = "*"
 python = ">=3.10,<3.12"
@@ -61,7 +61,6 @@ nodeenv = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-pytest-docker = "*"
 pytest-dotenv = "*"
 pytest-mock = "*"
 
@@ -307,7 +306,6 @@ module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "js
 [[tool.mypy.overrides]]
 ignore_errors = true
 module = ["app.lib.db.migrations.*", "app.lib.dto.*"]
-
 
 [tool.pyright]
 include = ["src/app", "tests"]
