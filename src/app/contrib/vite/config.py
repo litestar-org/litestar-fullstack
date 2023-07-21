@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING, Generic, TypeVar, cast
 from litestar.exceptions import ImproperlyConfiguredException
 from litestar.template import TemplateEngineProtocol
 
+__all__ = ["ViteConfig", "ViteTemplateConfig"]
+
+
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.pagination import OffsetPagination
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
@@ -48,5 +48,8 @@ class StatsController(Controller):
         """New Users by week."""
         results = await analytic_queries.select("users_by_week")
         return OffsetPagination[NewUsersByWeek](
-            items=parse_obj_as(list[NewUsersByWeek], results), total=len(results), limit=len(results), offset=0
+            items=TypeAdapter(list[NewUsersByWeek]).validate_python(results),
+            total=len(results),
+            limit=len(results),
+            offset=0,
         )

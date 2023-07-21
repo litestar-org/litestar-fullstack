@@ -8,6 +8,9 @@ from litestar.plugins import InitPluginProtocol
 from app.contrib.vite.config import ViteTemplateConfig
 from app.contrib.vite.template_engine import ViteTemplateEngine
 
+__all__ = ["VitePlugin"]
+
+
 if TYPE_CHECKING:
     from litestar.config.app import AppConfig
 

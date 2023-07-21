@@ -13,6 +13,9 @@ from litestar.template.base import (
 
 from .loader import ViteAssetLoader
 
+__all__ = ["ViteTemplateEngine"]
+
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 

@@ -755,17 +755,6 @@ trio = ["trio (>=0.14,<0.23)"]
 wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
 [[package]]
-name = "docstring-parser"
-version = "0.15"
-description = "Parse Python docstrings in reST, Google and Numpydoc format"
-optional = false
-python-versions = ">=3.6,<4.0"
-files = [
-    {file = "docstring_parser-0.15-py3-none-any.whl", hash = "sha256:d1679b86250d269d06a99670924d6bce45adc00b08069dae8c47d98e89b667a9"},
-    {file = "docstring_parser-0.15.tar.gz", hash = "sha256:48ddc093e8b1865899956fcc03b03e66bb7240c310fac5af81814580c55bf682"},
-]
-
-[[package]]
 name = "ecdsa"
 version = "0.18.0"
 description = "ECDSA cryptographic signature library (pure python)"
@@ -825,13 +814,13 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "19.1.0"
+version = "19.2.0"
 description = "Faker is a Python package that generates fake data for you."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Faker-19.1.0-py3-none-any.whl", hash = "sha256:4b7d5cd0c898f0b64f88fbf0a35aac66762f2273446ba4a4e459985a2e5c8f8c"},
-    {file = "Faker-19.1.0.tar.gz", hash = "sha256:d1eb772faf4a7c458c90b19d3626c40ae3460bd665ad7f5fb7b089e31d1a6dcf"},
+    {file = "Faker-19.2.0-py3-none-any.whl", hash = "sha256:c6c1218482faf79ae1d791bb7124067d12339e0b8f400de855e2c281bcf78c77"},
+    {file = "Faker-19.2.0.tar.gz", hash = "sha256:78840b94843f3aa32a34a220b2b5e8b309e3ffff3a231b0c54e841bb68e0757d"},
 ]
 
 [package.dependencies]
@@ -1207,17 +1196,6 @@ files = [
 ]
 
 [[package]]
-name = "inflection"
-version = "0.5.1"
-description = "A port of Ruby on Rails inflector to Python"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"},
-    {file = "inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417"},
-]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -1323,13 +1301,13 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.0.0b3"
+version = "2.0.0b4"
 description = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "litestar-2.0.0b3-py3-none-any.whl", hash = "sha256:516ab1622e1b80edcfff62470c6b1b44ecd0d9673baf9c9cb0ae7d55464214e4"},
-    {file = "litestar-2.0.0b3.tar.gz", hash = "sha256:df19e1ccf0f96b17f1cc0b305e034ef71e8d4f42e3ab921cc951d4348d55416a"},
+    {file = "litestar-2.0.0b4-py3-none-any.whl", hash = "sha256:47cdcd598247c56e3a928338da5f0b57c0a876e512f5d7ae62e109d034f69c7c"},
+    {file = "litestar-2.0.0b4.tar.gz", hash = "sha256:87e7bdad774a71c9a745194432dd025aaa605d32104f21fac0e9f1a73ec72ae9"},
 ]
 
 [package.dependencies]
@@ -1341,17 +1319,16 @@ fast-query-parsers = ">=1.0.2"
 httpx = ">=0.22"
 jinja2 = {version = ">=3.1.2", optional = true, markers = "extra == \"jinja\" or extra == \"standard\" or extra == \"full\""}
 jsbeautifier = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
-mako = ">=1.2.4"
 msgspec = ">=0.17.0"
 multidict = ">=6.0.2"
-piccolo = "*"
-polyfactory = ">=2.3.2"
-pydantic = {version = "*", extras = ["email"], optional = true, markers = "extra == \"pydantic\""}
+polyfactory = ">=2.6.3"
+pydantic = {version = "*", extras = ["email"], optional = true, markers = "extra == \"pydantic\" or extra == \"full\""}
+pydantic-extra-types = {version = "*", optional = true, markers = "extra == \"pydantic\" or extra == \"full\""}
 python-jose = {version = "*", optional = true, markers = "extra == \"jwt\" or extra == \"full\""}
 pyyaml = "*"
 redis = {version = ">=4.4.4,<4.5.0", extras = ["hiredis"], optional = true, markers = "extra == \"redis\" or extra == \"full\""}
 rich = {version = ">=13.0.0", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
-rich-click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\""}
+rich-click = {version = "*", optional = true, markers = "extra == \"cli\" or extra == \"standard\" or extra == \"full\""}
 sqlalchemy = {version = ">=2.0.12", optional = true, markers = "extra == \"sqlalchemy\" or extra == \"full\""}
 structlog = {version = "*", optional = true, markers = "extra == \"structlog\" or extra == \"full\""}
 typing-extensions = "*"
@@ -1363,18 +1340,19 @@ attrs = ["attrs"]
 brotli = ["brotli"]
 cli = ["click", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.22.0)"]
 cryptography = ["cryptography"]
-full = ["alembic", "attrs", "brotli", "click", "cryptography", "jinja2 (>=3.1.2)", "jsbeautifier", "opentelemetry-instrumentation-asgi", "prometheus-client", "python-jose", "redis[hiredis] (>=4.4.4,<4.5.0)", "rich (>=13.0.0)", "sqlalchemy (>=2.0.12)", "structlog", "uvicorn[standard] (>=0.22.0)"]
+full = ["alembic", "annotated-types", "attrs", "brotli", "click", "cryptography", "jinja2 (>=3.1.2)", "jsbeautifier", "mako (>=1.2.4)", "opentelemetry-instrumentation-asgi", "piccolo", "picologging", "prometheus-client", "pydantic-extra-types", "pydantic[email]", "python-jose", "redis[hiredis] (>=4.4.4,<4.5.0)", "rich (>=13.0.0)", "rich-click", "sqlalchemy (>=2.0.12)", "structlog", "uvicorn[standard] (>=0.22.0)"]
 jinja = ["jinja2 (>=3.1.2)"]
 jwt = ["cryptography", "python-jose"]
+mako = ["mako (>=1.2.4)"]
 opentelemetry = ["opentelemetry-instrumentation-asgi"]
+piccolo = ["piccolo"]
 picologging = ["picologging"]
 prometheus = ["prometheus-client"]
-pydantic = ["pydantic[email]"]
+pydantic = ["pydantic-extra-types", "pydantic[email]"]
 redis = ["redis[hiredis] (>=4.4.4,<4.5.0)"]
 sqlalchemy = ["alembic", "sqlalchemy (>=2.0.12)"]
 standard = ["click", "jinja2 (>=3.1.2)", "jsbeautifier", "rich (>=13.0.0)", "rich-click", "uvicorn[standard] (>=0.22.0)"]
 structlog = ["structlog"]
-tortoise-orm = ["tortoise-orm (>=0.17.0)"]
 
 [[package]]
 name = "mako"
@@ -1881,34 +1859,6 @@ files = [
 ]
 
 [[package]]
-name = "piccolo"
-version = "0.116.0"
-description = "A fast, user friendly ORM and query builder which supports asyncio."
-optional = false
-python-versions = ">=3.7.0"
-files = [
-    {file = "piccolo-0.116.0-py3-none-any.whl", hash = "sha256:c32d50425c283adaa3df3c57fa08df83a076babecf71b46d23ab85c5f29bfadd"},
-    {file = "piccolo-0.116.0.tar.gz", hash = "sha256:e41440a89dc3b7a5706f71497375f620279de0845789fdb9a962b690451d760b"},
-]
-
-[package.dependencies]
-black = "*"
-colorama = ">=0.4.0"
-inflection = ">=0.5.1"
-Jinja2 = ">=2.11.0"
-pydantic = {version = ">=1.6", extras = ["email"]}
-targ = ">=0.3.7"
-typing-extensions = ">=4.3.0"
-
-[package.extras]
-all = ["aiosqlite (>=0.16.0)", "asyncpg (>=0.21.0)", "ipython", "orjson (>=3.5.1)", "uvloop (>=0.12.0)"]
-orjson = ["orjson (>=3.5.1)"]
-playground = ["ipython"]
-postgres = ["asyncpg (>=0.21.0)"]
-sqlite = ["aiosqlite (>=0.16.0)"]
-uvloop = ["uvloop (>=0.12.0)"]
-
-[[package]]
 name = "platformdirs"
 version = "3.9.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -1940,13 +1890,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "polyfactory"
-version = "2.6.2"
+version = "2.6.3"
 description = "Mock data generation factories"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "polyfactory-2.6.2-py3-none-any.whl", hash = "sha256:becdae6720a6df87fb1aa738ba8fa5c26982d72040eb73bf7d938be2637c35b3"},
-    {file = "polyfactory-2.6.2.tar.gz", hash = "sha256:a71016770b643c3bbc26c439cffea13b8510827d6e9e40a857783f8242cb1d8f"},
+    {file = "polyfactory-2.6.3-py3-none-any.whl", hash = "sha256:3da6450402c65f0841cbcd0db72eb28c4c415d4b9c853951ddb0722968ae9ee7"},
+    {file = "polyfactory-2.6.3.tar.gz", hash = "sha256:4c314e94ff89afd0fc59a8c947c9759bb01b65b0662c64bc3b25961747a036e6"},
 ]
 
 [package.dependencies]
@@ -1954,10 +1904,11 @@ faker = "*"
 typing-extensions = "*"
 
 [package.extras]
-beanie = ["beanie", "pydantic"]
+beanie = ["beanie", "pydantic[email]"]
+full = ["beanie", "msgspec", "odmantic", "pydantic[email]"]
 msgspec = ["msgspec"]
-odmantic = ["odmantic", "pydantic"]
-pydantic = ["pydantic"]
+odmantic = ["odmantic", "pydantic[email]"]
+pydantic = ["pydantic[email]"]
 
 [[package]]
 name = "pre-commit"
@@ -2133,6 +2084,23 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "pydantic-extra-types"
+version = "2.0.0"
+description = "Extra Pydantic types."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pydantic_extra_types-2.0.0-py3-none-any.whl", hash = "sha256:63e5109f00815e71fff2b82090ff0523baef6b8a51889356fd984ef50c184e64"},
+    {file = "pydantic_extra_types-2.0.0.tar.gz", hash = "sha256:137ddacb168d95ea77591dbb3739ec4da5eeac0fc4df7f797371d9904451a178"},
+]
+
+[package.dependencies]
+pydantic = ">=2.0b3"
+
+[package.extras]
+all = ["phonenumbers (>=8,<9)", "pycountry (>=22,<23)"]
+
+[[package]]
 name = "pydantic-settings"
 version = "2.0.2"
 description = "Settings management using Pydantic"
@@ -2205,12 +2173,12 @@ pylint = ">=1.7"
 
 [[package]]
 name = "pylint-pydantic"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Pylint plugin to help Pylint understand the Pydantic"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pylint_pydantic-0.2.2-py3-none-any.whl", hash = "sha256:37f9b16b68f258dcb638efd3a78632e237c80d6cde036fe73514de9cdf11aff2"},
+    {file = "pylint_pydantic-0.2.3-py3-none-any.whl", hash = "sha256:da9f477cb9c600fb69cb20267b8b459fa75a51bb931149f46c5fccac2bb12961"},
 ]
 
 [package.dependencies]
@@ -2815,21 +2783,6 @@ dev = ["structlog[docs,tests,typing]"]
 docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-mermaid", "twisted"]
 tests = ["coverage[toml]", "freezegun (>=0.2.8)", "pretend", "pytest (>=6.0)", "pytest-asyncio (>=0.17)", "simplejson"]
 typing = ["mypy", "rich", "twisted"]
-
-[[package]]
-name = "targ"
-version = "0.3.8"
-description = "Build a Python CLI for your app, just using type hints and docstrings."
-optional = false
-python-versions = ">=3.7.0"
-files = [
-    {file = "targ-0.3.8-py3-none-any.whl", hash = "sha256:cabee4dc7f4aa5c858dbf4ff6b948746a245616c6a370774aaf23afbabdd2676"},
-    {file = "targ-0.3.8.tar.gz", hash = "sha256:6e32e0cd76ab90ead61ed164f4a7131279f8a3721000f419bf219821727253bb"},
-]
-
-[package.dependencies]
-colorama = "==0.4.*"
-docstring-parser = ">=0.12"
 
 [[package]]
 name = "tomli"

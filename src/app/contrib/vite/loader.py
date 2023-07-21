@@ -7,6 +7,9 @@ from urllib.parse import urljoin
 
 from litestar.template import TemplateEngineProtocol
 
+__all__ = ["ViteAssetLoader"]
+
+
 if TYPE_CHECKING:
     from app.contrib.vite import ViteConfig
 
