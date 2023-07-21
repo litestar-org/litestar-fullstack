@@ -21,7 +21,6 @@ def create_app() -> Litestar:
 
     from app import domain
     from app.domain.security import provide_user
-    from app.domain.web.vite import template_config
     from app.lib import (
         cache,
         constants,
@@ -55,11 +54,10 @@ def create_app() -> Litestar:
         openapi_config=domain.openapi.config,
         type_encoders={pgproto.UUID: str, SecretStr: str},
         route_handlers=[*domain.routes],
-        plugins=[db.plugin, domain.plugins.aiosql],
+        plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite],
         on_shutdown=[cache.redis.close],
         on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
         static_files_config=static_files.config,
-        template_config=template_config,  # type: ignore[arg-type]
         signature_namespace=domain.signature_namespace,
     )

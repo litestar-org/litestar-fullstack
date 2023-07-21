@@ -86,8 +86,7 @@ class AccountController(Controller):
         data: DTOData[UserCreate],
     ) -> User:
         """Create a new user."""
-        obj = data.create_instance()
-        db_obj = await users_service.create(obj.__dict__)
+        db_obj = await users_service.create(data.as_builtins())
         return users_service.to_dto(db_obj)
 
     @patch(

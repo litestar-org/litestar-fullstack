@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
     from aiosql.queries import Queries
     from sqlalchemy.ext.asyncio import AsyncSession
+
 __all__ = ["AiosqlQueryManager"]
 
 AiosqlQueryManagerT = TypeVar("AiosqlQueryManagerT", bound="AiosqlQueryManager")
@@ -54,10 +55,7 @@ class AiosqlQueryManager:
         Returns:
             The service object instance.
         """
-        try:
-            yield cls(connection=connection, queries=queries)
-        finally:
-            ...
+        yield cls(connection=connection, queries=queries)
 
     async def select(self, method: str, **binds: Any) -> list[dict[str, Any]]:
         data = await self.fn(method)(conn=self.connection, **binds)
@@ -66,6 +64,18 @@ class AiosqlQueryManager:
     async def select_one(self, method: str, **binds: Any) -> dict[str, Any]:
         data = await self.fn(method)(conn=self.connection, **binds)
         return dict(data)
+
+    async def select_one_value(self, method: str, **binds: Any) -> Any:
+        return await self.fn(method)(conn=self.connection, **binds)
+
+    async def insert_update_delete(self, method: str, **binds: Any) -> None:
+        return await self.fn(method)(conn=self.connection, **binds)  # type: ignore
+
+    async def insert_update_delete_many(self, method: str, **binds: Any) -> Any | None:
+        return await self.fn(method)(conn=self.connection, **binds)
+
+    async def insert_returning(self, method: str, **binds: Any) -> Any | None:
+        return await self.fn(method)(conn=self.connection, **binds)
 
     async def execute(self, method: str, **binds: Any) -> Any:
         return await self.fn(method)(conn=self.connection, **binds)

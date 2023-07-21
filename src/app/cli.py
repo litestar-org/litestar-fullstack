@@ -5,14 +5,16 @@ from typing import Any
 
 import anyio
 import click
+from anyio import open_process
+from anyio.streams.text import TextReceiveStream
 from click import echo
 from pydantic import EmailStr
 from rich import get_console
 from rich.prompt import Confirm
 
+from app.domain import plugins
 from app.domain.accounts.dtos import UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
-from app.domain.web.vite import run_vite
 from app.lib import db, log, settings, worker
 
 __all__ = [
@@ -370,3 +372,21 @@ def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
             process_args.append(f"--{arg}={value}")
 
     return process_args
+
+
+def run_vite() -> None:
+    """Run Vite in a subprocess."""
+    try:
+        anyio.run(_run_vite, backend="asyncio", backend_options={"use_uvloop": True})
+    except KeyboardInterrupt:
+        logger.info("Stopping typescript development services.")
+    finally:
+        logger.info("Vite Service stopped.")
+
+
+async def _run_vite() -> None:
+    """Run Vite in a subprocess."""
+    log.config.configure()
+    async with await open_process(plugins.vite._config.run_command) as vite_process:
+        async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
+            await logger.ainfo("Vite", message=text.replace("\n", ""))

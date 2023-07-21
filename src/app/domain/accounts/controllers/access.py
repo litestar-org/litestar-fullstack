@@ -65,8 +65,7 @@ class AccessController(Controller):
     )
     async def signup(self, users_service: UserService, data: DTOData[AccountRegister]) -> User:
         """User Signup."""
-        obj = data.create_instance()
-        user = await users_service.create(obj.__dict__)
+        user = await users_service.create(data.as_builtins())
         return users_service.to_dto(user)
 
     @get(

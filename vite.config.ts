@@ -16,7 +16,8 @@ export default defineConfig({
     fs: {
       allow: [".", path.join(__dirname, "node_modules")],
     },
-    port: 3000,
+    host: "0.0.0.0",
+    port: 3005,
     cors: true,
     strictPort: true,
     watch: {

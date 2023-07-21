@@ -15,6 +15,7 @@ from litestar.contrib.repository.filters import (
     LimitOffset,
 )
 from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
+from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from pydantic.type_adapter import TypeAdapter
 
@@ -33,8 +34,8 @@ if TYPE_CHECKING:
 __all__ = ["SQLAlchemyAsyncRepositoryService"]
 
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
-ModelDictT: TypeAlias = dict[str, Any] | ModelT
-ModelDictListT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]]
+ModelDictDTOT: TypeAlias = dict[str, Any] | ModelT | DTOData
+ModelDictListDTOT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]] | DTOData
 ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")
 FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
 
