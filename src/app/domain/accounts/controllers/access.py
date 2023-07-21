@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from litestar import Controller, MediaType, Response, get, post
+from litestar.contrib.jwt import OAuth2Login
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
@@ -12,6 +13,8 @@ from app.domain import security, urls
 from app.domain.accounts.dependencies import provides_user_service
 from app.domain.accounts.dtos import AccountLogin, AccountLoginDTO, AccountRegister, AccountRegisterDTO, UserDTO
 from app.domain.accounts.guards import requires_active_user
+from app.domain.accounts.models import User
+from app.domain.accounts.services import UserService
 from app.lib import log
 
 __all__ = ["AccessController", "provides_user_service"]
@@ -20,11 +23,7 @@ __all__ = ["AccessController", "provides_user_service"]
 logger = log.get_logger()
 
 if TYPE_CHECKING:
-    from litestar.contrib.jwt import OAuth2Login
     from litestar.dto import DTOData
-
-    from app.domain.accounts.models import User
-    from app.domain.accounts.services import UserService
 
 
 class AccessController(Controller):
@@ -32,6 +31,8 @@ class AccessController(Controller):
 
     tags = ["Access"]
     dependencies = {"users_service": Provide(provides_user_service)}
+    signature_namespace = {"UserService": UserService, "User": User, "OAuth2Login": OAuth2Login}
+
     return_dto = UserDTO
 
     @post(
