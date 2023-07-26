@@ -21,10 +21,10 @@ def build_npm_assets(setup_kwargs: Any) -> Any:
     nodeenv_command = f"{DEFAULT_VENV_PATH}/bin/{NODEENV}" if found_in_local_venv else NODEENV
     install_dir = DEFAULT_VENV_PATH if found_in_local_venv else os.environ.get("VIRTUAL_ENV", sys.prefix)
     logger.info("Installing Node environment to %s:", install_dir)
-    subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"])  # noqa: S603
-    subprocess.run(["npm", "ci", "install"])  # noqa: S607, S603
+    subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], shell=True)  # noqa: S603
+    subprocess.run(["npm", "ci", "install"], shell=True)  # noqa: S607, S603
     logger.info("Building NPM assets:")
-    subprocess.run(["npm", "run", "build"])  # noqa: S607, S603
+    subprocess.run(["npm", "run", "build"], shell=True)  # noqa: S607, S603
     return setup_kwargs
 
 
