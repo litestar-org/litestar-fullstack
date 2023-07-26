@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import atexit
+import platform
 import threading
 from multiprocessing.util import _exit_function  # type: ignore[attr-defined]
 from typing import TYPE_CHECKING, Any
 
-import uvloop
+if platform.system() != "Windows":
+    import uvloop
 
 from app.lib import settings
 
@@ -16,7 +18,6 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Collection
 
     import saq
-
 
 __all__ = ["create_worker_instance", "run_worker"]
 
@@ -99,5 +100,6 @@ def run_worker() -> None:
 
 
 def _create_event_loop() -> asyncio.AbstractEventLoop:
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    if platform.system() != "Windows":
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     return asyncio.new_event_loop()
