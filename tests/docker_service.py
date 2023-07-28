@@ -63,7 +63,7 @@ class DockerServiceRegistry:
 
     def run_command(self, *args: str) -> None:
         command = [*self._base_command, *args]
-        subprocess.run(command, check=True, capture_output=True)
+        subprocess.run(command, check=True, capture_output=True)  # noqa: S603
 
     async def start(
         self,
