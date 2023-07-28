@@ -52,6 +52,7 @@ class DockerServiceRegistry:
         ]
 
     def _get_docker_ip(self) -> str:
+        print("get docker ip")
         docker_host = os.environ.get("DOCKER_HOST", "").strip()
         if not docker_host or docker_host.startswith("unix://"):
             return "127.0.0.1"
