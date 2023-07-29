@@ -101,10 +101,10 @@ def module_to_os_path(dotted_path: str = "app") -> Path:
     src = pkgutil.get_loader(dotted_path)
     if not isinstance(src, SourceFileLoader):
         raise TypeError("Couldn't find the path for %s", dotted_path)
-    if platform.system() != "Windows":
-        return Path(str(src.path).removesuffix("/__init__.py"))
-    else:
-        return Path(str(src.path).removesuffix("\\__init__.py"))
+    path_separator = "/"
+    if platform.system() == "Windows":
+        path_separator = "\\"
+    return Path(str(src.path).removesuffix(f"{path_separator}__init__.py"))
 
 
 def import_string(dotted_path: str) -> Any:
