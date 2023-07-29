@@ -4,7 +4,6 @@ import asyncio
 import os
 import re
 import subprocess
-import sys
 import timeit
 from typing import TYPE_CHECKING, Any
 
@@ -63,10 +62,8 @@ class DockerServiceRegistry:
         raise ValueError(f'Invalid value for DOCKER_HOST: "{docker_host}".')
 
     def run_command(self, *args: str) -> None:
-        if sys.platform == "darwin":
-            subprocess.call([*self._base_command, *args], shell=True)  # noqa: S602
-        else:
-            subprocess.run([*self._base_command, *args], check=True, capture_output=True)  # noqa: S603
+        command = [*self._base_command, *args]
+        subprocess.run(command, check=True, capture_output=True)  # noqa: S603
 
     async def start(
         self,
