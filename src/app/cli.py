@@ -141,7 +141,7 @@ def run_all_app(
             "port": settings.server.PORT,
             "workers": 1 if bool(settings.server.RELOAD or settings.app.DEV_MODE) else settings.server.HTTP_WORKERS,
             "factory": settings.server.APP_LOC_IS_FACTORY,
-            "loop": "uvloop",
+            "loop": "auto",
             "no-access-log": True,
             "timeout-keep-alive": settings.server.KEEPALIVE,
         }
