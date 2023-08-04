@@ -8,7 +8,8 @@ from litestar.di import Provide
 from litestar.plugins import InitPluginProtocol
 from saq.types import QueueInfo
 
-from app.lib.worker import Job, Queue, Worker, dependencies
+from . import dependencies
+from .base import Job, Queue, Worker
 
 __all__ = ["SAQConfig", "SAQPlugin"]
 

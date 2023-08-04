@@ -5,7 +5,7 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.lib import log, settings
+from app.lib import settings
 from app.lib.db.orm import DatabaseModel
 
 __all__ = ["do_run_migrations", "run_migrations_offline", "run_migrations_online"]
@@ -13,8 +13,6 @@ __all__ = ["do_run_migrations", "run_migrations_offline", "run_migrations_online
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Connection
-
-log.config.configure()
 
 
 # this is the Alembic Config object, which provides

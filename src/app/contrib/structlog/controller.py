@@ -24,7 +24,7 @@ from litestar.utils.scope import get_litestar_scope_state
 
 from app.lib import constants, settings
 
-__all__ = ["BeforeSendHandler", "drop_health_logs", "middleware_factory"]
+__all__ = ["BeforeSendHandler", "drop_health_logs", "LoggingMiddleware"]
 
 
 if TYPE_CHECKING:
@@ -60,7 +60,7 @@ def drop_health_logs(_: WrappedLogger, __: str, event_dict: EventDict) -> EventD
     return event_dict
 
 
-def middleware_factory(app: ASGIApp) -> ASGIApp:
+def LoggingMiddleware(app: ASGIApp) -> ASGIApp:  # noqa: N802
     """Middleware to ensure that every request has a clean structlog context.
 
     Args:

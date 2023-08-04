@@ -28,25 +28,17 @@
     "source.fixAll.eslint": true
   },
   "python.defaultInterpreterPath": ".venv/bin/python",
-  "python.linting.banditEnabled": false,
-  "python.linting.flake8Enabled": false,
-  "python.linting.flake8Args": ["--max-line-length=120"],
-  "python.linting.pylintEnabled": true,
-  "python.linting.pylintArgs": [
-    "--load-plugins pylint_pydantic",
-    "--rcfile=pylintrc"
-  ],
-  "python.linting.enabled": true,
   "python.testing.pytestArgs": ["tests/unit", "tests/integration"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.envFile": "${workspaceFolder}/.env",
-  "python.formatting.provider": "black",
   "python.analysis.extraPaths": ["${workspaceFolder}/src"],
   "[python]": {
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,
+
     "editor.defaultFormatter": "ms-python.black-formatter",
+
     "editor.codeActionsOnSave": {
       "source.organizeImports": false,
       "source.fixAll": true

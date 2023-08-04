@@ -11,14 +11,15 @@ from litestar.pagination import OffsetPagination
 from litestar.types import TypeEncodersMap
 from saq.types import QueueInfo
 
+from app.contrib import saq as worker
+from app.contrib.saq.controllers import WorkerController
 from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserCreate, UserUpdate
 from app.domain.accounts.models import User
 from app.domain.analytics.dtos import NewUsersByWeek
 from app.domain.tags.models import Tag
 from app.domain.teams.models import Team
-from app.lib import settings, worker
+from app.lib import settings
 from app.lib.service.generic import Service
-from app.lib.worker.controllers import WorkerController
 
 from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web
 

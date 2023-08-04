@@ -1,4 +1,6 @@
 from app.contrib.aiosql.plugin import AioSQLConfig, AioSQLPlugin
+from app.contrib.saq.plugin import SAQConfig, SAQPlugin
+from app.contrib.structlog.plugin import StructLogConfig, StructLogPlugin
 from app.contrib.vite.config import ViteConfig
 from app.contrib.vite.plugin import VitePlugin
 from app.lib import settings
@@ -12,3 +14,5 @@ vite = VitePlugin(
         port=3005,
     )
 )
+structlog = StructLogPlugin(config=StructLogConfig(logging_config=settings.log.config))
+saq = SAQPlugin(config=SAQConfig())

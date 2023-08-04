@@ -35,7 +35,6 @@ version = "0.1.0"
 app = "litestar.__main__:run_cli"
 
 [tool.poetry.plugins."litestar.commands"]
-database = "app.cli:database_management_app"
 run-all = "app.cli:run_all_app"
 users = "app.cli:user_management_app"
 worker = "app.cli:worker_management_app"
@@ -44,7 +43,7 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
+litestar = {path = "/home/oracle/Code/Starlite/litestar", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic'], develop = true}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic-settings = "*"
 python = ">=3.10,<3.12"
@@ -52,6 +51,7 @@ python-dotenv = "*"
 saq = "*"
 sqlalchemy = ">=2.0.19"
 uvicorn = {version = "*", extras = ['standard']}
+# litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
 
 [tool.poetry.group.dev.dependencies]
 asgi-lifespan = "*"

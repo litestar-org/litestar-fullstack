@@ -1,18 +1,13 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
 )
-from litestar.contrib.sqlalchemy.plugins.init.config.common import SESSION_SCOPE_KEY, SESSION_TERMINUS_ASGI_EVENTS
+from litestar.contrib.sqlalchemy.plugins.init.config.asyncio import autocommit_before_send_handler
 from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
-from litestar.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES
-from litestar.utils import (
-    delete_litestar_scope_state,
-    get_litestar_scope_state,
-)
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
@@ -22,32 +17,7 @@ from app.lib import constants, serialization, settings
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from litestar.types import Message, Scope
     from sqlalchemy.ext.asyncio import AsyncSession
-__all__ = ["before_send_handler", "session"]
-
-
-async def before_send_handler(message: Message, scope: Scope) -> None:
-    """Handle database connection before sending response.
-
-    Custom `before_send_handler` for SQLAlchemy plugin that inspects the status of response and commits, or rolls back the database.
-
-    Args:
-        message: ASGI message
-        _:
-        scope: ASGI scope
-    """
-    session = cast("AsyncSession | None", get_litestar_scope_state(scope, SESSION_SCOPE_KEY))
-    try:
-        if session is not None and message["type"] == "http.response.start":
-            if HTTP_200_OK <= message["status"] < HTTP_300_MULTIPLE_CHOICES:
-                await session.commit()
-            else:
-                await session.rollback()
-    finally:
-        if session and message["type"] in SESSION_TERMINUS_ASGI_EVENTS:
-            await session.close()
-            delete_litestar_scope_state(scope, SESSION_SCOPE_KEY)
 
 
 engine = create_async_engine(
@@ -62,7 +32,7 @@ engine = create_async_engine(
     pool_timeout=settings.db.POOL_TIMEOUT,
     pool_recycle=settings.db.POOL_RECYCLE,
     pool_pre_ping=settings.db.POOL_PRE_PING,
-    pool_use_lifo=True,  # use lifo to reduce the number of idle connections
+    pool_use_lifo=False,  # use lifo to reduce the number of idle connections
     poolclass=NullPool if settings.db.POOL_DISABLE else None,
     connect_args=settings.db.CONNECT_ARGS,
 )
@@ -116,7 +86,7 @@ config = SQLAlchemyAsyncConfig(
     session_dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,
     engine_instance=engine,
     session_maker=async_session_factory,
-    before_send_handler=before_send_handler,
+    before_send_handler=autocommit_before_send_handler,
 )
 
 
