@@ -6,8 +6,9 @@ from litestar import Controller, MediaType, get
 from litestar.response import Response
 from sqlalchemy import text
 
+from app.contrib.saq.info import is_healthy as worker_is_healthy
 from app.domain.system.dtos import SystemHealth
-from app.lib import constants, log, worker
+from app.lib import constants, log
 from app.lib.cache import redis
 
 if TYPE_CHECKING:
@@ -47,7 +48,7 @@ class SystemController(Controller):
         db_status = "online" if db_ping else "offline"
         cache_ping = await redis.ping()
         cache_status = "online" if cache_ping else "offline"
-        worker_ping = await worker.info.is_healthy()
+        worker_ping = await worker_is_healthy()
         worker_status = "online" if worker_ping else "offline"
         healthy = bool(worker_ping and cache_ping and db_ping)
         if healthy:

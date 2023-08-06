@@ -10,7 +10,6 @@ from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags.dependencies import provide_tags_service
 from app.domain.tags.dtos import TagCreateDTO, TagDTO
-from app.lib import log
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -24,9 +23,6 @@ if TYPE_CHECKING:
 
 
 __all__ = ["TagController"]
-
-
-logger = log.get_logger()
 
 
 class TagController(Controller):

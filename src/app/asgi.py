@@ -31,16 +31,15 @@ def create_app() -> Litestar:
         settings,
         static_files,
     )
-    from app.lib.dependencies import (
-        create_collection_dependencies,
-    )
+    from app.lib.dependencies import create_collection_dependencies
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
-
+    domain.plugins.structlog.configure()
     return Litestar(
         response_cache_config=cache.config,
         stores=StoreRegistry(default_factory=cache.redis_store_factory),
+        logging_config=domain.plugins.structlog.logging_config,
         cors_config=cors.config,
         dependencies=dependencies,
         exception_handlers={

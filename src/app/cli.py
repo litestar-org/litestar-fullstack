@@ -12,10 +12,11 @@ from pydantic import EmailStr
 from rich import get_console
 from rich.prompt import Confirm
 
+from app.contrib import saq as worker
 from app.domain import plugins
 from app.domain.accounts.dtos import UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
-from app.lib import db, log, settings, worker
+from app.lib import db, log, settings
 
 __all__ = [
     "create_database",

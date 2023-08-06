@@ -12,7 +12,6 @@ from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
 from app.domain.analytics.dependencies import provides_analytic_queries
 from app.domain.analytics.dtos import NewUsersByWeekDTO
-from app.lib import log
 
 from .dtos import NewUsersByWeek
 
@@ -21,9 +20,6 @@ if TYPE_CHECKING:
 
 
 __all__ = ["StatsController"]
-
-
-logger = log.get_logger()
 
 
 class StatsController(Controller):

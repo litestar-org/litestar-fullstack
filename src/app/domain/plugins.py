@@ -14,5 +14,35 @@ vite = VitePlugin(
         port=3005,
     )
 )
-structlog = StructLogPlugin(config=StructLogConfig(logging_config=settings.log.config))
+structlog = StructLogPlugin(
+    config=StructLogConfig(
+        loggers={
+            "uvicorn.access": {
+                "propagate": False,
+                "level": settings.log.UVICORN_ACCESS_LEVEL,
+                "handlers": ["queue_listener"],
+            },
+            "uvicorn.error": {
+                "propagate": False,
+                "level": settings.log.UVICORN_ERROR_LEVEL,
+                "handlers": ["queue_listener"],
+            },
+            "saq": {
+                "propagate": False,
+                "level": settings.log.SAQ_LEVEL,
+                "handlers": ["queue_listener"],
+            },
+            "sqlalchemy.engine": {
+                "propagate": False,
+                "level": settings.log.SQLALCHEMY_LEVEL,
+                "handlers": ["queue_listener"],
+            },
+            "sqlalchemy.pool": {
+                "propagate": False,
+                "level": settings.log.SQLALCHEMY_LEVEL,
+                "handlers": ["queue_listener"],
+            },
+        },
+    )
+)
 saq = SAQPlugin(config=SAQConfig())

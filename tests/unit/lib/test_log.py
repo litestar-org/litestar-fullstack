@@ -18,7 +18,8 @@ from litestar.testing import RequestFactory
 from litestar.utils.scope import set_litestar_scope_state
 from structlog import DropEvent
 
-from app.lib import constants, log, settings
+from app.contrib import structlog as log
+from app.lib import constants, settings
 
 try:
     import re2 as re  # pyright: ignore

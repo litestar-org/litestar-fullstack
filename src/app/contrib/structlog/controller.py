@@ -22,7 +22,7 @@ from litestar.status_codes import (
 )
 from litestar.utils.scope import get_litestar_scope_state
 
-from app.lib import constants, settings
+from app.lib import constants
 
 __all__ = ["BeforeSendHandler", "drop_health_logs", "LoggingMiddleware"]
 
@@ -34,11 +34,14 @@ if TYPE_CHECKING:
     from litestar.types.asgi_types import ASGIApp, Message, Receive, Scope, Send
     from structlog.types import EventDict, WrappedLogger
 
+    from .plugin import StructLogConfig
+
 LOGGER = structlog.get_logger()
 
 HTTP_RESPONSE_START: Literal["http.response.start"] = "http.response.start"
 HTTP_RESPONSE_BODY: Literal["http.response.body"] = "http.response.body"
 REQUEST_BODY_FIELD: Literal["body"] = "body"
+HTTP_EVENT: Literal["HTTP"] = "HTTP"
 
 
 def drop_health_logs(_: WrappedLogger, __: str, event_dict: EventDict) -> EventDict:
@@ -52,7 +55,7 @@ def drop_health_logs(_: WrappedLogger, __: str, event_dict: EventDict) -> EventD
     Returns:
         `event_dict` for further processing if it does not represent a successful health check.
     """
-    is_http_log = event_dict["event"] == settings.log.HTTP_EVENT
+    is_http_log = event_dict["event"] == HTTP_EVENT
     is_health_log = event_dict.get("request", {}).get("path") == constants.SYSTEM_HEALTH
     is_success_status = HTTP_200_OK <= event_dict.get("response", {}).get("status_code", 0) < HTTP_300_MULTIPLE_CHOICES
     if is_http_log and is_health_log and is_success_status:
@@ -95,36 +98,38 @@ class BeforeSendHandler:
         "logger",
         "request_extractor",
         "response_extractor",
+        "_config",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, config: StructLogConfig) -> None:
         """Configure the handler."""
-        self.exclude_paths = re.compile(settings.log.EXCLUDE_PATHS)
-        self.do_log_request = bool(settings.log.REQUEST_FIELDS)
-        self.do_log_response = bool(settings.log.RESPONSE_FIELDS)
-        self.include_compressed_body = settings.log.INCLUDE_COMPRESSED_BODY
+        self._config = config
+        self.exclude_paths = re.compile(config.exclude_paths)
+        self.do_log_request = bool(config.request_fields)
+        self.do_log_response = bool(config.response_fields)
+        self.include_compressed_body = config.include_compressed_body
         self.request_extractor = ConnectionDataExtractor(
-            extract_body="body" in settings.log.REQUEST_FIELDS,
-            extract_client="client" in settings.log.REQUEST_FIELDS,
-            extract_content_type="content_type" in settings.log.REQUEST_FIELDS,
-            extract_cookies="cookies" in settings.log.REQUEST_FIELDS,
-            extract_headers="headers" in settings.log.REQUEST_FIELDS,
-            extract_method="method" in settings.log.REQUEST_FIELDS,
-            extract_path="path" in settings.log.REQUEST_FIELDS,
-            extract_path_params="path_params" in settings.log.REQUEST_FIELDS,
-            extract_query="query" in settings.log.REQUEST_FIELDS,
-            extract_scheme="scheme" in settings.log.REQUEST_FIELDS,
-            obfuscate_cookies=settings.log.OBFUSCATE_COOKIES,
-            obfuscate_headers=settings.log.OBFUSCATE_HEADERS,
+            extract_body="body" in config.request_fields,
+            extract_client="client" in config.request_fields,
+            extract_content_type="content_type" in config.request_fields,
+            extract_cookies="cookies" in config.request_fields,
+            extract_headers="headers" in config.request_fields,
+            extract_method="method" in config.request_fields,
+            extract_path="path" in config.request_fields,
+            extract_path_params="path_params" in config.request_fields,
+            extract_query="query" in config.request_fields,
+            extract_scheme="scheme" in config.request_fields,
+            obfuscate_cookies=config.obfuscate_cookies,
+            obfuscate_headers=config.obfuscate_headers,
             parse_body=False,
             parse_query=False,
         )
         self.response_extractor = ResponseDataExtractor(
-            extract_body="body" in settings.log.RESPONSE_FIELDS,
-            extract_headers="headers" in settings.log.RESPONSE_FIELDS,
-            extract_status_code="status_code" in settings.log.RESPONSE_FIELDS,
-            obfuscate_cookies=settings.log.OBFUSCATE_COOKIES,
-            obfuscate_headers=settings.log.OBFUSCATE_HEADERS,
+            extract_body="body" in config.response_fields,
+            extract_headers="headers" in config.response_fields,
+            extract_status_code="status_code" in config.response_fields,
+            obfuscate_cookies=config.obfuscate_cookies,
+            obfuscate_headers=config.obfuscate_headers,
         )
 
     async def __call__(self, message: Message, scope: Scope) -> None:
@@ -151,7 +156,7 @@ class BeforeSendHandler:
                     await self.log_request(scope)
                 if self.do_log_response:
                     await self.log_response(scope)
-                await LOGGER.alog(scope["state"]["log_level"], settings.log.HTTP_EVENT)
+                await LOGGER.alog(scope["state"]["log_level"], HTTP_EVENT)
             # RuntimeError: Expected ASGI message 'http.response.body', but got 'http.response.start'.
             except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-except
                 # just in-case something in the context causes the error
@@ -194,7 +199,7 @@ class BeforeSendHandler:
         data: dict[str, Any] = {}
         extracted_data = self.request_extractor(connection=request)
         missing = object()
-        for key in settings.log.REQUEST_FIELDS:
+        for key in self._config.request_fields:
             value = extracted_data.get(key, missing)
             if value is missing:  # pragma: no cover
                 continue
@@ -225,7 +230,7 @@ class BeforeSendHandler:
         )
         missing = object()
         response_body_compressed = get_litestar_scope_state(scope, SCOPE_STATE_RESPONSE_COMPRESSED)
-        for key in settings.log.RESPONSE_FIELDS:
+        for key in self._config.response_fields:
             value = extracted_data.get(key, missing)
             if key == "body" and response_body_compressed and not self.include_compressed_body:
                 continue

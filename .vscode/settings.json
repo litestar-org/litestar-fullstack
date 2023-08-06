@@ -53,8 +53,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "python.linting.lintOnSave": true,
-  "python.linting.mypyEnabled": true,
   "mypy.runUsingActiveInterpreter": true,
   "mypy.targets": ["src"],
   "mypy.configFile": "./pyproject.toml",
@@ -62,6 +60,7 @@
   "ruff.args": [],
   "ruff.importStrategy": "fromEnvironment",
   "pylint.importStrategy": "fromEnvironment",
+  "mypy-type-checker.importStrategy": "fromEnvironment",
   "black-formatter.importStrategy": "fromEnvironment",
   "ruff.fixAll": true,
   "[toml]": {

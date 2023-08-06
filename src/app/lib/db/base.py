@@ -14,6 +14,9 @@ from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
 
+__all__ = ["session", "engine", "config", "plugin", "async_session_factory"]
+
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
@@ -36,7 +39,7 @@ engine = create_async_engine(
     poolclass=NullPool if settings.db.POOL_DISABLE else None,
     connect_args=settings.db.CONNECT_ARGS,
 )
-async_session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(engine, expire_on_commit=False)
+async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
 """Database session factory.
 
 See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].

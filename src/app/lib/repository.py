@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 __all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository", "on_app_init"]
 
 
-def on_app_init(app_config: "AppConfig") -> "AppConfig":
+def on_app_init(app_config: AppConfig) -> AppConfig:
     """Executes on application init.  Injects signature namespaces."""
     app_config.signature_namespace.update(
         {

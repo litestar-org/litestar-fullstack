@@ -149,11 +149,11 @@ def _patch_worker(
 ) -> None:
     """We don't want the worker to start for unit tests."""
     if is_unit_test:
-        from app.lib import worker
+        from app.contrib import saq
 
-        monkeypatch.setattr(worker.Worker, "on_app_startup", MagicMock())
-        monkeypatch.setattr(worker.Worker, "stop", MagicMock())
-    from app.lib.worker import commands
+        monkeypatch.setattr(saq.Worker, "on_app_startup", MagicMock())
+        monkeypatch.setattr(saq.Worker, "stop", MagicMock())
+    from app.contrib.saq import commands
 
     monkeypatch.setattr(commands, "_create_event_loop", event_loop)
 
@@ -164,7 +164,7 @@ def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
     import app.lib
 
     app.lib.log.configure(
-        app.lib.log.default_processors  # type:ignore[arg-type]
+        app.lib.log.DEFAULT_PROCESSORS  # type:ignore[arg-type]
     )
     # clear context for every test
     clear_contextvars()
@@ -173,7 +173,7 @@ def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
     logger._logger = CapturingLogger()
     # drop rendering processor to get a dict, not bytes
     # noinspection PyProtectedMember
-    logger._processors = app.lib.log.default_processors[:-1]
+    logger._processors = app.lib.log.DEFAULT_PROCESSORS[:-1]
     monkeypatch.setattr(app.lib.log.controller, "LOGGER", logger)
     monkeypatch.setattr(app.lib.log.worker, "LOGGER", logger)
     return logger._logger

@@ -149,8 +149,6 @@ class LogSettings(BaseSettings):
     # https://stackoverflow.com/a/1845097/6560549
     EXCLUDE_PATHS: str = r"\A(?!x)x"
     """Regex to exclude paths from logging."""
-    HTTP_EVENT: str = "HTTP"
-    """Log event name for logs from Litestar handlers."""
     INCLUDE_COMPRESSED_BODY: bool = False
     """Include 'body' of compressed responses in log output."""
     LEVEL: int = 20
