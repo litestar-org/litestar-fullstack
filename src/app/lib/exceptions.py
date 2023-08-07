@@ -117,4 +117,4 @@ def exception_to_http_response(
         http_exc = InternalServerException
     if request.app.debug:
         return create_debug_response(request, exc)
-    return create_exception_response(http_exc(detail=str(exc.__cause__)))
+    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
