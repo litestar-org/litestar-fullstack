@@ -14,7 +14,7 @@ from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
 
-__all__ = ["session", "engine", "config", "plugin", "async_session_factory"]
+__all__ = ["session", "engine", "config", "plugin", "session_factory"]
 
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ engine = create_async_engine(
     poolclass=NullPool if settings.db.POOL_DISABLE else None,
     connect_args=settings.db.CONNECT_ARGS,
 )
-async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
+session_factory = async_sessionmaker(engine, expire_on_commit=False)
 """Database session factory.
 
 See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
@@ -88,7 +88,7 @@ def _sqla_on_connect(dbapi_connection: Any, _: Any) -> Any:  # pragma: no cover
 config = SQLAlchemyAsyncConfig(
     session_dependency_key=constants.DB_SESSION_DEPENDENCY_KEY,
     engine_instance=engine,
-    session_maker=async_session_factory,
+    session_maker=session_factory,
     before_send_handler=autocommit_before_send_handler,
 )
 
@@ -103,5 +103,5 @@ async def session() -> AsyncIterator[AsyncSession]:
     Returns:
         AsyncIterator[AsyncSession]
     """
-    async with async_session_factory() as session:
+    async with session_factory() as session:
         yield session

@@ -46,3 +46,5 @@ structlog = StructLogPlugin(
     )
 )
 saq = SAQPlugin(config=SAQConfig())
+
+enabled_plugins = [aiosql, vite, structlog]

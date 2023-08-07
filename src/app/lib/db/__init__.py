@@ -3,11 +3,11 @@ from __future__ import annotations
 
 from app.lib.db import orm, utils
 from app.lib.db.base import (
-    async_session_factory,
     config,
     engine,
     plugin,
     session,
+    session_factory,
 )
 
 __all__ = [

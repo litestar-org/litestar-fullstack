@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from app.lib.db.base import async_session_factory
+from app.lib.db.base import session_factory
 from app.lib.exceptions import ApplicationError
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ class AiosqlQueryManager:
         if session:
             yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
         else:
-            async with async_session_factory() as session:
+            async with session_factory() as session:
                 yield cls(connection=(await cls.get_connection_from_session(session)), queries=queries)
 
     @classmethod

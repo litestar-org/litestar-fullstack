@@ -111,9 +111,7 @@ class SAQPlugin(InitPluginProtocol, _slots_base.SlotsBase):
         """
         app_config.dependencies.update(
             {
-                self._config.queues_dependency_key: Provide(
-                    dependency=dependencies.provide_queues, sync_to_thread=False
-                ),
+                self._config.queues_dependency_key: Provide(dependency=dependencies.provide_queues),
             }
         )
         app_config.on_shutdown.append(self._config.on_shutdown)

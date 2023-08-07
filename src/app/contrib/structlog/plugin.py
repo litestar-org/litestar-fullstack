@@ -12,7 +12,7 @@ from litestar.data_extractors import (  # noqa: TCH002
     ResponseExtractorField,
 )
 from litestar.logging.config import LoggingConfig
-from litestar.plugins import InitPluginProtocol
+from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from structlog.stdlib import ProcessorFormatter
 
 from . import controller
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import Any
 
+    from click import Group
     from litestar.config.app import AppConfig
     from structlog.types import Processor
 
@@ -43,6 +44,7 @@ DEFAULT_PROCESSORS = [
 
 STDLIB_PROCESSORS = [
     structlog.stdlib.add_log_level,
+    structlog.stdlib.ExtraAdder(),
     EventFilter(["color_message"]),
     structlog.stdlib.ProcessorFormatter.remove_processors_meta,
     structlog.processors.TimeStamper(fmt="iso", utc=True),
@@ -143,10 +145,7 @@ class StructLogConfig(Generic[T]):
 
         if ENABLE_TTY:  # pragma: no cover
             logger_factory: Any = structlog.WriteLoggerFactory
-            console_processor = structlog.dev.ConsoleRenderer(
-                colors=True,
-                exception_formatter=structlog.dev.plain_traceback,
-            )
+            console_processor = structlog.dev.ConsoleRenderer(colors=True)
             self.default_processors.extend([console_processor])
             self.stdlib_processors.extend([console_processor])
         else:
@@ -155,7 +154,7 @@ class StructLogConfig(Generic[T]):
 
         self.logging_config.configure()
 
-        structlog.configure(
+        return structlog.configure(
             cache_logger_on_first_use=True,
             logger_factory=logger_factory(),
             processors=processors if processors is not None else self.default_processors,
@@ -163,7 +162,7 @@ class StructLogConfig(Generic[T]):
         )
 
 
-class StructLogPlugin(InitPluginProtocol, _slots_base.SlotsBase):
+class StructLogPlugin(InitPluginProtocol, CLIPluginProtocol, _slots_base.SlotsBase):
     """StructLog plugin."""
 
     __slots__ = ()
@@ -176,22 +175,27 @@ class StructLogPlugin(InitPluginProtocol, _slots_base.SlotsBase):
         """
         self._config = config
 
+    def on_cli_init(self, cli: Group) -> None:
+        self.configure()
+        return super().on_cli_init(cli)
+
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
         """Configure application for use with SQLAlchemy.
 
         Args:
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
+        app_config.logging_config = self.logging_config
+        app_config.on_startup.append(self.configure)
         app_config.before_send.append(BeforeSendHandler(config=self._config))
         app_config.middleware.append(LoggingMiddleware)
-        app_config.logging_config = self._config.logging_config
+
         app_config.signature_namespace.update(self._config.signature_namespace)
-        self._config.configure()
         return app_config
 
     def configure(self, processors: Sequence[Processor] | None = None) -> None:
         """Call to configure `structlog` on app startup."""
-        self._config.configure()
+        return self._config.configure()
 
     @property
     def logging_config(self) -> LoggingConfig:

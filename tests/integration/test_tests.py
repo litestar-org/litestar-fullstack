@@ -40,8 +40,8 @@ def test_sessionmaker(app: "Litestar", sessionmaker: "async_sessionmaker[AsyncSe
         app: The test Litestar instance
         sessionmaker: The test SQLAlchemy sessionmaker factory.
     """
-    assert db.async_session_factory is sessionmaker
-    assert db.base.async_session_factory is sessionmaker
+    assert db.session_factory is sessionmaker
+    assert db.base.session_factory is sessionmaker
 
 
 async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> None:

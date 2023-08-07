@@ -300,8 +300,13 @@ disallow_untyped_decorators = false
 module = ["tests.*"]
 
 [[tool.mypy.overrides]]
+disallow_untyped_calls = false
+disallow_untyped_decorators = false
+module = ["aisoql.*"]
+
+[[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*"]
+module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*", "re2.*", "uvloop", "uvloop.*"]
 
 [[tool.mypy.overrides]]
 ignore_errors = true

@@ -19,7 +19,7 @@ from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from pydantic.type_adapter import TypeAdapter
 
-from app.lib.db import async_session_factory
+from app.lib.db import session_factory
 from app.lib.db.orm import model_from_dict
 
 from .generic import Service
@@ -342,7 +342,7 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
         if session:
             yield cls(statement=statement, session=session)
         else:
-            async with async_session_factory() as db_session:
+            async with session_factory() as db_session:
                 yield cls(
                     statement=statement,
                     session=db_session,

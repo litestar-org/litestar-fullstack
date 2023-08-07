@@ -10,6 +10,7 @@ from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from litestar.types import TypeEncodersMap
 from saq.types import QueueInfo
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.contrib import saq as worker
 from app.contrib.saq.controllers import WorkerController
@@ -104,4 +105,5 @@ signature_namespace: Mapping[str, Any] = {
     "Job": worker.Job,
     "DTOData": DTOData,
     "TypeEncodersMap": TypeEncodersMap,
+    "AsyncSession": AsyncSession,
 }

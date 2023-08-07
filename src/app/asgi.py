@@ -25,7 +25,6 @@ def create_app() -> Litestar:
         cache,
         constants,
         cors,
-        db,
         exceptions,
         repository,
         settings,
@@ -35,7 +34,7 @@ def create_app() -> Litestar:
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
-    domain.plugins.structlog.configure()
+    domain.plugins.structlog.configure(domain.plugins.structlog._config.stdlib_processors)
     return Litestar(
         response_cache_config=cache.config,
         stores=StoreRegistry(default_factory=cache.redis_store_factory),
@@ -49,7 +48,7 @@ def create_app() -> Litestar:
         openapi_config=domain.openapi.config,
         type_encoders={pgproto.UUID: str, SecretStr: str},
         route_handlers=[*domain.routes],
-        plugins=[domain.plugins.structlog, db.plugin, domain.plugins.aiosql, domain.plugins.vite],
+        plugins=domain.plugins.enabled_plugins,
         on_shutdown=[cache.redis.close],
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
         static_files_config=static_files.config,

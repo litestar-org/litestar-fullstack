@@ -114,7 +114,8 @@ def run_all_app(
     debug: bool | None,
 ) -> None:
     """Run the API server."""
-    plugins.structlog.config.configure()
+    plugins.structlog.configure(plugins.structlog._config.stdlib_processors)
+
     settings.server.HOST = host or settings.server.HOST
     settings.server.PORT = port or settings.server.PORT
     settings.server.RELOAD = reload or settings.server.RELOAD if settings.server.RELOAD is not None else None
