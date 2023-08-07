@@ -49,7 +49,6 @@ repos:
             pydantic,
             pydantic-settings,
             aiosql,
-            google-re2,
             uvloop,
             jinja2,
             hiredis,

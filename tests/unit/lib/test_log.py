@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
@@ -20,11 +21,6 @@ from structlog import DropEvent
 
 from app.contrib import structlog as log
 from app.lib import constants, settings
-
-try:
-    import re2 as re  # pyright: ignore
-except ImportError:
-    import re
 
 if TYPE_CHECKING:
     from typing import Any
