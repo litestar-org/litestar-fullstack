@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
@@ -19,11 +20,6 @@ from litestar.utils.scope import set_litestar_scope_state
 from structlog import DropEvent
 
 from app.lib import constants, log, settings
-
-try:
-    import re2 as re  # pyright: ignore
-except ImportError:
-    import re
 
 if TYPE_CHECKING:
     from typing import Any

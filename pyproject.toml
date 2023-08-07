@@ -44,7 +44,7 @@ worker = "app.cli:worker_management_app"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
+litestar = {git = "https://github.com/litestar-org/litestar.git", branch = "main", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic-settings = "*"
 python = ">=3.10,<3.12"
@@ -300,8 +300,13 @@ disallow_untyped_decorators = false
 module = ["tests.*"]
 
 [[tool.mypy.overrides]]
+disallow_untyped_calls = false
+disallow_untyped_decorators = false
+module = ["aisoql.*"]
+
+[[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*"]
+module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*", "re2.*", "uvloop", "uvloop.*"]
 
 [[tool.mypy.overrides]]
 ignore_errors = true
