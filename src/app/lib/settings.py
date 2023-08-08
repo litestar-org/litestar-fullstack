@@ -149,6 +149,8 @@ class LogSettings(BaseSettings):
     # https://stackoverflow.com/a/1845097/6560549
     EXCLUDE_PATHS: str = r"\A(?!x)x"
     """Regex to exclude paths from logging."""
+    HTTP_EVENT: str = "HTTP"
+    """Log event name for logs from Litestar handlers."""
     INCLUDE_COMPRESSED_BODY: bool = False
     """Include 'body' of compressed responses in log output."""
     LEVEL: int = 20
@@ -204,7 +206,7 @@ class LogSettings(BaseSettings):
     """Level to log SQLAlchemy logs."""
     UVICORN_ACCESS_LEVEL: int = 30
     """Level to log uvicorn access logs."""
-    UVICORN_ERROR_LEVEL: int = 20
+    UVICORN_ERROR_LEVEL: int = 30
     """Level to log uvicorn error logs."""
 
 

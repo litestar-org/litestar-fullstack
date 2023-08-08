@@ -114,7 +114,7 @@ def run_all_app(
     debug: bool | None,
 ) -> None:
     """Run the API server."""
-    plugins.structlog.configure(plugins.structlog._config.stdlib_processors)
+    log.config.configure()
 
     settings.server.HOST = host or settings.server.HOST
     settings.server.PORT = port or settings.server.PORT
@@ -176,7 +176,7 @@ def run_worker(
     debug: bool | None,
 ) -> None:
     """Run the API server."""
-    plugins.structlog.config.configure()
+    log.config.configure()
     settings.worker.CONCURRENCY = worker_concurrency or settings.worker.CONCURRENCY
     settings.app.DEBUG = debug or settings.app.DEBUG
     settings.log.LEVEL = 10 if verbose or settings.app.DEBUG else settings.log.LEVEL
@@ -379,6 +379,7 @@ def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
 def run_vite() -> None:
     """Run Vite in a subprocess."""
     try:
+        log.config.configure()
         anyio.run(_run_vite, backend="asyncio", backend_options={"use_uvloop": True})
     except KeyboardInterrupt:
         logger.info("Stopping typescript development services.")
@@ -388,7 +389,7 @@ def run_vite() -> None:
 
 async def _run_vite() -> None:
     """Run Vite in a subprocess."""
-    plugins.structlog.config.configure()
+
     async with await open_process(plugins.vite._config.run_command) as vite_process:
         async for text in TextReceiveStream(vite_process.stdout):  # type: ignore[arg-type]
             await logger.ainfo("Vite", message=text.replace("\n", ""))

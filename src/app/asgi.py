@@ -34,11 +34,9 @@ def create_app() -> Litestar:
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
-    domain.plugins.structlog.configure(domain.plugins.structlog._config.stdlib_processors)
     return Litestar(
         response_cache_config=cache.config,
         stores=StoreRegistry(default_factory=cache.redis_store_factory),
-        logging_config=domain.plugins.structlog.logging_config,
         cors_config=cors.config,
         dependencies=dependencies,
         exception_handlers={

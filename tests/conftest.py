@@ -164,7 +164,7 @@ def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
     import app.lib
 
     app.lib.log.configure(
-        app.lib.log.DEFAULT_PROCESSORS  # type:ignore[arg-type]
+        app.lib.log.default_processors  # type:ignore[arg-type]
     )
     # clear context for every test
     clear_contextvars()
@@ -173,7 +173,7 @@ def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
     logger._logger = CapturingLogger()
     # drop rendering processor to get a dict, not bytes
     # noinspection PyProtectedMember
-    logger._processors = app.lib.log.DEFAULT_PROCESSORS[:-1]
+    logger._processors = app.lib.log.default_processors[:-1]
     monkeypatch.setattr(app.lib.log.controller, "LOGGER", logger)
     monkeypatch.setattr(app.lib.log.worker, "LOGGER", logger)
     return logger._logger

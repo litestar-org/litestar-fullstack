@@ -126,8 +126,8 @@ def _patch_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(db, "async_session_factory", sessionmaker)
-    monkeypatch.setattr(db.base, "async_session_factory", sessionmaker)
+    monkeypatch.setattr(db, "session_factory", sessionmaker)
+    monkeypatch.setattr(db.base, "session_factory", sessionmaker)
     monkeypatch.setitem(app.state, db.config.engine_app_state_key, engine)
     monkeypatch.setitem(
         app.state,

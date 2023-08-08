@@ -5,7 +5,6 @@ from app.lib.db import orm, utils
 from app.lib.db.base import (
     config,
     engine,
-    plugin,
     session,
     session_factory,
 )
@@ -13,9 +12,8 @@ from app.lib.db.base import (
 __all__ = [
     "utils",
     "config",
-    "plugin",
     "engine",
     "session",
-    "async_session_factory",
+    "session_factory",
     "orm",
 ]

@@ -7,14 +7,13 @@ from litestar.contrib.sqlalchemy.plugins.init.config import (
     SQLAlchemyAsyncConfig,
 )
 from litestar.contrib.sqlalchemy.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
 
-__all__ = ["session", "engine", "config", "plugin", "session_factory"]
+__all__ = ["session", "engine", "config", "session_factory"]
 
 
 if TYPE_CHECKING:
@@ -91,9 +90,6 @@ config = SQLAlchemyAsyncConfig(
     session_maker=session_factory,
     before_send_handler=autocommit_before_send_handler,
 )
-
-
-plugin = SQLAlchemyInitPlugin(config=config)
 
 
 @asynccontextmanager

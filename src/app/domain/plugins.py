@@ -1,9 +1,11 @@
+from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
+
 from app.contrib.aiosql.plugin import AioSQLConfig, AioSQLPlugin
 from app.contrib.saq.plugin import SAQConfig, SAQPlugin
-from app.contrib.structlog.plugin import StructLogConfig, StructLogPlugin
 from app.contrib.vite.config import ViteConfig
 from app.contrib.vite.plugin import VitePlugin
-from app.lib import settings
+from app.lib import db, settings
+from app.lib.log import StructLogPlugin
 
 aiosql = AioSQLPlugin(config=AioSQLConfig())
 vite = VitePlugin(
@@ -14,37 +16,7 @@ vite = VitePlugin(
         port=3005,
     )
 )
-structlog = StructLogPlugin(
-    config=StructLogConfig(
-        loggers={
-            "uvicorn.access": {
-                "propagate": False,
-                "level": settings.log.UVICORN_ACCESS_LEVEL,
-                "handlers": ["queue_listener"],
-            },
-            "uvicorn.error": {
-                "propagate": False,
-                "level": settings.log.UVICORN_ERROR_LEVEL,
-                "handlers": ["queue_listener"],
-            },
-            "saq": {
-                "propagate": False,
-                "level": settings.log.SAQ_LEVEL,
-                "handlers": ["queue_listener"],
-            },
-            "sqlalchemy.engine": {
-                "propagate": False,
-                "level": settings.log.SQLALCHEMY_LEVEL,
-                "handlers": ["queue_listener"],
-            },
-            "sqlalchemy.pool": {
-                "propagate": False,
-                "level": settings.log.SQLALCHEMY_LEVEL,
-                "handlers": ["queue_listener"],
-            },
-        },
-    )
-)
 saq = SAQPlugin(config=SAQConfig())
-
-enabled_plugins = [aiosql, vite, structlog]
+structlog = StructLogPlugin()
+sqlalchemy = SQLAlchemyInitPlugin(config=db.config)
+enabled_plugins = [structlog, aiosql, vite, sqlalchemy]

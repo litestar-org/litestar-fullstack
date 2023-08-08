@@ -8,8 +8,7 @@ from litestar.di import Provide
 from litestar.plugins import InitPluginProtocol
 from saq.types import QueueInfo
 
-from . import dependencies
-from .base import Job, Queue, Worker
+from app.lib.worker import Job, Queue, Worker, dependencies
 
 __all__ = ["SAQConfig", "SAQPlugin"]
 
@@ -111,7 +110,9 @@ class SAQPlugin(InitPluginProtocol, _slots_base.SlotsBase):
         """
         app_config.dependencies.update(
             {
-                self._config.queues_dependency_key: Provide(dependency=dependencies.provide_queues),
+                self._config.queues_dependency_key: Provide(
+                    dependency=dependencies.provide_queues, sync_to_thread=False
+                ),
             }
         )
         app_config.on_shutdown.append(self._config.on_shutdown)
