@@ -49,6 +49,7 @@ pydantic-settings = "*"
 python = ">=3.10,<3.12"
 python-dotenv = "*"
 saq = "*"
+socketify = ">=0.0.25"
 sqlalchemy = ">=2.0.19"
 uvicorn = {version = "*", extras = ['standard']}
 # litestar = {version = "*", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
@@ -306,7 +307,7 @@ module = ["aisoql.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*", "re2.*", "uvloop", "uvloop.*"]
+module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*", "re2.*", "uvloop", "uvloop.*", "socketify.*"]
 
 [[tool.mypy.overrides]]
 ignore_errors = true
