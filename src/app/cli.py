@@ -303,7 +303,7 @@ def upgrade_database() -> None:
 
 @database_management_app.command(
     name="reset-database",
-    help="Executes migrations to apply any outstanding database structures.",
+    help="Drops all tables and re-applies the migrations.",
 )
 @click.option(
     "--no-prompt",
