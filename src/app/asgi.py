@@ -52,3 +52,6 @@ def create_app() -> Litestar:
         static_files_config=static_files.config,
         signature_namespace=domain.signature_namespace,
     )
+
+
+app = create_app()

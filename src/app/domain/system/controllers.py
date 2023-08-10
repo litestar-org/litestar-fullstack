@@ -6,10 +6,10 @@ from litestar import Controller, MediaType, get
 from litestar.response import Response
 from sqlalchemy import text
 
-from app.contrib.saq.info import is_healthy as worker_is_healthy
 from app.domain.system.dtos import SystemHealth
 from app.lib import constants, log
 from app.lib.cache import redis
+from app.lib.worker.info import is_healthy as worker_is_healthy
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession

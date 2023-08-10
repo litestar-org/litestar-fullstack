@@ -1,11 +1,11 @@
 from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
 
 from app.contrib.aiosql.plugin import AioSQLConfig, AioSQLPlugin
-from app.contrib.saq.plugin import SAQConfig, SAQPlugin
 from app.contrib.vite.config import ViteConfig
 from app.contrib.vite.plugin import VitePlugin
 from app.lib import db, settings
 from app.lib.log import StructLogPlugin
+from app.lib.worker.plugin import SAQConfig, SAQPlugin
 
 aiosql = AioSQLPlugin(config=AioSQLConfig())
 vite = VitePlugin(
