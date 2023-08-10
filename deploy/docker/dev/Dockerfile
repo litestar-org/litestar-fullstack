@@ -54,7 +54,7 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml poetry.lock README.md mkdocs.yml mypy.ini .pre-commit-config.yaml .pylintrc LICENSE Makefile \
+COPY pyproject.toml poetry.lock README.md mkdocs.yml .pre-commit-config.yaml .pylintrc LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json \
     ./
 COPY scripts ./scripts/
@@ -88,7 +88,7 @@ COPY tests/ tests/
 COPY src src/
 RUN poetry install $POETRY_INSTALL_ARGS
 STOPSIGNAL SIGINT
-EXPOSE 8000/tcp
+EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
-CMD [ "litestar","run"]
+CMD [ "litestar","run","--host","0.0.0.0"]
 VOLUME /workspace/app

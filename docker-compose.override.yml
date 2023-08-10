@@ -25,7 +25,7 @@ services:
         # remove this to build for production.
         POETRY_INSTALL_ARGS: --with=dev,docs,lint
     image: app:latest-dev
-    command: litestar run --reload
+    command: litestar run --reload --port 8000 --host 0.0.0.0
     restart: always
     <<: *development-volumes
   worker:
