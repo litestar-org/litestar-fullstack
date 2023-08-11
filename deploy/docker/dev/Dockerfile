@@ -88,7 +88,7 @@ COPY tests/ tests/
 COPY src src/
 RUN poetry install $POETRY_INSTALL_ARGS
 STOPSIGNAL SIGINT
-EXPOSE 8000/tcp
+EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
-CMD [ "litestar","run"]
+CMD [ "litestar","run","--host","0.0.0.0"]
 VOLUME /workspace/app
