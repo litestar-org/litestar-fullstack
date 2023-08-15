@@ -4,7 +4,6 @@ from __future__ import annotations
 from app.lib.db import orm, utils
 from app.lib.db.base import (
     async_session_factory,
-    before_send_handler,
     config,
     engine,
     plugin,
@@ -13,7 +12,6 @@ from app.lib.db.base import (
 
 __all__ = [
     "utils",
-    "before_send_handler",
     "config",
     "plugin",
     "engine",
