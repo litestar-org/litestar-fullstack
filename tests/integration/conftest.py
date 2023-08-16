@@ -1,6 +1,6 @@
 import os
 import sys
-from collections.abc import AsyncIterator, Generator
+from collections.abc import AsyncGenerator, AsyncIterator, Generator
 from pathlib import Path
 from typing import Any
 
@@ -79,8 +79,9 @@ def fx_session_maker_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSes
 
 
 @pytest.fixture(name="session")
-def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncSession:
-    return sessionmaker()
+async def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
+    async with sessionmaker() as session:
+        yield session
 
 
 @pytest.fixture(autouse=True)
