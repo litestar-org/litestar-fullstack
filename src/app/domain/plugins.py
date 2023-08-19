@@ -10,5 +10,6 @@ vite = VitePlugin(
         templates_dir=settings.TEMPLATES_DIR,
         hot_reload=settings.app.DEV_MODE,
         port=3005,
+        manifest_name="vite-manifest.json",
     )
 )

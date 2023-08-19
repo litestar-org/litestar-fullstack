@@ -39,7 +39,7 @@ class ViteConfig:
     templates_dir: Path
     """Location of the Jinja2 template file.
     """
-    manifest_name: str = "vite-manifest.json"
+    manifest_name: str = "manifest.json"
     """Name of the manifest file."""
     hot_reload: bool = False
     """Enable HMR for Vite development server."""
