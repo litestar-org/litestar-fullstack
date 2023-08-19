@@ -61,23 +61,23 @@
         function (require, module, exports) {
           "use strict";
 
-          var _init = require("./node_modules/snabbdom/build/init");
+          var _init = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/init");
 
-          var _h = require("./node_modules/snabbdom/build/h");
+          var _h = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/h");
 
-          var _tovnode = require("./node_modules/snabbdom/build/tovnode");
+          var _tovnode = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/tovnode");
 
-          var _attributes = require("./node_modules/snabbdom/build/modules/attributes");
+          var _attributes = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/attributes");
 
-          var _class = require("./node_modules/snabbdom/build/modules/class");
+          var _class = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/class");
 
-          var _dataset = require("./node_modules/snabbdom/build/modules/dataset");
+          var _dataset = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/dataset");
 
-          var _eventlisteners = require("./node_modules/snabbdom/build/modules/eventlisteners");
+          var _eventlisteners = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/eventlisteners");
 
-          var _props = require("./node_modules/snabbdom/build/modules/props");
+          var _props = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/props");
 
-          var _style = require("./node_modules/snabbdom/build/modules/style");
+          var _style = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/node_modules/snabbdom/build/modules/style");
 
           // browserify build.js -p esmify -s snabbdom > opal/vendor/snabbdom.js
           module.exports.init = _init.init;
@@ -113,9 +113,9 @@
           exports.h = h;
           exports.fragment = fragment;
 
-          var _vnode = require("./vnode");
+          var _vnode = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/vnode");
 
-          var is = _interopRequireWildcard(require("./is"));
+          var is = _interopRequireWildcard(require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/is"));
 
           function _getRequireWildcardCache(nodeInterop) {
             if (typeof WeakMap !== "function") return null;
@@ -380,11 +380,11 @@
           });
           exports.init = init;
 
-          var _vnode = require("./vnode");
+          var _vnode = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/vnode");
 
-          var is = _interopRequireWildcard(require("./is"));
+          var is = _interopRequireWildcard(require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/is"));
 
-          var _htmldomapi = require("./htmldomapi");
+          var _htmldomapi = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/htmldomapi");
 
           function _getRequireWildcardCache(nodeInterop) {
             if (typeof WeakMap !== "function") return null;
@@ -1439,9 +1439,9 @@
           });
           exports.toVNode = toVNode;
 
-          var _vnode = require("./vnode");
+          var _vnode = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/vnode");
 
-          var _htmldomapi = require("./htmldomapi");
+          var _htmldomapi = require("../../../../web/.svelte-kit/types/src/app/lib/worker/static/htmldomapi");
 
           function toVNode(node, domApi) {
             const api = domApi !== undefined ? domApi : _htmldomapi.htmlDomApi;

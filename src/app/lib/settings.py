@@ -34,8 +34,11 @@ __all__ = [
 ]
 
 DEFAULT_MODULE_NAME = "app"
+WEB_SRC_DIR = "web"
 BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
-STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
+WEB_DIR: Final = utils.module_to_os_path(WEB_SRC_DIR)
+
+STATIC_DIR = Path(WEB_DIR / ".svelte-kit" / "generated")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
 version = importlib.metadata.version(DEFAULT_MODULE_NAME)
 

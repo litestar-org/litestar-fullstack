@@ -19,6 +19,7 @@ homepage = "https://github.com/cofin/litestar-fullstack"
 include = [
   "CHANGELOG.md",
   "src/server/app/domain/web/public/**/*",
+  "src/server/web/.sveltekit/generated/**/*",
   "src/server/app/**/*.sql",
   "src/server/app/lib/db/**/*.ini",
 ]
