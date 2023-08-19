@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+  cache:
+    image: redis:latest
+    ports:
+      - "16379:6379"
+    hostname: cache
+    command: redis-server --appendonly yes
+    volumes:
+      - cache-data:/data
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
+  db:
+    image: postgres:latest
+    ports:
+      - "15432:5432"
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: "app"
+      POSTGRES_USER: "app"
+      POSTGRES_DB: "app"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - app
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  localmail:
+    image: mailhog/mailhog:v1.0.0
+    container_name: localmail
+    ports:
+      - "8025:8025"
+  objectstorage:
+    image: minio/minio:latest
+    container_name: objectstorage
+    volumes:
+      - ./media/:/export/app/data
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env.example
+    entrypoint: sh
+    command: -c 'mkdir -p /export/app/data/public && mkdir -p /export/app/data/data && /opt/bin/minio server /export/app/data'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+volumes:
+  db-data: {}
+  cache-data: {}

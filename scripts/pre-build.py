@@ -25,10 +25,10 @@ def build_npm_assets(setup_kwargs: Any) -> Any:
     if platform.system() == "Windows":
         kwargs.update({"shell": True})
     logger.info("Installing Node environment to %s:", install_dir)
-    subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], **kwargs)  # noqa: S603
-    subprocess.run(["npm", "ci", "install"], **kwargs)  # noqa: S607, S603
+    subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], **kwargs)  # noqa: S603, PLW1510
+    subprocess.run(["npm", "ci", "install"], **kwargs)  # noqa: S607, S603, PLW1510
     logger.info("Building NPM assets:")
-    subprocess.run(["npm", "run", "build"], **kwargs)  # noqa: S607, S603
+    subprocess.run(["npm", "run", "build"], **kwargs)  # noqa: S607, S603, PLW1510
     return setup_kwargs
 
 
