@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.282"
+    rev: "v0.0.285"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -21,11 +21,11 @@ repos:
       - id: black
         args: [--config=./pyproject.toml]
   - repo: https://github.com/asottile/blacken-docs
-    rev: 1.15.0
+    rev: 1.16.0
     hooks:
       - id: blacken-docs
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.1"
+    rev: "v3.0.2"
     hooks:
       - id: prettier
         exclude: "_templates"
@@ -41,7 +41,7 @@ repos:
         exclude: "test_*|docs|migrations|scripts"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.4.1"
+    rev: "v1.5.1"
     hooks:
       - id: mypy
         additional_dependencies:
