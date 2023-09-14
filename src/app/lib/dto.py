@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, overload
+from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
-from litestar.dto import DataclassDTO, DTOConfig, dto_field
+from litestar.dto import DataclassDTO, dto_field
+from litestar.dto.config import DTOConfig, SQLAlchemyDTOConfig
 from litestar.types.protocols import DataclassProtocol
 from sqlalchemy.orm import DeclarativeBase
 
@@ -21,13 +22,38 @@ DataclassModelT = TypeVar("DataclassModelT", bound=DataclassProtocol)
 ModelT = SQLAlchemyModelT | DataclassModelT
 
 
+@overload
 def config(
+    backend: Literal["sqlalchemy"] = "sqlalchemy",
+    exclude: Set[str] | None = None,
+    rename_fields: dict[str, str] | None = None,
+    rename_strategy: RenameStrategy | None = None,
+    max_nested_depth: int | None = None,
+    partial: bool | None = None,
+) -> SQLAlchemyDTOConfig:
+    ...
+
+
+@overload
+def config(
+    backend: Literal["dataclass"] = "dataclass",
     exclude: Set[str] | None = None,
     rename_fields: dict[str, str] | None = None,
     rename_strategy: RenameStrategy | None = None,
     max_nested_depth: int | None = None,
     partial: bool | None = None,
 ) -> DTOConfig:
+    ...
+
+
+def config(
+    backend: Literal["dataclass", "sqlalchemy"] = "dataclass",
+    exclude: Set[str] | None = None,
+    rename_fields: dict[str, str] | None = None,
+    rename_strategy: RenameStrategy | None = None,
+    max_nested_depth: int | None = None,
+    partial: bool | None = None,
+) -> DTOConfig | SQLAlchemyDTOConfig:
     """_summary_
 
     Returns:
@@ -35,15 +61,15 @@ def config(
     """
     default_kwargs = {"rename_strategy": "camel", "max_nested_depth": 2}
     if exclude:
-        default_kwargs.update({"exclude": exclude})
+        default_kwargs["exclude"] = exclude
     if rename_fields:
-        default_kwargs.update({"rename_fields": rename_fields})
+        default_kwargs["rename_fields"] = rename_fields
     if rename_strategy:
-        default_kwargs.update({"rename_strategy": rename_strategy})
+        default_kwargs["rename_strategy"] = rename_strategy
     if max_nested_depth:
-        default_kwargs.update({"max_nested_depth": max_nested_depth})
+        default_kwargs["max_nested_depth"] = max_nested_depth
     if partial:
-        default_kwargs.update({"partial": partial})
+        default_kwargs["partial"] = partial
     return DTOConfig(**default_kwargs)
 
 

@@ -10,13 +10,13 @@ import contextlib
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, cast, overload
 
-from litestar.contrib.repository.filters import (
-    FilterTypes,
-    LimitOffset,
-)
 from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
+from litestar.repository.filters import (
+    FilterTypes,
+    LimitOffset,
+)
 from pydantic.type_adapter import TypeAdapter
 
 from app.lib.db import async_session_factory

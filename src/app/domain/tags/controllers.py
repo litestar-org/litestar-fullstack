@@ -15,9 +15,9 @@ from app.lib import log
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.contrib.repository.filters import FilterTypes
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
+    from litestar.repository.filters import FilterTypes
 
     from app.domain.tags.models import Tag
     from app.domain.tags.services import TagService

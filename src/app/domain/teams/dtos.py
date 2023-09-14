@@ -14,6 +14,7 @@ __all__ = ["TeamCreate", "TeamCreateDTO", "TeamDTO", "TeamUpdate", "TeamUpdateDT
 
 class TeamDTO(SQLAlchemyDTO[Team]):
     config = dto.config(
+        backend="sqlalchemy",
         exclude={
             "members.team",
             "members.user",

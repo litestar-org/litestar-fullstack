@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Collection
 
     import saq
+    from saq.types import Context
 
 __all__ = ["create_worker_instance", "run_worker"]
 
@@ -26,10 +27,10 @@ def create_worker_instance(
     queue: Queue,
     tasks: Collection[Callable[..., Any] | tuple[str, Callable]],
     scheduled_tasks: Collection[saq.CronJob] | None = None,
-    startup: Callable[[dict[str, Any]], Awaitable[Any]] | None = None,
-    shutdown: Callable[[dict[str, Any]], Awaitable[Any]] | None = None,
-    before_process: Callable[[dict[str, Any]], Awaitable[Any]] | None = None,
-    after_process: Callable[[dict[str, Any]], Awaitable[Any]] | None = None,
+    startup: Callable[[Context], Awaitable[Any]] | None = None,
+    shutdown: Callable[[Context], Awaitable[Any]] | None = None,
+    before_process: Callable[[Context], Awaitable[Any]] | None = None,
+    after_process: Callable[[Context], Awaitable[Any]] | None = None,
     concurrency: int | None = None,
 ) -> Worker:
     """Create worker instance.
@@ -81,10 +82,10 @@ def run_worker() -> None:
             queue=queue,
             tasks=tasks.get(queue, []),
             scheduled_tasks=scheduled_tasks.get(queue, []),
-            startup=startup_logging_process,
-            shutdown=shutdown_logging_process,
-            after_process=after_logging_process,
-            before_process=before_logging_process,
+            startup=startup_logging_process,  # type: ignore[arg-type]
+            shutdown=shutdown_logging_process,  # type: ignore[arg-type]
+            after_process=after_logging_process,  # type: ignore[arg-type]
+            before_process=before_logging_process,  # type: ignore[arg-type]
         )
         for queue in queues.values()
     ]
