@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 from litestar import Litestar, get
-from litestar.contrib.repository.exceptions import ConflictError, NotFoundError
+from litestar.repository.exceptions import ConflictError, NotFoundError
 from litestar.status_codes import (
     HTTP_403_FORBIDDEN,
     HTTP_404_NOT_FOUND,

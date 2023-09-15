@@ -4,8 +4,8 @@ import random
 import string
 from typing import TYPE_CHECKING, Any
 
-from litestar.contrib.repository.handlers import on_app_init as _on_app_init
 from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
+from litestar.repository.handlers import on_app_init as _on_app_init
 
 from app.utils import slugify
 

@@ -8,7 +8,7 @@ import asyncio
 import contextlib
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, cast
 
-from litestar.contrib.repository.exceptions import NotFoundError
+from litestar.repository.exceptions import NotFoundError
 
 from app.lib import constants
 
