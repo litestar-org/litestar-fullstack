@@ -1,6 +1,6 @@
 # Developer Setup
 
-To begin local development, clone the [cofin/typer_cli/litestar-fullstack](https://github.com/cofin/litestar-fullstack) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
+To begin local development, clone the [cofin/typer_cli/litestar-fullstack](https://github.com/litestar-org/litestar-fullstack) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
 
 ## Using poetry
 
