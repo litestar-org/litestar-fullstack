@@ -7,7 +7,8 @@ from uuid import uuid4
 
 import pytest
 from litestar import Litestar, get
-from litestar.contrib.repository.filters import (
+from litestar.params import Dependency
+from litestar.repository.filters import (
     BeforeAfter,
     CollectionFilter,
     FilterTypes,
@@ -15,7 +16,6 @@ from litestar.contrib.repository.filters import (
     OrderBy,
     SearchFilter,
 )
-from litestar.params import Dependency
 from litestar.testing import RequestFactory, TestClient
 
 from app.domain import security

@@ -5,7 +5,9 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from litestar.contrib.repository.filters import (
+from litestar.di import Provide
+from litestar.params import Dependency, Parameter
+from litestar.repository.filters import (
     BeforeAfter,
     CollectionFilter,
     FilterTypes,
@@ -13,8 +15,6 @@ from litestar.contrib.repository.filters import (
     OrderBy,
     SearchFilter,
 )
-from litestar.di import Provide
-from litestar.params import Dependency, Parameter
 
 from app.lib import constants
 

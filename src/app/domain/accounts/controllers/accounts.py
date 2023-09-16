@@ -19,9 +19,9 @@ __all__ = ["AccountController"]
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.contrib.repository.filters import FilterTypes
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
+    from litestar.repository.filters import FilterTypes
 
     from app.domain.accounts.models import User
     from app.domain.accounts.services import UserService
