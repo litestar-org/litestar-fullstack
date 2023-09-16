@@ -1,0 +1,24 @@
+# https://nixpacks.com/docs/configuration/file
+
+providers = ['python'] # force python as the only provider, otherwise railway may think this is a node project
+
+# set up some variables to minimize annoyance
+[variables]
+    PIP_DISABLE_PIP_VERSION_CHECK = '1' # the pip update notification is relatively useless in a production environment
+    NPM_CONFIG_UPDATE_NOTIFIER = 'false' # the node update notification is relatively useless in a production environment
+    NPM_CONFIG_FUND = 'false' # the fund notification is is also pretty useless in a production environment
+
+[phases.setup]
+    nixPkgs = ['...', 'nodejs'] # add nodejs since it is needed to build the frontend
+
+[phases.ci]
+    dependsOn = ['setup'] # must run after the setup phase since node is installed in the setup phase
+    cmds = ['npm ci'] # install frontend dependencies with clean-install
+
+[phases.build]
+    dependsOn = ['ci'] # must run after the ci phase so that node dependencies are available
+    cmds = ['npm run build'] # build the frontend
+
+[phases.migrations]
+    dependsOn = ['install'] # must run after the install phase so that python dependencies are available
+    cmds = ['litestar database upgrade-database'] # executes migrations to apply any outstanding database structures
