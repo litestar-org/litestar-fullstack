@@ -1,5 +1,36 @@
+[project]
+authors = [
+  {name = "Cody Fincher", email = "cody.fincher@gmail.com"},
+  {name = "Janek Nouvertné", email = "j.a.nouvertne@posteo.de"},
+  {name = "Jacob Coffee", email = "jacob@z7x.org"},
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development",
+  "Typing :: Typed",
+]
+dependencies = [
+  "sqlalchemy>=2.0.20",
+  "alembic>=1.12.0",
+  "typing_extensions",
+]
+description = "Opinionated template for a Litestar application."
+keywords = [
+  "litestar",
+]
+license = {text = "MIT"}
+name = "advanced_alchemy"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"
 [tool.poetry]
-authors = ["Cody Fincher <cody.fincher@gmail.com>"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Web Environment",
