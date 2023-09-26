@@ -117,7 +117,7 @@ async def _seed_db(
             await teams_services.create(raw_team)
         await teams_services.repository.session.commit()
 
-    yield
+    return None  # type: ignore[return-value]
 
 
 @pytest.fixture(autouse=True)

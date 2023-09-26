@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from litestar.connection import Request
 
 
-redis = Redis.from_url(
-    settings.redis.URL,
+redis = Redis.from_url(  # type:ignore[call-overload]
+    url=settings.redis.URL,
     encoding="utf-8",
     decode_responses=False,
     socket_connect_timeout=2,
@@ -31,7 +31,7 @@ redis = Redis.from_url(
 
 async def on_shutdown() -> None:
     """On Shutdown."""
-    await redis.close()
+    await redis.aclose()
 
 
 def cache_key_builder(request: Request) -> str:

@@ -65,7 +65,9 @@ def worker_management_app(_: dict[str, Any]) -> None:
 
 
 @click.group(
-    name="run-all", invoke_without_command=True, help="Starts the application server & worker in a single command."
+    name="run-all",
+    invoke_without_command=True,
+    help="Starts the application server & worker in a single command.",
 )
 @click.option(
     "--host",
@@ -146,9 +148,10 @@ def run_all_app(
             "timeout-keep-alive": settings.server.KEEPALIVE,
         }
         if reload_dirs:
-            process_args.update({"reload-dir": reload_dirs})
+            process_args["reload-dir"] = reload_dirs
         subprocess.run(
-            ["uvicorn", settings.server.APP_LOC, *_convert_uvicorn_args(process_args)], check=True  # noqa: S603, S607
+            ["uvicorn", settings.server.APP_LOC, *_convert_uvicorn_args(process_args)],  # noqa: S607
+            check=True,
         )
     finally:
         for process in multiprocessing.active_children():

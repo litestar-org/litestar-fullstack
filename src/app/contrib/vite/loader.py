@@ -72,8 +72,9 @@ class ViteAssetLoader:
             try:
                 self._manifest = json.loads(manifest_content)
             except Exception as exc:  # noqa: BLE001
+                msg = "Cannot read Vite manifest file at %s"
                 raise RuntimeError(
-                    "Cannot read Vite manifest file at %s",
+                    msg,
                     Path(self._config.static_dir / self._config.manifest_name),
                 ) from exc
 
@@ -126,27 +127,30 @@ class ViteAssetLoader:
             )
 
         if path not in self._manifest:
+            msg = "Cannot find %s in Vite manifest at %s"
             raise RuntimeError(
-                "Cannot find %s in Vite manifest at %s",
+                msg,
                 path,
                 Path(self._config.static_dir / self._config.manifest_name),
             )
 
-        tags = []
+        tags: list[str] = []
         manifest_entry: dict = self._manifest[path]
         if not scripts_attrs:
             scripts_attrs = {"type": "module", "async": "", "defer": ""}
 
         # Add dependent CSS
         if "css" in manifest_entry:
-            for css_path in manifest_entry.get("css", {}):
-                tags.append(self._style_tag(urljoin(self._config.static_url, css_path)))
-
+            tags.extend(
+                self._style_tag(urljoin(self._config.static_url, css_path))
+                for css_path in manifest_entry.get("css", {})
+            )
         # Add dependent "vendor"
         if "imports" in manifest_entry:
-            for vendor_path in manifest_entry.get("imports", {}):
-                tags.append(self.generate_asset_tags(vendor_path, scripts_attrs=scripts_attrs))
-
+            tags.extend(
+                self.generate_asset_tags(vendor_path, scripts_attrs=scripts_attrs)
+                for vendor_path in manifest_entry.get("imports", {})
+            )
         # Add the script by itself
         tags.append(
             self._script_tag(

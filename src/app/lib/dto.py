@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
-from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
+from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO, SQLAlchemyDTOConfig
 from litestar.dto import DataclassDTO, dto_field
-from litestar.dto.config import DTOConfig, SQLAlchemyDTOConfig
+from litestar.dto.config import DTOConfig
 from litestar.types.protocols import DataclassProtocol
 from sqlalchemy.orm import DeclarativeBase
 
 if TYPE_CHECKING:
-    from collections.abc import Set
+    from collections.abc import Set as AbstractSet
 
     from litestar.dto import RenameStrategy
 
@@ -25,7 +25,7 @@ ModelT = SQLAlchemyModelT | DataclassModelT
 @overload
 def config(
     backend: Literal["sqlalchemy"] = "sqlalchemy",
-    exclude: Set[str] | None = None,
+    exclude: AbstractSet[str] | None = None,
     rename_fields: dict[str, str] | None = None,
     rename_strategy: RenameStrategy | None = None,
     max_nested_depth: int | None = None,
@@ -37,7 +37,7 @@ def config(
 @overload
 def config(
     backend: Literal["dataclass"] = "dataclass",
-    exclude: Set[str] | None = None,
+    exclude: AbstractSet[str] | None = None,
     rename_fields: dict[str, str] | None = None,
     rename_strategy: RenameStrategy | None = None,
     max_nested_depth: int | None = None,
@@ -48,7 +48,7 @@ def config(
 
 def config(
     backend: Literal["dataclass", "sqlalchemy"] = "dataclass",
-    exclude: Set[str] | None = None,
+    exclude: AbstractSet[str] | None = None,
     rename_fields: dict[str, str] | None = None,
     rename_strategy: RenameStrategy | None = None,
     max_nested_depth: int | None = None,

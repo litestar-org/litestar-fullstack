@@ -19,9 +19,9 @@ __all__ = ["AccountController"]
 if TYPE_CHECKING:
     from uuid import UUID
 
+    from advanced_alchemy.filters import FilterTypes
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
-    from litestar.repository.filters import FilterTypes
 
     from app.domain.accounts.models import User
     from app.domain.accounts.services import UserService
@@ -47,7 +47,9 @@ class AccountController(Controller):
         cache=60,
     )
     async def list_users(
-        self, users_service: UserService, filters: list[FilterTypes] = Dependency(skip_validation=True)
+        self,
+        users_service: UserService,
+        filters: list[FilterTypes] = Dependency(skip_validation=True),
     ) -> OffsetPagination[User]:
         """List users."""
         results, total = await users_service.list_and_count(*filters)

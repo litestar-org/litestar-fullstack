@@ -88,8 +88,8 @@ class Worker(saq.Worker):
         loop.create_task(self.start())
 
 
-redis = Redis.from_url(
-    settings.redis.URL,
+redis = Redis.from_url(  # type: ignore[call-overload]
+    url=settings.redis.URL,
     decode_responses=False,
     socket_connect_timeout=2,
     socket_keepalive=5,

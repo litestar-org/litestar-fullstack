@@ -16,7 +16,9 @@ if TYPE_CHECKING:
 
 
 async def test_before_send_handler_success_response(
-    app: Litestar, http_response_start: HTTPResponseStartEvent, http_scope: HTTPScope
+    app: Litestar,
+    http_response_start: HTTPResponseStartEvent,
+    http_scope: HTTPScope,
 ) -> None:
     """Test that the session is committed given a success response."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -29,7 +31,9 @@ async def test_before_send_handler_success_response(
 
 
 async def test_before_send_handler_error_response(
-    app: Litestar, http_response_start: HTTPResponseStartEvent, http_scope: HTTPScope
+    app: Litestar,
+    http_response_start: HTTPResponseStartEvent,
+    http_scope: HTTPScope,
 ) -> None:
     """Test that the session is committed given a success response."""
     mock_session = MagicMock(spec=AsyncSession)

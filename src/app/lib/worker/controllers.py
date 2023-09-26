@@ -48,7 +48,8 @@ class WorkerController(Controller):
         """Get queue information."""
         queue = queues.get(queue_id, None)
         if not queue:
-            raise NotFoundException(f"Could not find the {queue_id} queue")
+            msg = f"Could not find the {queue_id} queue"
+            raise NotFoundException(msg)
         return {"queue": await queue.info()}
 
     @get(
@@ -64,7 +65,8 @@ class WorkerController(Controller):
         """Get job information."""
         queue = queues.get(queue_id, None)
         if not queue:
-            raise NotFoundException(f"Could not find the {queue_id} queue")
+            msg = f"Could not find the {queue_id} queue"
+            raise NotFoundException(msg)
         job = await info.job(queue, job_id)
         job_dict = job.to_dict()
         if "kwargs" in job_dict:
@@ -86,7 +88,8 @@ class WorkerController(Controller):
         """Retry job."""
         queue = queues.get(queue_id, None)
         if not queue:
-            raise NotFoundException(f"Could not find the {queue_id} queue")
+            msg = f"Could not find the {queue_id} queue"
+            raise NotFoundException(msg)
         job = await info.job(queue, job_id)
         await job.retry("retried from ui")
         return {}
@@ -104,7 +107,8 @@ class WorkerController(Controller):
         """Abort job."""
         queue = queues.get(queue_id, None)
         if not queue:
-            raise NotFoundException(f"Could not find the {queue_id} queue")
+            msg = f"Could not find the {queue_id} queue"
+            raise NotFoundException(msg)
         job = await info.job(queue, job_id)
         await job.abort("aborted from ui")
         return {}

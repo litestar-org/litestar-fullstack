@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from litestar.contrib.sqlalchemy.plugins import _slots_base
 from litestar.di import Provide
 from litestar.plugins import InitPluginProtocol
 from saq.types import QueueInfo
@@ -89,10 +88,10 @@ class SAQConfig(Generic[T]):
         """
 
 
-class SAQPlugin(InitPluginProtocol, _slots_base.SlotsBase):
+class SAQPlugin(InitPluginProtocol):
     """SAQ plugin."""
 
-    __slots__ = ()
+    __slots__ = ("_config",)
 
     def __init__(self, config: SAQConfig) -> None:
         """Initialize ``SAQPlugin``.
@@ -111,9 +110,10 @@ class SAQPlugin(InitPluginProtocol, _slots_base.SlotsBase):
         app_config.dependencies.update(
             {
                 self._config.queues_dependency_key: Provide(
-                    dependency=dependencies.provide_queues, sync_to_thread=False
+                    dependency=dependencies.provide_queues,
+                    sync_to_thread=False,
                 ),
-            }
+            },
         )
         app_config.on_shutdown.append(self._config.on_shutdown)
         app_config.signature_namespace.update(self._config.signature_namespace)
