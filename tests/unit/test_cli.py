@@ -1,4 +1,3 @@
-from collections.abc import Generator
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -6,9 +5,9 @@ import pytest
 from click.testing import CliRunner
 
 
-@pytest.fixture
-def cli_runner() -> Generator[CliRunner, None, None]:
-    yield CliRunner()
+@pytest.fixture()
+def cli_runner() -> CliRunner:
+    return CliRunner()
 
 
 def test_run_server(cli_runner: Any, monkeypatch: pytest.MonkeyPatch) -> None:

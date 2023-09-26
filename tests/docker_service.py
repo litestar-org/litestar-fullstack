@@ -38,7 +38,8 @@ async def wait_until_responsive(
         await asyncio.sleep(pause)
         now = timeit.default_timer()
 
-    raise RuntimeError("Timeout reached while waiting on service!")
+    msg = "Timeout reached while waiting on service!"
+    raise RuntimeError(msg)
 
 
 class DockerServiceRegistry:
@@ -59,11 +60,12 @@ class DockerServiceRegistry:
         if match := re.match(r"^tcp://(.+?):\d+$", docker_host):
             return match[1]
 
-        raise ValueError(f'Invalid value for DOCKER_HOST: "{docker_host}".')
+        msg = f'Invalid value for DOCKER_HOST: "{docker_host}".'
+        raise ValueError(msg)
 
     def run_command(self, *args: str) -> None:
         command = [*self._base_command, *args]
-        subprocess.run(command, check=True, capture_output=True)  # noqa: S603
+        subprocess.run(command, check=True, capture_output=True)
 
     async def start(
         self,
@@ -100,13 +102,17 @@ async def redis_responsive(host: str) -> bool:
     except (ConnectionError, RedisConnectionError):
         return False
     finally:
-        await client.close()
+        await client.aclose()  # type: ignore[attr-defined]
 
 
 async def postgres_responsive(host: str) -> bool:
     try:
         conn = await asyncpg.connect(
-            host=host, port=5423, user="postgres", database="postgres", password="super-secret"  # noqa: S106
+            host=host,
+            port=5423,
+            user="postgres",
+            database="postgres",
+            password="super-secret",  # noqa: S106
         )
     except (ConnectionError, asyncpg.CannotConnectNowError):
         return False

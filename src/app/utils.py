@@ -31,7 +31,8 @@ if TYPE_CHECKING:
 def check_email(email: str) -> str:
     """Validate an email."""
     if "@" not in email:
-        raise ValueError("Invalid email!")
+        msg = "Invalid email!"
+        raise ValueError(msg)
     return email.lower()
 
 
@@ -100,7 +101,8 @@ def module_to_os_path(dotted_path: str = "app") -> Path:
     """
     src = pkgutil.get_loader(dotted_path)
     if not isinstance(src, SourceFileLoader):
-        raise TypeError("Couldn't find the path for %s", dotted_path)
+        msg = "Couldn't find the path for %s"
+        raise TypeError(msg, dotted_path)
     path_separator = "/"
     if platform.system() == "Windows":
         path_separator = "\\"
@@ -147,9 +149,11 @@ def import_string(dotted_path: str) -> Any:
     try:
         module_path, class_name = dotted_path.rsplit(".", 1)
     except ValueError as e:
-        raise ImportError("%s doesn't look like a module path", dotted_path) from e
+        msg = "%s doesn't look like a module path"
+        raise ImportError(msg, dotted_path) from e
 
     try:
         return _cached_import(module_path, class_name)
     except AttributeError as e:
-        raise ImportError("Module '%s' does not define a '%s' attribute/class", module_path, class_name) from e
+        msg = "Module '%s' does not define a '%s' attribute/class"
+        raise ImportError(msg, module_path, class_name) from e

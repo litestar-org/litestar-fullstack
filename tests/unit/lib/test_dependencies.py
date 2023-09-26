@@ -6,9 +6,7 @@ from typing import TYPE_CHECKING, Literal
 from uuid import uuid4
 
 import pytest
-from litestar import Litestar, get
-from litestar.params import Dependency
-from litestar.repository.filters import (
+from advanced_alchemy.filters import (
     BeforeAfter,
     CollectionFilter,
     FilterTypes,
@@ -16,6 +14,8 @@ from litestar.repository.filters import (
     OrderBy,
     SearchFilter,
 )
+from litestar import Litestar, get
+from litestar.params import Dependency
 from litestar.testing import RequestFactory, TestClient
 
 from app.domain import security
@@ -62,10 +62,15 @@ def test_before_after_filters(filter_: "abc.Callable[[datetime, datetime], Befor
     ],
 )
 def test_search_filters(
-    filter_: "abc.Callable[[str, str,bool], SearchFilter]", field_name: str, search_string: str, ignore_case: bool
+    filter_: "abc.Callable[[str, str,bool], SearchFilter]",
+    field_name: str,
+    search_string: str,
+    ignore_case: bool,
 ) -> None:
     assert filter_(field_name, search_string, ignore_case) == SearchFilter(
-        field_name=field_name, value=search_string, ignore_case=ignore_case
+        field_name=field_name,
+        value=search_string,
+        ignore_case=ignore_case,
     )
 
 

@@ -84,7 +84,8 @@ class ViteTemplateConfig(Generic[T]):
     def __post_init__(self) -> None:
         """Ensure that directory is set if engine is a class."""
         if isclass(self.engine) and not self.directory:
-            raise ImproperlyConfiguredException("directory is a required kwarg when passing a template engine class")
+            msg = "directory is a required kwarg when passing a template engine class"
+            raise ImproperlyConfiguredException(msg)
 
     def to_engine(self) -> T:
         """Instantiate the template engine."""

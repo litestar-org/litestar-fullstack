@@ -28,5 +28,6 @@ async def is_healthy() -> bool:
 async def job(queue: Queue, job_id: str) -> Job:
     job = await queue._get_job_by_id(str(job_id))
     if not job:
-        raise ApplicationError("Could not find job ID %s", job_id)
+        msg = "Could not find job ID %s"
+        raise ApplicationError(msg, job_id)
     return cast("Job", job)

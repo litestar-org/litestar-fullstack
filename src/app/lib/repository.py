@@ -20,7 +20,7 @@ def on_app_init(app_config: "AppConfig") -> "AppConfig":
         {
             "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
             "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
-        }
+        },
     )
     return _on_app_init(app_config)
 

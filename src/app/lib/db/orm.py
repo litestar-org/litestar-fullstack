@@ -32,5 +32,5 @@ def model_from_dict(model: ModelT, **kwargs: Any) -> ModelT:
     for column in model.__table__.columns:
         column_val = kwargs.get(column.name, None)
         if column_val is not None:
-            data.update({column.name: column_val})
+            data[column.name] = column_val
     return model(**data)  # type: ignore

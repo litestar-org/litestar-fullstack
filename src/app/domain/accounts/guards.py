@@ -26,7 +26,8 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
     """
     if connection.user.is_active:
         return
-    raise PermissionDeniedException("Inactive account")
+    msg = "Inactive account"
+    raise PermissionDeniedException(msg)
 
 
 def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:

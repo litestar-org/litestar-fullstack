@@ -22,7 +22,9 @@ async def test_update_user_no_auth(client: "AsyncClient") -> None:
 
 async def test_accounts_with_incorrect_role(client: "AsyncClient", user_token_headers: dict[str, str]) -> None:
     response = await client.patch(
-        "/api/users/97108ac1-ffcb-411d-8b1e-d9183399f63b", json={"name": "TEST UPDATE"}, headers=user_token_headers
+        "/api/users/97108ac1-ffcb-411d-8b1e-d9183399f63b",
+        json={"name": "TEST UPDATE"},
+        headers=user_token_headers,
     )
     assert response.status_code == 403
     response = await client.post(

@@ -62,4 +62,5 @@ def requires_team_ownership(connection: ASGIConnection, _: BaseRouteHandler) -> 
         return
     if any(membership.team.id == team_id and membership.is_owner for membership in connection.user.teams):
         return
-    raise PermissionDeniedException("Insufficient permissions to access team.")
+    msg = "Insufficient permissions to access team."
+    raise PermissionDeniedException(msg)

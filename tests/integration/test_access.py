@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.parametrize(
-    "username,password,expected_status_code",
+    ("username", "password", "expected_status_code"),
     (
         ("superuser@example1.com", "Test_Password1!", 403),
         ("superuser@example.com", "Test_Password1!", 201),

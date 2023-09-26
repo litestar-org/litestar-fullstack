@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         HTTPResponseStartEvent,
         HTTPScope,
     )
-    from pytest import MonkeyPatch
+    from pytest import MonkeyPatch  # noqa: PT013
     from structlog.testing import CapturingLogger
 
 
