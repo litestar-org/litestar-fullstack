@@ -52,7 +52,7 @@ repos:
             uvloop,
             jinja2,
             hiredis,
-            redis>=5.0.0',
+            "redis>=5.0.0",
             passlib,
             rich,
             packaging,
