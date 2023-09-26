@@ -44,21 +44,12 @@ install:          ## Install the project in dev mode.
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src $(ENV_PREFIX)alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@env PYTHONPATH=src $(ENV_PREFIX)app database make-migrations --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src $(ENV_PREFIX)app database upgrade-database
-
-.PHONY: squash-migrations
-squash-migrations:       ## Generate database migrations
-	@echo "ATTENTION: This operation will wipe all migrations and recreate from an empty state."
-	@env PYTHONPATH=src $(ENV_PREFIX)app database purge-database --no-prompt
-	rm -Rf src/app/lib/db/migrations/versions/*.py
-	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Initial migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src $(ENV_PREFIX)alembic -c src/app/lib/db/alembic.ini revision --autogenerate -m "$${MIGRATION_MESSAGE}"
-
+	@env PYTHONPATH=src $(ENV_PREFIX)app database upgrade
 
 .PHONY: build
 build:

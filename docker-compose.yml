@@ -77,7 +77,7 @@ services:
   migrator:
     image: app:latest
     restart: "no"
-    command: litestar database upgrade-database
+    command: litestar database upgrade
     env_file:
       - .env.example
     depends_on:
