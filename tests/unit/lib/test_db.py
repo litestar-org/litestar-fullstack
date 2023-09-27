@@ -5,9 +5,9 @@ import random
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
+from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
+from advanced_alchemy.extensions.litestar.plugins.init.config.common import SESSION_SCOPE_KEY
 from litestar.constants import SCOPE_STATE_NAMESPACE
-from litestar.contrib.sqlalchemy.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar.contrib.sqlalchemy.plugins.init.config.common import SESSION_SCOPE_KEY
 from sqlalchemy.ext.asyncio import AsyncSession
 
 if TYPE_CHECKING:

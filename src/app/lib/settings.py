@@ -142,9 +142,7 @@ class AppSettings(BaseSettings):
         value: str | None,
     ) -> str:
         """Generate a secret key."""
-        if value is None:
-            return os.urandom(32).decode()
-        return value
+        return os.urandom(32).decode() if value is None else value
 
 
 class LogSettings(BaseSettings):
