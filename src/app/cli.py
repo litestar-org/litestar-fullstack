@@ -16,7 +16,6 @@ from app.domain.accounts.services import UserService
 from app.lib import log, settings, worker
 
 __all__ = [
-    "create_database",
     "create_user",
     "run_all_app",
     "run_app",
@@ -278,9 +277,8 @@ def promote_to_superuser(email: str) -> None:
     anyio.run(_promote_to_superuser, email)
 
 
-
 def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
-    process_args = []
+    process_args: list[str] = []
     for arg, value in args.items():
         if isinstance(value, list):
             process_args.extend(f"--{arg}={val}" for val in value)
