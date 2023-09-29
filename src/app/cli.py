@@ -7,28 +7,20 @@ import anyio
 import click
 from anyio import open_process
 from anyio.streams.text import TextReceiveStream
-from click import echo
 from pydantic import EmailStr
 from rich import get_console
-from rich.prompt import Confirm
 
 from app.domain import plugins
 from app.domain.accounts.dtos import UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
-from app.lib import db, log, settings, worker
+from app.lib import log, settings, worker
 
 __all__ = [
     "create_database",
     "create_user",
-    "database_management_app",
-    "promote_to_superuser",
-    "purge_database",
-    "reset_database",
     "run_all_app",
     "run_app",
     "run_worker",
-    "show_database_revision",
-    "upgrade_database",
     "user_management_app",
     "worker_management_app",
 ]
@@ -286,88 +278,12 @@ def promote_to_superuser(email: str) -> None:
     anyio.run(_promote_to_superuser, email)
 
 
-@database_management_app.command(
-    name="create-database",
-    help="Creates an empty postgres database and executes migrations",
-)
-def create_database() -> None:
-    """Create database DDL migrations."""
-    db.utils.create_database()
-
-
-@database_management_app.command(
-    name="upgrade-database",
-    help="Executes migrations to apply any outstanding database structures.",
-)
-def upgrade_database() -> None:
-    """Upgrade the database to the latest revision."""
-    db.utils.upgrade_database()
-
-
-@database_management_app.command(
-    name="reset-database",
-    help="Drops all tables and re-applies the migrations.",
-)
-@click.option(
-    "--no-prompt",
-    help="Do not prompt for confirmation.",
-    type=click.BOOL,
-    default=False,
-    required=False,
-    show_default=True,
-    is_flag=True,
-)
-def reset_database(no_prompt: bool) -> None:
-    """Reset the database to an initial empty state."""
-    if not no_prompt:
-        Confirm.ask("Are you sure you want to drop and recreate everything?")
-    db.utils.reset_database()
-
-
-@database_management_app.command(
-    name="purge-database",
-    help="Drops all tables.",
-)
-@click.option(
-    "--no-prompt",
-    help="Do not prompt for confirmation.",
-    type=click.BOOL,
-    default=False,
-    required=False,
-    show_default=True,
-    is_flag=True,
-)
-def purge_database(no_prompt: bool) -> None:
-    """Drop all objects in the database."""
-    if not no_prompt:
-        confirmed = Confirm.ask(
-            "Are you sure you want to drop everything?",
-        )
-        if not confirmed:
-            echo("Aborting database purge and exiting.")
-            sys.exit(0)
-    db.utils.purge_database()
-
-
-@database_management_app.command(
-    name="show-current-database-revision",
-    help="Shows the current revision for the database.",
-)
-def show_database_revision() -> None:
-    """Show current database revision."""
-    db.utils.show_database_revision()
-
 
 def _convert_uvicorn_args(args: dict[str, Any]) -> list[str]:
     process_args = []
     for arg, value in args.items():
-        if value is None:
-            pass
         if isinstance(value, list):
-            for val in value:
-                if val is None:
-                    pass
-                process_args.append(f"--{arg}={val}")
+            process_args.extend(f"--{arg}={val}" for val in value)
         if isinstance(value, bool):
             if value:
                 process_args.append(f"--{arg}")
