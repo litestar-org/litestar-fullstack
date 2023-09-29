@@ -406,7 +406,7 @@ def load_settings() -> (
         worker: WorkerSettings = WorkerSettings()
 
     except ValidationError as e:
-        print("Could not load settings. %s", e)  # noqa: T201
+        print("Could not load settings.", e)  # noqa: T201
         raise e from e
     return (
         app,
