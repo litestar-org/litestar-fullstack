@@ -171,6 +171,7 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
+  "src/app/lib/db/migrations/versions/*.py",
 ]
 fix = true
 ignore = [
