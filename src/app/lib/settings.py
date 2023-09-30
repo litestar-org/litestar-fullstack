@@ -407,7 +407,7 @@ def load_settings() -> (
 
     except ValidationError as e:
         print("Could not load settings.", e)  # noqa: T201
-        raise e from e
+        raise
     return (
         app,
         redis,
