@@ -2,13 +2,13 @@
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.2.1"
+version = "0.2.2"
 description = "Ready-to-go SQLAlchemy concoctions."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "advanced_alchemy-0.2.1-py3-none-any.whl", hash = "sha256:1cad8026e12905b8bb734ad53015271a49d7d994fe11b8d61fd17a54af04a95e"},
-    {file = "advanced_alchemy-0.2.1.tar.gz", hash = "sha256:e0103df9106e5ced313afded1ed8c11afeb366dc84d643fd2965678b9c75d321"},
+    {file = "advanced_alchemy-0.2.2-py3-none-any.whl", hash = "sha256:5c744e61d67d0c4b25e9084776e8c2ca790aaa3f9370f922b71d216b6bef200b"},
+    {file = "advanced_alchemy-0.2.2.tar.gz", hash = "sha256:d6c0557f8762b889aa4ad714001ab18c16797c65b6d3eb88fb97e0de13ba8d69"},
 ]
 
 [package.dependencies]
@@ -3302,4 +3302,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "1ea5dd88997a8ca8869eb715940491ff71abe566a5f95c5d6ec0e9dc18ecec36"
+content-hash = "b1af000b92d68df5932e12549ebed4ba6aa8f5bae49754e5a133d579d5c8d778"

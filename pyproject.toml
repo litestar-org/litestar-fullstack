@@ -40,7 +40,7 @@ users = "app.cli:user_management_app"
 worker = "app.cli:worker_management_app"
 
 [tool.poetry.dependencies]
-advanced-alchemy = "^0.2.1"
+advanced-alchemy = "^0.2.2"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}

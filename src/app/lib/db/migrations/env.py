@@ -3,13 +3,12 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING, cast
 
+from advanced_alchemy.base import orm_registry
 from alembic import context
 from alembic.autogenerate import rewriter
 from alembic.operations import ops
 from sqlalchemy import Column, pool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_engine_from_config
-
-import app
 
 if TYPE_CHECKING:
     from advanced_alchemy.extensions.litestar.alembic import AlembicCommandConfig
@@ -26,7 +25,7 @@ config: AlembicCommandConfig = context.config  # type: ignore
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = app.lib.db.orm.orm_registry.metadata
+target_metadata = orm_registry.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -140,5 +139,4 @@ async def run_migrations_online() -> None:
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    loop = asyncio.get_event_loop()
-    asyncio.run_coroutine_threadsafe(run_migrations_online(), loop=loop)
+    asyncio.run(run_migrations_online())
