@@ -1,9 +1,11 @@
-name: ci
+name: Tests and Linting
+
 on:
   pull_request:
   push:
     branches:
       - main
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -15,6 +17,7 @@ jobs:
         with:
           python-version: "3.11"
       - uses: pre-commit/action@v3.0.0
+
   test:
     needs: validate
     runs-on: ubuntu-latest
@@ -50,6 +53,7 @@ jobs:
           name: coverage-xml
           path: coverage.xml
         if: matrix.python-version == '3.11'
+
   codeql:
     needs: test
     runs-on: ubuntu-latest

@@ -84,7 +84,8 @@ class AiosqlQueryManager:
         try:
             return getattr(self.queries, method)
         except AttributeError as exc:
-            raise NotImplementedError("%s was not found", method) from exc
+            msg = "%s was not found"
+            raise NotImplementedError(msg, method) from exc
 
     @property
     def available_queries(self) -> list[str]:
@@ -100,4 +101,5 @@ class AiosqlQueryManager:
         raw_connection = await db_connection.get_raw_connection()
         if raw_connection.driver_connection:
             return raw_connection.driver_connection
-        raise ApplicationError("Unable to fetch raw connection from session.")
+        msg = "Unable to fetch raw connection from session."
+        raise ApplicationError(msg)

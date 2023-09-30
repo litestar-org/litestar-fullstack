@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from litestar.contrib.sqlalchemy.plugins import _slots_base
 from litestar.plugins import InitPluginProtocol
 
 from app.contrib.vite.config import ViteTemplateConfig
@@ -19,10 +18,10 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-class VitePlugin(InitPluginProtocol, _slots_base.SlotsBase):
+class VitePlugin(InitPluginProtocol):
     """Vite plugin."""
 
-    __slots__ = ()
+    __slots__ = ("_config",)
 
     def __init__(self, config: ViteConfig) -> None:
         """Initialize ``Vite``.

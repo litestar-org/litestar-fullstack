@@ -10,7 +10,7 @@ from app.lib import crypt
 
 
 @pytest.mark.parametrize(
-    "secret_key,expected_value",
+    ("secret_key", "expected_value"),
     (
         ("test", "test                            "),
         ("test---------------------------", "test--------------------------- "),
@@ -41,7 +41,7 @@ async def test_get_password_hash() -> None:
 
 
 @pytest.mark.parametrize(
-    "valid_password,tested_password,expected_result",
+    ("valid_password", "tested_password", "expected_result"),
     (("SuperS3cret123456789!!", "SuperS3cret123456789!!", True), ("SuperS3cret123456789!!", "Invalid!!", False)),
 )
 async def test_verify_password(valid_password: str, tested_password: str, expected_result: bool) -> None:

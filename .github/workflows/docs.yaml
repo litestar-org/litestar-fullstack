@@ -1,10 +1,12 @@
-name: docs
+name: Documentation Building
+
 on:
   workflow_run:
     workflows: ["ci"]
     branches: [main]
     types:
       - completed
+
 jobs:
   docs:
     runs-on: ubuntu-latest

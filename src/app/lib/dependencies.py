@@ -5,9 +5,7 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from litestar.di import Provide
-from litestar.params import Dependency, Parameter
-from litestar.repository.filters import (
+from advanced_alchemy.filters import (
     BeforeAfter,
     CollectionFilter,
     FilterTypes,
@@ -15,6 +13,8 @@ from litestar.repository.filters import (
     OrderBy,
     SearchFilter,
 )
+from litestar.di import Provide
+from litestar.params import Dependency, Parameter
 
 from app.lib import constants
 
@@ -87,7 +87,10 @@ def provide_search_filter(
     field: StringOrNone = Parameter(title="Field to search", query="searchField", default=None, required=False),
     search: StringOrNone = Parameter(title="Field to search", query="searchString", default=None, required=False),
     ignore_case: BooleanOrNone = Parameter(
-        title="Search should be case sensitive", query="searchIgnoreCase", default=None, required=False
+        title="Search should be case sensitive",
+        query="searchIgnoreCase",
+        default=None,
+        required=False,
     ),
 ) -> SearchFilter:
     """Add offset/limit pagination.

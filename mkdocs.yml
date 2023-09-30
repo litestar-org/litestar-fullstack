@@ -1,5 +1,5 @@
 site_name: Litestar SPA Sample Architecture
-repo_url: https://github.com/cofin/litestar-fullstack
+repo_url: https://github.com/litestar-org/litestar-fullstack
 edit_uri: ./edit/main/docs
 
 # Sticking with readthedocs theme for basic template

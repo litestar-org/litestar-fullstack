@@ -44,13 +44,17 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         """
         db_obj = await self.get_one_or_none(email=username)
         if db_obj is None:
-            raise PermissionDeniedException("User not found or password invalid")
+            msg = "User not found or password invalid"
+            raise PermissionDeniedException(msg)
         if db_obj.hashed_password is None:
-            raise PermissionDeniedException("User not found or password invalid.")
+            msg = "User not found or password invalid."
+            raise PermissionDeniedException(msg)
         if not await crypt.verify_password(password, db_obj.hashed_password):
-            raise PermissionDeniedException("User not found or password invalid")
+            msg = "User not found or password invalid"
+            raise PermissionDeniedException(msg)
         if not db_obj.is_active:
-            raise PermissionDeniedException("User account is inactive")
+            msg = "User account is inactive"
+            raise PermissionDeniedException(msg)
         return db_obj
 
     async def update_password(self, data: dict[str, Any], db_obj: User) -> None:
@@ -66,11 +70,14 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             PermissionDeniedException: _description_
         """
         if db_obj.hashed_password is None:
-            raise PermissionDeniedException("User not found or password invalid.")
+            msg = "User not found or password invalid."
+            raise PermissionDeniedException(msg)
         if not await crypt.verify_password(data["current_password"], db_obj.hashed_password):
-            raise PermissionDeniedException("User not found or password invalid.")
+            msg = "User not found or password invalid."
+            raise PermissionDeniedException(msg)
         if not db_obj.is_active:
-            raise PermissionDeniedException("User account is not active")
+            msg = "User account is not active"
+            raise PermissionDeniedException(msg)
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
 
