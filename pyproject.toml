@@ -35,22 +35,21 @@ version = "0.1.0"
 app = "litestar.__main__:run_cli"
 
 [tool.poetry.plugins."litestar.commands"]
-database = "app.cli:database_management_app"
 run-all = "app.cli:run_all_app"
 users = "app.cli:user_management_app"
 worker = "app.cli:worker_management_app"
 
 [tool.poetry.dependencies]
+advanced-alchemy = "^0.2.2"
 aiosql = "*"
 asyncpg = "*"
 greenlet = {version = ">=2.0.1", platform = "darwin"}
-litestar = {version = ">=2.1.1", extras = ["jwt", 'cli', 'redis', 'jinja', 'sqlalchemy', 'structlog', 'pydantic']}
+litestar = {version = ">=2.1.1", extras = ["jwt", 'cli', 'redis', 'jinja', 'structlog', 'pydantic']}
 passlib = {version = "*", extras = ["argon2"]}
 pydantic-settings = "*"
 python = ">=3.10,<3.12"
 python-dotenv = "*"
 saq = "*"
-sqlalchemy = ">=2.0.19"
 uvicorn = {version = "*", extras = ['standard']}
 
 [tool.poetry.group.dev.dependencies]
@@ -172,6 +171,7 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
+  "src/app/lib/db/migrations/versions/*.py",
 ]
 fix = true
 ignore = [

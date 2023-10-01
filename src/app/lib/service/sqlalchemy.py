@@ -14,7 +14,7 @@ from advanced_alchemy.filters import (
     FilterTypes,
     LimitOffset,
 )
-from litestar.contrib.sqlalchemy.repository import ModelT, SQLAlchemyAsyncRepository
+from advanced_alchemy.repository.typing import ModelT
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from pydantic.type_adapter import TypeAdapter
@@ -27,6 +27,7 @@ from .generic import Service
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
+    from advanced_alchemy.repository import SQLAlchemyAsyncRepository
     from litestar.repository.filters import FilterTypes as FilterTypesLitestar
     from pydantic import BaseModel
     from sqlalchemy import Select
@@ -174,7 +175,6 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
         """
         match_fields = match_fields or self.match_fields
         validated_model = await self.to_model(kwargs, "create")
-        # TODO: submit PR with repo enhancements
         return await self.repository.get_or_create(**validated_model.to_dict())
 
     async def get_one(self, **kwargs: Any) -> ModelT:
@@ -231,7 +231,7 @@ class SQLAlchemyAsyncRepositoryService(Service[ModelT], Generic[ModelT]):
             Representation of created instances.
         """
         if isinstance(data, dict):
-            return model_from_dict(model=self.repository.model_type, **data)  # type: ignore[type-var,return-value]
+            return model_from_dict(model=self.repository.model_type, **data)  # type: ignore
         return data
 
     async def list_and_count(

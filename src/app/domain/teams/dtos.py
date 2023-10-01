@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO
+from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
 from app.domain.teams.models import Team

@@ -3,9 +3,10 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any
 
-from litestar.contrib.sqlalchemy.plugins.init.config import SQLAlchemyAsyncConfig
-from litestar.contrib.sqlalchemy.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar.contrib.sqlalchemy.plugins.init.plugin import SQLAlchemyInitPlugin
+from advanced_alchemy.config import AlembicAsyncConfig
+from advanced_alchemy.extensions.litestar.plugins.init.config import SQLAlchemyAsyncConfig
+from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
+from advanced_alchemy.extensions.litestar.plugins.init.plugin import SQLAlchemyInitPlugin
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
@@ -87,6 +88,11 @@ config = SQLAlchemyAsyncConfig(
     engine_instance=engine,
     session_maker=async_session_factory,
     before_send_handler=autocommit_before_send_handler,
+    alembic_config=AlembicAsyncConfig(
+        version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,
+        script_config=settings.db.MIGRATION_CONFIG,
+        script_location=settings.db.MIGRATION_PATH,
+    ),
 )
 
 
