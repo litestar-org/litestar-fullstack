@@ -67,6 +67,18 @@ worker = "app.cli:worker_management_app"
 build-backend = "hatchling.build"
 requires = ["hatchling", "nodeenv"]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build]
+include = [
+  "CHANGELOG.md",
+  "src/server/app/domain/web/public/**/*",
+  "src/server/app/**/*.sql",
+  "src/server/app/lib/db/**/*.ini",
+]
+sources = ["src/server"]
+
 [tool.pdm.scripts]
 pre_build = "pdm run python scripts/pre-build.py"
 pre_install = "pdm run python scripts/pre-build.py"
