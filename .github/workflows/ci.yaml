@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: pdm install -G:all
       - name: Test with Coverage
-        run: pdm run pytest --cov=. --cov-report=xml
+        run: pdm run pytest tests --cov=app --cov-report=xml
       - uses: actions/upload-artifact@v3
         with:
           name: coverage-xml
