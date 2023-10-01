@@ -42,7 +42,7 @@ services:
       - .env.example
   migrator:
     image: app:latest-dev
-    command: litestar database upgrade-database
+    command: litestar database upgrade
     restart: "no"
     <<: *development-volumes
     env_file:
