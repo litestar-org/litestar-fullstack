@@ -139,6 +139,10 @@ Using Litestar app from env: 'app.asgi:create_app'
 
 ```
 
+## Run Commands
+
+To run the application through Uvicorn using the standard Litestar CLI, you can use the following:
+
 ```bash
 ❯ app run --help
 Using Litestar app from env: 'app.asgi:create_app'
@@ -185,6 +189,10 @@ Using Litestar app from env: 'app.asgi:create_app'
 
 
 ```
+
+The above command will not start the background workers. Those can be launched separately in another terminal.
+
+Alternately, the `run-all` command will automatically start the background workers in separate processes.
 
 ```bash
 ❯ app run-all --help
@@ -278,8 +286,9 @@ if `DEV_MODE` is set to true, the base template expects that Vite will be runnin
 
 ```bash
 ❯ app run-all -p 8080
-2023-06-16T16:58:38.049014Z [info     ] starting all application services.
-2023-06-16T16:58:38.049058Z [info     ] starting Background worker processes.
+Using Litestar app from env: 'app.asgi:create_app'
+2023-10-01T20:19:06.493377Z [info     ] starting all application services.
+2023-10-01T20:19:06.493500Z [info     ] starting Background worker processes.
 2023-06-16T16:58:38.055247Z [info     ] starting Vite
 2023-06-16T16:58:38.056850Z [info     ] Starting HTTP Server.
 2023-06-16T16:58:38.791943Z [info     ] Started server process [29108]
@@ -298,7 +307,9 @@ if `DEV_MODE` is set to true, the base template expects that Vite will be runnin
 
 #### start the server in production mode
 
-if `DEV_MODE` is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting the server.
+if `DEV_MODE` is false, the server will look for the static assets that are produced from the `npm run build` command. This command is automatically executed and the assets are bundled when running `pdm build`.
+
+To manually rebuild assets, use the following:
 
 ```bash
 npm run build # generates static assets from vite and
@@ -361,7 +372,7 @@ make lint
 
 ### Generate New Migrations
 
-This command is a shorthand for execute `app database make-migrations`.
+This command is a shorthand for executing `app database make-migrations`.
 
 ```shell
 make migrations
@@ -369,7 +380,7 @@ make migrations
 
 ### Upgrade a Database to the Latest Revision
 
-This command is a shorthand for execute `app database upgrade`.
+This command is a shorthand for executing `app database upgrade`.
 
 ```shell
 make migrate

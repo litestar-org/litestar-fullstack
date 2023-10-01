@@ -36,10 +36,8 @@ jobs:
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
-          allow-python-prereleases: true
-          cache: true
       - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet
+        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
       - name: Install dependencies
         run: pdm install -G:all
       - name: Test with Coverage
@@ -64,9 +62,7 @@ jobs:
       - uses: pdm-project/setup-pdm@v3
         name: Set up PDM
         with:
-          python-version: ${{ matrix.python-version }}
-          allow-python-prereleases: true
-          cache: true
+          python-version: 3.11
       - name: Install dependencies
         run: pdm install -G:all
       - name: Perform CodeQL Analysis
