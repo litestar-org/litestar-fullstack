@@ -59,6 +59,8 @@ jobs:
           languages: python
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Install base libraries
+        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
       - uses: pdm-project/setup-pdm@v3
         name: Set up PDM
         with:
