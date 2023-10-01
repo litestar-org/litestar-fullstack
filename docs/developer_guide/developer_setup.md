@@ -2,10 +2,10 @@
 
 To begin local development, clone the [cofin/typer_cli/litestar-fullstack](https://github.com/litestar-org/litestar-fullstack) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
 
-## Using poetry
+## Using PDM
 
 ```bash
-poetry install
+pdm install
 ```
 
 Install optional dependencies using the `--extras` flag:

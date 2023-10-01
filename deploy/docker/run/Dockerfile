@@ -30,15 +30,8 @@ RUN apt-get update \
 ## ------------------------- Python build base -------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python-base AS build-base
-ARG POETRY_INSTALL_ARGS="--only main"
-ENV POETRY_HOME="/opt/poetry" \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_ALWAYS_COPY=1 \
-    POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_VERSION='1.5.1' \
-    POETRY_INSTALL_ARGS="${POETRY_INSTALL_ARGS}" \
+ARG PDM_INSTALL_ARGS=""
+ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add build packages ----------------------------------- ##
@@ -48,22 +41,20 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \
     && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && curl -sSL https://install.python-poetry.org | python - \
-    && ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml poetry.lock README.md mkdocs.yml .pre-commit-config.yaml .pylintrc LICENSE Makefile \
+COPY pyproject.toml pdm.lock README.md mkdocs.yml .pre-commit-config.yaml .pylintrc LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json \
     ./
 COPY scripts ./scripts/
 RUN python -m venv --copies /workspace/app/.venv \
-    && /workspace/app/.venv/bin/pip install --quiet nodeenv cython  \
-    && poetry install ${POETRY_INSTALL_ARGS} --no-root --quiet \
-    && poetry export ${POETRY_INSTALL_ARGS} --quiet --without-hashes --output=requirements.txt
+    && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython  \
+    && pdm install ${PDM_INSTALL_ARGS} --no-self  \
+    && pdm export ${PDM_INSTALL_ARGS} --without-hashes --prod --output=requirements.txt
 COPY src ./src/
-RUN poetry build --quiet
+RUN pdm build
 
 
 ## ---------------------------------------------------------------------------------- ##

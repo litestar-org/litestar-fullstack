@@ -89,7 +89,7 @@ migrate:          ## Generate database migrations
 .PHONY: build
 build:
 	@echo "=> Building package..."
-	@if [ "$(USING_POETRY)" ]; then pdm build; fi
+	@if [ "$(USING_PDM)" ]; then pdm build; fi
 	@echo "=> Package build complete..."
 # =============================================================================
 # Tests, Linting, Coverage
