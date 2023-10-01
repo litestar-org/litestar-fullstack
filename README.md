@@ -20,9 +20,6 @@
 
 # Litestar Fullstack Reference Application
 
-> [!WARNING]\
-> This repo is referencing a currently unreleased version of Litestar 2.0. Expect things to stabilize as we get closer to a final release.
-
 This is a reference application that you can use to get your next Litestar application running quickly.
 
 It contains most of the boilerplate required for a production web API with features like:
@@ -35,6 +32,17 @@ It contains most of the boilerplate required for a production web API with featu
 - Pre-configured user model that includes teams and associated team roles
 - Examples of using guards for superuser and team-based auth.
 - Examples using raw SQL for more complex queries
+
+Take what you need and adapt it to your own projects
+
+## Quick Start
+
+To quickly get a development environment running, run the following:
+
+```shell
+make install
+. .venv/bin/activate
+```
 
 ## App Commands
 
@@ -93,6 +101,23 @@ Using Litestar app from env: 'app.asgi:create_app'
 │ upgrade                Upgrade database to a specific revision.              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
+```
+
+### Upgrading the Database
+
+```bash
+❯ app database upgrade
+Using Litestar app from env: 'app.asgi:create_app'
+Starting database upgrade process ───────────────────────────────────────────────
+Are you sure you you want migrate the database to the "head" revision? [y/n]: y
+2023-10-01T19:44:13.536101Z [debug    ] Using selector: EpollSelector
+2023-10-01T19:44:13.623437Z [info     ] Context impl PostgresqlImpl.
+2023-10-01T19:44:13.623617Z [info     ] Will assume transactional DDL.
+2023-10-01T19:44:13.667920Z [info     ] Running upgrade  -> c3a9a11cc35d, init
+2023-10-01T19:44:13.774932Z [debug    ] new branch insert c3a9a11cc35d
+2023-10-01T19:44:13.783804Z [info     ] Pool disposed. Pool size: 5  Connections
+ in pool: 0 Current Overflow: -5 Current Checked out connections: 0
+2023-10-01T19:44:13.784013Z [info     ] Pool recreating
 ```
 
 ## Worker Commands

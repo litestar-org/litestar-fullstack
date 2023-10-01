@@ -6,11 +6,11 @@ groups = ["default", "dev", "docs", "linting", "test"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:49b3d4c470c317dc9e5b9b9cb78341b99e3d59678c71a8a4584942321f72af60"
+content_hash = "sha256:8ab2cda9653cfd92b39109adae5726ecb119378cf67b33a8ce11a731363f9ff4"
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.2.0"
+version = "0.2.2"
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 dependencies = [
@@ -19,8 +19,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "advanced_alchemy-0.2.0-py3-none-any.whl", hash = "sha256:f5aca306c45d161f43a3d6487ede5e21682f61485ef44df0a62e52ec06cb2ec3"},
-    {file = "advanced_alchemy-0.2.0.tar.gz", hash = "sha256:df9729c90af70493801a594afc5c956914501b0512e14c502e99561ae9db30f8"},
+    {file = "advanced_alchemy-0.2.2-py3-none-any.whl", hash = "sha256:5c744e61d67d0c4b25e9084776e8c2ca790aaa3f9370f922b71d216b6bef200b"},
+    {file = "advanced_alchemy-0.2.2.tar.gz", hash = "sha256:d6c0557f8762b889aa4ad714001ab18c16797c65b6d3eb88fb97e0de13ba8d69"},
 ]
 
 [[package]]
@@ -734,11 +734,10 @@ files = [
 [[package]]
 name = "litestar"
 version = "2.1.1"
-extras = ["cli", "jinja", "jwt", "pydantic", "redis", "sqlalchemy", "structlog"]
+extras = ["cli", "jinja", "jwt", "pydantic", "redis", "structlog"]
 requires_python = ">=3.8,<4.0"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
-    "advanced-alchemy==0.2.0",
     "click",
     "cryptography",
     "jinja2>=3.1.2",

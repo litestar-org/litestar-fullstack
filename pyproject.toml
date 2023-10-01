@@ -16,9 +16,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,pydantic,redis,sqlalchemy,structlog]>=2.1.1",
+  "litestar[cli,jinja,jwt,pydantic,redis,structlog]>=2.1.1",
   "saq>=0.12.0",
   "pydantic-settings>=2.0.3",
+  "advanced-alchemy==0.2.2",
   "asyncpg>=0.28.0",
   "aiosql>=9.0",
   "python-dotenv>=1.0.0",
