@@ -23,8 +23,8 @@ dependencies = [
   "aiosql>=9.0",
   "python-dotenv>=1.0.0",
   "uvicorn[standard]>=0.23.2",
-  "greenlet; sys_platform == \"darwin\"",
   "passlib[argon2]>=1.7.4",
+  "greenlet; sys_platform == \"darwin\"",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = [
@@ -40,9 +40,6 @@ keywords = [
 ]
 license = {text = "MIT"}
 name = "app"
-packages = [
-  {include = "app", from = "src/server"},
-]
 readme = "README.md"
 requires-python = ">=3.11"
 version = "0.1.0"
@@ -69,13 +66,14 @@ requires = ["hatchling", "nodeenv"]
 allow-direct-references = true
 
 [tool.hatch.build]
+dev-mode-dirs = ["src/"]
 include = [
   "CHANGELOG.md",
-  "src/server/app/domain/web/public/**/*",
-  "src/server/app/**/*.sql",
-  "src/server/app/lib/db/**/*.ini",
+  "src/app/domain/web/public/**/*",
+  "src/app/**/*.sql",
+  "src/app/lib/db/**/*.ini",
 ]
-sources = ["src/server"]
+packages = ["src/app"]
 
 [tool.pdm.scripts]
 pre_build = "pdm run python scripts/pre-build.py"
@@ -246,7 +244,7 @@ line-length = 120
 select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-src = ["src/server", "tests/"]
+src = ["src", "tests/"]
 target-version = "py311"
 
 [tool.ruff.pydocstyle]
