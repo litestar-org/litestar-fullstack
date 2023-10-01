@@ -31,40 +31,41 @@ It contains most of the boilerplate required for a production web API with featu
 - Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), and [Structlog](https://www.structlog.org/en/stable/)
 - Extends built-in Litestar click CLI
 - Frontend integrated with ViteJS and includes Jinja2 templates that integrate with Vite websocket/HMR support
-- Multi-stage Docker build using a Google Distroless (distroless/cc) Python 3.11 runtime image.
+- Multi-stage Docker build using using a minimal Python 3.11 runtime image.
 - Pre-configured user model that includes teams and associated team roles
 - Examples of using guards for superuser and team-based auth.
+- Examples using raw SQL for more complex queries
 
 ## App Commands
 
 ```bash
-❯ poetry shell
-Virtual environment already activated: .venv
 ❯ app
 
  Usage: app [OPTIONS] COMMAND [ARGS]...
 
  Litestar CLI.
 
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --app        TEXT       Module path to a Litestar application (TEXT)                             │
-│ --app-dir    DIRECTORY  Look for APP in the specified directory, by adding this to the           │
-│                         PYTHONPATH. Defaults to the current working directory.                   │
-│                         (DIRECTORY)                                                              │
-│ --help                  Show this message and exit.                                              │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
-│ database      Manage the configured database backend.                                            │
-│ info          Show information about the detected Litestar app.                                  │
-│ routes        Display information about the application's routes.                                │
-│ run           Run a Litestar app.                                                                │
-│ run-all       Starts the application server & worker in a single command.                        │
-│ schema        Manage server-side OpenAPI schemas.                                                │
-│ sessions      Manage server-side sessions.                                                       │
-│ users         Manage application users.                                                          │
-│ version       Show the currently installed Litestar version.                                     │
-│ worker        Manage application background workers.                                             │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --app          TEXT       Module path to a Litestar application (TEXT)       │
+│ --app-dir      DIRECTORY  Look for APP in the specified directory, by adding │
+│                           this to the PYTHONPATH. Defaults to the current    │
+│                           working directory.                                 │
+│                           (DIRECTORY)                                        │
+│ --help     -h             Show this message and exit.                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Using Litestar app from env: 'app.asgi:create_app'
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ database   Manage SQLAlchemy database components.                            │
+│ info       Show information about the detected Litestar app.                 │
+│ routes     Display information about the application's routes.               │
+│ run        Run a Litestar app.                                               │
+│ run-all    Starts the application server & worker in a single command.       │
+│ schema     Manage server-side OpenAPI schemas.                               │
+│ sessions   Manage server-side sessions.                                      │
+│ users      Manage application users.                                         │
+│ version    Show the currently installed Litestar version.                    │
+│ worker     Manage application background workers.                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
@@ -72,23 +73,25 @@ Virtual environment already activated: .venv
 
 ```bash
 ❯ app database
+Using Litestar app from env: 'app.asgi:create_app'
 
  Usage: app database [OPTIONS] COMMAND [ARGS]...
 
- Manage the configured database backend.
+ Manage SQLAlchemy database components.
 
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --help      Show this message and exit.                                                          │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
-│ create-database                 Creates an empty postgres database and executes migrations       │
-│ purge-database                  Drops all tables.                                                │
-│ reset-database                  Executes migrations to apply any outstanding database            │
-│                                 structures.                                                      │
-│ show-current-database-revision  Shows the current revision for the database.                     │
-│ upgrade-database                Executes migrations to apply any outstanding database            │
-│                                 structures.                                                      │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help  -h    Show this message and exit.                                    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ downgrade              Downgrade database to a specific revision.            │
+│ init                   Initialize migrations for the project.                │
+│ make-migrations        Create a new migration revision.                      │
+│ merge-migrations       Merge multiple revisions into a single new revision.  │
+│ show-current-revision  Shows the current revision for the database.          │
+│ stamp-migration        Mark (Stamp) a specific revision as current without   │
+│                        applying the migrations.                              │
+│ upgrade                Upgrade database to a specific revision.              │
+╰──────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
@@ -96,80 +99,102 @@ Virtual environment already activated: .venv
 
 ```bash
 ❯ app worker
+Using Litestar app from env: 'app.asgi:create_app'
 
  Usage: app worker [OPTIONS] COMMAND [ARGS]...
 
  Manage application background workers.
 
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --help      Show this message and exit.                                                          │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
-│ run         Starts the background workers.                                                       │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help  -h    Show this message and exit.                                    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ run       Starts the background workers.                                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
 ```
 
 ```bash
 ❯ app run --help
+Using Litestar app from env: 'app.asgi:create_app'
 
  Usage: app run [OPTIONS]
 
  Run a Litestar app.
- The app can be either passed as a module path in the form of <module name>.<submodule>:<app
- instance or factory>, set as an environment variable LITESTAR_APP with the same format or
- automatically discovered from one of these canonical paths: app.py, asgi.py, application.py or
- app/__init__.py. When auto-discovering application factories, functions with the name
- ``create_app`` are considered, or functions that are annotated as returning a ``Litestar``
- instance.
+ The app can be either passed as a module path in the form of <module
+ name>.<submodule>:<app instance or factory>, set as an environment variable
+ LITESTAR_APP with the same format or automatically discovered from one of
+ these canonical paths: app.py, asgi.py, application.py or app/__init__.py.
+ When auto-discovering application factories, functions with the name
+ ``create_app`` are considered, or functions that are annotated as returning a
+ ``Litestar`` instance.
 
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --reload                    -r                             Reload server on changes              │
-│ --port                      -p   INTEGER                   Serve under this port (INTEGER)       │
-│                                                            [default: 8000]                       │
-│ --web-concurrency           -wc  INTEGER RANGE [1<=x<=11]  The number of HTTP workers to launch  │
-│                                                            (INTEGER RANGE)                       │
-│                                                            [default: 1; 1<=x<=11]                │
-│ --host                           TEXT                      Server under this host (TEXT)         │
-│                                                            [default: 127.0.0.1]                  │
-│ --fd,--file-descriptor           INTEGER                   Bind to a socket from this file       │
-│                                                            descriptor.                           │
-│                                                            (INTEGER)                             │
-│ --uds,--unix-domain-socket       TEXT                      Bind to a UNIX domain socket. (TEXT)  │
-│ --debug                                                    Run app in debug mode                 │
-│ --pdb                                                      Drop into PDB on an exception         │
-│ --reload-dir                     TEXT                      Directories to watch for file changes │
-│                                                            (TEXT)                                │
-│ --help                                                     Show this message and exit.           │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --reload                 -r                          Reload server on        │
+│                                                      changes                 │
+│ --reload-dir             -R  TEXT                    Directories to watch    │
+│                                                      for file changes        │
+│                                                      (TEXT)                  │
+│ --port                   -p  INTEGER                 Serve under this port   │
+│                                                      (INTEGER)               │
+│                                                      [default: 8000]         │
+│ --wc,--web-concurrency   -W  INTEGER RANGE           The number of HTTP      │
+│                              [1<=x<=7]               workers to launch       │
+│                                                      (INTEGER RANGE)         │
+│                                                      [default: 1; 1<=x<=7]   │
+│ --host                   -H  TEXT                    Server under this host  │
+│                                                      (TEXT)                  │
+│                                                      [default: 127.0.0.1]    │
+│ --fd,--file-descriptor   -F  INTEGER                 Bind to a socket from   │
+│                                                      this file descriptor.   │
+│                                                      (INTEGER)               │
+│ --uds,--unix-domain-so…  -U  TEXT                    Bind to a UNIX domain   │
+│                                                      socket.                 │
+│                                                      (TEXT)                  │
+│ --debug                  -d                          Run app in debug mode   │
+│ --pdb,--use-pdb          -P                          Drop into PDB on an     │
+│                                                      exception               │
+│ --help                   -h                          Show this message and   │
+│                                                      exit.                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
 
 ```
 
 ```bash
 ❯ app run-all --help
+Using Litestar app from env: 'app.asgi:create_app'
 
  Usage: app run-all [OPTIONS] COMMAND [ARGS]...
 
  Starts the application server & worker in a single command.
 
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --host                    TEXT                      Host interface to listen on.  Use 0.0.0.0    │
-│                                                     for all available interfaces.                │
-│                                                     (TEXT)                                       │
-│                                                     [default: 0.0.0.0]                           │
-│ --port                -p  INTEGER                   Port to bind. (INTEGER) [default: 8000]      │
-│ --http-workers            INTEGER RANGE [1<=x<=11]  The number of HTTP worker processes for      │
-│                                                     handling requests.                           │
-│                                                     (INTEGER RANGE)                              │
-│                                                     [default: 11; 1<=x<=11]                      │
-│ --worker-concurrency      INTEGER RANGE [x>=1]      The number of simultaneous jobs a worker     │
-│                                                     process can execute.                         │
-│                                                     (INTEGER RANGE)                              │
-│                                                     [default: 1; x>=1]                           │
-│ --reload              -r                            Enable reload                                │
-│ --verbose             -v                            Enable verbose logging.                      │
-│ --debug               -d                            Enable debugging.                            │
-│ --help                                              Show this message and exit.                  │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --host                    TEXT                     Host interface to listen  │
+│                                                    on.  Use 0.0.0.0 for all  │
+│                                                    available interfaces.     │
+│                                                    (TEXT)                    │
+│                                                    [default: 0.0.0.0]        │
+│ --port                -p  INTEGER                  Port to bind.   (INTEGER) │
+│                                                    [default: 8000]           │
+│ --http-workers            INTEGER RANGE [1<=x<=7]  The number of HTTP worker │
+│                                                    processes for handling    │
+│                                                    requests.                 │
+│                                                    (INTEGER RANGE)           │
+│                                                    [default: 7; 1<=x<=7]     │
+│ --worker-concurrency      INTEGER RANGE [x>=1]     The number of             │
+│                                                    simultaneous jobs a       │
+│                                                    worker process can        │
+│                                                    execute.                  │
+│                                                    (INTEGER RANGE)           │
+│                                                    [default: 1; x>=1]        │
+│ --reload              -r                           Enable reload             │
+│ --verbose             -v                           Enable verbose logging.   │
+│ --debug               -d                           Enable debugging.         │
+│ --help                -h                           Show this message and     │
+│                                                    exit.                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
 ```
 
 ## Installation and Configuration
@@ -186,10 +211,9 @@ make install
 
 This command does the following:
 
-- install `poetry` if it is not available in the path.
+- install `pdm` if it is not available in the path.
 - create a virtual environment with all dependencies configured
-- executes `npm ci` to install the node modules into the environment
-- run `npm run build` to generate the static assets
+- build assets to be hosted by production asset server
 
 ### Edit .env configuration
 
@@ -216,7 +240,7 @@ You can run most of the database commands with the integrated CLI tool.
 To deploy migration to the database, execute:
 
 ```bash
-❯ app database upgrade-database
+❯ app database upgrade
 2023-06-16T16:55:17.048183Z [info     ] Context impl PostgresqlImpl.
 2023-06-16T16:55:17.048251Z [info     ] Will assume transactional DDL.
 ```
@@ -249,7 +273,7 @@ if `DEV_MODE` is set to true, the base template expects that Vite will be runnin
 
 #### start the server in production mode
 
-if `DEV_MODE` is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting th server.
+if `DEV_MODE` is false, the server will look for the static assets that are produced from the `npm run build` command. Please be sure to have run this before starting the server.
 
 ```bash
 npm run build # generates static assets from vite and
@@ -282,6 +306,54 @@ Generated an empty chunk: "vue".
 
 ## Make Commands
 
-- `make migrations`
-- `make squash-migrations`
-- `make upgrade`
+### Install Development Environment
+
+This command will remove any existing environment and install a new environment with the latest dependencies.
+
+```shell
+make install
+```
+
+### Upgrade Project Dependencies
+
+This command will upgrade all components of the application at the same time. It automatically executes:
+
+- `pdm upgrade`
+- `npm update`
+- `pre-commit autoupdate`
+
+```shell
+make upgrade
+```
+
+### Execute Pre-commit
+
+This command will automatically execute the pre-commit process for the project.
+
+```shell
+make lint
+```
+
+### Generate New Migrations
+
+This command is a shorthand for execute `app database make-migrations`.
+
+```shell
+make migrations
+```
+
+### Upgrade a Database to the Latest Revision
+
+This command is a shorthand for execute `app database upgrade`.
+
+```shell
+make migrate
+```
+
+### Execute Full Test Suite
+
+This command executes all tests for the project.
+
+```shell
+make test
+```
