@@ -77,5 +77,5 @@ repos:
             types-passlib,
             types-click,
             types-PyYAML,
-            uvicorn,
+            "uvicorn[standard]",
           ]

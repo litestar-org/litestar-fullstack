@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator, Iterator
 
     from litestar import Litestar
-    from pytest import FixtureRequest, MonkeyPatch  # noqa: PT013
+    from pytest import FixtureRequest, MonkeyPatch
 
     from app.domain.accounts.models import User
     from app.domain.teams.models import Team

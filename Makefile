@@ -7,7 +7,7 @@ SHELL := /bin/bash
 .ONESHELL:
 USING_PDM		          =	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
 USING_NPM             = $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
-ENV_PREFIX		        =	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
+ENV_PREFIX		        =.venv/bin/
 VENV_EXISTS           =	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
 NODE_MODULES_EXISTS		=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
 SRC_DIR               =src
@@ -41,7 +41,6 @@ upgrade:       										## Upgrade all dependencies to the latest stable versio
 # =============================================================================
 # Developer Utils
 # =============================================================================
-.PHONY: install-pdm
 install-pdm: 										## Install latest version of PDM
 	@curl -sSLO https://pdm.fming.dev/install-pdm.py && \
 	curl -sSL https://pdm.fming.dev/install-pdm.py.sha256 | shasum -a 256 -c - && \
@@ -50,9 +49,10 @@ install-pdm: 										## Install latest version of PDM
 install:											## Install the project and
 	@if ! $(PDM) --version > /dev/null; then echo '=> Installing PDM'; $(MAKE) install-pdm; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "=> Removing existing virtual environment"; fi
-	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy; fi
+	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy-venv; fi
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
-	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node environment"; rm -Rf node_modules fi
+	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node modules"; fi
+	if [ "$(NODE_MODULES_EXISTS)" ]; then $(MAKE) destroy-node_modules; fi
 	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip; fi
 	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
@@ -60,20 +60,21 @@ install:											## Install the project and
 
 clean: 												## Cleanup temporary build artifacts
 	@echo "=> Cleaning working directory"
-	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/
+	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .mypy_cache
 	@find . -name '*.egg-info' -exec rm -rf {} +
 	@find . -name '*.egg' -exec rm -f {} +
 	@find . -name '*.pyc' -exec rm -f {} +
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
 	@find . -name '__pycache__' -exec rm -rf {} +
+	@find . -name '.pytest_cache' -exec rm -rf {} +
 	@find . -name '.ipynb_checkpoints' -exec rm -rf {} +
-	@rm -rf .coverage coverage.xml coverage.json htmlcov/ .pytest_cache tests/.pytest_cache tests/**/.pytest_cache .mypy_cache
-	$(MAKE) docs-clean
 
-destroy: 											## Destroy the virtual environment
+destroy-venv: 											## Destroy the virtual environment
 	@rm -rf .venv
 
+destroy-node_modules: 											## Destroy the node environment
+	@rm -rf node_modules
 
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
@@ -114,11 +115,6 @@ test:  												## Run the tests
 	@echo "=> Running test cases"
 	@$(ENV_PREFIX)pytest tests
 	@echo "=> Tests complete"
-
-.PHONY: lint
-lint:
-	@echo "=> Executing pre-commit..."
-	$(ENV_PREFIX)pre-commit run --all-files
 
 
 .PHONY: pre-release
