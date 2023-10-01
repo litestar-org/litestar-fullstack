@@ -61,7 +61,7 @@ repos:
             polyfactory,
             structlog,
             aiosmtplib,
-            advanced-alchemy,
+            advanced-alchemy==0.2.2,
             alembic,
             asyncpg,
             asyncpg-stubs,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
-from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO, SQLAlchemyDTOConfig
+from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO, SQLAlchemyDTOConfig
 from litestar.dto import DataclassDTO, dto_field
 from litestar.dto.config import DTOConfig
 from litestar.types.protocols import DataclassProtocol

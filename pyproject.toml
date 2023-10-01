@@ -1,8 +1,6 @@
 [project]
 authors = [
   {name = "Cody Fincher", email = "cody.fincher@gmail.com"},
-  {name = "Janek Nouvertné", email = "j.a.nouvertne@posteo.de"},
-  {name = "Jacob Coffee", email = "jacob@z7x.org"},
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -192,6 +190,7 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
+  "src/app/lib/db/migrations/versions/*.py",
 ]
 fix = true
 ignore = [
