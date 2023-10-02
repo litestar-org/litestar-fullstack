@@ -77,8 +77,8 @@ include = [
 packages = ["src/app"]
 
 [tool.pdm.scripts]
+post_install = "pdm run python scripts/pre-build.py"
 pre_build = "pdm run python scripts/pre-build.py"
-pre_install = "pdm run python scripts/pre-build.py"
 
 [tool.pdm.dev-dependencies]
 dev = [

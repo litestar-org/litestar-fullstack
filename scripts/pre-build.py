@@ -23,7 +23,7 @@ def build_npm_assets(setup_kwargs: Any) -> Any:
     install_dir = DEFAULT_VENV_PATH if found_in_local_venv else os.environ.get("VIRTUAL_ENV", sys.prefix)
     kwargs: dict[str, Any] = {}
     if platform.system() == "Windows":
-        kwargs.update({"shell": True})
+        kwargs["shell"] = True
     logger.info("Installing Node environment to %s:", install_dir)
     subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], **kwargs)  # noqa: PLW1510
     subprocess.run(["npm", "ci", "install"], **kwargs)  # noqa: S607, PLW1510
