@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import dataclasses
 import pkgutil
-import platform
 import re
 import sys
 import unicodedata
@@ -103,8 +102,7 @@ def module_to_os_path(dotted_path: str = "app") -> Path:
     if not isinstance(src, SourceFileLoader):
         msg = "Couldn't find the path for %s"
         raise TypeError(msg, dotted_path)
-    path_separator = "\\" if platform.system() == "Windows" else "/"
-    return Path(str(src.path).removesuffix(f"{path_separator}__init__.py"))
+    return Path(str(src.path)).parent
 
 
 def import_string(dotted_path: str) -> Any:
