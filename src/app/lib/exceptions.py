@@ -31,7 +31,6 @@ if TYPE_CHECKING:
 __all__ = (
     "AuthorizationError",
     "HealthCheckConfigurationError",
-    "MissingDependencyError",
     "ApplicationError",
     "after_exception_hook_handler",
 )
@@ -47,23 +46,6 @@ class ApplicationClientError(ApplicationError):
 
 class AuthorizationError(ApplicationClientError):
     """A user tried to do something they shouldn't have."""
-
-
-class MissingDependencyError(ApplicationError, ValueError):
-    """A required dependency is not installed."""
-
-    def __init__(self, module: str, config: str | None = None) -> None:
-        """Missing Dependency Error.
-
-        Args:
-        module: name of the package that should be installed
-        config: name of the extra to install the package.
-        """
-        config = config if config else module
-        super().__init__(
-            f"You enabled {config} configuration but package {module!r} is not installed. "
-            f'You may need to run: "poetry install litestar-saqlalchemy[{config}]"',
-        )
 
 
 class HealthCheckConfigurationError(ApplicationError):

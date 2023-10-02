@@ -1,13 +1,19 @@
+SHELL := /bin/bash
+# =============================================================================
+# Variables
+# =============================================================================
+
 .DEFAULT_GOAL:=help
 .ONESHELL:
-ENV_PREFIX=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
-USING_POETRY=$(shell grep "tool.poetry" pyproject.toml && echo "yes")
-USING_NPM=$(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
-VENV_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
-NODE_MODULES_EXISTS=$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
-VERSION := $(shell grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
-SRC_DIR=src
-BUILD_DIR=dist
+USING_PDM		          =	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
+USING_NPM             = $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
+ENV_PREFIX		        =.venv/bin/
+VENV_EXISTS           =	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
+NODE_MODULES_EXISTS		=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
+SRC_DIR               =src
+BUILD_DIR             =dist
+PDM_OPTS 		          ?=
+PDM 			            ?= 	pdm $(PDM_OPTS)
 
 .EXPORT_ALL_VARIABLES:
 
@@ -16,63 +22,109 @@ ifndef VERBOSE
 endif
 
 
-help:  ## Display this help
+.PHONY: help
+help: 		   										## Display this help text for Makefile
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 
 .PHONY: upgrade
-upgrade:       ## Upgrade all dependencies to the latest stable versions
-	@if [ "$(USING_POETRY)" ]; then poetry update; fi
-	@echo "Python Dependencies Updated"
+upgrade:       										## Upgrade all dependencies to the latest stable versions
+	@echo "=> Updating all dependencies"
+	@if [ "$(USING_PDM)" ]; then $(PDM) update; fi
+	@echo "=> Python Dependencies Updated"
 	@if [ "$(USING_NPM)" ]; then npm upgrade --latest; fi
-	@echo "Node Dependencies Updated"
-	$(ENV_PREFIX)pre-commit autoupdate
-	@echo "Updated Pre-commit"
-
-.PHONY: install
-install:          ## Install the project in dev mode.
-	@if ! poetry --version > /dev/null; then echo 'poetry is required, installing from from https://install.python-poetry.org'; curl -sSL https://install.python-poetry.org | python3 -; fi
-	@if [ "$(VENV_EXISTS)" ]; then echo "Removing existing virtual environment"; fi
-	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "Removing existing node environment"; fi
-	if [ "$(VENV_EXISTS)" ]; then rm -Rf .venv; fi
-	if [ "$(USING_POETRY)" ]; then poetry config virtualenvs.in-project true --local  && poetry config virtualenvs.options.always-copy true --local && python3 -m venv --copies .venv && . .venv/bin/activate && .venv/bin/pip install -U wheel setuptools cython pip && poetry install --with lint,dev,docs; fi
-	if [ "$(USING_NPM)" ]; then npm ci; fi
-	@echo "=> Install complete.  ** If you want to re-install re-run 'make install'"
+	@echo "=> Node Dependencies Updated"
+	@$(ENV_PREFIX)pre-commit autoupdate
+	@echo "=> Updated Pre-commit"
 
 
-.PHONY: migrations
+# =============================================================================
+# Developer Utils
+# =============================================================================
+install-pdm: 										## Install latest version of PDM
+	@curl -sSLO https://pdm.fming.dev/install-pdm.py && \
+	curl -sSL https://pdm.fming.dev/install-pdm.py.sha256 | shasum -a 256 -c - && \
+	python3 install-pdm.py
+
+install:											## Install the project and
+	@if ! $(PDM) --version > /dev/null; then echo '=> Installing PDM'; $(MAKE) install-pdm; fi
+	@if [ "$(VENV_EXISTS)" ]; then echo "=> Removing existing virtual environment"; fi
+	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy-venv; fi
+	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
+	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node modules"; fi
+	if [ "$(NODE_MODULES_EXISTS)" ]; then $(MAKE) destroy-node_modules; fi
+	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip nodeenv; fi
+	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
+	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
+
+
+clean: 												## Cleanup temporary build artifacts
+	@echo "=> Cleaning working directory"
+	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .mypy_cache
+	@find . -name '*.egg-info' -exec rm -rf {} +
+	@find . -name '*.egg' -exec rm -f {} +
+	@find . -name '*.pyc' -exec rm -f {} +
+	@find . -name '*.pyo' -exec rm -f {} +
+	@find . -name '*~' -exec rm -f {} +
+	@find . -name '__pycache__' -exec rm -rf {} +
+	@find . -name '.pytest_cache' -exec rm -rf {} +
+	@find . -name '.ipynb_checkpoints' -exec rm -rf {} +
+
+destroy-venv: 											## Destroy the virtual environment
+	@rm -rf .venv
+
+destroy-node_modules: 											## Destroy the node environment
+	@rm -rf node_modules
+
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
 	@while [ -z "$$MIGRATION_MESSAGE" ]; do read -r -p "Migration message: " MIGRATION_MESSAGE; done ;
-	@env PYTHONPATH=src $(ENV_PREFIX)app database make-migrations --autogenerate -m "$${MIGRATION_MESSAGE}"
+	@$(ENV_PREFIX)app database make-migrations --autogenerate -m "$${MIGRATION_MESSAGE}"
 
 .PHONY: migrate
 migrate:          ## Generate database migrations
 	@echo "ATTENTION: Will apply all database migrations."
-	@env PYTHONPATH=src $(ENV_PREFIX)app database upgrade
+	@$(ENV_PREFIX)app database upgrade
 
 .PHONY: build
 build:
 	@echo "=> Building package..."
-	if [ "$(USING_POETRY)" ]; then poetry build; fi
+	@if [ "$(USING_PDM)" ]; then pdm build; fi
+	@echo "=> Package build complete..."
+
+.PHONY: refresh-lockfiles
+refresh-lockfiles:                                 ## Sync lockfiles with requirements files.
+	@pdm update --update-reuse --group :all
+
+.PHONY: lock
+lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
+	@pdm update --update-eager --group :all
+
+# =============================================================================
+# Tests, Linting, Coverage
+# =============================================================================
+.PHONY: lint
+lint: 												## Runs pre-commit hooks; includes ruff linting, codespell, black
+	@echo "=> Running pre-commit process"
+	@$(ENV_PREFIX)pre-commit run --all-files
+	@echo "=> Pre-commit complete"
+
+.PHONY: coverage
+coverage:  											## Run the tests and generate coverage report
+	@echo "=> Running tests with coverage"
+	@$(ENV_PREFIX)pytest tests --cov=app
+	@$(ENV_PREFIX)coverage html
+	@$(ENV_PREFIX)coverage xml
+	@echo "=> Coverage report generated"
+
+
 
 .PHONY: test
-test:
-	@echo "=> Launching Python test cases..."
-	$(ENV_PREFIX)pytest tests/
+test:  												## Run the tests
+	@echo "=> Running test cases"
+	@$(ENV_PREFIX)pytest tests
+	@echo "=> Tests complete"
 
-.PHONY: lint
-lint:
-	@echo "=> Executing pre-commit..."
-	$(ENV_PREFIX)pre-commit run --all-files
-
-gen-docs:       ## generate HTML documentation
-	$(ENV_PREFIX)mkdocs build
-
-.PHONY: docs
-docs:       ## generate HTML documentation and serve it to the browser
-	$(ENV_PREFIX)mkdocs build
-	$(ENV_PREFIX)mkdocs serve
 
 .PHONY: pre-release
 pre-release:       ## bump the version and create the release tag
@@ -82,24 +134,13 @@ pre-release:       ## bump the version and create the release tag
 	git describe --tags --abbrev=0
 	head pyproject.toml | grep version
 
+ # =============================================================================
+# Docs
+# =============================================================================
+gen-docs:       ## generate HTML documentation
+	$(ENV_PREFIX)mkdocs build
 
-.PHONY: clean
-clean:       ## remove all build, testing, and static documentation files
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
-	find . -name '.ipynb_checkpoints' -exec rm -fr {} +
-	rm -fr .tox/
-	rm -fr .coverage
-	rm -fr coverage.xml
-	rm -fr coverage.json
-	rm -fr htmlcov/
-	rm -fr .pytest_cache
-	rm -fr .mypy_cache
-	rm -fr site
+.PHONY: docs
+docs:       ## generate HTML documentation and serve it to the browser
+	$(ENV_PREFIX)mkdocs build
+	$(ENV_PREFIX)mkdocs serve

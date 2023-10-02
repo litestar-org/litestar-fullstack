@@ -6,7 +6,7 @@ x-development-volumes: &development-volumes
     - ./src:/workspace/app/src/
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
-    - ./poetry.lock:/workspace/app/poetry.lock
+    - ./pdm.lock:/workspace/app/pdm.lock
     - ./mkdocs.yml:/workspace/app/mkdocs.yml
     - ./tsconfig.json:/workspace/app/tsconfig.json
     - ./package.json:/workspace/app/package.json
@@ -23,7 +23,7 @@ services:
       dockerfile: deploy/docker/dev/Dockerfile
       args:
         # remove this to build for production.
-        POETRY_INSTALL_ARGS: --with=dev,docs,lint
+        PDM_INSTALL_ARGS: -G:all
     image: app:latest-dev
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
@@ -42,7 +42,7 @@ services:
       - .env.example
   migrator:
     image: app:latest-dev
-    command: litestar database upgrade-database
+    command: litestar database upgrade
     restart: "no"
     <<: *development-volumes
     env_file:
