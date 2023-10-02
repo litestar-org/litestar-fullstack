@@ -91,6 +91,15 @@ build:
 	@echo "=> Building package..."
 	@if [ "$(USING_PDM)" ]; then pdm build; fi
 	@echo "=> Package build complete..."
+
+.PHONY: refresh-lockfiles
+refresh-lockfiles:                                 ## Sync lockfiles with requirements files.
+	@pdm update --update-reuse --group :all
+
+.PHONY: lock
+lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
+	@pdm update --update-eager --group :all
+
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================
