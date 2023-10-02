@@ -282,7 +282,7 @@ strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog"
-skip = 'pdm.lock, poetry.lock, package-lock.json'
+skip = 'pdm.lock, package-lock.json'
 
 [tool.mypy]
 disallow_any_generics = false

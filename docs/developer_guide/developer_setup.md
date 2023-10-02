@@ -1,6 +1,6 @@
 # Developer Setup
 
-To begin local development, clone the [cofin/typer_cli/litestar-fullstack](https://github.com/litestar-org/litestar-fullstack) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
+To begin local development, clone the [litestar-org/litestar-fullstack](https://github.com/litestar-org/litestar-fullstack) repository and use one of the following methods to build it. Commands should be executed from inside of the project home folder.
 
 ## Using PDM
 
@@ -8,10 +8,10 @@ To begin local development, clone the [cofin/typer_cli/litestar-fullstack](https
 pdm install
 ```
 
-Install optional dependencies using the `--extras` flag:
+Install optional dependencies using the `--G` flag:
 
 ```bash
-poetry install --extras=dev,docs,lint
+pdm install --G:all
 ```
 
 ## Using pip
