@@ -21,7 +21,6 @@ __all__ = [
     "run_all_app",
     "run_app",
     "user_management_app",
-    "worker_management_app",
 ]
 
 
@@ -40,12 +39,6 @@ def run_app(_: dict[str, Any]) -> None:
 @click.group(name="users", invoke_without_command=False, help="Manage application users.")
 @click.pass_context
 def user_management_app(_: dict[str, Any]) -> None:
-    """Manage application users."""
-
-
-@click.group(name="worker", invoke_without_command=False, help="Manage application background workers.")
-@click.pass_context
-def worker_management_app(_: dict[str, Any]) -> None:
     """Manage application users."""
 
 
