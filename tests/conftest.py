@@ -151,13 +151,10 @@ def _patch_worker(
 ) -> None:
     """We don't want the worker to start for unit tests."""
     if is_unit_test:
-        from app.lib import worker
+        from litestar_saq import base
 
-        monkeypatch.setattr(worker.Worker, "on_app_startup", MagicMock())
-        monkeypatch.setattr(worker.Worker, "stop", MagicMock())
-    from app.lib.worker import commands
-
-    monkeypatch.setattr(commands, "_create_event_loop", event_loop)
+        monkeypatch.setattr(base.Worker, "on_app_startup", MagicMock())
+        monkeypatch.setattr(base.Worker, "stop", MagicMock())
 
 
 @pytest.fixture(name="cap_logger")
