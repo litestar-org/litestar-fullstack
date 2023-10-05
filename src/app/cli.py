@@ -8,7 +8,6 @@ import click
 from anyio import open_process
 from anyio.streams.text import TextReceiveStream
 from litestar import Litestar
-from litestar_saq.cli import get_saq_plugin, run_worker_process
 from pydantic import EmailStr
 from rich import get_console
 
@@ -102,6 +101,8 @@ def run_all_app(
     debug: bool | None,
 ) -> None:
     """Run the API server."""
+    from litestar_saq.cli import get_saq_plugin, run_worker_process
+
     log.config.configure()
     settings.server.HOST = host or settings.server.HOST
     settings.server.PORT = port or settings.server.PORT

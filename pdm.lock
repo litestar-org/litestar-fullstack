@@ -6,7 +6,7 @@ groups = ["default", "dev", "docs", "linting", "test"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:59c7e158706b69f1c88e0297621567448f4c44e66162593610f5c45c98db87c8"
+content_hash = "sha256:7896669f762fe81e37ecd99333d81e242c2bd72aa34e38e2d57c0df804eb90cb"
 
 [[package]]
 name = "advanced-alchemy"
@@ -836,15 +836,15 @@ files = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.1.1"
+version = "0.1.2"
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 dependencies = [
     "litestar[cli,jinja]>=2.0.1",
 ]
 files = [
-    {file = "litestar_vite-0.1.1-py3-none-any.whl", hash = "sha256:459abc5811cfcbb4e23b267cc4c69793cd203186c8df6a1fc6d96beb90cf69db"},
-    {file = "litestar_vite-0.1.1.tar.gz", hash = "sha256:774c5e3c7a00dcfb3bacf969f7e912d99ea5fe649a00c2d57be403bbde3c3393"},
+    {file = "litestar_vite-0.1.2-py3-none-any.whl", hash = "sha256:7432590e7d007c4027670ae91997424e8c330bb4d714875115943f125a6cbc9f"},
+    {file = "litestar_vite-0.1.2.tar.gz", hash = "sha256:fdddbdc46730759830100779b37ab92e4021ba74cb2647545501a8e91cec0d54"},
 ]
 
 [[package]]
