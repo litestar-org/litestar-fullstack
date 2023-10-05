@@ -17,7 +17,7 @@ from app.lib import log
 from .dtos import NewUsersByWeek
 
 if TYPE_CHECKING:
-    from app.contrib.aiosql import AiosqlQueryManager
+    from litestar_aiosql.service import AiosqlQueryManager
 
 
 __all__ = ["StatsController"]
