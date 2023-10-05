@@ -1,3 +1,3 @@
-from . import controllers, dtos
+from . import controllers, dtos, tasks
 
-__all__ = ["controllers", "dtos"]
+__all__ = ["controllers", "dtos", "tasks"]
