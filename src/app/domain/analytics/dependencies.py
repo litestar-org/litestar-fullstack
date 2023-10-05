@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import aiosql
+from litestar_aiosql.service import AiosqlQueryManager
 
-from app.contrib.aiosql import AiosqlQueryManager
 from app.lib.settings import BASE_DIR
 
 __all__ = ["provides_analytic_queries"]

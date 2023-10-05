@@ -32,9 +32,7 @@ def create_app() -> Litestar:
         settings,
         static_files,
     )
-    from app.lib.dependencies import (
-        create_collection_dependencies,
-    )
+    from app.lib.dependencies import create_collection_dependencies
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -54,7 +52,7 @@ def create_app() -> Litestar:
         openapi_config=domain.openapi.config,
         type_encoders={pgproto.UUID: str, SecretStr: str},
         route_handlers=[*domain.routes],
-        plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite],
+        plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite, domain.plugins.saq],
         on_shutdown=[cache.redis.aclose],
         on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
