@@ -107,7 +107,7 @@ class AccountController(Controller):
         ),
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.update(user_id, data.as_builtins())
+        db_obj = await users_service.update(item_id=user_id, data=data.as_builtins())
         return users_service.to_dto(db_obj)
 
     @delete(

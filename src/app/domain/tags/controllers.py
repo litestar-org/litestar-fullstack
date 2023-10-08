@@ -106,7 +106,7 @@ class TagController(Controller):
         ),
     ) -> Tag:
         """Update a tag."""
-        db_obj = await tags_service.update(tag_id, data.create_instance())
+        db_obj = await tags_service.update(item_id=tag_id, data=data.create_instance())
         return tags_service.to_dto(db_obj)
 
     @delete(

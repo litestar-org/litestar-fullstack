@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-ast
       - id: check-case-conflict
@@ -48,28 +48,16 @@ repos:
           [
             pydantic,
             pydantic-settings,
-            aiosql,
             uvloop,
-            jinja2,
-            hiredis,
-            "redis>=5.0.0",
             passlib,
-            rich,
             packaging,
-            click,
-            rich-click,
-            polyfactory,
-            structlog,
-            aiosmtplib,
-            advanced-alchemy==0.2.2,
-            alembic,
+            advanced-alchemy==0.3.0,
             asyncpg,
-            asyncpg-stubs,
-            httpx,
-            pytest,
-            pytest-docker,
-            saq,
-            litestar,
+            "uvicorn[standard]",
+            "litestar[redis,cli,structlog,standard] @ https://github.com/litestar-org/litestar/archive/refs/heads/main.zip",
+            litestar-vite,
+            litestar-saq,
+            litestar-aiosql,
             types-freezegun,
             types-python-jose,
             types-click,
@@ -77,5 +65,5 @@ repos:
             types-passlib,
             types-click,
             types-PyYAML,
-            "uvicorn[standard]",
+            asyncpg-stubs,
           ]

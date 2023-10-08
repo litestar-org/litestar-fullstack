@@ -14,7 +14,6 @@ from app.domain.accounts.models import User
 from app.domain.analytics.dtos import NewUsersByWeek
 from app.domain.tags.models import Tag
 from app.domain.teams.models import Team
-from app.lib.service.generic import Service
 
 from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web
 
@@ -53,7 +52,6 @@ __all__ = [
 ]
 
 signature_namespace: Mapping[str, Any] = {
-    "Service": Service,
     "UUID": UUID,
     "User": User,
     "Team": Team,

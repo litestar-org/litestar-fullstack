@@ -7,7 +7,7 @@ from pydantic import SecretStr
 
 from app.lib import crypt
 from app.lib.repository import SQLAlchemyAsyncRepository
-from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
+from app.lib.service import SQLAlchemyAsyncRepositoryService
 
 from .models import User
 
