@@ -16,9 +16,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,pydantic,redis,structlog]>=2.1.1",
+  "litestar[cli,jinja,jwt,pydantic,redis,structlog] @ git+https://github.com/litestar-org/litestar.git",
   "pydantic-settings>=2.0.3",
-  "advanced-alchemy==0.2.2",
+  "advanced-alchemy==0.3.0",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "uvicorn[standard]>=0.23.2",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from app.domain.tags.models import Tag
 from app.lib.repository import SQLAlchemyAsyncRepository
-from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
+from app.lib.service import SQLAlchemyAsyncRepositoryService
 
 __all__ = ["TagService", "TagRepository"]
 

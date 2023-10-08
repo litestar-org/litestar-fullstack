@@ -13,11 +13,9 @@ __all__ = ["create_app"]
 def create_app() -> Litestar:
     """Create ASGI application."""
 
-    from asyncpg.pgproto import pgproto
     from litestar import Litestar
     from litestar.di import Provide
     from litestar.stores.registry import StoreRegistry
-    from pydantic import SecretStr
 
     from app import domain
     from app.domain.security import provide_user
@@ -50,9 +48,8 @@ def create_app() -> Litestar:
         middleware=[log.controller.middleware_factory],
         logging_config=log.config,
         openapi_config=domain.openapi.config,
-        type_encoders={pgproto.UUID: str, SecretStr: str},
         route_handlers=[*domain.routes],
-        plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite, domain.plugins.saq],
+        plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite, domain.plugins.saq, domain.plugins.pydantic],
         on_shutdown=[cache.redis.aclose],
         on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],

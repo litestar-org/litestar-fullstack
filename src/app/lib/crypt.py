@@ -26,7 +26,7 @@ def get_encryption_key(secret: str) -> bytes:
         bytes: a URL safe encoded version of secret
     """
     if len(secret) <= 32:
-        secret = f"{secret:<32}"[0:32]
+        secret = f"{secret:<32}"[:32]
     return base64.urlsafe_b64encode(secret.encode())
 
 

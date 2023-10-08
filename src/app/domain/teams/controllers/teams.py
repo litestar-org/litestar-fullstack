@@ -111,8 +111,8 @@ class TeamController(Controller):
     ) -> Team:
         """Update a migration team."""
         db_obj = await teams_service.update(
-            team_id,
-            data.create_instance().__dict__,
+            item_id=team_id,
+            data=data.create_instance().__dict__,
         )
         return teams_service.to_dto(db_obj)
 

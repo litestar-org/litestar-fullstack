@@ -1,14 +1,15 @@
+from collections.abc import Iterable
 from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload, selectinload
+from sqlalchemy.orm import InstrumentedAttribute, joinedload, noload, selectinload
 
 from app.domain.tags.dependencies import provide_tags_service
 from app.domain.teams.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
-from app.lib.service.sqlalchemy import SQLAlchemyAsyncRepositoryService
+from app.lib.service import SQLAlchemyAsyncRepositoryService
 
 __all__ = [
     "TeamInvitationRepository",
@@ -80,16 +81,22 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if tags_added:
             tags_service = await anext(provide_tags_service(db_session=self.repository.session))
             for tag_text in tags_added:
-                tag, _ = await tags_service.get_or_create(match_fields=["name"], upsert=False, name=tag_text)
+                tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
                 db_obj.tags.append(tag)
         return await super().create(db_obj)
 
-    async def update(self, item_id: Any, data: Team | dict[str, Any]) -> Team:
+    async def update(
+        self,
+        data: Team | dict[str, Any],
+        item_id: Any | None = None,
+        attribute_names: Iterable[str] | None = None,
+        with_for_update: bool | None = None,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        id_attribute: str | InstrumentedAttribute | None = None,
+    ) -> Team:
         """Wrap repository update operation.
-
-        Args:
-            item_id: Identifier of item to be updated.
-            data: Representation to be updated.
 
         Returns:
             Updated representation.
@@ -98,7 +105,16 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if isinstance(data, dict):
             tags_updated.extend(data.pop("tags", None) or [])
             data["id"] = item_id
-            data = await super().update(item_id, data)
+            data = await super().update(
+                item_id=item_id,
+                data=data,
+                attribute_names=attribute_names,
+                with_for_update=with_for_update,
+                auto_commit=auto_commit,
+                auto_expunge=auto_expunge,
+                auto_refresh=auto_refresh,
+                id_attribute=id_attribute,
+            )
             tags_service = await anext(provide_tags_service(db_session=self.repository.session))
             existing_tags = [tag.name for tag in data.tags]
             tags_to_remove = [tag for tag in data.tags if tag.name not in tags_updated]
@@ -106,9 +122,18 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             for tag_rm in tags_to_remove:
                 data.tags.remove(tag_rm)
             for tag_text in tags_to_add:
-                tag, _ = await tags_service.get_or_create(name=tag_text)
+                tag, _ = await tags_service.get_or_upsert(name=tag_text)
                 data.tags.append(tag)
-        return await super().update(item_id, data)
+        return await super().update(
+            item_id=item_id,
+            data=data,
+            attribute_names=attribute_names,
+            with_for_update=with_for_update,
+            auto_commit=auto_commit,
+            auto_expunge=auto_expunge,
+            auto_refresh=auto_refresh,
+            id_attribute=id_attribute,
+        )
 
     async def to_model(self, data: Team | dict[str, Any], operation: str | None = None) -> Team:
         if isinstance(data, dict) and "slug" not in data and operation == "create":
