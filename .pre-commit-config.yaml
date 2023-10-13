@@ -41,7 +41,7 @@ repos:
         exclude: "test_*|docs|migrations|scripts"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.5.1"
+    rev: "v1.6.0"
     hooks:
       - id: mypy
         additional_dependencies:
@@ -51,10 +51,11 @@ repos:
             uvloop,
             passlib,
             packaging,
-            advanced-alchemy==0.3.0,
+            advanced-alchemy==0.3.1,
             asyncpg,
             "uvicorn[standard]",
-            "litestar[redis,cli,structlog,standard] @ https://github.com/litestar-org/litestar/archive/refs/heads/main.zip",
+            "litestar[redis,cli,structlog,standard]",
+            litestar-granian,
             litestar-vite,
             litestar-saq,
             litestar-aiosql,

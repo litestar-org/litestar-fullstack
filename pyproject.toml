@@ -16,9 +16,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,pydantic,redis,structlog] @ git+https://github.com/litestar-org/litestar.git",
+  "litestar[cli,jinja,jwt,pydantic,redis,structlog]",
   "pydantic-settings>=2.0.3",
-  "advanced-alchemy==0.3.0",
+  "advanced-alchemy==0.3.1",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "uvicorn[standard]>=0.23.2",
@@ -77,12 +77,16 @@ include = [
 packages = ["src/app"]
 
 [tool.pdm.scripts]
+lint = "pdm run pre-commit run --all-files"
 post_install = "pdm run python scripts/pre-build.py"
 pre_build = "pdm run python scripts/pre-build.py"
+test = "pdm run pytest tests"
+test_coverage = {composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"]}
 
 [tool.pdm.dev-dependencies]
 dev = [
   "nodeenv",
+  "anyio",
 ]
 docs = [
   "mkdocs",
@@ -108,14 +112,10 @@ linting = [
 test = [
   "pytest>=7.4.1",
   "pytest-xdist>=3.3.1",
-  "pytest-asyncio",
   "pytest-lazy-fixture>=0.6.3",
-  "pytest-asyncio>=0.21.1",
   "pytest-mock>=3.11.1",
   "pytest-cov",
   "coverage",
-  "time-machine>=2.12.0",
-  "httpx>=0.24.1",
   "pytest-dotenv",
 ]
 

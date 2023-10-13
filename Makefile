@@ -53,7 +53,7 @@ install:											## Install the project and
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node modules"; fi
 	if [ "$(NODE_MODULES_EXISTS)" ]; then $(MAKE) destroy-node_modules; fi
-	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip nodeenv; fi
+	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip mypy nodeenv; fi
 	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
 
@@ -117,22 +117,11 @@ coverage:  											## Run the tests and generate coverage report
 	@$(ENV_PREFIX)coverage xml
 	@echo "=> Coverage report generated"
 
-
-
 .PHONY: test
 test:  												## Run the tests
 	@echo "=> Running test cases"
 	@$(ENV_PREFIX)pytest tests
 	@echo "=> Tests complete"
-
-
-.PHONY: pre-release
-pre-release:       ## bump the version and create the release tag
-	make gen-docs
-	make clean
-	$(ENV_PREFIX)bump2version $(increment)
-	git describe --tags --abbrev=0
-	head pyproject.toml | grep version
 
  # =============================================================================
 # Docs
