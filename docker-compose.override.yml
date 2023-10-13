@@ -21,16 +21,13 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/dev/Dockerfile
-      args:
-        # remove this to build for production.
-        PDM_INSTALL_ARGS: -G:all
     image: app:latest-dev
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
     <<: *development-volumes
   worker:
     image: app:latest-dev
-    command: litestar worker run
+    command: litestar workers run
     restart: always
     <<: *development-volumes
     depends_on:
@@ -42,7 +39,7 @@ services:
       - .env.example
   migrator:
     image: app:latest-dev
-    command: litestar database upgrade
+    command: litestar database upgrade --no-prompt
     restart: "no"
     <<: *development-volumes
     env_file:
