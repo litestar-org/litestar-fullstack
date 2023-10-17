@@ -142,8 +142,8 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
     async def filtered_collection_route(filters: list[FilterTypes] = Dependency(skip_validation=True)) -> MessageTest:
         nonlocal called
         assert filters == [
-            BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),
             CollectionFilter(field_name="id", values=ids),
+            BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),
             LimitOffset(limit=2, offset=18),
             BeforeAfter(field_name="updated_at", before=datetime.max, after=datetime.min),
             SearchFilter(field_name="my_field", value="SearchString"),
@@ -164,6 +164,43 @@ def test_filters_dependency(app: "Litestar", client: "TestClient") -> None:
             "currentPage": 10,
             "pageSize": 2,
             "ids": [str(id_) for id_ in ids],
+            "orderBy": "my_col",
+            "searchField": "my_field",
+            "searchString": "SearchString",
+        },
+    )
+    assert called
+
+
+def test_filters_dependency_no_ids(app: "Litestar", client: "TestClient") -> None:
+    called = False
+    path = f"/{uuid4()}"
+    [uuid4() for _ in range(2)]
+
+    @get(path=path, opt={"exclude_from_auth": True})
+    async def filtered_collection_route(filters: list[FilterTypes] = Dependency(skip_validation=True)) -> MessageTest:
+        nonlocal called
+        assert filters == [
+            BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),
+            LimitOffset(limit=2, offset=18),
+            BeforeAfter(field_name="updated_at", before=datetime.max, after=datetime.min),
+            SearchFilter(field_name="my_field", value="SearchString"),
+            OrderBy(field_name="my_col", sort_order="desc"),
+        ]
+        called = True
+        return MessageTest(test_attr="yay")
+
+    app.debug = True
+    app.register(filtered_collection_route)
+    _response = client.get(
+        path,
+        params={
+            "createdBefore": datetime.max.isoformat(),
+            "createdAfter": datetime.min.isoformat(),
+            "updatedBefore": datetime.max.isoformat(),
+            "updatedAfter": datetime.min.isoformat(),
+            "currentPage": 10,
+            "pageSize": 2,
             "orderBy": "my_col",
             "searchField": "my_field",
             "searchString": "SearchString",

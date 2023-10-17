@@ -3,7 +3,6 @@ from litestar_aiosql import AiosqlConfig, AiosqlPlugin
 from litestar_saq import CronJob, QueueConfig, SAQConfig, SAQPlugin
 from litestar_vite import ViteConfig, VitePlugin
 
-from app.domain.system import tasks
 from app.lib import settings
 
 pydantic = PydanticPlugin(prefer_alias=True)
@@ -24,14 +23,26 @@ saq = SAQPlugin(
         queue_configs=[
             QueueConfig(
                 name="system-tasks",
-                tasks=[tasks.system_task, tasks.system_upkeep],
-                scheduled_tasks=[CronJob(function=tasks.system_upkeep, unique=True, cron="0 * * * *", timeout=500)],
+                tasks=["app.domain.system.tasks.system_task", "app.domain.system.tasks.system_upkeep"],
+                scheduled_tasks=[
+                    CronJob(
+                        function="app.domain.system.tasks.system_upkeep",
+                        unique=True,
+                        cron="0 * * * *",
+                        timeout=500,
+                    ),
+                ],
             ),
             QueueConfig(
                 name="background-tasks",
-                tasks=[tasks.background_worker_task],
+                tasks=["app.domain.system.tasks.background_worker_task"],
                 scheduled_tasks=[
-                    CronJob(function=tasks.background_worker_task, unique=True, cron="* * * * *", timeout=300),
+                    CronJob(
+                        function="app.domain.system.tasks.background_worker_task",
+                        unique=True,
+                        cron="* * * * *",
+                        timeout=300,
+                    ),
                 ],
             ),
         ],

@@ -205,7 +205,11 @@ def provide_filter_dependencies(
     list[FilterTypes]
         List of filters parsed from connection.
     """
-    filters: list[FilterTypes] = [created_filter, id_filter, limit_offset, updated_filter]
+    filters: list[FilterTypes] = []
+    if id_filter.values:  # noqa: PD011
+        filters.append(id_filter)
+    filters.extend([created_filter, limit_offset, updated_filter])
+
     if search_filter.field_name is not None and search_filter.value is not None:
         filters.append(search_filter)
     if order_by.field_name is not None:
