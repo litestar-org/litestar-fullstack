@@ -2,11 +2,11 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "linting", "test", "docs", "dev"]
+groups = ["default", "linting", "test", "docs", "dev", ":dev"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:7b4469a7d4e40dfed9b2d49654c1d3daee70299d376c8d61e97d69d5b1cf8933"
+content_hash = "sha256:ba78129f8c5eadafec8684e2f775725153b41f2dee2cec90764c389ff4d9dec3"
 
 [[package]]
 name = "advanced-alchemy"
