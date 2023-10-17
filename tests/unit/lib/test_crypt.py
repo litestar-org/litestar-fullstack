@@ -8,6 +8,8 @@ from pydantic import SecretBytes, SecretStr
 
 from app.lib import crypt
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.mark.parametrize(
     ("secret_key", "expected_value"),

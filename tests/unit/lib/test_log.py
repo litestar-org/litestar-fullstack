@@ -35,6 +35,8 @@ if TYPE_CHECKING:
     from pytest import MonkeyPatch
     from structlog.testing import CapturingLogger
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture(name="before_send_handler")
 def fx_before_send_handler() -> log.controller.BeforeSendHandler:

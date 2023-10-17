@@ -21,6 +21,11 @@ if TYPE_CHECKING:
     from app.domain.teams.models import Team
 
 
+@pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"
+
+
 @pytest.fixture(scope="session")
 def event_loop() -> "abc.Iterator[asyncio.AbstractEventLoop]":
     """Scoped Event loop.

@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.mark.parametrize(
     ("username", "password", "expected_status_code"),
