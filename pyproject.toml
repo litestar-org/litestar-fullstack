@@ -16,17 +16,17 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,pydantic,redis,structlog]",
-  "pydantic-settings>=2.0.3",
-  "advanced-alchemy==0.3.1",
-  "asyncpg>=0.28.0",
-  "python-dotenv>=1.0.0",
-  "uvicorn[standard]>=0.23.2",
-  "passlib[argon2]>=1.7.4",
-  "greenlet; sys_platform == \"darwin\"",
-  "litestar-saq>=0.1.3",
-  "litestar-vite>=0.1.2",
-  "litestar-aiosql>=0.1.1",
+    "litestar[cli,jinja,jwt,pydantic,redis,structlog]",
+    "pydantic-settings>=2.0.3",
+    "advanced-alchemy==0.3.1",
+    "asyncpg>=0.28.0",
+    "python-dotenv>=1.0.0",
+    "uvicorn[standard]>=0.23.2",
+    "passlib[argon2]>=1.7.4",
+    "greenlet; sys_platform == \"darwin\"",
+    "litestar-saq>=0.1.3",
+    "litestar-vite>=0.1.2",
+    "litestar-aiosql>=0.1.1",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = [
@@ -85,8 +85,8 @@ test_coverage = {composite = ["pdm run pytest tests", "pdm run coverage html", "
 
 [tool.pdm.dev-dependencies]
 dev = [
-  "nodeenv",
-  "anyio",
+    "nodeenv",
+    "anyio>=4.0.0",
 ]
 docs = [
   "mkdocs",
@@ -158,7 +158,6 @@ omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--ignore", "migrations"]
-asyncio_mode = "auto"
 env_files = [".env.testing"]
 env_override_existing_values = 1
 filterwarnings = [
