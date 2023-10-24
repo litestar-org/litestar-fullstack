@@ -11,12 +11,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.292"
+    rev: "v0.1.1"
     hooks:
       - id: ruff
         args: ["--fix"]
   - repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 23.10.1
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -29,11 +29,6 @@ repos:
     hooks:
       - id: prettier
         exclude: "_templates"
-  - repo: https://github.com/python-formate/flake8-dunder-all
-    rev: v0.3.0
-    hooks:
-      - id: ensure-dunder-all
-        exclude: "test*|examples*|tools|scripts"
   - repo: https://github.com/ariebovenberg/slotscheck
     rev: v0.17.0
     hooks:
@@ -41,7 +36,7 @@ repos:
         exclude: "test_*|docs|migrations|scripts"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.6.0"
+    rev: "v1.6.1"
     hooks:
       - id: mypy
         additional_dependencies:
@@ -51,7 +46,7 @@ repos:
             uvloop,
             passlib,
             packaging,
-            advanced-alchemy==0.3.1,
+            advanced-alchemy>=0.4.0,
             asyncpg,
             "uvicorn[standard]",
             "litestar[redis,cli,structlog,standard]",
