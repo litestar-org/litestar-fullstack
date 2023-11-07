@@ -8,10 +8,10 @@ To begin local development, clone the [litestar-org/litestar-fullstack](https://
 pdm install
 ```
 
-Install optional dependencies using the `--G` flag:
+Install optional dependencies using the `-G` flag:
 
 ```bash
-pdm install --G:all
+pdm install -G:all
 ```
 
 ## Using pip
