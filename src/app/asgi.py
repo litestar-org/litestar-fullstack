@@ -44,7 +44,7 @@ def create_app() -> Litestar:
         dependencies=dependencies,
         exception_handlers={
             exceptions.ApplicationError: exceptions.exception_to_http_response,
-            RepositoryError: exceptions.exception_to_http_response,  # type: ignore[dict-item]
+            RepositoryError: exceptions.exception_to_http_response,
         },
         debug=settings.app.DEBUG,
         before_send=[log.controller.BeforeSendHandler()],
