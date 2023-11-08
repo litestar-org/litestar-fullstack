@@ -13,6 +13,7 @@ __all__ = ["create_app"]
 def create_app() -> Litestar:
     """Create ASGI application."""
 
+    from advanced_alchemy.exceptions import RepositoryError
     from litestar import Litestar
     from litestar.config.app import ExperimentalFeatures
     from litestar.di import Provide
@@ -42,7 +43,8 @@ def create_app() -> Litestar:
         cors_config=cors.config,
         dependencies=dependencies,
         exception_handlers={
-            exceptions.ApplicationError: exceptions.exception_to_http_response,  # type: ignore[dict-item]
+            exceptions.ApplicationError: exceptions.exception_to_http_response,
+            RepositoryError: exceptions.exception_to_http_response,  # type: ignore[dict-item]
         },
         debug=settings.app.DEBUG,
         before_send=[log.controller.BeforeSendHandler()],

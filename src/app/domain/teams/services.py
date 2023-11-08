@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID, uuid4
 
 from sqlalchemy import select
@@ -10,6 +10,9 @@ from app.domain.teams.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = [
     "TeamInvitationRepository",
@@ -79,7 +82,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if owner_id:
             db_obj.members.append(TeamMember(user_id=owner_id, role=TeamRoles.ADMIN, is_owner=True))
         if tags_added:
-            tags_service = await anext(provide_tags_service(db_session=self.repository.session))
+            tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
             for tag_text in tags_added:
                 tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
                 db_obj.tags.append(tag)
@@ -115,7 +118,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                 auto_refresh=auto_refresh,
                 id_attribute=id_attribute,
             )
-            tags_service = await anext(provide_tags_service(db_session=self.repository.session))
+            tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
             existing_tags = [tag.name for tag in data.tags]
             tags_to_remove = [tag for tag in data.tags if tag.name not in tags_updated]
             tags_to_add = [tag for tag in tags_updated if tag not in existing_tags]

@@ -8,7 +8,7 @@ import timeit
 from typing import TYPE_CHECKING, Any
 
 import asyncpg
-from litestar.utils import AsyncCallable
+from litestar.utils.sync import AsyncCallable
 from redis.asyncio import Redis as AsyncRedis
 from redis.exceptions import ConnectionError as RedisConnectionError
 
