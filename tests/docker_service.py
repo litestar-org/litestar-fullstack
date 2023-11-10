@@ -77,7 +77,7 @@ class DockerServiceRegistry:
         **kwargs: Any,
     ) -> None:
         if name not in self._running_services:
-            self.run_command("up", "-d", name)
+            self.run_command("up", "-d", name, "--wait")
             self._running_services.add(name)
 
             await wait_until_responsive(
