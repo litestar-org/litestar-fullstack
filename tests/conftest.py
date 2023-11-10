@@ -20,6 +20,8 @@ if TYPE_CHECKING:
     from app.domain.accounts.models import User
     from app.domain.teams.models import Team
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture
 def anyio_backend() -> str:

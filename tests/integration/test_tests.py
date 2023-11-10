@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from redis.asyncio import Redis as AsyncRedis
     from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
+pytestmark = pytest.mark.anyio
+
 
 def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
     """Test that the app's cache is patched.
