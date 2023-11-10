@@ -20,6 +20,7 @@ from app.lib import db
 from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive
 
 here = Path(__file__).parent
+pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(scope="session")
