@@ -25,6 +25,8 @@ from app.lib import dependencies
 if TYPE_CHECKING:
     from collections import abc
 
+pytestmark = pytest.mark.anyio
+
 
 @dataclass
 class MessageTest:
