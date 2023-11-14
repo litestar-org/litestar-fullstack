@@ -51,3 +51,17 @@ async def on_startup(_: Litestar) -> None:
     """Do things before the app starts up."""
     await _db_ready()
     await _redis_ready()
+
+
+def wait_for_redis() -> None:
+    """Do things before the app starts up."""
+    import anyio
+
+    anyio.run(_redis_ready)
+
+
+def wait_for_postgres() -> None:
+    """Do things before the app starts up."""
+    import anyio
+
+    anyio.run(_db_ready)

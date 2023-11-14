@@ -54,6 +54,8 @@ Source = "https://github.com/litestar-org/litestar-fullstack"
 
 [project.scripts]
 app = "app.__main__:run_cli"
+wait-for-postgres = "app.lib.lifespan:wait_for_postgres"
+wait-for-redis = "app.lib.lifespan:wait_for_redis"
 
 [project.entry-points."litestar.commands"]
 run-all = "app.cli:run_all_app"

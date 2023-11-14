@@ -21,7 +21,7 @@ def create_app() -> Litestar:
 
     from app import domain
     from app.domain.security import provide_user
-    from app.lib import cache, constants, cors, db, exceptions, lifespan, log, repository, settings, static_files
+    from app.lib import cache, constants, cors, db, exceptions, log, repository, settings, static_files
     from app.lib.dependencies import create_collection_dependencies
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
@@ -44,7 +44,7 @@ def create_app() -> Litestar:
         route_handlers=[*domain.routes],
         plugins=[db.plugin, domain.plugins.aiosql, domain.plugins.vite, domain.plugins.saq, domain.plugins.pydantic],
         on_shutdown=[cache.redis.aclose],
-        on_startup=[lifespan.on_startup, lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
+        on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[domain.security.auth.on_app_init, repository.on_app_init],
         static_files_config=static_files.config,
         signature_namespace=domain.signature_namespace,
