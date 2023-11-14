@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Literal, TypeVar
 
 from litestar import Controller, MediaType, get
 from litestar.response import Response
-from litestar_saq import TaskQueues
 from sqlalchemy import text
 
 from app.domain.system.dtos import SystemHealth
@@ -12,6 +11,7 @@ from app.lib import constants, log
 from app.lib.cache import redis
 
 if TYPE_CHECKING:
+    from litestar_saq import TaskQueues
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
