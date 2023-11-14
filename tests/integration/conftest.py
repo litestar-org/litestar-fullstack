@@ -51,7 +51,7 @@ async def redis_service(docker_services: DockerServiceRegistry) -> None:
 
 
 @pytest.fixture(name="engine")
-async def fx_engine(docker_ip: str, postgres_service: None) -> AsyncEngine:
+async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None) -> AsyncEngine:  # noqa: D417
     """Postgresql instance for end-to-end testing.
 
     Args:
