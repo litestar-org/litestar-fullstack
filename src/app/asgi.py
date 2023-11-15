@@ -21,17 +21,7 @@ def create_app() -> Litestar:
 
     from app import domain
     from app.domain.security import provide_user
-    from app.lib import (
-        cache,
-        constants,
-        cors,
-        db,
-        exceptions,
-        log,
-        repository,
-        settings,
-        static_files,
-    )
+    from app.lib import cache, constants, cors, db, exceptions, log, repository, settings, static_files
     from app.lib.dependencies import create_collection_dependencies
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}

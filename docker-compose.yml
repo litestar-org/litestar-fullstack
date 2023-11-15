@@ -65,13 +65,8 @@ services:
       - .env.example
   worker:
     image: app:latest
-    command: litestar workers run
+    command: wait-for-redis && litestar workers run
     restart: always
-    depends_on:
-      db:
-        condition: service_healthy
-      cache:
-        condition: service_healthy
     env_file:
       - .env.example
   migrator:
