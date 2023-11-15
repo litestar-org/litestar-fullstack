@@ -10,6 +10,8 @@ from litestar.enums import ScopeType
 if TYPE_CHECKING:
     from litestar.types import HTTPResponseBodyEvent, HTTPResponseStartEvent, HTTPScope
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture()
 def http_response_start() -> HTTPResponseStartEvent:

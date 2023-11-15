@@ -1,4 +1,8 @@
+import pytest
+
 from app.lib import settings
+
+pytestmark = pytest.mark.anyio
 
 
 def test_app_slug() -> None:

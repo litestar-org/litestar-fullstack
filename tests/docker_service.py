@@ -8,12 +8,16 @@ import timeit
 from typing import TYPE_CHECKING, Any
 
 import asyncpg
+import pytest
 from litestar.utils.sync import AsyncCallable
 from redis.asyncio import Redis as AsyncRedis
 from redis.exceptions import ConnectionError as RedisConnectionError
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
+
+
+pytestmark = pytest.mark.anyio
 
 
 async def wait_until_responsive(
