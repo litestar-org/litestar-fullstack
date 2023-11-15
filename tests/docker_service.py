@@ -47,14 +47,19 @@ async def wait_until_responsive(
 
 
 class DockerServiceRegistry:
-    def __init__(self) -> None:
+    def __init__(self, use_legacy_compose: bool = False) -> None:
+        self._use_legacy_compose = use_legacy_compose
+        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") == "true" or os.environ.get("GITHUB_ACTIONS") == "true":
+            self._use_legacy_compose = True
         self._running_services: set[str] = set()
         self.docker_ip = self._get_docker_ip()
-        self._base_command = [
-            "docker compose",
-            "--file=tests/docker-compose.yml",
-            "--project-name=app_pytest",
-        ]
+        self._base_command = ["docker-compose"] if self._use_legacy_compose else ["docker", "compose"]
+        self._base_command.extend(
+            [
+                "--file=tests/docker-compose.yml",
+                "--project-name=app_pytest",
+            ],
+        )
 
     def _get_docker_ip(self) -> str:
         docker_host = os.environ.get("DOCKER_HOST", "").strip()
@@ -81,7 +86,10 @@ class DockerServiceRegistry:
         **kwargs: Any,
     ) -> None:
         if name not in self._running_services:
-            self.run_command("up", "-d", name, "--wait")
+            run_command = ["up", "-d", name]
+            if not self._use_legacy_compose:
+                run_command.append("--wait")
+            self.run_command(*run_command)
             self._running_services.add(name)
 
             await wait_until_responsive(
