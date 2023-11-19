@@ -7,9 +7,13 @@ providers = ['python'] # force python as the only provider, otherwise railway ma
     PIP_DISABLE_PIP_VERSION_CHECK = '1' # the pip update notification is relatively useless in a production environment
     NPM_CONFIG_UPDATE_NOTIFIER = 'false' # the node update notification is relatively useless in a production environment
     NPM_CONFIG_FUND = 'false' # the fund notification is is also pretty useless in a production environment
+    NIXPACKS_PDM_VERSION = '2.10.3'
 
 [phases.setup]
     nixPkgs = ['...', 'nodejs'] # add nodejs since it is needed to build the frontend
+
+[phases.install]
+    cmds = ['python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install pdm==$NIXPACKS_PDM_VERSION && pdm install -G:all -v'] # install python dependencies
 
 [phases.ci]
     dependsOn = ['setup'] # must run after the setup phase since node is installed in the setup phase
