@@ -1,6 +1,6 @@
 # https://nixpacks.com/docs/configuration/file
 
-providers = ['python'] # force python as the only provider, otherwise railway may think this is a node project
+providers = ['python', 'node'] # force python as the only provider, otherwise railway may think this is a node project
 
 # set up some variables to minimize annoyance
 [variables]
