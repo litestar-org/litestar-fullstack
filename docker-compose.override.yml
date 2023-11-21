@@ -20,7 +20,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: deploy/docker/dev/Dockerfile.dev
+      dockerfile: deploy/docker/dev/Dockerfile
     image: app:latest-dev
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always

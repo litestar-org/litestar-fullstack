@@ -51,7 +51,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: deploy/docker/run/Dockerfile.prod
+      dockerfile: deploy/docker/run/Dockerfile
     image: app:latest
     restart: always
     depends_on:
