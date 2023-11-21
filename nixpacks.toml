@@ -13,12 +13,10 @@ providers = ['python'] # force python as the only provider, otherwise railway ma
 
 [phases.ci]
     dependsOn = ['setup'] # must run after the setup phase since node is installed in the setup phase
-    nixPkgs = ['...'] # add nodejs since it is needed to build the frontend
     cmds = ['npm ci'] # install frontend dependencies with clean-install
 
 [phases.build]
     dependsOn = ['ci'] # must run after the ci phase so that node dependencies are available
-    nixPkgs = ['...']
     cmds = ['npm run build'] # build the frontend
 
 [phases.migrations]
