@@ -128,8 +128,7 @@ class BeforeSendHandler:
         )
 
     async def __call__(self, message: Message, scope: Scope) -> None:
-        """Receives ASGI response messages and scope, and logs per
-        configuration.
+        """Receives ASGI response messages and scope, and logs per configuration.
 
         Args:
             message: ASGI response event.
@@ -186,7 +185,7 @@ class BeforeSendHandler:
         """Create a dictionary of values for the log.
 
         Args:
-            request: A [Request][litestar.connection.request.Request] instance.
+            request: A `Request <litestar.connection.request.Request>`_ instance.
 
         Returns:
             An OrderedDict.

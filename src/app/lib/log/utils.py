@@ -1,12 +1,12 @@
 """Logging utilities.
 
-`msgspec_json_renderer()`
+``msgspec_json_renderer()``
     A JSON Renderer for structlog using msgspec.
 
-    Msgspec doesn't have an API consistent with the stdlib's `json` module,
-    which is required for structlog's `JSONRenderer`.
+    Msgspec doesn't have an API consistent with the stdlib's ``json`` module,
+    which is required for structlog's ``JSONRenderer``.
 
-`EventFilter`
+``EventFilter``
     A structlog processor that removes keys from the log event if they exist.
 """
 
@@ -44,20 +44,25 @@ class EventFilter:
 
     Add an instance to the processor chain.
 
-    Examples:
+    .. code-block:: python
+        :caption: Examples
+
         structlog.configure(
             ...,
             processors=[
                 ...,
                 EventFilter(["color_message"]),
                 ...,
-            ]
+            ],
         )
+
     """
 
     def __init__(self, filter_keys: Iterable[str]) -> None:
-        """Args:
-        filter_keys: Iterable of string keys to be excluded from the log event.
+        """Initialize the EventFilter.
+
+        Args:
+            filter_keys: Iterable of string keys to be excluded from the log event.
         """
         self.filter_keys = filter_keys
 
