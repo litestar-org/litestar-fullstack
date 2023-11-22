@@ -296,6 +296,7 @@ known-first-party = ['tests', 'app']
     "ARG001",
 ]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 
 [tool.slotscheck]
 strict-imports = false
@@ -352,6 +353,10 @@ warn_untyped_fields = true
 
 [tool.pyright]
 include = ["src/app", "tests"]
+exclude = [
+  "tools",
+  "docs",
+]
 
 [tool.git-cliff.changelog]
 header = """

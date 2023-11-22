@@ -27,13 +27,13 @@ parser.add_argument("output")
 
 @contextmanager
 def checkout(branch: str) -> None:
-    subprocess.run(["git", "checkout", branch], check=True)  # noqa: S603 S607
+    subprocess.run(["git", "checkout", branch], check=True)  # noqa: S607
     yield
-    subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S603 S607
+    subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S607
 
 
 def build(output_dir: str) -> None:
-    subprocess.run(["make", "docs"], check=True)  # noqa: S603 S607
+    subprocess.run(["make", "docs"], check=True)  # noqa: S607
 
     output_dir = Path(output_dir)
     output_dir.mkdir()
