@@ -329,30 +329,31 @@ def load_settings() -> (
 ):
     """Load Settings file.
 
-    As an example, I've commented out how you might go about injecting secrets into the environment for production.
+    As an example, I've commented on how you might go about injecting secrets into the environment for production.
 
-    This fetches a `.env` configuration from a Google secret and configures the environment with those variables.
+    This fetches a ``.env`` configuration from a Google secret and configures the environment with those variables.
 
-    ```python
-    secret_id = os.environ.get("ENV_SECRETS", None)
-    env_file_exists = os.path.isfile(f"{os.curdir}/.env")
-    local_service_account_exists = os.path.isfile(f"{os.curdir}/service_account.json")
-    if local_service_account_exists:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
-    project_id = os.environ.get("GOOGLE_PROJECT_ID", None)
-    if project_id is None:
-        _, project_id = google.auth.default()
-        os.environ["GOOGLE_PROJECT_ID"] = project_id
-    if not env_file_exists and secret_id:
-        secret = secret_manager.get_secret(project_id, secret_id)
-        load_dotenv(stream=io.StringIO(secret))
+    .. code-block:: python
 
-    try:
-        settings = ...  # existing code below
-    except:
-        ...
-    return settings
-    ```
+        secret_id = os.environ.get("ENV_SECRETS", None)
+        env_file_exists = os.path.isfile(f"{os.curdir}/.env")
+        local_service_account_exists = os.path.isfile(f"{os.curdir}/service_account.json")
+        if local_service_account_exists:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
+        project_id = os.environ.get("GOOGLE_PROJECT_ID", None)
+        if project_id is None:
+            _, project_id = google.auth.default()
+            os.environ["GOOGLE_PROJECT_ID"] = project_id
+        if not env_file_exists and secret_id:
+            secret = secret_manager.get_secret(project_id, secret_id)
+            load_dotenv(stream=io.StringIO(secret))
+
+        try:
+            settings = ...  # existing code below
+        except:
+            ...
+        return settings
+
     Returns:
         Settings: application settings
     """

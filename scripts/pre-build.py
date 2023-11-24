@@ -18,6 +18,10 @@ DEFAULT_VENV_PATH = Path(PROJECT_ROOT / ".venv")
 
 
 def build_npm_assets(setup_kwargs: Any) -> Any:
+    # look for this in the environment and skip this function if it exists, sometimes building here is not needed, eg. when using nixpacks
+    if os.environ.get("LITESTAR_SKIP_BUILD_ASSETS") is not None:
+        logger.info("skipping npm asset building")
+        return setup_kwargs
     found_in_local_venv = Path(DEFAULT_VENV_PATH / "bin" / NODEENV).exists()
     nodeenv_command = f"{DEFAULT_VENV_PATH}/bin/{NODEENV}" if found_in_local_venv else NODEENV
     install_dir = DEFAULT_VENV_PATH if found_in_local_venv else os.environ.get("VIRTUAL_ENV", sys.prefix)

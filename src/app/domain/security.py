@@ -25,7 +25,7 @@ async def provide_user(request: Request[User, Token, Any]) -> User:
         request: current connection.
 
     Returns:
-    User
+        User
     """
     return request.user
 

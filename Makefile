@@ -123,13 +123,24 @@ test:  												## Run the tests
 	@$(ENV_PREFIX)pytest tests
 	@echo "=> Tests complete"
 
- # =============================================================================
+# =============================================================================
 # Docs
 # =============================================================================
-gen-docs:       ## generate HTML documentation
-	$(ENV_PREFIX)mkdocs build
+.PHONY: docs-install
+docs-install: 										## Install docs dependencies
+	@echo "=> Installing documentation dependencies"
+	@$(PDM) install -dG:docs
+	@echo "=> Installed documentation dependencies"
 
-.PHONY: docs
-docs:       ## generate HTML documentation and serve it to the browser
-	$(ENV_PREFIX)mkdocs build
-	$(ENV_PREFIX)mkdocs serve
+docs-clean: 										## Dump the existing built docs
+	@echo "=> Cleaning documentation build assets"
+	@rm -rf docs/_build
+	@echo "=> Removed existing documentation build assets"
+
+docs-serve: docs-clean 								## Serve the docs locally
+	@echo "=> Serving documentation"
+	$(PDM_RUN_BIN) sphinx-autobuild docs docs/_build/ -j auto --watch src --watch docs --watch tests --watch CONTRIBUTING.rst --port 8002
+
+docs: docs-clean 									## Dump the existing built docs and rebuild them
+	@echo "=> Building documentation"
+	@$(PDM_RUN_BIN) sphinx-build -M html docs docs/_build/ -E -a -j auto --keep-going
