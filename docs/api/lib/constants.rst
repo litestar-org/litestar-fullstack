@@ -4,5 +4,5 @@ constants
 
 Application constants
 
-.. automodule:: src.app.lib.constants
+.. automodule:: app.lib.constants
      :members:

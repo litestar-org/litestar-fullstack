@@ -4,5 +4,5 @@ utils
 
 Shared utilities for the application.
 
-.. automodule:: src.app.utils
+.. automodule:: app.utils
      :members:

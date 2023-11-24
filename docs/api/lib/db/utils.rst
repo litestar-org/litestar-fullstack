@@ -4,5 +4,5 @@ utils
 
 Application database utilities
 
-.. automodule:: src.app.lib.db.utils
+.. automodule:: app.lib.db.utils
      :members:

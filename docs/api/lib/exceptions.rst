@@ -4,5 +4,5 @@ exceptions
 
 Application exceptions
 
-.. automodule:: src.app.lib.exceptions
+.. automodule:: app.lib.exceptions
      :members:

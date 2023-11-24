@@ -4,5 +4,5 @@ cache
 
 Application cache configuration
 
-.. automodule:: src.app.lib.cache
+.. automodule:: app.lib.cache
      :members:

@@ -4,5 +4,5 @@ dto
 
 Application DTO configuration
 
-.. automodule:: src.app.lib.dto
+.. automodule:: app.lib.dto
      :members:

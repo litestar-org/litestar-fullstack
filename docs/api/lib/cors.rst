@@ -4,5 +4,5 @@ cors
 
 CORS config
 
-.. automodule:: src.app.lib.cors
+.. automodule:: app.lib.cors
      :members:

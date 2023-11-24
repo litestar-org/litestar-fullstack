@@ -4,5 +4,5 @@ orm
 
 Application database ORM configuration
 
-.. automodule:: src.app.lib.db.orm
+.. automodule:: app.lib.db.orm
      :members:

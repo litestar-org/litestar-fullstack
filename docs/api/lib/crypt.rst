@@ -4,5 +4,5 @@ crypt
 
 Application cryptography configuration
 
-.. automodule:: src.app.lib.crypt
+.. automodule:: app.lib.crypt
      :members:

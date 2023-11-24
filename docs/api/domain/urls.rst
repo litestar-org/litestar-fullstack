@@ -4,5 +4,5 @@ urls
 
 URL patterns for the app.
 
-.. automodule:: src.app.domain.urls
+.. automodule:: app.domain.urls
      :members:
