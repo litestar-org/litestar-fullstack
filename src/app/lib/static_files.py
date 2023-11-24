@@ -18,3 +18,4 @@ config = [
         opt={"exclude_from_auth": True},
     ),
 ]
+"""Static file configuration."""

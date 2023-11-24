@@ -22,22 +22,38 @@ Context: TypeAlias = "dict[str, Any]"
 
 
 async def on_shutdown(_: Context) -> None:
-    """Shutdown events for each worker.."""
+    """Shutdown events for each worker.
+
+    Args:
+        _: The context for the worker.
+    """
     await LOGGER.ainfo("Worker is shutting down.")
 
 
 async def on_startup(_: Context) -> None:
-    """Startup events for each worker."""
+    """Startup events for each worker.
+
+    Args:
+        _: The context for the worker.
+    """
     await LOGGER.ainfo("Worker is starting up.")
 
 
 async def before_process(_: Context) -> None:
-    """Clear the structlog contextvars for this task."""
+    """Clear the structlog contextvars for this task.
+
+    Args:
+        _: The context for the worker.
+    """
     structlog.contextvars.clear_contextvars()
 
 
 async def after_process(ctx: Context) -> None:
-    """Parse log context and log it along with the contextvars context."""
+    """Parse log context and log it along with the contextvars context.
+
+    Args:
+        ctx: The context for the worker.
+    """
     # parse log context from `ctx`
     job: Job = ctx["job"]
     log_ctx = {k: getattr(job, k) for k in settings.log.JOB_FIELDS}

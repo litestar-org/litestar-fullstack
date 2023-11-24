@@ -59,8 +59,10 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 @pytest.fixture(name="app")
 def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
-    """Returns:
-    An application instance, configured via plugin.
+    """App fixture.
+
+    Returns:
+        An application instance, configured via plugin.
     """
     from app.asgi import create_app
 
