@@ -80,8 +80,15 @@ html_theme = "litestar_sphinx_theme"
 html_static_path = ["_static"]
 html_show_sourcelink = True
 html_title = "Litestar Fullstack Docs"
+html_context = {
+    "github_user": "litestar-org",
+    "github_repo": "litestar-fullstack",
+    "github_version": "main",
+    "doc_path": "docs",
+}
 html_theme_options = {
     "use_page_nav": False,
+    "use_edit_page_button": True,
     "github_repo_name": "litestar-fullstack",
     "logo": {
         "link": "https://docs.fullstack.litestar.dev",
