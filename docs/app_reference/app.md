@@ -1,3 +1,0 @@
-# App Reference
-
-::: app

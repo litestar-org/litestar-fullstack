@@ -1,0 +1,1199 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Changelog &#8212; Litestar Fullstack Docs</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/litestar-sphinx-theme.css?v=9e3812bb" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/litestar-theme.js?v=ab2dcc9e"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'changelog';</script>
+    <link rel="icon" href="_static/favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Contribution Guide" href="contribution-guide.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+   
+
+<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
+    <script>document.write(`<img src="_static/logo.svg" class="logo__image only-dark" alt="Litestar Fullstack Docs - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html">utils</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/domain/index.html">domain</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/domain/urls.html">urls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/domain/security.html">security</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/tasks.html">tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/tags/index.html">tags</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/tags/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/tags/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/tags/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/analytics/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/analytics/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/analytics/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/analytics/queries.html">queries</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/domain/accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/cache.html">cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/compression.html">compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/constants.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/cors.html">cors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/crypt.html">crypt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/csrf.html">csrf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/openapi.html">openapi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/repository.html">repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/serialization.html">serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/service.html">service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/settings.html">settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/static_files.html">static files</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/log/controller.html">controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/log/init.html">init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/log/utils.html">utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/log/worker.html">worker</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/db/base.html">base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/db/orm.html">orm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/lib/db/utils.html">utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Changelog</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Changelog</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
+<p>All commits to this project will be documented in this file.</p>
+<section id="unreleased">
+<h2>[unreleased]<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
+<section id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e134a29bed11ec6b69af5614e5db99ab70b66e40">e134a29</a>)  - Set volume mounts explicitly to avoid mounting <cite>.venv</cite> and <cite>node_modules</cite> not built in the container. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/cb80d8eae6f7c12aff537d911ee79a31123a6e00">cb80d8e</a>)  - Correct test case (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0900927c4cda4858ea7b4b4d9ae41e28b7b81a7b">0900927</a>)  - Updated pre-commit config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/875c672ccb451b341db3c66ada10957916bfcb05">875c672</a>)  - Tests update (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7ec1e02e079438213adf3180c0b159e687f7a55d">7ec1e02</a>)  - Cleanup the output. remove useless except block (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c635168ca39df63da14c27ef008f6ecc1f84c02f">c635168</a>)  - Logging cleanup (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2c35d8efbfdf67b167e349a1fa42ddc19d8804c4">2c35d8e</a>)  - Corrected type hints (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d3b8f62126bde427940a035af86fb23d593e6386">d3b8f62</a>)  - Updated test cases (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b407044909caf2286474e7880cf86fc5a30c85da">b407044</a>)  - Ensure logger is configured in worker processes (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c8e1bab25f01573bde7c75e263d29efaee3f18df">c8e1bab</a>)  - Update name (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/968d8a8abf905a3535c909c3dae13cd8dbee4476">968d8a8</a>)  - Updated symlink path for build dir.  Moved web folder. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/02c1b7bef49f13d6ef5d688aaed411a3e6fd7e34">02c1b7b</a>)  - Simplify expression (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1b7a54e2c9d0e2371063ee05dc77fb633ed0ebef">1b7a54e</a>)  - Updated startup configuration.  add exists statement. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/52e09ecb891e630aa8a6f6388cd4536fe2cd11c7">52e09ec</a>)  - Version updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f2e07da3a90b943d7e6c203addfadaf04d874eb8">f2e07da</a>)  - Squashed and re-applied migrations as a test.  Please reset database if you’ve used the DB already. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/275ef1bb6b5d16b803a975b881541c210608cf54">275ef1b</a>)  - Adds tailwind and existing js dotfiles to node container (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/304b249f074bd3bee2eb874f1cad1d62e250f681">304b249</a>)  - Pass kwargs into structlog.getLogger (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5addca6e9d72a4ef61f9386dffdf3095ef626621">5addca6</a>)  - Slight re-org (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4c642eaab5e17d0afa1e40173008b30bb729b0b4">4c642ea</a>)  - Remove the need for an extra file. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/292ea0638edf1452a7d4264abcef790dcffe7851">292ea06</a>)  - Remove unnecessary try/finally (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/72dc79c92ee36f93192cf9b30b9e9cf150003f6b">72dc79c</a>)  - Rename logger -&gt; log (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/6432fa8b50261af8c816de917a342d75a0f0448f">6432fa8</a>)  - Correct endpoint path (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1e37673f26604d64348c26d07a23c8bee80c36c0">1e37673</a>)  - Remove unused logger calls (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b74bb0ffe036a5b4595b7228913afd3d8e3c8607">b74bb0f</a>)  - Split user controllers into separate files (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d135cf2ce768fe3b4232d71329ff6faddfdcde04">d135cf2</a>)  - Simplify repo (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/df3c0cd002241a6c97da4fa69ecedd3ce6079539">df3c0cd</a>)  - Remove symlink (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/17f6d3d4ab0906b713db6bbbe98db0993e0c2ad2">17f6d3d</a>)  - Remove extra ignore (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ab502b68e922a3e547ac336ea5380745b7e9498d">ab502b6</a>)  - Simplify worker command (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/10c6ca53be75308553634eb35872b0b34bb37551">10c6ca5</a>)  - Swap to distroless (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f135b5df650f122e849f02aeef6489bec4431351">f135b5d</a>)  - Finish swap to distroless 3.11 (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f2a5d2e8e713ca8710f77a79e794bb904c4eb846">f2a5d2e</a>)  - Additional docker cleanup (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/fb5290c92476c98c392b4802dc32e4f9d6646c32">fb5290c</a>)  - Adjusts config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b4c86b6b6023bedab43980922068d7fa8b452930">b4c86b6</a>)  - Remove example endpoint.  adjust vite config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/cbf96d6b3c67b4147bf535a779270596b4141af8">cbf96d6</a>)  - Adds in the asset directory of vite as a static path when running in dev mode (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0a5747b6ff6823acebbd39215c2c48a5a592e9c8">0a5747b</a>)  - Ignore changes to public dir.  this is populated by <cite>npm run build</cite> (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1adab796f0599bd2a368f433fec02d0b117c6a3a">1adab79</a>)  - Correct reference (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2de861976f4f25e41a0be277f0873259340b9dda">2de8619</a>)  - Variable name usage (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/dabfc84715ede4af8c51d4b6fe53451bbd194b41">dabfc84</a>)  - Rename methods to private (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2b333710941eab742db41901b79c2bc52efbf5fc">2b33371</a>)  - Assume public is unchanged.  This prevents the changes from a build showing here. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0a966e09bd3dda626dbb4e92cce26fb0da16b5ad">0a966e0</a>)  - Adds polyfill required for running with a remote backend (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/64634cb10972b8df522ca54ed1ca30667b4e0ba0">64634cb</a>)  - Adds additional ruff checks (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b25edd1a07d31627ba50778d06cb2ddb89e63f4b">b25edd1</a>)  - Linting updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/02c99ee09f05147800b279737e87dcef54013ea4">02c99ee</a>)  - Doc updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/958aa307c196bbf0bcf734a1e66c059e7b6eef65">958aa30</a>)  - Remove unused reference to GCP service account (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/27fcac2e51621a18d3ae3b3f721f1fefc4d06830">27fcac2</a>)  - Move into type checking block (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/dc86c8b5aec8b757ada02e9703c124a66f39ab73">dc86c8b</a>)  - Swap to AsyncCallable (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b7f7621a49118c342dd5c5f8e6304057e519b613">b7f7621</a>)  - Enable UI build and integration into docker image (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/a35fc31db2f9ce911fd22e55bb194a18b767ddd8">a35fc31</a>)  - Updated container (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/dd64785c000f90dbb9947f17a916949c396fc361">dd64785</a>)  - Permissions in build image for running it as non-root in dev (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/73cdb05636da840be81964dc3f0edadc16176cc6">73cdb05</a>)  - Cleanup (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/461e1714e4411e30d598f0b049ffc2810354b697">461e171</a>)  - Updates configuration to use recently merged response_cache &amp; stores config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b0089bfe92dcc451d901f2552698f7b13a429f54">b0089bf</a>)  - Call uvicorn as a subprocess. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c2d935cd5c4bb39290bddb69f6cc3d24da334a5b">c2d935c</a>)  - Update forward refs.  fixes 1 of 2 issues for inserts (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b405aa350097e017032ea11552dd4e1e9fe7ec9b">b405aa3</a>)  - Correctly call model from dict for all methods (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1a32a2c25eeb58fdfa8791b24da447cd37857cdb">1a32a2c</a>)  - UUID serializer issue (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/3310e3753428164c396b9daa631bb0818ce0f63b">3310e37</a>)  - Updated provide user (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1498dfefa8c3875753640ebad2636ade601e9763">1498dfe</a>)  - Additional 2.0 adjustments (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ea7f1f5a311b1b420eb08d1a73354a250ebf2347">ea7f1f5</a>)  - Move <cite>joined_at</cite> and <cite>verified_at</cite> to datetime (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2fa75a353e64e58b41e131e4fe14bd1bf3ffd99d">2fa75a3</a>)  - Return User schema instead of user model (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ebbcce55ea28183dfdd4aa23f7c4281f357839f9">ebbcce5</a>)  - <cite>Request</cite> has no attribute <cite>to_dict</cite> error (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ec798adb77eb56dabc45da80f32f111e383917e2">ec798ad</a>)  - Adds worker command and updated CLI markdown (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/257260d25fcc9b1b086ce7191d7eb6b6d5ecdcdf">257260d</a>)  - Remove extra tag from User controller (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d7f0e41733886dfd690547fd270bc00cb89b7164">d7f0e41</a>)  - Prevent duplicate log messages from the <cite>sqlalchemy.pool</cite> loggers. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/315a6c8ed7f63fa80a87bb1d2315df8cbcf008d9">315a6c8</a>)  - Updated build process &amp; repository enhancements (#13) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0be2059a41e6684c3540353107a4c042a03be5f4">0be2059</a>)  - Updated process handling &amp; run as factory (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e8614ec7779f608c78a56aec871a6521d92f09e4">e8614ec</a>)  - Re-add accidentally removed <cite>profile</cite> route (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/8de65f09a2e144800abd37db2a18a25723ed9bd4">8de65f0</a>)  - Additional tests and adjusted dependency (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/15b9901a0ebcb1158a3c38268bfa039a811fe39f">15b9901</a>)  - Move aiosql into query files.  Add paginated results helper (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/14f841c4d7baaf558422a26225dd4bebc9db2cc3">14f841c</a>)  - Enable base model caching (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2ef4c2e4841906cd10ce18a590bfaea97505ed4f">2ef4c2e</a>)  - Simplify aiosql class (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/40f392f4495b13a6a4238e3c3bd2c13324b2feab">40f392f</a>)  - Remove extra variable (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ad0b61265610ac18b73701fdf4701f137d99d04d">ad0b612</a>)  - Remove the <cite>from_orm</cite> override in preference of a <cite>association_proxy</cite> (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e2787b0788469a99faa321818591a088515a2d6d">e2787b0</a>)  - Corrected test cases. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0627aa525d2af5b5472965f87ec5ba29b4289a0c">0627aa5</a>)  - Remove extra <code class="docutils literal notranslate"><span class="pre">DB_</span></code> prefix from a few settings (#18) (Patrick Armengol)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0f4140d71988768db402ca3e8fa8cfc9c700e99c">0f4140d</a>)  - Various test case corrections and enhancements (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0589818ef01012b671c2ee609ecc8b2d187222cf">0589818</a>)  - Corrects tests and worker launch process (#21) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b1a62a98192cbfcffc0526b25e226a23db27934c">b1a62a9</a>)  - Corrections to docker build process (#33) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/31bda77fe5a7093e62f2003c5511b2cff8f5b7c2">31bda77</a>)  - Correct run command (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/19de7054191bf9eb731662baec7a3b6f592b213b">19de705</a>)  - Remove unused make entry.  updated env example (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/110c1e81fe7da6d15f1a16c2cbf7d0a6d2a77cf6">110c1e8</a>)  - Adds local flag to poetry config. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4d70b3713552df77b0146fd5ef1a1337fc6aac90">4d70b37</a>)  - Migrate to updated model names for sqlalchemy (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/918d45d74674db6d4725808c15c0b38a2eb10743">918d45d</a>)  - Correct remaining test case for filter deps (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/07e5c79aa2d30416f85902f3faf06a7baade932f">07e5c79</a>)  - Address new <cite>sync_to_thread</cite> warnings and other test fixes (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7b3f20bcc75eb826cf7da7adc5fde6676a99dadd">7b3f20b</a>)  - Use self-hosted saq UI (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f16c82edee119f4239a09bea6817c1c25067909e">f16c82e</a>)  - Update timeout to prevent max job duration from exceeding. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1abf1028df18733b8ae5669e32c5f543cb8e5cb5">1abf102</a>)  - Remove extra call (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4c35cbb0f1dd819667e295a2908fd2f362d59ff9">4c35cbb</a>)  - Version bumps (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/81d33439a87d44ab1dcd93b8d824f83ef37f0658">81d3343</a>)  - Moved signature namespace from <cite>asgi.py</cite>, separated <cite>aiosql</cite> module for easier removal. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1790f80487291d003e9a516e2f5f14a90817a1f4">1790f80</a>)  - Parameter has been removed upstream (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2d00d73ba8248a436eeeaa22a3cee90cbca3f2fe">2d00d73</a>)  - Additional updates for upstream changes. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d46df10104eade752abac6585acf3e8f4e3efef3">d46df10</a>)  - Adds updates tests (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/85bfbc86118ff18ca027b64ce9f63d940854fc32">85bfbc8</a>)  - Upgrade to litestar beta.  squashed migrations to enabled DateTimeUTC columns. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/90031f82a087de3c79eac902492cc02a13f3b668">90031f8</a>)  - Updated readme (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/bc6ef7ff3fee74fa6df16bda68b56b0360b50bd4">bc6ef7f</a>)  - Updated readme (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/14c588ae53238d8f2e52e50ae037536d1b2542d9">14c588a</a>)  - Remove outdated type_encoder (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f474ce4813029740a15783e16d45acda7f81023f">f474ce4</a>)  - Updates for the orm sentinel changes (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/3ef9264eba4a1d1735e8fbf2707d950b3a765511">3ef9264</a>)  - Pydantic v2 support + latest litestar support (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4c838990e09d0f17d6bb0aab5ff0883a6f7e2c55">4c83899</a>)  - Docker build improvements (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2a12cada9d8b0fd173c962309aa2644271e3e323">2a12cad</a>)  - Reference library version as default openapi version (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e460d5db45e6b973accda9aea218910923ab5c79">e460d5d</a>)  - Additional deprecation changes (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c683d30281a938cea7550e0084d3d96d61b2d59c">c683d30</a>)  - Updated signature namespace (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/891e7321254002c5af4d9a9b1590a85a9bd4e12b">891e732</a>)  - Docker compose shell command (#40) (Faolain)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5fcc4e2be51b1289fe2f5f234b0b215c438f9734">5fcc4e2</a>)  - Handle breaking change from middleware updates to litestar (#44) (Faolain)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/a755dd0cbe5c6fb9ac3f1a50613c7e86181c4734">a755dd0</a>)  - Update pre-commit, remove re2 (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9b6c38edfaadecc52e179497d7c16cf57d8c7cc0">9b6c38e</a>)  - Remove <cite>mypy.ini</cite> reference from Dockerfile (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2be7ac7aaf23293ea064edd7970db7ab39d30bfd">2be7ac7</a>)  - Update copy-pasted description of the <cite>reset-database</cite> CLI command (#47) (0xSwego), Co-authored-by:0xSwego &lt;OxSwego&#64;gmail.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7a2f79c00d8c940de9a9b2720edd9b6db4122af3">7a2f79c</a>)  - Update <cite>cp .env</cite> command in documentation (#46) (0xSwego), Co-authored-by:0xSwego &lt;OxSwego&#64;gmail.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/eeec275c135d6db41d203ac5742b6fdb4286ccb0">eeec275</a>)  - Use built in auto-commit handler (#63) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5d57a00bcddf7d3c986a2f852ad78cb9063e498d">5d57a00</a>)  - Make sure sessions are closed in tests (#62) (0xSwego), Co-authored-by:0xSwego &lt;OxSwego&#64;gmail.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ad118e87439b433aeafac5edab84c0ec5d0207e1">ad118e8</a>)  - Cleanup tests and correct imports (#71) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d9aa54d0520fd3020735dbe83de7356485214097">d9aa54d</a>)  - Small typo using print (#79) (Manuel Sanchez Pinar)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/62733bd7ed303105d4cca5b301710f54c964f989">62733bd</a>)  - Correct <cite>aiosql</cite> import (#84) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/64da7b7477256200db8595649dc0352faa7fdf0f">64da7b7</a>)  - Update <code class="docutils literal notranslate"><span class="pre">.env</span></code> <code class="docutils literal notranslate"><span class="pre">alembic.ini</span></code> path (#86) (Jacob Coffee)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f23d18173b6adbc36709b8a70aae4adc21465415">f23d181</a>)  - Run async tests with <cite>anyio</cite> and <cite>asyncio</cite> backend (#89) (Franz)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/8a89fa11e9b48cd925f0352aad5f762740315282">8a89fa1</a>)  - Handle default behaviour change in <cite>CollectionFilter</cite> for empty lists (#90) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/6303474563e452475916ba488fe48d74170c7c0c">6303474</a>)  - Updates for <cite>AsyncCallable</cite> changes (#94) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e1889694de6ec37d068e1866c65a6f794bae8d89">e188969</a>)  - Adds anyio marker (#95) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/492cec66b027bb36256350bfb8fc1e2248985c8c">492cec6</a>)  - Add infrastructure checks for <cite>redis</cite> and <cite>postgres</cite> (#99) (Cody Fincher), Co-authored-by:Faolain &lt;Faolain&#64;users.noreply.github.com&gt;</p></li>
+<li><p>feat: use <cite>docker-compose</cite> in test or by config</p></li>
+<li><p>feat: remove unused extra code</p></li>
+<li><p>chore: bump deps</p></li>
+</ul>
+<p>———, Co-authored-by:Kumzy &lt;Kumzy&#64;users.noreply.github.com&gt;, Co-authored-by:Faolain &lt;Faolain&#64;users.noreply.github.com&gt;</p>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/94637345ea19610e1ebd9b5a28024f704130558d">9463734</a>)  - Adds banner artwork for future updates (#61) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/80ad7e432175a77ea2aceb99480fa06622e10e21">80ad7e4</a>)  - Update README.md features (#68) (Tom V), Co-authored-by:Cody Fincher &lt;204685+cofin&#64;users.noreply.github.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/464043eb4315419caf3358096bfe38a9425e7cdd">464043e</a>)  - Fix pdm install command (#93) (Faolain)</p></li>
+</ul>
+</section>
+<section id="fix">
+<h3>FIX<a class="headerlink" href="#fix" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5997f90314fb07f6d42e1bc756bcf32c413cf011">5997f90</a>)  - Change 401 to 403 for insufficient privileges (#10) (Benjamin Pereto)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/95f19b3fb76da60d2d45b951ba7544288c22db30">95f19b3</a>)  - Fields for Before and After filters (#9) (Benjamin Pereto)</p></li>
+</ul>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/044e271fcd299b02ff979b9beb10bbf341b80490">044e271</a>)  - Dynamically set the reload dir based on module path. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7259fc8711959b22b8faa5a676d3135458a7ae92">7259fc8</a>)  - Launch worker in-process or as standalone with CLI flags. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5b2bdb76f4a7b6fd917874513ae854fa2fca74d2">5b2bdb7</a>)  - Adds ruff integration (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/dfa670d7c3361162662e537a27281c6a9332e7f8">dfa670d</a>)  - Renamed background worker setting name (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ca68c70e7eb1f67b098a53a1d31f0920f3d0bed4">ca68c70</a>)  - Add slugify function (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5d4a80391d2dac739ca3312457522735bac83a26">5d4a803</a>)  - Argon2 crypt config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b559622224e4ee5aee549b48963650f8a16d6e7e">b559622</a>)  - Security config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1a70320df6fdf499f30171db7c730bb75fdfbbfd">1a70320</a>)  - Implement base of team domain (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0a68149c05f40badb39c067e897c0cc9d805e2d6">0a68149</a>)  - Additional updates for teams (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f7ca0a0d075335dc548d455a4aa04649d95924fa">f7ca0a0</a>)  - Adds CLI test case (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f66df497e63b56969046f738b0939af5e0c5c358">f66df49</a>)  - Updated uvicorn.run, added base schema, (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/28f3d787678df464933010a7c34bb881263bccab">28f3d78</a>)  - Refactored user auth service (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/45d6d29ab2a30d84ca6acfe5314b0f58307321f8">45d6d29</a>)  - Implements new command to start worker independently. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5a6a003478019ba353e6a8fcd369b2525497b9b7">5a6a003</a>)  - Team guards (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c6792117ac74da074b5ed1fa3570da7a979f704b">c679211</a>)  - Adds HTMX library (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/571d81c80637e2b732828e245681ea945abfb454">571d81c</a>)  - Updated build process to also download wheels if needed (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/ea2d0ebdb6443a7d158d5e8919af9b0211d523e2">ea2d0eb</a>)  - Adds js for generating routes. adapted  from flask-inertia (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4ee18d541ac94914872fa923b0e0da5e074cfe50">4ee18d5</a>)  - Launches vite in a separate process (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/3edd174955fd6de6a76ca728b5a5f1e72590904b">3edd174</a>)  - Moves to signature provider (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f09c144ab39c98cddc43c9c841af2794f7593116">f09c144</a>)  - Utilize the <cite>ruff</cite> and <cite>pre-commit</cite> configurations from <cite>starlite</cite> (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/3e4a4ad2b817058eba1f19e8e8339f990428c49a">3e4a4ad</a>)  - New controllers and commands (#8) (Cody Fincher), Features:- Adds <cite>promote-to-superuser</cite> management command.  This allows you to promote an existing user to a superuser from the command line: <cite>poetry run app manage promote-to-superuser –email example&#64;string.com</cite>
+- Adds <cite>create-user</cite> management command to create users from the CLI.  <cite>poetry run app manage create-user</cite>
+- Adds User Account CRUD routes that require superuser access to utilize (promote your user with the above command to test)
+- Adds <cite>created</cite>,`updated` Audit columns to model and squashed migrations.  Please run <cite>poetry run app manage reset-database</cite> to reset your database with the latest DDL.
+- Adds base of Team, Team Member, and Team Invitation services.</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7ae84116ab20ebe8dfe618b3ab314cfe9a523a01">7ae8411</a>)  - Adds exists and updated type check logic (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5c5874bdd8139484015aeeed33b9e129fb12a654">5c5874b</a>)  - <cite>litestar</cite> rebrand (#11) (Cody Fincher), Co-authored-by:Cody Fincher &lt;cody&#64;gluent.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b2b87d4a68fa5c6ca4a7a48752e83c2d816fd12d">b2b87d4</a>)  - Team controller and service updates (#12) (Cody Fincher), Co-authored-by:Cody Fincher &lt;cody&#64;gluent.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/84a7b2b21f072b246998d4313a3258728ff332ba">84a7b2b</a>)  - Upgrade to Litestar alpha 5 &amp; testing updates (#15) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/95581dae96de6528224b38ed45c441bcd5f204bf">95581da</a>)  - Adds an example of integrating <cite>aiosql</cite>, <cite>sqlalchemy</cite> and <cite>litestar</cite> (#16) (Cody Fincher), Co-authored-by:Cody Fincher &lt;cody.fincher&#64;gmail.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9547e93d8ec8c919ceaca828f5dbd3448c50f300">9547e93</a>)  - Add additional association proxies (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4167014d76836adde626a16fedd064d69a2f5422">4167014</a>)  - Basic example of calling the litestar cli from another click app. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/fccd30674eab65b908dba138e1de8c99f576f049">fccd306</a>)  - Adds tests for crypt functions (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/fb666b2921b625522c8bc3bcf5c64cb89df72e27">fb666b2</a>)  - Adds additional tests for user login (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/2ea42c0a2d4042a3e1d56810d9b29f344ecf66ba">2ea42c0</a>)  - System health check endpoint and additional test. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/615cb1d410c407e67755602411487f83209e7d7e">615cb1d</a>)  - Serves the SAQ UI through Litestar (#20) (Cody Fincher), Changelog:* fix: removes dict tracebacks that sometimes cause serializing issues</p>
+<ul>
+<li><p>fix: linting changes</p></li>
+<li><p>feat: updated worker pattern</p></li>
+<li><p>feat: additional work on saq web UI integration</p></li>
+<li><p>feat: re-implements saq UI in Litestar.</p></li>
+</ul>
+</li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9a419eec3ebcb57c287e0975571719693e38c9bb">9a419ee</a>)  - Makefile enhancements.  additional serializers in the msgspec handlers (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d1d0ebfe8f2eda255d5a072903443a56e47a3c16">d1d0ebf</a>)  - Adds ability to have tasks and jobs available on different queues. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b1ed90be54dd8c96d520452f56f93a7ba517f9d2">b1ed90b</a>)  - Move saq to plugin (#34) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/8701612670205417cde095e01d9a81c774dccaec">8701612</a>)  - Adds <cite>to_dto</cite> method to service (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/c2a5e16c6e559eb61bb4b030e91a17922c60cb95">c2a5e16</a>)  - App now uses litestar CLI (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7037c8379a47df5ef7ce5ce655c5f347e70e5542">7037c83</a>)  - Swap to main branch of litestar (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/661a26690c61d6fb28347853049e7507b6d26ad1">661a266</a>)  - Add example of default sorts (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/bf3dc664414fc72148a3eb22b3624e0f39845ca2">bf3dc66</a>)  - Adds example of many-to-many without association table. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/eedd47b609fbe00d3f2a694e000fa41599f85655">eedd47b</a>)  - Moves to dto implementation. (#36) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/959db41333acde190c25e49869729a7abd01c978">959db41</a>)  - Docker build enhancements. (#37) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d5d85d8f799b135f62fd4c25902b36a219634448">d5d85d8</a>)  - Enhanced migration template (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/478c7ef89f8ed9375aabe052b86af18de967f60c">478c7ef</a>)  - Implement batched alter statements (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/152cea77647951e14c444202ebbc2cea4f9a0b54">152cea7</a>)  - Create <cite>contrib</cite> folder for easier management of plugins. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4466b8208f3eed6b7772bf8256d2093745988094">4466b82</a>)  - Move vite into a plugin format (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d0490d55d274c12144949c1c61e92db5fb60525e">d0490d5</a>)  - Rudimentary Windows support (#39) (Ephedra), Co-authored-by:3phedra &lt;v.w&#64;mailbox.org&gt;, Co-authored-by:Cody Fincher &lt;cody.fincher&#64;gmail.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/bf24bb3718e7052cd24ae59955f05af8c7ca25df">bf24bb3</a>)  - Re-add imports (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/3185c955179a9e1f763426c1ec81683afc74f788">3185c95</a>)  - Upgraded support for litestar 2.1.1 (#78) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/6bf83ba05f4800a989f37d34a8b3ec3138240295">6bf83ba</a>)  - Enable Alembic CLI integration (#80) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/01880bdf10b06d4a342831a7be13c178de1bf57f">01880bd</a>)  - Swap to <cite>aiosql</cite>, <cite>vite</cite>, and <cite>saq</cite> plugins (#82) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0587794c3acc0e17ec4175fe3a5a9ea9e269e47f">0587794</a>)  - Move to <cite>advanced_alchemy</cite> services (#85) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/df72846a6258ca9ef2de9e7ff1ceae80679834c4">df72846</a>)  - Adds a custom entrypoint (#92) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/64a286635533266efcc47cf715e95586e084f277">64a2866</a>)  - Add version identifier for pdm, railway, rtx, etc. (Jacob Coffee)</p></li>
+</ul>
+</section>
+<section id="miscellaneous-tasks">
+<h3>Miscellaneous Tasks<a class="headerlink" href="#miscellaneous-tasks" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/05233d281f5a735b032c73d1d744e82efbdf0bcd">05233d2</a>)  - Docstring cleanup. (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/111cbc3f9419d609bdf084c947e3bf20d26e8a90">111cbc3</a>)  - Documentation update (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/6389a182f1178529184cbe5c15204d0872f76565">6389a18</a>)  - Linting/repo cleanup (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/a12dc28533fb11f5a30c4edbdb9265870a33eb0c">a12dc28</a>)  - Linting updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d899658e5d6a858a80ef65d8ef9e50d662c63fdd">d899658</a>)  - Linting updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/584ded72f13acfeb9163b684549e28fabbc811b2">584ded7</a>)  - Linting updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/627021c2754e5ce83df5b092e0afe88f4d3c12ca">627021c</a>)  - Updated ruff config (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e59748c7866c85c1aa23af700487b5e41b0acac6">e59748c</a>)  - Version bumps (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7cdf5e09d3fd26e0633dd286346cde024bdf7968">7cdf5e0</a>)  - Added additional note (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/486c0ca5ef36c47706a0d4df0a70ae5514ec3669">486c0ca</a>)  - Updated readme.md (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/fdf6fa1020770dbca1bf23f3b7ab65b081ded0b2">fdf6fa1</a>)  - Add more to the readme (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/43eb06578cf49884518cfbe6b512e204d472624b">43eb065</a>)  - Formatting (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1c852588b076061ab71410aa345aa315ae6a44ac">1c85258</a>)  - More formatting (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9cd5d1f265f271365a61e36b1a6c3b7eb2b7d43a">9cd5d1f</a>)  - More updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/a82fbf5e7227650082d0dc30acd88c323d6af1a1">a82fbf5</a>)  - Added additional notes and links (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/825b168eac86c893eaeb49af3698fa5ef46f9744">825b168</a>)  - Version bumps (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/4e00391c99128ce05f7fbc7c73f3f43edc935f8a">4e00391</a>)  - Linting updates (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/d38039a23efe65db3f4f2a76441f0b619d69c1e2">d38039a</a>)  - Lint/version bumps (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/046592ece2abe69c7dd66f6757cd9bd49c4f6e17">046592e</a>)  - Version bump (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/691770d56f23001f140098f09ef0727bac594b4a">691770d</a>)  - Upgrade to beta4 (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f8baaa69a719f8a02e0fe4ebf9dcebec335712a5">f8baaa6</a>)  - Bump actions/checkout from 3 to 4 (dependabot[bot]), Signed-off-by:dependabot[bot] &lt;support&#64;github.com&gt;</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/fc91c18af7acd97f8c4e79169739caa86d30a967">fc91c18</a>)  - Migrate to PDM (#81) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/649cbddb2537bd41126f8c40227438cc57261ebf">649cbdd</a>)  - Align license with litestar-org (#83) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/06c0b5f2e19d08fac76a1a8c1542d75e2385c167">06c0b5f</a>)  - Correct container build issues (#87) (Cody Fincher), fix:address build issues and move to the latest litestar (#87)</p></li>
+</ul>
+</section>
+<section id="testing">
+<h3>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/074f8ba736bab7c59232c5f7d28280d8b6ef5749">074f8ba</a>)  - Remove pytest docker and replace with custom implementation (Cody Fincher)</p></li>
+</ul>
+</section>
+<section id="ci">
+<h3>Ci<a class="headerlink" href="#ci" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b4ae5eef21b1de8a5a216dc7561133643ea66fcd">b4ae5ee</a>)  - Move mypy config to pyproject.toml.  Address deprecated import (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1b91b053a46a64d332e51b4c81c9f9c9b527d5ea">1b91b05</a>)  - Apply pre-commit (Jacob Coffee)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/45f7a0983c735d87a3616a032d2d28bcb07c36b9">45f7a09</a>)  - Fix badges (Jacob Coffee)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/f11fdc4d38a2ee04059642d3b66c865ce5c8dd16">f11fdc4</a>)  - Fix badges (Jacob Coffee)</p></li>
+</ul>
+</section>
+<section id="infra">
+<h3>Infra<a class="headerlink" href="#infra" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/42a8f6623f8fdfbed02682a69658415b61fe3dbf">42a8f66</a>)  - Set host to <cite>0.0.0.0</cite> instead of <cite>127.0.0.1</cite>.  This enables external access to the container. (#60) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/39ba71b665784a3a768d8f1c4e1f0d779fab15b7">39ba71b</a>)  - Fix <cite>source</cite> not found on some shells (#64) (Cody Fincher)</p></li>
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/0ef30d73d4c5622ce2da94b882ba82935b0c284e">0ef30d7</a>)  - Adds docker compose for running redis, db, mailhog only (#65) (Cody Fincher)</p></li>
+</ul>
+</section>
+<section id="meta">
+<h3>Meta<a class="headerlink" href="#meta" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9a84690bb40d8c9324579c08d5df55f74e609e03">9a84690</a>)  - Org updates (#72) (Jacob Coffee)</p></li>
+</ul>
+</section>
+<section id="wip">
+<h3>Wip<a class="headerlink" href="#wip" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/84af1da3837ee8ad11cfa904e651a18cdc751614">84af1da</a>)  - Begin refactoring for 2.0 (Cody Fincher)</p></li>
+</ul>
+<p>Litestar Fullstack Changelog</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="contribution-guide.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Contribution Guide</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">[unreleased]</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bug-fixes">Bug Fixes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fix">FIX</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#miscellaneous-tasks">Miscellaneous Tasks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ci">Ci</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#infra">Infra</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#meta">Meta</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wip">Wip</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="_sources/changelog.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2023, Litestar Organization.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

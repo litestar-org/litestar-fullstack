@@ -1,0 +1,1139 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Development &#8212; Litestar Fullstack Docs</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css?v=9e3812bb" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/litestar-theme.js?v=ab2dcc9e"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'usage/development';</script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Starting the server" href="startup.html" />
+    <link rel="prev" title="Getting Started" href="installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+   
+
+<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
+    <script>document.write(`<img src="../_static/logo.svg" class="logo__image only-dark" alt="Litestar Fullstack Docs - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="../index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="../contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="../index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="../contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Usage</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Starting the server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/utils.html">utils</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/domain/index.html">domain</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/urls.html">urls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/security.html">security</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/tasks.html">tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/tags/index.html">tags</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/analytics/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/analytics/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/analytics/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/analytics/queries.html">queries</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/domain/accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/cache.html">cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/compression.html">compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/constants.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/cors.html">cors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/crypt.html">crypt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/csrf.html">csrf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/openapi.html">openapi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/repository.html">repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/serialization.html">serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/service.html">service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/settings.html">settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/static_files.html">static files</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/log/controller.html">controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/log/init.html">init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/log/utils.html">utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/log/worker.html">worker</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/db/base.html">base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/db/orm.html">orm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib/db/utils.html">utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Usage</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Development</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="development">
+<h1>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h1>
+<p>This section describes tips on developing using this example repository.</p>
+<section id="makefile">
+<h2>Makefile<a class="headerlink" href="#makefile" title="Link to this heading">#</a></h2>
+<p>This repository includes a <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> with common commands for development.</p>
+<section id="install-development-environment">
+<h3>Install Development Environment<a class="headerlink" href="#install-development-environment" title="Link to this heading">#</a></h3>
+<p>This command will remove any existing environment and install a new environment with the latest dependencies.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="upgrade-project-dependencies">
+<h3>Upgrade Project Dependencies<a class="headerlink" href="#upgrade-project-dependencies" title="Link to this heading">#</a></h3>
+<p>This command will upgrade all components of the application at the same time. It automatically executes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pdm</span> <span class="pre">upgrade</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">update</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">autoupdate</span></code></p></li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>upgrade
+</pre></div>
+</div>
+</section>
+<section id="execute-pre-commit">
+<h3>Execute Pre-commit<a class="headerlink" href="#execute-pre-commit" title="Link to this heading">#</a></h3>
+<p>This command will automatically execute the pre-commit process for the project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>lint
+</pre></div>
+</div>
+</section>
+<section id="generate-new-migrations">
+<h3>Generate New Migrations<a class="headerlink" href="#generate-new-migrations" title="Link to this heading">#</a></h3>
+<p>This command is a shorthand for executing <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">database</span> <span class="pre">make-migrations</span></code>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>migrations
+</pre></div>
+</div>
+</section>
+<section id="upgrade-a-database-to-the-latest-revision">
+<h3>Upgrade a Database to the Latest Revision<a class="headerlink" href="#upgrade-a-database-to-the-latest-revision" title="Link to this heading">#</a></h3>
+<p>This command is a shorthand for executing <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">database</span> <span class="pre">upgrade</span></code>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>migrate
+</pre></div>
+</div>
+</section>
+<section id="execute-full-test-suite">
+<h3>Execute Full Test Suite<a class="headerlink" href="#execute-full-test-suite" title="Link to this heading">#</a></h3>
+<p>This command executes all tests for the project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="full-makefile">
+<h2>Full Makefile<a class="headerlink" href="#full-makefile" title="Link to this heading">#</a></h2>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Full Makefile<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-make notranslate"><div class="highlight"><pre><span></span><span class="nv">SHELL</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>/bin/bash
+<span class="c"># =============================================================================</span>
+<span class="c"># Variables</span>
+<span class="c"># =============================================================================</span>
+
+<span class="nv">.DEFAULT_GOAL</span><span class="o">:=</span><span class="nb">help</span>
+<span class="nf">.ONESHELL</span><span class="o">:</span>
+<span class="nv">USING_PDM</span><span class="w">		          </span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;tool.pdm&quot;</span><span class="w"> </span>pyproject.toml<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="k">)</span>
+<span class="nv">USING_NPM</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;package-lock.json&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">ENV_PREFIX</span><span class="w">		        </span><span class="o">=</span>.venv/bin/
+<span class="nv">VENV_EXISTS</span><span class="w">           </span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;.venv/bin/activate&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">NODE_MODULES_EXISTS</span><span class="w">		</span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;node_modules&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">SRC_DIR</span><span class="w">               </span><span class="o">=</span>src
+<span class="nv">BUILD_DIR</span><span class="w">             </span><span class="o">=</span>dist
+<span class="nv">PDM_OPTS</span><span class="w"> 		          </span><span class="o">?=</span>
+<span class="nv">PDM</span><span class="w"> 			            </span><span class="o">?=</span><span class="w"> 	</span>pdm<span class="w"> </span><span class="k">$(</span>PDM_OPTS<span class="k">)</span>
+
+<span class="nf">.EXPORT_ALL_VARIABLES</span><span class="o">:</span>
+
+<span class="cp">ifndef VERBOSE</span>
+<span class="nf">.SILENT</span><span class="o">:</span>
+<span class="cp">endif</span>
+
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">help</span>
+<span class="nf">help</span><span class="o">:</span><span class="w"> 		   										</span><span class="c">## Display this help text for Makefile</span>
+<span class="w">	</span>@awk<span class="w"> </span><span class="s1">&#39;BEGIN {FS = &quot;:.*##&quot;; printf &quot;\nUsage:\n  make \033[36m&lt;target&gt;\033[0m\n&quot;} /^[a-zA-Z0-9_-]+:.*?##/ { printf &quot;  \033[36m%-15s\033[0m %s\n&quot;, $$1, $$2 } /^##@/ { printf &quot;\n\033[1m%s\033[0m\n&quot;, substr($$0, 5) } &#39;</span><span class="w"> </span><span class="k">$(</span>MAKEFILE_LIST<span class="k">)</span>
+
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">upgrade</span>
+<span class="nf">upgrade</span><span class="o">:</span><span class="w">       										</span><span class="c">## Upgrade all dependencies to the latest stable versions</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Updating all dependencies&quot;</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>USING_PDM<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="k">$(</span>PDM<span class="k">)</span><span class="w"> </span>update<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Python Dependencies Updated&quot;</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>USING_NPM<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>npm<span class="w"> </span>upgrade<span class="w"> </span>--latest<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Node Dependencies Updated&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pre-commit<span class="w"> </span>autoupdate
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Updated Pre-commit&quot;</span>
+
+
+<span class="c"># =============================================================================</span>
+<span class="c"># Developer Utils</span>
+<span class="c"># =============================================================================</span>
+<span class="nf">install-pdm</span><span class="o">:</span><span class="w"> 										</span><span class="c">## Install latest version of PDM</span>
+<span class="w">	</span>@curl<span class="w"> </span>-sSLO<span class="w"> </span>https://pdm.fming.dev/install-pdm.py<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://pdm.fming.dev/install-pdm.py.sha256<span class="w"> </span><span class="p">|</span><span class="w"> </span>shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>-<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>python3<span class="w"> </span>install-pdm.py
+
+<span class="nf">install</span><span class="o">:</span><span class="w">											</span><span class="c">## Install the project and</span>
+<span class="w">	</span>@if<span class="w"> </span>!<span class="w"> </span><span class="k">$(</span>PDM<span class="k">)</span><span class="w"> </span>--version<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;=&gt; Installing PDM&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">$(</span>MAKE<span class="k">)</span><span class="w"> </span>install-pdm<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>VENV_EXISTS<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=&gt; Removing existing virtual environment&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="cp">	if [ &quot;$(VENV_EXISTS)&quot; ]; then $(MAKE) destroy-venv; fi</span>
+<span class="cp">	if [ &quot;$(VENV_EXISTS)&quot; ]; then $(MAKE) clean; fi</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>NODE_MODULES_EXISTS<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=&gt; Removing existing node modules&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="cp">	if [ &quot;$(NODE_MODULES_EXISTS)&quot; ]; then $(MAKE) destroy-node_modules; fi</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>USING_PDM<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="k">$(</span>PDM<span class="k">)</span><span class="w"> </span>config<span class="w"> </span>venv.in_project<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>--copies<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span><span class="k">$(</span>ENV_PREFIX<span class="k">)</span>/activate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">$(</span>ENV_PREFIX<span class="k">)</span>/pip<span class="w"> </span>install<span class="w"> </span>--quiet<span class="w"> </span>-U<span class="w"> </span>wheel<span class="w"> </span>setuptools<span class="w"> </span>cython<span class="w"> </span>pip<span class="w"> </span>mypy<span class="w"> </span>nodeenv<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>USING_PDM<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="k">$(</span>PDM<span class="k">)</span><span class="w"> </span>install<span class="w"> </span>-G:all<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Install complete! Note: If you want to re-install re-run &#39;make install&#39;&quot;</span>
+
+
+<span class="nf">clean</span><span class="o">:</span><span class="w"> 												</span><span class="c">## Cleanup temporary build artifacts</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Cleaning working directory&quot;</span>
+<span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>.pytest_cache<span class="w"> </span>.ruff_cache<span class="w"> </span>.hypothesis<span class="w"> </span>build/<span class="w"> </span>-rf<span class="w"> </span>dist/<span class="w"> </span>.eggs/<span class="w"> </span>.coverage<span class="w"> </span>coverage.xml<span class="w"> </span>coverage.json<span class="w"> </span>htmlcov/<span class="w"> </span>.mypy_cache
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg-info&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyc&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyo&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*~&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;__pycache__&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;.pytest_cache&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;.ipynb_checkpoints&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+
+<span class="nf">destroy-venv</span><span class="o">:</span><span class="w"> 											</span><span class="c">## Destroy the virtual environment</span>
+<span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>.venv
+
+<span class="nf">destroy-node_modules</span><span class="o">:</span><span class="w"> 											</span><span class="c">## Destroy the node environment</span>
+<span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>node_modules
+
+<span class="nf">migrations</span><span class="o">:</span><span class="w">       </span><span class="c">## Generate database migrations</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;ATTENTION: This operation will create a new database migration for any defined models changes.&quot;</span>
+<span class="w">	</span>@while<span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$$</span><span class="s2">MIGRATION_MESSAGE&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;Migration message: &quot;</span><span class="w"> </span>MIGRATION_MESSAGE<span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="p">;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>app<span class="w"> </span>database<span class="w"> </span>make-migrations<span class="w"> </span>--autogenerate<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$$</span><span class="s2">{MIGRATION_MESSAGE}&quot;</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">migrate</span>
+<span class="nf">migrate</span><span class="o">:</span><span class="w">          </span><span class="c">## Generate database migrations</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;ATTENTION: Will apply all database migrations.&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>app<span class="w"> </span>database<span class="w"> </span>upgrade
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>
+<span class="nf">build</span><span class="o">:</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Building package...&quot;</span>
+<span class="w">	</span>@if<span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>USING_PDM<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>pdm<span class="w"> </span>build<span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Package build complete...&quot;</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">refresh</span>-<span class="n">lockfiles</span>
+<span class="nf">refresh-lockfiles</span><span class="o">:</span><span class="w">                                 </span><span class="c">## Sync lockfiles with requirements files.</span>
+<span class="w">	</span>@pdm<span class="w"> </span>update<span class="w"> </span>--update-reuse<span class="w"> </span>--group<span class="w"> </span>:all
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lock</span>
+<span class="nf">lock</span><span class="o">:</span><span class="w">                                             </span><span class="c">## Rebuild lockfiles from scratch, updating all dependencies</span>
+<span class="w">	</span>@pdm<span class="w"> </span>update<span class="w"> </span>--update-eager<span class="w"> </span>--group<span class="w"> </span>:all
+
+<span class="c"># =============================================================================</span>
+<span class="c"># Tests, Linting, Coverage</span>
+<span class="c"># =============================================================================</span>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span>
+<span class="nf">lint</span><span class="o">:</span><span class="w"> 												</span><span class="c">## Runs pre-commit hooks; includes ruff linting, codespell, black</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running pre-commit process&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Pre-commit complete&quot;</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">coverage</span>
+<span class="nf">coverage</span><span class="o">:</span><span class="w">  											</span><span class="c">## Run the tests and generate coverage report</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running tests with coverage&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pytest<span class="w"> </span>tests<span class="w"> </span>--cov<span class="o">=</span>app
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>coverage<span class="w"> </span>html
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>coverage<span class="w"> </span>xml
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Coverage report generated&quot;</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>
+<span class="nf">test</span><span class="o">:</span><span class="w">  												</span><span class="c">## Run the tests</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running test cases&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pytest<span class="w"> </span>tests
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Tests complete&quot;</span>
+
+<span class="c"># =============================================================================</span>
+<span class="c"># Docs</span>
+<span class="c"># =============================================================================</span>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">install</span>
+<span class="nf">docs-install</span><span class="o">:</span><span class="w"> 										</span><span class="c">## Install docs dependencies</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Installing documentation dependencies&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>PDM<span class="k">)</span><span class="w"> </span>install<span class="w"> </span>-dG:docs
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Installed documentation dependencies&quot;</span>
+
+<span class="nf">docs-clean</span><span class="o">:</span><span class="w"> 										</span><span class="c">## Dump the existing built docs</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Cleaning documentation build assets&quot;</span>
+<span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>docs/_build
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Removed existing documentation build assets&quot;</span>
+
+<span class="nf">docs-serve</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span> 								<span class="c">## Serve the docs locally</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Serving documentation&quot;</span>
+<span class="w">	</span><span class="k">$(</span>PDM_RUN_BIN<span class="k">)</span><span class="w"> </span>sphinx-autobuild<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>--watch<span class="w"> </span>src<span class="w"> </span>--watch<span class="w"> </span>docs<span class="w"> </span>--watch<span class="w"> </span>tests<span class="w"> </span>--watch<span class="w"> </span>CONTRIBUTING.rst<span class="w"> </span>--port<span class="w"> </span><span class="m">8002</span>
+
+<span class="nf">docs</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span> 									<span class="c">## Dump the existing built docs and rebuild them</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Building documentation&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>PDM_RUN_BIN<span class="k">)</span><span class="w"> </span>sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-E<span class="w"> </span>-a<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>--keep-going
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="installation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Getting Started</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="startup.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Starting the server</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#makefile">Makefile</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-development-environment">Install Development Environment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-project-dependencies">Upgrade Project Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-pre-commit">Execute Pre-commit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-new-migrations">Generate New Migrations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-a-database-to-the-latest-revision">Upgrade a Database to the Latest Revision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-full-test-suite">Execute Full Test Suite</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-makefile">Full Makefile</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/usage/development.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2023, Litestar Organization.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
