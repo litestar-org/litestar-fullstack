@@ -36,6 +36,7 @@ default_processors = [
     structlog.processors.add_log_level,
     structlog.processors.TimeStamper(fmt="iso", utc=True),
 ]
+"""Default processors to apply to all loggers. See :mod:`structlog.processors` for more information."""
 
 stdlib_processors = [
     structlog.processors.TimeStamper(fmt="iso", utc=True),
@@ -44,6 +45,7 @@ stdlib_processors = [
     EventFilter(["color_message"]),
     structlog.stdlib.ProcessorFormatter.remove_processors_meta,
 ]
+"""Processors to apply to the stdlib logger. See :mod:`structlog.stdlib` for more information."""
 
 if sys.stderr.isatty() or "pytest" in sys.modules:  # pragma: no cover
     LoggerFactory: Any = structlog.WriteLoggerFactory
@@ -61,10 +63,16 @@ else:
 def configure(processors: Sequence[Processor]) -> None:
     """Call to configure `structlog` on app startup.
 
-    The calls to `structlog.get_logger()` in `controller.py` and
-    `worker.py` return proxies to the logger that is eventually called
+    The calls to :func:`get_logger() <structlog.get_logger()>` and ``worker.py``
+    in :mod:`controller.py <app.lib.log.controller>`  return proxies to the logger that is eventually called
     after this configurator function has been called. Therefore, nothing
     should try to log via structlog before this is called.
+
+    Args:
+        processors: A list of processors to apply to all loggers
+
+    Returns:
+        None
     """
     structlog.configure(
         cache_logger_on_first_use=True,
@@ -117,6 +125,10 @@ blocking manner.
 
 def get_logger(*args: Any, **kwargs: Any) -> BoundLogger:
     """Return a configured logger for the given name.
+
+    Args:
+        *args: Positional arguments to pass to :func:`get_logger() <structlog.get_logger()>`
+        **kwargs: Keyword arguments to pass to :func:`get_logger() <structlog.get_logger()>`
 
     Returns:
         Logger: A configured logger instance

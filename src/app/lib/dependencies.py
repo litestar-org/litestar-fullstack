@@ -55,14 +55,11 @@ def provide_id_filter(
 ) -> CollectionFilter[UUID]:
     """Return type consumed by ``Repository.filter_in_collection()``.
 
-    Parameters
-    ----------
-    ids : list[UUID] | None
-        Parsed out of comma separated list of values in query params.
+    Args:
+        ids (list[UUID] | None): Parsed out of a comma-separated list of values in query params.
 
     Returns:
-    -------
-    CollectionFilter[UUID]
+        CollectionFilter[UUID]: Filter for a scoping query to a limited set of identities.
     """
     return CollectionFilter(field_name="id", values=ids or [])
 
@@ -73,12 +70,12 @@ def provide_created_filter(
 ) -> BeforeAfter:
     """Return type consumed by `Repository.filter_on_datetime_field()`.
 
-    Parameters
-    ----------
-    before : datetime | None
-        Filter for records updated before this date/time.
-    after : datetime | None
-        Filter for records updated after this date/time.
+    Args:
+        before (DTorNone): Filter for records created before this date/time.
+        after (DTorNone): Filter for records created after this date/time.
+
+    Returns:
+        BeforeAfter: Filter for scoping query to instance creation date/time.
     """
     return BeforeAfter("created_at", before, after)
 
@@ -97,12 +94,13 @@ def provide_search_filter(
 
     Return type consumed by `Repository.apply_search_filter()`.
 
-    Parameters
-    ----------
-    field : int
-        LIMIT to apply to select.
-    page_size : int
-        OFFSET to apply to select.
+    Args:
+        field (StringOrNone): Field name to search.
+        search (StringOrNone): Value to search for.
+        ignore_case (BooleanOrNone): Whether to ignore case when searching.
+
+    Returns:
+        SearchFilter: Filter for searching fields.
     """
     return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)  # type: ignore[arg-type]
 
@@ -113,14 +111,14 @@ def provide_order_by(
 ) -> OrderBy:
     """Add offset/limit pagination.
 
-    Return type consumed by `Repository.apply_order_by()`.
+    Return type consumed by ``Repository.apply_order_by()``.
 
-    Parameters
-    ----------
-    field_name : str
-        Field name to order by.
-    sort_order : str
-        Order field ascending ('asc') or descending ('desc)
+    Args:
+        field_name (StringOrNone): Field name to order by.
+        sort_order (SortOrderOrNone): Order field ascending ('asc') or descending ('desc)
+
+    Returns:
+        OrderBy: Order by for query.
     """
     return OrderBy(field_name=field_name, sort_order=sort_order)  # type: ignore[arg-type]
 
@@ -131,14 +129,14 @@ def provide_updated_filter(
 ) -> BeforeAfter:
     """Add updated filter.
 
-    Return type consumed by `Repository.filter_on_datetime_field()`.
+    Return type consumed by ``Repository.filter_on_datetime_field()``.
 
-    Parameters
-    ----------
-    before : datetime | None
-        Filter for records updated before this date/time.
-    after : datetime | None
-        Filter for records updated after this date/time.
+    Args:
+        before (DTorNone): Filter for records updated before this date/time.
+        after (DTorNone): Filter for records updated after this date/time.
+
+    Returns:
+        BeforeAfter: Filter for scoping query to instance update date/time.
     """
     return BeforeAfter("updated_at", before, after)
 
@@ -154,14 +152,14 @@ def provide_limit_offset_pagination(
 ) -> LimitOffset:
     """Add offset/limit pagination.
 
-    Return type consumed by `Repository.apply_limit_offset_pagination()`.
+    Return type consumed by ``Repository.apply_limit_offset_pagination()``.
 
-    Parameters
-    ----------
-    current_page : int
-        LIMIT to apply to select.
-    page_size : int
-        OFFSET to apply to select.
+    Args:
+        current_page (int): Page number to return.
+        page_size (int): Number of records per page.
+
+    Returns:
+        LimitOffset: Filter for query pagination.
     """
     return LimitOffset(page_size, page_size * (current_page - 1))
 
@@ -176,34 +174,27 @@ def provide_filter_dependencies(
 ) -> list[FilterTypes]:
     """Provide common collection route filtering dependencies.
 
-    Add all filters to any route by including this function as a dependency, e.g:
+    Add all filters to any route by including this function as a dependency, e.g.:
+
+    .. code-block:: python
 
         @get
         def get_collection_handler(filters: Filters) -> ...:
             ...
-    The dependency is provided at the application layer, so only need to inject the dependency where
+
+    The dependency is provided in the application layer, so only need to inject the dependency where
     necessary.
 
-    Parameters
-    ----------
-    id_filter : repository.CollectionFilter
-        Filter for scoping query to limited set of identities.
-    created_filter : repository.BeforeAfter
-        Filter for scoping query to instance creation date/time.
-    updated_filter : repository.BeforeAfter
-        Filter for scoping query to instance update date/time.
-    limit_offset : repository.LimitOffset
-        Filter for query pagination.
-    search_filter : repository.SearchFilter
-        Filter for searching fields.
-    order_by : repository.OrderBy
-        Order by for query.
-
+    Args:
+        created_filter (BeforeAfter): Filter for a scoping query to instance creation date/time.
+        updated_filter (BeforeAfter): Filter for a scoping query to instance update date/time.
+        id_filter (CollectionFilter): Filter for a scoping query to a limited set of identities.
+        limit_offset (LimitOffset): Filter for query pagination.
+        search_filter (SearchFilter): Filter for searching fields.
+        order_by (OrderBy): Order by for query.
 
     Returns:
-    -------
-    list[FilterTypes]
-        List of filters parsed from connection.
+        list[FilterTypes]: List of filters parsed from connection.
     """
     filters: list[FilterTypes] = []
     if id_filter.values:  # noqa: PD011
@@ -223,8 +214,7 @@ def create_collection_dependencies() -> dict[str, Provide]:
     Creates a dictionary of provides for pagination endpoints.
 
     Returns:
-    -------
-    dict[str, Provide]
+        dict[str, Provide]: Dictionary of provides for pagination endpoints.
     """
     return {
         LIMIT_OFFSET_DEPENDENCY_KEY: Provide(provide_limit_offset_pagination, sync_to_thread=False),

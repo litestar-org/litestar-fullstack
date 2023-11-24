@@ -57,6 +57,7 @@ async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None)
     Args:
         docker_ip: IP address for TCP connection to Docker containers.
         postgres_service: docker service
+
     Returns:
         Async SQLAlchemy engine instance.
     """

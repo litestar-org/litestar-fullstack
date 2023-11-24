@@ -39,7 +39,7 @@ def check_email(email: str) -> str:
 def slugify(value: str, allow_unicode: bool = False, separator: str | None = None) -> str:
     """slugify.
 
-    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+    Convert to ASCII if ``allow_unicode`` is ``False``. Convert spaces or repeated
     dashes to single dashes. Remove characters that aren't alphanumerics,
     underscores, or hyphens. Convert to lowercase. Also strip leading and
     trailing whitespace, dashes, and underscores.
@@ -47,7 +47,8 @@ def slugify(value: str, allow_unicode: bool = False, separator: str | None = Non
     Args:
         value (str): the string to slugify
         allow_unicode (bool, optional): allow unicode characters in slug. Defaults to False.
-        separator (str, optional): by default a `-` is used to delimit word boundaries.  Set this to configure to something different.
+        separator (str, optional): by default a `-` is used to delimit word boundaries.
+            Set this to configure something different.
 
     Returns:
         str: a slugified string of the value parameter
@@ -80,7 +81,15 @@ def case_insensitive_string_compare(a: str, b: str, /) -> bool:
 
 
 def dataclass_as_dict_shallow(dataclass: Any, *, exclude_none: bool = False) -> dict[str, Any]:
-    """Convert a dataclass to dict, without deepcopy."""
+    """Convert a dataclass to dict, without deepcopy.
+
+    Args:
+        dataclass (Any): The dataclass to convert.
+        exclude_none (bool, optional): Exclude None values. Defaults to False.
+
+    Returns:
+        dict[str, Any]: The dataclass as a dict.
+    """
     ret: dict[str, Any] = {}
     for field in dataclasses.fields(dataclass):
         value = getattr(dataclass, field.name)
@@ -94,10 +103,19 @@ def dataclass_as_dict_shallow(dataclass: Any, *, exclude_none: bool = False) -> 
 def module_to_os_path(dotted_path: str = "app") -> Path:
     """Find Module to OS Path.
 
-    Return path to the base directory of the project or the module
+    Return a path to the base directory of the project or the module
     specified by `dotted_path`.
 
-    Ensures that pkgutil returns a valid source file loader.
+    Ensures that ``pkgutil`` returns a valid source file loader.
+
+    Args:
+        dotted_path (str, optional): The path to the module. Defaults to "app".
+
+    Raises:
+        TypeError: The module could not be found.
+
+    Returns:
+        Path: The path to the module.
     """
     src = pkgutil.get_loader(dotted_path)
     if not isinstance(src, SourceFileLoader):

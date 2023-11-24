@@ -37,15 +37,11 @@ async def on_shutdown() -> None:
 def cache_key_builder(request: Request) -> str:
     """App name prefixed cache key builder.
 
-    Parameters
-    ----------
-    request : Request
-        Current request instance.
+    Args:
+        request (Request): Current request instance.
 
     Returns:
-    -------
-    str
-        App slug prefixed cache key.
+        str: App slug prefixed cache key.
     """
     return f"{settings.app.slug}:{default_cache_key_builder(request)}"
 
