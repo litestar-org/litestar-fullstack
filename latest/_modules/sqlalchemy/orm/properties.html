@@ -1,0 +1,1751 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sqlalchemy.orm.properties &#8212; Litestar Fullstack Docs</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
+    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/sqlalchemy/orm/properties';</script>
+    <link rel="icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+   
+
+<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.svg" class="logo__image only-dark" alt="Litestar Fullstack Docs - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="../../../index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="../../../contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+
+
+
+
+    <nav class="hidden lg:flex lg:gap-x-4">
+        
+    
+        
+            <a href="../../../index.html"
+               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            Community
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="../../../contribution-guide.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Contributing
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
+            </div>
+        </div>
+    
+
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" fill="none"
+     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Code of Conduct
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+        
+            
+    <div class="relative">
+        <span type="button"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
+                data-dropdown-state="closed"
+                aria-expanded="false">
+            About
+            <div class="menu-state-indicator flex">
+                
+    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+     aria-hidden="true">
+    <path fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"/>
+</svg>
+
+            </div>
+        </span>
+
+        <div class="
+            absolute -left-8 top-full z-10 mt-3
+            w-max max-w-md
+            overflow-hidden rounded-3xl
+            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
+            hidden
+            st-dropdown-menu">
+            <div class="p-4">
+                
+                    
+    
+        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
+            <div class="
+            h-11 w-11 flex flex-none items-center justify-center
+            rounded-lg
+            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
+            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
+                
+    <svg class="h-6 w-6" aria-hidden="true"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+
+            </div>
+            <div class="flex-auto">
+                
+    <a href="https://litestar.dev/about/organization.html"
+       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
+        Litestar Organization
+        <span class="absolute inset-0"></span>
+    </a>
+
+                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
+            </div>
+        </div>
+    
+
+                
+            </div>
+        </div>
+    </div>
+
+        
+    
+
+    </nav>
+</div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Discord</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/domain/index.html">domain</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/domain/urls.html">urls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/domain/security.html">security</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/tasks.html">tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/tags/index.html">tags</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/queries.html">queries</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/cache.html">cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/compression.html">compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/constants.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/cors.html">cors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/crypt.html">crypt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/csrf.html">csrf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/openapi.html">openapi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/repository.html">repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/serialization.html">serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/service.html">service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/settings.html">settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/static_files.html">static files</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/controller.html">controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/init.html">init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/utils.html">utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/worker.html">worker</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/base.html">base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/orm.html">orm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/utils.html">utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">sqlalchemy.o...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for sqlalchemy.orm.properties</h1><div class="highlight"><pre>
+<span></span><span class="c1"># orm/properties.py</span>
+<span class="c1"># Copyright (C) 2005-2023 the SQLAlchemy authors and contributors</span>
+<span class="c1"># &lt;see AUTHORS file&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># This module is part of SQLAlchemy and is released under</span>
+<span class="c1"># the MIT License: https://www.opensource.org/licenses/mit-license.php</span>
+
+<span class="sd">&quot;&quot;&quot;MapperProperty implementations.</span>
+
+<span class="sd">This is a private module which defines the behavior of individual ORM-</span>
+<span class="sd">mapped attributes.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">attributes</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">strategy_options</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">_DeclarativeMapped</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">class_mapper</span>
+<span class="kn">from</span> <span class="nn">.descriptor_props</span> <span class="kn">import</span> <span class="n">CompositeProperty</span>
+<span class="kn">from</span> <span class="nn">.descriptor_props</span> <span class="kn">import</span> <span class="n">ConcreteInheritedProperty</span>
+<span class="kn">from</span> <span class="nn">.descriptor_props</span> <span class="kn">import</span> <span class="n">SynonymProperty</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">_AttributeOptions</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">_DEFAULT_ATTRIBUTE_OPTIONS</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">_IntrospectsAnnotations</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">_MapsColumns</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">MapperProperty</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">PropComparator</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">StrategizedProperty</span>
+<span class="kn">from</span> <span class="nn">.relationships</span> <span class="kn">import</span> <span class="n">RelationshipProperty</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">de_stringify_annotation</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">de_stringify_union_elements</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exc</span> <span class="k">as</span> <span class="n">sa_exc</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">..sql</span> <span class="kn">import</span> <span class="n">coercions</span>
+<span class="kn">from</span> <span class="nn">..sql</span> <span class="kn">import</span> <span class="n">roles</span>
+<span class="kn">from</span> <span class="nn">..sql.base</span> <span class="kn">import</span> <span class="n">_NoArg</span>
+<span class="kn">from</span> <span class="nn">..sql.schema</span> <span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">..sql.schema</span> <span class="kn">import</span> <span class="n">SchemaConst</span>
+<span class="kn">from</span> <span class="nn">..sql.type_api</span> <span class="kn">import</span> <span class="n">TypeEngine</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">de_optionalize_union_types</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">is_fwd_ref</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">is_optional_union</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">is_pep593</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">is_union</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">Self</span>
+<span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">typing_get_args</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">._typing</span> <span class="kn">import</span> <span class="n">_IdentityKeyType</span>
+    <span class="kn">from</span> <span class="nn">._typing</span> <span class="kn">import</span> <span class="n">_InstanceDict</span>
+    <span class="kn">from</span> <span class="nn">._typing</span> <span class="kn">import</span> <span class="n">_ORMColumnExprArgument</span>
+    <span class="kn">from</span> <span class="nn">._typing</span> <span class="kn">import</span> <span class="n">_RegistryType</span>
+    <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Mapped</span>
+    <span class="kn">from</span> <span class="nn">.decl_base</span> <span class="kn">import</span> <span class="n">_ClassScanMapperConfig</span>
+    <span class="kn">from</span> <span class="nn">.mapper</span> <span class="kn">import</span> <span class="n">Mapper</span>
+    <span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
+    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">_InstallLoaderCallableProto</span>
+    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">InstanceState</span>
+    <span class="kn">from</span> <span class="nn">..sql._typing</span> <span class="kn">import</span> <span class="n">_InfoType</span>
+    <span class="kn">from</span> <span class="nn">..sql.elements</span> <span class="kn">import</span> <span class="n">ColumnElement</span>
+    <span class="kn">from</span> <span class="nn">..sql.elements</span> <span class="kn">import</span> <span class="n">NamedColumn</span>
+    <span class="kn">from</span> <span class="nn">..sql.operators</span> <span class="kn">import</span> <span class="n">OperatorType</span>
+    <span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">_AnnotationScanType</span>
+    <span class="kn">from</span> <span class="nn">..util.typing</span> <span class="kn">import</span> <span class="n">RODescriptorReference</span>
+
+<span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+<span class="n">_PT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_PT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+<span class="n">_NC</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_NC&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;NamedColumn[Any]&quot;</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ColumnProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CompositeProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ConcreteInheritedProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RelationshipProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SynonymProperty&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="nd">@log</span><span class="o">.</span><span class="n">class_logger</span>
+<span class="k">class</span> <span class="nc">ColumnProperty</span><span class="p">(</span>
+    <span class="n">_MapsColumns</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span>
+    <span class="n">StrategizedProperty</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span>
+    <span class="n">_IntrospectsAnnotations</span><span class="p">,</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">Identified</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describes an object attribute that corresponds to a table column</span>
+<span class="sd">    or other column expression.</span>
+
+<span class="sd">    Public constructor is the :func:`_orm.column_property` function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">strategy_wildcard_key</span> <span class="o">=</span> <span class="n">strategy_options</span><span class="o">.</span><span class="n">_COLUMN_TOKEN</span>
+    <span class="n">inherit_cache</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
+
+    <span class="n">_links_to_entity</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedColumn</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
+
+    <span class="n">_is_polymorphic_discriminator</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="n">_mapped_by_synonym</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="n">comparator_factory</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">PropComparator</span><span class="p">[</span><span class="n">_T</span><span class="p">]]</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;columns&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deferred&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;instrument&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;comparator_factory&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;active_history&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expire_on_flush&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_creation_order&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_is_polymorphic_discriminator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_mapped_by_synonym&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_deferred_column_loader&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_raise_column_loader&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_renders_in_subqueries&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;raiseload&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column</span><span class="p">:</span> <span class="n">_ORMColumnExprArgument</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span>
+        <span class="o">*</span><span class="n">additional_columns</span><span class="p">:</span> <span class="n">_ORMColumnExprArgument</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">attribute_options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_AttributeOptions</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deferred</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">raiseload</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">comparator_factory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">PropComparator</span><span class="p">[</span><span class="n">_T</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">active_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">expire_on_flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_InfoType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">doc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_instrument</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">_assume_readonly_dc_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">attribute_options</span><span class="o">=</span><span class="n">attribute_options</span><span class="p">,</span>
+            <span class="n">_assume_readonly_dc_attributes</span><span class="o">=</span><span class="n">_assume_readonly_dc_attributes</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">column</span><span class="p">,)</span> <span class="o">+</span> <span class="n">additional_columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">coercions</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">roles</span><span class="o">.</span><span class="n">LabeledColumnExprRole</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span> <span class="o">=</span> <span class="n">deferred</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raiseload</span> <span class="o">=</span> <span class="n">raiseload</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">_instrument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparator_factory</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">comparator_factory</span>
+            <span class="k">if</span> <span class="n">comparator_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">Comparator</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_history</span> <span class="o">=</span> <span class="n">active_history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expire_on_flush</span> <span class="o">=</span> <span class="n">expire_on_flush</span>
+
+        <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">util</span><span class="o">.</span><span class="n">set_creation_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy_key</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;deferred&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;instrument&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raiseload</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategy_key</span> <span class="o">+=</span> <span class="p">((</span><span class="s2">&quot;raiseload&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),)</span>
+
+    <span class="k">def</span> <span class="nf">declarative_scan</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">decl_scan</span><span class="p">:</span> <span class="n">_ClassScanMapperConfig</span><span class="p">,</span>
+        <span class="n">registry</span><span class="p">:</span> <span class="n">_RegistryType</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">originating_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">mapped_container</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Mapped</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
+        <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_AnnotationScanType</span><span class="p">],</span>
+        <span class="n">extracted_mapped_annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_AnnotationScanType</span><span class="p">],</span>
+        <span class="n">is_dataclass_field</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">key</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mapper_property_to_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MapperProperty</span><span class="p">[</span><span class="n">_T</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">columns_to_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Column</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="c1"># mypy doesn&#39;t care about the isinstance here</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Column</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_memoized_attr__renders_in_subqueries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;query_expression&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy_key</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">_have_default_expression</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;deferred&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy_key</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_readonly_props</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
+
+    <span class="nd">@util</span><span class="o">.</span><span class="n">preload_module</span><span class="p">(</span><span class="s2">&quot;sqlalchemy.orm.state&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlalchemy.orm.strategies&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_memoized_attr__deferred_column_loader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_InstallLoaderCallableProto</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">preloaded</span><span class="o">.</span><span class="n">orm_state</span>
+        <span class="n">strategies</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">preloaded</span><span class="o">.</span><span class="n">orm_strategies</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">InstanceState</span><span class="o">.</span><span class="n">_instance_level_callable_processor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">class_manager</span><span class="p">,</span>
+            <span class="n">strategies</span><span class="o">.</span><span class="n">LoadDeferredColumns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@util</span><span class="o">.</span><span class="n">preload_module</span><span class="p">(</span><span class="s2">&quot;sqlalchemy.orm.state&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlalchemy.orm.strategies&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_memoized_attr__raise_column_loader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_InstallLoaderCallableProto</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">preloaded</span><span class="o">.</span><span class="n">orm_state</span>
+        <span class="n">strategies</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">preloaded</span><span class="o">.</span><span class="n">orm_strategies</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">InstanceState</span><span class="o">.</span><span class="n">_instance_level_callable_processor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">class_manager</span><span class="p">,</span>
+            <span class="n">strategies</span><span class="o">.</span><span class="n">LoadDeferredColumns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__clause_element__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">roles</span><span class="o">.</span><span class="n">ColumnsClauseRole</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow the ColumnProperty to work in expression before it is turned</span>
+<span class="sd">        into an instrumented attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">expression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">roles</span><span class="o">.</span><span class="n">ColumnsClauseRole</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the primary column or expression for this ColumnProperty.</span>
+
+<span class="sd">        E.g.::</span>
+
+
+<span class="sd">            class File(Base):</span>
+<span class="sd">                # ...</span>
+
+<span class="sd">                name = Column(String(64))</span>
+<span class="sd">                extension = Column(String(8))</span>
+<span class="sd">                filename = column_property(name + &#39;.&#39; + extension)</span>
+<span class="sd">                path = column_property(&#39;C:/&#39; + filename.expression)</span>
+
+<span class="sd">        .. seealso::</span>
+
+<span class="sd">            :ref:`mapper_column_property_sql_expressions_composed`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">instrument_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Mapper</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">attributes</span><span class="o">.</span><span class="n">register_descriptor</span><span class="p">(</span>
+            <span class="n">mapper</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+            <span class="n">comparator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comparator_factory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">),</span>
+            <span class="n">parententity</span><span class="o">=</span><span class="n">mapper</span><span class="p">,</span>
+            <span class="n">doc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">do_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_init</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">primary_key</span><span class="p">)</span><span class="o">.</span><span class="n">issuperset</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">columns</span>
+        <span class="p">):</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;On mapper </span><span class="si">%s</span><span class="s2">, primary key column &#39;</span><span class="si">%s</span><span class="s2">&#39; is being combined &quot;</span>
+                    <span class="s2">&quot;with distinct primary key column &#39;</span><span class="si">%s</span><span class="s2">&#39; in attribute &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span>
+                    <span class="s2">&quot;Use explicit properties to give each column its own &quot;</span>
+                    <span class="s2">&quot;mapped attribute name.&quot;</span>
+                <span class="p">)</span>
+                <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColumnProperty</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">ColumnProperty</span><span class="p">(</span>
+            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">deferred</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deferred</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
+            <span class="n">active_history</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_history</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span>
+        <span class="n">source_state</span><span class="p">:</span> <span class="n">InstanceState</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">source_dict</span><span class="p">:</span> <span class="n">_InstanceDict</span><span class="p">,</span>
+        <span class="n">dest_state</span><span class="p">:</span> <span class="n">InstanceState</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">dest_dict</span><span class="p">:</span> <span class="n">_InstanceDict</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">_recursive</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
+        <span class="n">_resolve_conflict_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">_IdentityKeyType</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">object</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">source_dict</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">source_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">load</span><span class="p">:</span>
+                <span class="n">dest_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">impl</span> <span class="o">=</span> <span class="n">dest_state</span><span class="o">.</span><span class="n">get_impl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">impl</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dest_state</span><span class="p">,</span> <span class="n">dest_dict</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dest_state</span><span class="o">.</span><span class="n">has_identity</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dest_dict</span><span class="p">:</span>
+            <span class="n">dest_state</span><span class="o">.</span><span class="n">_expire_attributes</span><span class="p">(</span>
+                <span class="n">dest_dict</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">],</span> <span class="n">no_loader</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Comparator</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">MemoizedSlots</span><span class="p">,</span> <span class="n">PropComparator</span><span class="p">[</span><span class="n">_PT</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce boolean, comparison, and other operators for</span>
+<span class="sd">        :class:`.ColumnProperty` attributes.</span>
+
+<span class="sd">        See the documentation for :class:`.PropComparator` for a brief</span>
+<span class="sd">        overview.</span>
+
+<span class="sd">        .. seealso::</span>
+
+<span class="sd">            :class:`.PropComparator`</span>
+
+<span class="sd">            :class:`.ColumnOperators`</span>
+
+<span class="sd">            :ref:`types_operators`</span>
+
+<span class="sd">            :attr:`.TypeEngine.comparator_factory`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+            <span class="c1"># prevent pylance from being clever about slots</span>
+            <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;__clause_element__&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;expressions&quot;</span>
+
+        <span class="n">prop</span><span class="p">:</span> <span class="n">RODescriptorReference</span><span class="p">[</span><span class="n">ColumnProperty</span><span class="p">[</span><span class="n">_PT</span><span class="p">]]</span>
+
+        <span class="n">expressions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">NamedColumn</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The full sequence of columns referenced by this</span>
+<span class="sd">         attribute, adjusted for any aliasing in progress.</span>
+
+<span class="sd">        .. versionadded:: 1.3.17</span>
+
+<span class="sd">        .. seealso::</span>
+
+<span class="sd">           :ref:`maptojoin` - usage example</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_orm_annotate_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="n">_NC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_NC</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;annotate and possibly adapt a column to be returned</span>
+<span class="sd">            as the mapped-attribute exposed version of the column.</span>
+
+<span class="sd">            The column in this context needs to act as much like the</span>
+<span class="sd">            column in an ORM mapped context as possible, so includes</span>
+<span class="sd">            annotations to give hints to various ORM functions as to</span>
+<span class="sd">            the source entity of this column.   It also adapts it</span>
+<span class="sd">            to the mapper&#39;s with_polymorphic selectable if one is</span>
+<span class="sd">            present.</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">pe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parententity</span>
+            <span class="n">annotations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;entity_namespace&quot;</span><span class="p">:</span> <span class="n">pe</span><span class="p">,</span>
+                <span class="s2">&quot;parententity&quot;</span><span class="p">:</span> <span class="n">pe</span><span class="p">,</span>
+                <span class="s2">&quot;parentmapper&quot;</span><span class="p">:</span> <span class="n">pe</span><span class="p">,</span>
+                <span class="s2">&quot;proxy_key&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="n">col</span> <span class="o">=</span> <span class="n">column</span>
+
+            <span class="c1"># for a mapper with polymorphic_on and an adapter, return</span>
+            <span class="c1"># the column against the polymorphic selectable.</span>
+            <span class="c1"># see also orm.util._orm_downgrade_polymorphic_columns</span>
+            <span class="c1"># for the reverse operation.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentmapper</span><span class="o">.</span><span class="n">_polymorphic_adapter</span><span class="p">:</span>
+                <span class="n">mapper_local_col</span> <span class="o">=</span> <span class="n">col</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentmapper</span><span class="o">.</span><span class="n">_polymorphic_adapter</span><span class="o">.</span><span class="n">traverse</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+                <span class="c1"># this is a clue to the ORM Query etc. that this column</span>
+                <span class="c1"># was adapted to the mapper&#39;s polymorphic_adapter.  the</span>
+                <span class="c1"># ORM uses this hint to know which column its adapting.</span>
+                <span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;adapt_column&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapper_local_col</span>
+
+            <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">_annotate</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span><span class="o">.</span><span class="n">_set_propagate_attrs</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;compile_state_plugin&quot;</span><span class="p">:</span> <span class="s2">&quot;orm&quot;</span><span class="p">,</span> <span class="s2">&quot;plugin_subject&quot;</span><span class="p">:</span> <span class="n">pe</span><span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">__clause_element__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedColumn</span><span class="p">[</span><span class="n">_PT</span><span class="p">]:</span>
+                <span class="o">...</span>
+
+        <span class="k">def</span> <span class="nf">_memoized_method___clause_element__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedColumn</span><span class="p">[</span><span class="n">_PT</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orm_annotate_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">def</span> <span class="nf">_memoized_attr_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_InfoType</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;The .info dictionary for this attribute.&quot;&quot;&quot;</span>
+
+            <span class="n">ce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ce</span><span class="o">.</span><span class="n">info</span>  <span class="c1"># type: ignore</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">info</span>
+
+        <span class="k">def</span> <span class="nf">_memoized_attr_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">NamedColumn</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;The full sequence of columns referenced by this</span>
+<span class="sd">            attribute, adjusted for any aliasing in progress.</span>
+
+<span class="sd">            .. versionadded:: 1.3.17</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_orm_annotate_column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">_fallback_getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;proxy attribute access down to the mapped column.</span>
+
+<span class="sd">            this allows user-defined comparison methods to be accessed.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">(),</span> <span class="n">key</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">(),</span> <span class="o">*</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore[no-any-return]  # noqa: E501</span>
+
+        <span class="k">def</span> <span class="nf">reverse_operate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">_bind_param</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">other</span><span class="p">),</span> <span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore[no-any-return]  # noqa: E501</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">class_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span>
+
+
+<span class="k">class</span> <span class="nc">MappedSQLExpression</span><span class="p">(</span><span class="n">ColumnProperty</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">_DeclarativeMapped</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Declarative front-end for the :class:`.ColumnProperty` class.</span>
+
+<span class="sd">    Public constructor is the :func:`_orm.column_property` function.</span>
+
+<span class="sd">    .. versionchanged:: 2.0 Added :class:`_orm.MappedSQLExpression` as</span>
+<span class="sd">       a Declarative compatible subclass for :class:`_orm.ColumnProperty`.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        :class:`.MappedColumn`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">inherit_cache</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">MappedColumn</span><span class="p">(</span>
+    <span class="n">_IntrospectsAnnotations</span><span class="p">,</span>
+    <span class="n">_MapsColumns</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span>
+    <span class="n">_DeclarativeMapped</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maps a single :class:`_schema.Column` on a class.</span>
+
+<span class="sd">    :class:`_orm.MappedColumn` is a specialization of the</span>
+<span class="sd">    :class:`_orm.ColumnProperty` class and is oriented towards declarative</span>
+<span class="sd">    configuration.</span>
+
+<span class="sd">    To construct :class:`_orm.MappedColumn` objects, use the</span>
+<span class="sd">    :func:`_orm.mapped_column` constructor function.</span>
+
+<span class="sd">    .. versionadded:: 2.0</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;column&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_creation_order&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_sort_order&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;foreign_keys&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_has_nullable&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_has_insert_default&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deferred&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deferred_group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deferred_raiseload&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;active_history&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_attribute_options&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_has_dataclass_arguments&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_use_existing_column&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">deferred</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_NoArg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>
+    <span class="n">deferred_raiseload</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">deferred_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="n">column</span><span class="p">:</span> <span class="n">Column</span><span class="p">[</span><span class="n">_T</span><span class="p">]</span>
+    <span class="n">foreign_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">ForeignKey</span><span class="p">]]</span>
+    <span class="n">_attribute_options</span><span class="p">:</span> <span class="n">_AttributeOptions</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attribute_options</span> <span class="o">=</span> <span class="n">attr_opts</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;attribute_options&quot;</span><span class="p">,</span> <span class="n">_DEFAULT_ATTRIBUTE_OPTIONS</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_existing_column</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;use_existing_column&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_dataclass_arguments</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">attr_opts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">attr_opts</span> <span class="o">!=</span> <span class="n">_DEFAULT_ATTRIBUTE_OPTIONS</span>
+            <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">attr_opts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">attr_opts</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="o">!=</span> <span class="s2">&quot;dataclasses_default&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">insert_default</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;insert_default&quot;</span><span class="p">,</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_insert_default</span> <span class="o">=</span> <span class="n">insert_default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_insert_default</span><span class="p">:</span>
+            <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">insert_default</span>
+        <span class="k">elif</span> <span class="n">attr_opts</span><span class="o">.</span><span class="n">dataclasses_default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span><span class="p">:</span>
+            <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_opts</span><span class="o">.</span><span class="n">dataclasses_default</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;deferred_group&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;deferred_raiseload&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;deferred&quot;</span><span class="p">,</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_history</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;active_history&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sort_order&quot;</span><span class="p">,</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Column[_T]&quot;</span><span class="p">,</span> <span class="n">Column</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">foreign_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">foreign_keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_nullable</span> <span class="o">=</span> <span class="s2">&quot;nullable&quot;</span> <span class="ow">in</span> <span class="n">kw</span> <span class="ow">and</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nullable&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">SchemaConst</span><span class="o">.</span><span class="n">NULL_UNSPECIFIED</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">set_creation_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">_copy</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">deferred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">deferred_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">deferred_raiseload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">foreign_keys</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">foreign_keys</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">active_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_history</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_has_nullable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_nullable</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_attribute_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attribute_options</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_has_insert_default</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_insert_default</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_has_dataclass_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_dataclass_arguments</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_use_existing_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_existing_column</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_sort_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">set_creation_order</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mapper_property_to_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MapperProperty</span><span class="p">[</span><span class="n">_T</span><span class="p">]]:</span>
+        <span class="n">effective_deferred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span>
+        <span class="k">if</span> <span class="n">effective_deferred</span> <span class="ow">is</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span><span class="p">:</span>
+            <span class="n">effective_deferred</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">effective_deferred</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_history</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ColumnProperty</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="n">deferred</span><span class="o">=</span><span class="n">effective_deferred</span><span class="p">,</span>
+                <span class="n">group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span><span class="p">,</span>
+                <span class="n">raiseload</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span><span class="p">,</span>
+                <span class="n">attribute_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_attribute_options</span><span class="p">,</span>
+                <span class="n">active_history</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_history</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">columns_to_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Column</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+                <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__clause_element__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">(),</span> <span class="o">*</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore[no-any-return]  # noqa: E501</span>
+
+    <span class="k">def</span> <span class="nf">reverse_operate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clause_element__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">_bind_param</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">other</span><span class="p">),</span> <span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore[no-any-return]  # noqa: E501</span>
+
+    <span class="k">def</span> <span class="nf">found_in_pep593_annotated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="c1"># return a blank mapped_column().  This mapped_column()&#39;s</span>
+        <span class="c1"># Column will be merged into it in _init_column_for_annotation().</span>
+        <span class="k">return</span> <span class="n">MappedColumn</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">declarative_scan</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">decl_scan</span><span class="p">:</span> <span class="n">_ClassScanMapperConfig</span><span class="p">,</span>
+        <span class="n">registry</span><span class="p">:</span> <span class="n">_RegistryType</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">originating_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">mapped_container</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Mapped</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
+        <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_AnnotationScanType</span><span class="p">],</span>
+        <span class="n">extracted_mapped_annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_AnnotationScanType</span><span class="p">],</span>
+        <span class="n">is_dataclass_field</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_use_existing_column</span>
+            <span class="ow">and</span> <span class="n">decl_scan</span><span class="o">.</span><span class="n">inherits</span>
+            <span class="ow">and</span> <span class="n">decl_scan</span><span class="o">.</span><span class="n">single</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">decl_scan</span><span class="o">.</span><span class="n">is_deferred</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">sa_exc</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t use use_existing_column with deferred mappers&quot;</span>
+                <span class="p">)</span>
+            <span class="n">supercls_mapper</span> <span class="o">=</span> <span class="n">class_mapper</span><span class="p">(</span><span class="n">decl_scan</span><span class="o">.</span><span class="n">inherits</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">colname</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">key</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span> <span class="o">=</span> <span class="n">supercls_mapper</span><span class="o">.</span><span class="n">local_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>  <span class="c1"># type: ignore # noqa: E501</span>
+                <span class="n">colname</span><span class="p">,</span> <span class="n">column</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">key</span>
+
+        <span class="n">sqltype</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">type</span>
+
+        <span class="k">if</span> <span class="n">extracted_mapped_annotation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sqltype</span><span class="o">.</span><span class="n">_isnull</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">foreign_keys</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_raise_for_required</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_column_for_annotation</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">registry</span><span class="p">,</span>
+            <span class="n">extracted_mapped_annotation</span><span class="p">,</span>
+            <span class="n">originating_module</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@util</span><span class="o">.</span><span class="n">preload_module</span><span class="p">(</span><span class="s2">&quot;sqlalchemy.orm.decl_base&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">declarative_scan_for_composite</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">registry</span><span class="p">:</span> <span class="n">_RegistryType</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">originating_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">param_annotation</span><span class="p">:</span> <span class="n">_AnnotationScanType</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">decl_base</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">preloaded</span><span class="o">.</span><span class="n">orm_decl_base</span>
+        <span class="n">decl_base</span><span class="o">.</span><span class="n">_undefer_column_name</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_column_for_annotation</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="n">registry</span><span class="p">,</span> <span class="n">param_annotation</span><span class="p">,</span> <span class="n">originating_module</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_column_for_annotation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">registry</span><span class="p">:</span> <span class="n">_RegistryType</span><span class="p">,</span>
+        <span class="n">argument</span><span class="p">:</span> <span class="n">_AnnotationScanType</span><span class="p">,</span>
+        <span class="n">originating_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sqltype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">type</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_fwd_ref</span><span class="p">(</span>
+            <span class="n">argument</span><span class="p">,</span> <span class="n">check_generic</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">):</span>
+            <span class="k">assert</span> <span class="n">originating_module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">argument</span> <span class="o">=</span> <span class="n">de_stringify_annotation</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">originating_module</span><span class="p">,</span> <span class="n">include_generic</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_union</span><span class="p">(</span><span class="n">argument</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">originating_module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">argument</span> <span class="o">=</span> <span class="n">de_stringify_union_elements</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">originating_module</span>
+            <span class="p">)</span>
+
+        <span class="n">nullable</span> <span class="o">=</span> <span class="n">is_optional_union</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_nullable</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">nullable</span> <span class="o">=</span> <span class="n">nullable</span>
+
+        <span class="n">our_type</span> <span class="o">=</span> <span class="n">de_optionalize_union_types</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+
+        <span class="n">use_args_from</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">is_pep593</span><span class="p">(</span><span class="n">our_type</span><span class="p">):</span>
+            <span class="n">our_type_is_pep593</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">pep_593_components</span> <span class="o">=</span> <span class="n">typing_get_args</span><span class="p">(</span><span class="n">our_type</span><span class="p">)</span>
+            <span class="n">raw_pep_593_type</span> <span class="o">=</span> <span class="n">pep_593_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">is_optional_union</span><span class="p">(</span><span class="n">raw_pep_593_type</span><span class="p">):</span>
+                <span class="n">raw_pep_593_type</span> <span class="o">=</span> <span class="n">de_optionalize_union_types</span><span class="p">(</span><span class="n">raw_pep_593_type</span><span class="p">)</span>
+
+                <span class="n">nullable</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_nullable</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">nullable</span> <span class="o">=</span> <span class="n">nullable</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">pep_593_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">MappedColumn</span><span class="p">):</span>
+                    <span class="n">use_args_from</span> <span class="o">=</span> <span class="n">elem</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">our_type_is_pep593</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">raw_pep_593_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">use_args_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_insert_default</span>
+                <span class="ow">and</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">use_args_from</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">_merge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">)</span>
+            <span class="n">sqltype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">type</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span> <span class="ow">is</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred</span> <span class="o">=</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred_group</span> <span class="o">=</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred_group</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred_raiseload</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred_raiseload</span> <span class="o">=</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">deferred_raiseload</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">_use_existing_column</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_existing_column</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_use_existing_column</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">active_history</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_history</span> <span class="o">=</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">active_history</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">_sort_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span> <span class="ow">is</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span> <span class="o">=</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">_sort_order</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">use_args_from</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="n">util</span><span class="o">.</span><span class="n">warn_deprecated</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t use the &#39;key&#39; or &#39;name&#39; arguments in &quot;</span>
+                    <span class="s2">&quot;Annotated with mapped_column(); this will be ignored&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;2.0.22&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">use_args_from</span><span class="o">.</span><span class="n">_has_dataclass_arguments</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">use_args_from</span><span class="o">.</span><span class="n">_attribute_options</span><span class="o">.</span><span class="n">_fields</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">use_args_from</span><span class="o">.</span><span class="n">_attribute_options</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                        <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NoArg</span><span class="o">.</span><span class="n">NO_ARG</span>
+                    <span class="p">):</span>
+                        <span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;dataclasses_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="n">util</span><span class="o">.</span><span class="n">warn_deprecated</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Argument &#39;</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">&#39; is a dataclass argument and &quot;</span>
+                            <span class="s2">&quot;cannot be specified within a mapped_column() &quot;</span>
+                            <span class="s2">&quot;bundled inside of an Annotated object&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;2.0.22&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sqltype</span><span class="o">.</span><span class="n">_isnull</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">foreign_keys</span><span class="p">:</span>
+            <span class="n">new_sqltype</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">our_type_is_pep593</span><span class="p">:</span>
+                <span class="n">checks</span> <span class="o">=</span> <span class="p">[</span><span class="n">our_type</span><span class="p">,</span> <span class="n">raw_pep_593_type</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">checks</span> <span class="o">=</span> <span class="p">[</span><span class="n">our_type</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">check_type</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
+                <span class="n">new_sqltype</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">_resolve_type</span><span class="p">(</span><span class="n">check_type</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">new_sqltype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">our_type</span><span class="p">,</span> <span class="n">TypeEngine</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">our_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">our_type</span><span class="p">,</span> <span class="n">TypeEngine</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">sa_exc</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The type provided inside the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+                        <span class="s2">&quot;attribute Mapped annotation is the SQLAlchemy type &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">our_type</span><span class="si">}</span><span class="s2">. Expected a Python type instead&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">sa_exc</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+                        <span class="s2">&quot;Could not locate SQLAlchemy Core type for Python &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;type </span><span class="si">{</span><span class="n">our_type</span><span class="si">}</span><span class="s2"> inside the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+                        <span class="s2">&quot;attribute Mapped annotation&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">_set_type</span><span class="p">(</span><span class="n">new_sqltype</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2023, Litestar Organization.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

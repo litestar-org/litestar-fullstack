@@ -4,5 +4,5 @@ services
 
 Services for the teams domain.
 
-.. automodule:: src.app.domain.teams.services
+.. automodule:: app.domain.teams.services
     :members:

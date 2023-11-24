@@ -4,5 +4,5 @@ base
 
 Application database base configuration
 
-.. automodule:: src.app.lib.db.base
+.. automodule:: app.lib.db.base
      :members:

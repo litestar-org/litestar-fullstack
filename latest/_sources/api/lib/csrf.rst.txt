@@ -4,5 +4,5 @@ csrf
 
 Application CSFR configuration
 
-.. automodule:: src.app.lib.csrf
+.. automodule:: app.lib.csrf
      :members:

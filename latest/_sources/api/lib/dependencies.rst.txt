@@ -4,5 +4,5 @@ dependencies
 
 Application dependency layer
 
-.. automodule:: src.app.lib.dependencies
+.. automodule:: app.lib.dependencies
      :members:
