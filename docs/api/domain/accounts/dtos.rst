@@ -4,5 +4,5 @@ dtos
 
 DTOs for the accounts domain.
 
-.. automodule:: src.app.domain.accounts.dtos
+.. automodule:: app.domain.accounts.dtos
     :members:

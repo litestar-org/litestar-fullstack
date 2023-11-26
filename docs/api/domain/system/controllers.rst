@@ -4,5 +4,5 @@ controllers
 
 Controllers for the application system.
 
-.. automodule:: src.app.domain.system.controllers
+.. automodule:: app.domain.system.controllers
     :members:

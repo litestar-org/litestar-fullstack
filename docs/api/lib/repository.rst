@@ -4,5 +4,5 @@ repository
 
 Application repository layer
 
-.. automodule:: src.app.lib.repository
+.. automodule:: app.lib.repository
      :members:
