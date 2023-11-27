@@ -90,6 +90,7 @@ class DockerServiceRegistry:
             if not self._use_legacy_compose:
                 run_command.append("--wait")
             self.run_command(*run_command)
+            self._running_services.add(name)
 
             await wait_until_responsive(
                 check=AsyncCallable(check),
