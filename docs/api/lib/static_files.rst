@@ -4,5 +4,5 @@ static files
 
 Static file config
 
-.. automodule:: src.app.lib.static_files
+.. automodule:: app.lib.static_files
      :members:

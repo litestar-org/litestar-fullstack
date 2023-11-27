@@ -4,5 +4,5 @@ dtos
 
 DTOs for the analytics domain.
 
-.. automodule:: src.app.domain.analytics.dtos
+.. automodule:: app.domain.analytics.dtos
     :members:

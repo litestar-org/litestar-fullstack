@@ -4,5 +4,5 @@ service
 
 Application service layer
 
-.. automodule:: src.app.lib.service
+.. automodule:: app.lib.service
      :members:

@@ -4,5 +4,5 @@ controllers
 
 Controllers for the tags domain.
 
-.. automodule:: src.app.domain.tags.controllers
+.. automodule:: app.domain.tags.controllers
     :members:

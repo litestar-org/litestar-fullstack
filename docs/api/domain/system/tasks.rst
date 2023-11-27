@@ -4,5 +4,5 @@ tasks
 
 Tasks for the application system.
 
-.. automodule:: src.app.domain.system.tasks
+.. automodule:: app.domain.system.tasks
     :members:

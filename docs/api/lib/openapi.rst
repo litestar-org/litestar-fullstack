@@ -4,5 +4,5 @@ openapi
 
 OpenAPI config
 
-.. automodule:: src.app.domain.openapi
+.. automodule:: app.domain.openapi
      :members:

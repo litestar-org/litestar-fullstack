@@ -4,5 +4,5 @@ settings
 
 Application settings
 
-.. automodule:: src.app.lib.settings
+.. automodule:: app.lib.settings
      :members:

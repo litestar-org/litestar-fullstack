@@ -4,5 +4,5 @@ dependencies
 
 Dependencies for the accounts domain.
 
-.. automodule:: src.app.domain.accounts.dependencies
+.. automodule:: app.domain.accounts.dependencies
     :members:
