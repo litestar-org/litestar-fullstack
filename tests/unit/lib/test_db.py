@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 import pytest
 from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
 from advanced_alchemy.extensions.litestar.plugins.init.config.common import SESSION_SCOPE_KEY
-from litestar.constants import SCOPE_STATE_NAMESPACE
+from litestar.utils import set_litestar_scope_state
 from sqlalchemy.ext.asyncio import AsyncSession
 
 if TYPE_CHECKING:
@@ -25,9 +25,7 @@ async def test_before_send_handler_success_response(
 ) -> None:
     """Test that the session is committed given a success response."""
     mock_session = MagicMock(spec=AsyncSession)
-    namespace = http_scope["state"].setdefault(SCOPE_STATE_NAMESPACE, {})
-    namespace.update({SESSION_SCOPE_KEY: mock_session})
-    http_scope["state"][SESSION_SCOPE_KEY] = mock_session
+    set_litestar_scope_state(http_scope, SESSION_SCOPE_KEY, mock_session)
     http_response_start["status"] = random.randint(200, 299)  # noqa: S311
     await autocommit_before_send_handler(http_response_start, http_scope)
     mock_session.commit.assert_awaited_once()
@@ -40,9 +38,7 @@ async def test_before_send_handler_error_response(
 ) -> None:
     """Test that the session is committed given a success response."""
     mock_session = MagicMock(spec=AsyncSession)
-    namespace = http_scope["state"].setdefault(SCOPE_STATE_NAMESPACE, {})
-    namespace.update({SESSION_SCOPE_KEY: mock_session})
-    http_scope["state"][SESSION_SCOPE_KEY] = mock_session
+    set_litestar_scope_state(http_scope, SESSION_SCOPE_KEY, mock_session)
     http_response_start["status"] = random.randint(300, 599)  # noqa: S311
     await autocommit_before_send_handler(http_response_start, http_scope)
     mock_session.rollback.assert_awaited_once()
