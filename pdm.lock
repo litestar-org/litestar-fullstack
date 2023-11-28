@@ -82,7 +82,7 @@ files = [
 
 [[package]]
 name = "anyio"
-version = "4.0.0"
+version = "4.1.0"
 requires_python = ">=3.8"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
 dependencies = [
@@ -90,8 +90,8 @@ dependencies = [
     "sniffio>=1.1",
 ]
 files = [
-    {file = "anyio-4.0.0-py3-none-any.whl", hash = "sha256:cfdb2b588b9fc25ede96d8db56ed50848b0b649dca3dd1df0b11f683bb9e0b5f"},
-    {file = "anyio-4.0.0.tar.gz", hash = "sha256:f7ed51751b2c2add651e5747c891b47e26d2a21be5d32d9311dfe9692f3e5d7a"},
+    {file = "anyio-4.1.0-py3-none-any.whl", hash = "sha256:56a415fbc462291813a94528a779597226619c8e78af7de0507333f700011e5f"},
+    {file = "anyio-4.1.0.tar.gz", hash = "sha256:5a0bec7085176715be77df87fc66d6c9d70626bd752fcc85f57cdbee5b3760da"},
 ]
 
 [[package]]
@@ -643,7 +643,7 @@ files = [
 name = "domdf-python-tools"
 version = "3.7.0"
 requires_python = ">=3.6"
-summary = "Helpful functions for Python 🐍 🛠️"
+summary = "Helpful functions for Python‚ÄÇüêç‚ÄÇüõ†Ô∏è"
 dependencies = [
     "natsort>=7.0.1",
     "typing-extensions>=3.7.4.1",
@@ -943,7 +943,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.3.2"
+version = "2.4.1"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
@@ -959,8 +959,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.3.2-py3-none-any.whl", hash = "sha256:a2301e5a786fa0466a00333f99694972332a85fad69ce222179ce342d84ee0ed"},
-    {file = "litestar-2.3.2.tar.gz", hash = "sha256:983b61b5a1a07de2f8e34974e21dc2adf5c3aab767ca89cbe229cecca54b92c3"},
+    {file = "litestar-2.4.1-py3-none-any.whl", hash = "sha256:6bc1176f3c9c90b75ccd0121f801a7e07cf386ffb8188507eaf4e95e34741775"},
+    {file = "litestar-2.4.1.tar.gz", hash = "sha256:273d136621cf41b04f566424b959ec602b06a0e496d24a61836c3279f10d47d3"},
 ]
 
 [[package]]
@@ -979,7 +979,7 @@ files = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.1.11"
+version = "0.1.14"
 requires_python = ">=3.8"
 summary = "Litestar integration for SAQ"
 dependencies = [
@@ -987,8 +987,8 @@ dependencies = [
     "saq>=0.12.0",
 ]
 files = [
-    {file = "litestar_saq-0.1.11-py3-none-any.whl", hash = "sha256:4a32e13fa46d3a5621b6147a0e553b80771be72602b1a5e99ae262810ce51a65"},
-    {file = "litestar_saq-0.1.11.tar.gz", hash = "sha256:51aabc64236baa7f13b39635c60a56714ecf5ec45c2969678b4712c051a27bf7"},
+    {file = "litestar_saq-0.1.14-py3-none-any.whl", hash = "sha256:389b809594b689be585fd2d484a2f897bd8311679d645ce9e1af287737c092c9"},
+    {file = "litestar_saq-0.1.14.tar.gz", hash = "sha256:1a0cf1a99a9ff499889d5668cb1f5a72831a1ff51bb7663f555b642d22e02001"},
 ]
 
 [[package]]
@@ -1018,7 +1018,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.3.2"
+version = "2.4.1"
 extras = ["cli", "jinja", "jwt", "pydantic", "redis", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -1027,7 +1027,7 @@ dependencies = [
     "email-validator",
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.3.2",
+    "litestar==2.4.1",
     "pydantic",
     "pydantic-extra-types",
     "python-jose",
@@ -1037,43 +1037,46 @@ dependencies = [
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.3.2-py3-none-any.whl", hash = "sha256:a2301e5a786fa0466a00333f99694972332a85fad69ce222179ce342d84ee0ed"},
-    {file = "litestar-2.3.2.tar.gz", hash = "sha256:983b61b5a1a07de2f8e34974e21dc2adf5c3aab767ca89cbe229cecca54b92c3"},
+    {file = "litestar-2.4.1-py3-none-any.whl", hash = "sha256:6bc1176f3c9c90b75ccd0121f801a7e07cf386ffb8188507eaf4e95e34741775"},
+    {file = "litestar-2.4.1.tar.gz", hash = "sha256:273d136621cf41b04f566424b959ec602b06a0e496d24a61836c3279f10d47d3"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.3.2"
+version = "2.4.1"
 extras = ["cli", "jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.3.2",
+    "litestar==2.4.1",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.3.2-py3-none-any.whl", hash = "sha256:a2301e5a786fa0466a00333f99694972332a85fad69ce222179ce342d84ee0ed"},
-    {file = "litestar-2.3.2.tar.gz", hash = "sha256:983b61b5a1a07de2f8e34974e21dc2adf5c3aab767ca89cbe229cecca54b92c3"},
+    {file = "litestar-2.4.1-py3-none-any.whl", hash = "sha256:6bc1176f3c9c90b75ccd0121f801a7e07cf386ffb8188507eaf4e95e34741775"},
+    {file = "litestar-2.4.1.tar.gz", hash = "sha256:273d136621cf41b04f566424b959ec602b06a0e496d24a61836c3279f10d47d3"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.3.2"
+version = "2.4.1"
 extras = ["cli"]
-requires_python = "<4.0,>=3.8"
+requires_python = ">=3.8,<4.0"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
     "jsbeautifier",
-    "litestar==2.3.2",
+    "jsbeautifier",
+    "litestar==2.4.1",
     "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.3.2-py3-none-any.whl", hash = "sha256:a2301e5a786fa0466a00333f99694972332a85fad69ce222179ce342d84ee0ed"},
-    {file = "litestar-2.3.2.tar.gz", hash = "sha256:983b61b5a1a07de2f8e34974e21dc2adf5c3aab767ca89cbe229cecca54b92c3"},
+    {file = "litestar-2.4.1-py3-none-any.whl", hash = "sha256:6bc1176f3c9c90b75ccd0121f801a7e07cf386ffb8188507eaf4e95e34741775"},
+    {file = "litestar-2.4.1.tar.gz", hash = "sha256:273d136621cf41b04f566424b959ec602b06a0e496d24a61836c3279f10d47d3"},
 ]
 
 [[package]]
@@ -1244,7 +1247,7 @@ files = [
 
 [[package]]
 name = "mypy"
-version = "1.7.0"
+version = "1.7.1"
 requires_python = ">=3.8"
 summary = "Optional static typing for Python"
 dependencies = [
@@ -1252,18 +1255,18 @@ dependencies = [
     "typing-extensions>=4.1.0",
 ]
 files = [
-    {file = "mypy-1.7.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:df67fbeb666ee8828f675fee724cc2cbd2e4828cc3df56703e02fe6a421b7401"},
-    {file = "mypy-1.7.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a79cdc12a02eb526d808a32a934c6fe6df07b05f3573d210e41808020aed8b5d"},
-    {file = "mypy-1.7.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f65f385a6f43211effe8c682e8ec3f55d79391f70a201575def73d08db68ead1"},
-    {file = "mypy-1.7.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:0e81ffd120ee24959b449b647c4b2fbfcf8acf3465e082b8d58fd6c4c2b27e46"},
-    {file = "mypy-1.7.0-cp311-cp311-win_amd64.whl", hash = "sha256:f29386804c3577c83d76520abf18cfcd7d68264c7e431c5907d250ab502658ee"},
-    {file = "mypy-1.7.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:87c076c174e2c7ef8ab416c4e252d94c08cd4980a10967754f91571070bf5fbe"},
-    {file = "mypy-1.7.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:6cb8d5f6d0fcd9e708bb190b224089e45902cacef6f6915481806b0c77f7786d"},
-    {file = "mypy-1.7.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d93e76c2256aa50d9c82a88e2f569232e9862c9982095f6d54e13509f01222fc"},
-    {file = "mypy-1.7.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:cddee95dea7990e2215576fae95f6b78a8c12f4c089d7e4367564704e99118d3"},
-    {file = "mypy-1.7.0-cp312-cp312-win_amd64.whl", hash = "sha256:d01921dbd691c4061a3e2ecdbfbfad029410c5c2b1ee88946bf45c62c6c91210"},
-    {file = "mypy-1.7.0-py3-none-any.whl", hash = "sha256:96650d9a4c651bc2a4991cf46f100973f656d69edc7faf91844e87fe627f7e96"},
-    {file = "mypy-1.7.0.tar.gz", hash = "sha256:1e280b5697202efa698372d2f39e9a6713a0395a756b1c6bd48995f8d72690dc"},
+    {file = "mypy-1.7.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:4b901927f16224d0d143b925ce9a4e6b3a758010673eeded9b748f250cf4e8f7"},
+    {file = "mypy-1.7.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:2f7f6985d05a4e3ce8255396df363046c28bea790e40617654e91ed580ca7c51"},
+    {file = "mypy-1.7.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:944bdc21ebd620eafefc090cdf83158393ec2b1391578359776c00de00e8907a"},
+    {file = "mypy-1.7.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:9c7ac372232c928fff0645d85f273a726970c014749b924ce5710d7d89763a28"},
+    {file = "mypy-1.7.1-cp311-cp311-win_amd64.whl", hash = "sha256:f6efc9bd72258f89a3816e3a98c09d36f079c223aa345c659622f056b760ab42"},
+    {file = "mypy-1.7.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:6dbdec441c60699288adf051f51a5d512b0d818526d1dcfff5a41f8cd8b4aaf1"},
+    {file = "mypy-1.7.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:4fc3d14ee80cd22367caaaf6e014494415bf440980a3045bf5045b525680ac33"},
+    {file = "mypy-1.7.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2c6e4464ed5f01dc44dc9821caf67b60a4e5c3b04278286a85c067010653a0eb"},
+    {file = "mypy-1.7.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:d9b338c19fa2412f76e17525c1b4f2c687a55b156320acb588df79f2e6fa9fea"},
+    {file = "mypy-1.7.1-cp312-cp312-win_amd64.whl", hash = "sha256:204e0d6de5fd2317394a4eff62065614c4892d5a4d1a7ee55b765d7a3d9e3f82"},
+    {file = "mypy-1.7.1-py3-none-any.whl", hash = "sha256:f7c5d642db47376a0cc130f0de6d055056e010debdaf0707cd2b0fc7e7ef30ea"},
+    {file = "mypy-1.7.1.tar.gz", hash = "sha256:fcb6d9afb1b6208b4c712af0dafdc650f518836065df0d4fb1d800f5d6773db2"},
 ]
 
 [[package]]
@@ -1670,7 +1673,7 @@ files = [
 
 [[package]]
 name = "pytest-xdist"
-version = "3.4.0"
+version = "3.5.0"
 requires_python = ">=3.7"
 summary = "pytest xdist plugin for distributed testing, most importantly across multiple CPUs"
 dependencies = [
@@ -1678,8 +1681,8 @@ dependencies = [
     "pytest>=6.2.0",
 ]
 files = [
-    {file = "pytest-xdist-3.4.0.tar.gz", hash = "sha256:3a94a931dd9e268e0b871a877d09fe2efb6175c2c23d60d56a6001359002b832"},
-    {file = "pytest_xdist-3.4.0-py3-none-any.whl", hash = "sha256:e513118bf787677a427e025606f55e95937565e06dfaac8d87f55301e57ae607"},
+    {file = "pytest-xdist-3.5.0.tar.gz", hash = "sha256:cbb36f3d67e0c478baa57fa4edc8843887e0f6cfc42d677530a36d7472b32d8a"},
+    {file = "pytest_xdist-3.5.0-py3-none-any.whl", hash = "sha256:d075629c7e00b611df89f490a5063944bee7a4362a5ff11c7cc7824a03dfce24"},
 ]
 
 [[package]]
@@ -2033,7 +2036,7 @@ files = [
 
 [[package]]
 name = "sphinx-click"
-version = "5.0.1"
+version = "5.1.0"
 requires_python = ">=3.8"
 summary = "Sphinx extension that automatically documents click applications"
 dependencies = [
@@ -2042,8 +2045,8 @@ dependencies = [
     "sphinx>=2.0",
 ]
 files = [
-    {file = "sphinx-click-5.0.1.tar.gz", hash = "sha256:fcc7df15e56e3ff17ebf446cdd316c2eb79580b37c49579fba11e5468802ef25"},
-    {file = "sphinx_click-5.0.1-py3-none-any.whl", hash = "sha256:31836ca22f746d3c26cbfdfe0c58edf0bca5783731a0b2e25bb6d59800bb75a1"},
+    {file = "sphinx-click-5.1.0.tar.gz", hash = "sha256:6812c2db62d3fae71a4addbe5a8a0a16c97eb491f3cd63fe34b4ed7e07236f33"},
+    {file = "sphinx_click-5.1.0-py3-none-any.whl", hash = "sha256:ae97557a4e9ec646045089326c3b90e026c58a45e083b8f35f17d5d6558d08a0"},
 ]
 
 [[package]]
@@ -2120,7 +2123,7 @@ files = [
 name = "sphinx-toolbox"
 version = "3.5.0"
 requires_python = ">=3.7"
-summary = "Box of handy tools for Sphinx 🧰 📔"
+summary = "Box of handy tools for Sphinx ðŸ§° ðŸ“”"
 dependencies = [
     "apeye>=0.4.0",
     "autodocsumm>=0.2.0",
@@ -2373,7 +2376,7 @@ files = [
 
 [[package]]
 name = "types-redis"
-version = "4.6.0.10"
+version = "4.6.0.11"
 requires_python = ">=3.7"
 summary = "Typing stubs for redis"
 dependencies = [
@@ -2381,8 +2384,8 @@ dependencies = [
     "types-pyOpenSSL",
 ]
 files = [
-    {file = "types-redis-4.6.0.10.tar.gz", hash = "sha256:aa7fb5f743534500f274ddf11ab1c910aae1020481865a36b799e1d67de2aaf3"},
-    {file = "types_redis-4.6.0.10-py3-none-any.whl", hash = "sha256:00f003da884ec3d1d54633186b4cbd587b39782595c5603330cc46a51f9bcf6e"},
+    {file = "types-redis-4.6.0.11.tar.gz", hash = "sha256:c8cfc84635183deca2db4a528966c5566445fd3713983f0034fb0f5a09e0890d"},
+    {file = "types_redis-4.6.0.11-py3-none-any.whl", hash = "sha256:94fc61118601fb4f79206b33b9f4344acff7ca1d7bba67834987fb0efcf6a770"},
 ]
 
 [[package]]
