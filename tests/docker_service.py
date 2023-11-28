@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Any
 
 import asyncpg
 import pytest
-from litestar.utils.sync import AsyncCallable
 from redis.asyncio import Redis as AsyncRedis
 from redis.exceptions import ConnectionError as RedisConnectionError
 
@@ -93,7 +92,7 @@ class DockerServiceRegistry:
             self._running_services.add(name)
 
             await wait_until_responsive(
-                check=AsyncCallable(check),
+                check=check,
                 timeout=timeout,
                 pause=pause,
                 host=self.docker_ip,
