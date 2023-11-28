@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Any
 
 import asyncpg
 import pytest
-from litestar.utils.sync import AsyncCallable
 from redis.asyncio import Redis as AsyncRedis
 from redis.exceptions import ConnectionError as RedisConnectionError
 
@@ -49,7 +48,7 @@ async def wait_until_responsive(
 class DockerServiceRegistry:
     def __init__(self, use_legacy_compose: bool = False) -> None:
         self._use_legacy_compose = use_legacy_compose
-        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") == "true" or os.environ.get("GITHUB_ACTIONS") == "true":
+        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") == "true":
             self._use_legacy_compose = True
         self._running_services: set[str] = set()
         self.docker_ip = self._get_docker_ip()
@@ -93,7 +92,7 @@ class DockerServiceRegistry:
             self._running_services.add(name)
 
             await wait_until_responsive(
-                check=AsyncCallable(check),
+                check=check,
                 timeout=timeout,
                 pause=pause,
                 host=self.docker_ip,
