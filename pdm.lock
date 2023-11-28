@@ -3,8 +3,9 @@
 
 [metadata]
 groups = ["default", "dev", "docs", "linting", "test"]
-strategy = ["cross_platform"]
-lock_version = "4.4"
+cross_platform = true
+static_urls = false
+lock_version = "4.3"
 content_hash = "sha256:aeb1c10b4f8cf398e4026143afc268d111572f0f380f969ec23712fcb30c3c82"
 
 [[package]]
@@ -979,7 +980,7 @@ files = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.1.11"
+version = "0.1.14"
 requires_python = ">=3.8"
 summary = "Litestar integration for SAQ"
 dependencies = [
@@ -987,8 +988,8 @@ dependencies = [
     "saq>=0.12.0",
 ]
 files = [
-    {file = "litestar_saq-0.1.11-py3-none-any.whl", hash = "sha256:4a32e13fa46d3a5621b6147a0e553b80771be72602b1a5e99ae262810ce51a65"},
-    {file = "litestar_saq-0.1.11.tar.gz", hash = "sha256:51aabc64236baa7f13b39635c60a56714ecf5ec45c2969678b4712c051a27bf7"},
+    {file = "litestar_saq-0.1.14-py3-none-any.whl", hash = "sha256:389b809594b689be585fd2d484a2f897bd8311679d645ce9e1af287737c092c9"},
+    {file = "litestar_saq-0.1.14.tar.gz", hash = "sha256:1a0cf1a99a9ff499889d5668cb1f5a72831a1ff51bb7663f555b642d22e02001"},
 ]
 
 [[package]]
