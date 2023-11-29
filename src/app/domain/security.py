@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from litestar.contrib.jwt import OAuth2PasswordBearerAuth, Token
+from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 

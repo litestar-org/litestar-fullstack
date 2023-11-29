@@ -4,9 +4,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from litestar.contrib.jwt import OAuth2Login
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
+from litestar.security.jwt import OAuth2Login
 from litestar.types import TypeEncodersMap
 
 from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserCreate, UserUpdate
