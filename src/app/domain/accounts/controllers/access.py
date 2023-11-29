@@ -4,10 +4,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from litestar import Controller, MediaType, Response, get, post
-from litestar.contrib.jwt import OAuth2Login
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
+from litestar.security.jwt import OAuth2Login
 
 from app.domain import security, urls
 from app.domain.accounts.dependencies import provides_user_service
