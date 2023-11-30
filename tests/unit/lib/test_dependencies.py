@@ -33,7 +33,6 @@ class MessageTest:
     test_attr: str
 
 
-@pytest.mark.anyio
 async def test_provide_user_dependency() -> None:
     user = User()
     request = RequestFactory(app=Litestar(route_handlers=[])).get("/", user=user)
