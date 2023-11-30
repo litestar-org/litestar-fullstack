@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
     from litestar import Litestar
     from litestar.datastructures import State
-    from litestar.testing import TestClient
+    from litestar.testing import AsyncTestClient
     from litestar.types.asgi_types import (
         HTTPResponseBodyEvent,
         HTTPResponseStartEvent,
@@ -324,7 +324,7 @@ def test_before_send_handler_extract_response_data(
 
 
 async def test_exception_in_before_send_handler(
-    client: TestClient[Litestar],
+    client: AsyncTestClient[Litestar],
     cap_logger: CapturingLogger,
     monkeypatch: MonkeyPatch,
 ) -> None:
@@ -344,7 +344,7 @@ async def test_exception_in_before_send_handler(
         AsyncMock(side_effect=RuntimeError),
     )
     client.app.register(test_handler)
-    resp = client.get("/a/b/a/d")
+    resp = await client.get("/a/b/a/d")
     assert resp.text == "Hello"
     assert len(cap_logger.calls) == 1
     call = cap_logger.calls[0]
@@ -354,7 +354,7 @@ async def test_exception_in_before_send_handler(
 
 
 async def test_exception_in_before_send_handler_read_empty_body(
-    client: TestClient[Litestar],
+    client: AsyncTestClient[Litestar],
     cap_logger: CapturingLogger,
     before_send_handler: log.controller.BeforeSendHandler,
     http_scope: HTTPScope,
@@ -375,7 +375,7 @@ async def test_exception_in_before_send_handler_read_empty_body(
     await before_send_handler.extract_request_data(request)
 
     client.app.register(test_handler)
-    resp = client.post("/1/2/3/4")
+    resp = await client.post("/1/2/3/4")
     assert resp.text == "Hello"
     assert len(cap_logger.calls) == 1
     call = cap_logger.calls[0]
@@ -385,7 +385,7 @@ async def test_exception_in_before_send_handler_read_empty_body(
     assert call.kwargs["level"] == "info"
 
 
-async def test_log_request_with_invalid_json_payload(client: TestClient[Litestar]) -> None:
+async def test_log_request_with_invalid_json_payload(client: AsyncTestClient[Litestar]) -> None:
     """Test logs emitted with invalid client payload.
 
     The request will fail with a 400 due to the data not being
@@ -400,7 +400,7 @@ async def test_log_request_with_invalid_json_payload(client: TestClient[Litestar
         return data
 
     client.app.register(test_handler)
-    resp = client.post("/", content=b'{"a": "b",}', headers={"content-type": "application/json"})
+    resp = await client.post("/", content=b'{"a": "b",}', headers={"content-type": "application/json"})
     assert resp.status_code == HTTP_400_BAD_REQUEST
 
 
