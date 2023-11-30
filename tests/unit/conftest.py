@@ -9,7 +9,7 @@ from litestar.enums import ScopeType
 from litestar.testing import AsyncTestClient
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import AsyncGenerator
 
     from litestar.types import HTTPResponseBodyEvent, HTTPResponseStartEvent, HTTPScope
 
@@ -17,7 +17,7 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(name="client")
-async def fx_client(app: Litestar) -> Generator[AsyncTestClient, None, None]:
+async def fx_client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
     """Test client fixture for making calls on the global app instance."""
     async with AsyncTestClient(app=app) as client:
         yield client
