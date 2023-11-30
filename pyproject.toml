@@ -171,8 +171,8 @@ filterwarnings = [
   "ignore::DeprecationWarning:google.*",
   "ignore::DeprecationWarning:passlib.*",
   "ignore::DeprecationWarning:aiosql.*",
-  "ignore::DeprecationWarning:litestar.constants.SCOPE_STATE_RESPONSE_COMPRESSED",
-  "ignore::DeprecationWarning:litestar.utils.set_litestar_scope_state",
+  "ignore::DeprecationWarning:litestar.constants.*",
+  "ignore::DeprecationWarning:litestar.utils.*",
 ]
 testpaths = ["tests"]
 
