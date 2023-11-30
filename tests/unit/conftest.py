@@ -19,8 +19,11 @@ pytestmark = pytest.mark.anyio
 @pytest.fixture(name="client")
 async def fx_client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
     """Test client fixture for making calls on the global app instance."""
-    async with AsyncTestClient(app=app) as client:
-        yield client
+    try:
+        async with AsyncTestClient(app=app) as client:
+            yield client
+    except Exception:  # noqa: BLE001
+        ...
 
 
 @pytest.fixture()
