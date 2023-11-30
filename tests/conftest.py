@@ -6,13 +6,12 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
-from litestar.testing import TestClient
 from structlog.contextvars import clear_contextvars
 from structlog.testing import CapturingLogger
 
 if TYPE_CHECKING:
     from collections import abc
-    from collections.abc import Generator, Iterator
+    from collections.abc import Iterator
 
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
@@ -67,13 +66,6 @@ def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     from app.asgi import create_app
 
     return create_app()
-
-
-@pytest.fixture(name="client")
-def fx_client(app: Litestar) -> Generator[TestClient, None, None]:
-    """Test client fixture for making calls on the global app instance."""
-    with TestClient(app=app) as client:
-        yield client
 
 
 @pytest.fixture(name="is_unit_test")
