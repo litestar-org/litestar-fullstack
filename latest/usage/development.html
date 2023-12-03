@@ -906,6 +906,18 @@ Full Makefile<div class="sd-summary-down docutils">
 <span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pre-commit<span class="w"> </span>autoupdate
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Updated Pre-commit&quot;</span>
 
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">uninstall</span>
+<span class="nf">uninstall</span><span class="o">:</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Uninstalling PDM&quot;</span>
+<span class="cp">ifeq ($(OS),Windows_NT)</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Removing PDM from %APPDATA%\Python\Scripts&quot;</span>
+<span class="w">	</span>@if<span class="w"> </span>exist<span class="w"> </span><span class="s2">&quot;%APPDATA%\Python\Scripts\pdm&quot;</span><span class="w"> </span><span class="o">(</span>del<span class="w"> </span><span class="s2">&quot;%APPDATA%\Python\Scripts\pdm&quot;</span><span class="o">)</span>
+<span class="cp">else</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Removing PDM from ~/.local/bin&quot;</span>
+<span class="w">	</span>@rm<span class="w"> </span>-f<span class="w"> </span>~/.local/bin/pdm
+<span class="cp">endif</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; PDM removal complete&quot;</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Uninstallation complete!&quot;</span>
 
 <span class="c"># =============================================================================</span>
 <span class="c"># Developer Utils</span>
