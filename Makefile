@@ -37,6 +37,18 @@ upgrade:       										## Upgrade all dependencies to the latest stable versio
 	@$(ENV_PREFIX)pre-commit autoupdate
 	@echo "=> Updated Pre-commit"
 
+.PHONY: uninstall
+uninstall:
+	@echo "=> Uninstalling PDM"
+ifeq ($(OS),Windows_NT)
+	@echo "=> Removing PDM from %APPDATA%\Python\Scripts"
+	@if exist "%APPDATA%\Python\Scripts\pdm" (del "%APPDATA%\Python\Scripts\pdm")
+else
+	@echo "=> Removing PDM from ~/.local/bin"
+	@rm -f ~/.local/bin/pdm
+endif
+	@echo "=> PDM removal complete"
+	@echo "=> Uninstallation complete!"
 
 # =============================================================================
 # Developer Utils
