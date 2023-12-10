@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="../../" >
 
   <head>
     <meta charset="utf-8" />
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -35,9 +35,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script src="../../_static/documentation_options.js?v=01f34227"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
@@ -115,6 +115,7 @@
   <div class=" navbar-header-items__start">
     
       <div class="navbar-item">
+
    
 
 <a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
@@ -327,6 +328,7 @@
       
         <div class="navbar-item navbar-persistent--container">
           
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -338,6 +340,7 @@ document.write(`
       
         <div class="navbar-item navbar-persistent--container">
           
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -384,6 +387,7 @@ document.write(`
   
   
     <div class="navbar-persistent--mobile">
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -394,6 +398,7 @@ document.write(`
     </div>
   
     <div class="navbar-persistent--mobile">
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -646,7 +651,8 @@ document.write(`
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -810,6 +816,44 @@ document.write(`
   <section id="constants">
 <h1>constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h1>
 <p>Application constants</p>
+<dl class="py data" id="module-app.lib.constants">
+<dt class="sig sig-object py" id="app.lib.constants.DB_SESSION_DEPENDENCY_KEY">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">DB_SESSION_DEPENDENCY_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_session'</span></em><a class="headerlink" href="#app.lib.constants.DB_SESSION_DEPENDENCY_KEY" title="Link to this definition">#</a></dt>
+<dd><p>The name of the key used for dependency injection of the database
+session.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.lib.constants.USER_DEPENDENCY_KEY">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">USER_DEPENDENCY_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'current_user'</span></em><a class="headerlink" href="#app.lib.constants.USER_DEPENDENCY_KEY" title="Link to this definition">#</a></dt>
+<dd><p>The name of the key used for dependency injection of the database
+session.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.lib.constants.DTO_INFO_KEY">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">DTO_INFO_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'info'</span></em><a class="headerlink" href="#app.lib.constants.DTO_INFO_KEY" title="Link to this definition">#</a></dt>
+<dd><p>The name of the key used for storing DTO information.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.lib.constants.DEFAULT_PAGINATION_SIZE">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PAGINATION_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#app.lib.constants.DEFAULT_PAGINATION_SIZE" title="Link to this definition">#</a></dt>
+<dd><p>Default page size to use.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.lib.constants.CACHE_EXPIRATION">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">CACHE_EXPIRATION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#app.lib.constants.CACHE_EXPIRATION" title="Link to this definition">#</a></dt>
+<dd><p>Default cache key expiration in seconds.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.lib.constants.SYSTEM_HEALTH">
+<span class="sig-prename descclassname"><span class="pre">app.lib.constants.</span></span><span class="sig-name descname"><span class="pre">SYSTEM_HEALTH</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/health'</span></em><a class="headerlink" href="#app.lib.constants.SYSTEM_HEALTH" title="Link to this definition">#</a></dt>
+<dd><p>Default path for the service health check endpoint.</p>
+</dd></dl>
+
 </section>
 
 
@@ -820,7 +864,7 @@ document.write(`
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
     <a class="left-prev"
        href="compression.html"
@@ -850,6 +894,23 @@ document.write(`
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
   <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.DB_SESSION_DEPENDENCY_KEY"><code class="docutils literal notranslate"><span class="pre">DB_SESSION_DEPENDENCY_KEY</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.USER_DEPENDENCY_KEY"><code class="docutils literal notranslate"><span class="pre">USER_DEPENDENCY_KEY</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.DTO_INFO_KEY"><code class="docutils literal notranslate"><span class="pre">DTO_INFO_KEY</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.DEFAULT_PAGINATION_SIZE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PAGINATION_SIZE</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.CACHE_EXPIRATION"><code class="docutils literal notranslate"><span class="pre">CACHE_EXPIRATION</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.constants.SYSTEM_HEALTH"><code class="docutils literal notranslate"><span class="pre">SYSTEM_HEALTH</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
   
   <div class="tocsection editthispage">
     <a href="https://github.com/litestar-org/litestar-fullstack/edit/main/docs/api/lib/constants.rst">
@@ -865,6 +926,7 @@ document.write(`
 </div>
 
   <div class="sidebar-secondary-item">
+
   <div class="tocsection sourcelink">
     <a href="../../_sources/api/lib/constants.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
@@ -885,8 +947,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -894,6 +956,7 @@ document.write(`
     <div class="footer-items__start">
       
         <div class="footer-item">
+
   <p class="copyright">
     
       © Copyright 2023, Litestar Organization.
@@ -903,6 +966,7 @@ document.write(`
 </div>
       
         <div class="footer-item">
+
   <p class="sphinx-version">
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     <br/>
@@ -915,8 +979,9 @@ document.write(`
   
     <div class="footer-items__end">
       
-        <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.3.
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
 </p></div>
       
     </div>

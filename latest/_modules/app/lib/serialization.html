@@ -6,9 +6,8 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
-    <title>controllers &#8212; Litestar Fullstack Docs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.lib.serialization &#8212; Litestar Fullstack Docs</title>
   
   
   
@@ -46,12 +45,12 @@
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
     <script src="../../../_static/design-tabs.js?v=36754332"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/domain/tags/controllers';</script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/lib/serialization';</script>
     <link rel="icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="dependencies" href="dependencies.html" />
-    <link rel="prev" title="tags" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -412,10 +411,6 @@ document.write(`
   
 
   
-    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
-      <span class="fa-solid fa-outdent"></span>
-    </label>
-  
 </div>
 
     </nav>
@@ -656,92 +651,92 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/development.html">Development</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the server</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../asgi.html">app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../utils.html">utils</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">domain</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../urls.html">urls</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../security.html">security</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/tasks.html">tasks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/domain/index.html">domain</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/domain/urls.html">urls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/domain/security.html">security</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/system/tasks.html">tasks</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../web/controllers.html">controllers</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/web/controllers.html">controllers</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../teams/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/controllers/index.html">teams</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
 </li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="index.html">tags</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="services.html">services</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/tags/index.html">tags</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/queries.html">queries</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/analytics/queries.html">queries</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/domain/accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/dependencies.html">dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/dtos.html">dtos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/models.html">models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/cache.html">cache</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/compression.html">compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/constants.html">constants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/cors.html">cors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/csrf.html">csrf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/dependencies.html">dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/dto.html">dto</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/exceptions.html">exceptions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/openapi.html">openapi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/repository.html">repository</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/serialization.html">serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/service.html">service</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/settings.html">settings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/static_files.html">static files</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/controller.html">controller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/init.html">init</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/utils.html">utils</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/worker.html">worker</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/cache.html">cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/compression.html">compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/constants.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/cors.html">cors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/crypt.html">crypt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/csrf.html">csrf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/openapi.html">openapi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/repository.html">repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/serialization.html">serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/service.html">service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/settings.html">settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/lib/static_files.html">static files</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/controller.html">controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/init.html">init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/utils.html">utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/log/worker.html">worker</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/base.html">base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/orm.html">orm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/utils.html">utils</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../api/lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/base.html">base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/orm.html">orm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/lib/db/utils.html">utils</a></li>
 </ul>
 </li>
 </ul>
@@ -782,8 +777,6 @@ document.write(`
 
 
 
-
-
 <nav aria-label="Breadcrumb">
   <ul class="bd-breadcrumbs">
     
@@ -793,15 +786,9 @@ document.write(`
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">API Reference</a></li>
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    
-    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
-    
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">tags</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page">controllers</li>
+    <li class="breadcrumb-item active" aria-current="page">app.lib.seri...</li>
   </ul>
 </nav>
 </div>
@@ -818,11 +805,93 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="controllers">
-<h1>controllers<a class="headerlink" href="#controllers" title="Link to this heading">#</a></h1>
-<p>Controllers for the tags domain.</p>
-</section>
+  <h1>Source code for app.lib.serialization</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 
+<span class="kn">import</span> <span class="nn">msgspec</span>
+<span class="kn">from</span> <span class="nn">asyncpg.pgproto</span> <span class="kn">import</span> <span class="n">pgproto</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;convert_datetime_to_gmt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;from_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;from_msgpack&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_msgpack&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_default</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pgproto</span><span class="o">.</span><span class="n">UUID</span> <span class="o">|</span> <span class="n">UUID</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">convert_datetime_to_gmt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">convert_date_to_iso</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="kn">from</span> <span class="nn">exc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+
+<span class="n">_msgspec_json_encoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="n">enc_hook</span><span class="o">=</span><span class="n">_default</span><span class="p">)</span>
+<span class="n">_msgspec_json_decoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">Decoder</span><span class="p">()</span>
+<span class="n">_msgspec_msgpack_encoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">msgpack</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="n">enc_hook</span><span class="o">=</span><span class="n">_default</span><span class="p">)</span>
+<span class="n">_msgspec_msgpack_decoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">msgpack</span><span class="o">.</span><span class="n">Decoder</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="to_json">
+<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.to_json">[docs]</a>
+<span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode json with the optimized msgspec package.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_msgspec_json_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="from_json">
+<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.from_json">[docs]</a>
+<span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode to an object with the optimized msgspec package.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_msgspec_json_decoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_msgpack">
+<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.to_msgpack">[docs]</a>
+<span class="k">def</span> <span class="nf">to_msgpack</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode json with the optimized msgspec package.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_msgspec_msgpack_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="from_msgpack">
+<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.from_msgpack">[docs]</a>
+<span class="k">def</span> <span class="nf">from_msgpack</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode to an object with the optimized msgspec package.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_msgspec_msgpack_decoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_datetime_to_gmt">
+<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.convert_datetime_to_gmt">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_datetime_to_gmt</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle datetime serialization for nested timestamps.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dt</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">convert_date_to_iso</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle date serialization for nested dates.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</pre></div>
 
                 </article>
               
@@ -833,59 +902,12 @@ document.write(`
                 <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="index.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">tags</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="dependencies.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">dependencies</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/litestar-org/litestar-fullstack/edit/main/docs/api/domain/tags/controllers.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-
-  <div class="tocsection sourcelink">
-    <a href="../../../_sources/api/domain/tags/controllers.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
-
-</div></div>
               
             
           </div>
