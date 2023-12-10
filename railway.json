@@ -2,5 +2,8 @@
   "$schema": "https://schema.up.railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "/opt/venv/bin/app databases upgrade --no-prompt && /opt/venv/bin/app run-all --http-workers 2 --host 0.0.0.0 --port $PORT"
   }
 }

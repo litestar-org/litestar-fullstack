@@ -4,15 +4,12 @@ providers = ['python'] # force python as the only provider, otherwise railway ma
 
 # set up some variables to minimize annoyance
 [variables]
+
 NIXPACKS_PDM_VERSION = '2.10.3' # set pdm version to install
 NIXPACKS_PYTHON_VERSION = '3.12' # set python version to install
 NPM_CONFIG_FUND = 'false' # the fund notification is is also pretty useless in a production environment
 NPM_CONFIG_UPDATE_NOTIFIER = 'false' # the node update notification is relatively useless in a production environment
 PIP_DISABLE_PIP_VERSION_CHECK = '1' # the pip update notification is relatively useless in a production environment
-
-[phases.release]
-cmds = ['litestar databases upgrade --no-prompt']
-
 [phases.setup]
 nixPkgs = ['...'] # add nodejs since it is needed to build the frontend
 
@@ -22,4 +19,4 @@ cmds = [
 ] # custom install command allows for setting pdm version above
 
 [start]
-cmd = 'app run-all --http-workers 2 --host 0.0.0.0 --port $PORT'
+cmd = '/opt/venv/bin/app databases upgrade --no-prompt && /opt/venv/bin/app run-all --http-workers 2 --host 0.0.0.0 --port $PORT'
