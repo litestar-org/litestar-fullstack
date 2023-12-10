@@ -24,8 +24,8 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.fixAll.eslint": true
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "python.defaultInterpreterPath": ".venv/bin/python",
   "python.linting.banditEnabled": false,
@@ -48,8 +48,8 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.codeActionsOnSave": {
-      "source.organizeImports": false,
-      "source.fixAll": true
+      "source.organizeImports": "never",
+      "source.fixAll": "explicit"
     }
   },
   "eslint.alwaysShowStatus": true,

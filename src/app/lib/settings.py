@@ -35,6 +35,7 @@ __all__ = [
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
+RESOURCES_DIR = Path(BASE_DIR / "domain" / "web" / "resources")
 STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
 version = importlib.metadata.version(DEFAULT_MODULE_NAME)
