@@ -9,7 +9,7 @@ from litestar.params import Dependency, Parameter
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags.dependencies import provide_tags_service
-from app.domain.tags.dtos import TagCreateDTO, TagDTO
+from app.domain.tags.dtos import TagCreateDTO, TagDTO, TagUpdateDTO
 from app.lib import log
 
 if TYPE_CHECKING:
@@ -95,6 +95,7 @@ class TagController(Controller):
         name="tags:update",
         path=urls.TAG_UPDATE,
         guards=[requires_superuser],
+        dto=TagUpdateDTO,
     )
     async def update_tag(
         self,
