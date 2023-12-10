@@ -11,7 +11,7 @@ NPM_CONFIG_UPDATE_NOTIFIER = 'false' # the node update notification is relativel
 PIP_DISABLE_PIP_VERSION_CHECK = '1' # the pip update notification is relatively useless in a production environment
 
 [phases.release]
-cmds = ['litestar databases upgrade']
+cmds = ['litestar databases upgrade --no-prompt']
 
 [phases.setup]
 nixPkgs = ['...'] # add nodejs since it is needed to build the frontend
@@ -22,4 +22,4 @@ cmds = [
 ] # custom install command allows for setting pdm version above
 
 [start]
-cmd = 'app run-all'
+cmd = 'app run-all --http-workers 2 --host 0.0.0.0 --port $PORT'
