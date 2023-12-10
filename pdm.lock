@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "docs", "dev", "linting", "test"]
+groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:d221274aa6cbd13421b1e0c35a10daf788a1d6d834bcf8b50e6775320df6ee7a"
+content_hash = "sha256:6c0ec3846a987287a1e08db6b1a19fc4e49971fb2f50953ff4aceab8495a4428"
 
 [[package]]
 name = "accessible-pygments"

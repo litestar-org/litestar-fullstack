@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "litestar database upgrade --no-prompt && litestar run-all --http-workers 2 --host 0.0.0.0 --port $PORT"
+    "startCommand": "/opt/venv/bin/app databases upgrade --no-prompt && /opt/venv/bin/app run-all --http-workers 2 --host 0.0.0.0 --port $PORT"
   }
 }
