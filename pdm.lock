@@ -1051,15 +1051,15 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.1.5"
+version = "0.1.6"
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 dependencies = [
     "litestar[cli,jinja]>=2.4.0",
 ]
 files = [
-    {file = "litestar_vite-0.1.5-py3-none-any.whl", hash = "sha256:8f063efea477c53487da25db73e441f36c0a25c42365e7fe65fdac45ed65eda5"},
-    {file = "litestar_vite-0.1.5.tar.gz", hash = "sha256:441f922d87c96a38b3d3c485c225ab47df05d0eeb48a64970a4a607314dbfc2a"},
+    {file = "litestar_vite-0.1.6-py3-none-any.whl", hash = "sha256:a21ef636a0661eb4b70ec14aa269d08c1fe77abf47a4a857383c6f9a3081b4d7"},
+    {file = "litestar_vite-0.1.6.tar.gz", hash = "sha256:97997f7a1779140241cb66f0d70113d3348e1c73a42a63c97f75d47f96f391b3"},
 ]
 
 [[package]]

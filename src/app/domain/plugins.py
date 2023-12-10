@@ -16,7 +16,6 @@ vite = VitePlugin(
         assets_dir=Path(settings.RESOURCES_DIR / "assets"),
         templates_dir=settings.TEMPLATES_DIR,
         hot_reload=settings.app.DEV_MODE,
-        manifest_name=".vite/manifest.json",
     ),
 )
 saq = SAQPlugin(
