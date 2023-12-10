@@ -75,5 +75,8 @@
   "[toml]": {
     "editor.defaultFormatter": "be5invis.toml"
   },
-  "ansible.python.interpreterPath": "${workspaceFolder}/.venv/bin/python"
+  "ansible.python.interpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  }
 }
