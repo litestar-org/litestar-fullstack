@@ -9,7 +9,7 @@ export default defineConfig({
   base: `${ASSET_URL}`,
   root: "src/app/domain/web",
   server: {
-    host: "0.0.0.0",
+    host: "localhost",
     port: 3005,
     cors: true,
   },
