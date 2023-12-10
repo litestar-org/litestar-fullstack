@@ -24,6 +24,7 @@ dependencies = [
   "litestar-saq>=0.1.3",
   "litestar-vite>=0.1.4",
   "litestar-aiosql>=0.1.1",
+  "nodeenv",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = [
