@@ -1,30 +1,30 @@
-ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
+ARG PYTHON_BUILDER_IMAGE=3.12-slim-bookworm
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python:${PYTHON_BUILDER_IMAGE} as python-base
 ENV PIP_DEFAULT_TIMEOUT=100 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random \
-    LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
+  PIP_DISABLE_PIP_VERSION_CHECK=1 \
+  PIP_NO_CACHE_DIR=1 \
+  PIP_ROOT_USER_ACTION=ignore \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  PYTHONFAULTHANDLER=1 \
+  PYTHONHASHSEED=random \
+  LANG=C.UTF-8 \
+  LC_ALL=C.UTF-8
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends git tini \
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /root/.cache \
-    && rm -rf /var/apt/lists/* \
-    && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false\
-    && mkdir -p /workspace/app \
-    && pip install --quiet -U pip wheel setuptools virtualenv
+  && apt-get upgrade -y \
+  && apt-get install -y --no-install-recommends git tini \
+  && apt-get autoremove -y \
+  && apt-get clean -y \
+  && rm -rf /root/.cache \
+  && rm -rf /var/apt/lists/* \
+  && rm -rf /var/cache/apt/* \
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false\
+  && mkdir -p /workspace/app \
+  && pip install --quiet -U pip wheel setuptools virtualenv
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python build base -------------------------------------- ##
@@ -32,27 +32,27 @@ RUN apt-get update \
 FROM python-base AS build-base
 ARG PDM_INSTALL_ARGS=""
 ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
-    GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
-    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
+  GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
+  PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add build packages ----------------------------------- ##
 RUN apt-get install -y --no-install-recommends build-essential curl \
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /root/.cache \
-    && rm -rf /var/apt/lists/* \
-    && rm -rf /var/cache/apt/* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+  && apt-get autoremove -y \
+  && apt-get clean -y \
+  && rm -rf /root/.cache \
+  && rm -rf /var/apt/lists/* \
+  && rm -rf /var/cache/apt/* \
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml pdm.lock README.md mkdocs.yml .pre-commit-config.yaml .pylintrc LICENSE Makefile \
-    package.json package-lock.json vite.config.ts tsconfig.json \
-    ./
+COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml .pylintrc LICENSE Makefile \
+  package.json package-lock.json vite.config.ts tsconfig.json \
+  ./
 COPY scripts ./scripts/
 RUN python -m venv --copies /workspace/app/.venv \
-    && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython  \
-    && pdm install ${PDM_INSTALL_ARGS} --no-self  \
-    && pdm export ${PDM_INSTALL_ARGS} --without-hashes --prod --output=requirements.txt
+  && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython  \
+  && pdm install ${PDM_INSTALL_ARGS} --no-self  \
+  && pdm export ${PDM_INSTALL_ARGS} --without-hashes --prod --output=requirements.txt
 COPY src ./src/
 RUN pdm build
 
@@ -66,8 +66,8 @@ FROM python-base as run-image
 ARG ENV_SECRETS="runtime-secrets"
 ENV ENV_SECRETS="${ENV_SECRETS}"
 RUN addgroup --system --gid 65532 nonroot \
-    && adduser --no-create-home --system --uid 65532 nonroot \
-    && chown -R nonroot:nonroot /workspace
+  && adduser --no-create-home --system --uid 65532 nonroot \
+  && chown -R nonroot:nonroot /workspace
 ## -------------------------- install application ----------------------------------- ##
 COPY --from=build-base --chown=65532:65532 /workspace/app/requirements.txt /tmp/requirements.txt
 COPY --from=build-base --chown=65532:65532 /workspace/app/dist /tmp/

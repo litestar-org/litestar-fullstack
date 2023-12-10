@@ -7,7 +7,6 @@ x-development-volumes: &development-volumes
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
     - ./pdm.lock:/workspace/app/pdm.lock
-    - ./mkdocs.yml:/workspace/app/mkdocs.yml
     - ./tsconfig.json:/workspace/app/tsconfig.json
     - ./package.json:/workspace/app/package.json
     - ./vite.config.ts:/workspace/app/vite.config.ts
@@ -21,6 +20,9 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/dev/Dockerfile
+    ports:
+      - "8000:8000"
+      - "3006:3006"
     image: app:latest-dev
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
