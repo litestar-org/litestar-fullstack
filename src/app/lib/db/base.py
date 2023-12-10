@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.config import AlembicAsyncConfig
@@ -13,12 +12,7 @@ from sqlalchemy.pool import NullPool
 
 from app.lib import constants, serialization, settings
 
-__all__ = ["session"]
-
-
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
-
     from sqlalchemy.ext.asyncio import AsyncSession
 
 engine = create_async_engine(
@@ -97,14 +91,3 @@ config = SQLAlchemyAsyncConfig(
 
 
 plugin = SQLAlchemyInitPlugin(config=config)
-
-
-@asynccontextmanager
-async def session() -> AsyncIterator[AsyncSession]:
-    """Use this to get a database session where you can't in litestar.
-
-    Returns:
-        AsyncIterator[AsyncSession]
-    """
-    async with async_session_factory() as session:
-        yield session
