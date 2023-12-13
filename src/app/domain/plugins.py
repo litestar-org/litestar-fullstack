@@ -1,3 +1,5 @@
+import os
+
 from litestar.contrib.pydantic import PydanticPlugin
 from litestar_aiosql import AiosqlConfig, AiosqlPlugin
 from litestar_saq import CronJob, QueueConfig, SAQConfig, SAQPlugin
@@ -13,9 +15,10 @@ vite = VitePlugin(
         resource_dir=settings.RESOURCES_DIR,
         template_dir=settings.TEMPLATES_DIR,
         dev_mode=settings.app.DEV_MODE,
-        hot_reload=True,
+        hot_reload=os.environ.get("VITE_HOT_RELOAD", None) not in {None, "no", "false", "False", "0"},
         use_server_lifespan=True,
-        port=3006,
+        port=int(os.environ.get("VITE_PORT", 3006)),
+        host=os.environ.get("VITE_HOST", "localhost"),
     ),
 )
 saq = SAQPlugin(
