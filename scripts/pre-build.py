@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    import nodeenv  # type: ignore  # noqa: F401
+    import nodeenv  # noqa: F401
 
     NODEENV_INSTALLED = True
 except ImportError:
