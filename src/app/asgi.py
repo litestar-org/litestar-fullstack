@@ -38,7 +38,7 @@ def create_app() -> Litestar:
         },
         debug=settings.app.DEBUG,
         before_send=[log.controller.BeforeSendHandler()],
-        middleware=[log.controller.middleware_factory],
+        middleware=[log.controller.StructlogLoggingMiddleware],
         logging_config=log.config,
         openapi_config=domain.openapi.config,
         route_handlers=[*domain.routes],

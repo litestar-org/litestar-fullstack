@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from litestar.contrib.pydantic import PydanticPlugin
 from litestar_aiosql import AiosqlConfig, AiosqlPlugin
 from litestar_saq import CronJob, QueueConfig, SAQConfig, SAQPlugin
@@ -13,9 +11,9 @@ vite = VitePlugin(
     config=ViteConfig(
         bundle_dir=settings.STATIC_DIR,
         resource_dir=settings.RESOURCES_DIR,
-        assets_dir=Path(settings.RESOURCES_DIR / "assets"),
-        templates_dir=settings.TEMPLATES_DIR,
-        hot_reload=settings.app.DEV_MODE,
+        template_dir=settings.TEMPLATES_DIR,
+        dev_mode=settings.app.DEV_MODE,
+        hot_reload=True,
         use_server_lifespan=True,
         port=3006,
     ),
