@@ -110,7 +110,7 @@ jobs:
       security-events: write
     steps:
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: python
       - name: Checkout repository
@@ -125,4 +125,4 @@ jobs:
       - name: Install dependencies
         run: pdm install -G:all
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
