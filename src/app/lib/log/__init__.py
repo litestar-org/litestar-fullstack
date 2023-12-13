@@ -103,6 +103,11 @@ config = LoggingConfig(
             "level": settings.log.SAQ_LEVEL,
             "handlers": ["queue_listener"],
         },
+        "vite": {
+            "propagate": False,
+            "level": settings.log.LEVEL,
+            "handlers": ["queue_listener"],
+        },
         "sqlalchemy.engine": {
             "propagate": False,
             "level": settings.log.SQLALCHEMY_LEVEL,

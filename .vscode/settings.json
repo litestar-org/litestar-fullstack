@@ -78,5 +78,8 @@
   "ansible.python.interpreterPath": "${workspaceFolder}/.venv/bin/python",
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }

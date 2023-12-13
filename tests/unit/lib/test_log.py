@@ -70,7 +70,7 @@ def test_drop_health_log_no_drop_event_if_not_success_status() -> None:
 
 def test_middleware_factory_added_to_app(app: Litestar) -> None:
     """Ensures the plugin adds the middleware to clear the context."""
-    assert log.controller.middleware_factory in app.middleware
+    assert log.controller.StructlogLoggingMiddleware in app.middleware
 
 
 async def test_middleware_calls_structlog_contextvars_clear_contextvars(
@@ -80,7 +80,7 @@ async def test_middleware_calls_structlog_contextvars_clear_contextvars(
     clear_ctx_vars_mock = MagicMock()
     monkeypatch.setattr(structlog.contextvars, "clear_contextvars", clear_ctx_vars_mock)
     app_mock = AsyncMock()
-    middleware = log.controller.middleware_factory(app_mock)
+    middleware = log.controller.StructlogLoggingMiddleware(app_mock)
     await middleware(1, 2, 3)  # type:ignore[arg-type]
     clear_ctx_vars_mock.assert_called_once()
     app_mock.assert_called_once_with(1, 2, 3)
