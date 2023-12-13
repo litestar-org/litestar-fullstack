@@ -4,7 +4,7 @@ import path from "path";
 
 import litestar from "litestar-vite-plugin";
 const ASSET_URL =
-  process.env.LITESTAR_ASSET_URL || process.env.ASSET_URL || "{{ asset_url }}";
+  process.env.LITESTAR_ASSET_URL || process.env.ASSET_URL || "/static/";
 const VITE_PORT = process.env.VITE_PORT || "5173";
 const VITE_HOST = process.env.VITE_HOST || "localhost";
 export default defineConfig({
