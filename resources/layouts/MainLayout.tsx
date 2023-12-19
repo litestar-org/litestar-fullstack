@@ -29,7 +29,7 @@ const MainLayout = ({
 };
 
 MainLayout.defaultProps = {
-  title: "Database Migration Assistant",
+  title: "Litestar Application",
   description: "Gemini, Vertex... and Databases?",
   keywords: "database, dma",
 };

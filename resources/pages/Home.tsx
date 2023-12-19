@@ -10,8 +10,8 @@ const Home: React.FC = () => {
 
   return (
     <MainLayout
-      title="DMA - Home"
-      description="Database Migration Assistant - Home"
+      title="Litestar Application - Home"
+      description="Litestar Application - Home"
       keywords="home"
     >
       <div className="h-screen w-full flex justify-center items-center bg-blue-900/20 pt-24">

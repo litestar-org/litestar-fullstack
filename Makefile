@@ -83,10 +83,14 @@ clean: 												## Cleanup temporary build artifacts
 	@find . -name '.ipynb_checkpoints' -exec rm -rf {} +
 
 destroy-venv: 											## Destroy the virtual environment
+	@echo "=> Cleaning Python virtual environment"
 	@rm -rf .venv
 
 destroy-node_modules: 											## Destroy the node environment
+	@echo "=> Cleaning Node modules"
 	@rm -rf node_modules
+
+tidy: clean destroy-venv destroy-node_modules ## Clean up everything
 
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
@@ -119,6 +123,12 @@ lock:                                             ## Rebuild lockfiles from scra
 lint: 												## Runs pre-commit hooks; includes ruff linting, codespell, black
 	@echo "=> Running pre-commit process"
 	@$(ENV_PREFIX)pre-commit run --all-files
+	@echo "=> Pre-commit complete"
+
+.PHONY: format
+format: 												## Runs code formatting utilities
+	@echo "=> Running pre-commit process"
+	@$(ENV_PREFIX)ruff . --fix
 	@echo "=> Pre-commit complete"
 
 .PHONY: coverage

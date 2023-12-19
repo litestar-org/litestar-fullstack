@@ -41,8 +41,8 @@ const RegisterForm = () => {
 
   return (
     <MainLayout
-      title="DMA - User Registration"
-      description="Database Migration Assistant - Register"
+      title="Litestar Application - User Registration"
+      description="Litestar Application - Register"
       keywords="register"
     >
       <section>

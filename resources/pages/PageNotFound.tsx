@@ -6,8 +6,8 @@ const PageNotFound: React.FC = () => {
 
   return (
     <MainLayout
-      title="DMA - 404"
-      description="Database Migration Assistant - Page Not Found"
+      title="Litestar Application - 404"
+      description="Litestar Application - Page Not Found"
       keywords="404"
     >
       <div className="w-full h-screen flex items-center justify-center px-2 md:px-0">

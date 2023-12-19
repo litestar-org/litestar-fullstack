@@ -35,8 +35,8 @@ const LoginForm = () => {
 
   return (
     <MainLayout
-      title="DMA - Login"
-      description="Database Migration Assistant - Login"
+      title="Litestar Application - Login"
+      description="Litestar Application - Login"
       keywords="login"
     >
       <section>
