@@ -15,8 +15,6 @@ from app.lib import constants, db, settings
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection, Request
 
-__all__ = ["current_user_from_token", "auth"]
-
 
 async def provide_user(request: Request[User, Token, Any]) -> User:
     """Get the user from the connection.

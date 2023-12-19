@@ -9,6 +9,7 @@ const VITE_PORT = process.env.VITE_PORT || "5173";
 const VITE_HOST = process.env.VITE_HOST || "localhost";
 export default defineConfig({
   base: `${ASSET_URL}`,
+  clearScreen: false,
   server: {
     host: `${VITE_HOST}`,
     port: +`${VITE_PORT}`,

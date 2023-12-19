@@ -7,9 +7,6 @@ if TYPE_CHECKING:
     from litestar import Litestar
 
 
-__all__ = ["create_app"]
-
-
 def create_app() -> Litestar:
     """Create ASGI application."""
 

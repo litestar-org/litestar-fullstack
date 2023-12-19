@@ -4,9 +4,9 @@ from litestar.static_files.config import StaticFilesConfig
 
 from . import settings
 
-STATIC_DIRS = [settings.app.STATIC_DIR]
-if settings.app.DEBUG:
-    STATIC_DIRS.append(Path(settings.BASE_DIR / "domain" / "web" / "resources"))
+STATIC_DIRS = [settings.app.BUNDLE_DIR]
+if settings.app.DEV_MODE and settings.app.HOT_RELOAD:
+    STATIC_DIRS.append(Path(settings.RESOURCE_DIR))
 
 
 config = [

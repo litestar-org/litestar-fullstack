@@ -13,12 +13,13 @@ vite = VitePlugin(
     config=ViteConfig(
         bundle_dir=settings.BUNDLE_DIR,
         resource_dir=settings.RESOURCE_DIR,
-        template_dir=settings.TEMPLATES_DIR,
+        template_dir=settings.TEMPLATE_DIR,
         dev_mode=settings.app.DEV_MODE,
-        hot_reload=os.environ.get("VITE_HOT_RELOAD", None) not in {None, "no", "false", "False", "0"},
+        hot_reload=True,
         use_server_lifespan=True,
         port=int(os.environ.get("VITE_PORT", 3006)),
         host=os.environ.get("VITE_HOST", "localhost"),
+        is_react=True,
     ),
 )
 saq = SAQPlugin(

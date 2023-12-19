@@ -35,9 +35,9 @@ __all__ = [
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
-BUNDLE_DIR = Path("public")
-RESOURCE_DIR = Path("resources")
-TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
+BUNDLE_DIR = Path("public/")
+RESOURCE_DIR = Path("resources/")
+TEMPLATE_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
 version = importlib.metadata.version(DEFAULT_MODULE_NAME)
 
 
@@ -111,8 +111,10 @@ class AppSettings(BaseSettings):
     CSRF_COOKIE_NAME: str = "csrftoken"
     CSRF_COOKIE_SECURE: bool = False
     """Default URL where static assets are located."""
-    STATIC_DIR: Path = BUNDLE_DIR
+    BUNDLE_DIR: Path = BUNDLE_DIR
+    RESOURCE_DIR: Path = RESOURCE_DIR
     DEV_MODE: bool = False
+    HOT_RELOAD: bool = True
 
     @property
     def slug(self) -> str:
