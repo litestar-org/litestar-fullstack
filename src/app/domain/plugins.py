@@ -11,8 +11,8 @@ pydantic = PydanticPlugin(prefer_alias=True)
 aiosql = AiosqlPlugin(config=AiosqlConfig())
 vite = VitePlugin(
     config=ViteConfig(
-        bundle_dir=settings.STATIC_DIR,
-        resource_dir=settings.RESOURCES_DIR,
+        bundle_dir=settings.BUNDLE_DIR,
+        resource_dir=settings.RESOURCE_DIR,
         template_dir=settings.TEMPLATES_DIR,
         dev_mode=settings.app.DEV_MODE,
         hot_reload=os.environ.get("VITE_HOT_RELOAD", None) not in {None, "no", "false", "False", "0"},

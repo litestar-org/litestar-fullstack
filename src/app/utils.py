@@ -1,23 +1,17 @@
 """General utility functions."""
 from __future__ import annotations
 
-import dataclasses
-import pkgutil
 import platform
 import re
 import sys
 import unicodedata
-from functools import lru_cache
 from importlib import import_module
-from importlib.machinery import SourceFileLoader
+from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 __all__ = [
-    "camel_case",
-    "case_insensitive_string_compare",
     "check_email",
-    "dataclass_as_dict_shallow",
     "import_string",
     "module_to_os_path",
     "slugify",
@@ -63,50 +57,11 @@ def slugify(value: str, allow_unicode: bool = False, separator: str | None = Non
     return re.sub(r"[-\s]+", "-", value).strip("-_")
 
 
-def camel_case(string: str) -> str:
-    """Convert a string to camel case.
-
-    Args:
-        string (str): The string to convert
-
-    Returns:
-        str: The string converted to camel case
-    """
-    return "".join(word if index == 0 else word.capitalize() for index, word in enumerate(string.split("_")))
-
-
-def case_insensitive_string_compare(a: str, b: str, /) -> bool:
-    """Compare `a` and `b`, stripping whitespace and ignoring case."""
-    return a.strip().lower() == b.strip().lower()
-
-
-def dataclass_as_dict_shallow(dataclass: Any, *, exclude_none: bool = False) -> dict[str, Any]:
-    """Convert a dataclass to dict, without deepcopy.
-
-    Args:
-        dataclass (Any): The dataclass to convert.
-        exclude_none (bool, optional): Exclude None values. Defaults to False.
-
-    Returns:
-        dict[str, Any]: The dataclass as a dict.
-    """
-    ret: dict[str, Any] = {}
-    for field in dataclasses.fields(dataclass):
-        value = getattr(dataclass, field.name)
-        if exclude_none and value is None:
-            continue
-        ret[field.name] = value
-    return ret
-
-
-@lru_cache
 def module_to_os_path(dotted_path: str = "app") -> Path:
     """Find Module to OS Path.
 
     Return a path to the base directory of the project or the module
     specified by `dotted_path`.
-
-    Ensures that ``pkgutil`` returns a valid source file loader.
 
     Args:
         dotted_path (str, optional): The path to the module. Defaults to "app".
@@ -117,12 +72,13 @@ def module_to_os_path(dotted_path: str = "app") -> Path:
     Returns:
         Path: The path to the module.
     """
-    src = pkgutil.get_loader(dotted_path)
-    if not isinstance(src, SourceFileLoader):
+
+    src = find_spec(dotted_path)
+    if src is None:
         msg = "Couldn't find the path for %s"
         raise TypeError(msg, dotted_path)
     path_separator = "\\" if platform.system() == "Windows" else "/"
-    return Path(str(src.path).removesuffix(f"{path_separator}__init__.py"))
+    return Path(str(src.origin).removesuffix(f"{path_separator}__init__.py"))
 
 
 def import_string(dotted_path: str) -> Any:

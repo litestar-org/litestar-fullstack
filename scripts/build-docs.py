@@ -5,6 +5,10 @@ import shutil
 import subprocess
 from contextlib import contextmanager
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 REDIRECT_TEMPLATE = """
 <!DOCTYPE HTML>
@@ -26,7 +30,7 @@ parser.add_argument("output")
 
 
 @contextmanager
-def checkout(branch: str) -> None:
+def checkout(branch: str) -> Generator[None, None, None]:
     subprocess.run(["git", "checkout", branch], check=True)  # noqa: S607
     yield
     subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S607
@@ -35,13 +39,13 @@ def checkout(branch: str) -> None:
 def build(output_dir: str) -> None:
     subprocess.run(["make", "docs"], check=True)  # noqa: S607
 
-    output_dir = Path(output_dir)
-    output_dir.mkdir()
-    output_dir.joinpath(".nojekyll").touch(exist_ok=True)
-    output_dir.joinpath("index.html").write_text(REDIRECT_TEMPLATE.format(target="latest"))
+    output_dir = Path(output_dir)  # type: ignore[assignment]
+    output_dir.mkdir()  # type: ignore[attr-defined]
+    output_dir.joinpath(".nojekyll").touch(exist_ok=True)  # type: ignore[attr-defined]
+    output_dir.joinpath("index.html").write_text(REDIRECT_TEMPLATE.format(target="latest"))  # type: ignore[attr-defined]
 
     docs_src_path = Path("docs/_build/html")
-    shutil.copytree(docs_src_path, output_dir / "latest", dirs_exist_ok=True)
+    shutil.copytree(docs_src_path, output_dir / "latest", dirs_exist_ok=True)  # type: ignore[operator]
 
 
 def main() -> None:

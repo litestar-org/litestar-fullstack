@@ -50,12 +50,10 @@ services:
       retries: 40
   localmail:
     image: mailhog/mailhog:v1.0.0
-    container_name: localmail
     ports:
       - "8025:8025"
   objectstorage:
     image: minio/minio:latest
-    container_name: objectstorage
     volumes:
       - ./media/:/export/app/data
     ports:

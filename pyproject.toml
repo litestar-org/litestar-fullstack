@@ -41,7 +41,7 @@ license = {text = "MIT"}
 name = "app"
 readme = "README.md"
 requires-python = ">=3.11"
-version = "0.1.0"
+version = "0.2.0"
 
 [project.urls]
 Discord = "https://discord.gg/litestar-919193495116337154"
@@ -51,10 +51,6 @@ Source = "https://github.com/litestar-org/litestar-fullstack"
 
 [project.scripts]
 app = "app.__main__:run_cli"
-
-[project.entry-points."litestar.commands"]
-run-all = "app.cli:run_all_app"
-users = "app.cli:user_management_app"
 
 [build-system]
 build-backend = "hatchling.build"
@@ -67,7 +63,7 @@ allow-direct-references = true
 dev-mode-dirs = ["src/"]
 include = [
   "CHANGELOG.md",
-  "src/app/domain/web/public/**/*",
+  "src/public/**/*",
   "src/app/**/*.sql",
   "src/app/lib/db/**/*.ini",
 ]
@@ -75,8 +71,10 @@ packages = ["src/app"]
 
 [tool.pdm.scripts]
 lint = "pdm run pre-commit run --all-files"
-post_install = "pdm run python scripts/pre-build.py"
-pre_build = "pdm run python scripts/pre-build.py"
+post_install = "pdm run python scripts/pre-build.py --install-packages"
+pre_build = "pdm run python scripts/pre-build.py --build-assets"
+start-infra = "docker-compose -f docker-compose.infra.yml up --force-recreate -d"
+stop-infra = "docker-compose -f docker-compose.infra.yml down --remove-orphans"
 test = "pdm run pytest tests"
 test_coverage = {composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"]}
 
@@ -93,14 +91,12 @@ docs = [
   "sphinx-toolbox>=3.5.0",
   "sphinx-design>=0.5.0",
   "sphinx-click>=5.0.1",
-  "blacken-docs>=1.16.0",
   "sphinxcontrib-mermaid>=0.9.2",
   "autodoc-pydantic>=2.0.1",
   "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git",
 ]
 linting = [
   "pre-commit>=3.4.0",
-  "black>=23.7.0",
   "mypy>=1.5.1",
   "ruff>=0.0.287",
   "slotscheck",
@@ -156,6 +152,7 @@ exclude_lines = [
 ]
 omit = ["*/tests/*"]
 show_missing = true
+
 [tool.coverage.run]
 branch = true
 omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
@@ -293,10 +290,10 @@ known-first-party = ['tests', 'app']
   "ARG001",
 ]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
+"scripts/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 "scripts/*.py" = ["INP001"]
 "src/app/lib/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
-"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 
 [tool.slotscheck]
 strict-imports = false
@@ -353,7 +350,7 @@ warn_untyped_fields = true
 
 [tool.pyright]
 exclude = [
-  "tools",
+  "scripts",
   "docs",
 ]
 include = ["src/app", "tests"]

@@ -35,8 +35,8 @@ __all__ = [
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
-RESOURCES_DIR = Path(BASE_DIR / "domain" / "web" / "resources")
-STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
+BUNDLE_DIR = Path("public")
+RESOURCE_DIR = Path("resources")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
 version = importlib.metadata.version(DEFAULT_MODULE_NAME)
 
@@ -67,7 +67,6 @@ class ServerSettings(BaseSettings):
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = None
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
-
 
 class AppSettings(BaseSettings):
     """Generic application settings.
@@ -111,7 +110,7 @@ class AppSettings(BaseSettings):
     CSRF_COOKIE_NAME: str = "csrftoken"
     CSRF_COOKIE_SECURE: bool = False
     """Default URL where static assets are located."""
-    STATIC_DIR: Path = STATIC_DIR
+    STATIC_DIR: Path = BUNDLE_DIR
     DEV_MODE: bool = False
 
     @property
