@@ -68,6 +68,7 @@ class ServerSettings(BaseSettings):
     HTTP_WORKERS: int | None = None
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
 
+
 class AppSettings(BaseSettings):
     """Generic application settings.
 
