@@ -1,0 +1,4 @@
+src/app/domain/web/templates
+.venv
+public/
+dist/
