@@ -1,8 +1,8 @@
-import MainLayout from "@/layouts/MainLayout";
-import { useNavigate } from "react-router-dom";
+import MainLayout from "@/layouts/MainLayout"
+import { useNavigate } from "react-router-dom"
 
 const PageNotFound: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <MainLayout
@@ -41,7 +41,7 @@ const PageNotFound: React.FC = () => {
         </div>
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
-export default PageNotFound;
+export default PageNotFound

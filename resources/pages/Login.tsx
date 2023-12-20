@@ -1,37 +1,37 @@
-import { toast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthProvider";
-import MainLayout from "@/layouts/MainLayout";
-import { loginUserService } from "@/services/authService";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast"
+import { useAuth } from "@/contexts/AuthProvider"
+import MainLayout from "@/layouts/MainLayout"
+import { loginUserService } from "@/services/authService"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 const LoginForm = () => {
-  const navigate = useNavigate();
-  const { handleLogin } = useAuth();
-  const [data, setData] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  const { handleLogin } = useAuth()
+  const [data, setData] = useState({ email: "", password: "" })
+  const [loading, setLoading] = useState(false)
 
   const handleLoginClick = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      setLoading(true);
-      const { success, message, token, user } = await loginUserService(data);
-      setLoading(false);
+      setLoading(true)
+      const { success, message, token, user } = await loginUserService(data)
+      setLoading(false)
       if (success) {
-        handleLogin({ token, user });
+        handleLogin({ token, user })
         toast({
           title: message,
-        });
-        return navigate("/");
+        })
+        return navigate("/")
       }
     } catch (error: any) {
-      setLoading(false);
-      console.log(error);
+      setLoading(false)
+      console.log(error)
       toast({
         title: error.response.data.message,
-      });
+      })
     }
-  };
+  }
 
   return (
     <MainLayout
@@ -74,7 +74,10 @@ const LoginForm = () => {
                       placeholder="Email"
                       autoComplete="email"
                       onChange={(e) =>
-                        setData({ ...data, email: e.target.value })
+                        setData({
+                          ...data,
+                          email: e.target.value,
+                        })
                       }
                       required
                     />
@@ -100,7 +103,10 @@ const LoginForm = () => {
                       placeholder="Password"
                       autoComplete="current-password"
                       onChange={(e) =>
-                        setData({ ...data, password: e.target.value })
+                        setData({
+                          ...data,
+                          password: e.target.value,
+                        })
                       }
                       required
                     />
@@ -121,7 +127,7 @@ const LoginForm = () => {
         </div>
       </section>
     </MainLayout>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

@@ -1,10 +1,10 @@
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet"
 
 interface MainLayoutProps {
-  children: React.ReactNode;
-  title: string;
-  description: string;
-  keywords: string;
+  children: React.ReactNode
+  title: string
+  description: string
+  keywords: string
 }
 
 const MainLayout = ({
@@ -25,13 +25,13 @@ const MainLayout = ({
       <main>{children}</main>
       <footer></footer>
     </>
-  );
-};
+  )
+}
 
 MainLayout.defaultProps = {
   title: "Litestar Application",
   description: "Gemini, Vertex... and Databases?",
   keywords: "database, dma",
-};
+}
 
-export default MainLayout;
+export default MainLayout

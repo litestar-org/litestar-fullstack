@@ -1,24 +1,24 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 // pages imports
-import ProtectedRoutes from "@/lib/protected-routes";
-import Login from "@/pages/access/Login";
-import Register from "@/pages/access/Register";
-import Home from "@/pages/Home";
-import PageNotFound from "@/pages/PageNotFound";
-import Placeholder from "@/pages/Placeholder";
-import { useAuth } from "@/contexts/AuthProvider";
-import { useEffect } from "react";
+import ProtectedRoutes from "@/lib/protected-routes"
+import Login from "@/pages/access/Login"
+import Register from "@/pages/access/Register"
+import Home from "@/pages/Home"
+import PageNotFound from "@/pages/PageNotFound"
+import Placeholder from "@/pages/Placeholder"
+import { useAuth } from "@/contexts/AuthProvider"
+import { useEffect } from "react"
 
 const App: React.FC = () => {
-  const navigate = useNavigate();
-  const { auth } = useAuth();
-  const { pathname } = useLocation();
+  const navigate = useNavigate()
+  const { auth } = useAuth()
+  const { pathname } = useLocation()
 
   useEffect(() => {
     if (auth?.token && (pathname === "/login" || pathname === "/register")) {
-      navigate("/");
+      navigate("/")
     }
-  }, [auth, pathname]);
+  }, [auth, pathname])
 
   return (
     <Routes>
@@ -32,7 +32,7 @@ const App: React.FC = () => {
       <Route path="/register" element={<Register />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
-  );
-};
+  )
+}
 
-export default App;
+export default App

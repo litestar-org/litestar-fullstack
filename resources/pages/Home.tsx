@@ -1,12 +1,12 @@
-import { useAuth } from "@/contexts/AuthProvider";
-import MainLayout from "@/layouts/MainLayout";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthProvider"
+import MainLayout from "@/layouts/MainLayout"
+import { useEffect, useState } from "react"
 
 const Home: React.FC = () => {
-  const { auth } = useAuth();
-  const [fetching, setFetching] = useState(false);
+  const { auth } = useAuth()
+  const [fetching, setFetching] = useState(false)
 
-  useEffect(() => {}, [auth?.token]);
+  useEffect(() => {}, [auth?.token])
 
   return (
     <MainLayout
@@ -18,7 +18,7 @@ const Home: React.FC = () => {
         <div className="h-full w-full md:w-[70%] mx-auto flex flex-col items-center"></div>
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

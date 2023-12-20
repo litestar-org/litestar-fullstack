@@ -1,18 +1,18 @@
-import { useAuth } from "@/contexts/AuthProvider";
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthProvider"
+import { useEffect } from "react"
+import { Outlet, useNavigate } from "react-router-dom"
 
 const ProtectedRoutes: React.FC = () => {
-  const { auth } = useAuth();
-  const navigate = useNavigate();
+  const { auth } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!auth.user && !auth.token) {
-      return navigate("/login");
+      return navigate("/login")
     }
-  }, [auth]);
+  }, [auth])
 
-  return <Outlet />;
-};
+  return <Outlet />
+}
 
-export default ProtectedRoutes;
+export default ProtectedRoutes

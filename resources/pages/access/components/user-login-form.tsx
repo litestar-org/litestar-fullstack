@@ -1,47 +1,47 @@
-import { toast } from "@/components/ui/use-toast";
-import { useState } from "react";
-import * as React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { registerUserService } from "@/services/authService";
+import { toast } from "@/components/ui/use-toast"
+import { useState } from "react"
+import * as React from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { registerUserService } from "@/services/authService"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
-  const navigate = useNavigate();
-  const [data, setData] = useState({ name: "", email: "", password: "" });
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const navigate = useNavigate()
+  const [data, setData] = useState({ name: "", email: "", password: "" })
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
+    event.preventDefault()
     try {
       if (data.password.length < 6) {
         return toast({
           title: "Password is required!",
-        });
+        })
       }
-      setIsLoading(true);
-      const { success, message } = await registerUserService(data);
-      setIsLoading(false);
+      setIsLoading(true)
+      const { success, message } = await registerUserService(data)
+      setIsLoading(false)
       if (success) {
         toast({
           title: message,
-        });
-        return navigate("/login");
+        })
+        return navigate("/login")
       } else {
         return toast({
           title: message,
-        });
+        })
       }
     } catch (error: any) {
-      setIsLoading(false);
-      console.log(error);
+      setIsLoading(false)
+      console.log(error)
       toast({
         title: error.response.data.message,
-      });
+      })
     }
   }
 
@@ -178,5 +178,5 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
         Sign in with Google
       </Button>
     </div>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { UserRegistrationForm } from "./components/user-registration-form";
-import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
+import { UserRegistrationForm } from "./components/user-registration-form"
+import { Link } from "react-router-dom"
 export default function AuthenticationPage() {
   return (
     <>
@@ -10,7 +10,7 @@ export default function AuthenticationPage() {
           to="/login"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8",
+            "absolute right-4 top-4 md:right-8 md:top-8"
           )}
         >
           Login
@@ -75,5 +75,5 @@ export default function AuthenticationPage() {
         </div>
       </div>
     </>
-  );
+  )
 }

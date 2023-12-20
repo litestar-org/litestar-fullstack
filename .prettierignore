@@ -1,4 +1,5 @@
-src/app/domain/web/templates
-.venv
-public/
-dist/
+templates
+scripts
+artwork
+deploy
+docs
