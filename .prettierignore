@@ -3,3 +3,12 @@ scripts
 artwork
 deploy
 docs
+*.json
+.eslintrc.cjs
+postcss.config.cjs
+.github
+.venv
+media
+public
+dist
+.git
