@@ -1,4 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.12-slim-bookworm
+ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -77,6 +77,8 @@ COPY --from=build-base --chown=65532:65532 /workspace/app/dist /tmp/
 WORKDIR /workspace/app
 RUN pip install --quiet --disable-pip-version-check --no-deps --requirement=/tmp/requirements.txt
 RUN pip install --quiet --disable-pip-version-check --no-deps /tmp/*.whl
+COPY --from=build-base --chown=65532:65532 /workspace/app/public /workspace/app/public
+
 USER nonroot
 STOPSIGNAL SIGINT
 EXPOSE 8000
