@@ -38,6 +38,7 @@ module.exports = {
       "error",
       { allowExpressions: true },
     ],
+    "@typescript-eslint/no-explicit-any": "off",
     "max-len": ["warn", { code: 120, ignoreComments: true, ignoreUrls: true }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",

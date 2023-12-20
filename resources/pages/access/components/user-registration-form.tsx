@@ -1,7 +1,7 @@
 import { toast } from "@/components/ui/use-toast"
 import { useState } from "react"
 import * as React from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
