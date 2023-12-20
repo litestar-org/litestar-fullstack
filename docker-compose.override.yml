@@ -10,6 +10,8 @@ x-development-volumes: &development-volumes
     - ./tsconfig.json:/workspace/app/tsconfig.json
     - ./package.json:/workspace/app/package.json
     - ./vite.config.ts:/workspace/app/vite.config.ts
+    - ./resources:/workspace/app/resources
+    - ./public:/workspace/app/public
 services:
   localmail:
     image: mailhog/mailhog:v1.0.0

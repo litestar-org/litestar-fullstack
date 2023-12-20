@@ -49,6 +49,8 @@ COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml .pylintrc LICENSE
   package.json package-lock.json vite.config.ts tsconfig.json \
   ./
 COPY scripts ./scripts/
+COPY resources ./resources/
+COPY public ./public/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython pdm nodeenv  \
   && pdm install ${PDM_INSTALL_ARGS} --no-self
