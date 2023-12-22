@@ -24,6 +24,7 @@ dependencies = [
   "litestar-saq>=0.1.3",
   "litestar-vite>=0.1.4",
   "litestar-aiosql>=0.1.1",
+  "litestar-granian>=0.1.4",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = [
@@ -63,7 +64,7 @@ allow-direct-references = true
 dev-mode-dirs = ["src/"]
 include = [
   "CHANGELOG.md",
-  "src/public/**/*",
+  "public/**/*",
   "src/app/**/*.sql",
   "src/app/lib/db/**/*.ini",
 ]
@@ -317,7 +318,6 @@ exclude = '''(?x)(
 '''
 implicit_reexport = false
 plugins = ['pydantic.mypy']
-show_error_codes = true
 strict = true
 warn_redundant_casts = true
 warn_return_any = true

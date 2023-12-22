@@ -9,12 +9,6 @@ from sqlalchemy.orm import joinedload, noload, selectinload
 from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
 from app.domain.teams.models import TeamMember
-from app.lib import log
-
-__all__ = ["provides_user_service"]
-
-
-logger = log.get_logger()
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
