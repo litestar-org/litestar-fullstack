@@ -82,8 +82,6 @@ test_coverage = {composite = ["pdm run pytest tests", "pdm run coverage html", "
 [tool.pdm.dev-dependencies]
 dev = [
   "nodeenv",
-  "anyio>=4.0.0",
-  "nodeenv",
 ]
 docs = [
   "sphinx>=7.2.6",
@@ -110,15 +108,7 @@ linting = [
   "pylint",
   "pylint-pydantic",
 ]
-test = [
-  "pytest>=7.4.1",
-  "pytest-xdist>=3.3.1",
-  "pytest-lazy-fixture>=0.6.3",
-  "pytest-mock>=3.11.1",
-  "pytest-cov",
-  "coverage",
-  "pytest-dotenv",
-]
+test = ["pytest", "pytest-xdist", "pytest-mock", "pytest-cov", "coverage"]
 
 [tool.black]
 exclude = '''
@@ -194,7 +184,7 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
-  "src/app/lib/db/migrations/versions/*.py",
+  "src/app/db/migrations/versions/*.py",
 ]
 fix = true
 ignore = [
@@ -340,7 +330,7 @@ module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "js
 
 [[tool.mypy.overrides]]
 ignore_errors = true
-module = ["app.lib.db.migrations.*", "app.lib.dto.*"]
+module = ["app.db.migrations.*", "app.lib.dto.*"]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

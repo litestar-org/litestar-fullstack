@@ -2,22 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-import anyio
 import click
-from pydantic import EmailStr
-from rich import get_console
-
-from app.domain.accounts.dtos import UserCreate, UserUpdate
-from app.domain.accounts.services import UserService
-from app.lib import log
-
-console = get_console()
-"""Pre-configured CLI Console."""
-
-logger = log.get_logger()
 
 
-@click.group(name="users", invoke_without_command=False, help="Manage application users.")
+@click.group(name="users", invoke_without_command=False, help="Manage application users and roles.")
 @click.pass_context
 def user_management_app(_: dict[str, Any]) -> None:
     """Manage application users."""
@@ -61,6 +49,11 @@ def create_user(
     superuser: bool | None,
 ) -> None:
     """Create a user."""
+    import anyio
+    from litestar.cli._utils import console
+
+    from app.domain.accounts.dtos import UserCreate
+    from app.domain.accounts.services import UserService
 
     async def _create_user(
         email: str,
@@ -69,7 +62,7 @@ def create_user(
         superuser: bool = False,
     ) -> None:
         obj_in = UserCreate(
-            email=EmailStr(email),
+            email=email,
             name=name,
             password=password,
             is_superuser=superuser,
@@ -78,8 +71,9 @@ def create_user(
         async with UserService.new() as users_service:
             user = await users_service.create(data=obj_in.__dict__)
             await users_service.repository.session.commit()
-            logger.info("User created: %s", user.email)
+            console.print(f"User created: {user.email}")
 
+    console.rule("Create a new application user.")
     email = email or click.prompt("Email")
     name = name or click.prompt("Full Name", show_default=False)
     password = password or click.prompt("Password", hide_input=True, confirmation_prompt=True)
@@ -100,14 +94,19 @@ def promote_to_superuser(email: str) -> None:
     """Promote to Superuser.
 
     Args:
-        email (str): _description_
+        email (str): The email address of the user to promote.
     """
+    import anyio
+    from litestar.cli._utils import console
+
+    from app.domain.accounts.dtos import UserUpdate
+    from app.domain.accounts.services import UserService
 
     async def _promote_to_superuser(email: str) -> None:
         async with UserService.new() as users_service:
             user = await users_service.get_one_or_none(email=email)
             if user:
-                logger.info("Promoting user: %s", user.email)
+                console.print(f"Promoting user: {user.email}")
                 user_in = UserUpdate(
                     email=user.email,
                     is_superuser=True,
@@ -117,8 +116,9 @@ def promote_to_superuser(email: str) -> None:
                     data=user_in.__dict__,
                 )
                 await users_service.repository.session.commit()
-                logger.info("Upgraded %s to superuser", email)
+                console.print(f"Upgraded {email} to superuser")
             else:
-                logger.warning("User not found: %s", email)
+                console.print(f"User not found: {email}")
 
+    console.rule("Promote user to superuser.")
     anyio.run(_promote_to_superuser, email)

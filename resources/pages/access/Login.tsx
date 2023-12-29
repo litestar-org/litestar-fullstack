@@ -1,10 +1,15 @@
 import { cn } from "@/lib/utils"
+import AuthLayout from "@/layouts/AuthLayout"
 import { buttonVariants } from "@/components/ui/button"
 import { UserLoginForm } from "./components/user-login-form"
 import { Link } from "react-router-dom"
 export default function AuthenticationPage() {
   return (
-    <>
+    <AuthLayout
+      title="Litestar Fullstack Application - Login"
+      description="Litestar Fullstack Application - Login"
+      keywords="login"
+    >
       <div className="container relative  h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           to="/register"
@@ -30,7 +35,7 @@ export default function AuthenticationPage() {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            Acme Inc
+            Litestar Fullstack Application
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
@@ -59,10 +64,10 @@ export default function AuthenticationPage() {
                     clipRule="evenodd"
                   />
                 </svg>{" "}
-                Login to Litestar
+                Login to Continue
               </h1>
               <p className="text-sm text-muted-foreground ">
-                Enter your email below to create your account
+                Enter your credentials to get started!
               </p>
             </div>
             <UserLoginForm />
@@ -86,6 +91,6 @@ export default function AuthenticationPage() {
           </div>
         </div>
       </div>
-    </>
+    </AuthLayout>
   )
 }

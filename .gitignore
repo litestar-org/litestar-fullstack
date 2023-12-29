@@ -170,3 +170,5 @@ temp/
 # built files from the web UI
 src/app/domain/web/static
 public/hot
+public/bundle
+pdm-pythn

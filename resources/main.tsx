@@ -4,7 +4,7 @@ import App from "@/App.tsx"
 import "@/main.css"
 import { BrowserRouter } from "react-router-dom"
 import AuthProvider from "@/contexts/AuthProvider.tsx"
-import { Toaster } from "@/components/ui/toaster.tsx"
+import { Toaster } from "@/components/ui/sonner"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -5,14 +5,14 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL:=help
 .ONESHELL:
-USING_PDM		          =	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
-USING_NPM             = $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
-ENV_PREFIX		        =.venv/bin/
-VENV_EXISTS           =	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
-NODE_MODULES_EXISTS		=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
-SRC_DIR               =src
-BUILD_DIR             =dist
-PDM_OPTS 		          ?=
+USING_PDM		          	=	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
+USING_NPM             		= $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
+ENV_PREFIX		        	=.venv/bin/
+VENV_EXISTS           		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
+NODE_MODULES_EXISTS			=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
+SRC_DIR               		=src
+BUILD_DIR             		=dist
+PDM_OPTS 		          	?=
 PDM 			            ?= 	pdm $(PDM_OPTS)
 
 .EXPORT_ALL_VARIABLES:

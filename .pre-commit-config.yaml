@@ -11,12 +11,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.1.8"
+    rev: "v0.1.9"
     hooks:
       - id: ruff
         args: ["--fix"]
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.1.0"
+    rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
         exclude: "templates|migrations|scripts|docs|dist|.venv|public"
@@ -27,7 +27,7 @@ repos:
         exclude: "test_*|docs|migrations|scripts"
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.7.1"
+    rev: "v1.8.0"
     hooks:
       - id: mypy
         exclude: "scripts/"

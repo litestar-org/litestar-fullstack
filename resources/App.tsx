@@ -8,6 +8,7 @@ import PageNotFound from "@/pages/PageNotFound"
 import Placeholder from "@/pages/Placeholder"
 import { useAuth } from "@/contexts/AuthProvider"
 import { useEffect } from "react"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const App: React.FC = () => {
   const navigate = useNavigate()
@@ -21,17 +22,19 @@ const App: React.FC = () => {
   }, [auth, pathname])
 
   return (
-    <Routes>
-      <Route path="/" element={<ProtectedRoutes />}>
-        <Route index element={<Home />} />
-      </Route>
-      <Route path="/landing" element={<Placeholder />} />
-      <Route path="/terms" element={<Placeholder />} />
-      <Route path="/privacy" element={<Placeholder />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+    <ThemeProvider defaultTheme="system" storageKey="dma-ui-theme">
+      <Routes>
+        <Route path="/" element={<ProtectedRoutes />}>
+          <Route index element={<Home />} />
+        </Route>
+        <Route path="/landing" element={<Placeholder />} />
+        <Route path="/terms" element={<Placeholder />} />
+        <Route path="/privacy" element={<Placeholder />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </ThemeProvider>
   )
 }
 

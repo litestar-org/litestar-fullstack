@@ -2,7 +2,7 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    "src/dma/domain/web/{resources,templates}/**/*.{js,jsx,ts,tsx,vue,j2,html,htm}",
+    "src/app/domain/web/{resources,templates}/**/*.{js,jsx,ts,tsx,vue,j2,html,htm}",
     "{resources,templates}/**/*.{js,jsx,ts,tsx,vue,j2,html,htm}",
   ],
   theme: {

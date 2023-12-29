@@ -1,6 +1,6 @@
 import { Helmet, HelmetProvider } from "react-helmet-async"
 
-interface MainLayoutProps {
+interface AuthLayoutProps {
   children: React.ReactNode
   title: string
   description: string
@@ -9,12 +9,12 @@ interface MainLayoutProps {
 
 const helmetContext = {}
 
-const MainLayout = ({
+const AuthLayout = ({
   children,
   title,
   description,
   keywords,
-}: MainLayoutProps) => {
+}: AuthLayoutProps) => {
   return (
     <HelmetProvider context={helmetContext}>
       <Helmet>
@@ -24,17 +24,15 @@ const MainLayout = ({
 
         <title>{title}</title>
       </Helmet>
-      <header></header>
-      <main>{children}</main>
-      <footer></footer>
+      {children}
     </HelmetProvider>
   )
 }
 
-MainLayout.defaultProps = {
+AuthLayout.defaultProps = {
   title: "Litestar Fullstack Application",
   description: "A fullstack reference application",
   keywords: "litestar",
 }
 
-export default MainLayout
+export default AuthLayout

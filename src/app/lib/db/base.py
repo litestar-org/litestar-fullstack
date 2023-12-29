@@ -95,12 +95,12 @@ def get_engine(settings: Any) -> AsyncEngine:
         """
 
         @event.listens_for(engine.sync_engine, "connect")
-        def _sqla_on_connect(dbapi_connection: Any, _: Any) -> Any:
+        def _sqla_on_connect(dbapi_connection: Any, _: Any) -> Any:  # pragma: no cover
             """Override the default begin statement.  The disables the built in begin execution."""
             dbapi_connection.isolation_level = None
 
         @event.listens_for(engine.sync_engine, "begin")
-        def _sqla_on_begin(dbapi_connection: Any, _: Any) -> Any:
+        def _sqla_on_begin(dbapi_connection: Any, _: Any) -> Any:  # pragma: no cover
             """Emits a custom begin"""
             dbapi_connection.exec_driver_sql("BEGIN")
 
@@ -112,7 +112,7 @@ config = SQLAlchemyAsyncConfig(
     engine_instance=get_engine(settings),
     before_send_handler=autocommit_before_send_handler,
     alembic_config=AlembicAsyncConfig(
-        version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,
+        version_table_name="ddl_version",
         script_config=settings.db.MIGRATION_CONFIG,
         script_location=settings.db.MIGRATION_PATH,
     ),
