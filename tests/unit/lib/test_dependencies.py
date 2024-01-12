@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 from uuid import uuid4
 
 import pytest
@@ -15,7 +15,7 @@ from advanced_alchemy.filters import (
     SearchFilter,
 )
 from litestar import Litestar, get
-from litestar.params import Dependency
+from litestar.params import Dependency  # noqa: TCH002
 from litestar.testing import AsyncTestClient, RequestFactory
 
 from app.domain import security
@@ -140,7 +140,9 @@ async def test_filters_dependency(app: "Litestar", client: "AsyncTestClient") ->
     ids = [uuid4() for _ in range(2)]
 
     @get(path=path, opt={"exclude_from_auth": True})
-    async def filtered_collection_route(filters: list[FilterTypes] = Dependency(skip_validation=True)) -> MessageTest:
+    async def filtered_collection_route(
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> MessageTest:
         nonlocal called
         assert filters == [
             CollectionFilter(field_name="id", values=ids),
@@ -179,7 +181,9 @@ async def test_filters_dependency_no_ids(app: "Litestar", client: "AsyncTestClie
     [uuid4() for _ in range(2)]
 
     @get(path=path, opt={"exclude_from_auth": True})
-    async def filtered_collection_route(filters: list[FilterTypes] = Dependency(skip_validation=True)) -> MessageTest:
+    async def filtered_collection_route(
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> MessageTest:
         nonlocal called
         assert filters == [
             BeforeAfter(field_name="created_at", before=datetime.max, after=datetime.min),

@@ -1,7 +1,7 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
@@ -49,7 +49,7 @@ class AccountController(Controller):
     async def list_users(
         self,
         users_service: UserService,
-        filters: list[FilterTypes] = Dependency(skip_validation=True),
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[User]:
         """List users."""
         results, total = await users_service.list_and_count(*filters)
@@ -64,10 +64,13 @@ class AccountController(Controller):
     async def get_user(
         self,
         users_service: UserService,
-        user_id: UUID = Parameter(
-            title="User ID",
-            description="The user to retrieve.",
-        ),
+        user_id: Annotated[
+            UUID,
+            Parameter(
+                title="User ID",
+                description="The user to retrieve.",
+            ),
+        ],
     ) -> User:
         """Get a user."""
         db_obj = await users_service.get(user_id)
@@ -121,10 +124,13 @@ class AccountController(Controller):
     async def delete_user(
         self,
         users_service: UserService,
-        user_id: UUID = Parameter(
-            title="User ID",
-            description="The user to delete.",
-        ),
+        user_id: Annotated[
+            UUID,
+            Parameter(
+                title="User ID",
+                description="The user to delete.",
+            ),
+        ],
     ) -> None:
         """Delete a user from the system."""
         _ = await users_service.delete(user_id)

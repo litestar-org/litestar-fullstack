@@ -1,12 +1,12 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, MediaType, Response, get, post
 from litestar.di import Provide
-from litestar.enums import RequestEncodingType
-from litestar.params import Body
+from litestar.enums import RequestEncodingType  # noqa: TCH002
+from litestar.params import Body  # noqa: TCH002
 from litestar.security.jwt import OAuth2Login
 
 from app.domain import security, urls
@@ -48,7 +48,7 @@ class AccessController(Controller):
     async def login(
         self,
         users_service: UserService,
-        data: DTOData[AccountLogin] = Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED),
+        data: Annotated[DTOData[AccountLogin], Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
         obj = data.create_instance()
