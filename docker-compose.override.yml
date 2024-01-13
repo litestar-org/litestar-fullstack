@@ -24,12 +24,17 @@ services:
       - "8000:8000"
       - "3006:3006"
     image: app:latest-dev
+    tty: true
+    environment:
+      VITE_USE_SERVER_LIFESPAN: "true" # true in dev or run
+      SAQ_USE_SERVER_LIFESPAN: "false"
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
     <<: *development-volumes
   worker:
     image: app:latest-dev
     command: litestar workers run
+    tty: true
     restart: always
     <<: *development-volumes
     depends_on:
@@ -37,6 +42,7 @@ services:
         condition: service_healthy
       cache:
         condition: service_healthy
+
     env_file:
       - .env.example
   migrator:

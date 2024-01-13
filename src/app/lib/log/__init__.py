@@ -10,10 +10,10 @@ import structlog
 from litestar.logging.config import LoggingConfig
 from structlog.dev import RichTracebackFormatter
 
-from app.lib import settings
+from app.lib import serialization, settings
 
 from . import controller, worker
-from .utils import EventFilter, msgspec_json_renderer
+from .utils import EventFilter, msgspec_json_renderer, msgspec_json_str_renderer
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -54,11 +54,12 @@ if sys.stderr.isatty() or "pytest" in sys.modules:  # pragma: no cover
         colors=True,
         exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80),
     )
-    default_processors.extend([console_processor])
+    default_processors.append(console_processor)
     stdlib_processors.append(console_processor)
 else:
     LoggerFactory = structlog.BytesLoggerFactory
-    default_processors.extend([structlog.processors.JSONRenderer(serializer=msgspec_json_renderer)])
+    default_processors.append(structlog.processors.JSONRenderer(serializer=msgspec_json_renderer))
+    stdlib_processors.append(structlog.processors.JSONRenderer(serializer=msgspec_json_str_renderer))
 
 
 def configure(processors: Sequence[Processor]) -> None:
