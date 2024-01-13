@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, MediaType, Response, get, post
 from litestar.di import Provide
-from litestar.enums import RequestEncodingType  # noqa: TCH002
-from litestar.params import Body  # noqa: TCH002
+from litestar.enums import RequestEncodingType
+from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
 
 from app.domain import security, urls
@@ -31,7 +31,13 @@ class AccessController(Controller):
 
     tags = ["Access"]
     dependencies = {"users_service": Provide(provides_user_service)}
-    signature_namespace = {"UserService": UserService, "User": User, "OAuth2Login": OAuth2Login}
+    signature_namespace = {
+        "UserService": UserService,
+        "User": User,
+        "OAuth2Login": OAuth2Login,
+        "RequestEncodingType": RequestEncodingType,
+        "Body": Body,
+    }
 
     return_dto = UserDTO
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.params import Dependency, Parameter  # noqa: TCH002
+from litestar.params import Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
@@ -34,7 +34,12 @@ class TeamController(Controller):
     dependencies = {"teams_service": Provide(provides_teams_service)}
     guards = [requires_active_user]
     return_dto = TeamDTO
-    signature_namespace = {"TeamUpdate": TeamUpdate, "TeamCreate": TeamCreate}
+    signature_namespace = {
+        "Dependency": Dependency,
+        "Parameter": Parameter,
+        "TeamUpdate": TeamUpdate,
+        "TeamCreate": TeamCreate,
+    }
 
     @get(
         operation_id="ListTeams",

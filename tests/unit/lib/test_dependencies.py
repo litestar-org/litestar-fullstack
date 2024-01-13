@@ -15,7 +15,7 @@ from advanced_alchemy.filters import (
     SearchFilter,
 )
 from litestar import Litestar, get
-from litestar.params import Dependency  # noqa: TCH002
+from litestar.params import Dependency
 from litestar.testing import AsyncTestClient, RequestFactory
 
 from app.domain import security
@@ -139,7 +139,7 @@ async def test_filters_dependency(app: "Litestar", client: "AsyncTestClient") ->
     path = f"/{uuid4()}"
     ids = [uuid4() for _ in range(2)]
 
-    @get(path=path, opt={"exclude_from_auth": True})
+    @get(path=path, opt={"exclude_from_auth": True}, signature_namespace={"Dependency": Dependency})
     async def filtered_collection_route(
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> MessageTest:

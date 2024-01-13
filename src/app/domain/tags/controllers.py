@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.params import Dependency, Parameter  # noqa: TCH002
+from litestar.params import Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
@@ -34,6 +34,10 @@ class TagController(Controller):
 
     guards = [requires_active_user]
     dependencies = {"tags_service": Provide(provide_tags_service)}
+    signature_namespace = {
+        "Dependency": Dependency,
+        "Parameter": Parameter,
+    }
     tags = ["Tags"]
     return_dto = TagDTO
 
