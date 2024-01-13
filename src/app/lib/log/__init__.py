@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import structlog
 from litestar.logging.config import LoggingConfig
+from structlog.dev import RichTracebackFormatter
 
 from app.lib import settings
 
@@ -51,13 +52,13 @@ if sys.stderr.isatty() or "pytest" in sys.modules:  # pragma: no cover
     LoggerFactory: Any = structlog.WriteLoggerFactory
     console_processor = structlog.dev.ConsoleRenderer(
         colors=True,
-        exception_formatter=structlog.dev.plain_traceback,
+        exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80),
     )
     default_processors.extend([console_processor])
     stdlib_processors.append(console_processor)
 else:
     LoggerFactory = structlog.BytesLoggerFactory
-    default_processors.extend([msgspec_json_renderer])
+    default_processors.extend([structlog.processors.JSONRenderer(serializer=msgspec_json_renderer)])
 
 
 def configure(processors: Sequence[Processor]) -> None:
