@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from app.lib.serialization import _msgspec_json_encoder
 
@@ -25,18 +25,28 @@ if TYPE_CHECKING:
     from structlog.typing import EventDict, WrappedLogger
 
 
-def msgspec_json_renderer(_: WrappedLogger, __: str, event_dict: EventDict) -> bytes:
+def msgspec_json_renderer(event_dict: EventDict, **_: Any) -> bytes:
     """Structlog processor that uses `msgspec` for JSON encoding.
 
     Args:
-        _ ():
-        __ ():
-        event_dict (): The data to be logged.
+         event_dict (): The data to be logged.
 
     Returns:
         The log event encoded to JSON by msgspec.
     """
     return _msgspec_json_encoder.encode(event_dict)
+
+
+def msgspec_json_str_renderer(event_dict: EventDict, **_: Any) -> str:
+    """Structlog processor that uses `msgspec` for JSON encoding.
+
+    Args:
+         event_dict (): The data to be logged.
+
+    Returns:
+        The log event encoded to JSON by msgspec as a string
+    """
+    return _msgspec_json_encoder.encode(event_dict).decode("utf-8")
 
 
 class EventFilter:
