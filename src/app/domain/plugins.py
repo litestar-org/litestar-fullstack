@@ -24,8 +24,9 @@ vite = VitePlugin(
 saq = SAQPlugin(
     config=SAQConfig(
         redis_url=settings.redis.URL,
-        web_enabled=True,
+        web_enabled=settings.worker.WEB_ENABLED,
         worker_processes=1,
+        use_server_lifespan=settings.worker.USE_SERVER_LIFESPAN,
         queue_configs=[
             QueueConfig(
                 name="system-tasks",
