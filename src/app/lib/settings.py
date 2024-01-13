@@ -254,6 +254,7 @@ class WorkerSettings(BaseSettings):
     WEB_ENABLED: bool = True
     """If true, the worker admin UI is launched on worker startup.."""
     """Initialization method for the worker process."""
+    USE_SERVER_LIFESPAN: bool = True
 
 
 class DatabaseSettings(BaseSettings):

@@ -52,10 +52,6 @@ Source = "https://github.com/litestar-org/litestar-fullstack"
 [project.scripts]
 app = "app.__main__:run_cli"
 
-[project.entry-points."litestar.commands"]
-run-all = "app.cli:run_all_app"
-users = "app.cli:user_management_app"
-
 [build-system]
 build-backend = "hatchling.build"
 requires = ["hatchling", "nodeenv"]

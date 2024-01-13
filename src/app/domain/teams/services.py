@@ -70,7 +70,13 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         """Get all teams for a user."""
         return await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs)
 
-    async def create(self, data: Team | dict[str, Any]) -> Team:
+    async def create(
+        self,
+        data: Team | dict[str, Any],
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+    ) -> Team:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
         tags_added: list[str] = []
@@ -86,7 +92,12 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             for tag_text in tags_added:
                 tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
                 db_obj.tags.append(tag)
-        return await super().create(db_obj)
+        return await super().create(
+            data=db_obj,
+            auto_commit=auto_commit,
+            auto_expunge=auto_expunge,
+            auto_refresh=auto_refresh,
+        )
 
     async def update(
         self,
