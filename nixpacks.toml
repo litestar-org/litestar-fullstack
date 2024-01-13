@@ -18,4 +18,4 @@ cmds = [
 ] # custom install command allows for setting pdm version above
 
 [start]
-cmd = '/opt/venv/bin/app database upgrade --no-prompt && /opt/venv/bin/app run --http-workers 2 --host 0.0.0.0 --port $PORT'
+cmd = '/opt/venv/bin/app database upgrade --no-prompt && /opt/venv/bin/app run --wc 2 --host 0.0.0.0 --port $PORT'
