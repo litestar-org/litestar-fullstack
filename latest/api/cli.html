@@ -18,15 +18,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -35,9 +35,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
 
     <script src="../_static/documentation_options.js?v=01f34227"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
@@ -61,7 +61,7 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
 
@@ -104,8 +104,10 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <header>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    <div class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
@@ -418,12 +420,18 @@ document.write(`
   
 </div>
 
-    </nav>
+    </div>
   
+  </header>
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -650,114 +658,6 @@ document.write(`
     
   </div>
   
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../usage/installation.html">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../usage/startup.html">Starting the server</a></li>
-</ul>
-</li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="asgi.html">app</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="domain/index.html">domain</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="domain/urls.html">urls</a></li>
-<li class="toctree-l3"><a class="reference internal" href="domain/security.html">security</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/system/index.html">system</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/tasks.html">tasks</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/web/index.html">web</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/teams/index.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/controllers/index.html">teams</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/tags/index.html">tags</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/services.html">services</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/analytics/index.html">analytics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/queries.html">queries</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/accounts/index.html">accounts</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/controllers/index.html">accounts</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="lib/index.html">lib</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="lib/cache.html">cache</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/compression.html">compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/constants.html">constants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/cors.html">cors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/csrf.html">csrf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/dependencies.html">dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/dto.html">dto</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/exceptions.html">exceptions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/openapi.html">openapi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/repository.html">repository</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/serialization.html">serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/service.html">service</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/settings.html">settings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/static_files.html">static files</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="lib/log/index.html">logging</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/controller.html">controller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/init.html">init</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/utils.html">utils</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/worker.html">worker</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="lib/db/index.html">db</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/base.html">base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/orm.html">orm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/utils.html">utils</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../contribution-guide.html">Contribution Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
-</ul>
-</div>
-</nav></div>
-    </div>
-  
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
   </div>
@@ -808,13 +708,253 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section id="cli">
 <h1>cli<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
 <p>Command line interface for the application.</p>
 <section id="litestar-cli">
 <h2>Litestar CLI<a class="headerlink" href="#litestar-cli" title="Link to this heading">#</a></h2>
+<section id="app">
+<h3>app<a class="headerlink" href="#app" title="Link to this heading">#</a></h3>
+<p>Litestar CLI.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-app">
+<span class="sig-name descname"><span class="pre">--app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-app" title="Link to this definition">#</a></dt>
+<dd><p>Module path to a Litestar application</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-app-dir">
+<span class="sig-name descname"><span class="pre">--app-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-app-dir" title="Link to this definition">#</a></dt>
+<dd><p>Look for APP in the specified directory, by adding this to the PYTHONPATH. Defaults to the current working directory.</p>
+</dd></dl>
+
+<section id="app-info">
+<h4>info<a class="headerlink" href="#app-info" title="Link to this heading">#</a></h4>
+<p>Show information about the detected Litestar app.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="app-routes">
+<h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">#</a></h4>
+<p>Display information about the application’s routes.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-routes-schema">
+<span class="sig-name descname"><span class="pre">--schema</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-routes-schema" title="Link to this definition">#</a></dt>
+<dd><p>Include schema routes</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-routes-exclude">
+<span class="sig-name descname"><span class="pre">--exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-routes-exclude" title="Link to this definition">#</a></dt>
+<dd><p>routes to exclude via regex</p>
+</dd></dl>
+
+</section>
+<section id="app-run">
+<h4>run<a class="headerlink" href="#app-run" title="Link to this heading">#</a></h4>
+<p>Run a Litestar app; requires <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code>.</p>
+<p>The app can be either passed as a module path in the form of &lt;module name&gt;.&lt;submodule&gt;:&lt;app instance or factory&gt;,
+set as an environment variable LITESTAR_APP with the same format or automatically discovered from one of these
+canonical paths: app.py, asgi.py, application.py or app/__init__.py. When auto-discovering application factories,
+functions with the name <code class="docutils literal notranslate"><span class="pre">create_app</span></code> are considered, or functions that are annotated as returning a <code class="docutils literal notranslate"><span class="pre">Litestar</span></code>
+instance.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-r">
+<span id="cmdoption-app-run-reload"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-r" title="Link to this definition">#</a></dt>
+<dd><p>Reload server on changes</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-R">
+<span id="cmdoption-app-run-reload-dir"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-R" title="Link to this definition">#</a></dt>
+<dd><p>Directories to watch for file changes</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-p">
+<span id="cmdoption-app-run-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-p" title="Link to this definition">#</a></dt>
+<dd><p>Serve under this port</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">8000</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-W">
+<span id="cmdoption-app-run-wc"></span><span id="cmdoption-app-run-web-concurrency"></span><span class="sig-name descname"><span class="pre">-W</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--web-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;wc&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-W" title="Link to this definition">#</a></dt>
+<dd><p>The number of HTTP workers to launch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-H">
+<span id="cmdoption-app-run-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-H" title="Link to this definition">#</a></dt>
+<dd><p>Server under this host</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-F">
+<span id="cmdoption-app-run-fd"></span><span id="cmdoption-app-run-file-descriptor"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file-descriptor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fd&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-F" title="Link to this definition">#</a></dt>
+<dd><p>Bind to a socket from this file descriptor.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-U">
+<span id="cmdoption-app-run-uds"></span><span id="cmdoption-app-run-unix-domain-socket"></span><span class="sig-name descname"><span class="pre">-U</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uds</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unix-domain-socket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;uds&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-U" title="Link to this definition">#</a></dt>
+<dd><p>Bind to a UNIX domain socket.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-d">
+<span id="cmdoption-app-run-debug"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-d" title="Link to this definition">#</a></dt>
+<dd><p>Run app in debug mode</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-P">
+<span id="cmdoption-app-run-pdb"></span><span id="cmdoption-app-run-use-pdb"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--pdb</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-pdb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-P" title="Link to this definition">#</a></dt>
+<dd><p>Drop into PDB on an exception</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-ssl-certfile">
+<span class="sig-name descname"><span class="pre">--ssl-certfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_certfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-certfile" title="Link to this definition">#</a></dt>
+<dd><p>Location of the SSL cert file</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-ssl-keyfile">
+<span class="sig-name descname"><span class="pre">--ssl-keyfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_keyfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-keyfile" title="Link to this definition">#</a></dt>
+<dd><p>Location of the SSL key file</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-run-create-self-signed-cert">
+<span class="sig-name descname"><span class="pre">--create-self-signed-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-create-self-signed-cert" title="Link to this definition">#</a></dt>
+<dd><p>If certificate and key are not found at specified locations, create a self-signed certificate and a key</p>
+</dd></dl>
+
+</section>
+<section id="app-schema">
+<h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">#</a></h4>
+<p>Manage server-side OpenAPI schemas.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="app-schema-openapi">
+<h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">#</a></h5>
+<p>Generate an OpenAPI Schema.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span>openapi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-schema-openapi-output">
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-openapi-output" title="Link to this definition">#</a></dt>
+<dd><p>output file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">openapi_schema.json</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="app-schema-typescript">
+<h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">#</a></h5>
+<p>Generate TypeScript specs from the OpenAPI schema.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span>typescript<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-schema-typescript-output">
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-output" title="Link to this definition">#</a></dt>
+<dd><p>output file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">api-specs.ts</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-schema-typescript-namespace">
+<span class="sig-name descname"><span class="pre">--namespace</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;namespace&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-namespace" title="Link to this definition">#</a></dt>
+<dd><p>namespace to use for the typescript specs</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="app-sessions">
+<h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">#</a></h4>
+<p>Manage server-side sessions.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="app-sessions-clear">
+<h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">#</a></h5>
+<p>Delete all sessions.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span>clear<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="app-sessions-delete">
+<h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">#</a></h5>
+<p>Delete a specific session.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SESSION_ID
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-sessions-delete-arg-SESSION_ID">
+<span class="sig-name descname"><span class="pre">SESSION_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-sessions-delete-arg-SESSION_ID" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="app-version">
+<h4>version<a class="headerlink" href="#app-version" title="Link to this heading">#</a></h4>
+<p>Show the currently installed Litestar version.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-version-s">
+<span id="cmdoption-app-version-short"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--short</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-version-s" title="Link to this definition">#</a></dt>
+<dd><p>Exclude release level and serial information</p>
+</dd></dl>
+
+</section>
+</section>
 <section id="database-cli">
 <h3>Database CLI<a class="headerlink" href="#database-cli" title="Link to this heading">#</a></h3>
 <section id="app-database">
@@ -1146,14 +1286,33 @@ document.write(`
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-  <div class="sidebar-secondary-item">
 
-  <div class="page-toc tocsection onthispage">
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc">
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#litestar-cli">Litestar CLI</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app">app</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-info">info</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-routes">routes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-run">run</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema">schema</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema-openapi">openapi</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema-typescript">typescript</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions">sessions</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions-clear">clear</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions-delete">delete</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-version">version</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#database-cli">Database CLI</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database">app database</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-downgrade">downgrade</a></li>
@@ -1210,8 +1369,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1244,7 +1403,7 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.1.
 </p></div>
       
     </div>
