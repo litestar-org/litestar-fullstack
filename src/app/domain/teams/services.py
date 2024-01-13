@@ -93,7 +93,10 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                 tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
                 db_obj.tags.append(tag)
         return await super().create(
-            data=db_obj, auto_commit=auto_commit, auto_expunge=auto_expunge, auto_refresh=auto_refresh
+            data=db_obj,
+            auto_commit=auto_commit,
+            auto_expunge=auto_expunge,
+            auto_refresh=auto_refresh,
         )
 
     async def update(
