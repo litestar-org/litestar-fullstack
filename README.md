@@ -194,48 +194,6 @@ Using Litestar app from env: 'app.asgi:create_app'
 
 ```
 
-The above command will not start the background workers. Those can be launched separately in another terminal.
-
-Alternately, the `run-all` command will automatically start the background workers in separate processes.
-
-```bash
-❯ app run-all --help
-Using Litestar app from env: 'app.asgi:create_app'
-
- Usage: app run-all [OPTIONS] COMMAND [ARGS]...
-
- Starts the application server & worker in a single command.
-
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --host                    TEXT                     Host interface to listen  │
-│                                                    on.  Use 0.0.0.0 for all  │
-│                                                    available interfaces.     │
-│                                                    (TEXT)                    │
-│                                                    [default: 0.0.0.0]        │
-│ --port                -p  INTEGER                  Port to bind.   (INTEGER) │
-│                                                    [default: 8000]           │
-│ --http-workers            INTEGER RANGE [1<=x<=7]  The number of HTTP worker │
-│                                                    processes for handling    │
-│                                                    requests.                 │
-│                                                    (INTEGER RANGE)           │
-│                                                    [default: 7; 1<=x<=7]     │
-│ --worker-concurrency      INTEGER RANGE [x>=1]     The number of             │
-│                                                    simultaneous jobs a       │
-│                                                    worker process can        │
-│                                                    execute.                  │
-│                                                    (INTEGER RANGE)           │
-│                                                    [default: 1; x>=1]        │
-│ --reload              -r                           Enable reload             │
-│ --verbose             -v                           Enable verbose logging.   │
-│ --debug               -d                           Enable debugging.         │
-│ --help                -h                           Show this message and     │
-│                                                    exit.                     │
-╰──────────────────────────────────────────────────────────────────────────────╯
-
-```
-
-</details>
-
 ## Installation and Configuration
 
 We have documented the process to help you get the repository up and running.
