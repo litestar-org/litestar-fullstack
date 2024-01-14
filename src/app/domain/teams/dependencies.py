@@ -31,10 +31,7 @@ async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[Team
             ),
         ),
     ) as service:
-        try:
-            yield service
-        finally:
-            ...
+        yield service
 
 
 async def provide_team_members_service(db_session: AsyncSession) -> AsyncGenerator[TeamMemberService, None]:
@@ -47,10 +44,7 @@ async def provide_team_members_service(db_session: AsyncSession) -> AsyncGenerat
             joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
         ),
     ) as service:
-        try:
-            yield service
-        finally:
-            ...
+        yield service
 
 
 async def provide_team_invitations_service(db_session: AsyncSession) -> AsyncGenerator[TeamInvitationService, None]:
@@ -63,7 +57,4 @@ async def provide_team_invitations_service(db_session: AsyncSession) -> AsyncGen
             joinedload(TeamInvitation.invited_by, innerjoin=True).options(noload("*")),
         ),
     ) as service:
-        try:
-            yield service
-        finally:
-            ...
+        yield service
