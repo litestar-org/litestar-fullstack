@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+from app.__about__ import __version__
+
 pytestmark = pytest.mark.anyio
 
 
@@ -12,8 +14,8 @@ async def test_health(client: AsyncClient) -> None:
         "database_status": "online",
         "cache_status": "online",
         "worker_status": "offline",
-        "app": "Starlite Application",
-        "version": "",
+        "app": "app",
+        "version": __version__,
     }
 
     assert response.json() == expected
