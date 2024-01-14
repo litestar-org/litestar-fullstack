@@ -6,6 +6,8 @@ from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.db.models.base import SlugKey
+
 from .team_tag import team_tag
 
 if TYPE_CHECKING:
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
     from .team_member import TeamMember
 
 
-class Team(UUIDAuditBase):
+class Team(UUIDAuditBase, SlugKey):
     """A group of users with common permissions.
     Users can create and invite users to a team.
     """

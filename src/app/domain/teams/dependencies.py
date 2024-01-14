@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, noload, selectinload
 from app.db.models import Team, TeamInvitation, TeamMember
 from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
 
-__all__ = ["provide_team_members_service", "provides_teams_service", "provide_team_invitations_service"]
+__all__ = ["provide_team_members_service", "provide_teams_service", "provide_team_invitations_service"]
 
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def provides_teams_service(db_session: AsyncSession) -> AsyncGenerator[TeamService, None]:
+async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[TeamService, None]:
     """Construct repository and service objects for the request."""
     async with TeamService.new(
         session=db_session,

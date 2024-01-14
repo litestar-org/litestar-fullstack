@@ -61,7 +61,7 @@ def create_app() -> Litestar:
         ],
         on_shutdown=[redis.aclose],  # type: ignore[attr-defined]
         on_app_init=[domain.security.auth.on_app_init],
-        listeners=[domain.accounts.signals.user_created_event_handler],
+        listeners=[domain.accounts.signals.user_created_event_handler, domain.teams.signals.team_created_event_handler],
         signature_namespace=domain.signature_namespace,
         experimental_features=[ExperimentalFeatures.DTO_CODEGEN],
     )

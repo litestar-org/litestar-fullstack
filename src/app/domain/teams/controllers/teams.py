@@ -9,7 +9,7 @@ from litestar.params import Dependency, Parameter
 
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
-from app.domain.teams.dependencies import provides_teams_service
+from app.domain.teams.dependencies import provide_teams_service
 from app.domain.teams.dtos import TeamCreate, TeamCreateDTO, TeamDTO, TeamUpdate, TeamUpdateDTO
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 
@@ -28,7 +28,7 @@ class TeamController(Controller):
     """Teams."""
 
     tags = ["Teams"]
-    dependencies = {"teams_service": Provide(provides_teams_service)}
+    dependencies = {"teams_service": Provide(provide_teams_service)}
     guards = [requires_active_user]
     return_dto = TeamDTO
     signature_namespace = {

@@ -1,9 +1,9 @@
 # type: ignore
-"""initial
+"""Initial revision
 
-Revision ID: 3d0af9cbdb06
-Revises:
-Create Date: 2024-01-02 19:09:16.603374
+Revision ID: a22cc7704d14
+Revises: 
+Create Date: 2024-01-14 14:59:07.826121
 
 """
 from __future__ import annotations
@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 import sqlalchemy as sa
 from alembic import op
 from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC
+from sqlalchemy import Text  # noqa: F401
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -27,7 +28,7 @@ sa.EncryptedString = EncryptedString
 sa.EncryptedText = EncryptedText
 
 # revision identifiers, used by Alembic.
-revision = '3d0af9cbdb06'
+revision = 'a22cc7704d14'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -78,13 +79,16 @@ def schema_upgrades() -> None:
     )
     op.create_table('team',
     sa.Column('id', sa.GUID(length=16), nullable=False),
+    sa.Column('slug', sa.String(length=100), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_team')),
+    sa.UniqueConstraint('slug'),
+    sa.UniqueConstraint('slug', name=op.f('uq_team_slug'))
     )
     with op.batch_alter_table('team', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_team_name'), ['name'], unique=False)

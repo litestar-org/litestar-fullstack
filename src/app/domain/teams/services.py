@@ -2,26 +2,28 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
-from sqlalchemy.orm import InstrumentedAttribute, joinedload, noload, selectinload
+from advanced_alchemy import RepositoryError
+from sqlalchemy import ColumnElement, select
+from sqlalchemy.orm import InstrumentedAttribute, joinedload, load_only, noload, selectinload
 
-from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
+from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles, User
 from app.domain.tags.dependencies import provide_tags_service
 from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
+from app.utils import slugify
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
-__all__ = [
+__all__ = (
     "TeamInvitationRepository",
     "TeamInvitationService",
     "TeamMemberRepository",
     "TeamMemberService",
     "TeamRepository",
     "TeamService",
-]
+)
 
 
 class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
@@ -31,24 +33,32 @@ class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
 
     async def get_user_teams(
         self,
-        *filters: FilterTypes,
+        *filters: FilterTypes | ColumnElement[bool],
         user_id: UUID,
+        auto_expunge: bool | None = None,
+        force_basic_query_mode: bool | None = None,
         **kwargs: Any,
     ) -> tuple[list[Team], int]:
-        """Get all teams for a user."""
-        statement = (
-            select(Team)
+        """Get paginated list and total count of teams that a user can access."""
+
+        return await self.list_and_count(
+            *filters,
+            statement=select(Team)
             .join(TeamMember, onclause=Team.id == TeamMember.team_id, isouter=False)
             .where(TeamMember.user_id == user_id)
             .options(
                 noload("*"),
                 selectinload(Team.members).options(
-                    joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
+                    joinedload(TeamMember.user, innerjoin=True).options(
+                        load_only(User.name, User.email),
+                    ),
                 ),
             )
-            .execution_options(populate_existing=True)
+            .execution_options(populate_existing=True),
+            auto_expunge=auto_expunge,
+            force_basic_query_mode=force_basic_query_mode,
+            **kwargs,
         )
-        return await self.list_and_count(*filters, statement=statement)
 
 
 class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
@@ -83,6 +93,9 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if isinstance(data, dict):
             data["id"] = data.get("id", uuid4())
             owner_id = data.pop("owner_id", None)
+            if owner_id is None:
+                msg = "'owner_id' is required to create a workspace."
+                raise RepositoryError(msg)
             tags_added = data.pop("tags", [])
             db_obj = await self.to_model(data, "create")
         if owner_id:
@@ -90,7 +103,12 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if tags_added:
             tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
             for tag_text in tags_added:
-                tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
+                tag, _ = await tags_service.get_or_upsert(
+                    match_fields=["slug"],
+                    upsert=False,
+                    name=tag_text,
+                    slug=slugify(tag_text),
+                )
                 db_obj.tags.append(tag)
         return await super().create(
             data=data,
@@ -151,6 +169,8 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
 
     async def to_model(self, data: Team | dict[str, Any], operation: str | None = None) -> Team:
         if isinstance(data, dict) and "slug" not in data and operation == "create":
+            data["slug"] = await self.repository.get_available_slug(data["name"])
+        if isinstance(data, dict) and "slug" not in data and "name" in data and operation == "update":
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return await super().to_model(data, operation)
 
