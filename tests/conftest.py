@@ -6,8 +6,6 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
-from structlog.contextvars import clear_contextvars
-from structlog.testing import CapturingLogger
 
 if TYPE_CHECKING:
     from collections import abc
@@ -16,8 +14,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
 
-    from app.domain.accounts.models import User
-    from app.domain.teams.models import Team
+    from app.db.models import Team, User
 
 pytestmark = pytest.mark.anyio
 
@@ -133,18 +130,6 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
 
 
 @pytest.fixture()
-def _patch_sqlalchemy_plugin(is_unit_test: bool, monkeypatch: MonkeyPatch) -> None:
-    if is_unit_test:
-        from app.lib import db
-
-        monkeypatch.setattr(
-            db.config.SQLAlchemyConfig,  # type:ignore[attr-defined]
-            "on_shutdown",
-            MagicMock(),
-        )
-
-
-@pytest.fixture()
 def _patch_worker(
     is_unit_test: bool,
     monkeypatch: MonkeyPatch,
@@ -156,24 +141,3 @@ def _patch_worker(
 
         monkeypatch.setattr(base.Worker, "on_app_startup", MagicMock())
         monkeypatch.setattr(base.Worker, "stop", MagicMock())
-
-
-@pytest.fixture(name="cap_logger")
-def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
-    """Used to monkeypatch the app logger, so we can inspect output."""
-    import app.lib
-
-    app.lib.log.configure(
-        app.lib.log.default_processors,  # type:ignore[arg-type]
-    )
-    # clear context for every test
-    clear_contextvars()
-    # pylint: disable=protected-access
-    logger = app.lib.log.controller.LOGGER.bind()
-    logger._logger = CapturingLogger()
-    # drop rendering processor to get a dict, not bytes
-    # noinspection PyProtectedMember
-    logger._processors = app.lib.log.default_processors[:-1]
-    monkeypatch.setattr(app.lib.log.controller, "LOGGER", logger)
-    monkeypatch.setattr(app.lib.log.worker, "LOGGER", logger)
-    return logger._logger

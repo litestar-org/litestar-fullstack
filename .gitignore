@@ -137,7 +137,6 @@ dmypy.json
 .venv
 .venv
 
-
 # Logs
 logs
 *.log
@@ -164,11 +163,19 @@ tsconfig.tsbuildinfo
 *.sln
 *.sw?
 
-
 # temporary files
 tmp/
 temp/
 
-
 # built files from the web UI
 src/app/domain/web/public
+src/app/domain/web/public/hot
+public
+.vite
+src/app/domain/web/static
+public/hot
+public/bundle
+pdm-pythn
+
+db.duckdb
+local.duckdb

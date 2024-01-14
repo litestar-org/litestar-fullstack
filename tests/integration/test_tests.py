@@ -5,13 +5,13 @@ from httpx import AsyncClient
 from litestar import get
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.lib import db
+from app.domain import config
 
 if TYPE_CHECKING:
     from litestar import Litestar
     from litestar.stores.redis import RedisStore
     from redis.asyncio import Redis as AsyncRedis
-    from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
+    from sqlalchemy.ext.asyncio import AsyncEngine
 
 pytestmark = pytest.mark.anyio
 
@@ -33,18 +33,7 @@ def test_engine_on_app(app: "Litestar", engine: "AsyncEngine") -> None:
         app: The test Litestar instance
         engine: The test SQLAlchemy engine instance.
     """
-    assert app.state[db.config.engine_app_state_key] is engine
-
-
-def test_sessionmaker(app: "Litestar", sessionmaker: "async_sessionmaker[AsyncSession]") -> None:
-    """Test that the sessionmaker is patched.
-
-    Args:
-        app: The test Litestar instance
-        sessionmaker: The test SQLAlchemy sessionmaker factory.
-    """
-    assert db.async_session_factory is sessionmaker
-    assert db.base.async_session_factory is sessionmaker
+    assert app.state[config.alchemy.engine_app_state_key] is engine
 
 
 @pytest.mark.anyio

@@ -5,8 +5,8 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import InstrumentedAttribute, joinedload, noload, selectinload
 
+from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.domain.tags.dependencies import provide_tags_service
-from app.domain.teams.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
@@ -93,7 +93,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                 tag, _ = await tags_service.get_or_upsert(match_fields=["name"], upsert=False, name=tag_text)
                 db_obj.tags.append(tag)
         return await super().create(
-            data=db_obj,
+            data=data,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,

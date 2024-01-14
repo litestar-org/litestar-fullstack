@@ -1,4 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.12-slim-bookworm
+ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -45,10 +45,12 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml .pylintrc LICENSE Makefile \
+COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml LICENSE Makefile \
   package.json package-lock.json vite.config.ts tsconfig.json \
+  tailwind.config.js postcss.config.cjs components.json \
   ./
 COPY scripts ./scripts/
+COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython pdm nodeenv  \
   && pdm install ${PDM_INSTALL_ARGS} --no-self

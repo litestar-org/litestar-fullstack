@@ -16,7 +16,7 @@ from advanced_alchemy.filters import (
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
-from app.lib import constants
+from app.config import constants
 
 __all__ = [
     "create_collection_dependencies",

@@ -9,13 +9,10 @@ from litestar.pagination import OffsetPagination
 from litestar.security.jwt import OAuth2Login
 from litestar.types import TypeEncodersMap
 
+from app.db.models import Tag, Team, User
 from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserCreate, UserUpdate
-from app.domain.accounts.models import User
-from app.domain.analytics.dtos import NewUsersByWeek
-from app.domain.tags.models import Tag
-from app.domain.teams.models import Team
 
-from . import accounts, analytics, openapi, plugins, security, system, tags, teams, urls, web
+from . import accounts, config, openapi, plugins, security, system, tags, teams, urls, web
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -26,11 +23,10 @@ if TYPE_CHECKING:
 
 routes: list[ControllerRouterHandler] = [
     accounts.controllers.AccessController,
-    accounts.controllers.AccountController,
+    accounts.controllers.UserController,
     teams.controllers.TeamController,
     # teams.controllers.TeamInvitationController,
     # teams.controllers.TeamMemberController,
-    analytics.controllers.StatsController,
     tags.controllers.TagController,
     system.controllers.SystemController,
     web.controllers.WebController,
@@ -46,7 +42,7 @@ __all__ = [
     "security",
     "routes",
     "openapi",
-    "analytics",
+    "config",
     "plugins",
     "signature_namespace",
 ]
@@ -59,7 +55,6 @@ signature_namespace: Mapping[str, Any] = {
     "UserUpdate": UserUpdate,
     "AccountLogin": AccountLogin,
     "AccountRegister": AccountRegister,
-    "NewUsersByWeek": NewUsersByWeek,
     "Tag": Tag,
     "OAuth2Login": OAuth2Login,
     "OffsetPagination": OffsetPagination,

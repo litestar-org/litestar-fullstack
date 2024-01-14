@@ -4,7 +4,7 @@ from litestar.connection import ASGIConnection
 from litestar.exceptions import PermissionDeniedException
 from litestar.handlers.base import BaseRouteHandler
 
-from app.domain.teams.models import TeamRoles
+from app.db.models import TeamRoles
 
 __all__ = ["requires_team_admin", "requires_team_membership", "requires_team_ownership"]
 
@@ -24,7 +24,7 @@ def requires_team_membership(connection: ASGIConnection, _: BaseRouteHandler) ->
         return
     if any(membership.team.id == team_id for membership in connection.user.teams):
         return
-    raise PermissionDeniedException(detail="Insufficient permissions to access workspace.")
+    raise PermissionDeniedException(detail="Insufficient permissions to access team.")
 
 
 def requires_team_admin(connection: ASGIConnection, _: BaseRouteHandler) -> None:

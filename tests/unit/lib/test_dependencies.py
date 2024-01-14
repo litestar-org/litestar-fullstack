@@ -18,8 +18,8 @@ from litestar import Litestar, get
 from litestar.params import Dependency
 from litestar.testing import AsyncTestClient, RequestFactory
 
+from app.db.models import User
 from app.domain import security
-from app.domain.accounts.models import User
 from app.lib import dependencies
 
 if TYPE_CHECKING:

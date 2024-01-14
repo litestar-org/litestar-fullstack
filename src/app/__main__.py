@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2023-present Cody Fincher <cody.fincher@gmail.com>
+#
+# SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 
@@ -13,6 +16,9 @@ def run_cli() -> None:
     try:
         from litestar.__main__ import run_cli as run_litestar_cli
 
+        from app.config.base import Settings
+
+        _settings = Settings.from_env()
     except ImportError as exc:
         print(  # noqa: T201
             "Could not load required libraries.  ",

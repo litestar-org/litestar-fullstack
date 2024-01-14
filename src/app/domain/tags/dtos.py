@@ -1,6 +1,6 @@
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 
-from app.domain.tags.models import Tag
+from app.db.models import Tag
 from app.lib import dto
 
 __all__ = ["TagCreateDTO", "TagDTO", "TagUpdateDTO"]

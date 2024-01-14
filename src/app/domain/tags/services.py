@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.domain.tags.models import Tag
+from app.db.models import Tag
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 

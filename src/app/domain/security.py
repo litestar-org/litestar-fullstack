@@ -6,16 +6,15 @@ from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
+from app.config import constants, settings
+from app.db.models import TeamMember, User
 from app.domain import urls
-from app.domain.accounts.models import User
 from app.domain.accounts.services import UserService
-from app.domain.teams.models import TeamMember
-from app.lib import constants, db, settings
+
+from .config import alchemy
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection, Request
-
-__all__ = ["current_user_from_token", "auth"]
 
 
 async def provide_user(request: Request[User, Token, Any]) -> User:
@@ -46,7 +45,7 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     """
 
     async with UserService.new(
-        session=db.config.provide_session(connection.app.state, connection.scope),
+        session=alchemy.provide_session(connection.app.state, connection.scope),
         statement=select(User).options(
             noload("*"),
             selectinload(User.teams).options(

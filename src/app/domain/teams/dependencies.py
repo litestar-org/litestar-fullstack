@@ -6,9 +6,8 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
-from app.domain.teams.models import Team, TeamInvitation, TeamMember
+from app.db.models import Team, TeamInvitation, TeamMember
 from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
-from app.lib import log
 
 __all__ = ["provide_team_members_service", "provides_teams_service", "provide_team_invitations_service"]
 
@@ -17,8 +16,6 @@ if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = log.get_logger()
 
 
 async def provides_teams_service(db_session: AsyncSession) -> AsyncGenerator[TeamService, None]:

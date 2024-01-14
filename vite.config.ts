@@ -1,33 +1,32 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import path from "path";
+import { defineConfig } from "vite"
+import path from "path"
+import litestar from "litestar-vite-plugin"
+import react from "@vitejs/plugin-react"
 
-import litestar from "litestar-vite-plugin";
-const ASSET_URL =
-  process.env.LITESTAR_ASSET_URL || process.env.ASSET_URL || "/static/";
-const VITE_PORT = process.env.VITE_PORT || "5173";
-const VITE_HOST = process.env.VITE_HOST || "localhost";
+const ASSET_URL = process.env.ASSET_URL || "/static/"
+const VITE_PORT = process.env.VITE_PORT || "5173"
+const VITE_HOST = process.env.VITE_HOST || "localhost"
 export default defineConfig({
   base: `${ASSET_URL}`,
-  root: "src/app/domain/web",
+  clearScreen: false,
   server: {
     host: `${VITE_HOST}`,
     port: +`${VITE_PORT}`,
     cors: true,
   },
   plugins: [
-    vue(),
+    react(),
     litestar({
-      input: ["src/app/domain/web/resources/main.ts"],
+      input: ["resources/main.tsx"],
       assetUrl: `${ASSET_URL}`,
-      bundleDirectory: "public",
+      bundleDirectory: "src/app/domain/web/static",
       resourceDirectory: "resources",
-      hotFile: "src/app/domain/web/public/hot",
+      hotFile: "src/app/domain/web/static/hot",
     }),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src/app/domain/web/resources"),
+      "@": path.resolve(__dirname, "resources"),
     },
   },
-});
+})

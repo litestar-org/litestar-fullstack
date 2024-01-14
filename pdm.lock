@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:68713bfb41bee0e9387d159f687b39d00c1d74e8bf41db8099f22337d49b5412"
+content_hash = "sha256:ae730ba3f9a6c56ab38129152b438bf36708a60628f3bb74b09a136ae20c6348"
 
 [[package]]
 name = "accessible-pygments"
@@ -38,14 +38,14 @@ files = [
 ]
 
 [[package]]
-name = "aiosql"
-version = "9.2"
-requires_python = ">=3.8"
-summary = "Simple SQL in Python"
+name = "aiosqlite"
+version = "0.19.0"
+requires_python = ">=3.7"
+summary = "asyncio bridge to the standard sqlite3 module"
 groups = ["default"]
 files = [
-    {file = "aiosql-9.2-py3-none-any.whl", hash = "sha256:86b58ce987307d4b8f72537780280d48dbf9f0ce7b94aeb9aa30c309031f15f8"},
-    {file = "aiosql-9.2.tar.gz", hash = "sha256:2804a3027e4a3f0e92888e451731af40ae9aac03f183c07a27996a65081f2802"},
+    {file = "aiosqlite-0.19.0-py3-none-any.whl", hash = "sha256:edba222e03453e094a3ce605db1b970c4b3376264e56f32e2a4959f948d66a96"},
+    {file = "aiosqlite-0.19.0.tar.gz", hash = "sha256:95ee77b91c8d2808bd08a59fbebf66270e9090c3d92ffbf260dc0db0b979577d"},
 ]
 
 [[package]]
@@ -91,7 +91,7 @@ name = "anyio"
 version = "4.2.0"
 requires_python = ">=3.8"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
-groups = ["default", "dev"]
+groups = ["default"]
 dependencies = [
     "idna>=2.8",
     "sniffio>=1.1",
@@ -300,46 +300,6 @@ dependencies = [
 files = [
     {file = "beautifulsoup4-4.12.2-py3-none-any.whl", hash = "sha256:bd2520ca0d9d7d12694a53d44ac482d181b4ec1888909b035a3dbf40d0f57d4a"},
     {file = "beautifulsoup4-4.12.2.tar.gz", hash = "sha256:492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da"},
-]
-
-[[package]]
-name = "black"
-version = "23.12.1"
-requires_python = ">=3.8"
-summary = "The uncompromising code formatter."
-groups = ["docs", "linting"]
-dependencies = [
-    "click>=8.0.0",
-    "mypy-extensions>=0.4.3",
-    "packaging>=22.0",
-    "pathspec>=0.9.0",
-    "platformdirs>=2",
-]
-files = [
-    {file = "black-23.12.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:8d4df77958a622f9b5a4c96edb4b8c0034f8434032ab11077ec6c56ae9f384ba"},
-    {file = "black-23.12.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:602cfb1196dc692424c70b6507593a2b29aac0547c1be9a1d1365f0d964c353b"},
-    {file = "black-23.12.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9c4352800f14be5b4864016882cdba10755bd50805c95f728011bcb47a4afd59"},
-    {file = "black-23.12.1-cp311-cp311-win_amd64.whl", hash = "sha256:0808494f2b2df923ffc5723ed3c7b096bd76341f6213989759287611e9837d50"},
-    {file = "black-23.12.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:25e57fd232a6d6ff3f4478a6fd0580838e47c93c83eaf1ccc92d4faf27112c4e"},
-    {file = "black-23.12.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:2d9e13db441c509a3763a7a3d9a49ccc1b4e974a47be4e08ade2a228876500ec"},
-    {file = "black-23.12.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6d1bd9c210f8b109b1762ec9fd36592fdd528485aadb3f5849b2740ef17e674e"},
-    {file = "black-23.12.1-cp312-cp312-win_amd64.whl", hash = "sha256:ae76c22bde5cbb6bfd211ec343ded2163bba7883c7bc77f6b756a1049436fbb9"},
-    {file = "black-23.12.1-py3-none-any.whl", hash = "sha256:78baad24af0f033958cad29731e27363183e140962595def56423e626f4bee3e"},
-    {file = "black-23.12.1.tar.gz", hash = "sha256:4ce3ef14ebe8d9509188014d96af1c456a910d5b5cbf434a09fef7e024b3d0d5"},
-]
-
-[[package]]
-name = "blacken-docs"
-version = "1.16.0"
-requires_python = ">=3.8"
-summary = "Run Black on Python code blocks in documentation files."
-groups = ["docs"]
-dependencies = [
-    "black>=22.1.0",
-]
-files = [
-    {file = "blacken_docs-1.16.0-py3-none-any.whl", hash = "sha256:b0dcb84b28ebfb352a2539202d396f50e15a54211e204a8005798f1d1edb7df8"},
-    {file = "blacken_docs-1.16.0.tar.gz", hash = "sha256:b4bdc3f3d73898dfbf0166f292c6ccfe343e65fc22ddef5319c95d1a8dcc6c1c"},
 ]
 
 [[package]]
@@ -797,6 +757,56 @@ files = [
 ]
 
 [[package]]
+name = "granian"
+version = "0.7.5"
+requires_python = ">=3.8"
+summary = "A Rust HTTP server for Python applications"
+groups = ["default"]
+dependencies = [
+    "typer>=0.4.2",
+    "uvloop~=0.18.0; sys_platform != \"win32\" and platform_python_implementation == \"CPython\"",
+    "watchfiles~=0.21",
+]
+files = [
+    {file = "granian-0.7.5-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:668fe80c2ab32c5088dabcc0d4e95d6e42b986b5db34b08c4c5ef6d5284e2b5b"},
+    {file = "granian-0.7.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a7d1f282e6b89552de58c4994e75931d8f249ac393166e1524f96d43e57d47ef"},
+    {file = "granian-0.7.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a0bdb78b73c92346424730af01c4f171df64cb7f4176de0e4db76028dc29131a"},
+    {file = "granian-0.7.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:90ca1ccb6f85eef0093a3685fe4c7f79987ddf77a9c0cab67a64a3e36f1ac3fa"},
+    {file = "granian-0.7.5-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:e0b08aceaf42b506b54a5eaa7c22c48a3f4a742c525a0cd97ccf1e720d22e6c0"},
+    {file = "granian-0.7.5-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:90600745b77c4827fafee1e17043cebf9c0226d95a0eb74800b7b7d2d2d79dca"},
+    {file = "granian-0.7.5-cp311-none-win_amd64.whl", hash = "sha256:adc7d4293b15c49ea79269a901fd6667183c553620eea56e34a3ba857e06789c"},
+    {file = "granian-0.7.5-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:c8cc3bc905fb931e634bbaa8d2a98fbf6d3c40f39ce2a60b9ee20bee1c2d111c"},
+    {file = "granian-0.7.5-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a0203fffebae9b477a38600d722cbe291e7f8dec4fde3e5b294247d15498330d"},
+    {file = "granian-0.7.5-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3b202e06ee35c5c6e6561fb94930c0f71fbcaa23bbe27309536d75c972f449ea"},
+    {file = "granian-0.7.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:16d97aecb294d25ded70e5bed431ab469ad23dc8450bb63f8c0b022702e46426"},
+    {file = "granian-0.7.5-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:202cb0fa8bfc6633954c263e5081490b0e419db91d9bbc210e538c3b8a0f1dd7"},
+    {file = "granian-0.7.5-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:e50e3da147c0c7d86735df08d92864d91b46f18e859fe5ff74fb1755ba41b4b8"},
+    {file = "granian-0.7.5-cp312-none-win_amd64.whl", hash = "sha256:35cba5c5ae655c5017b3c8cfd8e37a8b2610c1f8959be89680938730142dfcbb"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-macosx_10_12_x86_64.whl", hash = "sha256:64d2935a4dc2016c9d4b653f3dd4022f8c419478af55216e89b893186ae6da0b"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:cff1edb191da3102f3163cc49216ff3f2f0fe5e362133a652ff7c3f4c5a05fef"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6664efeccc37365f879cb80f0c6a35d65afb6d70bf84452d9594bed964a125c8"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a4da8b19455535913e4d1c9a411f277710f4498389000205c9d66d0b2cdde0b7"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:be05b42db7db27fd7fbeca15dec2c2a752d661335a992c9120c1f0004e791d7d"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:78031f6490998575bbcb8ac7c901a5c228b69fdf740db4ecdc7da3c51654e6bd"},
+    {file = "granian-0.7.5-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:1965b30f272f17dc2da694ed7ac1b56e8eb90d50405c9164b22657b22bdb022d"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-macosx_10_12_x86_64.whl", hash = "sha256:7d9478f4f3ee0062a62fe5ac07ab8e24ce09495593faaa3e6c54a76b0510a0b0"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-macosx_11_0_arm64.whl", hash = "sha256:a2238431ddb4a08776a817578e0a45f1ed6b49c1e95d107c1431ce239f4371ba"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:58c0c4432577b40221476bba138a19c1ef3ac3108b88c17074b92d8ae628da5b"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f09742dbc2ad1106fe02485fe76381045e38453dfae42ebbdced8e8d04f8bd08"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:0badf7688512c96008060c19f41d8159824e78efc7f8e95875d9c3b4a1fbc9d9"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:bb3131df9514e781c8e4ba3ca8f6b477f407667e5b00a69add37afa88d3f288d"},
+    {file = "granian-0.7.5-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:c933f08cdc6515b4fd411c9ecdf10b4bfc988b5abe80e4f9147ac6c5e554e93d"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-macosx_10_12_x86_64.whl", hash = "sha256:9301c707642caff413c123af002152fe75a938cd10e9bee35f98e06568bd472a"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-macosx_11_0_arm64.whl", hash = "sha256:1047f355af1259cba82a4208d2d92b9392e01d4451dfc0341a629537174ab629"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8761b9ce4a8647d6160e87a70cf372e4d48a7a56d25fa237c011ba73c90cf303"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5e8b08c3aa34a849f594a7d8b73883a0670848fe5ba839ee331096eaca82b523"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:4b5385bd267656635a61064f8c6719b9dc3d9d9c37528102b129beebaeb746b7"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:7e0d55ef57054e9f64a46c79af337abcf34e974b1e8d7b47d5bac8e1c1eb55e5"},
+    {file = "granian-0.7.5-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:bf9695256d467a0d56bbd556becbfc4e0b7755dc710d62c8be9f8ae2a867f510"},
+    {file = "granian-0.7.5.tar.gz", hash = "sha256:14e48c965a05b75dc48ce7045c26dbcbf7f7311d9f2ab7ea1499f921bc06aab6"},
+]
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 requires_python = ">=3.7"
@@ -984,7 +994,7 @@ name = "idna"
 version = "3.6"
 requires_python = ">=3.5"
 summary = "Internationalized Domain Names in Applications (IDNA)"
-groups = ["default", "dev", "docs"]
+groups = ["default", "docs"]
 files = [
     {file = "idna-3.6-py3-none-any.whl", hash = "sha256:c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f"},
     {file = "idna-3.6.tar.gz", hash = "sha256:9ecdbbd083b06798ae1e86adcbfe8ab1479cf864e4ee30fe4e46a003d12491ca"},
@@ -1052,8 +1062,11 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.5.0"
-requires_python = "<4.0,>=3.8"
+version = "2.6.0"
+requires_python = ">=3.8,<4.0"
+git = "https://github.com/litestar-org/litestar.git"
+ref = "develop"
+revision = "0d642c5e5a87637e8b6412993fc4347546f62558"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
@@ -1068,24 +1081,20 @@ dependencies = [
     "rich>=13.0.0",
     "typing-extensions",
 ]
-files = [
-    {file = "litestar-2.5.0-py3-none-any.whl", hash = "sha256:dc684d751712c852c3594582c74201f106b6806f721f5d0a0f317b8f0e4b35fd"},
-    {file = "litestar-2.5.0.tar.gz", hash = "sha256:b88780d538a387dab4e02a94de2089822d829dba6a0666abc37593b07d479e00"},
-]
 
 [[package]]
-name = "litestar-aiosql"
-version = "0.1.2"
+name = "litestar-granian"
+version = "0.1.5"
 requires_python = ">=3.8"
-summary = "aiosql plugin for Litestar"
+summary = "Granian plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "aiosql>=9.0",
+    "granian>=0.6.0",
     "litestar[cli]>=2.0.1",
 ]
 files = [
-    {file = "litestar_aiosql-0.1.2-py3-none-any.whl", hash = "sha256:00b1ac831e94c7fca03f3ff754e8795fee9d902ddd1b1421f8f55a34154e29f8"},
-    {file = "litestar_aiosql-0.1.2.tar.gz", hash = "sha256:0ddea44cf054e4b1112bb1447a6ff3bcb18e72a1ec062222109c82abbbece655"},
+    {file = "litestar_granian-0.1.5-py3-none-any.whl", hash = "sha256:608018c02f011dcc29cde220a2e4390187268a8ec92478f447cdac2e8320504e"},
+    {file = "litestar_granian-0.1.5.tar.gz", hash = "sha256:4b2524a7c6a84b1a079eea4f59157b9f4e12d4f736fade006b3f945d8eb21a5c"},
 ]
 
 [[package]]
@@ -1131,72 +1140,130 @@ files = [
 ]
 
 [[package]]
+name = "litestar-vite"
+version = "0.1.17"
+extras = ["nodeenv"]
+requires_python = ">=3.8"
+summary = "Vite plugin for Litestar"
+groups = ["default"]
+dependencies = [
+    "litestar-vite==0.1.17",
+    "nodeenv",
+]
+files = [
+    {file = "litestar_vite-0.1.17-py3-none-any.whl", hash = "sha256:1796722d4064b40ecf88d0d8bced2ebba233be159f97a24569266fd0a5deb892"},
+    {file = "litestar_vite-0.1.17.tar.gz", hash = "sha256:4c17b39a0f3dd6c90a43d76954ee8d2e2bbf8821024a56c59ce457430122ff09"},
+]
+
+[[package]]
 name = "litestar"
-version = "2.5.0"
+version = "2.6.0"
 extras = ["cli", "jinja", "jwt", "pydantic", "redis", "sqlalchemy", "standard", "structlog"]
-requires_python = "<4.0,>=3.8"
+requires_python = ">=3.8,<4.0"
+git = "https://github.com/litestar-org/litestar.git"
+ref = "develop"
+revision = "0d642c5e5a87637e8b6412993fc4347546f62558"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "advanced-alchemy<1.0.0,>=0.2.2",
+    "advanced-alchemy<1.0.0,>=0.2.2",
+    "advanced-alchemy<1.0.0,>=0.2.2",
+    "advanced-alchemy<1.0.0,>=0.2.2",
+    "cryptography",
+    "cryptography",
+    "cryptography",
     "cryptography",
     "email-validator",
+    "email-validator",
+    "email-validator",
+    "email-validator",
+    "fast-query-parsers>=1.0.2",
+    "fast-query-parsers>=1.0.2",
+    "fast-query-parsers>=1.0.2",
     "fast-query-parsers>=1.0.2",
     "jinja2",
+    "jinja2",
+    "jinja2",
+    "jinja2",
+    "jinja2>=3.1.2",
+    "jinja2>=3.1.2",
+    "jinja2>=3.1.2",
     "jinja2>=3.1.2",
     "jsbeautifier",
     "jsbeautifier",
-    "litestar==2.5.0",
+    "jsbeautifier",
+    "jsbeautifier",
+    "jsbeautifier",
+    "jsbeautifier",
+    "jsbeautifier",
+    "jsbeautifier",
+    "litestar @ git+https://github.com/litestar-org/litestar.git@develop",
+    "pydantic",
+    "pydantic",
+    "pydantic",
     "pydantic",
     "pydantic-extra-types",
+    "pydantic-extra-types",
+    "pydantic-extra-types",
+    "pydantic-extra-types",
+    "python-jose",
+    "python-jose",
+    "python-jose",
     "python-jose",
     "redis[hiredis]>=4.4.4",
+    "redis[hiredis]>=4.4.4",
+    "redis[hiredis]>=4.4.4",
+    "redis[hiredis]>=4.4.4",
+    "structlog",
+    "structlog",
+    "structlog",
     "structlog",
     "uvicorn[standard]",
     "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvicorn[standard]",
+    "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
-]
-files = [
-    {file = "litestar-2.5.0-py3-none-any.whl", hash = "sha256:dc684d751712c852c3594582c74201f106b6806f721f5d0a0f317b8f0e4b35fd"},
-    {file = "litestar-2.5.0.tar.gz", hash = "sha256:b88780d538a387dab4e02a94de2089822d829dba6a0666abc37593b07d479e00"},
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
+    "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 
 [[package]]
 name = "litestar"
-version = "2.5.0"
+version = "2.6.0"
 extras = ["cli", "jinja"]
-requires_python = "<4.0,>=3.8"
+requires_python = ">=3.8,<4.0"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.5.0",
+    "litestar==2.6.0",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
-]
-files = [
-    {file = "litestar-2.5.0-py3-none-any.whl", hash = "sha256:dc684d751712c852c3594582c74201f106b6806f721f5d0a0f317b8f0e4b35fd"},
-    {file = "litestar-2.5.0.tar.gz", hash = "sha256:b88780d538a387dab4e02a94de2089822d829dba6a0666abc37593b07d479e00"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.5.0"
+version = "2.6.0"
 extras = ["cli"]
-requires_python = "<4.0,>=3.8"
+requires_python = ">=3.8,<4.0"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jsbeautifier",
-    "litestar==2.5.0",
+    "litestar==2.6.0",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
-]
-files = [
-    {file = "litestar-2.5.0-py3-none-any.whl", hash = "sha256:dc684d751712c852c3594582c74201f106b6806f721f5d0a0f317b8f0e4b35fd"},
-    {file = "litestar-2.5.0.tar.gz", hash = "sha256:b88780d538a387dab4e02a94de2089822d829dba6a0666abc37593b07d479e00"},
 ]
 
 [[package]]
@@ -1404,7 +1471,7 @@ name = "mypy-extensions"
 version = "1.0.0"
 requires_python = ">=3.5"
 summary = "Type system extensions for programs checked with the mypy type checker."
-groups = ["docs", "linting"]
+groups = ["linting"]
 files = [
     {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
     {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
@@ -1426,7 +1493,7 @@ name = "nodeenv"
 version = "1.8.0"
 requires_python = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*"
 summary = "Node.js virtual environment builder"
-groups = ["dev", "linting"]
+groups = ["default", "dev", "linting"]
 dependencies = [
     "setuptools",
 ]
@@ -1440,7 +1507,7 @@ name = "packaging"
 version = "23.2"
 requires_python = ">=3.7"
 summary = "Core utilities for Python packages"
-groups = ["docs", "linting", "test"]
+groups = ["docs", "test"]
 files = [
     {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
     {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
@@ -1469,17 +1536,6 @@ dependencies = [
 files = [
     {file = "passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1"},
     {file = "passlib-1.7.4.tar.gz", hash = "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"},
-]
-
-[[package]]
-name = "pathspec"
-version = "0.12.1"
-requires_python = ">=3.8"
-summary = "Utility library for gitignore style pattern matching of file paths."
-groups = ["docs", "linting"]
-files = [
-    {file = "pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08"},
-    {file = "pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712"},
 ]
 
 [[package]]
@@ -1663,7 +1719,7 @@ name = "pydantic-settings"
 version = "2.1.0"
 requires_python = ">=3.8"
 summary = "Settings management using Pydantic"
-groups = ["default", "docs"]
+groups = ["docs"]
 dependencies = [
     "pydantic>=2.3.0",
     "python-dotenv>=0.21.0",
@@ -1788,33 +1844,6 @@ files = [
 ]
 
 [[package]]
-name = "pytest-dotenv"
-version = "0.5.2"
-summary = "A py.test plugin that parses environment files before running tests"
-groups = ["test"]
-dependencies = [
-    "pytest>=5.0.0",
-    "python-dotenv>=0.9.1",
-]
-files = [
-    {file = "pytest-dotenv-0.5.2.tar.gz", hash = "sha256:2dc6c3ac6d8764c71c6d2804e902d0ff810fa19692e95fe138aefc9b1aa73732"},
-    {file = "pytest_dotenv-0.5.2-py3-none-any.whl", hash = "sha256:40a2cece120a213898afaa5407673f6bd924b1fa7eafce6bda0e8abffe2f710f"},
-]
-
-[[package]]
-name = "pytest-lazy-fixture"
-version = "0.6.3"
-summary = "It helps to use fixtures in pytest.mark.parametrize"
-groups = ["test"]
-dependencies = [
-    "pytest>=3.2.5",
-]
-files = [
-    {file = "pytest-lazy-fixture-0.6.3.tar.gz", hash = "sha256:0e7d0c7f74ba33e6e80905e9bfd81f9d15ef9a790de97993e34213deb5ad10ac"},
-    {file = "pytest_lazy_fixture-0.6.3-py3-none-any.whl", hash = "sha256:e0b379f38299ff27a653f03eaa69b08a6fd4484e46fd1c9907d984b9f9daeda6"},
-]
-
-[[package]]
 name = "pytest-mock"
 version = "3.12.0"
 requires_python = ">=3.8"
@@ -1862,7 +1891,7 @@ name = "python-dotenv"
 version = "1.0.0"
 requires_python = ">=3.8"
 summary = "Read key-value pairs from a .env file and set them as environment variables"
-groups = ["default", "docs", "test"]
+groups = ["default", "docs"]
 files = [
     {file = "python-dotenv-1.0.0.tar.gz", hash = "sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba"},
     {file = "python_dotenv-1.0.0-py3-none-any.whl", hash = "sha256:f5971a9226b701070a4bf2c38c89e5a3f0d64de8debda981d1db98583009122a"},
@@ -2095,7 +2124,7 @@ name = "setuptools"
 version = "69.0.3"
 requires_python = ">=3.8"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
-groups = ["dev", "linting"]
+groups = ["default", "dev", "linting"]
 files = [
     {file = "setuptools-69.0.3-py3-none-any.whl", hash = "sha256:385eb4edd9c9d5c17540511303e39a147ce2fc04bc55289c322b9e5904fe2c05"},
     {file = "setuptools-69.0.3.tar.gz", hash = "sha256:be1af57fc409f93647f2e8e4573a142ed38724b8cdd389706a867bb4efcf1e78"},
@@ -2131,7 +2160,7 @@ name = "sniffio"
 version = "1.3.0"
 requires_python = ">=3.7"
 summary = "Sniff out which async library your code is running under"
-groups = ["default", "dev"]
+groups = ["default"]
 files = [
     {file = "sniffio-1.3.0-py3-none-any.whl", hash = "sha256:eecefdce1e5bbfb7ad2eeaabf7c1eeb404d7757c379bd1f7e5cce9d8bf425384"},
     {file = "sniffio-1.3.0.tar.gz", hash = "sha256:e60305c5e5d314f5389259b7f22aaa33d8f7dee49763119234af3755c55b9101"},
@@ -2501,6 +2530,21 @@ files = [
 ]
 
 [[package]]
+name = "typer"
+version = "0.9.0"
+requires_python = ">=3.6"
+summary = "Typer, build great CLIs. Easy to code. Based on Python type hints."
+groups = ["default"]
+dependencies = [
+    "click<9.0.0,>=7.1.1",
+    "typing-extensions>=3.7.4.3",
+]
+files = [
+    {file = "typer-0.9.0-py3-none-any.whl", hash = "sha256:5d96d986a21493606a358cae4461bd8cdf83cbf33a5aa950ae629ca3b51467ee"},
+    {file = "typer-0.9.0.tar.gz", hash = "sha256:50922fd79aea2f4751a8e0408ff10d2662bd0c8bbfa84755a699f3bada2978b2"},
+]
+
+[[package]]
 name = "types-click"
 version = "7.1.8"
 summary = "Typing stubs for click"
@@ -2646,25 +2690,25 @@ files = [
 
 [[package]]
 name = "uvloop"
-version = "0.19.0"
-requires_python = ">=3.8.0"
+version = "0.18.0"
+requires_python = ">=3.7.0"
 summary = "Fast implementation of asyncio event loop on top of libuv"
 groups = ["default"]
 marker = "sys_platform != \"win32\""
 files = [
-    {file = "uvloop-0.19.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:4ce6b0af8f2729a02a5d1575feacb2a94fc7b2e983868b009d51c9a9d2149bef"},
-    {file = "uvloop-0.19.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:31e672bb38b45abc4f26e273be83b72a0d28d074d5b370fc4dcf4c4eb15417d2"},
-    {file = "uvloop-0.19.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:570fc0ed613883d8d30ee40397b79207eedd2624891692471808a95069a007c1"},
-    {file = "uvloop-0.19.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5138821e40b0c3e6c9478643b4660bd44372ae1e16a322b8fc07478f92684e24"},
-    {file = "uvloop-0.19.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:91ab01c6cd00e39cde50173ba4ec68a1e578fee9279ba64f5221810a9e786533"},
-    {file = "uvloop-0.19.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:47bf3e9312f63684efe283f7342afb414eea4d3011542155c7e625cd799c3b12"},
-    {file = "uvloop-0.19.0-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:da8435a3bd498419ee8c13c34b89b5005130a476bda1d6ca8cfdde3de35cd650"},
-    {file = "uvloop-0.19.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:02506dc23a5d90e04d4f65c7791e65cf44bd91b37f24cfc3ef6cf2aff05dc7ec"},
-    {file = "uvloop-0.19.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2693049be9d36fef81741fddb3f441673ba12a34a704e7b4361efb75cf30befc"},
-    {file = "uvloop-0.19.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7010271303961c6f0fe37731004335401eb9075a12680738731e9c92ddd96ad6"},
-    {file = "uvloop-0.19.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:5daa304d2161d2918fa9a17d5635099a2f78ae5b5960e742b2fcfbb7aefaa593"},
-    {file = "uvloop-0.19.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:7207272c9520203fea9b93843bb775d03e1cf88a80a936ce760f60bb5add92f3"},
-    {file = "uvloop-0.19.0.tar.gz", hash = "sha256:0246f4fd1bf2bf702e06b0d45ee91677ee5c31242f39aab4ea6fe0c51aedd0fd"},
+    {file = "uvloop-0.18.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:25b714f07c68dcdaad6994414f6ec0f2a3b9565524fba181dcbfd7d9598a3e73"},
+    {file = "uvloop-0.18.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:1121087dfeb46e9e65920b20d1f46322ba299b8d93f7cb61d76c94b5a1adc20c"},
+    {file = "uvloop-0.18.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:74020ef8061678e01a40c49f1716b4f4d1cc71190d40633f08a5ef8a7448a5c6"},
+    {file = "uvloop-0.18.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1f4a549cd747e6f4f8446f4b4c8cb79504a8372d5d3a9b4fc20e25daf8e76c05"},
+    {file = "uvloop-0.18.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:6132318e1ab84a626639b252137aa8d031a6c0550250460644c32ed997604088"},
+    {file = "uvloop-0.18.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:585b7281f9ea25c4a5fa993b1acca4ad3d8bc3f3fe2e393f0ef51b6c1bcd2fe6"},
+    {file = "uvloop-0.18.0-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:61151cc207cf5fc88863e50de3d04f64ee0fdbb979d0b97caf21cae29130ed78"},
+    {file = "uvloop-0.18.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:c65585ae03571b73907b8089473419d8c0aff1e3826b3bce153776de56cbc687"},
+    {file = "uvloop-0.18.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e3d301e23984dcbc92d0e42253e0e0571915f0763f1eeaf68631348745f2dccc"},
+    {file = "uvloop-0.18.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:680da98f12a7587f76f6f639a8aa7708936a5d17c5e7db0bf9c9d9cbcb616593"},
+    {file = "uvloop-0.18.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:75baba0bfdd385c886804970ae03f0172e0d51e51ebd191e4df09b929771b71e"},
+    {file = "uvloop-0.18.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:ed3c28337d2fefc0bac5705b9c66b2702dc392f2e9a69badb1d606e7e7f773bb"},
+    {file = "uvloop-0.18.0.tar.gz", hash = "sha256:d5d1135beffe9cd95d0350f19e2716bc38be47d5df296d7cc46e3b7557c0d1ff"},
 ]
 
 [[package]]

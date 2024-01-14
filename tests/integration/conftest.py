@@ -13,10 +13,9 @@ from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from app.domain.accounts.models import User
+from app.db.models import Team, User
+from app.domain.plugins import alchemy
 from app.domain.security import auth
-from app.domain.teams.models import Team
-from app.lib import db
 from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive
 
 here = Path(__file__).parent
@@ -104,11 +103,12 @@ async def _seed_db(
 
     """
 
+    from advanced_alchemy.base import UUIDAuditBase
+
     from app.domain.accounts.services import UserService
     from app.domain.teams.services import TeamService
-    from app.lib.db import orm  # pylint: disable=[import-outside-toplevel,unused-import]
 
-    metadata = orm.DatabaseModel.registry.metadata
+    metadata = UUIDAuditBase.registry.metadata
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
@@ -130,12 +130,11 @@ def _patch_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(db, "async_session_factory", sessionmaker)
-    monkeypatch.setattr(db.base, "async_session_factory", sessionmaker)
-    monkeypatch.setitem(app.state, db.config.engine_app_state_key, engine)
+    monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
+    monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
     monkeypatch.setitem(
         app.state,
-        db.config.session_maker_app_state_key,
+        alchemy._config.session_maker_app_state_key,
         async_sessionmaker(bind=engine, expire_on_commit=False),
     )
 

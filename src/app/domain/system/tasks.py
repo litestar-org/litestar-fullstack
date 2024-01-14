@@ -1,13 +1,12 @@
 import asyncio
 
 from saq.types import Context
-
-from app.lib import log
+from structlog import get_logger
 
 __all__ = ["background_worker_task", "system_task", "system_upkeep"]
 
 
-logger = log.get_logger()
+logger = get_logger()
 
 
 async def system_upkeep(_: Context) -> None:

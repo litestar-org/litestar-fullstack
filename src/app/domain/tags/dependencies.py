@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import select
 
-from app.domain.tags.models import Tag
+from app.db.models import Tag
 from app.domain.tags.services import TagService
 
 if TYPE_CHECKING:

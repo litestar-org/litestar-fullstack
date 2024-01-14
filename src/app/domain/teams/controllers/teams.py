@@ -19,12 +19,9 @@ if TYPE_CHECKING:
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
 
-    from app.domain.accounts.models import User
-    from app.domain.teams.models import Team
+    from app.db.models import Team, User
     from app.domain.teams.services import TeamService
     from app.lib.dependencies import FilterTypes
-
-__all__ = ["TeamController"]
 
 
 class TeamController(Controller):

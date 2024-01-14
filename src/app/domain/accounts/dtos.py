@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.accounts.models import User
+from app.db.models import User
 from app.lib import dto
 
 __all__ = [
@@ -93,6 +93,32 @@ class AccountRegister:
 
 
 class AccountRegisterDTO(DataclassDTO[AccountRegister]):
+    """User Account Registration."""
+
+    config = dto.config()
+
+
+@dataclass
+class UserRoleAdd:
+    """User role add ."""
+
+    user_name: str
+
+
+class UserRoleAddDTO(DataclassDTO[UserRoleAdd]):
+    """User Account Registration."""
+
+    config = dto.config()
+
+
+@dataclass
+class UserRoleRevoke:
+    """User role revoke ."""
+
+    user_name: str
+
+
+class UserRoleRevokeDTO(DataclassDTO[UserRoleRevoke]):
     """User Account Registration."""
 
     config = dto.config()

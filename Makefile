@@ -5,14 +5,14 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL:=help
 .ONESHELL:
-USING_PDM		          =	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
-USING_NPM             = $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
-ENV_PREFIX		        =.venv/bin/
-VENV_EXISTS           =	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
-NODE_MODULES_EXISTS		=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
-SRC_DIR               =src
-BUILD_DIR             =dist
-PDM_OPTS 		          ?=
+USING_PDM		          	=	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
+USING_NPM             		= $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
+ENV_PREFIX		        	=.venv/bin/
+VENV_EXISTS           		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
+NODE_MODULES_EXISTS			=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
+SRC_DIR               		=src
+BUILD_DIR             		=dist
+PDM_OPTS 		          	?=
 PDM 			            ?= 	pdm $(PDM_OPTS)
 
 .EXPORT_ALL_VARIABLES:
@@ -83,10 +83,14 @@ clean: 												## Cleanup temporary build artifacts
 	@find . -name '.ipynb_checkpoints' -exec rm -rf {} +
 
 destroy-venv: 											## Destroy the virtual environment
+	@echo "=> Cleaning Python virtual environment"
 	@rm -rf .venv
 
 destroy-node_modules: 											## Destroy the node environment
+	@echo "=> Cleaning Node modules"
 	@rm -rf node_modules
+
+tidy: clean destroy-venv destroy-node_modules ## Clean up everything
 
 migrations:       ## Generate database migrations
 	@echo "ATTENTION: This operation will create a new database migration for any defined models changes."
@@ -119,6 +123,12 @@ lock:                                             ## Rebuild lockfiles from scra
 lint: 												## Runs pre-commit hooks; includes ruff linting, codespell, black
 	@echo "=> Running pre-commit process"
 	@$(ENV_PREFIX)pre-commit run --all-files
+	@echo "=> Pre-commit complete"
+
+.PHONY: format
+format: 												## Runs code formatting utilities
+	@echo "=> Running pre-commit process"
+	@$(ENV_PREFIX)ruff . --fix
 	@echo "=> Pre-commit complete"
 
 .PHONY: coverage

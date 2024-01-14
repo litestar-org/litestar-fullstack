@@ -3,7 +3,9 @@ from typing import Literal
 
 from litestar.dto import DataclassDTO
 
-from app.lib import dto, settings
+from app.__about__ import __version__ as current_version
+from app.config import settings
+from app.lib import dto
 
 __all__ = ["SystemHealth", "SystemHealthDTO"]
 
@@ -14,7 +16,7 @@ class SystemHealth:
     cache_status: Literal["online", "offline"]
     worker_status: Literal["online", "offline"]
     app: str = settings.app.NAME
-    version: str = settings.app.BUILD_NUMBER
+    version: str = current_version
 
 
 class SystemHealthDTO(DataclassDTO[SystemHealth]):

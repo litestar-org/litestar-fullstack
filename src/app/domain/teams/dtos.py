@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.teams.models import Team
+from app.db.models import Team
 from app.lib import dto
 
 __all__ = ["TeamCreate", "TeamCreateDTO", "TeamDTO", "TeamUpdate", "TeamUpdateDTO"]
