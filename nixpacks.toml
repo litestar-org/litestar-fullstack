@@ -4,11 +4,12 @@ providers = ['python', 'node'] # force python as the only provider, otherwise ra
 
 # set up some variables to minimize annoyance
 [variables]
-NIXPACKS_PDM_VERSION = '2.11.1'      # set pdm version to install
-NIXPACKS_PYTHON_VERSION = '3.11'     # set python version to install
-NPM_CONFIG_FUND = 'false'            # the fund notification is is also pretty useless in a production environment
-NPM_CONFIG_UPDATE_NOTIFIER = 'false' # the node update notification is relatively useless in a production environment
-PIP_DISABLE_PIP_VERSION_CHECK = '1'  # the pip update notification is relatively useless in a production environment
+LITESTAR_SKIP_NODEENV_INSTALL = 'true' # skip using nodeenv.  nix handles that for us.
+NIXPACKS_PDM_VERSION = '2.11.2'        # set pdm version to install
+NIXPACKS_PYTHON_VERSION = '3.11'       # set python version to install
+NPM_CONFIG_FUND = 'false'              # the fund notification is is also pretty useless in a production environment
+NPM_CONFIG_UPDATE_NOTIFIER = 'false'   # the node update notification is relatively useless in a production environment
+PIP_DISABLE_PIP_VERSION_CHECK = '1'    # the pip update notification is relatively useless in a production environment
 [phases.setup]
 nixPkgs = ['...'] # add nodejs since it is needed to build the frontend
 
