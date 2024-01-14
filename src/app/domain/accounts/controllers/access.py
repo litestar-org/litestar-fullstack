@@ -1,7 +1,7 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, MediaType, Response, get, post
 from litestar.di import Provide
@@ -31,7 +31,13 @@ class AccessController(Controller):
 
     tags = ["Access"]
     dependencies = {"users_service": Provide(provides_user_service)}
-    signature_namespace = {"UserService": UserService, "User": User, "OAuth2Login": OAuth2Login}
+    signature_namespace = {
+        "UserService": UserService,
+        "User": User,
+        "OAuth2Login": OAuth2Login,
+        "RequestEncodingType": RequestEncodingType,
+        "Body": Body,
+    }
 
     return_dto = UserDTO
 
@@ -48,7 +54,7 @@ class AccessController(Controller):
     async def login(
         self,
         users_service: UserService,
-        data: DTOData[AccountLogin] = Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED),
+        data: Annotated[DTOData[AccountLogin], Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
         obj = data.create_instance()

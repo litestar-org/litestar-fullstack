@@ -1,7 +1,7 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
@@ -34,7 +34,12 @@ class TeamController(Controller):
     dependencies = {"teams_service": Provide(provides_teams_service)}
     guards = [requires_active_user]
     return_dto = TeamDTO
-    signature_namespace = {"TeamUpdate": TeamUpdate, "TeamCreate": TeamCreate}
+    signature_namespace = {
+        "Dependency": Dependency,
+        "Parameter": Parameter,
+        "TeamUpdate": TeamUpdate,
+        "TeamCreate": TeamCreate,
+    }
 
     @get(
         operation_id="ListTeams",
@@ -46,7 +51,7 @@ class TeamController(Controller):
         self,
         teams_service: TeamService,
         current_user: User,
-        filters: list[FilterTypes] = Dependency(skip_validation=True),
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
         if current_user.is_superuser:
@@ -84,10 +89,13 @@ class TeamController(Controller):
     async def get_team(
         self,
         teams_service: TeamService,
-        team_id: UUID = Parameter(
-            title="Team ID",
-            description="The team to retrieve.",
-        ),
+        team_id: Annotated[
+            UUID,
+            Parameter(
+                title="Team ID",
+                description="The team to retrieve.",
+            ),
+        ],
     ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
@@ -104,10 +112,13 @@ class TeamController(Controller):
         self,
         data: DTOData[TeamUpdate],
         teams_service: TeamService,
-        team_id: UUID = Parameter(
-            title="Team ID",
-            description="The team to update.",
-        ),
+        team_id: Annotated[
+            UUID,
+            Parameter(
+                title="Team ID",
+                description="The team to update.",
+            ),
+        ],
     ) -> Team:
         """Update a migration team."""
         db_obj = await teams_service.update(
@@ -127,10 +138,13 @@ class TeamController(Controller):
     async def delete_team(
         self,
         teams_service: TeamService,
-        team_id: UUID = Parameter(
-            title="Team ID",
-            description="The team to delete.",
-        ),
+        team_id: Annotated[
+            UUID,
+            Parameter(
+                title="Team ID",
+                description="The team to delete.",
+            ),
+        ],
     ) -> None:
         """Delete a team."""
         _ = await teams_service.delete(team_id)

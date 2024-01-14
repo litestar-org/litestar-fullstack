@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
@@ -34,6 +34,10 @@ class TagController(Controller):
 
     guards = [requires_active_user]
     dependencies = {"tags_service": Provide(provide_tags_service)}
+    signature_namespace = {
+        "Dependency": Dependency,
+        "Parameter": Parameter,
+    }
     tags = ["Tags"]
     return_dto = TagDTO
 
@@ -47,7 +51,7 @@ class TagController(Controller):
     async def list_tags(
         self,
         tags_service: TagService,
-        filters: list[FilterTypes] = Dependency(skip_validation=True),
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Tag]:
         """List tags."""
         results, total = await tags_service.list_and_count(*filters)
@@ -62,10 +66,13 @@ class TagController(Controller):
     async def get_tag(
         self,
         tags_service: TagService,
-        tag_id: UUID = Parameter(
-            title="Tag ID",
-            description="The tag to retrieve.",
-        ),
+        tag_id: Annotated[
+            UUID,
+            Parameter(
+                title="Tag ID",
+                description="The tag to retrieve.",
+            ),
+        ],
     ) -> Tag:
         """Get a new migration tag."""
         db_obj = await tags_service.get(tag_id)
@@ -101,10 +108,13 @@ class TagController(Controller):
         self,
         tags_service: TagService,
         data: DTOData[Tag],
-        tag_id: UUID = Parameter(
-            title="Tag ID",
-            description="The tag to update.",
-        ),
+        tag_id: Annotated[
+            UUID,
+            Parameter(
+                title="Tag ID",
+                description="The tag to update.",
+            ),
+        ],
     ) -> Tag:
         """Update a tag."""
         db_obj = await tags_service.update(item_id=tag_id, data=data.create_instance())
@@ -122,10 +132,13 @@ class TagController(Controller):
     async def delete_tag(
         self,
         tags_service: TagService,
-        tag_id: UUID = Parameter(
-            title="Tag ID",
-            description="The tag to delete.",
-        ),
+        tag_id: Annotated[
+            UUID,
+            Parameter(
+                title="Tag ID",
+                description="The tag to delete.",
+            ),
+        ],
     ) -> None:
         """Create a new migration tag."""
         _ = await tags_service.delete(tag_id)
