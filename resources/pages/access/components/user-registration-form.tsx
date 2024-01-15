@@ -46,16 +46,11 @@ export function UserRegistrationForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true)
-      const { success, message } = await registerUserService(values)
-      console.log(success)
-      console.log(message)
+      const registerResponse = await registerUserService(values)
+      console.log(registerResponse)
       setIsLoading(false)
-      if (success) {
-        toast(message)
-        return navigate("/login")
-      } else {
-        return toast(message)
-      }
+      toast("Registration Successful.  Login to continue.")
+      return navigate("/login")
     } catch (error: any) {
       setIsLoading(false)
       console.log(error)
@@ -103,7 +98,7 @@ export function UserRegistrationForm({
                     <FormLabel className="sr-only">Password</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your current password."
+                        placeholder="Enter a secure password."
                         type="password"
                         autoCapitalize="none"
                         autoCorrect="off"

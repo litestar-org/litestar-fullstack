@@ -2,7 +2,7 @@
 """Initial revision
 
 Revision ID: a22cc7704d14
-Revises: 
+Revises:
 Create Date: 2024-01-14 14:59:07.826121
 
 """
