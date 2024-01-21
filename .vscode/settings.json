@@ -27,7 +27,7 @@
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "black-formatter.importStrategy": "fromEnvironment",
   "pylint.importStrategy": "fromEnvironment",
-  "pylint.args": ["--load-plugins pylint_pydantic", "--rcfile=pylintrc"],
+  "pylint.args": [ "--rcfile=pylintrc"],
   "python.autoComplete.extraPaths": ["${workspaceFolder}/src"],
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.executeInFileDir": true,

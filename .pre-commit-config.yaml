@@ -33,11 +33,10 @@ repos:
         exclude: "scripts/"
         additional_dependencies:
           [
-            pydantic-settings,
             "passlib[argon2]",
             asyncpg,
             asyncpg-stubs,
-            "litestar[cli,jinja,jwt,pydantic,redis,sqlalchemy,standard,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
+            "litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
             litestar-vite,
             litestar-saq,
             types-freezegun,

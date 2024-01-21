@@ -57,7 +57,6 @@ def create_app() -> Litestar:
             domain.plugins.alchemy,
             domain.plugins.vite,
             domain.plugins.saq,
-            domain.plugins.pydantic,
         ],
         on_shutdown=[redis.aclose],  # type: ignore[attr-defined]
         on_app_init=[domain.security.auth.on_app_init],
