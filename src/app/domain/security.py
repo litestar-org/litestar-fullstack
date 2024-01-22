@@ -6,15 +6,17 @@ from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
-from app.config import constants, settings
+from app.config.app import alchemy
+from app.config.base import get_settings
 from app.db.models import TeamMember, User
 from app.domain import urls
 from app.domain.accounts.services import UserService
-
-from .config import alchemy
+from app.domain.system.urls import SYSTEM_HEALTH
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection, Request
+
+settings = get_settings()
 
 
 async def provide_user(request: Request[User, Token, Any]) -> User:
@@ -67,7 +69,7 @@ auth = OAuth2PasswordBearerAuth[User](
     token_url=urls.ACCOUNT_LOGIN,
     exclude=[
         urls.OPENAPI_SCHEMA,
-        constants.SYSTEM_HEALTH,
+        SYSTEM_HEALTH,
         urls.ACCOUNT_LOGIN,
         urls.ACCOUNT_REGISTER,
     ],

@@ -25,6 +25,3 @@ TEAM_UPDATE = "/api/teams/{team_id:uuid}"
 TEAM_CREATE = "/api/teams"
 TEAM_INDEX = "/api/teams/{team_id:uuid}"
 TEAM_INVITATION_LIST = "/api/teams/{team_id:uuid}/invitations"
-
-
-STATS_WEEKLY_NEW_USERS = "/api/stats/weekly-new-users"

@@ -11,6 +11,7 @@ from app.domain import urls
 from app.domain.accounts.dependencies import provide_users_service
 from app.domain.accounts.dtos import UserCreate, UserCreateDTO, UserDTO, UserUpdate, UserUpdateDTO
 from app.domain.accounts.guards import requires_superuser
+from app.domain.accounts.services import UserService
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -20,7 +21,6 @@ if TYPE_CHECKING:
     from litestar.pagination import OffsetPagination
 
     from app.db.models import User
-    from app.domain.accounts.services import UserService
 
 
 class UserController(Controller):
@@ -30,6 +30,7 @@ class UserController(Controller):
     guards = [requires_superuser]
     dependencies = {"users_service": Provide(provide_users_service)}
     return_dto = UserDTO
+    signature_namespace = {"UserService": UserService}
 
     @get(
         operation_id="ListUsers",

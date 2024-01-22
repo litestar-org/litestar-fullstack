@@ -13,7 +13,5 @@ DEFAULT_PAGINATION_SIZE = 20
 """Default page size to use."""
 CACHE_EXPIRATION: int = 60
 """Default cache key expiration in seconds."""
-SYSTEM_HEALTH: str = "/health"
-"""Default path for the service health check endpoint."""
 DEFAULT_USER_ROLE = "Application Access"
 """The name of the default role assigned to all users."""

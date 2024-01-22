@@ -1,13 +1,12 @@
 from dataclasses import dataclass
 from typing import Literal
 
-from litestar.dto import DataclassDTO
-
 from app.__about__ import __version__ as current_version
-from app.config import settings
-from app.lib import dto
+from app.config.base import get_settings
 
-__all__ = ["SystemHealth", "SystemHealthDTO"]
+__all__ = ("SystemHealth",)
+
+settings = get_settings()
 
 
 @dataclass
@@ -17,9 +16,3 @@ class SystemHealth:
     worker_status: Literal["online", "offline"]
     app: str = settings.app.NAME
     version: str = current_version
-
-
-class SystemHealthDTO(DataclassDTO[SystemHealth]):
-    """Team Create."""
-
-    config = dto.config()

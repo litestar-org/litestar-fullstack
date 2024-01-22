@@ -4,7 +4,7 @@ from litestar_granian import GranianPlugin
 from litestar_saq import SAQPlugin
 from litestar_vite import VitePlugin
 
-from . import config
+from app.config import app as config
 
 structlog = StructlogPlugin(config=config.log)
 vite = VitePlugin(config=config.vite)

@@ -7,8 +7,10 @@ from litestar import Controller, MediaType, Request, get
 from litestar.response import Response
 from sqlalchemy import text
 
-from app.config import constants, settings
-from app.domain.system.dtos import SystemHealth
+from app.config.base import get_settings
+
+from .schemas import SystemHealth
+from .urls import SYSTEM_HEALTH
 
 if TYPE_CHECKING:
     from litestar_saq import TaskQueues
@@ -17,6 +19,8 @@ if TYPE_CHECKING:
 logger = structlog.get_logger()
 OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
 
+settings = get_settings()
+
 
 class SystemController(Controller):
     tags = ["System"]
@@ -24,7 +28,7 @@ class SystemController(Controller):
     @get(
         operation_id="SystemHealth",
         name="system:health",
-        path=constants.SYSTEM_HEALTH,
+        path=SYSTEM_HEALTH,
         media_type=MediaType.JSON,
         cache=False,
         tags=["System"],

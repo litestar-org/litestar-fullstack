@@ -53,9 +53,9 @@ def create_user(
     import click
     from rich import get_console
 
+    from app.config.app import alchemy
     from app.domain.accounts.dependencies import provide_users_service
     from app.domain.accounts.dtos import UserCreate
-    from app.domain.config import alchemy
 
     console = get_console()
 
@@ -73,8 +73,7 @@ def create_user(
         )
         async with alchemy.get_session() as db_session:
             users_service = await anext(provide_users_service(db_session))
-            user = await users_service.create(data=obj_in.__dict__)
-            await users_service.repository.session.commit()
+            user = await users_service.create(data=obj_in.__dict__, auto_commit=True)
             console.print(f"User created: {user.email}")
 
     console.rule("Create a new application user.")

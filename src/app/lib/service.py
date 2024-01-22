@@ -96,7 +96,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
         Returns:
             The service object instance.
         """
-        from app.domain.config import alchemy
+        from app.config.app import alchemy
 
         if session:
             yield cls(statement=statement, session=session)

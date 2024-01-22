@@ -7,11 +7,13 @@ from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
+from app.db.models import Team
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams.dependencies import provide_teams_service
 from app.domain.teams.dtos import TeamCreate, TeamCreateDTO, TeamDTO, TeamUpdate, TeamUpdateDTO
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
+from app.domain.teams.services import TeamService
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -19,8 +21,7 @@ if TYPE_CHECKING:
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
 
-    from app.db.models import Team, User
-    from app.domain.teams.services import TeamService
+    from app.db.models import User
     from app.lib.dependencies import FilterTypes
 
 
@@ -34,8 +35,10 @@ class TeamController(Controller):
     signature_namespace = {
         "Dependency": Dependency,
         "Parameter": Parameter,
+        "TeamService": TeamService,
         "TeamUpdate": TeamUpdate,
         "TeamCreate": TeamCreate,
+        "Team": Team,
     }
 
     @get(

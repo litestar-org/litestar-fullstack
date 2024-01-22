@@ -436,3 +436,7 @@ class Settings:
 
             load_dotenv(env_file)
         return Settings()
+
+
+def get_settings() -> Settings:
+    return Settings.from_env()
