@@ -23,6 +23,7 @@ def create_app() -> Litestar:
     from litestar.di import Provide
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
+    from litestar.params import Dependency, Parameter
     from litestar.security.jwt import OAuth2Login
     from litestar.stores.redis import RedisStore
     from litestar.stores.registry import StoreRegistry
@@ -72,7 +73,7 @@ def create_app() -> Litestar:
         on_app_init=[auth.on_app_init],
         listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
         experimental_features=[ExperimentalFeatures.DTO_CODEGEN],
-        signature_types=[DTOData, OffsetPagination, OAuth2Login, User, UUID],
+        signature_types=[DTOData, OffsetPagination, OAuth2Login, User, UUID, Dependency, Parameter],
     )
 
 

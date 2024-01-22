@@ -14,8 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.pool import NullPool
 
 from app.db.models import Team, User
-from app.domain.plugins import alchemy
 from app.domain.security import auth
+from app.server.plugins import alchemy
 from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive
 
 here = Path(__file__).parent
