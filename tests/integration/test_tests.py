@@ -1,17 +1,18 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, cast
 
 import pytest
 from httpx import AsyncClient
 from litestar import get
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain import config
+from app.config import app as config
 
 if TYPE_CHECKING:
     from litestar import Litestar
     from litestar.stores.redis import RedisStore
     from redis.asyncio import Redis as AsyncRedis
-    from sqlalchemy.ext.asyncio import AsyncEngine
+    from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 pytestmark = pytest.mark.anyio
 
