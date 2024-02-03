@@ -14,7 +14,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
+  "litestar[cli,jinja,jwt,redis,sqlalchemy,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
+  "advanced-alchemy[uuid]",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "passlib[argon2]>=1.7.4",
@@ -22,6 +23,8 @@ dependencies = [
   "litestar-vite[nodeenv]>=0.1.4",
   "litestar-granian>=0.1.4",
   "aiosqlite>=0.19.0",
+  "uvloop",
+  "httptools",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
