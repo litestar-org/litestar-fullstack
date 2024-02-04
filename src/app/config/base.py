@@ -194,13 +194,13 @@ class ViteSettings:
         default_factory=lambda: os.getenv("VITE_ENABLE_REACT_HELPERS", "True") in {"True", "1", "yes", "Y", "T"},
     )
     """Enable React support in HMR."""
-    BUNDLE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/static"))
+    BUNDLE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/public"))
     """Bundle directory"""
     RESOURCE_DIR: Path = field(default_factory=lambda: Path("resources"))
     """Resource directory"""
     TEMPLATE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/templates"))
     """Template directory."""
-    ASSET_URL: str = field(default_factory=lambda: "/static/")
+    ASSET_URL: str = field(default_factory=lambda: os.getenv("ASSET_URL", "/static/"))
     """Base URL for assets"""
 
     @property
