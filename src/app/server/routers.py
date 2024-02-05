@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from litestar.types import ControllerRouterHandler
 
 
-routes: list[ControllerRouterHandler] = [
+route_handlers: list[ControllerRouterHandler] = [
     AccessController,
     UserController,
     TeamController,

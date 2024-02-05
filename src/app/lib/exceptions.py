@@ -8,6 +8,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
+from advanced_alchemy.exceptions import IntegrityError
 from litestar.exceptions import (
     HTTPException,
     InternalServerException,
@@ -124,12 +125,12 @@ def exception_to_http_response(
     http_exc: type[HTTPException]
     if isinstance(exc, NotFoundError):
         http_exc = NotFoundException
-    elif isinstance(exc, ConflictError | RepositoryError):
+    elif isinstance(exc, ConflictError | RepositoryError | IntegrityError):
         http_exc = _HTTPConflictException
     elif isinstance(exc, AuthorizationError):
         http_exc = PermissionDeniedException
     else:
         http_exc = InternalServerException
-    if request.app.debug:
+    if request.app.debug and not isinstance(http_exc, PermissionDeniedException | NotFoundError | AuthorizationError):
         return create_debug_response(request, exc)
     return create_exception_response(request, http_exc(detail=str(exc.__cause__)))

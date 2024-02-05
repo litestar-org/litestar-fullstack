@@ -10,6 +10,7 @@ from litestar.stores.registry import StoreRegistry
 
 if TYPE_CHECKING:
     from click import Group
+    from litestar import Request
     from litestar.config.app import AppConfig
     from redis.asyncio import Redis
 
@@ -32,13 +33,13 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         """
 
     def on_cli_init(self, cli: Group) -> None:
-        from app.cli.builder import build_management_cli_group
+        from app.cli.commands import user_management_app
         from app.config import get_settings
 
         settings = get_settings()
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
-        cli.add_command(build_management_cli_group())
+        cli.add_command(user_management_app)
 
         return super().on_cli_init(cli)
 
@@ -48,31 +49,47 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         Args:
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
-        from litestar.contrib.jwt import OAuth2Login, Token
+        from advanced_alchemy.exceptions import RepositoryError
+        from litestar.config.app import ExperimentalFeatures
+        from litestar.contrib.jwt import OAuth2Login
+        from litestar.dto import DTOData
         from litestar.pagination import OffsetPagination
+        from litestar.params import Dependency, Parameter
         from uuid_utils import UUID
 
         from app.config import constants, get_settings
         from app.db.models import User
-        from app.lib.repository import SQLAlchemyAsyncSlugRepository
+        from app.lib.exceptions import ApplicationError, exception_to_http_response
 
         settings = get_settings()
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
-        app_config.response_cache_config = ResponseCacheConfig(default_expiration=constants.CACHE_EXPIRATION)
+        app_config.response_cache_config = ResponseCacheConfig(
+            default_expiration=constants.CACHE_EXPIRATION,
+            key_builder=self._cache_key_builder,
+        )
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
-        app_config.signature_namespace.update(
-            {
-                "UUID": UUID,
-                "User": User,
-                "Token": Token,
-                "OAuth2Login": OAuth2Login,
-                "OffsetPagination": OffsetPagination,
-                "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
-            },
-        )
+        app_config.signature_types = [DTOData, OffsetPagination, OAuth2Login, User, UUID, Dependency, Parameter]
+        app_config.experimental_features = [ExperimentalFeatures.DTO_CODEGEN]
+        app_config.exception_handlers = {
+            ApplicationError: exception_to_http_response,
+            RepositoryError: exception_to_http_response,
+        }
         return app_config
 
     def redis_store_factory(self, name: str) -> RedisStore:
         return RedisStore(self.redis, namespace=f"{self.app_slug}:{name}")
+
+    def _cache_key_builder(self, request: Request) -> str:
+        """App name prefixed cache key builder.
+
+        Args:
+            request (Request): Current request instance.
+
+        Returns:
+            str: App slug prefixed cache key.
+        """
+        from litestar.config.response_cache import default_cache_key_builder
+
+        return f"{self.app_slug}:{default_cache_key_builder(request)}"

@@ -1031,7 +1031,7 @@ dependencies = [
 
 [[package]]
 name = "litestar-granian"
-version = "0.2.1"
+version = "0.2.2"
 requires_python = ">=3.8"
 summary = "Granian plugin for Litestar"
 groups = ["default"]
@@ -1040,8 +1040,8 @@ dependencies = [
     "litestar[cli]>=2.0.1",
 ]
 files = [
-    {file = "litestar_granian-0.2.1-py3-none-any.whl", hash = "sha256:b0c4d0f6440b67dfb8520db0d6fabb6598b03c3eec1c9fecc166f941cc03ea54"},
-    {file = "litestar_granian-0.2.1.tar.gz", hash = "sha256:8072d0890f5ee83cedfe7bc185408669084ac64fc6f3c6db3ff05a530cf0e431"},
+    {file = "litestar_granian-0.2.2-py3-none-any.whl", hash = "sha256:4a8a61f2aab1af77efeefae7fbc7292ebf9ab9d58bfc3e50372b3c466fceeb8b"},
+    {file = "litestar_granian-0.2.2.tar.gz", hash = "sha256:6fb30b049f34b759ef0213ad78c5771a42ca1e1fed5e9c91e792d0ac293d67be"},
 ]
 
 [[package]]
