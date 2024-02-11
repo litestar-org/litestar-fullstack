@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:7fd1a7bf60bacc1e31573a7d54a802f228b80a9e0eb61155ce37cab9e6eebc35"
+content_hash = "sha256:210c5020d57f18659aae815c42ef49dd060ac6735da721f61663afa385835d3a"
 
 [[package]]
 name = "accessible-pygments"
@@ -680,7 +680,7 @@ files = [
 
 [[package]]
 name = "faker"
-version = "22.6.0"
+version = "23.1.0"
 requires_python = ">=3.8"
 summary = "Faker is a Python package that generates fake data for you."
 groups = ["default"]
@@ -688,8 +688,8 @@ dependencies = [
     "python-dateutil>=2.4",
 ]
 files = [
-    {file = "Faker-22.6.0-py3-none-any.whl", hash = "sha256:2b57f0256da6b45b7851dca87836ef5e2ae2fbb64d63d8697f1e47830d7b505d"},
-    {file = "Faker-22.6.0.tar.gz", hash = "sha256:fa6d969728ef3da6229da91267a1bd4e6b902044c4822012d4fc46c71bb92b26"},
+    {file = "Faker-23.1.0-py3-none-any.whl", hash = "sha256:60e89e5c0b584e285a7db05eceba35011a241954afdab2853cb246c8a56700a2"},
+    {file = "Faker-23.1.0.tar.gz", hash = "sha256:b7f76bb1b2ac4cdc54442d955e36e477c387000f31ce46887fb9722a041be60b"},
 ]
 
 [[package]]
@@ -1010,10 +1010,7 @@ files = [
 [[package]]
 name = "litestar"
 version = "2.6.0"
-requires_python = ">=3.8,<4.0"
-git = "https://github.com/litestar-org/litestar.git"
-ref = "develop"
-revision = "e4558a91476645d1ede4193e7df5d10e09e3df7e"
+requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
@@ -1027,6 +1024,10 @@ dependencies = [
     "rich-click",
     "rich>=13.0.0",
     "typing-extensions",
+]
+files = [
+    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
+    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
 ]
 
 [[package]]
@@ -1106,50 +1107,24 @@ files = [
 name = "litestar"
 version = "2.6.0"
 extras = ["cli", "jinja", "jwt", "redis", "sqlalchemy", "structlog"]
-requires_python = ">=3.8,<4.0"
-git = "https://github.com/litestar-org/litestar.git"
-ref = "develop"
-revision = "e4558a91476645d1ede4193e7df5d10e09e3df7e"
+requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "advanced-alchemy<1.0.0,>=0.2.2",
-    "advanced-alchemy<1.0.0,>=0.2.2",
-    "advanced-alchemy<1.0.0,>=0.2.2",
-    "advanced-alchemy<1.0.0,>=0.2.2",
-    "cryptography",
-    "cryptography",
-    "cryptography",
     "cryptography",
     "jinja2>=3.1.2",
-    "jinja2>=3.1.2",
-    "jinja2>=3.1.2",
-    "jinja2>=3.1.2",
     "jsbeautifier",
-    "jsbeautifier",
-    "jsbeautifier",
-    "jsbeautifier",
-    "litestar @ git+https://github.com/litestar-org/litestar.git@develop",
-    "python-jose",
-    "python-jose",
-    "python-jose",
+    "litestar==2.6.0",
     "python-jose",
     "redis[hiredis]>=4.4.4",
-    "redis[hiredis]>=4.4.4",
-    "redis[hiredis]>=4.4.4",
-    "redis[hiredis]>=4.4.4",
-    "structlog",
-    "structlog",
-    "structlog",
     "structlog",
     "uvicorn[standard]",
-    "uvicorn[standard]",
-    "uvicorn[standard]",
-    "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
-    "uvloop>=0.18.0; sys_platform != \"win32\"",
-    "uvloop>=0.18.0; sys_platform != \"win32\"",
-    "uvloop>=0.18.0; sys_platform != \"win32\"",
+]
+files = [
+    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
+    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
 ]
 
 [[package]]
@@ -1166,6 +1141,10 @@ dependencies = [
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
+files = [
+    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
+    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
+]
 
 [[package]]
 name = "litestar"
@@ -1179,6 +1158,10 @@ dependencies = [
     "litestar==2.6.0",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
+]
+files = [
+    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
+    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
 ]
 
 [[package]]
@@ -1508,7 +1491,7 @@ files = [
 
 [[package]]
 name = "pre-commit"
-version = "3.6.0"
+version = "3.6.1"
 requires_python = ">=3.9"
 summary = "A framework for managing and maintaining multi-language pre-commit hooks."
 groups = ["linting"]
@@ -1520,8 +1503,8 @@ dependencies = [
     "virtualenv>=20.10.0",
 ]
 files = [
-    {file = "pre_commit-3.6.0-py2.py3-none-any.whl", hash = "sha256:c255039ef399049a5544b6ce13d135caba8f2c28c3b4033277a788f434308376"},
-    {file = "pre_commit-3.6.0.tar.gz", hash = "sha256:d30bad9abf165f7785c15a21a1f46da7d0677cb00ee7ff4c579fd38922efe15d"},
+    {file = "pre_commit-3.6.1-py2.py3-none-any.whl", hash = "sha256:9fe989afcf095d2c4796ce7c553cf28d4d4a9b9346de3cda079bcf40748454a4"},
+    {file = "pre_commit-3.6.1.tar.gz", hash = "sha256:c90961d8aa706f75d60935aba09469a6b0bcb8345f127c3fbee4bdc5f114cf4b"},
 ]
 
 [[package]]
@@ -1829,7 +1812,7 @@ files = [
 
 [[package]]
 name = "ruamel-yaml"
-version = "0.18.5"
+version = "0.18.6"
 requires_python = ">=3.7"
 summary = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 groups = ["docs"]
@@ -1837,8 +1820,8 @@ dependencies = [
     "ruamel-yaml-clib>=0.2.7; platform_python_implementation == \"CPython\" and python_version < \"3.13\"",
 ]
 files = [
-    {file = "ruamel.yaml-0.18.5-py3-none-any.whl", hash = "sha256:a013ac02f99a69cdd6277d9664689eb1acba07069f912823177c5eced21a6ada"},
-    {file = "ruamel.yaml-0.18.5.tar.gz", hash = "sha256:61917e3a35a569c1133a8f772e1226961bf5a1198bea7e23f06a0841dea1ab0e"},
+    {file = "ruamel.yaml-0.18.6-py3-none-any.whl", hash = "sha256:57b53ba33def16c4f3d807c0ccbc00f8a6081827e81ba2491691b76882d0c636"},
+    {file = "ruamel.yaml-0.18.6.tar.gz", hash = "sha256:8b27e6a217e786c6fbe5634d8f3f11bc63e0f80f6a5890f28863d9c45aac311b"},
 ]
 
 [[package]]
@@ -1870,28 +1853,28 @@ files = [
 
 [[package]]
 name = "ruff"
-version = "0.2.0"
+version = "0.2.1"
 requires_python = ">=3.7"
 summary = "An extremely fast Python linter and code formatter, written in Rust."
 groups = ["linting"]
 files = [
-    {file = "ruff-0.2.0-py3-none-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:638ea3294f800d18bae84a492cb5a245c8d29c90d19a91d8e338937a4c27fca0"},
-    {file = "ruff-0.2.0-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:3ff35433fcf4dff6d610738712152df6b7d92351a1bde8e00bd405b08b3d5759"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bf9faafbdcf4f53917019f2c230766da437d4fd5caecd12ddb68bb6a17d74399"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8153a3e4128ed770871c47545f1ae7b055023e0c222ff72a759f5a341ee06483"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e8a75a98ae989a27090e9c51f763990ad5bbc92d20626d54e9701c7fe597f399"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:87057dd2fdde297130ff99553be8549ca38a2965871462a97394c22ed2dfc19d"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:6d232f99d3ab00094ebaf88e0fb7a8ccacaa54cc7fa3b8993d9627a11e6aed7a"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3d3c641f95f435fc6754b05591774a17df41648f0daf3de0d75ad3d9f099ab92"},
-    {file = "ruff-0.2.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3826fb34c144ef1e171b323ed6ae9146ab76d109960addca730756dc19dc7b22"},
-    {file = "ruff-0.2.0-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:eceab7d85d09321b4de18b62d38710cf296cb49e98979960a59c6b9307c18cfe"},
-    {file = "ruff-0.2.0-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:30ad74687e1f4a9ff8e513b20b82ccadb6bd796fe5697f1e417189c5cde6be3e"},
-    {file = "ruff-0.2.0-py3-none-musllinux_1_2_i686.whl", hash = "sha256:a7e3818698f8460bd0f8d4322bbe99db8327e9bc2c93c789d3159f5b335f47da"},
-    {file = "ruff-0.2.0-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:edf23041242c48b0d8295214783ef543847ef29e8226d9f69bf96592dba82a83"},
-    {file = "ruff-0.2.0-py3-none-win32.whl", hash = "sha256:e155147199c2714ff52385b760fe242bb99ea64b240a9ffbd6a5918eb1268843"},
-    {file = "ruff-0.2.0-py3-none-win_amd64.whl", hash = "sha256:ba918e01cdd21e81b07555564f40d307b0caafa9a7a65742e98ff244f5035c59"},
-    {file = "ruff-0.2.0-py3-none-win_arm64.whl", hash = "sha256:3fbaff1ba9564a2c5943f8f38bc221f04bac687cc7485e45237579fee7ccda79"},
-    {file = "ruff-0.2.0.tar.gz", hash = "sha256:63856b91837606c673537d2889989733d7dffde553828d3b0f0bacfa6def54be"},
+    {file = "ruff-0.2.1-py3-none-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:dd81b911d28925e7e8b323e8d06951554655021df8dd4ac3045d7212ac4ba080"},
+    {file = "ruff-0.2.1-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:dc586724a95b7d980aa17f671e173df00f0a2eef23f8babbeee663229a938fec"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c92db7101ef5bfc18e96777ed7bc7c822d545fa5977e90a585accac43d22f18a"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:13471684694d41ae0f1e8e3a7497e14cd57ccb7dd72ae08d56a159d6c9c3e30e"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a11567e20ea39d1f51aebd778685582d4c56ccb082c1161ffc10f79bebe6df35"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:00a818e2db63659570403e44383ab03c529c2b9678ba4ba6c105af7854008105"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:be60592f9d218b52f03384d1325efa9d3b41e4c4d55ea022cd548547cc42cd2b"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:fbd2288890b88e8aab4499e55148805b58ec711053588cc2f0196a44f6e3d855"},
+    {file = "ruff-0.2.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f3ef052283da7dec1987bba8d8733051c2325654641dfe5877a4022108098683"},
+    {file = "ruff-0.2.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:7022d66366d6fded4ba3889f73cd791c2d5621b2ccf34befc752cb0df70f5fad"},
+    {file = "ruff-0.2.1-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:0a725823cb2a3f08ee743a534cb6935727d9e47409e4ad72c10a3faf042ad5ba"},
+    {file = "ruff-0.2.1-py3-none-musllinux_1_2_i686.whl", hash = "sha256:0034d5b6323e6e8fe91b2a1e55b02d92d0b582d2953a2b37a67a2d7dedbb7acc"},
+    {file = "ruff-0.2.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:e5cb5526d69bb9143c2e4d2a115d08ffca3d8e0fddc84925a7b54931c96f5c02"},
+    {file = "ruff-0.2.1-py3-none-win32.whl", hash = "sha256:6b95ac9ce49b4fb390634d46d6ece32ace3acdd52814671ccaf20b7f60adb232"},
+    {file = "ruff-0.2.1-py3-none-win_amd64.whl", hash = "sha256:e3affdcbc2afb6f5bd0eb3130139ceedc5e3f28d206fe49f63073cb9e65988e0"},
+    {file = "ruff-0.2.1-py3-none-win_arm64.whl", hash = "sha256:efababa8e12330aa94a53e90a81eb6e2d55f348bc2e71adbf17d9cad23c03ee6"},
+    {file = "ruff-0.2.1.tar.gz", hash = "sha256:3b42b5d8677cd0c72b99fcaf068ffc62abb5a19e71b4a3b9cfa50658a0af02f1"},
 ]
 
 [[package]]
@@ -2356,13 +2339,13 @@ files = [
 
 [[package]]
 name = "types-pyasn1"
-version = "0.5.0.20240106"
+version = "0.5.0.20240205"
 requires_python = ">=3.8"
 summary = "Typing stubs for pyasn1"
 groups = ["linting"]
 files = [
-    {file = "types-pyasn1-0.5.0.20240106.tar.gz", hash = "sha256:80e38befb1ddbf90c58b6f9e5ce158df66c42c87764a6564b1b7b6dd340535f7"},
-    {file = "types_pyasn1-0.5.0.20240106-py3-none-any.whl", hash = "sha256:e6ad48f5a58afb32019cba86a0529cdd52c315495a19122b4823ba4ad5f3c45b"},
+    {file = "types-pyasn1-0.5.0.20240205.tar.gz", hash = "sha256:b42b4e967d2ad780bde2ce47d7627a00dfb11b37a451f3e73b264ec6e97e50c7"},
+    {file = "types_pyasn1-0.5.0.20240205-py3-none-any.whl", hash = "sha256:40b205856c6a01d2ce6fa47a0be2a238a5556b04f47a2875a2aba680a65a959f"},
 ]
 
 [[package]]

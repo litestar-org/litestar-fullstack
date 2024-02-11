@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.2.0"
+    rev: "v0.2.1"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -36,7 +36,7 @@ repos:
             "passlib[argon2]",
             asyncpg,
             asyncpg-stubs,
-            "litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
+            "litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog]",
             litestar-vite,
             litestar-saq,
             types-freezegun,

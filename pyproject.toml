@@ -14,7 +14,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,redis,sqlalchemy,structlog] @ git+https://github.com/litestar-org/litestar.git@develop",
+  "litestar[cli,jinja,jwt,redis,sqlalchemy,structlog]",
   "advanced-alchemy[uuid]",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
@@ -170,8 +170,9 @@ exclude = [
   "src/app/db/migrations/versions/*.py",
 ]
 fix = true
-fixable = ["ALL"]
-ignore = [
+line-length = 120
+lint.fixable = ["ALL"]
+lint.ignore = [
   "E501",    # pycodestyle line too long, handled by black
   "D100",    # pydocstyle - missing docstring in public module
   "D101",    # pydocstyle - missing docstring in public class
@@ -220,20 +221,19 @@ ignore = [
   "TD",
   "PERF203", # ignore for now; investigate
 ]
-line-length = 120
-select = ["ALL"]
+lint.select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 src = ["src", "tests/"]
 target-version = "py311"
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 12
 
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
   "classmethod",
   "sqlalchemy.ext.declarative.declared_attr",
@@ -241,16 +241,16 @@ classmethod-decorators = [
   "sqlalchemy.orm.declared_attr",
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ['tests', 'app']
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "*/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "__init__.py" = ['F401', 'D104']
 "docs/**/*.*" = ["S", "B", "DTZ", "A", "TCH", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
 "scripts/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
-"scripts/*.py" = ["INP001"]
+"scripts/*.py" = ["INP001", "ERA001"]
 "src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
 
