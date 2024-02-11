@@ -3,7 +3,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from litestar.config.response_cache import ResponseCacheConfig
+from litestar.config.app import ExperimentalFeatures
+from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
+from litestar.contrib.jwt import OAuth2Login
+from litestar.dto import DTOData
+from litestar.pagination import OffsetPagination
+from litestar.params import Dependency, Parameter
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar.stores.redis import RedisStore
 from litestar.stores.registry import StoreRegistry
@@ -50,11 +55,6 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
         from advanced_alchemy.exceptions import RepositoryError
-        from litestar.config.app import ExperimentalFeatures
-        from litestar.contrib.jwt import OAuth2Login
-        from litestar.dto import DTOData
-        from litestar.pagination import OffsetPagination
-        from litestar.params import Dependency, Parameter
         from uuid_utils import UUID
 
         from app.config import constants, get_settings
@@ -90,6 +90,5 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         Returns:
             str: App slug prefixed cache key.
         """
-        from litestar.config.response_cache import default_cache_key_builder
 
         return f"{self.app_slug}:{default_cache_key_builder(request)}"
