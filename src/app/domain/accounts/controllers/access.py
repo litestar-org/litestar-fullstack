@@ -44,6 +44,7 @@ class AccessController(Controller):
         summary="Login",
         dto=AccountLoginDTO,
         return_dto=None,
+        exclude_from_auth=True,
     )
     async def login(
         self,
@@ -54,6 +55,24 @@ class AccessController(Controller):
         obj = data.create_instance()
         user = await users_service.authenticate(obj.username, obj.password)
         return security.auth.login(user.email)
+
+    @post(
+        operation_id="AccountLogout",
+        name="account:logout",
+        path=urls.ACCOUNT_LOGOUT,
+        cache=False,
+        summary="Logout",
+        dto=None,
+        return_dto=None,
+        exclude_from_auth=True,
+    )
+    async def logout(
+        self,
+        request: Request,
+    ) -> None:
+        """Account Logout"""
+        request.cookies.pop(security.auth.key, None)
+        request.clear_session()
 
     @post(
         operation_id="AccountRegister",
