@@ -52,8 +52,8 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
 COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml LICENSE Makefile \
-    package.json package-lock.json vite.config.ts tsconfig.json \
-    tailwind.config.js postcss.config.cjs components.json \
+    package.json package-lock.json vite.config.ts tsconfig.json tsconfig.node.json \
+    tailwind.config.cjs postcss.config.cjs components.json \
     ./
 RUN python -m venv --copies /workspace/app/.venv \
     && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython mypy
@@ -94,6 +94,7 @@ RUN /workspace/app/.venv/bin/pip install --quiet --disable-pip-version-check --n
 FROM ${PYTHON_RUN_IMAGE} as run-image
 ARG ENV_SECRETS="runtime-secrets"
 ARG CHIPSET_ARCH=x86_64-linux-gnu
+ARG LITESTAR_APP="app.asgi:app"
 ENV PATH="/workspace/app/.venv/bin:/bin:/usr/local/bin:$PATH" \
     ENV_SECRETS="${ENV_SECRETS}" \
     CHIPSET_ARCH="${CHIPSET_ARCH}" \
@@ -105,7 +106,8 @@ ENV PATH="/workspace/app/.venv/bin:/bin:/usr/local/bin:$PATH" \
     PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
     LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
+    LC_ALL=C.UTF-8 \
+    LITESTAR_APP="${LITESTAR_APP}"
 ## ------------------------- copy python itself from builder -------------------------- ##
 
 # this carries more risk than installing it fully, but makes the image a lot smaller
