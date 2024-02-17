@@ -1009,7 +1009,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.6.0"
+version = "2.6.1"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
@@ -1026,8 +1026,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
-    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
+    {file = "litestar-2.6.1-py3-none-any.whl", hash = "sha256:33451b705f04f1f1ee991c28502afc2ce1b5ca5df25f0ae6ae8cf11063397e42"},
+    {file = "litestar-2.6.1.tar.gz", hash = "sha256:3232190578d81180cce765840dfe72ef6b5d7ec2aead6fc37d664e61d8e2f647"},
 ]
 
 [[package]]
@@ -1105,7 +1105,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.6.0"
+version = "2.6.1"
 extras = ["cli", "jinja", "jwt", "redis", "sqlalchemy", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -1115,7 +1115,7 @@ dependencies = [
     "cryptography",
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.6.0",
+    "litestar==2.6.1",
     "python-jose",
     "redis[hiredis]>=4.4.4",
     "structlog",
@@ -1123,45 +1123,45 @@ dependencies = [
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
-    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
+    {file = "litestar-2.6.1-py3-none-any.whl", hash = "sha256:33451b705f04f1f1ee991c28502afc2ce1b5ca5df25f0ae6ae8cf11063397e42"},
+    {file = "litestar-2.6.1.tar.gz", hash = "sha256:3232190578d81180cce765840dfe72ef6b5d7ec2aead6fc37d664e61d8e2f647"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.6.0"
+version = "2.6.1"
 extras = ["cli", "jinja"]
-requires_python = ">=3.8,<4.0"
+requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.6.0",
+    "litestar==2.6.1",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
-    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
+    {file = "litestar-2.6.1-py3-none-any.whl", hash = "sha256:33451b705f04f1f1ee991c28502afc2ce1b5ca5df25f0ae6ae8cf11063397e42"},
+    {file = "litestar-2.6.1.tar.gz", hash = "sha256:3232190578d81180cce765840dfe72ef6b5d7ec2aead6fc37d664e61d8e2f647"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.6.0"
+version = "2.6.1"
 extras = ["cli"]
-requires_python = ">=3.8,<4.0"
+requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jsbeautifier",
-    "litestar==2.6.0",
+    "litestar==2.6.1",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.0-py3-none-any.whl", hash = "sha256:c0de3a1d99c1aaf3b926b9a3b054c08249a7bb3bf580e967cf79c3b8d9b8dda8"},
-    {file = "litestar-2.6.0.tar.gz", hash = "sha256:b665f55fb75e13808ceb237a7590ee1f1393de41e73ecdf6016efee5b2f0a605"},
+    {file = "litestar-2.6.1-py3-none-any.whl", hash = "sha256:33451b705f04f1f1ee991c28502afc2ce1b5ca5df25f0ae6ae8cf11063397e42"},
+    {file = "litestar-2.6.1.tar.gz", hash = "sha256:3232190578d81180cce765840dfe72ef6b5d7ec2aead6fc37d664e61d8e2f647"},
 ]
 
 [[package]]
@@ -1584,7 +1584,7 @@ files = [
 
 [[package]]
 name = "pytest"
-version = "8.0.0"
+version = "8.0.1"
 requires_python = ">=3.8"
 summary = "pytest: simple powerful testing with Python"
 groups = ["test"]
@@ -1595,8 +1595,8 @@ dependencies = [
     "pluggy<2.0,>=1.3.0",
 ]
 files = [
-    {file = "pytest-8.0.0-py3-none-any.whl", hash = "sha256:50fb9cbe836c3f20f0dfa99c565201fb75dc54c8d76373cd1bde06b06657bdb6"},
-    {file = "pytest-8.0.0.tar.gz", hash = "sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c"},
+    {file = "pytest-8.0.1-py3-none-any.whl", hash = "sha256:3e4f16fe1c0a9dc9d9389161c127c3edc5d810c38d6793042fb81d9f48a59fca"},
+    {file = "pytest-8.0.1.tar.gz", hash = "sha256:267f6563751877d772019b13aacbe4e860d73fe8f651f28112e9ac37de7513ae"},
 ]
 
 [[package]]
