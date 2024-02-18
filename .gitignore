@@ -1,7 +1,15 @@
+.idea/
+
+# pyenv
+.python-version
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+*.code-workspace
+tests/data/*
+temp/*
 
 # C extensions
 *.so
@@ -14,18 +22,17 @@ dist/
 downloads/
 eggs/
 .eggs/
+lib64/
 parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
-poetry.toml
-.pdm-python
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -49,6 +56,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+cover/
 
 # Translations
 *.mo
@@ -71,6 +79,7 @@ instance/
 docs/_build/
 
 # PyBuilder
+.pybuilder/
 target/
 
 # Jupyter Notebook
@@ -81,7 +90,9 @@ profile_default/
 ipython_config.py
 
 # pyenv
-.python-version
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
@@ -101,18 +112,12 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env*
-!.env.example
-!.env.testing
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-.venv
-media/
-!media/.gitkeep
 
 # Spyder project settings
 .spyderproject
@@ -132,43 +137,19 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# vscode
-# .vscode
-.venv
-.venv
+# pytype static type analyzer
+.pytype/
 
+# Cython debug symbols
+cython_debug/
+contrib/vault/file/
+/contrib/vault/keys/*.json
+.local.env
 
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-tsconfig.tsbuildinfo
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# archives
+*.zip
+*.gz
+*.tar
+*.bz2
+*.tgz
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-
-# temporary files
-tmp/
-temp/
-
-
-# built files from the web UI
-src/app/domain/web/public

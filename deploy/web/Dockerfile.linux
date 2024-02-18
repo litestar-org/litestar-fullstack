@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1
+
+# Source: https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
+# The builder image, used to build the virtual environment
+FROM python:3.11.0-slim as builder
+
+RUN pip install poetry
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE 1 \
+    PYTHONUNBUFFERED 1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
+COPY pyproject.toml poetry.lock ./
+
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-interaction --no-ansi --no-root --only main
+
+# The runtime image, used to just run the code provided its virtual environment
+FROM python:3.11.0-slim as runtime
+
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+
+COPY app/ ./app/
+
+ENTRYPOINT ["./entrypoint.sh"]
