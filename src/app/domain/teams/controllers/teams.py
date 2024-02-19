@@ -6,19 +6,20 @@ from typing import TYPE_CHECKING, Annotated
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
+from msgspec.structs import asdict
 
+from app.config import constants
 from app.db.models import Team
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams.dependencies import provide_teams_service
-from app.domain.teams.dtos import TeamCreate, TeamCreateDTO, TeamDTO, TeamUpdate, TeamUpdateDTO
+from app.domain.teams.dtos import TeamCreate, TeamDTO, TeamUpdate
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 from app.domain.teams.services import TeamService
 
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
 
     from app.db.models import User
@@ -54,7 +55,15 @@ class TeamController(Controller):
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
-        if current_user.is_superuser:
+        show_all = bool(
+            current_user.is_superuser
+            or any(
+                assigned_role.role.name
+                for assigned_role in current_user.roles
+                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
+            ),
+        )
+        if show_all:
             results, total = await teams_service.list_and_count(*filters)
         else:
             results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
@@ -65,16 +74,15 @@ class TeamController(Controller):
         name="teams:create",
         summary="Create a new team.",
         path=urls.TEAM_CREATE,
-        dto=TeamCreateDTO,
     )
     async def create_team(
         self,
         teams_service: TeamService,
         current_user: User,
-        data: DTOData[TeamCreate],
+        data: TeamCreate,
     ) -> Team:
         """Create a new team."""
-        obj = data.create_instance().__dict__
+        obj = asdict(data)
         obj.update({"owner_id": current_user.id})
         db_obj = await teams_service.create(obj)
         return teams_service.to_dto(db_obj)
@@ -106,11 +114,10 @@ class TeamController(Controller):
         name="teams:update",
         guards=[requires_team_admin],
         path=urls.TEAM_UPDATE,
-        dto=TeamUpdateDTO,
     )
     async def update_team(
         self,
-        data: DTOData[TeamUpdate],
+        data: TeamUpdate,
         teams_service: TeamService,
         team_id: Annotated[
             UUID,
@@ -123,7 +130,7 @@ class TeamController(Controller):
         """Update a migration team."""
         db_obj = await teams_service.update(
             item_id=team_id,
-            data=data.create_instance().__dict__,
+            data=asdict(data),
         )
         return teams_service.to_dto(db_obj)
 

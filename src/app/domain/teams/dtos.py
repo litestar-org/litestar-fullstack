@@ -1,12 +1,10 @@
-from dataclasses import dataclass, field
-
+import msgspec
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
-from litestar.dto import DataclassDTO
 
 from app.db.models import Team
 from app.lib import dto
 
-__all__ = ["TeamCreate", "TeamCreateDTO", "TeamDTO", "TeamUpdate", "TeamUpdateDTO"]
+__all__ = ["TeamCreate", "TeamDTO", "TeamUpdate"]
 
 
 # database model
@@ -16,6 +14,8 @@ class TeamDTO(SQLAlchemyDTO[Team]):
     config = dto.config(
         backend="sqlalchemy",
         exclude={
+            "created_at",
+            "updated_at",
             "members.team",
             "members.user",
             "members.created_at",
@@ -23,34 +23,23 @@ class TeamDTO(SQLAlchemyDTO[Team]):
             "members.id",
             "members.user_name",
             "members.user_email",
+            "members.team_name",
             "invitations",
+            "tags.created_at",
+            "tags.updated_at",
             "pending_invitations",
         },
         max_nested_depth=1,
     )
 
 
-@dataclass
-class TeamCreate:
+class TeamCreate(msgspec.Struct):
     name: str
-    description: str | None = None
-    tags: list[str] = field(default_factory=list)
-
-
-class TeamCreateDTO(DataclassDTO[TeamCreate]):
-    """Team Create."""
-
-    config = dto.config()
-
-
-@dataclass
-class TeamUpdate:
-    name: str | None = None
     description: str | None = None
     tags: list[str] | None = None
 
 
-class TeamUpdateDTO(DataclassDTO[TeamUpdate]):
-    """Team Update."""
-
-    config = dto.config()
+class TeamUpdate(msgspec.Struct):
+    name: str | None = None
+    description: str | None = None
+    tags: list[str] | None = None

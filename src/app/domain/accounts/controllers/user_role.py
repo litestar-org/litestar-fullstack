@@ -1,8 +1,6 @@
 """User Routes."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from litestar import Controller, post
 from litestar.di import Provide
 from litestar.params import Parameter
@@ -13,9 +11,6 @@ from app.domain.accounts.dependencies import provide_roles_service, provide_user
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import RoleService, UserRoleService, UserService
 from app.lib.schema import Message
-
-if TYPE_CHECKING:
-    from litestar.dto import DTOData
 
 
 class AccountRoleController(Controller):
@@ -34,24 +29,23 @@ class AccountRoleController(Controller):
         operation_id="AssignUserRole",
         name="users:assign-role",
         path=urls.ACCOUNT_ASSIGN_ROLE,
-        dto=dtos.UserRoleAddDTO,
         return_dto=None,
+        dto=None,
     )
     async def assign_role(
         self,
         roles_service: RoleService,
         users_service: UserService,
         user_roles_service: UserRoleService,
-        data: DTOData[dtos.UserRoleAdd],
+        data: dtos.UserRoleAdd,
         role_slug: str = Parameter(
             title="Role Slug",
             description="The role to grant.",
         ),
     ) -> Message:
         """Create a new migration role."""
-        user_data = data.as_builtins()
         role_id = (await roles_service.get_one(slug=role_slug)).id
-        user_obj = await users_service.get_one(email=user_data.get("user_name"))
+        user_obj = await users_service.get_one(email=data.user_name)
         if all(user_role.role_id != role_id for user_role in user_obj.roles):
             obj, created = await user_roles_service.get_or_upsert(role_id=role_id, user_id=user_obj.id)
         if created:
@@ -64,22 +58,21 @@ class AccountRoleController(Controller):
         summary="Remove Role",
         description="Removes an assigned role from a user.",
         path=urls.ACCOUNT_REVOKE_ROLE,
-        dto=dtos.UserRoleRevokeDTO,
+        dto=None,
         return_dto=None,
     )
     async def revoke_role(
         self,
         users_service: UserService,
         user_roles_service: UserRoleService,
-        data: DTOData[dtos.UserRoleRevoke],
+        data: dtos.UserRoleRevoke,
         role_slug: str = Parameter(
             title="Role Slug",
             description="The role to revoke.",
         ),
     ) -> Message:
         """Delete a role from the system."""
-        user_data = data.as_builtins()
-        user_obj = await users_service.get_one(email=user_data.get("user_name"))
+        user_obj = await users_service.get_one(email=data.user_name)
         removed_role: bool = False
         for user_role in user_obj.roles:
             if user_role.role_slug == role_slug:

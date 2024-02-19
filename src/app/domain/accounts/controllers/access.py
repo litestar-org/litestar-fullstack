@@ -8,17 +8,16 @@ from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
+from msgspec.structs import asdict
 
 from app.domain import security, urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.dtos import AccountLogin, AccountLoginDTO, AccountRegister, AccountRegisterDTO, UserDTO
+from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserDTO
 from app.domain.accounts.guards import requires_active_user
 from app.domain.accounts.services import RoleService, UserService
 from app.utils import slugify
 
 if TYPE_CHECKING:
-    from litestar.dto import DTOData
-
     from app.db.models import User
 
 
@@ -33,6 +32,7 @@ class AccessController(Controller):
         "OAuth2Login": OAuth2Login,
         "RequestEncodingType": RequestEncodingType,
         "Body": Body,
+        "AccountLogin": AccountLogin,
     }
     return_dto = UserDTO
 
@@ -42,18 +42,17 @@ class AccessController(Controller):
         path=urls.ACCOUNT_LOGIN,
         cache=False,
         summary="Login",
-        dto=AccountLoginDTO,
+        dto=None,
         return_dto=None,
         exclude_from_auth=True,
     )
     async def login(
         self,
         users_service: UserService,
-        data: Annotated[DTOData[AccountLogin], Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
+        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        obj = data.create_instance()
-        user = await users_service.authenticate(obj.username, obj.password)
+        user = await users_service.authenticate(data.username, data.password)
         return security.auth.login(user.email)
 
     @post(
@@ -81,17 +80,17 @@ class AccessController(Controller):
         cache=False,
         summary="Create User",
         description="Register a new account.",
-        dto=AccountRegisterDTO,
+        dto=None,
     )
     async def signup(
         self,
         request: Request,
         users_service: UserService,
         roles_service: RoleService,
-        data: DTOData[AccountRegister],
+        data: AccountRegister,
     ) -> User:
         """User Signup."""
-        user_data = data.as_builtins()
+        user_data = asdict(data)
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})

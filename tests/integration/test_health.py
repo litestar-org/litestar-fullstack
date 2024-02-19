@@ -12,7 +12,7 @@ async def test_health(client: AsyncClient) -> None:
 
     expected = {
         "database_status": "online",
-        "cache_status": "online",
+        "cache_status": "offline",
         "worker_status": "offline",
         "app": "app",
         "version": __version__,

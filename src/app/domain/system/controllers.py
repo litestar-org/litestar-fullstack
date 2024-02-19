@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal, TypeVar
 import structlog
 from litestar import Controller, MediaType, Request, get
 from litestar.response import Response
+from redis import RedisError
 from sqlalchemy import text
 
 from app.config.base import get_settings
@@ -19,11 +20,10 @@ if TYPE_CHECKING:
 logger = structlog.get_logger()
 OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
 
-settings = get_settings()
-
 
 class SystemController(Controller):
     tags = ["System"]
+    signature_types = [SystemHealth]
 
     @get(
         operation_id="SystemHealth",
@@ -34,7 +34,6 @@ class SystemController(Controller):
         tags=["System"],
         summary="Health Check",
         description="Execute a health check against backend components.  Returns system information including database and cache status.",
-        signature_namespace={"SystemHealth": SystemHealth},
     )
     async def check_system_health(
         self,
@@ -43,6 +42,7 @@ class SystemController(Controller):
         task_queues: TaskQueues,
     ) -> Response[SystemHealth]:
         """Check database available and returns app config info."""
+        settings = get_settings()
         try:
             await db_session.execute(text("select 1"))
             db_ping = True
@@ -50,11 +50,14 @@ class SystemController(Controller):
             db_ping = False
 
         db_status = "online" if db_ping else "offline"
-        cache_ping = await settings.redis.get_client().ping()
+        try:
+            cache_ping = await settings.redis.get_client().ping()
+        except RedisError:
+            cache_ping = False
         cache_status = "online" if cache_ping else "offline"
         worker_ping = bool([await queue.info() for queue in task_queues.queues.values()])
         worker_status = "online" if worker_ping else "offline"
-        healthy = bool(worker_ping and cache_ping and db_ping)
+        healthy = worker_ping and cache_ping and db_ping
         if healthy:
             await logger.adebug(
                 "System Health",

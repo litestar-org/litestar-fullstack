@@ -135,7 +135,6 @@ dmypy.json
 # vscode
 # .vscode
 .venv
-.venv
 
 # Logs
 logs
@@ -181,4 +180,3 @@ db.duckdb
 local.duckdb
 
 requirements.txt
-app

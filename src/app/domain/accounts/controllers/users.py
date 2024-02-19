@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING, Annotated
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
+from msgspec.structs import asdict
 
 from app.domain import urls
 from app.domain.accounts.dependencies import provide_users_service
-from app.domain.accounts.dtos import UserCreate, UserCreateDTO, UserDTO, UserUpdate, UserUpdateDTO
+from app.domain.accounts.dtos import UserCreate, UserDTO, UserUpdate
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import UserService
 
@@ -17,7 +18,6 @@ if TYPE_CHECKING:
     from uuid import UUID
 
     from advanced_alchemy.filters import FilterTypes
-    from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
 
     from app.db.models import User
@@ -77,26 +77,24 @@ class UserController(Controller):
         cache_control=None,
         description="A user who can login and use the system.",
         path=urls.ACCOUNT_CREATE,
-        dto=UserCreateDTO,
     )
     async def create_user(
         self,
         users_service: UserService,
-        data: DTOData[UserCreate],
+        data: UserCreate,
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.create(data.as_builtins())
+        db_obj = await users_service.create(asdict(data))
         return users_service.to_dto(db_obj)
 
     @patch(
         operation_id="UpdateUser",
         name="users:update",
         path=urls.ACCOUNT_UPDATE,
-        dto=UserUpdateDTO,
     )
     async def update_user(
         self,
-        data: DTOData[UserUpdate],
+        data: UserUpdate,
         users_service: UserService,
         user_id: UUID = Parameter(
             title="User ID",
@@ -104,7 +102,7 @@ class UserController(Controller):
         ),
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.update(item_id=user_id, data=data.as_builtins())
+        db_obj = await users_service.update(item_id=user_id, data=asdict(data))
         return users_service.to_dto(db_obj)
 
     @delete(

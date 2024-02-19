@@ -11,6 +11,31 @@ def user_management_app(_: dict[str, Any]) -> None:
     """Manage application users."""
 
 
+async def load_database_fixtures() -> None:
+    """Import/Synchronize Database Fixtures."""
+
+    from pathlib import Path
+
+    from sqlalchemy import select
+    from sqlalchemy.orm import load_only
+    from structlog import get_logger
+
+    from app.config import get_settings
+    from app.db.models import Role
+    from app.db.utils import open_fixture
+    from app.domain.accounts.services import RoleService
+
+    settings = get_settings()
+    logger = get_logger()
+    fixtures_path = Path(f"{settings.db.MIGRATION_PATH}/../fixtures")
+    async with RoleService.new(
+        statement=select(Role).options(load_only(Role.id, Role.slug, Role.name, Role.description)),
+    ) as service:
+        fixture_data = open_fixture(fixtures_path, "role")
+        await service.upsert_many(match_fields=["name"], data=fixture_data, auto_commit=True)
+        await logger.ainfo("loaded roles")
+
+
 @user_management_app.command(name="create-user", help="Create a user")
 @click.option(
     "--email",

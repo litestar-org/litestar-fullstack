@@ -60,7 +60,7 @@ async def test_teams_get(client: "AsyncClient", superuser_token_headers: dict[st
 async def test_teams_create(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
     response = await client.post(
         "/api/teams/",
-        json={"name": "A User", "email": "new-user@example.com", "password": "S3cret!"},
+        json={"name": "My First Team"},
         headers=superuser_token_headers,
     )
     assert response.status_code == 201

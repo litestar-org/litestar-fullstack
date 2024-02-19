@@ -64,6 +64,10 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         settings = get_settings()
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
+        app_config.type_encoders = {
+            **(app_config.type_encoders or {}),
+            UUID: str,
+        }
         app_config.response_cache_config = ResponseCacheConfig(
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,

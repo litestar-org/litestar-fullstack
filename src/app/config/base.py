@@ -50,12 +50,14 @@ class DatabaseSettings:
     """Optionally ping database before fetching a session from the connection pool."""
     URL: str = field(default_factory=lambda: os.getenv("DATABASE_URL", "sqlite+aiosqlite:///db.sqlite3"))
     """SQLAlchemy Database URL."""
-    MIGRATION_CONFIG: str = f"{BASE_DIR}/db/alembic.ini"
+    MIGRATION_CONFIG: str = f"{BASE_DIR}/db/migrations/alembic.ini"
     """The path to the `alembic.ini` configuration file."""
     MIGRATION_PATH: str = f"{BASE_DIR}/db/migrations"
     """The path to the `alembic` database migrations."""
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
     """The name to use for the `alembic` versions table name."""
+    FIXTURE_PATH: str = f"{BASE_DIR}/db/fixtures"
+    """The path to JSON fixture files to load into tables."""
     _engine_instance: AsyncEngine | None = None
     """SQLAlchemy engine instance generated from settings."""
 
@@ -325,9 +327,9 @@ class LogSettings:
     """Log event name for logs from SAQ worker."""
     SAQ_LEVEL: int = 20
     """Level to log SAQ logs."""
-    SQLALCHEMY_LEVEL: int = 30
+    SQLALCHEMY_LEVEL: int = 20
     """Level to log SQLAlchemy logs."""
-    UVICORN_ACCESS_LEVEL: int = 30
+    UVICORN_ACCESS_LEVEL: int = 20
     """Level to log uvicorn access logs."""
     UVICORN_ERROR_LEVEL: int = 20
     """Level to log uvicorn error logs."""
@@ -424,7 +426,6 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
 
     @classmethod
-    @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
         from litestar.cli._utils import console
 

@@ -1,22 +1,18 @@
-from dataclasses import dataclass
-
+import msgspec
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
-from litestar.dto import DataclassDTO
 
 from app.db.models import User
 from app.lib import dto
 
-__all__ = [
+__all__ = (
     "AccountLogin",
-    "AccountLoginDTO",
     "AccountRegister",
-    "AccountRegisterDTO",
+    "UserRoleAdd",
+    "UserRoleRevoke",
     "UserCreate",
-    "UserCreateDTO",
     "UserDTO",
     "UserUpdate",
-    "UserUpdateDTO",
-]
+)
 
 
 # database model
@@ -24,7 +20,9 @@ __all__ = [
 
 class UserDTO(SQLAlchemyDTO[User]):
     config = dto.config(
+        backend="sqlalchemy",
         exclude={
+            "oauth_accounts",
             "hashed_password",
             "teams.team",
             "teams.user",
@@ -41,8 +39,7 @@ class UserDTO(SQLAlchemyDTO[User]):
 # input
 
 
-@dataclass
-class UserCreate:
+class UserCreate(msgspec.Struct):
     email: str
     password: str
     name: str | None = None
@@ -51,14 +48,7 @@ class UserCreate:
     is_verified: bool = False
 
 
-class UserCreateDTO(DataclassDTO[UserCreate]):
-    """User Create."""
-
-    config = dto.config()
-
-
-@dataclass
-class UserUpdate:
+class UserUpdate(msgspec.Struct):
     email: str | None = None
     password: str | None = None
     name: str | None = None
@@ -67,58 +57,24 @@ class UserUpdate:
     is_verified: bool | None = None
 
 
-class UserUpdateDTO(DataclassDTO[UserUpdate]):
-    """User Update."""
-
-    config = dto.config()
-
-
-@dataclass
-class AccountLogin:
+class AccountLogin(msgspec.Struct):
     username: str
     password: str
 
 
-class AccountLoginDTO(DataclassDTO[AccountLogin]):
-    """User Login."""
-
-    config = dto.config()
-
-
-@dataclass
-class AccountRegister:
+class AccountRegister(msgspec.Struct):
     email: str
     password: str
     name: str | None = None
 
 
-class AccountRegisterDTO(DataclassDTO[AccountRegister]):
-    """User Account Registration."""
-
-    config = dto.config()
-
-
-@dataclass
-class UserRoleAdd:
+class UserRoleAdd(msgspec.Struct):
     """User role add ."""
 
     user_name: str
 
 
-class UserRoleAddDTO(DataclassDTO[UserRoleAdd]):
-    """User Account Registration."""
-
-    config = dto.config()
-
-
-@dataclass
-class UserRoleRevoke:
+class UserRoleRevoke(msgspec.Struct):
     """User role revoke ."""
 
     user_name: str
-
-
-class UserRoleRevokeDTO(DataclassDTO[UserRoleRevoke]):
-    """User Account Registration."""
-
-    config = dto.config()

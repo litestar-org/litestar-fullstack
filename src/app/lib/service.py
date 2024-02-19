@@ -10,6 +10,7 @@ import contextlib
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, overload
 
+import msgspec
 from advanced_alchemy.filters import (
     FilterTypes,
     LimitOffset,
@@ -18,19 +19,20 @@ from advanced_alchemy.repository.typing import ModelT
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService as _SQLAlchemyAsyncRepositoryService
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
+from msgspec import Struct
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from sqlalchemy import Select
+    from sqlalchemy import RowMapping, Select
     from sqlalchemy.ext.asyncio import AsyncSession
     from sqlalchemy.sql import ColumnElement
-
 
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictDTOT: TypeAlias = dict[str, Any] | ModelT | DTOData
 ModelDictListDTOT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]] | DTOData
 FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
+ModelDTOT = TypeVar("ModelDTOT", bound=Struct)
 
 
 class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]):
@@ -106,3 +108,47 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                     statement=statement,
                     session=db_session,
                 )
+
+    @overload
+    def to_schema(self, dto: type[ModelDTOT], data: ModelT | RowMapping) -> ModelDTOT:
+        ...
+
+    @overload
+    def to_schema(
+        self,
+        dto: type[ModelDTOT],
+        data: Sequence[ModelT] | list[RowMapping],
+        total: int | None = None,
+        *filters: FilterTypes,
+    ) -> OffsetPagination[ModelDTOT]:
+        ...
+
+    def to_schema(
+        self,
+        dto: type[ModelDTOT],
+        data: ModelT | Sequence[ModelT] | list[RowMapping] | RowMapping,
+        total: int | None = None,
+        *filters: FilterTypes,
+    ) -> ModelDTOT | OffsetPagination[ModelDTOT]:
+        """Convert the object to a response schema.
+
+        Args:
+            dto: Collection route filters.
+            data: The return from one of the service calls.
+            total: the total number of rows in the data
+            *filters: Collection route filters.
+
+        Returns:
+            The list of instances retrieved from the repository.
+        """
+        if not isinstance(data, Sequence | list):
+            return msgspec.convert(data, dto)
+        limit_offset = self.find_filter(LimitOffset, *filters)
+        total = total or len(data)
+        limit_offset = limit_offset if limit_offset is not None else LimitOffset(limit=len(data), offset=0)
+        return OffsetPagination[dto](  # type: ignore[valid-type]
+            items=msgspec.convert(data, list[dto]),  # type: ignore[valid-type]
+            limit=limit_offset.limit,
+            offset=limit_offset.offset,
+            total=total,
+        )

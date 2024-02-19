@@ -1,10 +1,10 @@
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, cast
-from uuid import UUID, uuid4
 
 from advanced_alchemy import RepositoryError
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import InstrumentedAttribute, joinedload, load_only, noload, selectinload
+from uuid_utils import UUID, uuid4
 
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles, User
 from app.domain.tags.dependencies import provide_tags_service
@@ -97,9 +97,9 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                 msg = "'owner_id' is required to create a workspace."
                 raise RepositoryError(msg)
             tags_added = data.pop("tags", [])
-            db_obj = await self.to_model(data, "create")
+            data = await self.to_model(data, "create")
         if owner_id:
-            db_obj.members.append(TeamMember(user_id=owner_id, role=TeamRoles.ADMIN, is_owner=True))
+            data.members.append(TeamMember(user_id=owner_id, role=TeamRoles.ADMIN, is_owner=True))
         if tags_added:
             tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
             for tag_text in tags_added:
@@ -109,7 +109,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                     name=tag_text,
                     slug=slugify(tag_text),
                 )
-                db_obj.tags.append(tag)
+                data.tags.append(tag)
         return await super().create(
             data=data,
             auto_commit=auto_commit,

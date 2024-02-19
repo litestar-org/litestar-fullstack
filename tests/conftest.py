@@ -7,6 +7,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from app.config import base
+
 if TYPE_CHECKING:
     from collections import abc
     from collections.abc import Iterator
@@ -22,6 +24,18 @@ pytestmark = pytest.mark.anyio
 @pytest.fixture
 def anyio_backend() -> str:
     return "asyncio"
+
+
+@pytest.fixture(autouse=True)
+def _patch_settings(monkeypatch: MonkeyPatch) -> None:
+    """Path the settings."""
+
+    settings = base.Settings.from_env(".env.testing")
+
+    def get_settings(dotenv_filename: str = ".env.testing") -> base.Settings:
+        return settings
+
+    monkeypatch.setattr(base, "get_settings", get_settings)
 
 
 @pytest.fixture(scope="session")
@@ -96,6 +110,14 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
             "is_active": True,
         },
         {
+            "id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "email": "test@test.com",
+            "name": "Test User",
+            "password": "Test_Password3!",
+            "is_superuser": False,
+            "is_active": True,
+        },
+        {
             "id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
             "email": "another@example.com",
             "name": "The User",
@@ -123,8 +145,16 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
             "slug": "test-assessment-team",
             "name": "Test Assessment Team",
-            "description": "This is a description for a migration team.",
+            "description": "This is a description for a  team.",
             "owner_id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
+        },
+        {
+            "id": "81108ac1-ffcb-411d-8b1e-d91833999999",
+            "slug": "simple-team",
+            "name": "Simple Migration Workspace",
+            "description": "This is a description",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "tags": ["new"],
         },
     ]
 

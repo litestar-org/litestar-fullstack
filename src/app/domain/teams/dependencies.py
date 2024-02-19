@@ -4,12 +4,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload, selectinload
+from sqlalchemy.orm import joinedload, load_only, noload, selectinload
 
-from app.db.models import Team, TeamInvitation, TeamMember
+from app.db.models import Tag, Team, TeamInvitation, TeamMember, User
 from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
 
-__all__ = ["provide_team_members_service", "provide_teams_service", "provide_team_invitations_service"]
+__all__ = ("provide_team_members_service", "provide_teams_service", "provide_team_invitations_service")
 
 
 if TYPE_CHECKING:
@@ -24,10 +24,20 @@ async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[Team
         session=db_session,
         statement=select(Team)
         .order_by(Team.name)
+        .execution_options(populate_existing=True)
         .options(
-            selectinload(Team.tags).options(noload("*")),
+            selectinload(Team.tags).options(load_only(Tag.name, Tag.slug, Tag.id)),
             selectinload(Team.members).options(
-                joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
+                load_only(
+                    TeamMember.id,
+                    TeamMember.user_id,
+                    TeamMember.team_id,
+                    TeamMember.role,
+                    TeamMember.is_owner,
+                ),
+                joinedload(TeamMember.user, innerjoin=True).options(
+                    load_only(User.name, User.email).options(selectinload(User.roles)),
+                ),
             ),
         ),
     ) as service:

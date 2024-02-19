@@ -1,0 +1,13 @@
+[
+    {
+       "slug": "application-access",
+      "name": "Application Access",
+      "description": "Default role required for access.  This role allows you to query and access the application."
+    },
+    {
+       "slug": "superuser",
+      "name": "Superuser",
+      "description": "Allows superuser access to the application."
+    } 
+  ]
+  
