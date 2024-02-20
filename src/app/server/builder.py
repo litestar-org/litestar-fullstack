@@ -55,7 +55,6 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
         from advanced_alchemy.exceptions import RepositoryError
-        from uuid_utils import UUID
 
         from app.config import constants, get_settings
         from app.db.models import User
@@ -64,17 +63,13 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         settings = get_settings()
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
-        app_config.type_encoders = {
-            **(app_config.type_encoders or {}),
-            UUID: str,
-        }
         app_config.response_cache_config = ResponseCacheConfig(
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,
         )
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
-        app_config.signature_types = [DTOData, OffsetPagination, OAuth2Login, User, UUID, Dependency, Parameter]
+        app_config.signature_types = [DTOData, OffsetPagination, OAuth2Login, User, Dependency, Parameter]
         app_config.experimental_features = [ExperimentalFeatures.DTO_CODEGEN]
         app_config.exception_handlers = {
             ApplicationError: exception_to_http_response,
