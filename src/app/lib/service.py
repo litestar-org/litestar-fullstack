@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import contextlib
 from collections.abc import Sequence
+from functools import partial
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, overload
 
 import msgspec
@@ -17,9 +18,12 @@ from advanced_alchemy.filters import (
 )
 from advanced_alchemy.repository.typing import ModelT
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService as _SQLAlchemyAsyncRepositoryService
+from asyncpg.pgproto import pgproto
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
+from litestar.serialization.msgspec_hooks import default_deserializer
 from msgspec import Struct
+from uuid_utils import UUID
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -142,12 +146,22 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
             The list of instances retrieved from the repository.
         """
         if not isinstance(data, Sequence | list):
-            return msgspec.convert(data, dto)
+            return msgspec.convert(
+                obj=data,
+                type=dto,
+                from_attributes=True,
+                dec_hook=partial(default_deserializer, type_decoders={pgproto.UUID: UUID}),
+            )
         limit_offset = self.find_filter(LimitOffset, *filters)
         total = total or len(data)
         limit_offset = limit_offset if limit_offset is not None else LimitOffset(limit=len(data), offset=0)
         return OffsetPagination[dto](  # type: ignore[valid-type]
-            items=msgspec.convert(data, list[dto]),  # type: ignore[valid-type]
+            items=msgspec.convert(
+                obj=data,
+                type=list[dto],  # type: ignore[valid-type]
+                from_attributes=True,
+                dec_hook=partial(default_deserializer, type_decoders={pgproto.UUID: UUID}),
+            ),
             limit=limit_offset.limit,
             offset=limit_offset.offset,
             total=total,

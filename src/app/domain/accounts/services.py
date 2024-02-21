@@ -8,20 +8,15 @@ from litestar.exceptions import PermissionDeniedException
 from app.config import constants
 from app.db.models import Role, User, UserRole
 from app.lib import crypt
-from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
+
+from .repositories import RoleRepository, UserRepository, UserRoleRepository
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from uuid import UUID
 
     from sqlalchemy.orm import InstrumentedAttribute
-
-
-class UserRepository(SQLAlchemyAsyncRepository[User]):
-    """User SQLAlchemy Repository."""
-
-    model_type = User
+    from uuid_utils import UUID
 
 
 class UserService(SQLAlchemyAsyncRepositoryService[User]):
@@ -141,12 +136,6 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         return await super().to_model(data, operation)
 
 
-class RoleRepository(SQLAlchemyAsyncSlugRepository[Role]):
-    """User SQLAlchemy Repository."""
-
-    model_type = Role
-
-
 class RoleService(SQLAlchemyAsyncRepositoryService[Role]):
     """Handles database operations for users."""
 
@@ -163,12 +152,6 @@ class RoleService(SQLAlchemyAsyncRepositoryService[Role]):
         if isinstance(data, dict) and "slug" not in data and "name" in data and operation == "update":
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return await super().to_model(data, operation)
-
-
-class UserRoleRepository(SQLAlchemyAsyncRepository[UserRole]):
-    """User Role SQLAlchemy Repository."""
-
-    model_type = UserRole
 
 
 class UserRoleService(SQLAlchemyAsyncRepositoryService[UserRole]):

@@ -1,45 +1,38 @@
 import msgspec
-from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
+from uuid_utils import UUID
 
-from app.db.models import Team
-from app.lib import dto
-
-__all__ = ["TeamCreate", "TeamDTO", "TeamUpdate"]
+from app.db.models.team_roles import TeamRoles
 
 
-# database model
+class TeamTag(msgspec.Struct):
+    id: UUID
+    slug: str
+    name: str
 
 
-class TeamDTO(SQLAlchemyDTO[Team]):
-    config = dto.config(
-        backend="sqlalchemy",
-        exclude={
-            "created_at",
-            "updated_at",
-            "members.team",
-            "members.user",
-            "members.created_at",
-            "members.updated_at",
-            "members.id",
-            "members.user_name",
-            "members.user_email",
-            "members.team_name",
-            "invitations",
-            "tags.created_at",
-            "tags.updated_at",
-            "pending_invitations",
-        },
-        max_nested_depth=1,
-    )
+class TeamMember(msgspec.Struct):
+    id: UUID
+    user_id: UUID
+    email: str
+    name: str | None = None
+    role: TeamRoles | None = TeamRoles.MEMBER
+    is_owner: bool | None = False
+
+
+class Team(msgspec.Struct):
+    name: str
+    description: str | None = None
+    members: list[TeamMember] = []
+    tags: list[TeamTag] = []
 
 
 class TeamCreate(msgspec.Struct):
     name: str
     description: str | None = None
-    tags: list[str] | None = None
+    tags: list[str] = []
 
 
 class TeamUpdate(msgspec.Struct):
     name: str | None = None
     description: str | None = None
-    tags: list[str] | None = None
+    tags: list[str] | None | msgspec.UnsetType = msgspec.UNSET

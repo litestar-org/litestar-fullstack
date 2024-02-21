@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, TypeVar
 
 from litestar.config.app import ExperimentalFeatures
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
-from litestar.contrib.jwt import OAuth2Login
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from litestar.params import Dependency, Parameter
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
+from litestar.security.jwt import OAuth2Login
 from litestar.stores.redis import RedisStore
 from litestar.stores.registry import StoreRegistry
 

@@ -24,9 +24,8 @@ async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[Team
         session=db_session,
         statement=select(Team)
         .order_by(Team.name)
-        .execution_options(populate_existing=True)
         .options(
-            selectinload(Team.tags).options(load_only(Tag.name, Tag.slug, Tag.id)),
+            selectinload(Team.tags).options(load_only(Tag.name, Tag.slug, Tag.description, Tag.id)),
             selectinload(Team.members).options(
                 load_only(
                     TeamMember.id,

@@ -9,11 +9,10 @@ from litestar.params import Dependency, Parameter
 from msgspec.structs import asdict
 
 from app.config import constants
-from app.db.models import Team
 from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams.dependencies import provide_teams_service
-from app.domain.teams.dtos import TeamCreate, TeamDTO, TeamUpdate
+from app.domain.teams.dtos import Team, TeamCreate, TeamUpdate
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 from app.domain.teams.services import TeamService
 
@@ -32,7 +31,6 @@ class TeamController(Controller):
     tags = ["Teams"]
     dependencies = {"teams_service": Provide(provide_teams_service)}
     guards = [requires_active_user]
-    return_dto = TeamDTO
     signature_namespace = {
         "Dependency": Dependency,
         "Parameter": Parameter,
@@ -67,7 +65,7 @@ class TeamController(Controller):
             results, total = await teams_service.list_and_count(*filters)
         else:
             results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
-        return teams_service.to_dto(results, total, *filters)
+        return teams_service.to_schema(Team, results, total, *filters)
 
     @post(
         operation_id="CreateTeam",
@@ -85,7 +83,7 @@ class TeamController(Controller):
         obj = asdict(data)
         obj.update({"owner_id": current_user.id})
         db_obj = await teams_service.create(obj)
-        return teams_service.to_dto(db_obj)
+        return teams_service.to_schema(Team, db_obj)
 
     @get(
         operation_id="GetTeam",
@@ -107,7 +105,7 @@ class TeamController(Controller):
     ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
-        return teams_service.to_dto(db_obj)
+        return teams_service.to_schema(Team, db_obj)
 
     @patch(
         operation_id="UpdateTeam",
@@ -132,7 +130,7 @@ class TeamController(Controller):
             item_id=team_id,
             data=asdict(data),
         )
-        return teams_service.to_dto(db_obj)
+        return teams_service.to_schema(Team, db_obj)
 
     @delete(
         operation_id="DeleteTeam",

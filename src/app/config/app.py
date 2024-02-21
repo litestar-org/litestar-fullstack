@@ -1,6 +1,7 @@
 import logging
 from typing import cast
 
+from advanced_alchemy import AsyncSessionConfig
 from advanced_alchemy.config import AlembicAsyncConfig
 from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
 from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
@@ -27,6 +28,7 @@ cors = CORSConfig(allow_origins=cast("list[str]", _settings.app.ALLOWED_CORS_ORI
 alchemy = SQLAlchemyAsyncConfig(
     connection_string=_settings.db.URL,
     before_send_handler=autocommit_before_send_handler,
+    session_config=AsyncSessionConfig(expire_on_commit=False),
     alembic_config=AlembicAsyncConfig(
         version_table_name=_settings.db.MIGRATION_DDL_VERSION_TABLE,
         script_config=_settings.db.MIGRATION_CONFIG,

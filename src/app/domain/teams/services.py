@@ -2,63 +2,26 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy import RepositoryError
-from sqlalchemy import ColumnElement, select
-from sqlalchemy.orm import InstrumentedAttribute, joinedload, load_only, noload, selectinload
+from sqlalchemy.orm import InstrumentedAttribute
 from uuid_utils import UUID, uuid4
 
-from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles, User
+from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
+from app.db.models.tag import Tag
 from app.domain.tags.dependencies import provide_tags_service
 from app.lib.dependencies import FilterTypes
-from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.utils import slugify
+
+from .repositories import TeamInvitationRepository, TeamMemberRepository, TeamRepository
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = (
-    "TeamInvitationRepository",
     "TeamInvitationService",
-    "TeamMemberRepository",
     "TeamMemberService",
-    "TeamRepository",
     "TeamService",
 )
-
-
-class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
-    """Team Repository."""
-
-    model_type = Team
-
-    async def get_user_teams(
-        self,
-        *filters: FilterTypes | ColumnElement[bool],
-        user_id: UUID,
-        auto_expunge: bool | None = None,
-        force_basic_query_mode: bool | None = None,
-        **kwargs: Any,
-    ) -> tuple[list[Team], int]:
-        """Get paginated list and total count of teams that a user can access."""
-
-        return await self.list_and_count(
-            *filters,
-            statement=select(Team)
-            .join(TeamMember, onclause=Team.id == TeamMember.team_id, isouter=False)
-            .where(TeamMember.user_id == user_id)
-            .options(
-                noload("*"),
-                selectinload(Team.members).options(
-                    joinedload(TeamMember.user, innerjoin=True).options(
-                        load_only(User.name, User.email),
-                    ),
-                ),
-            )
-            .execution_options(populate_existing=True),
-            auto_expunge=auto_expunge,
-            force_basic_query_mode=force_basic_query_mode,
-            **kwargs,
-        )
 
 
 class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
@@ -101,21 +64,19 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if owner_id:
             data.members.append(TeamMember(user_id=owner_id, role=TeamRoles.ADMIN, is_owner=True))
         if tags_added:
-            tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
-            for tag_text in tags_added:
-                tag, _ = await tags_service.get_or_upsert(
-                    match_fields=["slug"],
-                    upsert=False,
-                    name=tag_text,
-                    slug=slugify(tag_text),
-                )
-                data.tags.append(tag)
-        return await super().create(
+            data.tags.extend(
+                [
+                    await Tag.as_unique(self.repository.session, name=tag_text, slug=slugify(tag_text))
+                    for tag_text in tags_added
+                ],
+            )
+        _ = await super().create(
             data=data,
             auto_commit=auto_commit,
-            auto_expunge=auto_expunge,
-            auto_refresh=auto_refresh,
+            auto_expunge=True,
+            auto_refresh=False,
         )
+        return data
 
     async def update(
         self,
@@ -175,22 +136,10 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         return await super().to_model(data, operation)
 
 
-class TeamMemberRepository(SQLAlchemyAsyncRepository[TeamMember]):
-    """Team Member Repository."""
-
-    model_type = TeamMember
-
-
 class TeamMemberService(SQLAlchemyAsyncRepositoryService[TeamMember]):
     """Team Member Service."""
 
     repository_type = TeamMemberRepository
-
-
-class TeamInvitationRepository(SQLAlchemyAsyncRepository[TeamInvitation]):
-    """Team Invitation Repository."""
-
-    model_type = TeamInvitation
 
 
 class TeamInvitationService(SQLAlchemyAsyncRepositoryService[TeamInvitation]):

@@ -3,16 +3,24 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
-from sqlalchemy import String, Table
+from sqlalchemy import (
+    ColumnElement,
+    String,
+    Table,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import SlugKey
+from app.utils import slugify
+
+from .base import SlugKey, UniqueMixin
 
 if TYPE_CHECKING:
+    from collections.abc import Hashable
+
     from .team import Team
 
 
-class Tag(UUIDAuditBase, SlugKey):
+class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
     """Tag."""
 
     __tablename__ = "tag"  # type: ignore[assignment]
@@ -27,6 +35,18 @@ class Tag(UUIDAuditBase, SlugKey):
         secondary=lambda: _team_tag(),
         back_populates="tags",
     )
+
+    @classmethod
+    def unique_hash(cls, name: str, slug: str | None = None) -> Hashable:  # noqa: ARG003
+        return slugify(name)
+
+    @classmethod
+    def unique_filter(
+        cls,
+        name: str,
+        slug: str | None = None,  # noqa: ARG003
+    ) -> ColumnElement[bool]:
+        return cls.slug == slugify(name)
 
 
 def _team_tag() -> Table:
