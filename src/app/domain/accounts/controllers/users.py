@@ -15,10 +15,9 @@ from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import UserService
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from advanced_alchemy.filters import FilterTypes
     from litestar.pagination import OffsetPagination
+    from uuid_utils import UUID
 
     from app.db.models import User
 

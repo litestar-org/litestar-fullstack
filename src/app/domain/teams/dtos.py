@@ -2,15 +2,16 @@ import msgspec
 from uuid_utils import UUID
 
 from app.db.models.team_roles import TeamRoles
+from app.lib.schema import CamelizedBaseStruct
 
 
-class TeamTag(msgspec.Struct):
+class TeamTag(CamelizedBaseStruct):
     id: UUID
     slug: str
     name: str
 
 
-class TeamMember(msgspec.Struct):
+class TeamMember(CamelizedBaseStruct):
     id: UUID
     user_id: UUID
     email: str
@@ -19,20 +20,20 @@ class TeamMember(msgspec.Struct):
     is_owner: bool | None = False
 
 
-class Team(msgspec.Struct):
+class Team(CamelizedBaseStruct):
     name: str
     description: str | None = None
     members: list[TeamMember] = []
     tags: list[TeamTag] = []
 
 
-class TeamCreate(msgspec.Struct):
+class TeamCreate(CamelizedBaseStruct):
     name: str
     description: str | None = None
     tags: list[str] = []
 
 
-class TeamUpdate(msgspec.Struct):
-    name: str | None = None
-    description: str | None = None
+class TeamUpdate(CamelizedBaseStruct, omit_defaults=True):
+    name: str | None | msgspec.UnsetType = msgspec.UNSET
+    description: str | None | msgspec.UnsetType = msgspec.UNSET
     tags: list[str] | None | msgspec.UnsetType = msgspec.UNSET

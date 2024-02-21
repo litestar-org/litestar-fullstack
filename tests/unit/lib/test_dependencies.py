@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Annotated, Literal
-from uuid import uuid4
 
 import pytest
 from advanced_alchemy.filters import (
@@ -17,6 +16,7 @@ from advanced_alchemy.filters import (
 from litestar import Litestar, get
 from litestar.params import Dependency
 from litestar.testing import AsyncTestClient, RequestFactory
+from uuid_utils import uuid4
 
 from app.db.models import User
 from app.domain import security

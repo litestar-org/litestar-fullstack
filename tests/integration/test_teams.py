@@ -54,7 +54,7 @@ async def test_teams_list(client: "AsyncClient", superuser_token_headers: dict[s
 async def test_teams_get(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
     response = await client.get("/api/teams/97108ac1-ffcb-411d-8b1e-d9183399f63b", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json()["name"] == "Test Assessment Team"
+    assert response.json()["name"] == "Test Team"
 
 
 async def test_teams_create(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:

@@ -17,9 +17,8 @@ from app.domain.teams.guards import requires_team_admin, requires_team_membershi
 from app.domain.teams.services import TeamService
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from litestar.pagination import OffsetPagination
+    from uuid_utils import UUID
 
     from app.db.models import User
     from app.lib.dependencies import FilterTypes
@@ -128,7 +127,7 @@ class TeamController(Controller):
         """Update a migration team."""
         db_obj = await teams_service.update(
             item_id=team_id,
-            data=asdict(data),
+            data=data.to_dict(),
         )
         return teams_service.to_schema(Team, db_obj)
 

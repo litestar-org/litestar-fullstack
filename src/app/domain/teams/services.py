@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, Any, cast
+from typing import Any
 
 from advanced_alchemy import RepositoryError
 from sqlalchemy.orm import InstrumentedAttribute
@@ -8,15 +8,11 @@ from uuid_utils import UUID, uuid4
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
 from app.db.models.user import User
-from app.domain.tags.dependencies import provide_tags_service
 from app.lib.dependencies import FilterTypes
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.utils import slugify
 
 from .repositories import TeamInvitationRepository, TeamMemberRepository, TeamRepository
-
-if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = (
     "TeamInvitationService",
@@ -103,25 +99,18 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         if isinstance(data, dict):
             tags_updated.extend(data.pop("tags", None) or [])
             data["id"] = item_id
-            data = await super().update(
-                item_id=item_id,
-                data=data,
-                attribute_names=attribute_names,
-                with_for_update=with_for_update,
-                auto_commit=auto_commit,
-                auto_expunge=auto_expunge,
-                auto_refresh=auto_refresh,
-                id_attribute=id_attribute,
-            )
-            tags_service = await anext(provide_tags_service(db_session=cast("AsyncSession", self.repository.session)))
+            data = await self.to_model(data, "update")
             existing_tags = [tag.name for tag in data.tags]
             tags_to_remove = [tag for tag in data.tags if tag.name not in tags_updated]
             tags_to_add = [tag for tag in tags_updated if tag not in existing_tags]
             for tag_rm in tags_to_remove:
                 data.tags.remove(tag_rm)
-            for tag_text in tags_to_add:
-                tag, _ = await tags_service.get_or_upsert(name=tag_text)
-                data.tags.append(tag)
+            data.tags.extend(
+                [
+                    await Tag.as_unique(self.repository.session, name=tag_text, slug=slugify(tag_text))
+                    for tag_text in tags_to_add
+                ],
+            )
         return await super().update(
             item_id=item_id,
             data=data,

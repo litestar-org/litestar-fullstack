@@ -1,8 +1,7 @@
-from uuid import UUID
-
 from litestar.connection import ASGIConnection
 from litestar.exceptions import PermissionDeniedException
 from litestar.handlers.base import BaseRouteHandler
+from uuid_utils import UUID
 
 from app.db.models import TeamRoles
 

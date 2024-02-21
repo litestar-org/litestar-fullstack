@@ -143,8 +143,8 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
     return [
         {
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
-            "slug": "test-assessment-team",
-            "name": "Test Assessment Team",
+            "slug": "test-team",
+            "name": "Test Team",
             "description": "This is a description for a  team.",
             "owner_id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
         },

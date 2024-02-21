@@ -55,6 +55,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
         from advanced_alchemy.exceptions import RepositoryError
+        from uuid_utils import UUID
 
         from app.config import constants, get_settings
         from app.db.models import User
@@ -75,6 +76,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             ApplicationError: exception_to_http_response,
             RepositoryError: exception_to_http_response,
         }
+        app_config.type_decoders = [*(app_config.type_decoders or []), (lambda x: x is UUID, lambda t, v: t(v.hex))]
         return app_config
 
     def redis_store_factory(self, name: str) -> RedisStore:

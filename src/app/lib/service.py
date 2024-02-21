@@ -151,7 +151,9 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                 from_attributes=True,
                 dec_hook=partial(
                     default_deserializer,
-                    type_decoders=[(lambda x: x is UUID, lambda t, v: (UUID(str(v))))],  # noqa: ARG005
+                    type_decoders=[
+                        (lambda x: x is UUID, lambda t, v: t(v.hex)),
+                    ],
                 ),
             )
         limit_offset = self.find_filter(LimitOffset, *filters)
@@ -164,7 +166,9 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                 from_attributes=True,
                 dec_hook=partial(
                     default_deserializer,
-                    type_decoders=[(lambda x: x is UUID, lambda t, v: (UUID(str(v))))],  # noqa: ARG005
+                    type_decoders=[
+                        (lambda x: x is UUID, lambda t, v: t(v.hex)),
+                    ],
                 ),
             ),
             limit=limit_offset.limit,
