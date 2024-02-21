@@ -4,9 +4,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, load_only, noload, selectinload
+from sqlalchemy.orm import joinedload, noload, selectinload
 
-from app.db.models import Tag, Team, TeamInvitation, TeamMember, User
+from app.db.models import Team, TeamInvitation, TeamMember
 from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
 
 __all__ = ("provide_team_members_service", "provide_teams_service", "provide_team_invitations_service")
@@ -25,18 +25,9 @@ async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[Team
         statement=select(Team)
         .order_by(Team.name)
         .options(
-            selectinload(Team.tags).options(load_only(Tag.name, Tag.slug, Tag.description, Tag.id)),
+            selectinload(Team.tags),
             selectinload(Team.members).options(
-                load_only(
-                    TeamMember.id,
-                    TeamMember.user_id,
-                    TeamMember.team_id,
-                    TeamMember.role,
-                    TeamMember.is_owner,
-                ),
-                joinedload(TeamMember.user, innerjoin=True).options(
-                    load_only(User.name, User.email).options(selectinload(User.roles)),
-                ),
+                joinedload(TeamMember.user, innerjoin=True),
             ),
         ),
     ) as service:

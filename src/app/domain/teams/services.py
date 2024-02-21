@@ -7,6 +7,7 @@ from uuid_utils import UUID, uuid4
 
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
+from app.db.models.user import User
 from app.domain.tags.dependencies import provide_tags_service
 from app.lib.dependencies import FilterTypes
 from app.lib.service import SQLAlchemyAsyncRepositoryService
@@ -52,16 +53,20 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
     ) -> Team:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
+        owner: User | None = None
         tags_added: list[str] = []
         if isinstance(data, dict):
             data["id"] = data.get("id", uuid4())
+            owner = data.pop("owner", None)
             owner_id = data.pop("owner_id", None)
             if owner_id is None:
                 msg = "'owner_id' is required to create a workspace."
                 raise RepositoryError(msg)
             tags_added = data.pop("tags", [])
             data = await self.to_model(data, "create")
-        if owner_id:
+        if owner:
+            data.members.append(TeamMember(user=owner, role=TeamRoles.ADMIN, is_owner=True))
+        elif owner_id:
             data.members.append(TeamMember(user_id=owner_id, role=TeamRoles.ADMIN, is_owner=True))
         if tags_added:
             data.tags.extend(

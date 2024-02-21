@@ -22,25 +22,9 @@ async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[User
         statement=select(User)
         .order_by(User.email)
         .options(
-            load_only(
-                User.id,
-                User.email,
-                User.name,
-                User.hashed_password,
-                User.is_superuser,
-                User.is_active,
-                User.is_verified,
-            ),
             selectinload(User.roles).options(joinedload(UserRole.role, innerjoin=True).options(noload("*"))),
             selectinload(User.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(load_only(Team.name)),
-                load_only(
-                    TeamMember.id,
-                    TeamMember.user_id,
-                    TeamMember.team_id,
-                    TeamMember.role,
-                    TeamMember.is_owner,
-                ),
             ),
         ),
     ) as service:

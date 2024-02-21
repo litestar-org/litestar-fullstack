@@ -81,7 +81,7 @@ class TeamController(Controller):
     ) -> Team:
         """Create a new team."""
         obj = asdict(data)
-        obj.update({"owner_id": current_user.id})
+        obj.update({"owner_id": current_user.id, "owner": current_user})
         db_obj = await teams_service.create(obj)
         return teams_service.to_schema(Team, db_obj)
 
