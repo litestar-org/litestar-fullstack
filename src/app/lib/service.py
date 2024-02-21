@@ -18,7 +18,6 @@ from advanced_alchemy.filters import (
 )
 from advanced_alchemy.repository.typing import ModelT
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService as _SQLAlchemyAsyncRepositoryService
-from asyncpg.pgproto import pgproto
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 from litestar.serialization.msgspec_hooks import default_deserializer
@@ -150,7 +149,10 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                 obj=data,
                 type=dto,
                 from_attributes=True,
-                dec_hook=partial(default_deserializer, type_decoders={pgproto.UUID: UUID}),
+                dec_hook=partial(
+                    default_deserializer,
+                    type_decoders=[(lambda x: x is UUID, lambda t, v: (UUID(str(v))))],  # noqa: ARG005
+                ),
             )
         limit_offset = self.find_filter(LimitOffset, *filters)
         total = total or len(data)
@@ -160,7 +162,10 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                 obj=data,
                 type=list[dto],  # type: ignore[valid-type]
                 from_attributes=True,
-                dec_hook=partial(default_deserializer, type_decoders={pgproto.UUID: UUID}),
+                dec_hook=partial(
+                    default_deserializer,
+                    type_decoders=[(lambda x: x is UUID, lambda t, v: (UUID(str(v))))],  # noqa: ARG005
+                ),
             ),
             limit=limit_offset.limit,
             offset=limit_offset.offset,
