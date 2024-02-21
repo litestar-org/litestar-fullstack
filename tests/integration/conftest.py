@@ -122,7 +122,9 @@ async def _seed_db(
     async with UserService.new(sessionmaker()) as users_service:
         await users_service.create_many(raw_users, auto_commit=True)
     async with TeamService.new(sessionmaker()) as teams_services:
-        await teams_services.create_many(raw_teams, auto_commit=True)
+        for obj in raw_teams:
+            await teams_services.create(obj)
+        await teams_services.repository.session.commit()
 
     return None  # type: ignore[return-value]
 

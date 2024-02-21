@@ -76,7 +76,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             ApplicationError: exception_to_http_response,
             RepositoryError: exception_to_http_response,
         }
-        app_config.type_decoders = [*(app_config.type_decoders or []), (lambda x: x is UUID, lambda t, v: t(v.hex))]
+        app_config.type_decoders = [*(app_config.type_decoders or []), (lambda x: x is UUID, lambda t, v: t(str(v)))]
         return app_config
 
     def redis_store_factory(self, name: str) -> RedisStore:

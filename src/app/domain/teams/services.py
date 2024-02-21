@@ -7,7 +7,7 @@ from uuid_utils import UUID, uuid4
 
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
-from app.db.models.user import User
+from app.db.models.user import User  # noqa: TCH001
 from app.lib.dependencies import FilterTypes
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.utils import slugify

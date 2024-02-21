@@ -151,10 +151,18 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
         {
             "id": "81108ac1-ffcb-411d-8b1e-d91833999999",
             "slug": "simple-team",
-            "name": "Simple Migration Workspace",
+            "name": "Simple Team",
             "description": "This is a description",
             "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
-            "tags": ["new"],
+            "tags": ["new", "another", "extra"],
+        },
+        {
+            "id": "81108ac1-ffcb-411d-8b1e-d91833999998",
+            "slug": "extra-team",
+            "name": "Extra Team",
+            "description": "This is a description",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "tags": ["extra"],
         },
     ]
 
