@@ -27,7 +27,7 @@ async def load_database_fixtures() -> None:
 
     settings = get_settings()
     logger = get_logger()
-    fixtures_path = Path(f"{settings.db.MIGRATION_PATH}/../fixtures")
+    fixtures_path = Path(settings.db.FIXTURE_PATH)
     async with RoleService.new(
         statement=select(Role).options(load_only(Role.id, Role.slug, Role.name, Role.description)),
     ) as service:
@@ -152,3 +152,41 @@ def promote_to_superuser(email: str) -> None:
 
     console.rule("Promote user to superuser.")
     anyio.run(_promote_to_superuser, email)
+
+
+@user_management_app.command(name="create-roles", help="Create pre-configured application roles and assign to users.")
+def create_default_roles() -> None:
+    """Create the default Roles for the system
+
+    Args:
+        email (str): The email address of the user to promote.
+    """
+    import anyio
+    from rich import get_console
+
+    from app.config.app import alchemy
+    from app.db.models import UserRole
+    from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
+    from app.utils import slugify
+
+    console = get_console()
+
+    async def _create_default_roles() -> None:
+        await load_database_fixtures()
+        async with alchemy.get_session() as db_session:
+            users_service = await anext(provide_users_service(db_session))
+            roles_service = await anext(provide_roles_service(db_session))
+            default_role = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
+            if default_role:
+                all_active_users = await users_service.list(is_active=True)
+                for user in all_active_users:
+                    if any(r.role_id == default_role.id for r in user.roles):
+                        console.print("User %s already has default role", user.email)
+                    else:
+                        user.roles.append(UserRole(role_id=default_role.id))
+                        console.print("Assigned %s default role", user.email)
+                        await users_service.repository.update(user)
+            await db_session.commit()
+
+    console.rule("Creating default roles.")
+    anyio.run(_create_default_roles)

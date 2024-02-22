@@ -8,6 +8,7 @@ from litestar.di import Provide
 from uuid_utils import UUID  # noqa: TCH002
 
 from app.config import constants
+from app.db.models import User as UserModel
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams import urls
 from app.domain.teams.dependencies import provide_teams_service
@@ -19,7 +20,6 @@ if TYPE_CHECKING:
     from litestar.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
 
-    from app.db.models import User
     from app.lib.dependencies import FilterTypes
 
 
@@ -33,6 +33,7 @@ class TeamController(Controller):
         "TeamService": TeamService,
         "TeamUpdate": TeamUpdate,
         "TeamCreate": TeamCreate,
+        "UserModel": UserModel,
     }
 
     @get(
@@ -44,7 +45,7 @@ class TeamController(Controller):
     async def list_teams(
         self,
         teams_service: TeamService,
-        current_user: User,
+        current_user: UserModel,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
@@ -71,7 +72,7 @@ class TeamController(Controller):
     async def create_team(
         self,
         teams_service: TeamService,
-        current_user: User,
+        current_user: UserModel,
         data: TeamCreate,
     ) -> Team:
         """Create a new team."""

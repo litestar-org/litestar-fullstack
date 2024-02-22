@@ -34,6 +34,7 @@ class Team(UUIDAuditBase, SlugKey):
         back_populates="team",
         cascade="all, delete",
         passive_deletes=True,
+        lazy="selectin",
     )
     invitations: Mapped[list[TeamInvitation]] = relationship(
         back_populates="team",

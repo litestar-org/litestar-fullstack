@@ -26,7 +26,7 @@ class UserRole(UUIDAuditBase):
     # -----------
     # ORM Relationships
     # ------------
-    user: Mapped[User] = relationship(back_populates="roles", innerjoin=True, uselist=False)
+    user: Mapped[User] = relationship(back_populates="roles", innerjoin=True, uselist=False, lazy="joined")
     user_name: AssociationProxy[str] = association_proxy("user", "name")
     user_email: AssociationProxy[str] = association_proxy("user", "email")
     role: Mapped[Role] = relationship(back_populates="users", innerjoin=True, uselist=False, lazy="joined")
