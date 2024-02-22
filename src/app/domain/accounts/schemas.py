@@ -45,6 +45,18 @@ class UserRole(CamelizedBaseStruct):
     assigned_at: datetime
 
 
+class OauthAccount(CamelizedBaseStruct):
+    """Holds linked Oauth details for a user."""
+
+    id: UUID
+    oauth_name: str
+    access_token: str
+    account_id: str
+    account_email: str
+    expires_at: int | None = None
+    refresh_token: str | None = None
+
+
 class User(CamelizedBaseStruct):
     """User properties to use for a response."""
 
@@ -54,9 +66,9 @@ class User(CamelizedBaseStruct):
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
-    teams: list[UserTeam] | None = []
-    roles: list[UserRole] | None = []
-    # oauth_accounts: list[OAuthAccount] | None = []
+    teams: list[UserTeam] = []
+    roles: list[UserRole] = []
+    oauth_accounts: list[OauthAccount] | None = []
 
 
 class UserCreate(CamelizedBaseStruct):

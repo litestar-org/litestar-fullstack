@@ -16,41 +16,41 @@ from litestar_vite import ViteConfig
 
 from .base import get_settings
 
-_settings = get_settings()
+settings = get_settings()
 
 compression = CompressionConfig(backend="gzip")
 csrf = CSRFConfig(
-    secret=_settings.app.SECRET_KEY,
-    cookie_secure=_settings.app.CSRF_COOKIE_SECURE,
-    cookie_name=_settings.app.CSRF_COOKIE_NAME,
+    secret=settings.app.SECRET_KEY,
+    cookie_secure=settings.app.CSRF_COOKIE_SECURE,
+    cookie_name=settings.app.CSRF_COOKIE_NAME,
 )
-cors = CORSConfig(allow_origins=cast("list[str]", _settings.app.ALLOWED_CORS_ORIGINS))
+cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
 alchemy = SQLAlchemyAsyncConfig(
-    connection_string=_settings.db.URL,
+    connection_string=settings.db.URL,
     before_send_handler=autocommit_before_send_handler,
     session_config=AsyncSessionConfig(expire_on_commit=False),
     alembic_config=AlembicAsyncConfig(
-        version_table_name=_settings.db.MIGRATION_DDL_VERSION_TABLE,
-        script_config=_settings.db.MIGRATION_CONFIG,
-        script_location=_settings.db.MIGRATION_PATH,
+        version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,
+        script_config=settings.db.MIGRATION_CONFIG,
+        script_location=settings.db.MIGRATION_PATH,
     ),
 )
 vite = ViteConfig(
-    bundle_dir=_settings.vite.BUNDLE_DIR,
-    resource_dir=_settings.vite.RESOURCE_DIR,
-    template_dir=_settings.vite.TEMPLATE_DIR,
-    use_server_lifespan=_settings.vite.USE_SERVER_LIFESPAN,
-    dev_mode=_settings.vite.DEV_MODE,
-    hot_reload=_settings.vite.HOT_RELOAD,
-    is_react=_settings.vite.ENABLE_REACT_HELPERS,
-    port=_settings.vite.PORT,
-    host=_settings.vite.HOST,
+    bundle_dir=settings.vite.BUNDLE_DIR,
+    resource_dir=settings.vite.RESOURCE_DIR,
+    template_dir=settings.vite.TEMPLATE_DIR,
+    use_server_lifespan=settings.vite.USE_SERVER_LIFESPAN,
+    dev_mode=settings.vite.DEV_MODE,
+    hot_reload=settings.vite.HOT_RELOAD,
+    is_react=settings.vite.ENABLE_REACT_HELPERS,
+    port=settings.vite.PORT,
+    host=settings.vite.HOST,
 )
 saq = SAQConfig(
-    redis=_settings.redis.client,
-    web_enabled=_settings.saq.WEB_ENABLED,
-    worker_processes=_settings.saq.PROCESSES,
-    use_server_lifespan=_settings.saq.USE_SERVER_LIFESPAN,
+    redis=settings.redis.client,
+    web_enabled=settings.saq.WEB_ENABLED,
+    worker_processes=settings.saq.PROCESSES,
+    use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
     queue_configs=[
         QueueConfig(
             name="system-tasks",
@@ -84,41 +84,41 @@ log = StructlogConfig(
         log_exceptions="always",
         traceback_line_limit=4,
         standard_lib_logging_config=LoggingConfig(
-            root={"level": logging.getLevelName(_settings.log.LEVEL), "handlers": ["queue_listener"]},
+            root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
             loggers={
                 "uvicorn.access": {
                     "propagate": False,
-                    "level": _settings.log.UVICORN_ACCESS_LEVEL,
+                    "level": settings.log.UVICORN_ACCESS_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "uvicorn.error": {
                     "propagate": False,
-                    "level": _settings.log.UVICORN_ERROR_LEVEL,
+                    "level": settings.log.UVICORN_ERROR_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "granian.access": {
                     "propagate": False,
-                    "level": _settings.log.GRANIAN_ACCESS_LEVEL,
+                    "level": settings.log.GRANIAN_ACCESS_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "granian.error": {
                     "propagate": False,
-                    "level": _settings.log.GRANIAN_ERROR_LEVEL,
+                    "level": settings.log.GRANIAN_ERROR_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "saq": {
                     "propagate": False,
-                    "level": _settings.log.SAQ_LEVEL,
+                    "level": settings.log.SAQ_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "sqlalchemy.engine": {
                     "propagate": False,
-                    "level": _settings.log.SQLALCHEMY_LEVEL,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "sqlalchemy.pool": {
                     "propagate": False,
-                    "level": _settings.log.SQLALCHEMY_LEVEL,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
                     "handlers": ["queue_listener"],
                 },
             },

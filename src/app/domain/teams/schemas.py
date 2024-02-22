@@ -23,6 +23,7 @@ class TeamMember(CamelizedBaseStruct):
 
 
 class Team(CamelizedBaseStruct):
+    id: UUID
     name: str
     description: str | None = None
     members: list[TeamMember] = []
