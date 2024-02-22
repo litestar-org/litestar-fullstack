@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import PermissionDeniedException
-from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
+from litestar.security.jwt import OAuth2PasswordBearerAuth
 
 from app.config import constants
 from app.config.app import alchemy

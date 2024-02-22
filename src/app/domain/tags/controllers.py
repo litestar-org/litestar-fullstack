@@ -6,8 +6,8 @@ from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
 
 from app.db.models import Tag
-from app.domain import urls
 from app.domain.accounts.guards import requires_active_user, requires_superuser
+from app.domain.tags import urls
 from app.domain.tags.dependencies import provide_tags_service
 from app.domain.tags.dtos import TagCreateDTO, TagDTO, TagUpdateDTO
 from app.domain.tags.services import TagService

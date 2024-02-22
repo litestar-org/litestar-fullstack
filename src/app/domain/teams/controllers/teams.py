@@ -5,20 +5,19 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.params import Dependency, Parameter
-from msgspec.structs import asdict
+from uuid_utils import UUID  # noqa: TCH002
 
 from app.config import constants
-from app.domain import urls
 from app.domain.accounts.guards import requires_active_user
+from app.domain.teams import urls
 from app.domain.teams.dependencies import provide_teams_service
-from app.domain.teams.dtos import Team, TeamCreate, TeamUpdate
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
+from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
 
 if TYPE_CHECKING:
     from litestar.pagination import OffsetPagination
-    from uuid_utils import UUID
+    from litestar.params import Dependency, Parameter
 
     from app.db.models import User
     from app.lib.dependencies import FilterTypes
@@ -31,12 +30,9 @@ class TeamController(Controller):
     dependencies = {"teams_service": Provide(provide_teams_service)}
     guards = [requires_active_user]
     signature_namespace = {
-        "Dependency": Dependency,
-        "Parameter": Parameter,
         "TeamService": TeamService,
         "TeamUpdate": TeamUpdate,
         "TeamCreate": TeamCreate,
-        "Team": Team,
     }
 
     @get(
@@ -79,7 +75,7 @@ class TeamController(Controller):
         data: TeamCreate,
     ) -> Team:
         """Create a new team."""
-        obj = asdict(data)
+        obj = data.to_dict()
         obj.update({"owner_id": current_user.id, "owner": current_user})
         db_obj = await teams_service.create(obj)
         return teams_service.to_schema(Team, db_obj)
@@ -137,17 +133,13 @@ class TeamController(Controller):
         guards=[requires_team_admin],
         summary="Remove Team",
         path=urls.TEAM_DELETE,
-        return_dto=None,
     )
     async def delete_team(
         self,
         teams_service: TeamService,
         team_id: Annotated[
             UUID,
-            Parameter(
-                title="Team ID",
-                description="The team to delete.",
-            ),
+            Parameter(title="Team ID", description="The team to delete."),
         ],
     ) -> None:
         """Delete a team."""

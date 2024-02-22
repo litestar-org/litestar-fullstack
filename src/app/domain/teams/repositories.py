@@ -1,10 +1,10 @@
 from typing import Any
 
 from sqlalchemy import ColumnElement, select
-from sqlalchemy.orm import joinedload, load_only, noload, selectinload
+from sqlalchemy.orm import joinedload, selectinload
 from uuid_utils import UUID
 
-from app.db.models import Team, TeamInvitation, TeamMember, User
+from app.db.models import Team, TeamInvitation, TeamMember
 from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 
@@ -35,12 +35,11 @@ class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
             statement=select(Team)
             .join(TeamMember, onclause=Team.id == TeamMember.team_id, isouter=False)
             .where(TeamMember.user_id == user_id)
+            .order_by(Team.name)
             .options(
-                noload("*"),
+                selectinload(Team.tags),
                 selectinload(Team.members).options(
-                    joinedload(TeamMember.user, innerjoin=True).options(
-                        load_only(User.name, User.email),
-                    ),
+                    joinedload(TeamMember.user, innerjoin=True),
                 ),
             ),
             auto_expunge=auto_expunge,

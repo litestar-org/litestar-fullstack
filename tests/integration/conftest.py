@@ -17,8 +17,8 @@ from sqlalchemy.pool import NullPool
 from app.config import get_settings
 from app.db.models import Team, User
 from app.db.utils import open_fixture
+from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
-from app.domain.security import auth
 from app.domain.teams.services import TeamService
 from app.server.plugins import alchemy
 from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive

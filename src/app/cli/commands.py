@@ -80,7 +80,7 @@ def create_user(
 
     from app.config.app import alchemy
     from app.domain.accounts.dependencies import provide_users_service
-    from app.domain.accounts.dtos import UserCreate
+    from app.domain.accounts.schemas import UserCreate
 
     console = get_console()
 
@@ -127,7 +127,7 @@ def promote_to_superuser(email: str) -> None:
     import anyio
     from rich import get_console
 
-    from app.domain.accounts.dtos import UserUpdate
+    from app.domain.accounts.schemas import UserUpdate
     from app.domain.accounts.services import UserService
 
     console = get_console()

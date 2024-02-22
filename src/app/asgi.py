@@ -20,7 +20,8 @@ def create_app() -> Litestar:
     from app.config import constants
     from app.config.base import get_settings
     from app.domain.accounts import signals as account_signals
-    from app.domain.security import auth, provide_user
+    from app.domain.accounts.dependencies import provide_user
+    from app.domain.accounts.guards import auth
     from app.domain.teams import signals as team_signals
     from app.lib.dependencies import create_collection_dependencies
     from app.server import openapi, plugins, routers

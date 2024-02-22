@@ -6,14 +6,14 @@ from litestar.di import Provide
 from litestar.params import Parameter
 from litestar.repository.exceptions import ConflictError
 
-from app.domain.accounts import dtos, urls
+from app.domain.accounts import schemas, urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_user_roles_service, provide_users_service
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import RoleService, UserRoleService, UserService
 from app.lib.schema import Message
 
 
-class AccountRoleController(Controller):
+class UserRoleController(Controller):
     """Handles the adding and removing of User Role records."""
 
     tags = ["User Account Roles"]
@@ -29,15 +29,13 @@ class AccountRoleController(Controller):
         operation_id="AssignUserRole",
         name="users:assign-role",
         path=urls.ACCOUNT_ASSIGN_ROLE,
-        return_dto=None,
-        dto=None,
     )
     async def assign_role(
         self,
         roles_service: RoleService,
         users_service: UserService,
         user_roles_service: UserRoleService,
-        data: dtos.UserRoleAdd,
+        data: schemas.UserRoleAdd,
         role_slug: str = Parameter(
             title="Role Slug",
             description="The role to grant.",
@@ -58,14 +56,12 @@ class AccountRoleController(Controller):
         summary="Remove Role",
         description="Removes an assigned role from a user.",
         path=urls.ACCOUNT_REVOKE_ROLE,
-        dto=None,
-        return_dto=None,
     )
     async def revoke_role(
         self,
         users_service: UserService,
         user_roles_service: UserRoleService,
-        data: dtos.UserRoleRevoke,
+        data: schemas.UserRoleRevoke,
         role_slug: str = Parameter(
             title="Role Slug",
             description="The role to revoke.",

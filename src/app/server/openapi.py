@@ -2,7 +2,7 @@ from litestar.openapi.config import OpenAPIConfig
 
 from app.__about__ import __version__ as current_version
 from app.config import get_settings
-from app.domain.security import auth
+from app.domain.accounts.guards import auth
 
 settings = get_settings()
 

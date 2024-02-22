@@ -1,24 +1,21 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from litestar import Controller, Request, Response, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
-from msgspec.structs import asdict
 
-from app.domain import security, urls
+from app.db.models import User as UserModel  # noqa: TCH001
+from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.dtos import AccountLogin, AccountRegister, UserDTO
-from app.domain.accounts.guards import requires_active_user
+from app.domain.accounts.guards import auth, requires_active_user
+from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
 from app.domain.accounts.services import RoleService, UserService
 from app.utils import slugify
-
-if TYPE_CHECKING:
-    from app.db.models import User
 
 
 class AccessController(Controller):
@@ -32,9 +29,8 @@ class AccessController(Controller):
         "OAuth2Login": OAuth2Login,
         "RequestEncodingType": RequestEncodingType,
         "Body": Body,
-        "AccountLogin": AccountLogin,
+        "User": User,
     }
-    return_dto = UserDTO
 
     @post(
         operation_id="AccountLogin",
@@ -42,8 +38,6 @@ class AccessController(Controller):
         path=urls.ACCOUNT_LOGIN,
         cache=False,
         summary="Login",
-        dto=None,
-        return_dto=None,
         exclude_from_auth=True,
     )
     async def login(
@@ -53,7 +47,7 @@ class AccessController(Controller):
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
         user = await users_service.authenticate(data.username, data.password)
-        return security.auth.login(user.email)
+        return auth.login(user.email)
 
     @post(
         operation_id="AccountLogout",
@@ -61,8 +55,6 @@ class AccessController(Controller):
         path=urls.ACCOUNT_LOGOUT,
         cache=False,
         summary="Logout",
-        dto=None,
-        return_dto=None,
         exclude_from_auth=True,
     )
     async def logout(
@@ -70,7 +62,7 @@ class AccessController(Controller):
         request: Request,
     ) -> None:
         """Account Logout"""
-        request.cookies.pop(security.auth.key, None)
+        request.cookies.pop(auth.key, None)
         request.clear_session()
 
     @post(
@@ -80,7 +72,6 @@ class AccessController(Controller):
         cache=False,
         summary="Create User",
         description="Register a new account.",
-        dto=None,
     )
     async def signup(
         self,
@@ -90,13 +81,13 @@ class AccessController(Controller):
         data: AccountRegister,
     ) -> User:
         """User Signup."""
-        user_data = asdict(data)
+        user_data = data.to_dict()
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
-        return users_service.to_dto(user)
+        return users_service.to_schema(User, user)
 
     @get(
         operation_id="AccountProfile",
@@ -106,6 +97,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, request: Request, current_user: User, users_service: UserService) -> User:
+    async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
-        return users_service.to_dto(current_user)
+        return users_service.to_schema(User, current_user)

@@ -133,8 +133,8 @@ omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--ignore", "migrations"]
-env_files = [".env.testing"]
-env_override_existing_values = 1
+# env_files = [".env.testing"]
+# env_override_existing_values = 1
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",

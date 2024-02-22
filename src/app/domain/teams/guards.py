@@ -40,7 +40,8 @@ def requires_team_admin(connection: ASGIConnection, _: BaseRouteHandler) -> None
     if connection.user.is_superuser:
         return
     if any(
-        membership.team.id == team_id and membership.role == TeamRoles.ADMIN for membership in connection.user.teams
+        membership.team.id == team_id and membership.role == TeamRoles.ADMIN.value
+        for membership in connection.user.teams
     ):
         return
     raise PermissionDeniedException(detail="Insufficient permissions to access team.")

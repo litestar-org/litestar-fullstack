@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import msgspec
-from uuid_utils import UUID
+from uuid_utils import UUID  # noqa: TCH002
 
 from app.db.models.team_roles import TeamRoles
 from app.lib.schema import CamelizedBaseStruct
@@ -37,3 +39,9 @@ class TeamUpdate(CamelizedBaseStruct, omit_defaults=True):
     name: str | None | msgspec.UnsetType = msgspec.UNSET
     description: str | None | msgspec.UnsetType = msgspec.UNSET
     tags: list[str] | None | msgspec.UnsetType = msgspec.UNSET
+
+
+class TeamMemberModify(CamelizedBaseStruct):
+    """Team Member Modify."""
+
+    user_name: str

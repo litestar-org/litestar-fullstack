@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import PermissionDeniedException
+from uuid_utils import UUID  # noqa: TCH002
 
 from app.config import constants
 from app.db.models import Role, User, UserRole
@@ -16,7 +17,6 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from sqlalchemy.orm import InstrumentedAttribute
-    from uuid_utils import UUID
 
 
 class UserService(SQLAlchemyAsyncRepositoryService[User]):
