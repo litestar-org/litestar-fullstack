@@ -146,7 +146,7 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
             "slug": "test-team",
             "name": "Test Team",
             "description": "This is a description for a  team.",
-            "owner_id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         },
         {
             "id": "81108ac1-ffcb-411d-8b1e-d91833999999",

@@ -48,25 +48,6 @@ class SQLQuery(DeclarativeBase):
         return {field.name: getattr(self, field.name) for field in self.__table__.columns if field.name not in exclude}
 
 
-async def _unique(session, cls, hashfunc, queryfunc, constructor, arg, kw) -> Any:  # type: ignore[no-untyped-def]  # noqa: ANN001
-    cache = getattr(session, "_unique_cache", None)
-    if cache is None:
-        session._unique_cache = cache = {}
-
-    key = (cls, hashfunc(*arg, **kw))
-    if key in cache:
-        return cache[key]
-    with session.no_autoflush:
-        q = await session.query(cls)
-        q = queryfunc(q, *arg, **kw)
-        obj = q.first()
-        if not obj:
-            obj = constructor(*arg, **kw)
-            session.add(obj)
-    cache[key] = obj
-    return obj
-
-
 class UniqueMixin:
     @classmethod
     async def as_unique(

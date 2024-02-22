@@ -48,7 +48,7 @@ async def wait_until_responsive(
 class DockerServiceRegistry:
     def __init__(self, use_legacy_compose: bool = False) -> None:
         self._use_legacy_compose = use_legacy_compose
-        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") == "true":
+        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") in {"true", "True", True, 1}:
             self._use_legacy_compose = True
         self._running_services: set[str] = set()
         self.docker_ip = self._get_docker_ip()
