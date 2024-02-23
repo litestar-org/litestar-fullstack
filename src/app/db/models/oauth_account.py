@@ -39,4 +39,5 @@ class UserOauthAccount(UUIDAuditBase):
         back_populates="oauth_accounts",
         viewonly=True,
         innerjoin=True,
+        lazy="joined",
     )

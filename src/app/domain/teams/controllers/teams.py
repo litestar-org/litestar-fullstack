@@ -35,6 +35,8 @@ class TeamController(Controller):
         "TeamCreate": TeamCreate,
         "UserModel": UserModel,
     }
+    dto = None
+    return_dto = None
 
     @get(
         operation_id="ListTeams",

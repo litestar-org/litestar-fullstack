@@ -26,6 +26,8 @@ class UserController(Controller):
     guards = [requires_superuser]
     dependencies = {"users_service": Provide(provide_users_service)}
     signature_namespace = {"UserService": UserService}
+    dto = None
+    return_dto = None
 
     @get(
         operation_id="ListUsers",

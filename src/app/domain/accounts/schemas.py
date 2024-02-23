@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime  # noqa: TCH003
 
 import msgspec
-from uuid_utils import UUID
+from uuid_utils import UUID  # noqa: TCH002
 
 from app.db.models.team_roles import TeamRoles
 from app.lib.schema import CamelizedBaseStruct
@@ -68,7 +68,7 @@ class User(CamelizedBaseStruct):
     is_verified: bool = False
     teams: list[UserTeam] = []
     roles: list[UserRole] = []
-    oauth_accounts: list[OauthAccount] | None = []
+    oauth_accounts: list[OauthAccount] = []
 
 
 class UserCreate(CamelizedBaseStruct):
