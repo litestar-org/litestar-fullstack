@@ -55,7 +55,7 @@ def order_columns(
         op.table_name,
         columns,
         schema=op.schema,
-        # TODO: Remove when https://github.com/sqlalchemy/alembic/issues/1193 is fixed
+        # Remove when https://github.com/sqlalchemy/alembic/issues/1193 is fixed
         _namespace_metadata=op._namespace_metadata,
         **op.kw,
     )
