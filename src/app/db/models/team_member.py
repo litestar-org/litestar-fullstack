@@ -38,6 +38,7 @@ class TeamMember(UUIDAuditBase):
         foreign_keys="TeamMember.user_id",
         innerjoin=True,
         uselist=False,
+        lazy="joined",
     )
     name: AssociationProxy[str] = association_proxy("user", "name")
     email: AssociationProxy[str] = association_proxy("user", "email")
@@ -46,5 +47,6 @@ class TeamMember(UUIDAuditBase):
         foreign_keys="TeamMember.team_id",
         innerjoin=True,
         uselist=False,
+        lazy="joined",
     )
     team_name: AssociationProxy[str] = association_proxy("team", "name")
