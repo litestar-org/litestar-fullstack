@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
-from structlog.contextvars import clear_contextvars
-from structlog.testing import CapturingLogger
+
+from app.config import base
 
 if TYPE_CHECKING:
     from collections import abc
@@ -16,8 +16,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
 
-    from app.domain.accounts.models import User
-    from app.domain.teams.models import Team
+    from app.db.models import Team, User
 
 pytestmark = pytest.mark.anyio
 
@@ -25,6 +24,18 @@ pytestmark = pytest.mark.anyio
 @pytest.fixture
 def anyio_backend() -> str:
     return "asyncio"
+
+
+@pytest.fixture(autouse=True)
+def _patch_settings(monkeypatch: MonkeyPatch) -> None:
+    """Path the settings."""
+
+    settings = base.Settings.from_env(".env.testing")
+
+    def get_settings(dotenv_filename: str = ".env.testing") -> base.Settings:
+        return settings
+
+    monkeypatch.setattr(base, "get_settings", get_settings)
 
 
 @pytest.fixture(scope="session")
@@ -99,6 +110,14 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
             "is_active": True,
         },
         {
+            "id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "email": "test@test.com",
+            "name": "Test User",
+            "password": "Test_Password3!",
+            "is_superuser": False,
+            "is_active": True,
+        },
+        {
             "id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
             "email": "another@example.com",
             "name": "The User",
@@ -124,24 +143,28 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
     return [
         {
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
-            "slug": "test-assessment-team",
-            "name": "Test Assessment Team",
-            "description": "This is a description for a migration team.",
-            "owner_id": "6ef29f3c-3560-4d15-ba6b-a2e5c721e4d3",
+            "slug": "test-team",
+            "name": "Test Team",
+            "description": "This is a description for a  team.",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
+        },
+        {
+            "id": "81108ac1-ffcb-411d-8b1e-d91833999999",
+            "slug": "simple-team",
+            "name": "Simple Team",
+            "description": "This is a description",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "tags": ["new", "another", "extra"],
+        },
+        {
+            "id": "81108ac1-ffcb-411d-8b1e-d91833999998",
+            "slug": "extra-team",
+            "name": "Extra Team",
+            "description": "This is a description",
+            "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
+            "tags": ["extra"],
         },
     ]
-
-
-@pytest.fixture()
-def _patch_sqlalchemy_plugin(is_unit_test: bool, monkeypatch: MonkeyPatch) -> None:
-    if is_unit_test:
-        from app.lib import db
-
-        monkeypatch.setattr(
-            db.config.SQLAlchemyConfig,  # type:ignore[attr-defined]
-            "on_shutdown",
-            MagicMock(),
-        )
 
 
 @pytest.fixture()
@@ -156,24 +179,3 @@ def _patch_worker(
 
         monkeypatch.setattr(base.Worker, "on_app_startup", MagicMock())
         monkeypatch.setattr(base.Worker, "stop", MagicMock())
-
-
-@pytest.fixture(name="cap_logger")
-def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
-    """Used to monkeypatch the app logger, so we can inspect output."""
-    import app.lib
-
-    app.lib.log.configure(
-        app.lib.log.default_processors,  # type:ignore[arg-type]
-    )
-    # clear context for every test
-    clear_contextvars()
-    # pylint: disable=protected-access
-    logger = app.lib.log.controller.LOGGER.bind()
-    logger._logger = CapturingLogger()
-    # drop rendering processor to get a dict, not bytes
-    # noinspection PyProtectedMember
-    logger._processors = app.lib.log.default_processors[:-1]
-    monkeypatch.setattr(app.lib.log.controller, "LOGGER", logger)
-    monkeypatch.setattr(app.lib.log.worker, "LOGGER", logger)
-    return logger._logger

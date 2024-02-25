@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Annotated, Literal
-from uuid import uuid4
 
 import pytest
 from advanced_alchemy.filters import (
@@ -17,9 +16,10 @@ from advanced_alchemy.filters import (
 from litestar import Litestar, get
 from litestar.params import Dependency
 from litestar.testing import AsyncTestClient, RequestFactory
+from uuid_utils import uuid4
 
-from app.domain import security
-from app.domain.accounts.models import User
+from app.db.models import User
+from app.domain.accounts.dependencies import provide_user
 from app.lib import dependencies
 
 if TYPE_CHECKING:
@@ -36,7 +36,7 @@ class MessageTest:
 async def test_provide_user_dependency() -> None:
     user = User()
     request = RequestFactory(app=Litestar(route_handlers=[])).get("/", user=user)
-    assert await security.provide_user(request) is user
+    assert await provide_user(request) is user
 
 
 def test_id_filter() -> None:

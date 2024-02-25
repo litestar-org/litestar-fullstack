@@ -1,65 +1,69 @@
 """User Account Controllers."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
-from litestar import Controller, MediaType, Response, get, post
+from litestar import Controller, Request, Response, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
 
-from app.domain import security, urls
-from app.domain.accounts.dependencies import provides_user_service
-from app.domain.accounts.dtos import AccountLogin, AccountLoginDTO, AccountRegister, AccountRegisterDTO, UserDTO
-from app.domain.accounts.guards import requires_active_user
-from app.domain.accounts.models import User
-from app.domain.accounts.services import UserService
-from app.lib import log
-
-__all__ = ["AccessController", "provides_user_service"]
-
-
-logger = log.get_logger()
-
-if TYPE_CHECKING:
-    from litestar.dto import DTOData
+from app.db.models import User as UserModel  # noqa: TCH001
+from app.domain.accounts import urls
+from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
+from app.domain.accounts.guards import auth, requires_active_user
+from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
+from app.domain.accounts.services import RoleService, UserService
+from app.utils import slugify
 
 
 class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
-    dependencies = {"users_service": Provide(provides_user_service)}
+    dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
     signature_namespace = {
         "UserService": UserService,
-        "User": User,
+        "RoleService": RoleService,
         "OAuth2Login": OAuth2Login,
         "RequestEncodingType": RequestEncodingType,
         "Body": Body,
+        "User": User,
     }
-
-    return_dto = UserDTO
 
     @post(
         operation_id="AccountLogin",
         name="account:login",
         path=urls.ACCOUNT_LOGIN,
-        media_type=MediaType.JSON,
         cache=False,
         summary="Login",
-        dto=AccountLoginDTO,
-        return_dto=None,
+        exclude_from_auth=True,
     )
     async def login(
         self,
         users_service: UserService,
-        data: Annotated[DTOData[AccountLogin], Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
+        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
-        obj = data.create_instance()
-        user = await users_service.authenticate(obj.username, obj.password)
-        return security.auth.login(user.email)
+        user = await users_service.authenticate(data.username, data.password)
+        return auth.login(user.email)
+
+    @post(
+        operation_id="AccountLogout",
+        name="account:logout",
+        path=urls.ACCOUNT_LOGOUT,
+        cache=False,
+        summary="Logout",
+        exclude_from_auth=True,
+    )
+    async def logout(
+        self,
+        request: Request,
+    ) -> None:
+        """Account Logout"""
+        request.cookies.pop(auth.key, None)
+        request.clear_session()
 
     @post(
         operation_id="AccountRegister",
@@ -68,12 +72,22 @@ class AccessController(Controller):
         cache=False,
         summary="Create User",
         description="Register a new account.",
-        dto=AccountRegisterDTO,
     )
-    async def signup(self, users_service: UserService, data: DTOData[AccountRegister]) -> User:
+    async def signup(
+        self,
+        request: Request,
+        users_service: UserService,
+        roles_service: RoleService,
+        data: AccountRegister,
+    ) -> User:
         """User Signup."""
-        user = await users_service.create(data.as_builtins())
-        return users_service.to_dto(user)
+        user_data = data.to_dict()
+        role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
+        if role_obj is not None:
+            user_data.update({"role_id": role_obj.id})
+        user = await users_service.create(user_data)
+        request.app.emit(event_id="user_created", user_id=user.id)
+        return users_service.to_schema(User, user)
 
     @get(
         operation_id="AccountProfile",
@@ -83,6 +97,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, current_user: User, users_service: UserService) -> User:
+    async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
-        return users_service.to_dto(current_user)
+        return users_service.to_schema(User, current_user)

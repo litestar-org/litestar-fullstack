@@ -1,7 +1,5 @@
 [project]
-authors = [
-  {name = "Cody Fincher", email = "cody.fincher@gmail.com"},
-]
+authors = [{ name = "Cody Fincher", email = "cody.fincher@gmail.com" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Web Environment",
@@ -16,32 +14,25 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,pydantic,redis,structlog,sqlalchemy,standard]",
-  "pydantic-settings>=2.0.3",
+  "litestar[cli,jinja,jwt,redis,sqlalchemy,structlog]",
+  "advanced-alchemy[uuid]",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "passlib[argon2]>=1.7.4",
   "litestar-saq>=0.1.3",
-  "litestar-vite>=0.1.4",
-  "litestar-aiosql>=0.1.1",
+  "litestar-vite[nodeenv]>=0.1.4",
+  "litestar-granian>=0.1.4",
+  "aiosqlite>=0.19.0",
+  "uvloop",
+  "httptools",
 ]
 description = "Opinionated template for a Litestar application."
-keywords = [
-  "litestar",
-  "sqlalchemy",
-  "alembic",
-  "fullstack",
-  "api",
-  "asgi",
-  "litestar",
-  "vite",
-  "spa",
-]
-license = {text = "MIT"}
+keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
+license = { text = "MIT" }
 name = "app"
 readme = "README.md"
 requires-python = ">=3.11"
-version = "0.1.0"
+version = "0.2.0"
 
 [project.urls]
 Discord = "https://discord.gg/litestar-919193495116337154"
@@ -61,27 +52,22 @@ allow-direct-references = true
 
 [tool.hatch.build]
 dev-mode-dirs = ["src/"]
-include = [
-  "CHANGELOG.md",
-  "src/app/domain/web/public/**/*",
-  "src/app/**/*.sql",
-  "src/app/lib/db/**/*.ini",
-]
+include = ["CHANGELOG.md", "src/public/**/*", "src/app/**/*.sql", "src/app/lib/db/**/*.ini"]
 packages = ["src/app"]
+
+[tool.hatch.build.targets.app]
 
 [tool.pdm.scripts]
 lint = "pdm run pre-commit run --all-files"
-post_install = "pdm run python scripts/pre-build.py"
-pre_build = "pdm run python scripts/pre-build.py"
+post_install = "pdm run python scripts/pre-build.py --install-packages"
+pre_build = "pdm run python scripts/pre-build.py --build-assets"
+start-infra = "docker-compose -f docker-compose.infra.yml up --force-recreate -d"
+stop-infra = "docker-compose -f docker-compose.infra.yml down --remove-orphans"
 test = "pdm run pytest tests"
-test_coverage = {composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"]}
+test_coverage = { composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"] }
 
 [tool.pdm.dev-dependencies]
-dev = [
-  "nodeenv",
-  "anyio>=4.0.0",
-  "nodeenv",
-]
+dev = ["nodeenv"]
 docs = [
   "sphinx>=7.2.6",
   "sphinx-autobuild>=2021.3.14",
@@ -89,14 +75,11 @@ docs = [
   "sphinx-toolbox>=3.5.0",
   "sphinx-design>=0.5.0",
   "sphinx-click>=5.0.1",
-  "blacken-docs>=1.16.0",
   "sphinxcontrib-mermaid>=0.9.2",
-  "autodoc-pydantic>=2.0.1",
   "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git",
 ]
 linting = [
   "pre-commit>=3.4.0",
-  "black>=23.7.0",
   "mypy>=1.5.1",
   "ruff>=0.0.287",
   "slotscheck",
@@ -107,17 +90,8 @@ linting = [
   "types-redis",
   "asyncpg-stubs",
   "pylint",
-  "pylint-pydantic",
 ]
-test = [
-  "pytest>=7.4.1",
-  "pytest-xdist>=3.3.1",
-  "pytest-lazy-fixture>=0.6.3",
-  "pytest-mock>=3.11.1",
-  "pytest-cov",
-  "coverage",
-  "pytest-dotenv",
-]
+test = ["pytest", "pytest-xdist", "pytest-mock", "pytest-cov", "coverage"]
 
 [tool.black]
 exclude = '''
@@ -152,14 +126,15 @@ exclude_lines = [
 ]
 omit = ["*/tests/*"]
 show_missing = true
+
 [tool.coverage.run]
 branch = true
 omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--ignore", "migrations"]
-env_files = [".env.testing"]
-env_override_existing_values = 1
+# env_files = [".env.testing"]
+# env_override_existing_values = 1
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
@@ -192,37 +167,39 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
-  "src/app/lib/db/migrations/versions/*.py",
+  "src/app/db/migrations/versions/*.py",
 ]
 fix = true
-ignore = [
-  "E501", # pycodestyle line too long, handled by black
-  "D100", # pydocstyle - missing docstring in public module
-  "D101", # pydocstyle - missing docstring in public class
-  "D102", # pydocstyle - missing docstring in public method
-  "D103", # pydocstyle - missing docstring in public function
-  "D104", # pydocstyle - missing docstring in public package
-  "D105", # pydocstyle - missing docstring in magic method
-  "D106", # pydocstyle - missing docstring in public nested class
-  "D107", # pydocstyle - missing docstring in __init__
-  "D202", # pydocstyle - no blank lines allowed after function docstring
-  "D205", # pydocstyle - 1 blank line required between summary line and description
-  "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
-  "UP037", # pyupgrade - removes quotes from type annotation
-  "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
-  "B010", # flake8-bugbear - do not call setattr with a constant attribute value
-  "B008", #  flake8-bugbear - Do not perform function call `Parameter` in argument defaultsRuff(B008)
-  "RUF012", # ruff - mutable class attributes should be annotated with `typing.ClassVar`
-  "ANN401", # ruff - Dynamically typed expressions (typing.Any) are disallowed
+line-length = 120
+lint.fixable = ["ALL"]
+lint.ignore = [
+  "E501",    # pycodestyle line too long, handled by black
+  "D100",    # pydocstyle - missing docstring in public module
+  "D101",    # pydocstyle - missing docstring in public class
+  "D102",    # pydocstyle - missing docstring in public method
+  "D103",    # pydocstyle - missing docstring in public function
+  "D104",    # pydocstyle - missing docstring in public package
+  "D105",    # pydocstyle - missing docstring in magic method
+  "D106",    # pydocstyle - missing docstring in public nested class
+  "D107",    # pydocstyle - missing docstring in __init__
+  "D202",    # pydocstyle - no blank lines allowed after function docstring
+  "D205",    # pydocstyle - 1 blank line required between summary line and description
+  "D415",    # pydocstyle - first line should end with a period, question mark, or exclamation point
+  "UP037",   # pyupgrade - removes quotes from type annotation
+  "A003",    # flake8-builtins - class attribute {name} is shadowing a python builtin
+  "B010",    # flake8-bugbear - do not call setattr with a constant attribute value
+  "B008",    #  flake8-bugbear - Do not perform function call `Parameter` in argument defaultsRuff(B008)
+  "RUF012",  # ruff - mutable class attributes should be annotated with `typing.ClassVar`
+  "ANN401",  # ruff - Dynamically typed expressions (typing.Any) are disallowed
   "ANN102",
-  "ANN101", # ruff - Missing type annotation for `self` in method
+  "ANN101",  # ruff - Missing type annotation for `self` in method
   "PLR0913", # ruff - Too many arguments to function call
   "PLR2004", # Magic value used in comparison
-  "FBT001", # Boolean typed positional argument in function definition
-  "FBT002", # Boolean default positional argument in function definition
-  "FBT003", # Boolean Boolean default positional argument in function definition
-  "ARG002", # Unused method argument
-  "ARG001", #  Unused function argument
+  "FBT001",  # Boolean typed positional argument in function definition
+  "FBT002",  # Boolean default positional argument in function definition
+  "FBT003",  # Boolean Boolean default positional argument in function definition
+  "ARG002",  # Unused method argument
+  "ARG001",  #  Unused function argument
   "TD002",
   "TD003",
   "FIX002",
@@ -233,7 +210,7 @@ ignore = [
   'PT004',
   'PT005',
   'S603',
-  "E501", # pycodestyle line too long, handled by black
+  "E501",    # pycodestyle line too long, handled by black
   "PLW2901", # pylint - for loop variable overwritten by assignment target
   "ANN401",
   "ANN102",
@@ -244,55 +221,38 @@ ignore = [
   "TD",
   "PERF203", # ignore for now; investigate
 ]
-line-length = 120
-select = ["ALL"]
+lint.select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 src = ["src", "tests/"]
 target-version = "py311"
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 12
 
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
   "classmethod",
-  "pydantic.validator",
-  "pydantic.root_validator",
-  "pydantic.field_validator",
   "sqlalchemy.ext.declarative.declared_attr",
   "sqlalchemy.orm.declared_attr.directive",
   "sqlalchemy.orm.declared_attr",
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ['tests', 'app']
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "*/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "__init__.py" = ['F401', 'D104']
-"docs/**/*.*" = [
-  "S",
-  "B",
-  "DTZ",
-  "A",
-  "TCH",
-  "ERA",
-  "D",
-  "RET",
-  "E731",
-  "RUF012",
-  "FA100",
-  "ARG001",
-]
+"docs/**/*.*" = ["S", "B", "DTZ", "A", "TCH", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
-"scripts/*.py" = ["INP001"]
-"src/app/lib/db/migrations/versions/*.py" = ["ANN201", "INP001"]
+"scripts/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
+"scripts/*.py" = ["INP001", "ERA001"]
+"src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
-"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 
 [tool.slotscheck]
 strict-imports = false
@@ -315,8 +275,7 @@ exclude = '''(?x)(
 )
 '''
 implicit_reexport = false
-plugins = ['pydantic.mypy']
-show_error_codes = true
+plugins = []
 strict = true
 warn_redundant_casts = true
 warn_return_any = true
@@ -335,23 +294,25 @@ module = ["aisoql.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["sqlalchemy.*", "saq.*", "uvicorn.*", "aiohttp.*", "jsbeautifier", "jsbeautifier.*", "re2.*", "uvloop", "uvloop.*", "nodeenv"]
+module = [
+  "sqlalchemy.*",
+  "saq.*",
+  "uvicorn.*",
+  "aiohttp.*",
+  "jsbeautifier",
+  "jsbeautifier.*",
+  "uvloop",
+  "uvloop.*",
+  "nodeenv",
+]
 
 [[tool.mypy.overrides]]
 ignore_errors = true
-module = ["app.lib.db.migrations.*", "app.lib.dto.*"]
+module = ["app.db.migrations.*", "app.lib.dto.*"]
 
-[tool.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
-warn_untyped_fields = true
 
 [tool.pyright]
-exclude = [
-  "tools",
-  "docs",
-]
+exclude = ["scripts", "docs"]
 include = ["src/app", "tests"]
 
 [tool.git-cliff.changelog]
@@ -395,16 +356,16 @@ trim = true
 
 [tool.git-cliff.git]
 commit_parsers = [
-  {message = "^feat", group = "Features"},
-  {message = "^fix", group = "Bug Fixes"},
-  {message = "^doc", group = "Documentation"},
-  {message = "^perf", group = "Performance"},
-  {message = "^refactor", group = "Refactor"},
-  {message = "^style", group = "Styling"},
-  {message = "^test", group = "Testing"},
-  {message = "^chore\\(release\\): prepare for", skip = true},
-  {message = "^chore", group = "Miscellaneous Tasks"},
-  {body = ".*security", group = "Security"},
+  { message = "^feat", group = "Features" },
+  { message = "^fix", group = "Bug Fixes" },
+  { message = "^doc", group = "Documentation" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Refactor" },
+  { message = "^style", group = "Styling" },
+  { message = "^test", group = "Testing" },
+  { message = "^chore\\(release\\): prepare for", skip = true },
+  { message = "^chore", group = "Miscellaneous Tasks" },
+  { body = ".*security", group = "Security" },
 ]
 conventional_commits = true
 filter_commits = false

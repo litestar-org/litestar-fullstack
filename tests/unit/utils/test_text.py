@@ -1,4 +1,4 @@
-from app.utils import camel_case, check_email, slugify
+from app.utils import check_email, slugify
 
 
 def test_check_email() -> None:
@@ -14,8 +14,3 @@ def test_slugify() -> None:
     expected_slug = "this-is-a-test"
     assert slugify(string) == expected_slug
     assert slugify(string, separator="_") == "this_is_a_test"
-
-
-def test_camel_case() -> None:
-    string = "this_is_a_test"
-    assert camel_case(string) == "thisIsATest"
