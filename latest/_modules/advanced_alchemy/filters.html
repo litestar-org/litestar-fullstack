@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>advanced_alchemy.base &#8212; Litestar Fullstack Docs</title>
+    <title>advanced_alchemy.filters &#8212; Litestar Fullstack Docs</title>
   
   
   
@@ -17,28 +17,27 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
-  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -47,7 +46,7 @@
     <script src="../../_static/design-tabs.js?v=36754332"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/advanced_alchemy/base';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/advanced_alchemy/filters';</script>
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -63,7 +62,6 @@
   <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -103,10 +101,8 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <header>
   
-    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
@@ -413,15 +409,10 @@ document.write(`
   
 
   
-    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
-      <span class="fa-solid fa-outdent"></span>
-    </label>
-  
 </div>
 
-    </div>
+    </header>
   
-  </header>
 
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
@@ -709,190 +700,145 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for advanced_alchemy.base</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Application ORM configuration.&quot;&quot;&quot;</span>
+  <h1>Source code for advanced_alchemy.filters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Collection filter datastructures.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">runtime_checkable</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">uuid4</span>
-
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Date</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">String</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DeclarativeBase</span><span class="p">,</span>
-    <span class="n">Mapped</span><span class="p">,</span>
-    <span class="n">Mapper</span><span class="p">,</span>
-    <span class="n">declared_attr</span><span class="p">,</span>
-    <span class="n">mapped_column</span><span class="p">,</span>
-    <span class="n">orm_insert_sentinel</span><span class="p">,</span>
-    <span class="n">registry</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">advanced_alchemy.types</span> <span class="kn">import</span> <span class="n">GUID</span><span class="p">,</span> <span class="n">BigIntIdentity</span><span class="p">,</span> <span class="n">DateTimeUTC</span><span class="p">,</span> <span class="n">JsonB</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">abc</span>  <span class="c1"># noqa: TCH003</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>  <span class="c1"># noqa: TCH003</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">FromClause</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.sql.schema</span> <span class="kn">import</span> <span class="n">_NamingSchemaParameter</span> <span class="k">as</span> <span class="n">NamingSchemaParameter</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.types</span> <span class="kn">import</span> <span class="n">TypeEngine</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
 
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;AuditColumns&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;BigIntAuditBase&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;BigIntBase&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;BigIntPrimaryKey&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CommonTableAttributes&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;create_registry&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ModelProtocol&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;UUIDAuditBase&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;UUIDBase&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;UUIDPrimaryKey&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;orm_registry&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BeforeAfter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CollectionFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FilterTypes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LimitOffset&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OrderBy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SearchFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NotInCollectionFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OnBeforeAfter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NotInSearchFilter&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 
-<span class="n">UUIDBaseT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;UUIDBaseT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;UUIDBase&quot;</span><span class="p">)</span>
-<span class="n">BigIntBaseT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;BigIntBaseT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;BigIntBase&quot;</span><span class="p">)</span>
-
-<span class="n">convention</span><span class="p">:</span> <span class="n">NamingSchemaParameter</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;ix&quot;</span><span class="p">:</span> <span class="s2">&quot;ix_</span><span class="si">%(column_0_label)s</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;uq&quot;</span><span class="p">:</span> <span class="s2">&quot;uq_</span><span class="si">%(table_name)s</span><span class="s2">_</span><span class="si">%(column_0_name)s</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ck&quot;</span><span class="p">:</span> <span class="s2">&quot;ck_</span><span class="si">%(table_name)s</span><span class="s2">_</span><span class="si">%(constraint_name)s</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fk&quot;</span><span class="p">:</span> <span class="s2">&quot;fk_</span><span class="si">%(table_name)s</span><span class="s2">_</span><span class="si">%(column_0_name)s</span><span class="s2">_</span><span class="si">%(referred_table_name)s</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;pk&quot;</span><span class="p">:</span> <span class="s2">&quot;pk_</span><span class="si">%(table_name)s</span><span class="s2">&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;Templates for automated constraint name generation.&quot;&quot;&quot;</span>
+<span class="n">FilterTypes</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;BeforeAfter | OnBeforeAfter | CollectionFilter[Any] | LimitOffset | OrderBy | SearchFilter | NotInCollectionFilter[Any] | NotInSearchFilter&quot;</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Aggregate type alias of the types supported for collection filtering.&quot;&quot;&quot;</span>
 
 
-<span class="nd">@runtime_checkable</span>
-<span class="k">class</span> <span class="nc">ModelProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base SQLAlchemy model protocol.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BeforeAfter">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.BeforeAfter">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BeforeAfter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to filter a query on a ``datetime`` column.&quot;&quot;&quot;</span>
 
-    <span class="n">__table__</span><span class="p">:</span> <span class="n">FromClause</span>
-    <span class="n">__mapper__</span><span class="p">:</span> <span class="n">Mapper</span>
-    <span class="vm">__name__</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert model to dictionary.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict[str, Any]: A dict representation of the model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
-
-
-<span class="k">class</span> <span class="nc">UUIDPrimaryKey</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;UUID Primary Key Field Mixin.&quot;&quot;&quot;</span>
-
-    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">uuid4</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;UUID Primary key column.&quot;&quot;&quot;</span>
-
-    <span class="c1"># noinspection PyMethodParameters</span>
-    <span class="nd">@declared_attr</span>
-    <span class="k">def</span> <span class="nf">_sentinel</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">orm_insert_sentinel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sa_orm_sentinel&quot;</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">BigIntPrimaryKey</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;BigInt Primary Key Field Mixin.&quot;&quot;&quot;</span>
-
-    <span class="c1"># noinspection PyMethodParameters</span>
-    <span class="nd">@declared_attr</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;BigInt Primary key column.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">mapped_column</span><span class="p">(</span>
-            <span class="n">BigIntIdentity</span><span class="p">,</span>
-            <span class="n">Sequence</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">__tablename__</span><span class="si">}</span><span class="s2">_id_seq&quot;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>  <span class="c1"># type: ignore[attr-defined]</span>
-            <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-
-
-<div class="viewcode-block" id="AuditColumns">
-<a class="viewcode-back" href="../../api/lib/db/orm.html#app.lib.db.orm.AuditColumns">[docs]</a>
-<span class="k">class</span> <span class="nc">AuditColumns</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Created/Updated At Fields Mixin.&quot;&quot;&quot;</span>
-
-    <span class="n">created_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
-        <span class="n">DateTimeUTC</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
-    <span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Date/time of instance creation.&quot;&quot;&quot;</span>
-    <span class="n">updated_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
-        <span class="n">DateTimeUTC</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
-    <span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Date/time of instance last update.&quot;&quot;&quot;</span></div>
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
+    <span class="n">before</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field earlier than this.&quot;&quot;&quot;</span>
+    <span class="n">after</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field later than this.&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">CommonTableAttributes</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Common attributes for SQLALchemy tables.&quot;&quot;&quot;</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OnBeforeAfter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to filter a query on a ``datetime`` column.&quot;&quot;&quot;</span>
 
-    <span class="vm">__name__</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">__table__</span><span class="p">:</span> <span class="n">FromClause</span>
-    <span class="n">__mapper__</span><span class="p">:</span> <span class="n">Mapper</span>
-
-    <span class="c1"># noinspection PyMethodParameters</span>
-    <span class="nd">@declared_attr</span><span class="o">.</span><span class="n">directive</span>
-    <span class="k">def</span> <span class="nf">__tablename__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer table name from class name.&quot;&quot;&quot;</span>
-        <span class="n">regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;((?&lt;=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">regexp</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_\1&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert model to dictionary.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict[str, Any]: A dict representation of the model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">exclude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sa_orm_sentinel&quot;</span><span class="p">,</span> <span class="s2">&quot;_sentinel&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sa_instance_state</span><span class="o">.</span><span class="n">unloaded</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">exclude</span> <span class="ow">or</span> <span class="p">[])</span>  <span class="c1"># type: ignore[attr-defined]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">}</span>
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
+    <span class="n">on_or_before</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is on or earlier than this.&quot;&quot;&quot;</span>
+    <span class="n">on_or_after</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field on or later than this.&quot;&quot;&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">create_registry</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">registry</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new SQLAlchemy registry.&quot;&quot;&quot;</span>
-    <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">naming_convention</span><span class="o">=</span><span class="n">convention</span><span class="p">)</span>
-    <span class="n">type_annotation_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">TypeEngine</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="n">TypeEngine</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">UUID</span><span class="p">:</span> <span class="n">GUID</span><span class="p">,</span>
-        <span class="n">datetime</span><span class="p">:</span> <span class="n">DateTimeUTC</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Date</span><span class="p">,</span>
-        <span class="nb">dict</span><span class="p">:</span> <span class="n">JsonB</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">AnyUrl</span><span class="p">,</span> <span class="n">EmailStr</span>
+<div class="viewcode-block" id="CollectionFilter">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.CollectionFilter">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CollectionFilter</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE ... IN (...)`` clause.&quot;&quot;&quot;</span>
 
-        <span class="n">type_annotation_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">EmailStr</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">AnyUrl</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">AnyHttpUrl</span><span class="p">:</span> <span class="n">String</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">registry</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="n">meta</span><span class="p">,</span> <span class="n">type_annotation_map</span><span class="o">=</span><span class="n">type_annotation_map</span><span class="p">)</span>
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">abc</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``IN`` clause.</span>
+
+<span class="sd">    An empty list will return an empty result set, however, if ``None``, the filter is not applied to the query, and all rows are returned. &quot;&quot;&quot;</span></div>
 
 
-<span class="n">orm_registry</span> <span class="o">=</span> <span class="n">create_registry</span><span class="p">()</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">NotInCollectionFilter</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE ... NOT IN (...)`` clause.&quot;&quot;&quot;</span>
+
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">abc</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``NOT IN`` clause.</span>
+
+<span class="sd">    An empty list or ``None`` will return all rows.&quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">UUIDBase</span><span class="p">(</span><span class="n">UUIDPrimaryKey</span><span class="p">,</span> <span class="n">CommonTableAttributes</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all SQLAlchemy declarative models with UUID primary keys.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LimitOffset">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.LimitOffset">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LimitOffset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to add limit/offset filtering to a query.&quot;&quot;&quot;</span>
 
-    <span class="n">registry</span> <span class="o">=</span> <span class="n">orm_registry</span>
-
-
-<span class="k">class</span> <span class="nc">UUIDAuditBase</span><span class="p">(</span><span class="n">CommonTableAttributes</span><span class="p">,</span> <span class="n">UUIDPrimaryKey</span><span class="p">,</span> <span class="n">AuditColumns</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for declarative models with UUID primary keys and audit columns.&quot;&quot;&quot;</span>
-
-    <span class="n">registry</span> <span class="o">=</span> <span class="n">orm_registry</span>
-
-
-<span class="k">class</span> <span class="nc">BigIntBase</span><span class="p">(</span><span class="n">BigIntPrimaryKey</span><span class="p">,</span> <span class="n">CommonTableAttributes</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all SQLAlchemy declarative models with BigInt primary keys.&quot;&quot;&quot;</span>
-
-    <span class="n">registry</span> <span class="o">=</span> <span class="n">orm_registry</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Value for ``LIMIT`` clause of query.&quot;&quot;&quot;</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Value for ``OFFSET`` clause of query.&quot;&quot;&quot;</span></div>
 
 
-<span class="k">class</span> <span class="nc">BigIntAuditBase</span><span class="p">(</span><span class="n">CommonTableAttributes</span><span class="p">,</span> <span class="n">BigIntPrimaryKey</span><span class="p">,</span> <span class="n">AuditColumns</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for declarative models with BigInt primary keys and audit columns.&quot;&quot;&quot;</span>
 
-    <span class="n">registry</span> <span class="o">=</span> <span class="n">orm_registry</span>
+<div class="viewcode-block" id="OrderBy">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.OrderBy">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OrderBy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``ORDER BY ...`` clause.&quot;&quot;&quot;</span>
+
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to sort on.&quot;&quot;&quot;</span>
+    <span class="n">sort_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;asc&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort ascending or descending&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SearchFilter">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.SearchFilter">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SearchFilter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
+
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to sort on.&quot;&quot;&quot;</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``LIKE`` clause.&quot;&quot;&quot;</span>
+    <span class="n">ignore_case</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should the search be case insensitive.&quot;&quot;&quot;</span></div>
+
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">NotInSearchFilter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name NOT LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
+
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to search on.&quot;&quot;&quot;</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``NOT LIKE`` clause.&quot;&quot;&quot;</span>
+    <span class="n">ignore_case</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should the search be case insensitive.&quot;&quot;&quot;</span>
 </pre></div>
 
                 </article>
@@ -924,8 +870,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -958,7 +904,7 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
 </p></div>
       
     </div>

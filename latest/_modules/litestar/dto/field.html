@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>app.lib.serialization &#8212; Litestar Fullstack Docs</title>
+    <title>litestar.dto.field &#8212; Litestar Fullstack Docs</title>
   
   
   
@@ -17,28 +17,27 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../../../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
     <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
-  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -47,7 +46,7 @@
     <script src="../../../_static/design-tabs.js?v=36754332"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/lib/serialization';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/litestar/dto/field';</script>
     <link rel="icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -63,7 +62,6 @@
   <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -103,10 +101,8 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <header>
   
-    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
@@ -413,15 +409,10 @@ document.write(`
   
 
   
-    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
-      <span class="fa-solid fa-outdent"></span>
-    </label>
-  
 </div>
 
-    </div>
+    </header>
   
-  </header>
 
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
@@ -692,7 +683,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">app.lib.seri...</li>
+    <li class="breadcrumb-item active" aria-current="page">litestar.dto.field</li>
   </ul>
 </nav>
 </div>
@@ -709,92 +700,59 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for app.lib.serialization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+  <h1>Source code for litestar.dto.field</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;DTO domain types.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">msgspec</span>
-<span class="kn">from</span> <span class="nn">asyncpg.pgproto</span> <span class="kn">import</span> <span class="n">pgproto</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;convert_datetime_to_gmt&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;from_json&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;from_msgpack&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_json&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_msgpack&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;DTO_FIELD_META_KEY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DTOField&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Mark&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dto_field&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
-
-<span class="k">def</span> <span class="nf">_default</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pgproto</span><span class="o">.</span><span class="n">UUID</span> <span class="o">|</span> <span class="n">UUID</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">convert_datetime_to_gmt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">convert_date_to_iso</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="kn">from</span> <span class="nn">exc</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">val</span>
+<span class="n">DTO_FIELD_META_KEY</span> <span class="o">=</span> <span class="s2">&quot;__dto__&quot;</span>
 
 
-<span class="n">_msgspec_json_encoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="n">enc_hook</span><span class="o">=</span><span class="n">_default</span><span class="p">)</span>
-<span class="n">_msgspec_json_decoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">Decoder</span><span class="p">()</span>
-<span class="n">_msgspec_msgpack_encoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">msgpack</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="n">enc_hook</span><span class="o">=</span><span class="n">_default</span><span class="p">)</span>
-<span class="n">_msgspec_msgpack_decoder</span> <span class="o">=</span> <span class="n">msgspec</span><span class="o">.</span><span class="n">msgpack</span><span class="o">.</span><span class="n">Decoder</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">Mark</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For marking field definitions on domain models.&quot;&quot;&quot;</span>
+
+    <span class="n">READ_ONLY</span> <span class="o">=</span> <span class="s2">&quot;read-only&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To mark a field that can be read, but not updated by clients.&quot;&quot;&quot;</span>
+    <span class="n">WRITE_ONLY</span> <span class="o">=</span> <span class="s2">&quot;write-only&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To mark a field that can be written to, but not read by clients.&quot;&quot;&quot;</span>
+    <span class="n">PRIVATE</span> <span class="o">=</span> <span class="s2">&quot;private&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To mark a field that can neither be read or updated by clients.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="to_json">
-<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.to_json">[docs]</a>
-<span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode json with the optimized msgspec package.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_msgspec_json_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DTOField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For configuring DTO behavior on model fields.&quot;&quot;&quot;</span>
+
+    <span class="n">mark</span><span class="p">:</span> <span class="n">Mark</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;read-only&quot;</span><span class="p">,</span> <span class="s2">&quot;write-only&quot;</span><span class="p">,</span> <span class="s2">&quot;private&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mark the field as read-only, or private.&quot;&quot;&quot;</span>
 
 
+<div class="viewcode-block" id="dto_field">
+<a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.dto_field">[docs]</a>
+<span class="k">def</span> <span class="nf">dto_field</span><span class="p">(</span><span class="n">mark</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;read-only&quot;</span><span class="p">,</span> <span class="s2">&quot;write-only&quot;</span><span class="p">,</span> <span class="s2">&quot;private&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mark</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a field metadata mapping.</span>
 
-<div class="viewcode-block" id="from_json">
-<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.from_json">[docs]</a>
-<span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode to an object with the optimized msgspec package.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_msgspec_json_decoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+<span class="sd">    Args:</span>
+<span class="sd">        mark: A DTO mark for the field, e.g., &quot;read-only&quot;.</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict for setting as field metadata, such as the dataclass &quot;metadata&quot; field key, or the SQLAlchemy &quot;info&quot;</span>
+<span class="sd">        field.</span>
 
+<span class="sd">        Marking a field automates its inclusion/exclusion from DTO field definitions, depending on the DTO&#39;s purpose.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">DTO_FIELD_META_KEY</span><span class="p">:</span> <span class="n">DTOField</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">Mark</span><span class="p">(</span><span class="n">mark</span><span class="p">))}</span></div>
 
-<div class="viewcode-block" id="to_msgpack">
-<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.to_msgpack">[docs]</a>
-<span class="k">def</span> <span class="nf">to_msgpack</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode json with the optimized msgspec package.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_msgspec_msgpack_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="from_msgpack">
-<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.from_msgpack">[docs]</a>
-<span class="k">def</span> <span class="nf">from_msgpack</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode to an object with the optimized msgspec package.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_msgspec_msgpack_decoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="convert_datetime_to_gmt">
-<a class="viewcode-back" href="../../../api/lib/serialization.html#app.lib.serialization.convert_datetime_to_gmt">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_datetime_to_gmt</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle datetime serialization for nested timestamps.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dt</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">:</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span></div>
-
-
-
-<span class="k">def</span> <span class="nf">convert_date_to_iso</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle date serialization for nested dates.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
 </pre></div>
 
                 </article>
@@ -826,8 +784,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
-<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -860,7 +818,7 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
 </p></div>
       
     </div>

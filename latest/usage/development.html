@@ -6,7 +6,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Development &#8212; Litestar Fullstack Docs</title>
   
@@ -18,28 +18,27 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
     <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
-  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -64,7 +63,6 @@
   <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -104,10 +102,8 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <header>
   
-    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
@@ -420,9 +416,8 @@ document.write(`
   
 </div>
 
-    </div>
+    </header>
   
-  </header>
 
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
@@ -886,14 +881,14 @@ Full Makefile<div class="sd-summary-down docutils">
 
 <span class="nv">.DEFAULT_GOAL</span><span class="o">:=</span><span class="nb">help</span>
 <span class="nf">.ONESHELL</span><span class="o">:</span>
-<span class="nv">USING_PDM</span><span class="w">		          </span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;tool.pdm&quot;</span><span class="w"> </span>pyproject.toml<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="k">)</span>
-<span class="nv">USING_NPM</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;package-lock.json&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
-<span class="nv">ENV_PREFIX</span><span class="w">		        </span><span class="o">=</span>.venv/bin/
-<span class="nv">VENV_EXISTS</span><span class="w">           </span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;.venv/bin/activate&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
-<span class="nv">NODE_MODULES_EXISTS</span><span class="w">		</span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;node_modules&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
-<span class="nv">SRC_DIR</span><span class="w">               </span><span class="o">=</span>src
-<span class="nv">BUILD_DIR</span><span class="w">             </span><span class="o">=</span>dist
-<span class="nv">PDM_OPTS</span><span class="w"> 		          </span><span class="o">?=</span>
+<span class="nv">USING_PDM</span><span class="w">		          	</span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;tool.pdm&quot;</span><span class="w"> </span>pyproject.toml<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="k">)</span>
+<span class="nv">USING_NPM</span><span class="w">             		</span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;package-lock.json&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">ENV_PREFIX</span><span class="w">		        	</span><span class="o">=</span>.venv/bin/
+<span class="nv">VENV_EXISTS</span><span class="w">           		</span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;.venv/bin/activate&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">NODE_MODULES_EXISTS</span><span class="w">			</span><span class="o">=</span><span class="w">	</span><span class="k">$(</span>shell<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if __import__(&#39;pathlib&#39;).Path(&#39;node_modules&#39;).exists(): print(&#39;yes&#39;)&quot;</span><span class="k">)</span>
+<span class="nv">SRC_DIR</span><span class="w">               		</span><span class="o">=</span>src
+<span class="nv">BUILD_DIR</span><span class="w">             		</span><span class="o">=</span>dist
+<span class="nv">PDM_OPTS</span><span class="w"> 		          	</span><span class="o">?=</span>
 <span class="nv">PDM</span><span class="w"> 			            </span><span class="o">?=</span><span class="w"> 	</span>pdm<span class="w"> </span><span class="k">$(</span>PDM_OPTS<span class="k">)</span>
 
 <span class="nf">.EXPORT_ALL_VARIABLES</span><span class="o">:</span>
@@ -964,10 +959,14 @@ Full Makefile<div class="sd-summary-down docutils">
 <span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;.ipynb_checkpoints&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
 
 <span class="nf">destroy-venv</span><span class="o">:</span><span class="w"> 											</span><span class="c">## Destroy the virtual environment</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Cleaning Python virtual environment&quot;</span>
 <span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>.venv
 
 <span class="nf">destroy-node_modules</span><span class="o">:</span><span class="w"> 											</span><span class="c">## Destroy the node environment</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Cleaning Node modules&quot;</span>
 <span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>node_modules
+
+<span class="nf">tidy</span><span class="o">:</span><span class="w"> </span><span class="n">clean</span> <span class="n">destroy</span>-<span class="n">venv</span> <span class="n">destroy</span>-<span class="n">node_modules</span> <span class="c">## Clean up everything</span>
 
 <span class="nf">migrations</span><span class="o">:</span><span class="w">       </span><span class="c">## Generate database migrations</span>
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;ATTENTION: This operation will create a new database migration for any defined models changes.&quot;</span>
@@ -1000,6 +999,12 @@ Full Makefile<div class="sd-summary-down docutils">
 <span class="nf">lint</span><span class="o">:</span><span class="w"> 												</span><span class="c">## Runs pre-commit hooks; includes ruff linting, codespell, black</span>
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running pre-commit process&quot;</span>
 <span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Pre-commit complete&quot;</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">format</span>
+<span class="nf">format</span><span class="o">:</span><span class="w"> 												</span><span class="c">## Runs code formatting utilities</span>
+<span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running pre-commit process&quot;</span>
+<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>ruff<span class="w"> </span>.<span class="w"> </span>--fix
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Pre-commit complete&quot;</span>
 
 <span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">coverage</span>
@@ -1140,8 +1145,8 @@ Full Makefile<div class="sd-summary-down docutils">
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1174,7 +1179,7 @@ Full Makefile<div class="sd-summary-down docutils">
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
 </p></div>
       
     </div>
