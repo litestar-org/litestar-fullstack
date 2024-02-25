@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
 
+TRUE_VALUES = {"True", "true", "1", "yes", "Y", "T"}
+
 
 @dataclass
 class DatabaseSettings:
@@ -33,7 +35,7 @@ class DatabaseSettings:
     )
     """Enable SQLAlchemy connection pool logs."""
     POOL_DISABLED: bool = field(
-        default_factory=lambda: os.getenv("DATABASE_POOL_DISABLED", "False") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("DATABASE_POOL_DISABLED", "False") in TRUE_VALUES,
     )
     """Disable SQLAlchemy pool configuration."""
     POOL_MAX_OVERFLOW: int = field(default_factory=lambda: int(os.getenv("DATABASE_MAX_POOL_OVERFLOW", "10")))
@@ -45,7 +47,7 @@ class DatabaseSettings:
     POOL_RECYCLE: int = field(default_factory=lambda: int(os.getenv("DATABASE_POOL_RECYCLE", "300")))
     """Amount of time to wait before recycling connections."""
     POOL_PRE_PING: bool = field(
-        default_factory=lambda: os.getenv("DATABASE_PRE_POOL_PING", "False") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("DATABASE_PRE_POOL_PING", "False") in TRUE_VALUES,
     )
     """Optionally ping database before fetching a session from the connection pool."""
     URL: str = field(default_factory=lambda: os.getenv("DATABASE_URL", "sqlite+aiosqlite:///db.sqlite3"))
@@ -177,11 +179,11 @@ class ViteSettings:
     """Server configurations."""
 
     DEV_MODE: bool = field(
-        default_factory=lambda: os.getenv("VITE_DEV_MODE", "False") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("VITE_DEV_MODE", "False") in TRUE_VALUES,
     )
     """Start `vite` development server."""
     USE_SERVER_LIFESPAN: bool = field(
-        default_factory=lambda: os.getenv("VITE_USE_SERVER_LIFESPAN", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("VITE_USE_SERVER_LIFESPAN", "True") in TRUE_VALUES,
     )
     """Auto start and stop `vite` processes when running in development mode.."""
     HOST: str = field(default_factory=lambda: os.getenv("VITE_HOST", "0.0.0.0"))  # noqa: S104
@@ -189,11 +191,11 @@ class ViteSettings:
     PORT: int = field(default_factory=lambda: int(os.getenv("VITE_PORT", "5173")))
     """The port to start vite on.  Default to `5173`"""
     HOT_RELOAD: bool = field(
-        default_factory=lambda: os.getenv("VITE_HOT_RELOAD", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("VITE_HOT_RELOAD", "True") in TRUE_VALUES,
     )
     """Start `vite` with HMR enabled."""
     ENABLE_REACT_HELPERS: bool = field(
-        default_factory=lambda: os.getenv("VITE_ENABLE_REACT_HELPERS", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("VITE_ENABLE_REACT_HELPERS", "True") in TRUE_VALUES,
     )
     """Enable React support in HMR."""
     BUNDLE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/public"))
@@ -226,7 +228,7 @@ class ServerSettings:
     KEEPALIVE: int = field(default_factory=lambda: int(os.getenv("LITESTAR_KEEPALIVE", "65")))
     """Seconds to hold connections open (65 is > AWS lb idle timeout)."""
     RELOAD: bool = field(
-        default_factory=lambda: os.getenv("LITESTAR_RELOAD", "False") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("LITESTAR_RELOAD", "False") in TRUE_VALUES,
     )
     """Turn on hot reloading."""
     RELOAD_DIRS: list[str] = field(default_factory=lambda: [f"{BASE_DIR}"])
@@ -252,11 +254,11 @@ class SaqSettings:
     Default is set to 10.
     """
     WEB_ENABLED: bool = field(
-        default_factory=lambda: os.getenv("SAQ_WEB_ENABLED", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("SAQ_WEB_ENABLED", "True") in TRUE_VALUES,
     )
     """If true, the worker admin UI is hosted on worker startup."""
     USE_SERVER_LIFESPAN: bool = field(
-        default_factory=lambda: os.getenv("SAQ_USE_SERVER_LIFESPAN", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("SAQ_USE_SERVER_LIFESPAN", "True") in TRUE_VALUES,
     )
     """Auto start and stop `saq` processes when starting the Litestar application."""
 
@@ -349,7 +351,7 @@ class RedisSettings:
     HEALTH_CHECK_INTERVAL: int = field(default_factory=lambda: int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", "5")))
     """Length of time to wait (in seconds) before testing connection health."""
     SOCKET_KEEPALIVE: bool = field(
-        default_factory=lambda: os.getenv("REDIS_SOCKET_KEEPALIVE", "True") in {"True", "1", "yes", "Y", "T"},
+        default_factory=lambda: os.getenv("REDIS_SOCKET_KEEPALIVE", "True") in TRUE_VALUES,
     )
     """Length of time to wait (in seconds) between keepalive commands."""
     _redis_instance: Redis | None = None
@@ -379,7 +381,7 @@ class AppSettings:
 
     URL: str = field(default_factory=lambda: os.getenv("APP_URL", "http://localhost:8000"))
     """The frontend base URL"""
-    DEBUG: bool = field(default_factory=lambda: os.getenv("LITESTAR_DEBUG", "False") in {"True", "1", "yes", "Y", "T"})
+    DEBUG: bool = field(default_factory=lambda: os.getenv("LITESTAR_DEBUG", "False") in TRUE_VALUES)
     """Run `Litestar` with `debug=True`."""
     SECRET_KEY: str = field(
         default_factory=lambda: os.getenv("SECRET_KEY", binascii.hexlify(os.urandom(32)).decode(encoding="utf-8")),
@@ -387,7 +389,7 @@ class AppSettings:
     """Application secret key."""
     NAME: str = field(default_factory=lambda: "app")
     """Application name."""
-    ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=lambda: os.getenv("BACKEND_CORS_ORIGINS", '["*"]'))
+    ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=lambda: os.getenv("ALLOWED_CORS_ORIGINS", '["*"]'))
     """Allowed CORS Origins"""
     CSRF_COOKIE_NAME: str = field(default_factory=lambda: "csrftoken")
     """CSRF Cookie Name"""

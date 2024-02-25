@@ -8,9 +8,15 @@ x-development-volumes: &development-volumes
     - ./pyproject.toml:/workspace/app/pyproject.toml
     - ./pdm.lock:/workspace/app/pdm.lock
     - ./tsconfig.json:/workspace/app/tsconfig.json
+    - ./tsconfig.node.json:/workspace/app/tsconfig.node.json
     - ./package.json:/workspace/app/package.json
     - ./vite.config.ts:/workspace/app/vite.config.ts
     - ./resources:/workspace/app/resources
+    - ./components.json:/workspace/app/components.json
+    - ./tailwind.config.cjs:/workspace/app/tailwind.config.cjs
+    - ./postcss.config.cjs:/workspace/app/postcss.config.cjs
+    - ./.env.docker.example:/workspace/app/.env
+
 services:
   localmail:
     image: mailhog/mailhog:v1.0.0
@@ -45,14 +51,14 @@ services:
         condition: service_healthy
 
     env_file:
-      - .env.example
+      - .env.docker.example
   migrator:
     image: app:latest-dev
     command: litestar database upgrade --no-prompt
     restart: "no"
     <<: *development-volumes
     env_file:
-      - .env.example
+      - .env.docker.example
     depends_on:
       db:
         condition: service_healthy

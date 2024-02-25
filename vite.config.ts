@@ -10,7 +10,7 @@ export default defineConfig({
   base: `${ASSET_URL}`,
   clearScreen: false,
   server: {
-    host: `${VITE_HOST}`,
+    host: "0.0.0.0",
     port: +`${VITE_PORT}`,
     cors: true,
   },
