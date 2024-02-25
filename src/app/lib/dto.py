@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
     from litestar.dto import RenameStrategy
 
-__all__ = ["config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO"]
+__all__ = ("config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO")
 
 DTOT = TypeVar("DTOT", bound=DataclassProtocol | DeclarativeBase)
 DTOFactoryT = TypeVar("DTOFactoryT", bound=DataclassDTO | SQLAlchemyDTO)
@@ -71,20 +71,3 @@ def config(
     if partial:
         default_kwargs["partial"] = partial
     return DTOConfig(**default_kwargs)
-
-
-@overload
-def builder(dto: DeclarativeBase) -> DataclassDTO[DTOT]:
-    ...
-
-
-@overload
-def builder(dto: DataclassModelT) -> SQLAlchemyDTO[DTOT]:
-    ...
-
-
-def builder(dto: ModelT) -> DTOFactoryT[ModelT]:
-    """Construct a DTO."""
-    if issubclass(dto, DeclarativeBase):
-        return SQLAlchemyDTO[dto]
-    return DataclassDTO[dto]

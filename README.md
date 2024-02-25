@@ -25,10 +25,11 @@ This is a reference application that you can use to get your next Litestar appli
 It contains most of the boilerplate required for a production web API with features like:
 
 - Latest Litestar configured with best practices
-- Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), and [Structlog](https://www.structlog.org/en/stable/)
+- Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](<(https://www.structlog.org/en/stable/)](https://github.com/emmett-framework/granian)>)
 - Extends built-in Litestar click CLI
-- Frontend integrated with ViteJS and includes Jinja2 templates that integrate with Vite websocket/HMR support
-- Multi-stage Docker build using a minimal Python 3.11 runtime image.
+- Frontend integrated with Vite and includes Jinja2 templates that integrate with Vite websocket/HMR support
+- Multi-stage Docker build using a minimal Python 3.12 runtime image.
+  - Optional Multi-stage Distroless Docker build.
 - Pre-configured user model that includes teams and associated team roles
 - Examples of using guards for superuser and team-based auth.
 - Examples using raw SQL for more complex queries
@@ -42,6 +43,24 @@ To quickly get a development environment running, run the following:
 ```shell
 make install
 . .venv/bin/activate
+```
+
+### Local Development
+
+```bash
+cp .env.local.example .env
+pdm run start-infra # this starts a database and redis instance only
+# this will start the SAQ worker, Vite development process, and Litestar
+pdm run app run
+
+# to stop the database and redis, run
+pdm run stop-infra
+```
+
+### Docker
+
+```bash
+docker compose up
 ```
 
 <details>
@@ -65,23 +84,26 @@ make install
 │                           (DIRECTORY)                                        │
 │ --help     -h             Show this message and exit.                        │
 ╰──────────────────────────────────────────────────────────────────────────────╯
-Using Litestar app from env: 'app.asgi:create_app'
+Using Litestar app from env: 'app.asgi:app'
+Loading environment configuration from .env
 ╭─ Commands ───────────────────────────────────────────────────────────────────╮
-│ database   Manage SQLAlchemy database components.                            │
-│ info       Show information about the detected Litestar app.                 │
-│ routes     Display information about the application's routes.               │
-│ run        Run a Litestar app.                                               │
-│ run-all    Starts the application server & worker in a single command.       │
-│ schema     Manage server-side OpenAPI schemas.                               │
-│ sessions   Manage server-side sessions.                                      │
-│ users      Manage application users.                                         │
-│ version    Show the currently installed Litestar version.                    │
-│ worker     Manage application background workers.                            │
+│ assets       Manage Vite Tasks.                                              │
+│ database     Manage SQLAlchemy database components.                          │
+│ info         Show information about the detected Litestar app.               │
+│ routes       Display information about the application's routes.             │
+│ run          Run a Litestar app.                                             │
+│ schema       Manage server-side OpenAPI schemas.                             │
+│ sessions     Manage server-side sessions.                                    │
+│ users        Manage application users and roles.                             │
+│ version      Show the currently installed Litestar version.                  │
+│ workers      Manage background task workers.                                 │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
 ```
 
 ## Database Commands
+
+Alembic integration is built directly into the CLI under the `database` command.
 
 ```bash
 ❯ app database
@@ -145,11 +167,12 @@ Using Litestar app from env: 'app.asgi:create_app'
 
 ## Run Commands
 
-To run the application through Uvicorn using the standard Litestar CLI, you can use the following:
+To run the application through Granian (HTTP1 or HTTP2) using the standard Litestar CLI, you can use the following:
 
 ```bash
 ❯ app run --help
-Using Litestar app from env: 'app.asgi:create_app'
+Using Litestar app from env: 'app.asgi:app'
+Loading environment configuration from .env
 
  Usage: app run [OPTIONS]
 
@@ -163,80 +186,113 @@ Using Litestar app from env: 'app.asgi:create_app'
  ``Litestar`` instance.
 
 ╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --reload                 -r                          Reload server on        │
-│                                                      changes                 │
-│ --reload-dir             -R  TEXT                    Directories to watch    │
-│                                                      for file changes        │
-│                                                      (TEXT)                  │
 │ --port                   -p  INTEGER                 Serve under this port   │
 │                                                      (INTEGER)               │
 │                                                      [default: 8000]         │
-│ --wc,--web-concurrency   -W  INTEGER RANGE           The number of HTTP      │
-│                              [1<=x<=7]               workers to launch       │
+│ --wc,--web-concurrency…  -W  INTEGER RANGE           The number of processes │
+│                              [1<=x<=7]               to start.               │
 │                                                      (INTEGER RANGE)         │
 │                                                      [default: 1; 1<=x<=7]   │
+│ --threads                    INTEGER RANGE [x>=1]    The number of threads.  │
+│                                                      (INTEGER RANGE)         │
+│                                                      [default: 1; x>=1]      │
+│ --blocking-threads           INTEGER RANGE [x>=1]    The number of blocking  │
+│                                                      threads.                │
+│                                                      (INTEGER RANGE)         │
+│                                                      [default: 1; x>=1]      │
+│ --threading-mode             THREADMODES             Threading mode to use.  │
+│                                                      (THREADMODES)           │
+│ --http                       HTTPMODES               HTTP Version to use     │
+│                                                      (HTTP or HTTP2)         │
+│                                                      (HTTPMODES)             │
+│ --opt                                                Enable additional event │
+│                                                      loop optimizations      │
+│ --backlog                    INTEGER RANGE [x>=128]  Maximum number of       │
+│                                                      connections to hold in  │
+│                                                      backlog.                │
+│                                                      (INTEGER RANGE)         │
+│                                                      [default: 1024; x>=128] │
 │ --host                   -H  TEXT                    Server under this host  │
 │                                                      (TEXT)                  │
 │                                                      [default: 127.0.0.1]    │
-│ --fd,--file-descriptor   -F  INTEGER                 Bind to a socket from   │
-│                                                      this file descriptor.   │
+│ --ssl-keyfile                FILE                    SSL key file (FILE)     │
+│ --ssl-certificate            FILE                    SSL certificate file    │
+│                                                      (FILE)                  │
+│ --create-self-signed-c…                              If certificate and key  │
+│                                                      are not found at        │
+│                                                      specified locations,    │
+│                                                      create a self-signed    │
+│                                                      certificate and a key   │
+│ --http1-buffer-size          INTEGER RANGE           Set the maximum buffer  │
+│                              [x>=8192]               size for HTTP/1         │
+│                                                      connections             │
+│                                                      (INTEGER RANGE)         │
+│                                                      [default: 417792;       │
+│                                                      x>=8192]                │
+│ --http1-keep-alive/--n…                              Enables or disables     │
+│                                                      HTTP/1 keep-alive       │
+│                                                      [default:               │
+│                                                      http1-keep-alive]       │
+│ --http1-pipeline-flush…                              Aggregates HTTP/1       │
+│                                                      flushes to better       │
+│                                                      support pipelined       │
+│                                                      responses               │
+│                                                      (experimental)          │
+│ --http2-adaptive-windo…                              Sets whether to use an  │
+│                                                      adaptive flow control   │
+│                                                      for HTTP2               │
+│ --http2-initial-connec…      INTEGER                 Sets the max            │
+│                                                      connection-level flow   │
+│                                                      control for HTTP2       │
 │                                                      (INTEGER)               │
-│ --uds,--unix-domain-so…  -U  TEXT                    Bind to a UNIX domain   │
-│                                                      socket.                 │
+│ --http2-initial-stream…      INTEGER                 Sets the                │
+│                                                      `SETTINGS_INITIAL_WIND… │
+│                                                      option for HTTP2        │
+│                                                      stream-level flow       │
+│                                                      control                 │
+│                                                      (INTEGER)               │
+│ --http2-keep-alive-int…      OPTIONAL                Sets an interval for    │
+│                                                      HTTP2 Ping frames       │
+│                                                      should be sent to keep  │
+│                                                      a connection alive      │
+│                                                      (OPTIONAL)              │
+│ --http2-keep-alive-tim…      INTEGER                 Sets a timeout for      │
+│                                                      receiving an            │
+│                                                      acknowledgement of the  │
+│                                                      HTTP2 keep-alive ping   │
+│                                                      (INTEGER)               │
+│ --http2-max-concurrent…      INTEGER                 Sets the                │
+│                                                      SETTINGS_MAX_CONCURREN… │
+│                                                      option for HTTP2        │
+│                                                      connections             │
+│                                                      (INTEGER)               │
+│ --http2-max-frame-size       INTEGER                 Sets the maximum frame  │
+│                                                      size to use for HTTP2   │
+│                                                      (INTEGER)               │
+│ --http2-max-headers-si…      INTEGER                 Sets the max size of    │
+│                                                      received header frames  │
+│                                                      (INTEGER)               │
+│ --http2-max-send-buffe…      INTEGER                 Set the maximum write   │
+│                                                      buffer size for each    │
+│                                                      HTTP/2 stream           │
+│                                                      (INTEGER)               │
+│ --url-path-prefix            TEXT                    URL path prefix the app │
+│                                                      is mounted on           │
 │                                                      (TEXT)                  │
 │ --debug                  -d                          Run app in debug mode   │
 │ --pdb,--use-pdb          -P                          Drop into PDB on an     │
 │                                                      exception               │
+│ --respawn-failed-worke…                              Enable workers respawn  │
+│                                                      on unexpected exit      │
+│ --reload                 -r                          Reload server on        │
+│                                                      changes                 │
 │ --help                   -h                          Show this message and   │
 │                                                      exit.                   │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
-
 ```
 
-The above command will not start the background workers. Those can be launched separately in another terminal.
-
-Alternately, the `run-all` command will automatically start the background workers in separate processes.
-
-```bash
-❯ app run-all --help
-Using Litestar app from env: 'app.asgi:create_app'
-
- Usage: app run-all [OPTIONS] COMMAND [ARGS]...
-
- Starts the application server & worker in a single command.
-
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --host                    TEXT                     Host interface to listen  │
-│                                                    on.  Use 0.0.0.0 for all  │
-│                                                    available interfaces.     │
-│                                                    (TEXT)                    │
-│                                                    [default: 0.0.0.0]        │
-│ --port                -p  INTEGER                  Port to bind.   (INTEGER) │
-│                                                    [default: 8000]           │
-│ --http-workers            INTEGER RANGE [1<=x<=7]  The number of HTTP worker │
-│                                                    processes for handling    │
-│                                                    requests.                 │
-│                                                    (INTEGER RANGE)           │
-│                                                    [default: 7; 1<=x<=7]     │
-│ --worker-concurrency      INTEGER RANGE [x>=1]     The number of             │
-│                                                    simultaneous jobs a       │
-│                                                    worker process can        │
-│                                                    execute.                  │
-│                                                    (INTEGER RANGE)           │
-│                                                    [default: 1; x>=1]        │
-│ --reload              -r                           Enable reload             │
-│ --verbose             -v                           Enable verbose logging.   │
-│ --debug               -d                           Enable debugging.         │
-│ --help                -h                           Show this message and     │
-│                                                    exit.                     │
-╰──────────────────────────────────────────────────────────────────────────────╯
-
-```
-
-</details>
-
-## Installation and Configuration
+### Details
 
 We have documented the process to help you get the repository up and running.
 Check out the [documentation][docs] for more information.

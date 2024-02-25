@@ -61,8 +61,11 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
+    environment:
+      VITE_USE_SERVER_LIFESPAN: "false" # true if ssr or separate service
+      SAQ_USE_SERVER_LIFESPAN: "false"
     env_file:
-      - .env.example
+      - .env.docker.example
   worker:
     image: app:latest
     command: litestar workers run
@@ -73,13 +76,13 @@ services:
       cache:
         condition: service_healthy
     env_file:
-      - .env.example
+      - .env.docker.example
   migrator:
     image: app:latest
     restart: "no"
     command: litestar database upgrade --no-prompt
     env_file:
-      - .env.example
+      - .env.docker.example
     depends_on:
       db:
         condition: service_healthy

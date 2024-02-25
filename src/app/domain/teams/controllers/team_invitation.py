@@ -6,8 +6,6 @@ from litestar.di import Provide
 
 from app.domain.teams.dependencies import provide_team_invitations_service
 
-__all__ = ["TeamInvitationController", "provide_team_invitations_service"]
-
 
 class TeamInvitationController(Controller):
     """Team Invitations."""

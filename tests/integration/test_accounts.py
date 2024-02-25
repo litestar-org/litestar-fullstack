@@ -45,12 +45,11 @@ async def test_accounts_create(client: "AsyncClient", superuser_token_headers: d
     assert response.status_code == 201
 
 
-async def test_user_update(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
+async def test_accounts_update(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
     response = await client.patch(
         "/api/users/5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         json={
             "name": "Name Changed",
-            "is_superuser": True,
         },
         headers=superuser_token_headers,
     )

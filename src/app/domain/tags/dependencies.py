@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
-from app.domain.tags.models import Tag
+from app.db.models import Tag
 from app.domain.tags.services import TagService
 
 if TYPE_CHECKING:
@@ -26,5 +27,8 @@ async def provide_tags_service(
     Returns:
         TagService: An Tags service object
     """
-    async with TagService.new(session=db_session, statement=select(Tag)) as service:
+    async with TagService.new(
+        session=db_session,
+        statement=select(Tag).options(selectinload(Tag.teams, recursion_depth=2)),
+    ) as service:
         yield service
