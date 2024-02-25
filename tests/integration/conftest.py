@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from advanced_alchemy.base import UUIDAuditBase
 from httpx import AsyncClient
 from litestar import Litestar
 from litestar_saq.cli import get_saq_plugin
@@ -13,10 +14,13 @@ from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from app.domain.accounts.models import User
-from app.domain.security import auth
-from app.domain.teams.models import Team
-from app.lib import db
+from app.config import get_settings
+from app.db.models import Team, User
+from app.db.utils import open_fixture
+from app.domain.accounts.guards import auth
+from app.domain.accounts.services import RoleService, UserService
+from app.domain.teams.services import TeamService
+from app.server.plugins import alchemy
 from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive
 
 here = Path(__file__).parent
@@ -50,7 +54,7 @@ async def redis_service(docker_services: DockerServiceRegistry) -> None:
     await docker_services.start("redis", check=redis_responsive)
 
 
-@pytest.fixture(name="engine")
+@pytest.fixture(name="engine", autouse=True)
 async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None) -> AsyncEngine:  # noqa: D417
     """Postgresql instance for end-to-end testing.
 
@@ -104,20 +108,22 @@ async def _seed_db(
 
     """
 
-    from app.domain.accounts.services import UserService
-    from app.domain.teams.services import TeamService
-    from app.lib.db import orm  # pylint: disable=[import-outside-toplevel,unused-import]
-
-    metadata = orm.DatabaseModel.registry.metadata
+    settings = get_settings()
+    fixtures_path = Path(settings.db.FIXTURE_PATH)
+    metadata = UUIDAuditBase.registry.metadata
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
+    async with RoleService.new(sessionmaker()) as service:
+        fixture = open_fixture(fixtures_path, "role")
+        for obj in fixture:
+            _ = await service.repository.get_or_upsert(match_fields="name", upsert=True, **obj)
+        await service.repository.session.commit()
     async with UserService.new(sessionmaker()) as users_service:
-        await users_service.create_many(raw_users)
-        await users_service.repository.session.commit()
+        await users_service.create_many(raw_users, auto_commit=True)
     async with TeamService.new(sessionmaker()) as teams_services:
-        for raw_team in raw_teams:
-            await teams_services.create(raw_team)
+        for obj in raw_teams:
+            await teams_services.create(obj)
         await teams_services.repository.session.commit()
 
     return None  # type: ignore[return-value]
@@ -130,17 +136,16 @@ def _patch_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(db, "async_session_factory", sessionmaker)
-    monkeypatch.setattr(db.base, "async_session_factory", sessionmaker)
-    monkeypatch.setitem(app.state, db.config.engine_app_state_key, engine)
+    monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
+    monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
     monkeypatch.setitem(
         app.state,
-        db.config.session_maker_app_state_key,
+        alchemy._config.session_maker_app_state_key,
         async_sessionmaker(bind=engine, expire_on_commit=False),
     )
 
 
-@pytest.fixture(name="redis")
+@pytest.fixture(name="redis", autouse=True)
 async def fx_redis(docker_ip: str, redis_service: None) -> Redis:
     """Redis instance for testing.
 

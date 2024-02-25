@@ -1,3 +1,3 @@
-from . import controllers
+from . import controllers, templates
 
-__all__ = ["controllers"]
+__all__ = ["controllers", "templates"]

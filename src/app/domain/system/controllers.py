@@ -2,43 +2,47 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypeVar
 
-from litestar import Controller, MediaType, get
+import structlog
+from litestar import Controller, MediaType, Request, get
 from litestar.response import Response
+from redis import RedisError
 from sqlalchemy import text
 
-from app.domain.system.dtos import SystemHealth
-from app.lib import constants, log
-from app.lib.cache import redis
+from app.config.base import get_settings
+
+from .schemas import SystemHealth
+from .urls import SYSTEM_HEALTH
 
 if TYPE_CHECKING:
     from litestar_saq import TaskQueues
     from sqlalchemy.ext.asyncio import AsyncSession
 
-
-__all__ = ["SystemController"]
-
-
-logger = log.get_logger()
-
+logger = structlog.get_logger()
 OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
 
 
 class SystemController(Controller):
     tags = ["System"]
+    signature_types = [SystemHealth]
 
     @get(
         operation_id="SystemHealth",
         name="system:health",
-        path=constants.SYSTEM_HEALTH,
+        path=SYSTEM_HEALTH,
         media_type=MediaType.JSON,
         cache=False,
         tags=["System"],
         summary="Health Check",
         description="Execute a health check against backend components.  Returns system information including database and cache status.",
-        signature_namespace={"SystemHealth": SystemHealth},
     )
-    async def check_system_health(self, db_session: AsyncSession, task_queues: TaskQueues) -> Response[SystemHealth]:
+    async def check_system_health(
+        self,
+        request: Request,
+        db_session: AsyncSession,
+        task_queues: TaskQueues,
+    ) -> Response[SystemHealth]:
         """Check database available and returns app config info."""
+        settings = get_settings()
         try:
             await db_session.execute(text("select 1"))
             db_ping = True
@@ -46,11 +50,14 @@ class SystemController(Controller):
             db_ping = False
 
         db_status = "online" if db_ping else "offline"
-        cache_ping = await redis.ping()
+        try:
+            cache_ping = await settings.redis.get_client().ping()
+        except RedisError:
+            cache_ping = False
         cache_status = "online" if cache_ping else "offline"
         worker_ping = bool([await queue.info() for queue in task_queues.queues.values()])
         worker_status = "online" if worker_ping else "offline"
-        healthy = bool(worker_ping and cache_ping and db_ping)
+        healthy = worker_ping and cache_ping and db_ping
         if healthy:
             await logger.adebug(
                 "System Health",

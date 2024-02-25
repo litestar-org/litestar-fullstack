@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "ms-python.black-formatter",
     "mikestead.dotenv",
     "christian-kohler.path-intellisense",
     "ms-python.vscode-pylance",
