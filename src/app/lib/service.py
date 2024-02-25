@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import contextlib
 from collections.abc import Sequence
+from functools import partial
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, overload
 
+import msgspec
 from advanced_alchemy.filters import (
     FilterTypes,
     LimitOffset,
@@ -18,25 +20,22 @@ from advanced_alchemy.repository.typing import ModelT
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService as _SQLAlchemyAsyncRepositoryService
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
-from pydantic.type_adapter import TypeAdapter
-
-from app.lib.db import async_session_factory
+from litestar.serialization.msgspec_hooks import default_deserializer
+from msgspec import Struct
+from uuid_utils import UUID
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from pydantic import BaseModel
-    from sqlalchemy import Select
+    from sqlalchemy import RowMapping, Select
     from sqlalchemy.ext.asyncio import AsyncSession
     from sqlalchemy.sql import ColumnElement
-
-__all__ = ["SQLAlchemyAsyncRepositoryService"]
 
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictDTOT: TypeAlias = dict[str, Any] | ModelT | DTOData
 ModelDictListDTOT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]] | DTOData
-ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")
 FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
+ModelDTOT = TypeVar("ModelDTOT", bound=Struct)
 
 
 class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]):
@@ -88,15 +87,40 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
             total=total,
         )
 
+    @classmethod
+    @contextlib.asynccontextmanager
+    async def new(
+        cls: type[SQLAlchemyAsyncRepoServiceT],
+        session: AsyncSession | None = None,
+        statement: Select | None = None,
+    ) -> AsyncIterator[SQLAlchemyAsyncRepoServiceT]:
+        """Context manager that returns instance of service object.
+
+        Handles construction of the database session._create_select_for_model
+
+        Returns:
+            The service object instance.
+        """
+        from app.config.app import alchemy
+
+        if session:
+            yield cls(statement=statement, session=session)
+        else:
+            async with alchemy.get_session() as db_session:
+                yield cls(
+                    statement=statement,
+                    session=db_session,
+                )
+
     @overload
-    def to_schema(self, dto: type[ModelDTOT], data: ModelT) -> ModelDTOT:
+    def to_schema(self, dto: type[ModelDTOT], data: ModelT | RowMapping) -> ModelDTOT:
         ...
 
     @overload
     def to_schema(
         self,
         dto: type[ModelDTOT],
-        data: Sequence[ModelT],
+        data: Sequence[ModelT] | list[RowMapping],
         total: int | None = None,
         *filters: FilterTypes,
     ) -> OffsetPagination[ModelDTOT]:
@@ -105,7 +129,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
     def to_schema(
         self,
         dto: type[ModelDTOT],
-        data: ModelT | Sequence[ModelT],
+        data: ModelT | Sequence[ModelT] | list[RowMapping] | RowMapping,
         total: int | None = None,
         *filters: FilterTypes,
     ) -> ModelDTOT | OffsetPagination[ModelDTOT]:
@@ -121,36 +145,33 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
             The list of instances retrieved from the repository.
         """
         if not isinstance(data, Sequence | list):
-            return TypeAdapter(dto).validate_python(data)
+            return msgspec.convert(
+                obj=data,
+                type=dto,
+                from_attributes=True,
+                dec_hook=partial(
+                    default_deserializer,
+                    type_decoders=[
+                        (lambda x: x is UUID, lambda t, v: t(v.hex)),
+                    ],
+                ),
+            )
         limit_offset = self.find_filter(LimitOffset, *filters)
         total = total or len(data)
         limit_offset = limit_offset if limit_offset is not None else LimitOffset(limit=len(data), offset=0)
         return OffsetPagination[dto](  # type: ignore[valid-type]
-            items=TypeAdapter(list[dto]).validate_python(data),  # type: ignore[valid-type]
+            items=msgspec.convert(
+                obj=data,
+                type=list[dto],  # type: ignore[valid-type]
+                from_attributes=True,
+                dec_hook=partial(
+                    default_deserializer,
+                    type_decoders=[
+                        (lambda x: x is UUID, lambda t, v: t(v.hex)),
+                    ],
+                ),
+            ),
             limit=limit_offset.limit,
             offset=limit_offset.offset,
             total=total,
         )
-
-    @classmethod
-    @contextlib.asynccontextmanager
-    async def new(
-        cls: type[SQLAlchemyAsyncRepoServiceT],
-        session: AsyncSession | None = None,
-        statement: Select | None = None,
-    ) -> AsyncIterator[SQLAlchemyAsyncRepoServiceT]:
-        """Context manager that returns instance of service object.
-
-        Handles construction of the database session._create_select_for_model
-
-        Returns:
-            The service object instance.
-        """
-        if session:
-            yield cls(statement=statement, session=session)
-        else:
-            async with async_session_factory() as db_session:
-                yield cls(
-                    statement=statement,
-                    session=db_session,
-                )

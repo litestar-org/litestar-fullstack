@@ -1,6 +1,6 @@
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 
-from app.domain.tags.models import Tag
+from app.db.models import Tag
 from app.lib import dto
 
 __all__ = ["TagCreateDTO", "TagDTO", "TagUpdateDTO"]
@@ -10,7 +10,7 @@ __all__ = ["TagCreateDTO", "TagDTO", "TagUpdateDTO"]
 
 
 class TagDTO(SQLAlchemyDTO[Tag]):
-    config = dto.config(max_nested_depth=0)
+    config = dto.config(max_nested_depth=0, exclude={"created_at", "updated_at", "teams"})
 
 
 class TagCreateDTO(SQLAlchemyDTO[Tag]):

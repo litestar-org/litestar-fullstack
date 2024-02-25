@@ -33,11 +33,11 @@ jobs:
         run: git fetch origin gh-pages --depth=1
 
       - name: Build release docs
-        run: pdm run python tools/build_docs.py docs-build
+        run: pdm run python scripts/build-docs.py docs-build
         if: github.event_name == 'release'
 
       - name: Build dev docs
-        run: pdm run python tools/build_docs.py docs-build
+        run: pdm run python scripts/build-docs.py docs-build
         if: github.event_name == 'push'
 
       - name: Deploy

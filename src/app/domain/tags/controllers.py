@@ -4,29 +4,20 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from litestar.params import Dependency, Parameter
 
-from app.domain import urls
+from app.db.models import Tag
 from app.domain.accounts.guards import requires_active_user, requires_superuser
+from app.domain.tags import urls
 from app.domain.tags.dependencies import provide_tags_service
 from app.domain.tags.dtos import TagCreateDTO, TagDTO, TagUpdateDTO
-from app.lib import log
+from app.domain.tags.services import TagService
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from advanced_alchemy.filters import FilterTypes
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
-
-    from app.domain.tags.models import Tag
-    from app.domain.tags.services import TagService
-
-
-__all__ = ["TagController"]
-
-
-logger = log.get_logger()
+    from litestar.params import Dependency, Parameter
+    from uuid_utils import UUID
 
 
 class TagController(Controller):
@@ -34,10 +25,7 @@ class TagController(Controller):
 
     guards = [requires_active_user]
     dependencies = {"tags_service": Provide(provide_tags_service)}
-    signature_namespace = {
-        "Dependency": Dependency,
-        "Parameter": Parameter,
-    }
+    signature_types = [TagService, Tag]
     tags = ["Tags"]
     return_dto = TagDTO
 

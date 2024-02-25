@@ -1,4 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.12-slim-bookworm
+ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -45,10 +45,12 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml .pylintrc LICENSE Makefile \
-  package.json package-lock.json vite.config.ts tsconfig.json \
+COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml LICENSE Makefile \
+  package.json package-lock.json vite.config.ts tsconfig.json tsconfig.node.json \
+  tailwind.config.cjs postcss.config.cjs components.json \
   ./
 COPY scripts ./scripts/
+COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython  \
   && pdm install ${PDM_INSTALL_ARGS} --no-self  \
@@ -64,7 +66,10 @@ RUN pdm build
 
 FROM python-base as run-image
 ARG ENV_SECRETS="runtime-secrets"
-ENV ENV_SECRETS="${ENV_SECRETS}"
+ARG LITESTAR_APP="app.asgi:app"
+ENV ENV_SECRETS="${ENV_SECRETS}" \
+  LITESTAR_APP="${LITESTAR_APP}"
+
 RUN addgroup --system --gid 65532 nonroot \
   && adduser --no-create-home --system --uid 65532 nonroot \
   && chown -R nonroot:nonroot /workspace
@@ -74,6 +79,7 @@ COPY --from=build-base --chown=65532:65532 /workspace/app/dist /tmp/
 WORKDIR /workspace/app
 RUN pip install --quiet --disable-pip-version-check --no-deps --requirement=/tmp/requirements.txt
 RUN pip install --quiet --disable-pip-version-check --no-deps /tmp/*.whl
+
 USER nonroot
 STOPSIGNAL SIGINT
 EXPOSE 8000
