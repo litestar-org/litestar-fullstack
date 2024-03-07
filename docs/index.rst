@@ -21,6 +21,7 @@ It includes the following capabilities out of the box:
     - Extensive CLI
   - Advanced logging with :doc:`structlog <structlog:index>`
   - SQLAlchemy ORMs, including the :doc:`Advanced Alchemy <advanced-alchemy:index>` helper library by `Jolt <https://jolt.rs>`_
+    - UUIDv7 based Primary Keys using `uuid-utils`
   - AioSQL for raw queries without the ORM
   - Alembic migrations
   - Dockerized development and production environments
