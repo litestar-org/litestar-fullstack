@@ -14,7 +14,7 @@ It includes the following capabilities out of the box:
 
   - User creation, authentication, and authorization
   - Job/Task Queues via :doc:`SAQ <saq:index>`
-  - Fully featured frontend stack with ReactJS (support Vue, Angular, and all other JS frameworks) and native Vite integration via
+  - Fully featured frontend stack with ReactJS (supports Vue, Angular, and all other JS frameworks) and native Vite integration via
     the `litestar-vite <https://github.com/cofin/litestar-vite>`_ plugin
   - Fully featured backend API with Litestar
     - Includes the utilization of :doc:`Guards <litestar:usage/security/guards>` and team-based authentication,
