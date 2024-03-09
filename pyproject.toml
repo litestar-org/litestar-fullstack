@@ -142,6 +142,7 @@ filterwarnings = [
   "ignore::DeprecationWarning:aiosql.*",
   "ignore::DeprecationWarning:litestar.constants.*",
   "ignore::DeprecationWarning:litestar.utils.*",
+  "ignore::DeprecationWarning:httpx._client",
 ]
 testpaths = ["tests"]
 
