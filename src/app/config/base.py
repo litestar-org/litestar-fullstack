@@ -136,9 +136,6 @@ class DatabaseSettings:
                 json_deserializer=decode_json,
                 echo=self.ECHO,
                 echo_pool=self.ECHO_POOL,
-                max_overflow=self.POOL_MAX_OVERFLOW,
-                pool_size=self.POOL_SIZE,
-                pool_timeout=self.POOL_TIMEOUT,
                 pool_recycle=self.POOL_RECYCLE,
                 pool_pre_ping=self.POOL_PRE_PING,
             )
