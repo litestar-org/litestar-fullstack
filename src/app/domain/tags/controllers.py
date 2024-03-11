@@ -62,7 +62,7 @@ class TagController(Controller):
             ),
         ],
     ) -> Tag:
-        """Get a new migration tag."""
+        """Get a tag."""
         db_obj = await tags_service.get(tag_id)
         return tags_service.to_dto(db_obj)
 
@@ -128,5 +128,5 @@ class TagController(Controller):
             ),
         ],
     ) -> None:
-        """Create a new migration tag."""
+        """Delete a tag."""
         _ = await tags_service.delete(tag_id)
