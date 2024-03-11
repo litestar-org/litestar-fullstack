@@ -767,7 +767,7 @@ document.write(`
             <span class="p">),</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a new migration tag.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a tag.&quot;&quot;&quot;</span>
         <span class="n">db_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_dto</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
 
@@ -833,7 +833,7 @@ document.write(`
             <span class="p">),</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new migration tag.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a tag.&quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span></div>
 
 </pre></div>
