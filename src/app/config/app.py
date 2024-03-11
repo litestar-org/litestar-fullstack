@@ -26,7 +26,7 @@ csrf = CSRFConfig(
 )
 cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
 alchemy = SQLAlchemyAsyncConfig(
-    connection_string=settings.db.URL,
+    engine_instance=settings.db.get_engine(),
     before_send_handler=autocommit_before_send_handler,
     session_config=AsyncSessionConfig(expire_on_commit=False),
     alembic_config=AlembicAsyncConfig(
