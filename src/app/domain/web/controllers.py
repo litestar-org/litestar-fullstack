@@ -11,7 +11,12 @@ class WebController(Controller):
     include_in_schema = False
     opt = {"exclude_from_auth": True}
 
-    @get(constants.SITE_INDEX, operation_id="WebIndex", name="frontend:index", status_code=HTTP_200_OK)
-    async def index(self) -> Template:
+    @get(
+        path=[constants.SITE_INDEX, f"{constants.SITE_INDEX}/{{path:str}}"],
+        operation_id="WebIndex",
+        name="frontend:index",
+        status_code=HTTP_200_OK,
+    )
+    async def index(self, path: str | None = None) -> Template:
         """Serve site root."""
         return Template(template_name="site/index.html.j2")
