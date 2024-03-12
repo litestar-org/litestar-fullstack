@@ -26,9 +26,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
+        run: pip install nodeenv cython setuptools pip pre-commit --upgrade --quiet --user
 
-      - uses: pre-commit/action@v3.0.1
+      - name: Execute pre-commit
+        run: pre-commit run --all-files
 
   test:
     needs: validate
