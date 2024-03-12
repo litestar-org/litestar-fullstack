@@ -41,7 +41,6 @@ repos:
           - litestar-granian
           - litestar-vite
           - litestar-saq
-          - types-freezegun
           - types-python-jose
           - types-click
           - types-redis
