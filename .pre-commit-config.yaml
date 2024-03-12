@@ -33,7 +33,6 @@ repos:
       - id: mypy
         exclude: scripts/
         additional_dependencies:
-          - setuptools
           - passlib[argon2]
           - asyncpg
           - asyncpg-stubs

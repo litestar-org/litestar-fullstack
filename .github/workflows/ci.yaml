@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Install base libraries
         run: pip install nodeenv cython setuptools pip  --upgrade --quiet --user
@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.11","3.12"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -94,12 +94,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - uses: pdm-project/setup-pdm@v4
         name: Set up PDM
         with:
-          python-version: "3.12"
+          python-version: "3.11"
           allow-python-prereleases: false
           cache: true
 
@@ -139,7 +139,7 @@ jobs:
       - uses: pdm-project/setup-pdm@v4
         name: Set up PDM
         with:
-          python-version: "3.12"
+          python-version: "3.11"
           cache: true
       - name: Install dependencies
         run: pdm install -G:all
