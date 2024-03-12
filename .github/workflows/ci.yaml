@@ -50,14 +50,14 @@ jobs:
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
-          allow-python-prereleases: true
+          allow-python-prereleases: false
           cache: true
           cache-dependency-path: |
             ./pdm.lock
             ./matrix-file.txt
 
       - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
+        run: pip install nodeenv cython setuptools build distutils wheel pip --upgrade --quiet --user
 
       - name: Install dependencies
         run: pdm install -G:all
