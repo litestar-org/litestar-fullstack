@@ -77,7 +77,8 @@ jobs:
         run: sudo docker compose -f tests/docker-compose.yml down --remove-orphans --volumes
 
 
-      - uses: actions/upload-artifact@v4
+      - if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-xml
           path: coverage.xml
