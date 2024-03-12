@@ -947,6 +947,13 @@ have access to <code class="xref py py-class docutils literal notranslate"><span
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.request_class">
+<span class="sig-name descname"><span class="pre">request_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Request</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.request_class" title="Link to this definition">#</a></dt>
+<dd><p>A custom subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> to be used as the default request for all route
+handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.response_class">
 <span class="sig-name descname"><span class="pre">response_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Response</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.response_class" title="Link to this definition">#</a></dt>
 <dd><p>A custom subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> to be used as the default response for all route
@@ -981,6 +988,13 @@ handlers under the controller.</p>
 <dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.type_decoders">
 <span class="sig-name descname"><span class="pre">type_decoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeDecodersSequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.type_decoders" title="Link to this definition">#</a></dt>
 <dd><p>A sequence of tuples, each composed of a predicate testing for type identity and a msgspec hook for deserialization.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.websocket_class">
+<span class="sig-name descname"><span class="pre">websocket_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WebSocket</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.websocket_class" title="Link to this definition">#</a></dt>
+<dd><p>A custom subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">WebSocket</span></code> to be used as the default websocket for all route
+handlers under the controller.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1051,12 +1065,14 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.owner"><code class="docutils literal notranslate"><span class="pre">TeamController.owner</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.parameters"><code class="docutils literal notranslate"><span class="pre">TeamController.parameters</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.path"><code class="docutils literal notranslate"><span class="pre">TeamController.path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.request_class"><code class="docutils literal notranslate"><span class="pre">TeamController.request_class</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.response_class"><code class="docutils literal notranslate"><span class="pre">TeamController.response_class</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.response_cookies"><code class="docutils literal notranslate"><span class="pre">TeamController.response_cookies</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.response_headers"><code class="docutils literal notranslate"><span class="pre">TeamController.response_headers</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.security"><code class="docutils literal notranslate"><span class="pre">TeamController.security</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.type_encoders"><code class="docutils literal notranslate"><span class="pre">TeamController.type_encoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.type_decoders"><code class="docutils literal notranslate"><span class="pre">TeamController.type_decoders</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.websocket_class"><code class="docutils literal notranslate"><span class="pre">TeamController.websocket_class</span></code></a></li>
 </ul>
 </li>
 </ul>
