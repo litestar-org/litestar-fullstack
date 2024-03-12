@@ -33,10 +33,12 @@ repos:
       - id: mypy
         exclude: scripts/
         additional_dependencies:
+          - setuptools
           - passlib[argon2]
           - asyncpg
           - asyncpg-stubs
           - litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog]
+          - litestar-granian
           - litestar-vite
           - litestar-saq
           - types-freezegun
