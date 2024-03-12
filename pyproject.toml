@@ -61,8 +61,8 @@ packages = ["src/app"]
 lint = "pdm run pre-commit run --all-files"
 post_install = "pdm run python scripts/pre-build.py --install-packages"
 pre_build = "pdm run python scripts/pre-build.py --build-assets"
-start-infra = "docker-compose -f docker-compose.infra.yml up --force-recreate -d"
-stop-infra = "docker-compose -f docker-compose.infra.yml down --remove-orphans"
+start-infra = "docker compose -f docker-compose.infra.yml up --force-recreate -d"
+stop-infra = "docker compose -f docker-compose.infra.yml down --remove-orphans"
 test = "pdm run pytest tests"
 test_coverage = { composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"] }
 

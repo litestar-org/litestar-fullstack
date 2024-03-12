@@ -1,6 +1,4 @@
-import os
-import sys
-from collections.abc import AsyncGenerator, AsyncIterator, Generator
+from collections.abc import AsyncGenerator, AsyncIterator
 from pathlib import Path
 from typing import Any
 
@@ -21,37 +19,9 @@ from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.server.plugins import alchemy
-from tests.docker_service import DockerServiceRegistry, postgres_responsive, redis_responsive
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
-
-
-@pytest.fixture(scope="session")
-def docker_services() -> Generator[DockerServiceRegistry, None, None]:
-    if sys.platform not in ("linux", "darwin") or os.environ.get("SKIP_DOCKER_TESTS"):
-        pytest.skip("Docker not available on this platform")
-
-    registry = DockerServiceRegistry()
-    try:
-        yield registry
-    finally:
-        registry.down()
-
-
-@pytest.fixture(scope="session")
-def docker_ip(docker_services: DockerServiceRegistry) -> str:
-    return docker_services.docker_ip
-
-
-@pytest.fixture()
-async def postgres_service(docker_services: DockerServiceRegistry) -> None:
-    await docker_services.start("postgres", check=postgres_responsive)
-
-
-@pytest.fixture()
-async def redis_service(docker_services: DockerServiceRegistry) -> None:
-    await docker_services.start("redis", check=redis_responsive)
 
 
 @pytest.fixture(name="engine", autouse=True)
@@ -145,7 +115,7 @@ def _patch_db(
     )
 
 
-@pytest.fixture(name="redis", autouse=True)
+@pytest.fixture(name="redis")
 async def fx_redis(docker_ip: str, redis_service: None) -> Redis:
     """Redis instance for testing.
 

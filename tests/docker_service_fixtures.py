@@ -4,7 +4,9 @@ import asyncio
 import os
 import re
 import subprocess
+import sys
 import timeit
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import asyncpg
@@ -12,11 +14,16 @@ import pytest
 from redis.asyncio import Redis as AsyncRedis
 from redis.exceptions import ConnectionError as RedisConnectionError
 
+from tests.helpers import wrap_sync
+
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable
+    from collections.abc import Awaitable, Callable, Generator
 
 
 pytestmark = pytest.mark.anyio
+
+SKIP_DOCKER_COMPOSE: bool = bool(os.environ.get("SKIP_DOCKER_COMPOSE", False))
+USE_LEGACY_DOCKER_COMPOSE: bool = bool(os.environ.get("USE_LEGACY_DOCKER_COMPOSE", False))
 
 
 async def wait_until_responsive(
@@ -46,17 +53,14 @@ async def wait_until_responsive(
 
 
 class DockerServiceRegistry:
-    def __init__(self, use_legacy_compose: bool = False) -> None:
-        self._use_legacy_compose = use_legacy_compose
-        if os.environ.get("DOCKER_USE_LEGACY_COMPOSE") in {"true", "True", True, 1}:
-            self._use_legacy_compose = True
+    def __init__(self, worker_id: str = "0") -> None:
         self._running_services: set[str] = set()
         self.docker_ip = self._get_docker_ip()
-        self._base_command = ["docker-compose"] if self._use_legacy_compose else ["docker", "compose"]
+        self._base_command = ["docker-compose"] if USE_LEGACY_DOCKER_COMPOSE else ["docker", "compose"]
         self._base_command.extend(
             [
-                "--file=tests/docker-compose.yml",
-                "--project-name=app_pytest",
+                f"--file={Path(__file__).parent / 'docker-compose.yml'}",
+                f"--project-name=fullstack-test-{worker_id}",
             ],
         )
 
@@ -79,31 +83,31 @@ class DockerServiceRegistry:
         self,
         name: str,
         *,
-        check: Callable[..., Awaitable],
+        check: Callable[..., Any],
         timeout: float = 30,
         pause: float = 0.1,
         **kwargs: Any,
     ) -> None:
+        if SKIP_DOCKER_COMPOSE:
+            self._running_services.add(name)
         if name not in self._running_services:
-            run_command = ["up", "-d", name]
-            if not self._use_legacy_compose:
-                run_command.append("--wait")
-            self.run_command(*run_command)
+            self.run_command("up", "-d", name)
             self._running_services.add(name)
 
-            await wait_until_responsive(
-                check=check,
-                timeout=timeout,
-                pause=pause,
-                host=self.docker_ip,
-                **kwargs,
-            )
+        await wait_until_responsive(
+            check=wrap_sync(check),
+            timeout=timeout,
+            pause=pause,
+            host=self.docker_ip,
+            **kwargs,
+        )
 
     def stop(self, name: str) -> None:
         pass
 
     def down(self) -> None:
-        self.run_command("down", "-t", "5")
+        if not SKIP_DOCKER_COMPOSE:
+            self.run_command("down", "--remove-orphans", "--volumes", "-t", "10")
 
 
 async def redis_responsive(host: str) -> bool:
@@ -125,10 +129,37 @@ async def postgres_responsive(host: str) -> bool:
             database="postgres",
             password="super-secret",  # noqa: S106
         )
-    except (ConnectionError, asyncpg.CannotConnectNowError):
+    except Exception:  # noqa: BLE001
         return False
 
     try:
-        return (await conn.fetchrow("SELECT 1"))[0] == 1  # type: ignore
+        db_open = await conn.fetchrow("SELECT 1")
+        return db_open is not None and db_open[0] == 1
     finally:
         await conn.close()
+
+
+@pytest.fixture(scope="session")
+def docker_services(worker_id: str) -> Generator[DockerServiceRegistry, None, None]:
+    if sys.platform not in ("linux", "darwin") or os.environ.get("SKIP_DOCKER_TESTS"):
+        pytest.skip("Docker not available on this platform")
+    registry = DockerServiceRegistry(worker_id)
+    try:
+        yield registry
+    finally:
+        registry.down()
+
+
+@pytest.fixture(scope="session")
+def docker_ip(docker_services: DockerServiceRegistry) -> str:
+    return docker_services.docker_ip
+
+
+@pytest.fixture()
+async def postgres_service(docker_services: DockerServiceRegistry) -> None:
+    await docker_services.start("postgres", check=postgres_responsive)
+
+
+@pytest.fixture()
+async def redis_service(docker_services: DockerServiceRegistry) -> None:
+    await docker_services.start("redis", check=redis_responsive)
