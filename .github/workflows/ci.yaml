@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - uses: pre-commit/action@v3.0.1
 
@@ -50,14 +50,14 @@ jobs:
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
-          allow-python-prereleases: false
+          allow-python-prereleases: true
           cache: true
           cache-dependency-path: |
             ./pdm.lock
             ./matrix-file.txt
 
       - name: Install base libraries
-        run: pip install nodeenv cython setuptools build distutils wheel pip --upgrade --quiet --user
+        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
 
       - name: Install dependencies
         run: pdm install -G:all
@@ -72,7 +72,7 @@ jobs:
       - if: runner.os == 'Linux'
         name: Stop Redis & Database Services
         run: sudo docker compose -f tests/docker-compose.yml down --remove-orphans --volumes
-
+  
 
       - uses: actions/upload-artifact@v4
         with:
