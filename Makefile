@@ -142,7 +142,9 @@ coverage:  											## Run the tests and generate coverage report
 .PHONY: test
 test:  												## Run the tests
 	@echo "=> Running test cases"
-	@$(ENV_PREFIX)pytest tests
+	@docker compose  -f tests/docker-compose.yml --project-name=fullstack-test-0 up --force-recreate -d
+	@SKIP_DOCKER_COMPOSE=true $(ENV_PREFIX)pytest tests
+	@docker compose -f tests/docker-compose.yml --project-name=fullstack-test-0 down --remove-orphans --volumes
 	@echo "=> Tests complete"
 
 # =============================================================================

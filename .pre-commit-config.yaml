@@ -37,9 +37,9 @@ repos:
           - asyncpg
           - asyncpg-stubs
           - litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog]
+          - litestar-granian
           - litestar-vite
           - litestar-saq
-          - types-freezegun
           - types-python-jose
           - types-click
           - types-redis

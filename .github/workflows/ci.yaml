@@ -5,7 +5,14 @@ on:
   push:
     branches:
       - main
+concurrency:
+  group: test-${{ github.head_ref }}
+  cancel-in-progress: true
 
+env:
+  PYTHONUNBUFFERED: "1"
+  FORCE_COLOR: "1"
+  SKIP_DOCKER_COMPOSE: "1"
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,6 +25,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install base libraries
+        run: pip install nodeenv cython setuptools pip  --upgrade --quiet --user
+
       - uses: pre-commit/action@v3.0.1
 
   test:
@@ -26,7 +36,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.11","3.12"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -43,7 +53,7 @@ jobs:
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
-          allow-python-prereleases: true
+          allow-python-prereleases: false
           cache: true
           cache-dependency-path: |
             ./pdm.lock
@@ -55,10 +65,20 @@ jobs:
       - name: Install dependencies
         run: pdm install -G:all
 
+      - if: runner.os == 'Linux'
+        name: Start Database Services
+        run: sudo docker compose -f tests/docker-compose.yml up -d
+
       - name: Test with Coverage
         run: pdm run pytest tests --cov=app --cov-report=xml
 
-      - uses: actions/upload-artifact@v4
+      - if: runner.os == 'Linux'
+        name: Stop Redis & Database Services
+        run: sudo docker compose -f tests/docker-compose.yml down --remove-orphans --volumes
+
+
+      - if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-xml
           path: coverage.xml
@@ -81,7 +101,7 @@ jobs:
         name: Set up PDM
         with:
           python-version: "3.11"
-          allow-python-prereleases: true
+          allow-python-prereleases: false
           cache: true
 
       - name: Install dependencies
