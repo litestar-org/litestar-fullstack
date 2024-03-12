@@ -1018,7 +1018,9 @@ Full Makefile<div class="sd-summary-down docutils">
 <span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>
 <span class="nf">test</span><span class="o">:</span><span class="w">  												</span><span class="c">## Run the tests</span>
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Running test cases&quot;</span>
-<span class="w">	</span>@<span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pytest<span class="w"> </span>tests
+<span class="w">	</span>@docker<span class="w"> </span>compose<span class="w">  </span>-f<span class="w"> </span>tests/docker-compose.yml<span class="w"> </span>--project-name<span class="o">=</span>fullstack-test-0<span class="w"> </span>up<span class="w"> </span>--force-recreate<span class="w"> </span>-d
+<span class="w">	</span>@SKIP_DOCKER_COMPOSE<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="k">$(</span>ENV_PREFIX<span class="k">)</span>pytest<span class="w"> </span>tests
+<span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>tests/docker-compose.yml<span class="w"> </span>--project-name<span class="o">=</span>fullstack-test-0<span class="w"> </span>down<span class="w"> </span>--remove-orphans<span class="w"> </span>--volumes
 <span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;=&gt; Tests complete&quot;</span>
 
 <span class="c"># =============================================================================</span>
