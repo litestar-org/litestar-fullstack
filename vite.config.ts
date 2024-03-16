@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react"
 
 const ASSET_URL = process.env.ASSET_URL || "/static/"
 const VITE_PORT = process.env.VITE_PORT || "5173"
+const VITE_HOST = process.env.VITE_HOST || "localhost"
 export default defineConfig({
   base: `${ASSET_URL}`,
   clearScreen: false,
@@ -12,6 +13,9 @@ export default defineConfig({
     host: "0.0.0.0",
     port: +`${VITE_PORT}`,
     cors: true,
+    hmr: {
+      host: `${VITE_HOST}`,
+    },
   },
   plugins: [
     react(),
@@ -33,11 +37,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            // return id
-            //   .toString()
-            //   .split("node_modules/")[1]
-            //   .split("/")[0]
-            //   .toString()
             return "vendor"
           }
         },
