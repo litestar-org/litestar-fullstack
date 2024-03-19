@@ -14,7 +14,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[cli,jinja,jwt,redis,sqlalchemy,structlog]",
+  "litestar[jinja,jwt,redis,structlog]",
+  "jsbeautifier",
   "advanced-alchemy[uuid]",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
@@ -23,7 +24,6 @@ dependencies = [
   "litestar-vite[nodeenv]>=0.1.4",
   "litestar-granian>=0.1.4",
   "aiosqlite>=0.19.0",
-  "uvloop",
   "httptools",
 ]
 description = "Opinionated template for a Litestar application."
