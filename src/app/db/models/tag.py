@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.mixins import UniqueMixin
 from sqlalchemy import (
     ColumnElement,
     String,
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.utils import slugify
 
-from .base import SlugKey, UniqueMixin
+from .base import SlugKey
 
 if TYPE_CHECKING:
     from collections.abc import Hashable

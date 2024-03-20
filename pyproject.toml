@@ -16,7 +16,7 @@ classifiers = [
 dependencies = [
   "litestar[jinja,jwt,redis,structlog]",
   "jsbeautifier",
-  "advanced-alchemy[uuid]",
+  "advanced-alchemy[uuid]>=0.8.0",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "passlib[argon2]>=1.7.4",
