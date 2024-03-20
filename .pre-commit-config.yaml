@@ -36,9 +36,10 @@ repos:
           - passlib[argon2]
           - asyncpg
           - asyncpg-stubs
-          - litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog]
+          - litestar[jinja,jwt,redis,sqlalchemy,structlog]
+          - advanced-alchemy[uuid]>=0.8.0
           - litestar-granian
-          - litestar-vite
+          - litestar-vite>=0.1.21
           - litestar-saq
           - types-python-jose
           - types-click
