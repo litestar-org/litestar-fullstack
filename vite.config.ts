@@ -9,6 +9,7 @@ const VITE_HOST = process.env.VITE_HOST || "localhost"
 export default defineConfig({
   base: `${ASSET_URL}`,
   clearScreen: false,
+  publicDir: "public/",
   server: {
     host: "0.0.0.0",
     port: +`${VITE_PORT}`,
