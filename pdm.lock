@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:d56b8c8f068a6a2bf1939e9e0f0a87bcf5744979cd1c33f7642b7fb973743696"
+content_hash = "sha256:901340b94ede77a77aa38ba19486338642708d3f5b929bc92fa0db07bae18c37"
 
 [[package]]
 name = "accessible-pygments"
@@ -205,6 +205,7 @@ version = "4.0.3"
 requires_python = ">=3.7"
 summary = "Timeout context manager for asyncio programs"
 groups = ["default", "linting"]
+marker = "python_version < \"3.12.0\""
 files = [
     {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
     {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
@@ -514,7 +515,7 @@ files = [
 
 [[package]]
 name = "croniter"
-version = "2.0.2"
+version = "2.0.3"
 requires_python = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 summary = "croniter provides iteration for datetime object with cron like format"
 groups = ["default"]
@@ -523,8 +524,8 @@ dependencies = [
     "pytz>2021.1",
 ]
 files = [
-    {file = "croniter-2.0.2-py2.py3-none-any.whl", hash = "sha256:78bf110a2c7dbbfdd98b926318ae6c64a731a4c637c7befe3685755110834746"},
-    {file = "croniter-2.0.2.tar.gz", hash = "sha256:8bff16c9af4ef1fb6f05416973b8f7cb54997c02f2f8365251f9bf1dded91866"},
+    {file = "croniter-2.0.3-py2.py3-none-any.whl", hash = "sha256:84dc95b2eb6760144cc01eca65a6b9cc1619c93b2dc37d8a27f4319b3eb740de"},
+    {file = "croniter-2.0.3.tar.gz", hash = "sha256:28763ad39c404e159140874f08010cfd8a18f4c2a7cea1ce73e9506a4380cfc1"},
 ]
 
 [[package]]
@@ -681,7 +682,7 @@ files = [
 
 [[package]]
 name = "faker"
-version = "23.3.0"
+version = "24.3.0"
 requires_python = ">=3.8"
 summary = "Faker is a Python package that generates fake data for you."
 groups = ["default"]
@@ -689,8 +690,8 @@ dependencies = [
     "python-dateutil>=2.4",
 ]
 files = [
-    {file = "Faker-23.3.0-py3-none-any.whl", hash = "sha256:117ce1a2805c1bc5ca753b3dc6f9d567732893b2294b827d3164261ee8f20267"},
-    {file = "Faker-23.3.0.tar.gz", hash = "sha256:458d93580de34403a8dec1e8d5e6be2fee96c4deca63b95d71df7a6a80a690de"},
+    {file = "Faker-24.3.0-py3-none-any.whl", hash = "sha256:9978025e765ba79f8bf6154c9630a9c2b7f9c9b0f175d4ad5e04b19a82a8d8d6"},
+    {file = "Faker-24.3.0.tar.gz", hash = "sha256:5fb5aa9749d09971e04a41281ae3ceda9414f683d4810a694f8a8eebb8f9edec"},
 ]
 
 [[package]]
@@ -706,7 +707,7 @@ files = [
 
 [[package]]
 name = "granian"
-version = "1.1.1"
+version = "1.2.0"
 requires_python = ">=3.8"
 summary = "A Rust HTTP server for Python applications"
 groups = ["default"]
@@ -715,42 +716,42 @@ dependencies = [
     "uvloop~=0.18.0; sys_platform != \"win32\" and platform_python_implementation == \"CPython\"",
 ]
 files = [
-    {file = "granian-1.1.1-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:54e1b6ffaeaa56445073ee54a2cd5237b1268174f990f59b39a39e3ff00fece2"},
-    {file = "granian-1.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6e15b33986242e066176bb550052f0f1aac98504d2c430fed225103ef25797d0"},
-    {file = "granian-1.1.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2c4ecfbd844e520cc1490260bf24601015613428261c5c7fd9e2e7214d757222"},
-    {file = "granian-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:57a57ec75857f9fca2f882ef87c9b99dc051c5b0a25395bc0eb1f230649449bc"},
-    {file = "granian-1.1.1-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:bc34aa3f3fe309864a36fb3e3db9c28556375141bfe33906dc237351a2a7b517"},
-    {file = "granian-1.1.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:5d518df4b43b5c5b633ea94542861dc828e2fc3cfe9a442fa747e2440490e6ec"},
-    {file = "granian-1.1.1-cp311-none-win_amd64.whl", hash = "sha256:652a2dcbe043255571c162f841d707e9a1a1c533bb04e986e60e78a37c7d629e"},
-    {file = "granian-1.1.1-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:ced8e6e5c20e58fe307b504a59a62eea80419d227ee984b5ad05305f2563241c"},
-    {file = "granian-1.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:efea329c3b693bf0f3f1801ad0450fd02baa5718ee75897ecafa13a9f3f99506"},
-    {file = "granian-1.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cb4a84c5837e1031c6e59858b6b06c569795d8359cbf55d52c556f9ff4d73f37"},
-    {file = "granian-1.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3d84f972fe2e3add2b25774496b5ce26993e0847f6ec6a2d25116f03dd855f84"},
-    {file = "granian-1.1.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:8252b1046e686eae90ff7c2ab3a426960dc2a903064f1b1780dc2ec3d65b152f"},
-    {file = "granian-1.1.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:2b087d23b6eeaf49a034f33668f971db2fcd33ea24dc43ace85aafdd9bf92c8b"},
-    {file = "granian-1.1.1-cp312-none-win_amd64.whl", hash = "sha256:28e527e44d62d40d5f4f2a4cf2543a6193dc2e278b7daa00ef4a70a5e82d6590"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-macosx_10_12_x86_64.whl", hash = "sha256:44eba59bc498611bb9603b087c228d9b4a3ce971aa1fec914226f67841c087ab"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:5426cf7bde5051c73a60e6ae16d32bd5daaf06354e8b22f52107fe6d4a28726f"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ace314427fa273e60e1732089231a2a23f936a126e1b45c428f2e27d897c45b8"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5a4cfc245e786b946be52efe4c1a48e1063353f72b5d43c862a74d27f394e78f"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:557a62bcfd695d16077bad785ee898865f122239e48131d96776d251d8a604b5"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:fef58cf86226b97c90af58c6757ea752e87d626830edd78669c6ab994546ed90"},
-    {file = "granian-1.1.1-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:ea544fef5b697e349aaab20d8fbec9a641155e1eec9e363d17d5342af01317fc"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-macosx_10_12_x86_64.whl", hash = "sha256:716ab55b94a40bd796e2a87d5168c85453b78c5c1c2e2f887ae4d0fee4ddb8e2"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-macosx_11_0_arm64.whl", hash = "sha256:a03594d7007a10d8566fe296ea0d8d877f71a4f2ec3b837fcb7f9f5a8e04dad8"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:71737b25a1ef664c40381e12ad11d7b31d868b373cff573260b94815f5112196"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9d1bda2ac06ac1d2310f5f9e756ecab5b42162aba24a3b708640ff49787aeffb"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:fd9105958468e124053323686aa3253a635a56535ab391073ec290b81d7e4948"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:775c7d075d44648b058e87266ff554af9d125c95e5603e262b1f49b3ace0d770"},
-    {file = "granian-1.1.1-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:a25d9917a9af3b3d5473a9d9bfc0cf1635432f026c3d8559328a2c1cec33c417"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-macosx_10_12_x86_64.whl", hash = "sha256:08fdd715abbe02a92e7c91bee1f0915240b44c145f4cbfc83954641f4edbf272"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-macosx_11_0_arm64.whl", hash = "sha256:93a71e5d668e1d23ebe328fd9e50f14d8c498711ebc223c84851a4c4f083b19f"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3924facf63de1727084a75e7d4b1cc0780857d05796b72b99465af40cf2310a0"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:960245bb8e49a7ebc64d349b477b053a23de8cbcd7c9f162c9807c391e48f990"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:bbe30a0259550f1afe9cbc53e8dc49ec8b0a744895eab80b5266f8b8a1ed11cf"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:ddc4be68e3de65531d161028356b15e5285419fd1fd7a91df76cd690132e8a04"},
-    {file = "granian-1.1.1-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:4fb45ddeb257349c2f635a60236dc176d9c5a9a994c19db3a0a68f6db2260fb5"},
-    {file = "granian-1.1.1.tar.gz", hash = "sha256:53af866ac106464f47e5239a55f92a201b1fb00cfb388217037169ed4b431d5c"},
+    {file = "granian-1.2.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:b903be7fb3f8dbc4b05d52a4bbefd81a739cd5f68c86e7105f98e9af6dedec1f"},
+    {file = "granian-1.2.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:5273afdbeec6e2361eba83c1c2978cb22a94840a9d551b9f73b3bca8e9cf11e9"},
+    {file = "granian-1.2.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:dec49f94ef357d23c644f0da1d1763495bde1fbd5af043f8e40413302483afe5"},
+    {file = "granian-1.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc0a48d4872a82ade351931693aeece12e195ac8b9fb9b4b57cf31bce3189c63"},
+    {file = "granian-1.2.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:ce0bb3f40d79ccec3f5e0de8d73a83b0c19737c723ec637b0d064f7407c7cfcc"},
+    {file = "granian-1.2.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:47da8e77c6a75deb7d7113174a034eaa351d78336cec7b047d2a9db14ebde55e"},
+    {file = "granian-1.2.0-cp311-none-win_amd64.whl", hash = "sha256:77eb93da378d9db4b64fab1342f5bd45f082417abadd7e339f443a8c9cb640fc"},
+    {file = "granian-1.2.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:19665980e5f467d92c641ac6cbac1923d8eec20f8818be987f9c464e596fc151"},
+    {file = "granian-1.2.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:8d137624c621d81175c37af57489b715d93ae6ca63b5693efae7dcbce998775c"},
+    {file = "granian-1.2.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:94c322b5868eb9712d40a7eec48ebd828cb37a416594e5ca146eb7f47e7d130c"},
+    {file = "granian-1.2.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eb1bacb93039cd6ae1b4fa4fdbb82da11405acd85d4074e87b866017fdb03446"},
+    {file = "granian-1.2.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:81ed88465e61652b5048295ed70c51c13007318e52b52204264bb5aa87384ba1"},
+    {file = "granian-1.2.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:677bd15e3bb817a8974c622416ff8d49a2a52055baa8dcc49cca5a94c7cebd82"},
+    {file = "granian-1.2.0-cp312-none-win_amd64.whl", hash = "sha256:7ae64f383b0931e13cbbe1c27299858935f91803cb5f640cc2a66b95973dd58a"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-macosx_10_12_x86_64.whl", hash = "sha256:7438488ed2db8f8530b461b7641c5b39588633685b46660df8f45c6ab3a0c492"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:8d3e9852a16c5e3a6e53423416ff0b349861a0b5d1df4feed705d125589156f4"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a25daacb5293f5b562e7e388b355be7c506a60bcc7dd742424f90a9885bc1f1d"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:244a3632bd4ec75dfb5cd46e410655553a2eaf2c118696f1fb7d86f04a960ed8"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:130a7c5f1ed8593a7849d0325511158b531ae09f27730dbab7514ba8f8087e16"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:f93a5a4caba990e405a94946be1b52d977dfa18a6dd839007b12aa1c318ac1d5"},
+    {file = "granian-1.2.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:1f47a85d89bff4661ec67ec21640e1d24ab36cec88679aa965def241368eaf5f"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-macosx_10_12_x86_64.whl", hash = "sha256:12178f539fca7d31f35850515f91928ede958d373cd75ef3a57de108e3613ddb"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-macosx_11_0_arm64.whl", hash = "sha256:74eb03358f80bfc3102b081ebcbd8581cdb6e22f034e62f2986ff2a03ca050f6"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:13707a064884788ff696d9d8a5a019c7a6022d91d45dd4cfd2353ae932500a7b"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8886d06cd66126b9bd67e070040be049ca84deb59a7ba5bb3541add7d7b0c24b"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:94a7a4d90265ff7cddb04d646a8b6d0c57c525cff9bb63f9e363cb71d92af996"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:c6efa7eb11f36ee909dcbb1c0b90ead50bc121a721ff891246ff127a88625148"},
+    {file = "granian-1.2.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:6bd5994f90926e23ef7011b319b6dd13410248cb3b972287dadc2939779cbda6"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-macosx_10_12_x86_64.whl", hash = "sha256:6ececc06e01bf90ade3a816ea07a90fe69a46759ed28171fe993f0196f316d1b"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-macosx_11_0_arm64.whl", hash = "sha256:4acaaa2ec009ae04a7c64e1afcf892134c18c32548bc67f877f05e7dbc37e649"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f5f825445145586bc23c03838783a8339688f68a5eb4f5c8db66b9a051664357"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d569f03cd0fd149ef06e0bc901aedf0212571960ea838c7df7ccf0e8f1d88317"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-musllinux_1_1_aarch64.whl", hash = "sha256:985f93b1f2297870aaedd55237b53c60309c757f718c19a0a3d6d0ceb738a929"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:2112769592d7714f4205c7eecd5629a576d07bcf6d21cc14818162c924276340"},
+    {file = "granian-1.2.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:e3ea97a436ca18876fd4523b5d6622c833a69b07ef87b9a3e37d5f6d65969c3b"},
+    {file = "granian-1.2.0.tar.gz", hash = "sha256:c9dbbda5c66faf2717a927cf237b4691b8e07c84109a9c4cf3040c8e9fc27083"},
 ]
 
 [[package]]
@@ -1265,7 +1266,7 @@ files = [
     {file = "msgpack-1.0.8-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:e1dd7839443592d00e96db831eddb4111a2a81a46b028f0facd60a09ebbdd543"},
     {file = "msgpack-1.0.8-cp312-cp312-win32.whl", hash = "sha256:64d0fcd436c5683fdd7c907eeae5e2cbb5eb872fafbc03a43609d7941840995c"},
     {file = "msgpack-1.0.8-cp312-cp312-win_amd64.whl", hash = "sha256:74398a4cf19de42e1498368c36eed45d9528f5fd0155241e82c4082b7e16cffd"},
-    {file = "msgpack-1.0.8-py3-none-any.whl", hash = "sha256:24f727df1e20b9876fa6e95f840a2a2651e34c0ad147676356f4bf5fbb0206ca"},
+    {file = "msgpack-1.0.8.tar.gz", hash = "sha256:95c02b0e27e706e48d0e5426d1710ca78e0f0628d6e89d5b5a5b91a5f12274f3"},
 ]
 
 [[package]]
@@ -1396,13 +1397,13 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "23.2"
+version = "24.0"
 requires_python = ">=3.7"
 summary = "Core utilities for Python packages"
 groups = ["docs", "test"]
 files = [
-    {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
-    {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
+    {file = "packaging-24.0-py3-none-any.whl", hash = "sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5"},
+    {file = "packaging-24.0.tar.gz", hash = "sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"},
 ]
 
 [[package]]
@@ -1454,7 +1455,7 @@ files = [
 
 [[package]]
 name = "polyfactory"
-version = "2.14.1"
+version = "2.15.0"
 requires_python = "<4.0,>=3.8"
 summary = "Mock data generation factories"
 groups = ["default"]
@@ -1463,8 +1464,8 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 files = [
-    {file = "polyfactory-2.14.1-py3-none-any.whl", hash = "sha256:8aff3be75e046501ec5c411c78c23db284322c760fef50d560ee6ed683f217c8"},
-    {file = "polyfactory-2.14.1.tar.gz", hash = "sha256:8c1d5f15dad1ebfd0845d65d4a55f9791cddfa6b3096ad9f9e2fd02a4804631b"},
+    {file = "polyfactory-2.15.0-py3-none-any.whl", hash = "sha256:ff5b6a8742cbd6fbde9f81310b9732d5421fbec31916d6ede5a977753110fbe9"},
+    {file = "polyfactory-2.15.0.tar.gz", hash = "sha256:a3ff5263756ad74acf4001f04c1b6aab7d1197cbaa070352df79573a8dcd85ec"},
 ]
 
 [[package]]
@@ -1607,6 +1608,21 @@ files = [
 ]
 
 [[package]]
+name = "pytest-sugar"
+version = "1.0.0"
+summary = "pytest-sugar is a plugin for pytest that changes the default look and feel of pytest (e.g. progressbar, show tests that fail instantly)."
+groups = ["test"]
+dependencies = [
+    "packaging>=21.3",
+    "pytest>=6.2.0",
+    "termcolor>=2.1.0",
+]
+files = [
+    {file = "pytest-sugar-1.0.0.tar.gz", hash = "sha256:6422e83258f5b0c04ce7c632176c7732cab5fdb909cb39cca5c9139f81276c0a"},
+    {file = "pytest_sugar-1.0.0-py3-none-any.whl", hash = "sha256:70ebcd8fc5795dc457ff8b69d266a4e2e8a74ae0c3edc749381c64b5246c8dfd"},
+]
+
+[[package]]
 name = "pytest-xdist"
 version = "3.5.0"
 requires_python = ">=3.7"
@@ -1698,32 +1714,32 @@ files = [
 
 [[package]]
 name = "redis"
-version = "5.0.2"
+version = "5.0.3"
 requires_python = ">=3.7"
 summary = "Python client for Redis database and key-value store"
 groups = ["default"]
 dependencies = [
-    "async-timeout>=4.0.3",
+    "async-timeout>=4.0.3; python_full_version < \"3.11.3\"",
 ]
 files = [
-    {file = "redis-5.0.2-py3-none-any.whl", hash = "sha256:4caa8e1fcb6f3c0ef28dba99535101d80934b7d4cd541bbb47f4a3826ee472d1"},
-    {file = "redis-5.0.2.tar.gz", hash = "sha256:3f82cc80d350e93042c8e6e7a5d0596e4dd68715babffba79492733e1f367037"},
+    {file = "redis-5.0.3-py3-none-any.whl", hash = "sha256:5da9b8fe9e1254293756c16c008e8620b3d15fcc6dde6babde9541850e72a32d"},
+    {file = "redis-5.0.3.tar.gz", hash = "sha256:4973bae7444c0fbed64a06b87446f79361cb7e4ec1538c022d696ed7a5015580"},
 ]
 
 [[package]]
 name = "redis"
-version = "5.0.2"
+version = "5.0.3"
 extras = ["hiredis"]
 requires_python = ">=3.7"
 summary = "Python client for Redis database and key-value store"
 groups = ["default"]
 dependencies = [
     "hiredis>=1.0.0",
-    "redis==5.0.2",
+    "redis==5.0.3",
 ]
 files = [
-    {file = "redis-5.0.2-py3-none-any.whl", hash = "sha256:4caa8e1fcb6f3c0ef28dba99535101d80934b7d4cd541bbb47f4a3826ee472d1"},
-    {file = "redis-5.0.2.tar.gz", hash = "sha256:3f82cc80d350e93042c8e6e7a5d0596e4dd68715babffba79492733e1f367037"},
+    {file = "redis-5.0.3-py3-none-any.whl", hash = "sha256:5da9b8fe9e1254293756c16c008e8620b3d15fcc6dde6babde9541850e72a32d"},
+    {file = "redis-5.0.3.tar.gz", hash = "sha256:4973bae7444c0fbed64a06b87446f79361cb7e4ec1538c022d696ed7a5015580"},
 ]
 
 [[package]]
@@ -1760,7 +1776,7 @@ files = [
 
 [[package]]
 name = "rich-click"
-version = "1.7.3"
+version = "1.7.4"
 requires_python = ">=3.7"
 summary = "Format click help output nicely with rich"
 groups = ["default"]
@@ -1770,8 +1786,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "rich-click-1.7.3.tar.gz", hash = "sha256:bced1594c497dc007ab49508ff198bb437c576d01291c13a61658999066481f4"},
-    {file = "rich_click-1.7.3-py3-none-any.whl", hash = "sha256:bc4163d4e2a3361e21c4d72d300eca6eb8896dfc978667923cb1d4937b8769a3"},
+    {file = "rich-click-1.7.4.tar.gz", hash = "sha256:7ce5de8e4dc0333aec946113529b3eeb349f2e5d2fafee96b9edf8ee36a01395"},
+    {file = "rich_click-1.7.4-py3-none-any.whl", hash = "sha256:e363655475c60fec5a3e16a1eb618118ed79e666c365a36006b107c17c93ac4e"},
 ]
 
 [[package]]
@@ -1871,13 +1887,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "69.1.1"
+version = "69.2.0"
 requires_python = ">=3.8"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["default", "dev", "linting"]
 files = [
-    {file = "setuptools-69.1.1-py3-none-any.whl", hash = "sha256:02fa291a0471b3a18b2b2481ed902af520c69e8ae0919c13da936542754b4c56"},
-    {file = "setuptools-69.1.1.tar.gz", hash = "sha256:5c0806c7d9af348e6dd3777b4f4dbb42c7ad85b190104837488eab9a7c945cf8"},
+    {file = "setuptools-69.2.0-py3-none-any.whl", hash = "sha256:c21c49fb1042386df081cb5d86759792ab89efca84cf114889191cd09aacc80c"},
+    {file = "setuptools-69.2.0.tar.gz", hash = "sha256:0ff4183f8f42cd8fa3acea16c45205521a4ef28f73c6391d8a25e92893134f2e"},
 ]
 
 [[package]]
@@ -2196,7 +2212,7 @@ files = [
 
 [[package]]
 name = "sqlalchemy"
-version = "2.0.27"
+version = "2.0.28"
 requires_python = ">=3.7"
 summary = "Database Abstraction Library"
 groups = ["default"]
@@ -2205,24 +2221,24 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 files = [
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:6c5bad7c60a392850d2f0fee8f355953abaec878c483dd7c3836e0089f046bf6"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a3012ab65ea42de1be81fff5fb28d6db893ef978950afc8130ba707179b4284a"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:dbcd77c4d94b23e0753c5ed8deba8c69f331d4fd83f68bfc9db58bc8983f49cd"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d177b7e82f6dd5e1aebd24d9c3297c70ce09cd1d5d37b43e53f39514379c029c"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:680b9a36029b30cf063698755d277885d4a0eab70a2c7c6e71aab601323cba45"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:1306102f6d9e625cebaca3d4c9c8f10588735ef877f0360b5cdb4fdfd3fd7131"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-win32.whl", hash = "sha256:5b78aa9f4f68212248aaf8943d84c0ff0f74efc65a661c2fc68b82d498311fd5"},
-    {file = "SQLAlchemy-2.0.27-cp311-cp311-win_amd64.whl", hash = "sha256:15e19a84b84528f52a68143439d0c7a3a69befcd4f50b8ef9b7b69d2628ae7c4"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:0de1263aac858f288a80b2071990f02082c51d88335a1db0d589237a3435fe71"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ce850db091bf7d2a1f2fdb615220b968aeff3849007b1204bf6e3e50a57b3d32"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8dfc936870507da96aebb43e664ae3a71a7b96278382bcfe84d277b88e379b18"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c4fbe6a766301f2e8a4519f4500fe74ef0a8509a59e07a4085458f26228cd7cc"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:4535c49d961fe9a77392e3a630a626af5baa967172d42732b7a43496c8b28876"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:0fb3bffc0ced37e5aa4ac2416f56d6d858f46d4da70c09bb731a246e70bff4d5"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-win32.whl", hash = "sha256:7f470327d06400a0aa7926b375b8e8c3c31d335e0884f509fe272b3c700a7254"},
-    {file = "SQLAlchemy-2.0.27-cp312-cp312-win_amd64.whl", hash = "sha256:f9374e270e2553653d710ece397df67db9d19c60d2647bcd35bfc616f1622dcd"},
-    {file = "SQLAlchemy-2.0.27-py3-none-any.whl", hash = "sha256:1ab4e0448018d01b142c916cc7119ca573803a4745cfe341b8f95657812700ac"},
-    {file = "SQLAlchemy-2.0.27.tar.gz", hash = "sha256:86a6ed69a71fe6b88bf9331594fa390a2adda4a49b5c06f98e47bf0d392534f8"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:46a3d4e7a472bfff2d28db838669fc437964e8af8df8ee1e4548e92710929adc"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0d3dd67b5d69794cfe82862c002512683b3db038b99002171f624712fa71aeaa"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c61e2e41656a673b777e2f0cbbe545323dbe0d32312f590b1bc09da1de6c2a02"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0315d9125a38026227f559488fe7f7cee1bd2fbc19f9fd637739dc50bb6380b2"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:af8ce2d31679006e7b747d30a89cd3ac1ec304c3d4c20973f0f4ad58e2d1c4c9"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:81ba314a08c7ab701e621b7ad079c0c933c58cdef88593c59b90b996e8b58fa5"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-win32.whl", hash = "sha256:1ee8bd6d68578e517943f5ebff3afbd93fc65f7ef8f23becab9fa8fb315afb1d"},
+    {file = "SQLAlchemy-2.0.28-cp311-cp311-win_amd64.whl", hash = "sha256:ad7acbe95bac70e4e687a4dc9ae3f7a2f467aa6597049eeb6d4a662ecd990bb6"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:d3499008ddec83127ab286c6f6ec82a34f39c9817f020f75eca96155f9765097"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:9b66fcd38659cab5d29e8de5409cdf91e9986817703e1078b2fdaad731ea66f5"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bea30da1e76cb1acc5b72e204a920a3a7678d9d52f688f087dc08e54e2754c67"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:124202b4e0edea7f08a4db8c81cc7859012f90a0d14ba2bf07c099aff6e96462"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:e23b88c69497a6322b5796c0781400692eca1ae5532821b39ce81a48c395aae9"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:4b6303bfd78fb3221847723104d152e5972c22367ff66edf09120fcde5ddc2e2"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-win32.whl", hash = "sha256:a921002be69ac3ab2cf0c3017c4e6a3377f800f1fca7f254c13b5f1a2f10022c"},
+    {file = "SQLAlchemy-2.0.28-cp312-cp312-win_amd64.whl", hash = "sha256:b4a2cf92995635b64876dc141af0ef089c6eea7e05898d8d8865e71a326c0385"},
+    {file = "SQLAlchemy-2.0.28-py3-none-any.whl", hash = "sha256:78bb7e8da0183a8301352d569900d9d3594c48ac21dc1c2ec6b3121ed8b6c986"},
+    {file = "SQLAlchemy-2.0.28.tar.gz", hash = "sha256:dd53b6c4e6d960600fd6532b79ee28e2da489322fcf6648738134587faf767b6"},
 ]
 
 [[package]]
@@ -2245,6 +2261,17 @@ groups = ["docs"]
 files = [
     {file = "tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f"},
     {file = "tabulate-0.9.0.tar.gz", hash = "sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c"},
+]
+
+[[package]]
+name = "termcolor"
+version = "2.4.0"
+requires_python = ">=3.8"
+summary = "ANSI color formatting for output in terminal"
+groups = ["test"]
+files = [
+    {file = "termcolor-2.4.0-py3-none-any.whl", hash = "sha256:9297c0df9c99445c2412e832e882a7884038a25617c60cea2ad69488d4040d63"},
+    {file = "termcolor-2.4.0.tar.gz", hash = "sha256:aab9e56047c8ac41ed798fa36d892a37aca6b3e9159f3e0c24bc64a9b3ac7b7a"},
 ]
 
 [[package]]
@@ -2328,7 +2355,7 @@ files = [
 
 [[package]]
 name = "types-pyopenssl"
-version = "24.0.0.20240228"
+version = "24.0.0.20240311"
 requires_python = ">=3.8"
 summary = "Typing stubs for pyOpenSSL"
 groups = ["linting"]
@@ -2336,8 +2363,8 @@ dependencies = [
     "cryptography>=35.0.0",
 ]
 files = [
-    {file = "types-pyOpenSSL-24.0.0.20240228.tar.gz", hash = "sha256:cd990717d8aa3743ef0e73e0f462e64b54d90c304249232d48fece4f0f7c3c6a"},
-    {file = "types_pyOpenSSL-24.0.0.20240228-py3-none-any.whl", hash = "sha256:a472cf877a873549175e81972f153f44e975302a3cf17381eb5f3d41ccfb75a4"},
+    {file = "types-pyOpenSSL-24.0.0.20240311.tar.gz", hash = "sha256:7bca00cfc4e7ef9c5d2663c6a1c068c35798e59670595439f6296e7ba3d58083"},
+    {file = "types_pyOpenSSL-24.0.0.20240311-py3-none-any.whl", hash = "sha256:6e8e8bfad34924067333232c93f7fc4b369856d8bea0d5c9d1808cb290ab1972"},
 ]
 
 [[package]]
@@ -2457,7 +2484,7 @@ files = [
 
 [[package]]
 name = "uvicorn"
-version = "0.27.1"
+version = "0.28.1"
 requires_python = ">=3.8"
 summary = "The lightning-fast ASGI server."
 groups = ["default"]
@@ -2466,13 +2493,13 @@ dependencies = [
     "h11>=0.8",
 ]
 files = [
-    {file = "uvicorn-0.27.1-py3-none-any.whl", hash = "sha256:5c89da2f3895767472a35556e539fd59f7edbe9b1e9c0e1c99eebeadc61838e4"},
-    {file = "uvicorn-0.27.1.tar.gz", hash = "sha256:3d9a267296243532db80c83a959a3400502165ade2c1338dea4e67915fd4745a"},
+    {file = "uvicorn-0.28.1-py3-none-any.whl", hash = "sha256:5162f6d652f545be91b1feeaee8180774af143965ca9dc8a47ff1dc6bafa4ad5"},
+    {file = "uvicorn-0.28.1.tar.gz", hash = "sha256:08103e79d546b6cf20f67c7e5e434d2cf500a6e29b28773e407250c54fc4fa3c"},
 ]
 
 [[package]]
 name = "uvicorn"
-version = "0.27.1"
+version = "0.28.1"
 extras = ["standard"]
 requires_python = ">=3.8"
 summary = "The lightning-fast ASGI server."
@@ -2482,14 +2509,14 @@ dependencies = [
     "httptools>=0.5.0",
     "python-dotenv>=0.13",
     "pyyaml>=5.1",
-    "uvicorn==0.27.1",
+    "uvicorn==0.28.1",
     "uvloop!=0.15.0,!=0.15.1,>=0.14.0; (sys_platform != \"cygwin\" and sys_platform != \"win32\") and platform_python_implementation != \"PyPy\"",
     "watchfiles>=0.13",
     "websockets>=10.4",
 ]
 files = [
-    {file = "uvicorn-0.27.1-py3-none-any.whl", hash = "sha256:5c89da2f3895767472a35556e539fd59f7edbe9b1e9c0e1c99eebeadc61838e4"},
-    {file = "uvicorn-0.27.1.tar.gz", hash = "sha256:3d9a267296243532db80c83a959a3400502165ade2c1338dea4e67915fd4745a"},
+    {file = "uvicorn-0.28.1-py3-none-any.whl", hash = "sha256:5162f6d652f545be91b1feeaee8180774af143965ca9dc8a47ff1dc6bafa4ad5"},
+    {file = "uvicorn-0.28.1.tar.gz", hash = "sha256:08103e79d546b6cf20f67c7e5e434d2cf500a6e29b28773e407250c54fc4fa3c"},
 ]
 
 [[package]]

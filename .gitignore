@@ -169,7 +169,6 @@ temp/
 # built files from the web UI
 src/app/domain/web/public
 src/app/domain/web/public/hot
-public
 .vite
 src/app/domain/web/static
 public/hot

@@ -91,7 +91,7 @@ linting = [
   "asyncpg-stubs",
   "pylint",
 ]
-test = ["pytest", "pytest-xdist", "pytest-mock", "pytest-cov", "coverage"]
+test = ["pytest", "pytest-xdist", "pytest-mock", "pytest-cov", "coverage", "pytest-sugar"]
 
 [tool.black]
 exclude = '''

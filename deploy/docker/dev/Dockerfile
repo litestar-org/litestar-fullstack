@@ -50,6 +50,7 @@ COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml LICENSE Makefile 
   tailwind.config.cjs postcss.config.cjs components.json \
   ./
 COPY scripts ./scripts/
+COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython pdm nodeenv  \
