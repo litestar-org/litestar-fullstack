@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.3.2
+    rev: v0.3.3
     hooks:
       - id: ruff
         args:
@@ -36,9 +36,10 @@ repos:
           - passlib[argon2]
           - asyncpg
           - asyncpg-stubs
-          - litestar[cli,jinja,jwt,redis,sqlalchemy,standard,structlog]
+          - litestar[jinja,jwt,redis,sqlalchemy,structlog]
+          - advanced-alchemy[uuid]>=0.8.0
           - litestar-granian
-          - litestar-vite
+          - litestar-vite>=0.1.21
           - litestar-saq
           - types-python-jose
           - types-click

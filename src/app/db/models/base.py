@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Self, cast
+from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.base import orm_registry
-from sqlalchemy import (
-    ColumnElement,
-    select,
-)
 from sqlalchemy.orm import DeclarativeBase, Mapped, declarative_mixin, mapped_column
 from sqlalchemy.types import String
 
 if TYPE_CHECKING:
-    from collections.abc import Hashable
-
     from advanced_alchemy.repository.typing import ModelT
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from sqlalchemy.ext.asyncio.scoping import async_scoped_session
 
 
 @declarative_mixin
@@ -46,37 +38,3 @@ class SQLQuery(DeclarativeBase):
         """
         exclude = exclude.union("_sentinel") if exclude else {"_sentinel"}
         return {field.name: getattr(self, field.name) for field in self.__table__.columns if field.name not in exclude}
-
-
-class UniqueMixin:
-    @classmethod
-    async def as_unique(
-        cls,
-        session: AsyncSession | async_scoped_session[AsyncSession],
-        *args: Any,
-        **kwargs: Any,
-    ) -> Self:
-        key = cls, cls.unique_hash(*args, **kwargs)
-        cache = getattr(session, "_unique_cache", None)
-        if cache is None:
-            cache = {}
-            setattr(session, "_unique_cache", cache)
-        if obj := cache.get(key):
-            return cast("Self", obj)
-
-        with session.no_autoflush:
-            statement = select(cls).where(cls.unique_filter(*args, **kwargs)).limit(1)
-            if (obj := (await session.scalars(statement)).first()) is None:
-                session.add(obj := cls(*args, **kwargs))
-        cache[key] = obj
-        return obj
-
-    @classmethod
-    def unique_hash(cls, *arg: Any, **kw: Any) -> Hashable:  # noqa: ARG003
-        msg = "Implement this in subclass"
-        raise NotImplementedError(msg)
-
-    @classmethod
-    def unique_filter(cls, *arg: Any, **kw: Any) -> ColumnElement[bool]:  # noqa: ARG003
-        msg = "Implement this in subclass"
-        raise NotImplementedError(msg)
