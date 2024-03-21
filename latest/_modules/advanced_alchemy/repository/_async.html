@@ -722,7 +722,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">ColumnElement</span><span class="p">,</span> <span class="n">ColumnExpressionArgument</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">NotFoundError</span><span class="p">,</span> <span class="n">RepositoryError</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">NotFoundError</span><span class="p">,</span> <span class="n">RepositoryError</span><span class="p">,</span> <span class="n">wrap_sqlalchemy_exception</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BeforeAfter</span><span class="p">,</span>
     <span class="n">CollectionFilter</span><span class="p">,</span>
@@ -735,7 +735,7 @@ document.write(`
     <span class="n">SearchFilter</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.operations</span> <span class="kn">import</span> <span class="n">Merge</span>
-<span class="kn">from</span> <span class="nn">advanced_alchemy.repository._util</span> <span class="kn">import</span> <span class="n">get_instrumented_attr</span><span class="p">,</span> <span class="n">wrap_sqlalchemy_exception</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.repository._util</span> <span class="kn">import</span> <span class="n">get_instrumented_attr</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.repository.typing</span> <span class="kn">import</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">ModelT</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.utils.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>
 
@@ -1773,6 +1773,9 @@ document.write(`
 <span class="sd">        Update instances with the attribute values present on `data`, or create a new instance if</span>
 <span class="sd">        one doesn&#39;t exist.</span>
 
+<span class="sd">        !!! tip</span>
+<span class="sd">            In most cases, you will want to set `match_fields` to the combination of attributes, excluded the primary key, that define uniqueness for a row.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            data: Instance to update existing, or be created. Identifier used to determine if an</span>
 <span class="sd">                existing instance exists is the value of an attribute on ``data`` named as value of</span>
@@ -1784,7 +1787,7 @@ document.write(`
 <span class="sd">            no_merge: Skip the usage of optimized Merge statements</span>
 <span class="sd">                :class:`SQLAlchemyAsyncRepository.auto_commit &lt;SQLAlchemyAsyncRepository&gt;`</span>
 <span class="sd">            match_fields: a list of keys to use to match the existing model.  When</span>
-<span class="sd">                empty, all fields are matched.</span>
+<span class="sd">                empty, automatically uses ``self.id_attribute`` (`id` by default) to match .</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The updated or created instance.</span>
