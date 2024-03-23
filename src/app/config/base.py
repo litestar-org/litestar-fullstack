@@ -150,7 +150,7 @@ class DatabaseSettings:
                 dbapi_connection.isolation_level = None
 
             @event.listens_for(engine.sync_engine, "begin")
-            def _sqla_on_begin(dbapi_connection: Any, _: Any) -> Any:  # pragma: no cover
+            def _sqla_on_begin(dbapi_connection: Any) -> Any:  # pragma: no cover
                 """Emits a custom begin"""
                 dbapi_connection.exec_driver_sql("BEGIN")
         else:
