@@ -143,7 +143,7 @@ def promote_to_superuser(email: str) -> None:
                 )
                 user = await users_service.update(
                     item_id=user.id,
-                    data=user_in.__dict__,
+                    data=user_in.to_dict(),
                     auto_commit=True,
                 )
                 console.print(f"Upgraded {email} to superuser")
