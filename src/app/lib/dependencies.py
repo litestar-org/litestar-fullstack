@@ -1,8 +1,10 @@
 """Application dependency providers."""
+
 from __future__ import annotations
 
 from datetime import datetime
 from typing import Literal
+from uuid import UUID
 
 from advanced_alchemy.filters import (
     BeforeAfter,
@@ -14,7 +16,6 @@ from advanced_alchemy.filters import (
 )
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
-from uuid_utils import UUID
 
 from app.config import constants
 

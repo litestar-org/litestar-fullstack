@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
+from uuid import UUID  # noqa: TCH003
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid_utils import UUID  # noqa: TCH002
 
 if TYPE_CHECKING:
     from .role import Role

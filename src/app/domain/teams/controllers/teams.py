@@ -1,11 +1,11 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
-from uuid_utils import UUID  # noqa: TCH002
 
 from app.config import constants
 from app.db.models import User as UserModel
@@ -17,6 +17,8 @@ from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from litestar.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
 

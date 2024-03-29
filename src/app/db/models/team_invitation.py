@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from uuid import UUID  # noqa: TCH003
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid_utils import UUID  # noqa: TCH002
 
 from app.db.models.team_roles import TeamRoles
 

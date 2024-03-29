@@ -1,9 +1,10 @@
 from collections.abc import Iterable
 from typing import Any
+from uuid import UUID
 
 from advanced_alchemy import RepositoryError
 from sqlalchemy.orm import InstrumentedAttribute
-from uuid_utils import UUID, uuid4
+from uuid_utils.compat import uuid4
 
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag

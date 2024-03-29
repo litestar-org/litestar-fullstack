@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
+from uuid import UUID  # noqa: TCH003
 
 from litestar.exceptions import PermissionDeniedException
-from uuid_utils import UUID  # noqa: TCH002
 
 from app.config import constants
 from app.db.models import Role, User, UserRole
