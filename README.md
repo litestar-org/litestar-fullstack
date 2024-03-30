@@ -63,6 +63,14 @@ pdm run stop-infra
 docker compose up
 ```
 
+### Details
+
+We have documented the process to help you get the repository up and running.
+Check out the [documentation][docs] for more information.
+
+[//]: # "links"
+[docs]: https://docs.fullstack.litestar.dev/
+
 <details>
 
 <summary>Command Examples</summary>
@@ -292,10 +300,3 @@ Loading environment configuration from .env
 
 ```
 
-### Details
-
-We have documented the process to help you get the repository up and running.
-Check out the [documentation][docs] for more information.
-
-[//]: # "links"
-[docs]: https://docs.fullstack.litestar.dev/
