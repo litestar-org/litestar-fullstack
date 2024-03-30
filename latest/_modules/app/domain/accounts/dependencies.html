@@ -702,12 +702,13 @@ document.write(`
                   
   <h1>Source code for app.domain.accounts.dependencies</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;User Account Controllers.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">joinedload</span><span class="p">,</span> <span class="n">load_only</span><span class="p">,</span> <span class="n">noload</span><span class="p">,</span> <span class="n">selectinload</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">joinedload</span><span class="p">,</span> <span class="n">load_only</span><span class="p">,</span> <span class="n">selectinload</span>
 
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamMember</span><span class="p">,</span> <span class="n">UserRole</span>
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>
@@ -745,7 +746,7 @@ document.write(`
         <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">UserModel</span><span class="p">)</span>
         <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
         <span class="o">.</span><span class="n">options</span><span class="p">(</span>
-            <span class="n">selectinload</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">roles</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">joinedload</span><span class="p">(</span><span class="n">UserRole</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">))),</span>
+            <span class="n">selectinload</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">roles</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">joinedload</span><span class="p">(</span><span class="n">UserRole</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
             <span class="n">selectinload</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">oauth_accounts</span><span class="p">),</span>
             <span class="n">selectinload</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">teams</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamMember</span><span class="o">.</span><span class="n">team</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">load_only</span><span class="p">(</span><span class="n">Team</span><span class="o">.</span><span class="n">name</span><span class="p">)),</span>
@@ -788,7 +789,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">UserRoleService</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">session</span><span class="o">=</span><span class="n">db_session</span><span class="p">,</span>
-        <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">UserRole</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)),</span>
+        <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">UserRole</span><span class="p">),</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">service</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">service</span></div>
 
