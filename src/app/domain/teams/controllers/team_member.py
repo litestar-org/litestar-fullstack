@@ -1,4 +1,5 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -17,7 +18,7 @@ from app.domain.teams.schemas import Team, TeamMemberModify
 from app.domain.teams.services import TeamMemberService, TeamService
 
 if TYPE_CHECKING:
-    from uuid_utils import UUID
+    from uuid import UUID
 
 
 class TeamMemberController(Controller):

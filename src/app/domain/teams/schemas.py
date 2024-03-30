@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from uuid import UUID  # noqa: TCH003
+
 import msgspec
-from uuid_utils import UUID  # noqa: TCH002
 
 from app.db.models.team_roles import TeamRoles
 from app.lib.schema import CamelizedBaseStruct

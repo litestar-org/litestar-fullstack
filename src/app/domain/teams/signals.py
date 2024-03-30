@@ -10,7 +10,7 @@ from app.config.app import alchemy
 from .dependencies import provide_teams_service
 
 if TYPE_CHECKING:
-    from uuid_utils import UUID
+    from uuid import UUID
 
 logger = structlog.get_logger()
 

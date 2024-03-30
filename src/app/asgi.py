@@ -13,9 +13,10 @@ if TYPE_CHECKING:
 def create_app() -> Litestar:
     """Create ASGI application."""
 
+    from uuid import UUID
+
     from litestar import Litestar
     from litestar.di import Provide
-    from uuid_utils import UUID
 
     from app.config import app as config
     from app.config import constants

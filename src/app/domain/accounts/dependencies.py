@@ -1,10 +1,11 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, load_only, noload, selectinload
+from sqlalchemy.orm import joinedload, load_only, selectinload
 
 from app.db.models import Role, Team, TeamMember, UserRole
 from app.db.models import User as UserModel
@@ -37,7 +38,7 @@ async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[User
         statement=select(UserModel)
         .order_by(UserModel.email)
         .options(
-            selectinload(UserModel.roles).options(joinedload(UserRole.role, innerjoin=True).options(noload("*"))),
+            selectinload(UserModel.roles).options(joinedload(UserRole.role, innerjoin=True)),
             selectinload(UserModel.oauth_accounts),
             selectinload(UserModel.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(load_only(Team.name)),
@@ -74,6 +75,6 @@ async def provide_user_roles_service(db_session: AsyncSession | None = None) -> 
     """
     async with UserRoleService.new(
         session=db_session,
-        statement=select(UserRole).options(noload("*")),
+        statement=select(UserRole),
     ) as service:
         yield service

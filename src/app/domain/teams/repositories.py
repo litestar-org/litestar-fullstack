@@ -1,12 +1,16 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+from uuid import UUID  # noqa: TCH003
 
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import joinedload, selectinload
-from uuid_utils import UUID
 
 from app.db.models import Team, TeamInvitation, TeamMember
-from app.lib.dependencies import FilterTypes
 from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
+
+if TYPE_CHECKING:
+    from app.lib.dependencies import FilterTypes
 
 __all__ = (
     "TeamInvitationRepository",

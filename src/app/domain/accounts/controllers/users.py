@@ -1,4 +1,5 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
@@ -14,9 +15,10 @@ from app.domain.accounts.schemas import User, UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.filters import FilterTypes
     from litestar.pagination import OffsetPagination
-    from uuid_utils import UUID
 
 
 class UserController(Controller):
