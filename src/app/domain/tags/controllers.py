@@ -13,11 +13,12 @@ from app.domain.tags.dtos import TagCreateDTO, TagDTO, TagUpdateDTO
 from app.domain.tags.services import TagService
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.filters import FilterTypes
     from litestar.dto import DTOData
     from litestar.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
-    from uuid_utils import UUID
 
 
 class TagController(Controller):
