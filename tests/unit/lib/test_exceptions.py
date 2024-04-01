@@ -58,14 +58,15 @@ def test_repository_exception_to_http_response(exc: type[ApplicationError], stat
 
 
 @pytest.mark.parametrize(
-    ("exc", "status"),
+    ("exc", "status", "debug"),
     [
-        (exceptions.AuthorizationError, HTTP_403_FORBIDDEN),
-        (exceptions.ApplicationError, HTTP_500_INTERNAL_SERVER_ERROR),
+        (exceptions.AuthorizationError, HTTP_403_FORBIDDEN, True),
+        (exceptions.AuthorizationError, HTTP_403_FORBIDDEN, False),
+        (exceptions.ApplicationError, HTTP_500_INTERNAL_SERVER_ERROR, False),
     ],
 )
-def test_exception_to_http_response(exc: type[exceptions.ApplicationError], status: int) -> None:
-    app = Litestar(route_handlers=[])
+def test_exception_to_http_response(exc: type[exceptions.ApplicationError], status: int, debug: bool) -> None:
+    app = Litestar(route_handlers=[], debug=debug)
     request = RequestFactory(app=app, server="testserver").get("/wherever")
     response = exceptions.exception_to_http_response(request, exc())
     assert response.status_code == status
