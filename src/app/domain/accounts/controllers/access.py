@@ -60,10 +60,19 @@ class AccessController(Controller):
     async def logout(
         self,
         request: Request,
-    ) -> None:
+    ) -> Response:
         """Account Logout"""
         request.cookies.pop(auth.key, None)
         request.clear_session()
+
+        response = Response(
+            {"message": "OK"},
+        status_code=200,
+
+        )
+        response.delete_cookie(auth.key)
+
+        return response
 
     @post(
         operation_id="AccountRegister",
