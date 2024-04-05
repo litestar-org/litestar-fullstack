@@ -17,8 +17,8 @@ from app.domain.accounts.services import UserService
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from advanced_alchemy.filters import FilterTypes
-    from litestar.pagination import OffsetPagination
+    from advanced_alchemy.extensions.litestar.filters import FilterTypes
+    from advanced_alchemy.extensions.litestar.service import OffsetPagination
 
 
 class UserController(Controller):

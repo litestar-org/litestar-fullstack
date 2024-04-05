@@ -2,16 +2,16 @@ from collections.abc import Iterable
 from typing import Any
 from uuid import UUID
 
-from advanced_alchemy import RepositoryError
+from advanced_alchemy.extensions.litestar.exceptions import RepositoryError
+from advanced_alchemy.extensions.litestar.filters import FilterTypes
+from advanced_alchemy.extensions.litestar.service import SQLAlchemyAsyncRepositoryService
+from advanced_alchemy.extensions.litestar.utils.text import slugify
 from sqlalchemy.orm import InstrumentedAttribute
 from uuid_utils.compat import uuid4
 
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
 from app.db.models.user import User  # noqa: TCH001
-from app.lib.dependencies import FilterTypes
-from app.lib.service import SQLAlchemyAsyncRepositoryService
-from app.utils import slugify
 
 from .repositories import TeamInvitationRepository, TeamMemberRepository, TeamRepository
 

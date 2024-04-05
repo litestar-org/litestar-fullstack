@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from advanced_alchemy.extensions.litestar.service import SQLAlchemyAsyncRepositoryService
+
 from app.db.models import Tag
-from app.lib.service import SQLAlchemyAsyncRepositoryService
 
 from .repositories import TagRepository
 

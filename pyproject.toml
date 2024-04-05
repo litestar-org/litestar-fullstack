@@ -16,7 +16,7 @@ classifiers = [
 dependencies = [
   "litestar[jinja,jwt,redis,structlog]",
   "jsbeautifier",
-  "advanced-alchemy[uuid]>=0.8.0",
+  "advanced-alchemy[uuid] @ git+https://github.com/jolt-org/advanced-alchemy.git@litestar-exports",
   "asyncpg>=0.28.0",
   "python-dotenv>=1.0.0",
   "passlib[argon2]>=1.7.4",
@@ -45,7 +45,7 @@ app = "app.__main__:run_cli"
 
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatchling", "nodeenv"]
+requires = ["hatchling", "nodeenv", "setuptools"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -91,7 +91,15 @@ linting = [
   "asyncpg-stubs",
   "pylint",
 ]
-test = ["pytest", "pytest-xdist", "pytest-mock", "pytest-cov", "coverage", "pytest-sugar"]
+test = [
+  "pytest",
+  "pytest-xdist",
+  "pytest-mock",
+  "pytest-cov",
+  "coverage",
+  "pytest-sugar",
+  "pytest-databases[postgres,redis]>=0.1.0",
+]
 
 [tool.black]
 exclude = '''

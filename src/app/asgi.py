@@ -13,8 +13,6 @@ if TYPE_CHECKING:
 def create_app() -> Litestar:
     """Create ASGI application."""
 
-    from uuid import UUID
-
     from litestar import Litestar
     from litestar.di import Provide
 
@@ -46,7 +44,6 @@ def create_app() -> Litestar:
             plugins.saq,
             plugins.granian,
         ],
-        signature_namespace={"UUID": UUID},
         on_app_init=[auth.on_app_init],
         listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
     )

@@ -4,12 +4,12 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 from uuid import UUID  # noqa: TCH003
 
+from advanced_alchemy.extensions.litestar.service import SQLAlchemyAsyncRepositoryService
 from litestar.exceptions import PermissionDeniedException
 
 from app.config import constants
 from app.db.models import Role, User, UserRole
 from app.lib import crypt
-from app.lib.service import SQLAlchemyAsyncRepositoryService
 
 from .repositories import RoleRepository, UserRepository, UserRoleRepository
 

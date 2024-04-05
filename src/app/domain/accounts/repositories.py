@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from advanced_alchemy.extensions.litestar.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
+
 from app.db.models import Role, User, UserRole
-from app.lib.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):

@@ -11,7 +11,12 @@ if TYPE_CHECKING:
 
 
 pytestmark = pytest.mark.anyio
-pytest_plugins = ["tests.docker_service_fixtures", "tests.data_fixtures"]
+pytest_plugins = [
+    "tests.data_fixtures",
+    "pytest_databases.docker",
+    "pytest_databases.docker.postgres",
+    "pytest_databases.docker.redis",
+]
 
 
 @pytest.fixture
