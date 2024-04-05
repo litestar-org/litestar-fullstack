@@ -2,10 +2,10 @@ from collections.abc import Iterable
 from typing import Any
 from uuid import UUID
 
-from advanced_alchemy.extensions.litestar.exceptions import RepositoryError
-from advanced_alchemy.extensions.litestar.filters import FilterTypes
-from advanced_alchemy.extensions.litestar.service import SQLAlchemyAsyncRepositoryService
-from advanced_alchemy.extensions.litestar.utils.text import slugify
+from advanced_alchemy.exceptions import RepositoryError
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
+from advanced_alchemy.utils.text import slugify
 from sqlalchemy.orm import InstrumentedAttribute
 from uuid_utils.compat import uuid4
 

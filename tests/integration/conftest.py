@@ -25,12 +25,16 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(name="engine", autouse=True)
-async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None) -> AsyncEngine:  # noqa: D417
+async def fx_engine(
+    docker_ip: str,
+    postgres_service: None,
+    redis_service: None,
+    postgres_port: int,
+    postgres_user: str,
+    postgres_password: str,
+    postgres_database: str,
+) -> AsyncEngine:
     """Postgresql instance for end-to-end testing.
-
-    Args:
-        docker_ip: IP address for TCP connection to Docker containers.
-        postgres_service: docker service
 
     Returns:
         Async SQLAlchemy engine instance.
@@ -38,11 +42,11 @@ async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None)
     return create_async_engine(
         URL(
             drivername="postgresql+asyncpg",
-            username="postgres",
-            password="super-secret",  # noqa: S106
+            username=postgres_user,
+            password=postgres_password,
             host=docker_ip,
-            port=5423,
-            database="postgres",
+            port=postgres_port,
+            database=postgres_database,
             query={},  # type:ignore[arg-type]
         ),
         echo=False,
@@ -116,17 +120,13 @@ def _patch_db(
 
 
 @pytest.fixture(name="redis")
-async def fx_redis(docker_ip: str, redis_service: None) -> Redis:
+async def fx_redis(docker_ip: str, redis_service: None, redis_port: int) -> Redis:
     """Redis instance for testing.
-
-    Args:
-        docker_ip: IP of docker host.
-        redis_service: docker service
 
     Returns:
         Redis client instance, function scoped.
     """
-    return Redis(host=docker_ip, port=6397)
+    return Redis(host=docker_ip, port=redis_port)
 
 
 @pytest.fixture(autouse=True)

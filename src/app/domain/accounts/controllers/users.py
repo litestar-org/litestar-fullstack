@@ -17,8 +17,8 @@ from app.domain.accounts.services import UserService
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from advanced_alchemy.extensions.litestar.filters import FilterTypes
-    from advanced_alchemy.extensions.litestar.service import OffsetPagination
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service import OffsetPagination
 
 
 class UserController(Controller):
@@ -46,7 +46,7 @@ class UserController(Controller):
     ) -> OffsetPagination[User]:
         """List users."""
         results, total = await users_service.list_and_count(*filters)
-        return users_service.to_schema(User, results, total, *filters)
+        return users_service.to_schema(data=results, total=total, schema_type=User, filters=filters)
 
     @get(
         operation_id="GetUser",
@@ -67,7 +67,7 @@ class UserController(Controller):
     ) -> User:
         """Get a user."""
         db_obj = await users_service.get(user_id)
-        return users_service.to_schema(User, db_obj)
+        return users_service.to_schema(db_obj, schema_type=User)
 
     @post(
         operation_id="CreateUser",
@@ -84,7 +84,7 @@ class UserController(Controller):
     ) -> User:
         """Create a new user."""
         db_obj = await users_service.create(data.to_dict())
-        return users_service.to_schema(User, db_obj)
+        return users_service.to_schema(db_obj, schema_type=User)
 
     @patch(
         operation_id="UpdateUser",
@@ -102,7 +102,7 @@ class UserController(Controller):
     ) -> User:
         """Create a new user."""
         db_obj = await users_service.update(item_id=user_id, data=data.to_dict())
-        return users_service.to_schema(User, db_obj)
+        return users_service.to_schema(db_obj, schema_type=User)
 
     @delete(
         operation_id="DeleteUser",

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from advanced_alchemy.extensions.litestar.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
+from advanced_alchemy.repository import SQLAlchemyAsyncRepository, SQLAlchemyAsyncSlugRepository
 
 from app.db.models import Role, User, UserRole
 

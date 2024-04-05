@@ -26,7 +26,7 @@ version = "0.8.4"
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "5b10c8257d1f6aa31774f7f13a777d13f6a9c2b3"
+revision = "c245f7de1a81e4c4b92643b1a383dbe7902d796b"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -43,7 +43,7 @@ extras = ["uuid"]
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "5b10c8257d1f6aa31774f7f13a777d13f6a9c2b3"
+revision = "c245f7de1a81e4c4b92643b1a383dbe7902d796b"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -742,18 +742,18 @@ files = [
 
 [[package]]
 name = "execnet"
-version = "2.0.2"
-requires_python = ">=3.7"
+version = "2.1.0"
+requires_python = ">=3.8"
 summary = "execnet: rapid multi-Python deployment"
 groups = ["test"]
 files = [
-    {file = "execnet-2.0.2-py3-none-any.whl", hash = "sha256:88256416ae766bc9e8895c76a87928c0012183da3cc4fc18016e6f050e025f41"},
-    {file = "execnet-2.0.2.tar.gz", hash = "sha256:cc59bc4423742fd71ad227122eb0dd44db51efb3dc4095b45ac9a08c770096af"},
+    {file = "execnet-2.1.0-py3-none-any.whl", hash = "sha256:ad174d7705410adc9359ba4822bad211d71cdbd59ff70304e1aa41d196b4b4d3"},
+    {file = "execnet-2.1.0.tar.gz", hash = "sha256:dc4a63f86afb40f8429f59f938d6cb97846f9e7cf7dd9eb4b8c26016965b7ac0"},
 ]
 
 [[package]]
 name = "faker"
-version = "24.4.0"
+version = "24.7.1"
 requires_python = ">=3.8"
 summary = "Faker is a Python package that generates fake data for you."
 groups = ["default"]
@@ -761,8 +761,8 @@ dependencies = [
     "python-dateutil>=2.4",
 ]
 files = [
-    {file = "Faker-24.4.0-py3-none-any.whl", hash = "sha256:998c29ee7d64429bd59204abffa9ba11f784fb26c7b9df4def78d1a70feb36a7"},
-    {file = "Faker-24.4.0.tar.gz", hash = "sha256:a5ddccbe97ab691fad6bd8036c31f5697cfaa550e62e000078d1935fa8a7ec2e"},
+    {file = "Faker-24.7.1-py3-none-any.whl", hash = "sha256:73f2bd886e8ce751e660c7d37a6c0a128aab5e1551359335bb79cfea0f4fabfc"},
+    {file = "Faker-24.7.1.tar.gz", hash = "sha256:39d34c63f0d62ed574161e23fe32008917b923d18098ce94c2650fe16463b7d5"},
 ]
 
 [[package]]
@@ -1119,7 +1119,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.7.1"
+version = "2.8.0"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
@@ -1137,8 +1137,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.7.1-py3-none-any.whl", hash = "sha256:5ce44e2b66f99f7de615a2a5ac20c8eab959eb0a1bd3eb52015e750fad973cc2"},
-    {file = "litestar-2.7.1.tar.gz", hash = "sha256:df3f9ebd4e42d410017575dc1e502e7bf01fe216e8846ae21dc7444d57e80658"},
+    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
+    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
 ]
 
 [[package]]
@@ -1158,7 +1158,7 @@ files = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.1.19"
+version = "0.1.20"
 requires_python = ">=3.8"
 summary = "Litestar integration for SAQ"
 groups = ["default"]
@@ -1167,8 +1167,8 @@ dependencies = [
     "saq>=0.12.0",
 ]
 files = [
-    {file = "litestar_saq-0.1.19-py3-none-any.whl", hash = "sha256:89d76b73850e8bae44278547e9b5739562e1aa5713ac223b8c291e05e5a29671"},
-    {file = "litestar_saq-0.1.19.tar.gz", hash = "sha256:ff329abb723de26c9e55aea056514085a5a1ec549aeff031aeb2285792ffeec8"},
+    {file = "litestar_saq-0.1.20-py3-none-any.whl", hash = "sha256:2ff3c187849f495c8089db064bcaaf1729735010d2998911ecb28af07ad681d4"},
+    {file = "litestar_saq-0.1.20.tar.gz", hash = "sha256:e46cb187af3f95e2de919511c4d1ff9ebf82410e739f56b2756ea3baf9a72d75"},
 ]
 
 [[package]]
@@ -1216,7 +1216,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.7.1"
+version = "2.8.0"
 extras = ["jinja", "jwt", "redis", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -1224,30 +1224,30 @@ groups = ["default"]
 dependencies = [
     "cryptography",
     "jinja2>=3.1.2",
-    "litestar==2.7.1",
+    "litestar==2.8.0",
     "python-jose",
     "redis[hiredis]>=4.4.4",
     "structlog",
 ]
 files = [
-    {file = "litestar-2.7.1-py3-none-any.whl", hash = "sha256:5ce44e2b66f99f7de615a2a5ac20c8eab959eb0a1bd3eb52015e750fad973cc2"},
-    {file = "litestar-2.7.1.tar.gz", hash = "sha256:df3f9ebd4e42d410017575dc1e502e7bf01fe216e8846ae21dc7444d57e80658"},
+    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
+    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.7.1"
+version = "2.8.0"
 extras = ["jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
-    "litestar==2.7.1",
+    "litestar==2.8.0",
 ]
 files = [
-    {file = "litestar-2.7.1-py3-none-any.whl", hash = "sha256:5ce44e2b66f99f7de615a2a5ac20c8eab959eb0a1bd3eb52015e750fad973cc2"},
-    {file = "litestar-2.7.1.tar.gz", hash = "sha256:df3f9ebd4e42d410017575dc1e502e7bf01fe216e8846ae21dc7444d57e80658"},
+    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
+    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
 ]
 
 [[package]]
@@ -2650,13 +2650,13 @@ files = [
 
 [[package]]
 name = "typing-extensions"
-version = "4.10.0"
+version = "4.11.0"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
 groups = ["default", "docs", "linting"]
 files = [
-    {file = "typing_extensions-4.10.0-py3-none-any.whl", hash = "sha256:69b1a937c3a517342112fb4c6df7e72fc39a38e7891a5730ed4985b5214b5475"},
-    {file = "typing_extensions-4.10.0.tar.gz", hash = "sha256:b0abd7c89e8fb96f98db18d86106ff1d90ab692004eb746cf6eda2682f91b3cb"},
+    {file = "typing_extensions-4.11.0-py3-none-any.whl", hash = "sha256:c1f94d72897edaf4ce775bb7558d5b79d8126906a14ea5ed1635921406c0387a"},
+    {file = "typing_extensions-4.11.0.tar.gz", hash = "sha256:83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"},
 ]
 
 [[package]]
