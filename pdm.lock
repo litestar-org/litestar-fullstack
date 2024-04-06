@@ -26,7 +26,7 @@ version = "0.8.4"
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "c245f7de1a81e4c4b92643b1a383dbe7902d796b"
+revision = "7d36565cc118aa5ce0ae9d5fa4e288d2eb2b84af"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -43,7 +43,7 @@ extras = ["uuid"]
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "c245f7de1a81e4c4b92643b1a383dbe7902d796b"
+revision = "7d36565cc118aa5ce0ae9d5fa4e288d2eb2b84af"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
