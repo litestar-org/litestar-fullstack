@@ -1,10 +1,12 @@
 import logging
 from typing import cast
 
-from advanced_alchemy import AsyncSessionConfig
-from advanced_alchemy.config import AlembicAsyncConfig
-from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
-from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
+from advanced_alchemy.extensions.litestar import (
+    AlembicAsyncConfig,
+    AsyncSessionConfig,
+    SQLAlchemyAsyncConfig,
+    async_autocommit_before_send_handler,
+)
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -27,7 +29,7 @@ csrf = CSRFConfig(
 cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
 alchemy = SQLAlchemyAsyncConfig(
     engine_instance=settings.db.get_engine(),
-    before_send_handler=autocommit_before_send_handler,
+    before_send_handler=async_autocommit_before_send_handler,
     session_config=AsyncSessionConfig(expire_on_commit=False),
     alembic_config=AlembicAsyncConfig(
         version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,

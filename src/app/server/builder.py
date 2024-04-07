@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from litestar.config.app import ExperimentalFeatures
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar.security.jwt import OAuth2Login
@@ -68,12 +67,13 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         )
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
-        app_config.signature_types = [
-            Token,
-            OAuth2Login,
-            UserModel,
-        ]
-        app_config.experimental_features = [ExperimentalFeatures.DTO_CODEGEN]
+        app_config.signature_namespace.update(
+            {
+                "Token": Token,
+                "OAuth2Login": OAuth2Login,
+                "UserModel": UserModel,
+            },
+        )
         app_config.exception_handlers = {
             ApplicationError: exception_to_http_response,
             RepositoryError: exception_to_http_response,

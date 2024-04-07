@@ -19,7 +19,7 @@ from app.domain.teams.services import TeamService
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from litestar.pagination import OffsetPagination
+    from advanced_alchemy.service.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
 
     from app.lib.dependencies import FilterTypes
@@ -65,7 +65,7 @@ class TeamController(Controller):
             results, total = await teams_service.list_and_count(*filters)
         else:
             results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
-        return teams_service.to_schema(Team, results, total, *filters)
+        return teams_service.to_schema(data=results, total=total, schema_type=Team, filters=filters)
 
     @post(
         operation_id="CreateTeam",
@@ -83,7 +83,7 @@ class TeamController(Controller):
         obj = data.to_dict()
         obj.update({"owner_id": current_user.id, "owner": current_user})
         db_obj = await teams_service.create(obj)
-        return teams_service.to_schema(Team, db_obj)
+        return teams_service.to_schema(schema_type=Team, data=db_obj)
 
     @get(
         operation_id="GetTeam",
@@ -105,7 +105,7 @@ class TeamController(Controller):
     ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(Team, db_obj)
+        return teams_service.to_schema(schema_type=Team, data=db_obj)
 
     @patch(
         operation_id="UpdateTeam",
@@ -130,7 +130,7 @@ class TeamController(Controller):
             item_id=team_id,
             data=data.to_dict(),
         )
-        return teams_service.to_schema(Team, db_obj)
+        return teams_service.to_schema(schema_type=Team, data=db_obj)
 
     @delete(
         operation_id="DeleteTeam",

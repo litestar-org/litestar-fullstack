@@ -3,15 +3,23 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+from redis.asyncio import Redis
 
 from app.config import base
 
 if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
     from pytest import MonkeyPatch
 
 
 pytestmark = pytest.mark.anyio
-pytest_plugins = ["tests.docker_service_fixtures", "tests.data_fixtures"]
+pytest_plugins = [
+    "tests.data_fixtures",
+    "pytest_databases.docker",
+    "pytest_databases.docker.postgres",
+    "pytest_databases.docker.redis",
+]
 
 
 @pytest.fixture
@@ -29,3 +37,13 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
         return settings
 
     monkeypatch.setattr(base, "get_settings", get_settings)
+
+
+@pytest.fixture(name="redis", autouse=True)
+async def fx_redis(docker_ip: str, redis_service: None, redis_port: int) -> AsyncGenerator[Redis, None]:
+    """Redis instance for testing.
+
+    Returns:
+        Redis client instance, function scoped.
+    """
+    yield Redis(host=docker_ip, port=redis_port)

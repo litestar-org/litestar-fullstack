@@ -1,4 +1,4 @@
-from litestar.plugins.sqlalchemy import SQLAlchemyPlugin
+from advanced_alchemy.extensions.litestar import SQLAlchemyPlugin
 from litestar.plugins.structlog import StructlogPlugin
 from litestar_granian import GranianPlugin
 from litestar_saq import SAQPlugin

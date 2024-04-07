@@ -18,6 +18,7 @@ from app.db.utils import open_fixture
 from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
+from app.server.builder import ApplicationConfigurator
 from app.server.plugins import alchemy
 
 here = Path(__file__).parent
@@ -25,12 +26,16 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(name="engine", autouse=True)
-async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None) -> AsyncEngine:  # noqa: D417
+async def fx_engine(
+    docker_ip: str,
+    postgres_service: None,
+    redis_service: None,
+    postgres_port: int,
+    postgres_user: str,
+    postgres_password: str,
+    postgres_database: str,
+) -> AsyncEngine:
     """Postgresql instance for end-to-end testing.
-
-    Args:
-        docker_ip: IP address for TCP connection to Docker containers.
-        postgres_service: docker service
 
     Returns:
         Async SQLAlchemy engine instance.
@@ -38,11 +43,11 @@ async def fx_engine(docker_ip: str, postgres_service: None, redis_service: None)
     return create_async_engine(
         URL(
             drivername="postgresql+asyncpg",
-            username="postgres",
-            password="super-secret",  # noqa: S106
+            username=postgres_user,
+            password=postgres_password,
             host=docker_ip,
-            port=5423,
-            database="postgres",
+            port=postgres_port,
+            database=postgres_database,
             query={},  # type:ignore[arg-type]
         ),
         echo=False,
@@ -96,7 +101,7 @@ async def _seed_db(
             await teams_services.create(obj)
         await teams_services.repository.session.commit()
 
-    return None  # type: ignore[return-value]
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -115,25 +120,13 @@ def _patch_db(
     )
 
 
-@pytest.fixture(name="redis")
-async def fx_redis(docker_ip: str, redis_service: None) -> Redis:
-    """Redis instance for testing.
-
-    Args:
-        docker_ip: IP of docker host.
-        redis_service: docker service
-
-    Returns:
-        Redis client instance, function scoped.
-    """
-    return Redis(host=docker_ip, port=6397)
-
-
 @pytest.fixture(autouse=True)
 def _patch_redis(app: "Litestar", redis: Redis, monkeypatch: pytest.MonkeyPatch) -> None:
     cache_config = app.response_cache_config
     assert cache_config is not None
     saq_plugin = get_saq_plugin(app)
+    app_plugin = app.plugins.get(ApplicationConfigurator)
+    monkeypatch.setattr(app_plugin, "redis", redis)
     monkeypatch.setattr(app.stores.get(cache_config.store), "_redis", redis)
     if saq_plugin._config.queue_instances is not None:
         for queue in saq_plugin._config.queue_instances.values():

@@ -1,4 +1,5 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import Annotated
@@ -96,7 +97,7 @@ class AccessController(Controller):
             user_data.update({"role_id": role_obj.id})
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
-        return users_service.to_schema(User, user)
+        return users_service.to_schema(user, schema_type=User)
 
     @get(
         operation_id="AccountProfile",
@@ -108,4 +109,4 @@ class AccessController(Controller):
     )
     async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
-        return users_service.to_schema(User, current_user)
+        return users_service.to_schema(current_user, schema_type=User)

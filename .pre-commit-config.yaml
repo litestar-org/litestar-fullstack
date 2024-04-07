@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-ast
       - id: check-case-conflict
@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.3.4
+    rev: v0.3.5
     hooks:
       - id: ruff
         args:
@@ -36,8 +36,8 @@ repos:
           - passlib[argon2]
           - asyncpg
           - asyncpg-stubs
-          - litestar[jinja,jwt,redis,sqlalchemy,structlog]
-          - advanced-alchemy[uuid]>=0.8.0
+          - litestar[jinja,jwt,redis,structlog]
+          - advanced-alchemy[uuid]>=0.9.0
           - litestar-granian
           - litestar-vite>=0.1.21
           - litestar-saq
