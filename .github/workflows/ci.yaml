@@ -11,8 +11,7 @@ concurrency:
 
 env:
   PYTHONUNBUFFERED: "1"
-  FORCE_COLOR: "1"
-  SKIP_DOCKER_COMPOSE: "1"
+  FORCE_COLOR: "1" 
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -65,17 +64,8 @@ jobs:
       - name: Install dependencies
         run: pdm install -G:all
 
-      - if: runner.os == 'Linux'
-        name: Start Database Services
-        run: sudo docker compose -f tests/docker-compose.yml up -d
-
       - name: Test with Coverage
         run: pdm run pytest tests --cov=app --cov-report=xml
-
-      - if: runner.os == 'Linux'
-        name: Stop Redis & Database Services
-        run: sudo docker compose -f tests/docker-compose.yml down --remove-orphans --volumes
-
 
       - if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
