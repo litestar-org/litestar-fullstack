@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:7ec49ec71d1d2a63a54b1c0ce94961d2da66abe511411a5247479c8628418fdf"
+content_hash = "sha256:0cfe460e1f3b816915cd7c82bf601ab4a5323435d6cb42eda6f1912c0c1c06f7"
 
 [[package]]
 name = "accessible-pygments"
@@ -22,11 +22,8 @@ files = [
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.8.4"
+version = "0.9.0"
 requires_python = ">=3.8"
-git = "https://github.com/jolt-org/advanced-alchemy.git"
-ref = "litestar-exports"
-revision = "9ad2b48c37212d4fbb16d90923be6bc1f62a4723"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -35,22 +32,25 @@ dependencies = [
     "sqlalchemy>=2.0.20",
     "typing-extensions>=4.0.0",
 ]
+files = [
+    {file = "advanced_alchemy-0.9.0-py3-none-any.whl", hash = "sha256:882cf8b27cc8800f80971d44eb2c65f3a8718c28f2552a04ffe345ba7ac1e922"},
+    {file = "advanced_alchemy-0.9.0.tar.gz", hash = "sha256:25c27f57cb1b9cebf3073742c64061cea2b8b765660cb59fa02430cfb7a5c018"},
+]
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.8.4"
+version = "0.9.0"
 extras = ["uuid"]
 requires_python = ">=3.8"
-git = "https://github.com/jolt-org/advanced-alchemy.git"
-ref = "litestar-exports"
-revision = "9ad2b48c37212d4fbb16d90923be6bc1f62a4723"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy @ git+https://github.com/jolt-org/advanced-alchemy.git@litestar-exports",
+    "advanced-alchemy==0.9.0",
     "uuid-utils>=0.6.1",
-    "uuid-utils>=0.6.1",
-    "uuid-utils>=0.6.1",
+]
+files = [
+    {file = "advanced_alchemy-0.9.0-py3-none-any.whl", hash = "sha256:882cf8b27cc8800f80971d44eb2c65f3a8718c28f2552a04ffe345ba7ac1e922"},
+    {file = "advanced_alchemy-0.9.0.tar.gz", hash = "sha256:25c27f57cb1b9cebf3073742c64061cea2b8b765660cb59fa02430cfb7a5c018"},
 ]
 
 [[package]]
