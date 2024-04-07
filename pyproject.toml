@@ -45,7 +45,7 @@ app = "app.__main__:run_cli"
 
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatchling", "nodeenv", "setuptools"]
+requires = ["hatchling", "nodeenv"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
