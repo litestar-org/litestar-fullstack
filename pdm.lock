@@ -26,7 +26,7 @@ version = "0.8.4"
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "7d36565cc118aa5ce0ae9d5fa4e288d2eb2b84af"
+revision = "9ad2b48c37212d4fbb16d90923be6bc1f62a4723"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -43,7 +43,7 @@ extras = ["uuid"]
 requires_python = ">=3.8"
 git = "https://github.com/jolt-org/advanced-alchemy.git"
 ref = "litestar-exports"
-revision = "7d36565cc118aa5ce0ae9d5fa4e288d2eb2b84af"
+revision = "9ad2b48c37212d4fbb16d90923be6bc1f62a4723"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -1755,7 +1755,7 @@ files = [
 
 [[package]]
 name = "pytest-databases"
-version = "0.2.1"
+version = "0.2.2"
 requires_python = ">=3.8"
 summary = "Reusable database fixtures for any and all databases."
 groups = ["test"]
@@ -1763,25 +1763,25 @@ dependencies = [
     "pytest",
 ]
 files = [
-    {file = "pytest_databases-0.2.1-py3-none-any.whl", hash = "sha256:23ec74bb655a2ff1b43e1a7bbdb8570bd4e1e860011c8421a27c5a4a48dddad3"},
-    {file = "pytest_databases-0.2.1.tar.gz", hash = "sha256:a10df15e5e38444adeef87a4d2151de0a26a91c57b9043ce4f50206d187b32c9"},
+    {file = "pytest_databases-0.2.2-py3-none-any.whl", hash = "sha256:83577688016fbe6aaa5fe9533a839f8ef50a9975d1c6aaf12b4d339ce8adab6c"},
+    {file = "pytest_databases-0.2.2.tar.gz", hash = "sha256:14412923eb1db833a28bfdece2333fc4cddcb5ecc1b6e03cc60e95107e3f3405"},
 ]
 
 [[package]]
 name = "pytest-databases"
-version = "0.2.1"
+version = "0.2.2"
 extras = ["postgres", "redis"]
 requires_python = ">=3.8"
 summary = "Reusable database fixtures for any and all databases."
 groups = ["test"]
 dependencies = [
     "asyncpg>=0.29.0",
-    "pytest-databases==0.2.1",
+    "pytest-databases==0.2.2",
     "redis",
 ]
 files = [
-    {file = "pytest_databases-0.2.1-py3-none-any.whl", hash = "sha256:23ec74bb655a2ff1b43e1a7bbdb8570bd4e1e860011c8421a27c5a4a48dddad3"},
-    {file = "pytest_databases-0.2.1.tar.gz", hash = "sha256:a10df15e5e38444adeef87a4d2151de0a26a91c57b9043ce4f50206d187b32c9"},
+    {file = "pytest_databases-0.2.2-py3-none-any.whl", hash = "sha256:83577688016fbe6aaa5fe9533a839f8ef50a9975d1c6aaf12b4d339ce8adab6c"},
+    {file = "pytest_databases-0.2.2.tar.gz", hash = "sha256:14412923eb1db833a28bfdece2333fc4cddcb5ecc1b6e03cc60e95107e3f3405"},
 ]
 
 [[package]]

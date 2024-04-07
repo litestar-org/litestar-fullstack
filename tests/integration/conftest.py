@@ -18,6 +18,7 @@ from app.db.utils import open_fixture
 from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
+from app.server.builder import ApplicationConfigurator
 from app.server.plugins import alchemy
 
 here = Path(__file__).parent
@@ -100,7 +101,7 @@ async def _seed_db(
             await teams_services.create(obj)
         await teams_services.repository.session.commit()
 
-    return None  # type: ignore[return-value]
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -119,21 +120,13 @@ def _patch_db(
     )
 
 
-@pytest.fixture(name="redis")
-async def fx_redis(docker_ip: str, redis_service: None, redis_port: int) -> Redis:
-    """Redis instance for testing.
-
-    Returns:
-        Redis client instance, function scoped.
-    """
-    return Redis(host=docker_ip, port=redis_port)
-
-
 @pytest.fixture(autouse=True)
 def _patch_redis(app: "Litestar", redis: Redis, monkeypatch: pytest.MonkeyPatch) -> None:
     cache_config = app.response_cache_config
     assert cache_config is not None
     saq_plugin = get_saq_plugin(app)
+    app_plugin = app.plugins.get(ApplicationConfigurator)
+    monkeypatch.setattr(app_plugin, "redis", redis)
     monkeypatch.setattr(app.stores.get(cache_config.store), "_redis", redis)
     if saq_plugin._config.queue_instances is not None:
         for queue in saq_plugin._config.queue_instances.values():
