@@ -765,7 +765,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">IntegrityError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">team_obj</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TeamMember</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_obj</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">TeamRoles</span><span class="o">.</span><span class="n">MEMBER</span><span class="p">))</span>
         <span class="n">team_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">team_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">team_obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">Team</span><span class="p">,</span> <span class="n">team_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">schema_type</span><span class="o">=</span><span class="n">Team</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">team_obj</span><span class="p">)</span>
 
     <span class="nd">@post</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;RemoveMemberFromTeam&quot;</span><span class="p">,</span>
@@ -796,7 +796,7 @@ document.write(`
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;User is not a member of this team.&quot;</span>
             <span class="k">raise</span> <span class="n">IntegrityError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">team_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">Team</span><span class="p">,</span> <span class="n">team_obj</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">teams_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">schema_type</span><span class="o">=</span><span class="n">Team</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">team_obj</span><span class="p">)</span></div>
 
 </pre></div>
 

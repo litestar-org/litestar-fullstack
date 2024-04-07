@@ -705,16 +705,16 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy</span> <span class="kn">import</span> <span class="n">RepositoryError</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">RepositoryError</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepositoryService</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.utils.text</span> <span class="kn">import</span> <span class="n">slugify</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 <span class="kn">from</span> <span class="nn">uuid_utils.compat</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamInvitation</span><span class="p">,</span> <span class="n">TeamMember</span><span class="p">,</span> <span class="n">TeamRoles</span>
 <span class="kn">from</span> <span class="nn">app.db.models.tag</span> <span class="kn">import</span> <span class="n">Tag</span>
 <span class="kn">from</span> <span class="nn">app.db.models.user</span> <span class="kn">import</span> <span class="n">User</span>  <span class="c1"># noqa: TCH001</span>
-<span class="kn">from</span> <span class="nn">app.lib.dependencies</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
-<span class="kn">from</span> <span class="nn">app.lib.service</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepositoryService</span>
-<span class="kn">from</span> <span class="nn">app.utils</span> <span class="kn">import</span> <span class="n">slugify</span>
 
 <span class="kn">from</span> <span class="nn">.repositories</span> <span class="kn">import</span> <span class="n">TeamInvitationRepository</span><span class="p">,</span> <span class="n">TeamMemberRepository</span><span class="p">,</span> <span class="n">TeamRepository</span>
 

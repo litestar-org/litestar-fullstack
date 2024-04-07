@@ -706,14 +706,14 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>  <span class="c1"># noqa: TCH003</span>
 
+<span class="kn">from</span> <span class="nn">advanced_alchemy.repository</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepository</span><span class="p">,</span> <span class="n">SQLAlchemyAsyncSlugRepository</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ColumnElement</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">joinedload</span><span class="p">,</span> <span class="n">selectinload</span>
 
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamInvitation</span><span class="p">,</span> <span class="n">TeamMember</span>
-<span class="kn">from</span> <span class="nn">app.lib.repository</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepository</span><span class="p">,</span> <span class="n">SQLAlchemyAsyncSlugRepository</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">app.lib.dependencies</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;TeamInvitationRepository&quot;</span><span class="p">,</span>

@@ -707,13 +707,21 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span> <span class="nn">litestar.exceptions</span> <span class="kn">import</span> <span class="n">ImproperlyConfiguredException</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Mapping</span>
+
+    <span class="kn">from</span> <span class="nn">litestar.typing</span> <span class="kn">import</span> <span class="n">FieldDefinition</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;DTO_FIELD_META_KEY&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DTOField&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Mark&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dto_field&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;extract_dto_field&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">DTO_FIELD_META_KEY</span> <span class="o">=</span> <span class="s2">&quot;__dto__&quot;</span>
@@ -754,6 +762,31 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">DTO_FIELD_META_KEY</span><span class="p">:</span> <span class="n">DTOField</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">Mark</span><span class="p">(</span><span class="n">mark</span><span class="p">))}</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">extract_dto_field</span><span class="p">(</span><span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">,</span> <span class="n">field_info_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DTOField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract ``DTOField`` instance for a model field.</span>
+
+<span class="sd">    Supports ``DTOField`` to bet set via ``Annotated`` or via a field info/metadata mapping.</span>
+
+<span class="sd">    E.g., ``Annotated[str, DTOField(mark=&quot;read-only&quot;)]`` or ``info=dto_field(mark=&quot;read-only&quot;)``.</span>
+
+<span class="sd">    If a value is found in ``field_info_mapping``, it is prioritized over the field definition&#39;s metadata.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field_definition: A field definition.</span>
+<span class="sd">        field_info_mapping: A field metadata/info attribute mapping, e.g., SQLAlchemy&#39;s ``info`` attribute,</span>
+<span class="sd">          or dataclasses ``metadata`` attribute.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DTO field info, if any.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inst</span> <span class="o">:=</span> <span class="n">field_info_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DTO_FIELD_META_KEY</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfiguredException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DTO field info must be an instance of DTOField, got &#39;</span><span class="si">{</span><span class="n">inst</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inst</span>
+
+    <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">field_definition</span><span class="o">.</span><span class="n">metadata</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">)),</span> <span class="n">DTOField</span><span class="p">())</span>
 </pre></div>
 
                 </article>

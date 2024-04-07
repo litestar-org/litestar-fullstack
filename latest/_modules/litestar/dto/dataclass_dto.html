@@ -708,7 +708,7 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">litestar.dto.base_dto</span> <span class="kn">import</span> <span class="n">AbstractDTO</span>
 <span class="kn">from</span> <span class="nn">litestar.dto.data_structures</span> <span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.field</span> <span class="kn">import</span> <span class="n">DTO_FIELD_META_KEY</span><span class="p">,</span> <span class="n">DTOField</span>
+<span class="kn">from</span> <span class="nn">litestar.dto.field</span> <span class="kn">import</span> <span class="n">extract_dto_field</span>
 <span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">DependencyKwarg</span><span class="p">,</span> <span class="n">KwargDefinition</span>
 <span class="kn">from</span> <span class="nn">litestar.types.empty</span> <span class="kn">import</span> <span class="n">Empty</span>
 
@@ -747,7 +747,7 @@ document.write(`
                 <span class="n">DTOFieldDefinition</span><span class="o">.</span><span class="n">from_field_definition</span><span class="p">(</span>
                     <span class="n">field_definition</span><span class="o">=</span><span class="n">field_definition</span><span class="p">,</span>
                     <span class="n">default_factory</span><span class="o">=</span><span class="n">default_factory</span><span class="p">,</span>
-                    <span class="n">dto_field</span><span class="o">=</span><span class="n">dc_field</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DTO_FIELD_META_KEY</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">()),</span>
+                    <span class="n">dto_field</span><span class="o">=</span><span class="n">extract_dto_field</span><span class="p">(</span><span class="n">field_definition</span><span class="p">,</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
                     <span class="n">model_name</span><span class="o">=</span><span class="n">model_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>

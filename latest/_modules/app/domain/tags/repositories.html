@@ -703,8 +703,9 @@ document.write(`
   <h1>Source code for app.domain.tags.repositories</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">from</span> <span class="nn">advanced_alchemy.repository</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepository</span>
+
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Tag</span>
-<span class="kn">from</span> <span class="nn">app.lib.repository</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepository</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;TagRepository&quot;</span><span class="p">,)</span>
 

@@ -719,8 +719,8 @@ document.write(`
     <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 
     <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">OffsetPagination</span>
     <span class="kn">from</span> <span class="nn">litestar.dto</span> <span class="kn">import</span> <span class="n">DTOData</span>
-    <span class="kn">from</span> <span class="nn">litestar.pagination</span> <span class="kn">import</span> <span class="n">OffsetPagination</span>
     <span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
 
 
@@ -749,7 +749,7 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OffsetPagination</span><span class="p">[</span><span class="n">Tag</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List tags.&quot;&quot;&quot;</span>
         <span class="n">results</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">list_and_count</span><span class="p">(</span><span class="o">*</span><span class="n">filters</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_dto</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
 
     <span class="nd">@get</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;GetTag&quot;</span><span class="p">,</span>
@@ -770,7 +770,7 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a tag.&quot;&quot;&quot;</span>
         <span class="n">db_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_dto</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
 
     <span class="nd">@post</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;CreateTag&quot;</span><span class="p">,</span>
@@ -789,7 +789,7 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new tag.&quot;&quot;&quot;</span>
         <span class="n">db_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">create_instance</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_dto</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
 
     <span class="nd">@patch</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;UpdateTag&quot;</span><span class="p">,</span>
@@ -812,7 +812,7 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a tag.&quot;&quot;&quot;</span>
         <span class="n">db_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">tag_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">create_instance</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_dto</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tags_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">db_obj</span><span class="p">)</span>
 
     <span class="nd">@delete</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;DeleteTag&quot;</span><span class="p">,</span>
