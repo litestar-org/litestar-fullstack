@@ -70,7 +70,7 @@ class DatabaseSettings:
     def get_engine(self) -> AsyncEngine:
         if self._engine_instance is not None:
             return self._engine_instance
-        if self.URL.startswith("postgres"):
+        if self.URL.startswith("postgresql+asyncpg"):
             engine = create_async_engine(
                 url=self.URL,
                 future=True,
@@ -128,7 +128,7 @@ class DatabaseSettings:
                         format="binary",
                     ),
                 )
-        elif self.URL.startswith("sqlite"):
+        elif self.URL.startswith("sqlite+aiosqlite"):
             engine = create_async_engine(
                 url=self.URL,
                 future=True,
