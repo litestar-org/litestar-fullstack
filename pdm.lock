@@ -1119,7 +1119,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.8.0"
+version = "2.8.2"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
@@ -1137,8 +1137,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
-    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
+    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
+    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
 ]
 
 [[package]]
@@ -1158,7 +1158,7 @@ files = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.1.20"
+version = "0.1.21"
 requires_python = ">=3.8"
 summary = "Litestar integration for SAQ"
 groups = ["default"]
@@ -1167,8 +1167,8 @@ dependencies = [
     "saq>=0.12.0",
 ]
 files = [
-    {file = "litestar_saq-0.1.20-py3-none-any.whl", hash = "sha256:2ff3c187849f495c8089db064bcaaf1729735010d2998911ecb28af07ad681d4"},
-    {file = "litestar_saq-0.1.20.tar.gz", hash = "sha256:e46cb187af3f95e2de919511c4d1ff9ebf82410e739f56b2756ea3baf9a72d75"},
+    {file = "litestar_saq-0.1.21-py3-none-any.whl", hash = "sha256:f30f3efbcbc8d4a2c33b22ea2c79b008f1a0363231194001c7e34e78a50a78ea"},
+    {file = "litestar_saq-0.1.21.tar.gz", hash = "sha256:2e8121dbc091efb1d7a76f2b7b611a8d178f82da39f2d39143dde08b2210f714"},
 ]
 
 [[package]]
@@ -1216,7 +1216,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.8.0"
+version = "2.8.2"
 extras = ["jinja", "jwt", "redis", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -1224,30 +1224,30 @@ groups = ["default"]
 dependencies = [
     "cryptography",
     "jinja2>=3.1.2",
-    "litestar==2.8.0",
+    "litestar==2.8.2",
     "python-jose",
     "redis[hiredis]>=4.4.4",
     "structlog",
 ]
 files = [
-    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
-    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
+    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
+    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.8.0"
+version = "2.8.2"
 extras = ["jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
-    "litestar==2.8.0",
+    "litestar==2.8.2",
 ]
 files = [
-    {file = "litestar-2.8.0-py3-none-any.whl", hash = "sha256:1b9a326953639a72c48c8720c8d7f2a1724087d037b484214b0c79bd75d36ea7"},
-    {file = "litestar-2.8.0.tar.gz", hash = "sha256:d7f7fa5b0303e50868edaf0b640f67b0f59f1ed088da1730da14ae14ef10e2fb"},
+    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
+    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
 ]
 
 [[package]]
@@ -1755,7 +1755,7 @@ files = [
 
 [[package]]
 name = "pytest-databases"
-version = "0.2.2"
+version = "0.2.4"
 requires_python = ">=3.8"
 summary = "Reusable database fixtures for any and all databases."
 groups = ["test"]
@@ -1763,25 +1763,25 @@ dependencies = [
     "pytest",
 ]
 files = [
-    {file = "pytest_databases-0.2.2-py3-none-any.whl", hash = "sha256:83577688016fbe6aaa5fe9533a839f8ef50a9975d1c6aaf12b4d339ce8adab6c"},
-    {file = "pytest_databases-0.2.2.tar.gz", hash = "sha256:14412923eb1db833a28bfdece2333fc4cddcb5ecc1b6e03cc60e95107e3f3405"},
+    {file = "pytest_databases-0.2.4-py3-none-any.whl", hash = "sha256:68f5e4e5a2741448cd3e43ce22b63a051c1ba58383067249b38a0c2e5cff0827"},
+    {file = "pytest_databases-0.2.4.tar.gz", hash = "sha256:52b42fb0fd4a7c930ac9c5086211abfc2a200767c67799e0911602a423437425"},
 ]
 
 [[package]]
 name = "pytest-databases"
-version = "0.2.2"
+version = "0.2.4"
 extras = ["postgres", "redis"]
 requires_python = ">=3.8"
 summary = "Reusable database fixtures for any and all databases."
 groups = ["test"]
 dependencies = [
     "asyncpg>=0.29.0",
-    "pytest-databases==0.2.2",
+    "pytest-databases==0.2.4",
     "redis",
 ]
 files = [
-    {file = "pytest_databases-0.2.2-py3-none-any.whl", hash = "sha256:83577688016fbe6aaa5fe9533a839f8ef50a9975d1c6aaf12b4d339ce8adab6c"},
-    {file = "pytest_databases-0.2.2.tar.gz", hash = "sha256:14412923eb1db833a28bfdece2333fc4cddcb5ecc1b6e03cc60e95107e3f3405"},
+    {file = "pytest_databases-0.2.4-py3-none-any.whl", hash = "sha256:68f5e4e5a2741448cd3e43ce22b63a051c1ba58383067249b38a0c2e5cff0827"},
+    {file = "pytest_databases-0.2.4.tar.gz", hash = "sha256:52b42fb0fd4a7c930ac9c5086211abfc2a200767c67799e0911602a423437425"},
 ]
 
 [[package]]
@@ -2635,7 +2635,7 @@ files = [
 
 [[package]]
 name = "types-redis"
-version = "4.6.0.20240311"
+version = "4.6.0.20240409"
 requires_python = ">=3.8"
 summary = "Typing stubs for redis"
 groups = ["linting"]
@@ -2644,8 +2644,8 @@ dependencies = [
     "types-pyOpenSSL",
 ]
 files = [
-    {file = "types-redis-4.6.0.20240311.tar.gz", hash = "sha256:e049bbdff0e0a1f8e701b64636811291d21bff79bf1e7850850a44055224a85f"},
-    {file = "types_redis-4.6.0.20240311-py3-none-any.whl", hash = "sha256:6b9d68a29aba1ee400c823d8e5fe88675282eb69d7211e72fe65dbe54b33daca"},
+    {file = "types-redis-4.6.0.20240409.tar.gz", hash = "sha256:ce217c279581d769df992c5b76d61c65425b0a679626048e633e643868eb881b"},
+    {file = "types_redis-4.6.0.20240409-py3-none-any.whl", hash = "sha256:a3b92760c49a034827a0c3825206728df4e61e981c1324099d4414335af4f52f"},
 ]
 
 [[package]]
