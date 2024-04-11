@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import binascii
+import json
 import os
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -411,7 +412,7 @@ class AppSettings:
             elif self.ALLOWED_CORS_ORIGINS.startswith(
                 "[",
             ) and self.ALLOWED_CORS_ORIGINS.endswith("]"):
-                self.ALLOWED_CORS_ORIGINS = list(self.ALLOWED_CORS_ORIGINS)
+                self.ALLOWED_CORS_ORIGINS = json.loads(self.ALLOWED_CORS_ORIGINS)
 
 
 @dataclass
