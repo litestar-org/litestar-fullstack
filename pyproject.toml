@@ -35,7 +35,7 @@ requires-python = ">=3.10"
 version = "0.2.0"
 
 [project.urls]
-Discord = "https://discord.gg/litestar-919193495116337154"
+Discord = "https://discord.gg/litestar"
 Homepage = "https://github.com/litestar-org/litestar-fullstack"
 Issue = "https://github.com/litestar-org/litestar-fullstack/issues/"
 Source = "https://github.com/litestar-org/litestar-fullstack"
