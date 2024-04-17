@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import binascii
+import json
 import os
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -405,14 +406,20 @@ class AppSettings:
         return slugify(self.NAME)
 
     def __post_init__(self) -> None:
+        # Check if the ALLOWED_CORS_ORIGINS is a string.
         if isinstance(self.ALLOWED_CORS_ORIGINS, str):
-            if not self.ALLOWED_CORS_ORIGINS.startswith("["):
+            # Check if the string starts with "[" and ends with "]", indicating a list.
+            if self.ALLOWED_CORS_ORIGINS.startswith("[") and self.ALLOWED_CORS_ORIGINS.endswith("]"):
+                try:
+                    # Safely evaluate the string as a Python list.
+                    self.ALLOWED_CORS_ORIGINS = json.loads(self.ALLOWED_CORS_ORIGINS)
+                except (SyntaxError, ValueError):
+                    # Handle potential errors if the string is not a valid Python literal.
+                    msg = "ALLOWED_CORS_ORIGINS is not a valid list representation."
+                    raise ValueError(msg) from None
+            else:
+                # Split the string by commas into a list if it is not meant to be a list representation.
                 self.ALLOWED_CORS_ORIGINS = [host.strip() for host in self.ALLOWED_CORS_ORIGINS.split(",")]
-            elif self.ALLOWED_CORS_ORIGINS.startswith(
-                "[",
-            ) and self.ALLOWED_CORS_ORIGINS.endswith("]"):
-                self.ALLOWED_CORS_ORIGINS = list(self.ALLOWED_CORS_ORIGINS)
-
 
 @dataclass
 class Settings:
