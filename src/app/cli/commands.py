@@ -21,6 +21,7 @@ async def load_database_fixtures() -> None:
     from structlog import get_logger
 
     from app.config import get_settings
+    from app.config.app import alchemy
     from app.db.models import Role
     from app.db.utils import open_fixture
     from app.domain.accounts.services import RoleService
@@ -30,6 +31,7 @@ async def load_database_fixtures() -> None:
     fixtures_path = Path(settings.db.FIXTURE_PATH)
     async with RoleService.new(
         statement=select(Role).options(load_only(Role.id, Role.slug, Role.name, Role.description)),
+        config=alchemy,
     ) as service:
         fixture_data = open_fixture(fixtures_path, "role")
         await service.upsert_many(match_fields=["name"], data=fixture_data, auto_commit=True)
@@ -127,13 +129,14 @@ def promote_to_superuser(email: str) -> None:
     import anyio
     from rich import get_console
 
+    from app.config.app import alchemy
     from app.domain.accounts.schemas import UserUpdate
     from app.domain.accounts.services import UserService
 
     console = get_console()
 
     async def _promote_to_superuser(email: str) -> None:
-        async with UserService.new() as users_service:
+        async with UserService.new(config=alchemy) as users_service:
             user = await users_service.get_one_or_none(email=email)
             if user:
                 console.print(f"Promoting user: %{user.email}")
