@@ -104,6 +104,8 @@ auth = OAuth2PasswordBearerAuth[User](
     exclude=[
         constants.OPENAPI_SCHEMA,
         constants.HEALTH_ENDPOINT,
+        urls.GITHUB_OAUTH2_CALLBACK,
+        urls.GOOGLE_OAUTH2_CALLBACK,
         urls.ACCOUNT_LOGIN,
         urls.ACCOUNT_REGISTER,
     ],
