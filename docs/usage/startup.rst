@@ -82,7 +82,7 @@ To manually rebuild assets, use the following:
     src/app/domain/web/public/assets/main-gDMW9BNa.js       41.96 kB │ gzip:  10.46 kB
     src/app/domain/web/public/assets/vendor-DcvSTexI.js    493.83 kB │ gzip: 155.51 kB
     ✓ built in 2.91s
-    Assets built. 
+    Assets built.
 
 .. dropdown:: Starting the server in production mode
 
