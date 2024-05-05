@@ -57,7 +57,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             owner = data.pop("owner", None)
             owner_id = data.pop("owner_id", None)
             if owner_id is None:
-                msg = "'owner_id' is required to create a workspace."
+                msg = "'owner_id' is required to create a team."
                 raise RepositoryError(msg)
             tags_added = data.pop("tags", [])
             data = await self.to_model(data, "create")

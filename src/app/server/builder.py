@@ -42,8 +42,6 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         self.app_slug = settings.app.slug
         cli.add_command(user_management_app)
 
-        return super().on_cli_init(cli)
-
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
         """Configure application for use with SQLAlchemy.
 
