@@ -33,12 +33,11 @@ class TeamRepository(SQLAlchemyAsyncSlugRepository[Team]):
         **kwargs: Any,
     ) -> tuple[list[Team], int]:
         """Get paginated list and total count of teams that a user can access."""
-
+        team_filter = select(TeamMember.id).where(TeamMember.user_id == user_id)
         return await self.list_and_count(
             *filters,
+            Team.id.in_(team_filter),
             statement=select(Team)
-            .join(TeamMember, onclause=Team.id == TeamMember.team_id, isouter=False)
-            .where(TeamMember.user_id == user_id)
             .order_by(Team.name)
             .options(
                 selectinload(Team.tags),
