@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class Role(UUIDAuditBase, SlugKey):
     """Role."""
 
-    __tablename__ = "role"  # type: ignore[assignment]
+    __tablename__ = "role"
 
     name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]

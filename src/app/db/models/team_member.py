@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class TeamMember(UUIDAuditBase):
     """Team Membership."""
 
-    __tablename__ = "team_member"  # type: ignore[assignment]
+    __tablename__ = "team_member"
     __table_args__ = (UniqueConstraint("user_id", "team_id"),)
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user_account.id", ondelete="cascade"), nullable=False)
     team_id: Mapped[UUID] = mapped_column(ForeignKey("team.id", ondelete="cascade"), nullable=False)

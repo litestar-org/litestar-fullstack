@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class TeamInvitation(UUIDAuditBase):
     """Team Invite."""
 
-    __tablename__ = "team_invitation"  # type: ignore[assignment]
+    __tablename__ = "team_invitation"
     team_id: Mapped[UUID] = mapped_column(ForeignKey("team.id", ondelete="cascade"))
     email: Mapped[str] = mapped_column(index=True)
     role: Mapped[TeamRoles] = mapped_column(String(length=50), default=TeamRoles.MEMBER)
