@@ -39,7 +39,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=938c9ccc"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -374,7 +374,7 @@ document.write(`
           
           
           
-          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+          <a href="https://discord.gg/litestar" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Discord</span></a>
         </li>
 </ul></div>
@@ -642,7 +642,7 @@ document.write(`
           
           
           
-          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
+          <a href="https://discord.gg/litestar" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Discord</span></a>
         </li>
 </ul></div>
@@ -816,8 +816,8 @@ document.write(`
 <p>This section describes how to start the server in development and production mode.</p>
 <section id="development">
 <h2>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">DEV_MODE</span></code> is set to true, the base template expects that Vite will be running.
-When you start the application, it will try to start the Vite service with the HMR websocket connection enabled.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE</span></code> and <code class="docutils literal notranslate"><span class="pre">VITE_USE_SERVER_LIFESPAN</span></code> are both set  to true, the <cite>run</cite> command will automatically start <cite>vite</cite> during the <code class="docutils literal notranslate"><span class="pre">server_lifespan</span></code> startup hook of the Litestar CLI.</p>
+<p>Additionally, when you start the application with <code class="docutils literal notranslate"><span class="pre">VITE_HOT_RELOAD</span></code> set to true, it will also enable the HMR websocket connection to Vite.  This will allow the main Granian (or Uvicorn) web server to support Vite’s hot reload functionality.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 Starting the server in dev mode<div class="sd-summary-down docutils">
@@ -825,38 +825,71 @@ Starting the server in dev mode<div class="sd-summary-down docutils">
 <div class="sd-summary-up docutils">
 <svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
 </summary><div class="sd-summary-content sd-card-body docutils">
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>app<span class="w"> </span>run-all<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>
-Using<span class="w"> </span>Litestar<span class="w"> </span>app<span class="w"> </span>from<span class="w"> </span>env:<span class="w"> </span><span class="s1">&#39;app.asgi:create_app&#39;</span>
-<span class="m">2023</span>-10-01T20:19:06.493377Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>starting<span class="w"> </span>all<span class="w"> </span>application<span class="w"> </span>services.
-<span class="m">2023</span>-10-01T20:19:06.493500Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>starting<span class="w"> </span>Background<span class="w"> </span>worker<span class="w"> </span>processes.
-<span class="m">2023</span>-06-16T16:58:38.055247Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>starting<span class="w"> </span>Vite
-<span class="m">2023</span>-06-16T16:58:38.056850Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>HTTP<span class="w"> </span>Server.
-<span class="m">2023</span>-06-16T16:58:38.791943Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Started<span class="w"> </span>server<span class="w"> </span>process<span class="w"> </span><span class="o">[</span><span class="m">29108</span><span class="o">]</span>
-<span class="m">2023</span>-06-16T16:58:38.792012Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>application<span class="w"> </span>startup.
-<span class="m">2023</span>-06-16T16:58:38.794260Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Application<span class="w"> </span>startup<span class="w"> </span>complete.
-<span class="m">2023</span>-06-16T16:58:38.794876Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Uvicorn<span class="w"> </span>running<span class="w"> </span>on<span class="w"> </span>http://0.0.0.0:8080<span class="w"> </span><span class="o">(</span>Press<span class="w"> </span>CTRL+C<span class="w"> </span>to<span class="w"> </span>quit<span class="o">)</span>
-<span class="m">2023</span>-06-16T16:58:38.803751Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>working<span class="w"> </span>pool
-<span class="m">2023</span>-06-16T16:58:38.804423Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Worker<span class="w"> </span>is<span class="w"> </span>starting<span class="w"> </span>up.
-<span class="m">2023</span>-06-16T16:58:38.804519Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Worker<span class="w"> </span>is<span class="w"> </span>starting<span class="w"> </span>up.
-<span class="m">2023</span>-06-16T16:58:38.816324Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Performing<span class="w"> </span>background<span class="w"> </span>worker<span class="w"> </span>task.
-<span class="m">2023</span>-06-16T16:58:39.188218Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Vite<span class="w">                           </span><span class="nv">message</span><span class="o">=</span>&gt;<span class="w"> </span>litestar-fullstack@0.0.0<span class="w"> </span>dev&gt;<span class="w"> </span>vite
-<span class="m">2023</span>-06-16T16:58:39.894411Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Vite<span class="w">                           </span><span class="nv">message</span><span class="o">=</span>Forced<span class="w"> </span>re-optimization<span class="w"> </span>of<span class="w"> </span>dependencies
-<span class="m">2023</span>-06-16T16:58:39.923813Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Vite<span class="w">                           </span><span class="nv">message</span><span class="o">=</span><span class="w">  </span>VITE<span class="w"> </span>v4.3.9<span class="w">  </span>ready<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">676</span><span class="w"> </span>ms
-<span class="m">2023</span>-06-16T16:58:39.924023Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Vite<span class="w">                           </span><span class="nv">message</span><span class="o">=</span><span class="w">  </span>➜<span class="w">  </span>Local:<span class="w">   </span>http://localhost:3000/static/<span class="w">  </span>➜<span class="w">  </span>Network:<span class="w"> </span>use<span class="w"> </span>^host<span class="w"> </span>to<span class="w"> </span>expose
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span><span class="w"> </span>cody@localtop:~/Code/Litestar/litestar-fullstack$<span class="w"> </span>pdm<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8089</span>
+Using<span class="w"> </span>Litestar<span class="w"> </span>app<span class="w"> </span>from<span class="w"> </span>env:<span class="w"> </span><span class="s1">&#39;app.asgi:app&#39;</span>
+Loading<span class="w"> </span>environment<span class="w"> </span>configuration<span class="w"> </span>from<span class="w"> </span>.env
+Starting<span class="w"> </span>Granian<span class="w"> </span>server<span class="w"> </span>process<span class="w"> </span>───────────────────────────────────────────────────────
+┌──────────────────────────────┬──────────────────────────────────────────────────────┐
+│<span class="w"> </span>Litestar<span class="w"> </span>version<span class="w">             </span>│<span class="w"> </span><span class="m">2</span>.8.2<span class="w">                                                </span>│
+│<span class="w"> </span>Debug<span class="w"> </span>mode<span class="w">                   </span>│<span class="w"> </span>Enabled<span class="w">                                              </span>│
+│<span class="w"> </span>Python<span class="w"> </span>Debugger<span class="w"> </span>on<span class="w"> </span>exception<span class="w"> </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>CORS<span class="w">                         </span>│<span class="w"> </span>Enabled<span class="w">                                              </span>│
+│<span class="w"> </span>CSRF<span class="w">                         </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>OpenAPI<span class="w">                      </span>│<span class="w"> </span>Enabled<span class="w"> </span><span class="nv">path</span><span class="o">=</span>/schema<span class="w">                                 </span>│
+│<span class="w"> </span>Compression<span class="w">                  </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>Template<span class="w"> </span>engine<span class="w">              </span>│<span class="w"> </span>ViteTemplateEngine<span class="w">                                   </span>│
+│<span class="w"> </span>Middlewares<span class="w">                  </span>│<span class="w"> </span>JWTCookieAuthenticationMiddleware,<span class="w"> </span>LoggingMiddleware<span class="w"> </span>│
+└──────────────────────────────┴──────────────────────────────────────────────────────┘
+Starting<span class="w"> </span>Vite<span class="w"> </span>process<span class="w"> </span>with<span class="w"> </span>HMR<span class="w"> </span>Enabled<span class="w"> </span>────────────────────────────────────────────────
+Starting<span class="w"> </span>SAQ<span class="w"> </span>Workers<span class="w"> </span>──────────────────────────────────────────────────────────────────
+
+&gt;<span class="w"> </span>dev
+&gt;<span class="w"> </span>vite
+
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>granian<span class="w"> </span><span class="o">(</span>main<span class="w"> </span>PID:<span class="w"> </span><span class="m">55642</span><span class="o">)</span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Listening<span class="w"> </span>at:<span class="w"> </span>http://0.0.0.0:8089
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Spawning<span class="w"> </span>worker-1<span class="w"> </span>with<span class="w"> </span>pid:<span class="w"> </span><span class="m">55689</span>
+
+<span class="w">  </span>VITE<span class="w"> </span>v5.2.9<span class="w">  </span>ready<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">273</span><span class="w"> </span>ms
+
+<span class="w">  </span>➜<span class="w">  </span>Local:<span class="w">   </span>http://localhost:5174/static/
+<span class="w">  </span>➜<span class="w">  </span>Network:<span class="w"> </span>http://10.23.18.75:5174/static/
+<span class="w">  </span>➜<span class="w">  </span>press<span class="w"> </span>h<span class="w"> </span>+<span class="w"> </span>enter<span class="w"> </span>to<span class="w"> </span>show<span class="w"> </span><span class="nb">help</span>
+
+<span class="w">  </span>LITESTAR<span class="w">   </span>plugin<span class="w"> </span>v0.5.1
+
+<span class="w">  </span>➜<span class="w">  </span>APP_URL:<span class="w"> </span>http://localhost:8089
+Loading<span class="w"> </span>environment<span class="w"> </span>configuration<span class="w"> </span>from<span class="w"> </span>.env
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Started<span class="w"> </span>worker-1
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Started<span class="w"> </span>worker-1<span class="w"> </span>runtime-1
 </pre></div>
 </div>
 </div>
 </details></section>
 <section id="production">
 <h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">DEV_MODE</span></code> is false, the server will look for the static assets that are produced from the <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code> command.
+<p>If <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE</span></code> is false, the server will look for the static assets that are produced from the <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code> command.
 This command is automatically executed and the assets are bundled when running <code class="docutils literal notranslate"><span class="pre">pdm</span> <span class="pre">build</span></code>.</p>
 <p>To manually rebuild assets, use the following:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Generates static assets from Vite and runs the application.</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>npm<span class="w"> </span>run<span class="w"> </span>build
-<span class="w">  </span><span class="c1"># files from the above command can be found in &#39;src/app/domain/web/public&#39;</span>
-<span class="w">  </span>app<span class="w"> </span>run-all
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="o">(</span>.venv<span class="o">)</span><span class="w"> </span>cody@localtop:~/Code/Litestar/litestar-fullstack$<span class="w"> </span>app<span class="w"> </span>assets<span class="w"> </span>build
+<span class="w">  </span>Using<span class="w"> </span>Litestar<span class="w"> </span>app<span class="w"> </span>from<span class="w"> </span>env:<span class="w"> </span><span class="s1">&#39;app.asgi:app&#39;</span>
+<span class="w">  </span>Loading<span class="w"> </span>environment<span class="w"> </span>configuration<span class="w"> </span>from<span class="w"> </span>.env
+<span class="w">  </span>Starting<span class="w"> </span>Vite<span class="w"> </span>build<span class="w"> </span>process<span class="w"> </span>──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+<span class="w">  </span>&gt;<span class="w"> </span>build
+<span class="w">  </span>&gt;<span class="w"> </span>vite<span class="w"> </span>build
+
+<span class="w">  </span>vite<span class="w"> </span>v5.2.9<span class="w"> </span>building<span class="w"> </span><span class="k">for</span><span class="w"> </span>production...
+<span class="w">  </span>✓<span class="w"> </span><span class="m">222</span><span class="w"> </span>modules<span class="w"> </span>transformed.
+<span class="w">  </span>src/app/domain/web/public/manifest.json<span class="w">                  </span><span class="m">0</span>.53<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">   </span><span class="m">0</span>.22<span class="w"> </span>kB
+<span class="w">  </span>src/app/domain/web/public/assets/favicon-DXHXvpft.png<span class="w">    </span><span class="m">7</span>.69<span class="w"> </span>kB
+<span class="w">  </span>src/app/domain/web/public/assets/main-D9hDRSjL.css<span class="w">      </span><span class="m">34</span>.22<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">   </span><span class="m">6</span>.88<span class="w"> </span>kB
+<span class="w">  </span>src/app/domain/web/public/assets/main-gDMW9BNa.js<span class="w">       </span><span class="m">41</span>.96<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">  </span><span class="m">10</span>.46<span class="w"> </span>kB
+<span class="w">  </span>src/app/domain/web/public/assets/vendor-DcvSTexI.js<span class="w">    </span><span class="m">493</span>.83<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w"> </span><span class="m">155</span>.51<span class="w"> </span>kB
+<span class="w">  </span>✓<span class="w"> </span>built<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">2</span>.91s
+<span class="w">  </span>Assets<span class="w"> </span>built.
 </pre></div>
 </div>
 </div>
@@ -867,25 +900,29 @@ Starting the server in production mode<div class="sd-summary-down docutils">
 <div class="sd-summary-up docutils">
 <svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
 </summary><div class="sd-summary-content sd-card-body docutils">
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
-
-&gt;<span class="w"> </span>litestar-fullstack@0.0.0<span class="w"> </span>build
-&gt;<span class="w"> </span>vue-tsc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>vite<span class="w"> </span>build
-
-vite<span class="w"> </span>v4.1.2<span class="w"> </span>building<span class="w"> </span><span class="k">for</span><span class="w"> </span>production...
-✓<span class="w"> </span><span class="m">15</span><span class="w"> </span>modules<span class="w"> </span>transformed.
-Generated<span class="w"> </span>an<span class="w"> </span>empty<span class="w"> </span>chunk:<span class="w"> </span><span class="s2">&quot;vue&quot;</span>.
-../public/assets/vue-5532db34.svg<span class="w">    </span><span class="m">0</span>.50<span class="w"> </span>kB
-../public/manifest.json<span class="w">              </span><span class="m">0</span>.57<span class="w"> </span>kB
-../public/assets/main-b75adab1.css<span class="w">   </span><span class="m">1</span>.30<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">  </span><span class="m">0</span>.67<span class="w"> </span>kB
-../public/assets/vue-4ed993c7.js<span class="w">     </span><span class="m">0</span>.00<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">  </span><span class="m">0</span>.02<span class="w"> </span>kB
-../public/assets/main-17f9b70b.js<span class="w">    </span><span class="m">1</span>.50<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w">  </span><span class="m">0</span>.80<span class="w"> </span>kB
-../public/assets/@vue-5be96905.js<span class="w">   </span><span class="m">52</span>.40<span class="w"> </span>kB<span class="w"> </span>│<span class="w"> </span>gzip:<span class="w"> </span><span class="m">21</span>.07<span class="w"> </span>kB
-
-❯<span class="w"> </span>app<span class="w"> </span>run-all
-<span class="m">2023</span>-02-19<span class="w"> </span><span class="m">22</span>:53:08<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>starting<span class="w"> </span>application.
-<span class="m">2023</span>-02-19<span class="w"> </span><span class="m">22</span>:53:08<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>starting<span class="w"> </span>Background<span class="w"> </span>worker<span class="w"> </span>processes.
-<span class="m">2023</span>-02-19<span class="w"> </span><span class="m">22</span>:53:08<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>HTTP<span class="w"> </span>Server.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span><span class="w"> </span>cody@localtop:~/Code/Litestar/litestar-fullstack$<span class="w"> </span>app<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8089</span>
+Using<span class="w"> </span>Litestar<span class="w"> </span>app<span class="w"> </span>from<span class="w"> </span>env:<span class="w"> </span><span class="s1">&#39;app.asgi:app&#39;</span>
+Loading<span class="w"> </span>environment<span class="w"> </span>configuration<span class="w"> </span>from<span class="w"> </span>.env
+Starting<span class="w"> </span>Granian<span class="w"> </span>server<span class="w"> </span>process<span class="w"> </span>──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+┌──────────────────────────────┬──────────────────────────────────────────────────────┐
+│<span class="w"> </span>Litestar<span class="w"> </span>version<span class="w">             </span>│<span class="w"> </span><span class="m">2</span>.8.2<span class="w">                                                </span>│
+│<span class="w"> </span>Debug<span class="w"> </span>mode<span class="w">                   </span>│<span class="w"> </span>Enabled<span class="w">                                              </span>│
+│<span class="w"> </span>Python<span class="w"> </span>Debugger<span class="w"> </span>on<span class="w"> </span>exception<span class="w"> </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>CORS<span class="w">                         </span>│<span class="w"> </span>Enabled<span class="w">                                              </span>│
+│<span class="w"> </span>CSRF<span class="w">                         </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>OpenAPI<span class="w">                      </span>│<span class="w"> </span>Enabled<span class="w"> </span><span class="nv">path</span><span class="o">=</span>/schema<span class="w">                                 </span>│
+│<span class="w"> </span>Compression<span class="w">                  </span>│<span class="w"> </span>Disabled<span class="w">                                             </span>│
+│<span class="w"> </span>Template<span class="w"> </span>engine<span class="w">              </span>│<span class="w"> </span>ViteTemplateEngine<span class="w">                                   </span>│
+│<span class="w"> </span>Middlewares<span class="w">                  </span>│<span class="w"> </span>JWTCookieAuthenticationMiddleware,<span class="w"> </span>LoggingMiddleware<span class="w"> </span>│
+└──────────────────────────────┴──────────────────────────────────────────────────────┘
+Serving<span class="w"> </span>assets<span class="w"> </span>using<span class="w"> </span>manifest<span class="w"> </span>at<span class="w"> </span><span class="sb">`</span>/home/cody/Code/Litestar/litestar-fullstack/src/app/domain/web/public/manifest.json<span class="sb">`</span>.<span class="w"> </span>──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Starting<span class="w"> </span>SAQ<span class="w"> </span>Workers<span class="w"> </span>─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>granian<span class="w"> </span><span class="o">(</span>main<span class="w"> </span>PID:<span class="w"> </span><span class="m">47755</span><span class="o">)</span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Listening<span class="w"> </span>at:<span class="w"> </span>http://0.0.0.0:8089
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Spawning<span class="w"> </span>worker-1<span class="w"> </span>with<span class="w"> </span>pid:<span class="w"> </span><span class="m">47760</span>
+Loading<span class="w"> </span>environment<span class="w"> </span>configuration<span class="w"> </span>from<span class="w"> </span>.env
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Started<span class="w"> </span>worker-1
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Started<span class="w"> </span>worker-1<span class="w"> </span>runtime-1
 </pre></div>
 </div>
 </div>
@@ -1002,7 +1039,7 @@ Generated<span class="w"> </span>an<span class="w"> </span>empty<span class="w">
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
     <br/>
   </p>
 </div>
