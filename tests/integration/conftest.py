@@ -27,7 +27,7 @@ pytestmark = pytest.mark.anyio
 
 @pytest.fixture(name="engine", autouse=True)
 async def fx_engine(
-    docker_ip: str,
+    postgres_docker_ip: str,
     postgres_service: None,
     redis_service: None,
     postgres_port: int,
@@ -45,7 +45,7 @@ async def fx_engine(
             drivername="postgresql+asyncpg",
             username=postgres_user,
             password=postgres_password,
-            host=docker_ip,
+            host=postgres_docker_ip,
             port=postgres_port,
             database=postgres_database,
             query={},  # type:ignore[arg-type]

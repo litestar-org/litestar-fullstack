@@ -22,7 +22,7 @@ pytest_plugins = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def anyio_backend() -> str:
     return "asyncio"
 
@@ -40,10 +40,10 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.fixture(name="redis", autouse=True)
-async def fx_redis(docker_ip: str, redis_service: None, redis_port: int) -> AsyncGenerator[Redis, None]:
+async def fx_redis(redis_docker_ip: str, redis_service: None, redis_port: int) -> AsyncGenerator[Redis, None]:
     """Redis instance for testing.
 
     Returns:
         Redis client instance, function scoped.
     """
-    yield Redis(host=docker_ip, port=redis_port)
+    yield Redis(host=redis_docker_ip, port=redis_port)
