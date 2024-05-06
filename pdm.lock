@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:e6bb68d9114a016792d7a1e031f0702e0f2160f593934c256291fb14f969284e"
+content_hash = "sha256:25526582b8e8a361e868aafa9c392edfaf52f70c48b1a92d175c1d86bf13922a"
 
 [[package]]
 name = "accessible-pygments"
@@ -1234,7 +1234,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.8.2"
+version = "2.8.3"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
@@ -1252,8 +1252,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
-    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
+    {file = "litestar-2.8.3-py3-none-any.whl", hash = "sha256:bef5e8592b1afba24306f9a5834d84cef89826b12f58a97d3099cf49e2f3767d"},
+    {file = "litestar-2.8.3.tar.gz", hash = "sha256:3764eef3885b331bfb15c478a2b9e2bc1980741ff58bd5512d599436f669549c"},
 ]
 
 [[package]]
@@ -1289,7 +1289,7 @@ files = [
 [[package]]
 name = "litestar-sphinx-theme"
 version = "0.2.0"
-requires_python = ">=3.8,<4.0"
+requires_python = "<4.0,>=3.8"
 git = "https://github.com/litestar-org/litestar-sphinx-theme.git"
 revision = "76b1d0e4c8afff1ad135b1917fe09cf6c1cc6c9b"
 summary = "A Sphinx theme for the Litestar organization"
@@ -1331,7 +1331,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.8.2"
+version = "2.8.3"
 extras = ["jinja", "jwt", "redis", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -1339,30 +1339,30 @@ groups = ["default"]
 dependencies = [
     "cryptography",
     "jinja2>=3.1.2",
-    "litestar==2.8.2",
+    "litestar==2.8.3",
     "python-jose",
     "redis[hiredis]>=4.4.4",
     "structlog",
 ]
 files = [
-    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
-    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
+    {file = "litestar-2.8.3-py3-none-any.whl", hash = "sha256:bef5e8592b1afba24306f9a5834d84cef89826b12f58a97d3099cf49e2f3767d"},
+    {file = "litestar-2.8.3.tar.gz", hash = "sha256:3764eef3885b331bfb15c478a2b9e2bc1980741ff58bd5512d599436f669549c"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.8.2"
+version = "2.8.3"
 extras = ["jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
-    "litestar==2.8.2",
+    "litestar==2.8.3",
 ]
 files = [
-    {file = "litestar-2.8.2-py3-none-any.whl", hash = "sha256:c891baf8a17d66cfed5c40bef7b5bf4c02c2831babf5fca0af404f441610557a"},
-    {file = "litestar-2.8.2.tar.gz", hash = "sha256:18353cb7246ba2e7f8d4aac4fe2d8772b503c931cf5ee16efc759cbbc3a2344b"},
+    {file = "litestar-2.8.3-py3-none-any.whl", hash = "sha256:bef5e8592b1afba24306f9a5834d84cef89826b12f58a97d3099cf49e2f3767d"},
+    {file = "litestar-2.8.3.tar.gz", hash = "sha256:3764eef3885b331bfb15c478a2b9e2bc1980741ff58bd5512d599436f669549c"},
 ]
 
 [[package]]
