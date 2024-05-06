@@ -19,7 +19,7 @@ class Team(UUIDAuditBase, SlugKey):
     Users can create and invite users to a team.
     """
 
-    __tablename__ = "team"  # type: ignore[assignment]
+    __tablename__ = "team"
     __pii_columns__ = {"name", "description"}
     name: Mapped[str] = mapped_column(nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(String(length=500), nullable=True, default=None)

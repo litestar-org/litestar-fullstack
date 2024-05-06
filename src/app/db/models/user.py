@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class User(UUIDAuditBase):
-    __tablename__ = "user_account"  # type: ignore[assignment]
+    __tablename__ = "user_account"
     __table_args__ = {"comment": "User accounts for application access"}
     __pii_columns__ = {"name", "email", "avatar_url"}
 

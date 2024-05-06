@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
     """Tag."""
 
-    __tablename__ = "tag"  # type: ignore[assignment]
+    __tablename__ = "tag"
     name: Mapped[str] = mapped_column(index=False)
     description: Mapped[str | None] = mapped_column(String(length=255), index=False, nullable=True)
 
