@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import select
 from sqlalchemy.orm import joinedload, load_only, selectinload
 
 from app.db.models import Role, Team, TeamMember, UserRole
@@ -35,15 +34,13 @@ async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[User
     """Construct repository and service objects for the request."""
     async with UserService.new(
         session=db_session,
-        statement=select(UserModel)
-        .order_by(UserModel.email)
-        .options(
+        load=[
             selectinload(UserModel.roles).options(joinedload(UserRole.role, innerjoin=True)),
             selectinload(UserModel.oauth_accounts),
             selectinload(UserModel.teams).options(
                 joinedload(TeamMember.team, innerjoin=True).options(load_only(Team.name)),
             ),
-        ),
+        ],
     ) as service:
         yield service
 
@@ -59,7 +56,7 @@ async def provide_roles_service(db_session: AsyncSession | None = None) -> Async
     """
     async with RoleService.new(
         session=db_session,
-        statement=select(Role).options(selectinload(Role.users).options(joinedload(UserRole.user, innerjoin=True))),
+        load=selectinload(Role.users).options(joinedload(UserRole.user, innerjoin=True)),
     ) as service:
         yield service
 
@@ -75,6 +72,5 @@ async def provide_user_roles_service(db_session: AsyncSession | None = None) -> 
     """
     async with UserRoleService.new(
         session=db_session,
-        statement=select(UserRole),
     ) as service:
         yield service
