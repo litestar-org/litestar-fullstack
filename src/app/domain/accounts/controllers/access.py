@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
+from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
@@ -16,7 +17,6 @@ from app.domain.accounts.dependencies import provide_roles_service, provide_user
 from app.domain.accounts.guards import auth, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
 from app.domain.accounts.services import RoleService, UserService
-from app.utils import slugify
 
 
 class AccessController(Controller):
@@ -68,8 +68,7 @@ class AccessController(Controller):
 
         response = Response(
             {"message": "OK"},
-        status_code=200,
-
+            status_code=200,
         )
         response.delete_cookie(auth.key)
 

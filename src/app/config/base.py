@@ -8,13 +8,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
+from advanced_alchemy.utils.text import slugify
 from litestar.serialization import decode_json, encode_json
+from litestar.utils.module_loader import module_to_os_path
 from redis.asyncio import Redis
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.pool import NullPool
-
-from app.utils import module_to_os_path, slugify
 
 if TYPE_CHECKING:
     from litestar.data_extractors import RequestExtractorField, ResponseExtractorField
@@ -420,6 +420,7 @@ class AppSettings:
             else:
                 # Split the string by commas into a list if it is not meant to be a list representation.
                 self.ALLOWED_CORS_ORIGINS = [host.strip() for host in self.ALLOWED_CORS_ORIGINS.split(",")]
+
 
 @dataclass
 class Settings:
