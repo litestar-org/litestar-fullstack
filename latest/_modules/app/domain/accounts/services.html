@@ -29,7 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/domain/accounts/services';</script>
@@ -719,6 +719,7 @@ document.write(`
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.repository._util</span> <span class="kn">import</span> <span class="n">LoadSpec</span>
     <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 
 
@@ -745,6 +746,8 @@ document.write(`
         <span class="n">auto_commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new User and assign default Role.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -757,6 +760,8 @@ document.write(`
             <span class="n">auto_commit</span><span class="o">=</span><span class="n">auto_commit</span><span class="p">,</span>
             <span class="n">auto_expunge</span><span class="o">=</span><span class="n">auto_expunge</span><span class="p">,</span>
             <span class="n">auto_refresh</span><span class="o">=</span><span class="n">auto_refresh</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -772,6 +777,8 @@ document.write(`
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">id_attribute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">role_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;role_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -779,14 +786,16 @@ document.write(`
             <span class="k">if</span> <span class="n">role_id</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UserRole</span><span class="p">(</span><span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">,</span> <span class="n">assigned_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)))</span>  <span class="c1"># noqa: UP017</span>
         <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span>
-            <span class="n">item_id</span><span class="p">,</span>
-            <span class="n">attribute_names</span><span class="p">,</span>
-            <span class="n">with_for_update</span><span class="p">,</span>
-            <span class="n">auto_commit</span><span class="p">,</span>
-            <span class="n">auto_expunge</span><span class="p">,</span>
-            <span class="n">auto_refresh</span><span class="p">,</span>
-            <span class="n">id_attribute</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
+            <span class="n">attribute_names</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span>
+            <span class="n">with_for_update</span><span class="o">=</span><span class="n">with_for_update</span><span class="p">,</span>
+            <span class="n">auto_commit</span><span class="o">=</span><span class="n">auto_commit</span><span class="p">,</span>
+            <span class="n">auto_expunge</span><span class="o">=</span><span class="n">auto_expunge</span><span class="p">,</span>
+            <span class="n">auto_refresh</span><span class="o">=</span><span class="n">auto_refresh</span><span class="p">,</span>
+            <span class="n">id_attribute</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 

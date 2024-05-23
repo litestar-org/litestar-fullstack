@@ -29,7 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/domain/accounts/controllers/access';</script>
@@ -707,6 +707,7 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
 
+<span class="kn">from</span> <span class="nn">advanced_alchemy.utils.text</span> <span class="kn">import</span> <span class="n">slugify</span>
 <span class="kn">from</span> <span class="nn">litestar</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">post</span>
 <span class="kn">from</span> <span class="nn">litestar.di</span> <span class="kn">import</span> <span class="n">Provide</span>
 <span class="kn">from</span> <span class="nn">litestar.enums</span> <span class="kn">import</span> <span class="n">RequestEncodingType</span>
@@ -719,7 +720,6 @@ document.write(`
 <span class="kn">from</span> <span class="nn">app.domain.accounts.guards</span> <span class="kn">import</span> <span class="n">auth</span><span class="p">,</span> <span class="n">requires_active_user</span>
 <span class="kn">from</span> <span class="nn">app.domain.accounts.schemas</span> <span class="kn">import</span> <span class="n">AccountLogin</span><span class="p">,</span> <span class="n">AccountRegister</span><span class="p">,</span> <span class="n">User</span>
 <span class="kn">from</span> <span class="nn">app.domain.accounts.services</span> <span class="kn">import</span> <span class="n">RoleService</span><span class="p">,</span> <span class="n">UserService</span>
-<span class="kn">from</span> <span class="nn">app.utils</span> <span class="kn">import</span> <span class="n">slugify</span>
 
 
 <div class="viewcode-block" id="AccessController">
@@ -773,8 +773,7 @@ document.write(`
 
         <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;OK&quot;</span><span class="p">},</span>
-        <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-
+            <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">response</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="n">auth</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
 

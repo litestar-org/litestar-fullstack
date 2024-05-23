@@ -29,7 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/domain/teams/services';</script>
@@ -701,15 +701,13 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for app.domain.teams.services</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">RepositoryError</span>
-<span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepositoryService</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.utils.text</span> <span class="kn">import</span> <span class="n">slugify</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 <span class="kn">from</span> <span class="nn">uuid_utils.compat</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamInvitation</span><span class="p">,</span> <span class="n">TeamMember</span><span class="p">,</span> <span class="n">TeamRoles</span>
@@ -717,6 +715,14 @@ document.write(`
 <span class="kn">from</span> <span class="nn">app.db.models.user</span> <span class="kn">import</span> <span class="n">User</span>  <span class="c1"># noqa: TCH001</span>
 
 <span class="kn">from</span> <span class="nn">.repositories</span> <span class="kn">import</span> <span class="n">TeamInvitationRepository</span><span class="p">,</span> <span class="n">TeamMemberRepository</span><span class="p">,</span> <span class="n">TeamRepository</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+    <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.repository._util</span> <span class="kn">import</span> <span class="n">LoadSpec</span>
+    <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;TeamInvitationService&quot;</span><span class="p">,</span>
@@ -760,6 +766,8 @@ document.write(`
         <span class="n">auto_commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new team with an owner.&quot;&quot;&quot;</span>
         <span class="n">owner_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -790,6 +798,8 @@ document.write(`
             <span class="n">auto_commit</span><span class="o">=</span><span class="n">auto_commit</span><span class="p">,</span>
             <span class="n">auto_expunge</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">auto_refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
@@ -806,6 +816,8 @@ document.write(`
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">id_attribute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap repository update operation.</span>
 
@@ -837,6 +849,8 @@ document.write(`
             <span class="n">auto_expunge</span><span class="o">=</span><span class="n">auto_expunge</span><span class="p">,</span>
             <span class="n">auto_refresh</span><span class="o">=</span><span class="n">auto_refresh</span><span class="p">,</span>
             <span class="n">id_attribute</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 

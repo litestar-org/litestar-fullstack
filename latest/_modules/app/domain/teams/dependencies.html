@@ -29,7 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/app/domain/teams/dependencies';</script>
@@ -702,11 +702,11 @@ document.write(`
                   
   <h1>Source code for app.domain.teams.dependencies</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;User Account Controllers.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">joinedload</span><span class="p">,</span> <span class="n">noload</span><span class="p">,</span> <span class="n">selectinload</span>
 
 <span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamInvitation</span><span class="p">,</span> <span class="n">TeamMember</span>
@@ -727,14 +727,12 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct repository and service objects for the request.&quot;&quot;&quot;</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">TeamService</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">session</span><span class="o">=</span><span class="n">db_session</span><span class="p">,</span>
-        <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">Team</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Team</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">options</span><span class="p">(</span>
+        <span class="n">load</span><span class="o">=</span><span class="p">[</span>
             <span class="n">selectinload</span><span class="p">(</span><span class="n">Team</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
             <span class="n">selectinload</span><span class="p">(</span><span class="n">Team</span><span class="o">.</span><span class="n">members</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamMember</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="p">),</span>
-        <span class="p">),</span>
+        <span class="p">],</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">service</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">service</span></div>
 
@@ -746,11 +744,11 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct repository and service objects for the request.&quot;&quot;&quot;</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">TeamMemberService</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">session</span><span class="o">=</span><span class="n">db_session</span><span class="p">,</span>
-        <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">TeamMember</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+        <span class="n">load</span><span class="o">=</span><span class="p">[</span>
             <span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">),</span>
             <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamMember</span><span class="o">.</span><span class="n">team</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)),</span>
             <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamMember</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)),</span>
-        <span class="p">),</span>
+        <span class="p">],</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">service</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">service</span></div>
 
@@ -762,11 +760,11 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct repository and service objects for the request.&quot;&quot;&quot;</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">TeamInvitationService</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">session</span><span class="o">=</span><span class="n">db_session</span><span class="p">,</span>
-        <span class="n">statement</span><span class="o">=</span><span class="n">select</span><span class="p">(</span><span class="n">TeamInvitation</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+        <span class="n">load</span><span class="o">=</span><span class="p">[</span>
             <span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">),</span>
             <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamInvitation</span><span class="o">.</span><span class="n">team</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)),</span>
             <span class="n">joinedload</span><span class="p">(</span><span class="n">TeamInvitation</span><span class="o">.</span><span class="n">invited_by</span><span class="p">,</span> <span class="n">innerjoin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">noload</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)),</span>
-        <span class="p">),</span>
+        <span class="p">],</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">service</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">service</span></div>
 
