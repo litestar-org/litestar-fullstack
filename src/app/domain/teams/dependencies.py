@@ -1,9 +1,9 @@
 """User Account Controllers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
 from app.db.models import Team, TeamInvitation, TeamMember
@@ -22,14 +22,12 @@ async def provide_teams_service(db_session: AsyncSession) -> AsyncGenerator[Team
     """Construct repository and service objects for the request."""
     async with TeamService.new(
         session=db_session,
-        statement=select(Team)
-        .order_by(Team.name)
-        .options(
+        load=[
             selectinload(Team.tags),
             selectinload(Team.members).options(
                 joinedload(TeamMember.user, innerjoin=True),
             ),
-        ),
+        ],
     ) as service:
         yield service
 
@@ -38,11 +36,11 @@ async def provide_team_members_service(db_session: AsyncSession) -> AsyncGenerat
     """Construct repository and service objects for the request."""
     async with TeamMemberService.new(
         session=db_session,
-        statement=select(TeamMember).options(
+        load=[
             noload("*"),
             joinedload(TeamMember.team, innerjoin=True).options(noload("*")),
             joinedload(TeamMember.user, innerjoin=True).options(noload("*")),
-        ),
+        ],
     ) as service:
         yield service
 
@@ -51,10 +49,10 @@ async def provide_team_invitations_service(db_session: AsyncSession) -> AsyncGen
     """Construct repository and service objects for the request."""
     async with TeamInvitationService.new(
         session=db_session,
-        statement=select(TeamInvitation).options(
+        load=[
             noload("*"),
             joinedload(TeamInvitation.team, innerjoin=True).options(noload("*")),
             joinedload(TeamInvitation.invited_by, innerjoin=True).options(noload("*")),
-        ),
+        ],
     ) as service:
         yield service

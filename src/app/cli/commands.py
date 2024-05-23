@@ -16,6 +16,7 @@ async def load_database_fixtures() -> None:
 
     from pathlib import Path
 
+    from advanced_alchemy.utils.fixtures import open_fixture_async
     from sqlalchemy import select
     from sqlalchemy.orm import load_only
     from structlog import get_logger
@@ -23,7 +24,6 @@ async def load_database_fixtures() -> None:
     from app.config import get_settings
     from app.config.app import alchemy
     from app.db.models import Role
-    from app.db.utils import open_fixture
     from app.domain.accounts.services import RoleService
 
     settings = get_settings()
@@ -33,7 +33,7 @@ async def load_database_fixtures() -> None:
         statement=select(Role).options(load_only(Role.id, Role.slug, Role.name, Role.description)),
         config=alchemy,
     ) as service:
-        fixture_data = open_fixture(fixtures_path, "role")
+        fixture_data = await open_fixture_async(fixtures_path, "role")
         await service.upsert_many(match_fields=["name"], data=fixture_data, auto_commit=True)
         await logger.ainfo("loaded roles")
 
@@ -165,12 +165,12 @@ def create_default_roles() -> None:
         email (str): The email address of the user to promote.
     """
     import anyio
+    from advanced_alchemy.utils.text import slugify
     from rich import get_console
 
     from app.config.app import alchemy
     from app.db.models import UserRole
     from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-    from app.utils import slugify
 
     console = get_console()
 
