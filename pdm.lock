@@ -22,7 +22,7 @@ files = [
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.11.1"
+version = "0.12.0"
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
@@ -33,24 +33,24 @@ dependencies = [
     "typing-extensions>=4.0.0",
 ]
 files = [
-    {file = "advanced_alchemy-0.11.1-py3-none-any.whl", hash = "sha256:a04db7f2aa798be98273fa35df27e86b3a4525cafe7b1395140b95bf85e2a4d1"},
-    {file = "advanced_alchemy-0.11.1.tar.gz", hash = "sha256:8814be5ac3bcccf07f1d01ba73fea12777097368e971d3d95cfb7010c1494d94"},
+    {file = "advanced_alchemy-0.12.0-py3-none-any.whl", hash = "sha256:ee65b42e1d0f7031d1d148e394d9267458abd197d336455dc82032040b352c84"},
+    {file = "advanced_alchemy-0.12.0.tar.gz", hash = "sha256:8b42fba231b4c537d531b3152f45f829d183b23bf69bd95b1c03ebe9b02ad8b5"},
 ]
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.11.1"
+version = "0.12.0"
 extras = ["uuid"]
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy==0.11.1",
+    "advanced-alchemy==0.12.0",
     "uuid-utils>=0.6.1",
 ]
 files = [
-    {file = "advanced_alchemy-0.11.1-py3-none-any.whl", hash = "sha256:a04db7f2aa798be98273fa35df27e86b3a4525cafe7b1395140b95bf85e2a4d1"},
-    {file = "advanced_alchemy-0.11.1.tar.gz", hash = "sha256:8814be5ac3bcccf07f1d01ba73fea12777097368e971d3d95cfb7010c1494d94"},
+    {file = "advanced_alchemy-0.12.0-py3-none-any.whl", hash = "sha256:ee65b42e1d0f7031d1d148e394d9267458abd197d336455dc82032040b352c84"},
+    {file = "advanced_alchemy-0.12.0.tar.gz", hash = "sha256:8b42fba231b4c537d531b3152f45f829d183b23bf69bd95b1c03ebe9b02ad8b5"},
 ]
 
 [[package]]
