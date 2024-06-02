@@ -26,7 +26,7 @@ class TagController(Controller):
 
     guards = [requires_active_user]
     dependencies = {"tags_service": Provide(provide_tags_service)}
-    signature_types = [TagService, Tag]
+    signature_namespace = {"TagService": TagService, "Tag": Tag}
     tags = ["Tags"]
     return_dto = TagDTO
 
