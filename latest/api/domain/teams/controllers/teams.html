@@ -895,6 +895,14 @@ response, bypassing the route handler.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.cache_control">
+<span class="sig-name descname"><span class="pre">cache_control</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CacheControlHeader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.cache_control" title="Link to this definition">#</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
+controller.</p>
+<p>Can be overridden by route handlers.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.etag">
 <span class="sig-name descname"><span class="pre">etag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ETag</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.etag" title="Link to this definition">#</a></dt>
 <dd><p>An <code class="docutils literal notranslate"><span class="pre">etag</span></code> header of type <code class="xref py py-class docutils literal notranslate"><span class="pre">ETag</span></code> to add to route handlers of this controller.</p>
@@ -979,6 +987,13 @@ handlers under the controller.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.signature_types">
+<span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.signature_types" title="Link to this definition">#</a></dt>
+<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.teams.controllers.teams.TeamController.type_encoders">
 <span class="sig-name descname"><span class="pre">type_encoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeEncodersMap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.teams.controllers.teams.TeamController.type_encoders" title="Link to this definition">#</a></dt>
 <dd><p>A mapping of types to callables that transform them into types supported for serialization.</p>
@@ -1057,6 +1072,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.after_request"><code class="docutils literal notranslate"><span class="pre">TeamController.after_request</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.after_response"><code class="docutils literal notranslate"><span class="pre">TeamController.after_response</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.before_request"><code class="docutils literal notranslate"><span class="pre">TeamController.before_request</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.cache_control"><code class="docutils literal notranslate"><span class="pre">TeamController.cache_control</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.etag"><code class="docutils literal notranslate"><span class="pre">TeamController.etag</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.exception_handlers"><code class="docutils literal notranslate"><span class="pre">TeamController.exception_handlers</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.include_in_schema"><code class="docutils literal notranslate"><span class="pre">TeamController.include_in_schema</span></code></a></li>
@@ -1070,6 +1086,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.response_cookies"><code class="docutils literal notranslate"><span class="pre">TeamController.response_cookies</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.response_headers"><code class="docutils literal notranslate"><span class="pre">TeamController.response_headers</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.security"><code class="docutils literal notranslate"><span class="pre">TeamController.security</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.signature_types"><code class="docutils literal notranslate"><span class="pre">TeamController.signature_types</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.type_encoders"><code class="docutils literal notranslate"><span class="pre">TeamController.type_encoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.type_decoders"><code class="docutils literal notranslate"><span class="pre">TeamController.type_decoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.controllers.teams.TeamController.websocket_class"><code class="docutils literal notranslate"><span class="pre">TeamController.websocket_class</span></code></a></li>

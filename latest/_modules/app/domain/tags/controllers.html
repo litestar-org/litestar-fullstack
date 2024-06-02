@@ -731,7 +731,7 @@ document.write(`
 
     <span class="n">guards</span> <span class="o">=</span> <span class="p">[</span><span class="n">requires_active_user</span><span class="p">]</span>
     <span class="n">dependencies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tags_service&quot;</span><span class="p">:</span> <span class="n">Provide</span><span class="p">(</span><span class="n">provide_tags_service</span><span class="p">)}</span>
-    <span class="n">signature_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TagService</span><span class="p">,</span> <span class="n">Tag</span><span class="p">]</span>
+    <span class="n">signature_namespace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;TagService&quot;</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span> <span class="s2">&quot;Tag&quot;</span><span class="p">:</span> <span class="n">Tag</span><span class="p">}</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Tags&quot;</span><span class="p">]</span>
     <span class="n">return_dto</span> <span class="o">=</span> <span class="n">TagDTO</span>
 

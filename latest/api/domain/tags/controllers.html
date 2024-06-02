@@ -847,10 +847,9 @@ document.write(`
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_types">
-<span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'app.domain.tags.services.TagService'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'app.db.models.tag.Tag'&gt;]</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_types" title="Link to this definition">#</a></dt>
-<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
-<p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
+<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_namespace">
+<span class="sig-name descname"><span class="pre">signature_namespace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_namespace" title="Link to this definition">#</a></dt>
+<dd><p>A mapping of names to types for use in forward reference resolution during signature modeling.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -886,6 +885,14 @@ data.</p>
 <dd><p>A sync or async function called immediately before calling the route handler.</p>
 <p>It receives the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> instance and any non-<code class="docutils literal notranslate"><span class="pre">None</span></code> return value is used for the
 response, bypassing the route handler.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.cache_control">
+<span class="sig-name descname"><span class="pre">cache_control</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CacheControlHeader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.cache_control" title="Link to this definition">#</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
+controller.</p>
+<p>Can be overridden by route handlers.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -979,9 +986,10 @@ handlers under the controller.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_namespace">
-<span class="sig-name descname"><span class="pre">signature_namespace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_namespace" title="Link to this definition">#</a></dt>
-<dd><p>A mapping of names to types for use in forward reference resolution during signature modeling.</p>
+<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_types">
+<span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_types" title="Link to this definition">#</a></dt>
+<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1056,12 +1064,13 @@ handlers under the controller.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController"><code class="docutils literal notranslate"><span class="pre">TagController</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.guards"><code class="docutils literal notranslate"><span class="pre">TagController.guards</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.dependencies"><code class="docutils literal notranslate"><span class="pre">TagController.dependencies</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.signature_types"><code class="docutils literal notranslate"><span class="pre">TagController.signature_types</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.signature_namespace"><code class="docutils literal notranslate"><span class="pre">TagController.signature_namespace</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.tags"><code class="docutils literal notranslate"><span class="pre">TagController.tags</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.return_dto"><code class="docutils literal notranslate"><span class="pre">TagController.return_dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.after_request"><code class="docutils literal notranslate"><span class="pre">TagController.after_request</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.after_response"><code class="docutils literal notranslate"><span class="pre">TagController.after_response</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.before_request"><code class="docutils literal notranslate"><span class="pre">TagController.before_request</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.cache_control"><code class="docutils literal notranslate"><span class="pre">TagController.cache_control</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.dto"><code class="docutils literal notranslate"><span class="pre">TagController.dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.etag"><code class="docutils literal notranslate"><span class="pre">TagController.etag</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.exception_handlers"><code class="docutils literal notranslate"><span class="pre">TagController.exception_handlers</span></code></a></li>
@@ -1076,7 +1085,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.response_cookies"><code class="docutils literal notranslate"><span class="pre">TagController.response_cookies</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.response_headers"><code class="docutils literal notranslate"><span class="pre">TagController.response_headers</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.security"><code class="docutils literal notranslate"><span class="pre">TagController.security</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.signature_namespace"><code class="docutils literal notranslate"><span class="pre">TagController.signature_namespace</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.signature_types"><code class="docutils literal notranslate"><span class="pre">TagController.signature_types</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.type_encoders"><code class="docutils literal notranslate"><span class="pre">TagController.type_encoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.type_decoders"><code class="docutils literal notranslate"><span class="pre">TagController.type_decoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.tags.controllers.TagController.websocket_class"><code class="docutils literal notranslate"><span class="pre">TagController.websocket_class</span></code></a></li>

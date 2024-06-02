@@ -876,6 +876,14 @@ response, bypassing the route handler.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.access.AccessController.cache_control">
+<span class="sig-name descname"><span class="pre">cache_control</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CacheControlHeader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.access.AccessController.cache_control" title="Link to this definition">#</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
+controller.</p>
+<p>Can be overridden by route handlers.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.access.AccessController.dto">
 <span class="sig-name descname"><span class="pre">dto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">AbstractDTO</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EmptyType</span></em><a class="headerlink" href="#app.domain.accounts.controllers.access.AccessController.dto" title="Link to this definition">#</a></dt>
 <dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code> to use for (de)serializing and validation of request data.</p>
@@ -979,6 +987,13 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.access.AccessController.signature_types">
+<span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.accounts.controllers.access.AccessController.signature_types" title="Link to this definition">#</a></dt>
+<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.access.AccessController.type_encoders">
 <span class="sig-name descname"><span class="pre">type_encoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeEncodersMap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.access.AccessController.type_encoders" title="Link to this definition">#</a></dt>
 <dd><p>A mapping of types to callables that transform them into types supported for serialization.</p>
@@ -1054,6 +1069,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.after_request"><code class="docutils literal notranslate"><span class="pre">AccessController.after_request</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.after_response"><code class="docutils literal notranslate"><span class="pre">AccessController.after_response</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.before_request"><code class="docutils literal notranslate"><span class="pre">AccessController.before_request</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.cache_control"><code class="docutils literal notranslate"><span class="pre">AccessController.cache_control</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.dto"><code class="docutils literal notranslate"><span class="pre">AccessController.dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.etag"><code class="docutils literal notranslate"><span class="pre">AccessController.etag</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.exception_handlers"><code class="docutils literal notranslate"><span class="pre">AccessController.exception_handlers</span></code></a></li>
@@ -1070,6 +1086,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.response_headers"><code class="docutils literal notranslate"><span class="pre">AccessController.response_headers</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.return_dto"><code class="docutils literal notranslate"><span class="pre">AccessController.return_dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.security"><code class="docutils literal notranslate"><span class="pre">AccessController.security</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.signature_types"><code class="docutils literal notranslate"><span class="pre">AccessController.signature_types</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.type_encoders"><code class="docutils literal notranslate"><span class="pre">AccessController.type_encoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.type_decoders"><code class="docutils literal notranslate"><span class="pre">AccessController.type_decoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.controllers.access.AccessController.websocket_class"><code class="docutils literal notranslate"><span class="pre">AccessController.websocket_class</span></code></a></li>

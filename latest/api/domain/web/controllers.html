@@ -870,6 +870,14 @@ response, bypassing the route handler.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.web.controllers.WebController.cache_control">
+<span class="sig-name descname"><span class="pre">cache_control</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CacheControlHeader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.web.controllers.WebController.cache_control" title="Link to this definition">#</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
+controller.</p>
+<p>Can be overridden by route handlers.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.web.controllers.WebController.dependencies">
 <span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.web.controllers.WebController.dependencies" title="Link to this definition">#</a></dt>
 <dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
@@ -972,6 +980,13 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.web.controllers.WebController.signature_types">
+<span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.web.controllers.WebController.signature_types" title="Link to this definition">#</a></dt>
+<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.web.controllers.WebController.tags">
 <span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.web.controllers.WebController.tags" title="Link to this definition">#</a></dt>
 <dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
@@ -1052,6 +1067,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.after_request"><code class="docutils literal notranslate"><span class="pre">WebController.after_request</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.after_response"><code class="docutils literal notranslate"><span class="pre">WebController.after_response</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.before_request"><code class="docutils literal notranslate"><span class="pre">WebController.before_request</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.cache_control"><code class="docutils literal notranslate"><span class="pre">WebController.cache_control</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.dependencies"><code class="docutils literal notranslate"><span class="pre">WebController.dependencies</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.dto"><code class="docutils literal notranslate"><span class="pre">WebController.dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.etag"><code class="docutils literal notranslate"><span class="pre">WebController.etag</span></code></a></li>
@@ -1068,6 +1084,7 @@ handlers under the controller.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.return_dto"><code class="docutils literal notranslate"><span class="pre">WebController.return_dto</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.security"><code class="docutils literal notranslate"><span class="pre">WebController.security</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.signature_namespace"><code class="docutils literal notranslate"><span class="pre">WebController.signature_namespace</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.signature_types"><code class="docutils literal notranslate"><span class="pre">WebController.signature_types</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.tags"><code class="docutils literal notranslate"><span class="pre">WebController.tags</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.type_encoders"><code class="docutils literal notranslate"><span class="pre">WebController.type_encoders</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.web.controllers.WebController.type_decoders"><code class="docutils literal notranslate"><span class="pre">WebController.type_decoders</span></code></a></li>
