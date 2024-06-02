@@ -3,6 +3,7 @@
 Also, defines functions that translate service and repository exceptions
 into HTTP exceptions.
 """
+
 from __future__ import annotations
 
 import sys
@@ -132,5 +133,5 @@ def exception_to_http_response(
     else:
         http_exc = InternalServerException
     if request.app.debug and http_exc not in (PermissionDeniedException, NotFoundError, AuthorizationError):
-        return create_debug_response(request, exc)
-    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
+        return create_debug_response(request, exc)  # type: ignore
+    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))  # type: ignore

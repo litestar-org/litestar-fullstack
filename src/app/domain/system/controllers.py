@@ -23,7 +23,6 @@ OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
 
 class SystemController(Controller):
     tags = ["System"]
-    signature_types = [SystemHealth]
 
     @get(
         operation_id="SystemHealth",
