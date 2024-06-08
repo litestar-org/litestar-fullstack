@@ -28,11 +28,11 @@ TRUE_VALUES = {"True", "true", "1", "yes", "Y", "T"}
 @dataclass
 class DatabaseSettings:
     ECHO: bool = field(
-        default_factory=lambda: os.getenv("DATABASE_ECHO", "False") in {"True", "1", "yes", "Y", "T", "debug"},
+        default_factory=lambda: os.getenv("DATABASE_ECHO", "False") in TRUE_VALUES,
     )
     """Enable SQLAlchemy engine logs."""
     ECHO_POOL: bool = field(
-        default_factory=lambda: os.getenv("DATABASE_ECHO_POOL", "False") in {"True", "1", "yes", "Y", "T", "debug"},
+        default_factory=lambda: os.getenv("DATABASE_ECHO_POOL", "False") in TRUE_VALUES,
     )
     """Enable SQLAlchemy connection pool logs."""
     POOL_DISABLED: bool = field(
