@@ -16,8 +16,7 @@ from litestar.exceptions import (
     NotFoundException,
     PermissionDeniedException,
 )
-from litestar.middleware.exceptions._debug_response import create_debug_response
-from litestar.middleware.exceptions.middleware import create_exception_response
+from litestar.exceptions.responses import create_debug_response, create_exception_response
 from litestar.repository.exceptions import ConflictError, NotFoundError, RepositoryError
 from litestar.status_codes import HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from structlog.contextvars import bind_contextvars
@@ -133,5 +132,5 @@ def exception_to_http_response(
     else:
         http_exc = InternalServerException
     if request.app.debug and http_exc not in (PermissionDeniedException, NotFoundError, AuthorizationError):
-        return create_debug_response(request, exc)  # type: ignore
-    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))  # type: ignore
+        return create_debug_response(request, exc)
+    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
