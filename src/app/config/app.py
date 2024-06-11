@@ -84,7 +84,6 @@ saq = SAQConfig(
 log = StructlogConfig(
     structlog_logging_config=StructLoggingConfig(
         log_exceptions="always",
-        traceback_line_limit=4,
         standard_lib_logging_config=LoggingConfig(
             root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
             loggers={
