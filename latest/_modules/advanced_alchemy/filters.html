@@ -13,19 +13,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -33,9 +33,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -59,27 +59,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -101,12 +97,17 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class=" navbar-header-items__start">
@@ -430,7 +431,9 @@ document.write(`
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item">
+          
+          
+            <div class="navbar-item">
 
 
 
@@ -609,6 +612,7 @@ document.write(`
 
     </nav>
 </div>
+          
         
       </div>
     
@@ -657,13 +661,13 @@ document.write(`
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -672,7 +676,7 @@ document.write(`
 
 
 
-<nav aria-label="Breadcrumb">
+<nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
     <li class="breadcrumb-item breadcrumb-home">
@@ -709,12 +713,15 @@ document.write(`
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">abc</span>  <span class="c1"># noqa: TCH003</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>  <span class="c1"># noqa: TCH003</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">any_</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">any_</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">text</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">StatementLambdaElement</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+    <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ColumnElement</span><span class="p">,</span> <span class="n">Select</span><span class="p">,</span> <span class="n">StatementLambdaElement</span>
     <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
     <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
 
@@ -733,6 +740,8 @@ document.write(`
     <span class="s2">&quot;NotInSearchFilter&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PaginationFilter&quot;</span><span class="p">,</span>
     <span class="s2">&quot;InAnyFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;StatementFilter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;StatementFilterT&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
@@ -998,73 +1007,63 @@ document.write(`
 <span class="k">class</span> <span class="nc">SearchFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
 
-    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to sort on.&quot;&quot;&quot;</span>
-    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``LIKE`` clause.&quot;&quot;&quot;</span>
-    <span class="n">ignore_case</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should the search be case insensitive.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">statement</span><span class="p">:</span> <span class="n">Select</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ModelT</span><span class="p">]],</span>
-        <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Select</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ModelT</span><span class="p">]]:</span>
-        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">like</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">append_to_lambda_statement</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">statement</span><span class="p">:</span> <span class="n">StatementLambdaElement</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementLambdaElement</span><span class="p">:</span>
-        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">+=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportArgumentType,reportUnknownMemberType]</span>
-            <span class="k">return</span> <span class="n">statement</span>
-        <span class="n">statement</span> <span class="o">+=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">like</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportArgumentType,reportUnknownMemberType]</span>
-        <span class="k">return</span> <span class="n">statement</span></div>
-
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">NotInSearchFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name NOT LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
-
-    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to search on.&quot;&quot;&quot;</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``NOT LIKE`` clause.&quot;&quot;&quot;</span>
     <span class="n">ignore_case</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Should the search be case insensitive.&quot;&quot;&quot;</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="n">or_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+        <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;ilike&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span> <span class="k">else</span> <span class="s2">&quot;like&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">normalized_field_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">}</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span>
+
+    <span class="k">def</span> <span class="nf">get_search_clauses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+        <span class="n">search_clause</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized_field_names</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+            <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
+            <span class="n">search_clause</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="n">field</span><span class="p">)(</span><span class="n">search_text</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">search_clause</span>
+
     <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">statement</span><span class="p">:</span> <span class="n">Select</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ModelT</span><span class="p">]],</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Select</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ModelT</span><span class="p">]]:</span>
-        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">not_ilike</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">not_like</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>
+        <span class="n">where_clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">get_search_clauses</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">where_clause</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">append_to_lambda_statement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">statement</span><span class="p">:</span> <span class="n">StatementLambdaElement</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementLambdaElement</span><span class="p">:</span>
-        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">+=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">not_ilike</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
-            <span class="k">return</span> <span class="n">statement</span>
-        <span class="n">statement</span> <span class="o">+=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">not_like</span><span class="p">(</span><span class="n">search_text</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportArgumentType,reportUnknownMemberType]</span>
-        <span class="k">return</span> <span class="n">statement</span>
+        <span class="n">where_clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">get_search_clauses</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+        <span class="n">statement</span> <span class="o">+=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">where_clause</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
+        <span class="k">return</span> <span class="n">statement</span></div>
+
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">NotInSearchFilter</span><span class="p">(</span><span class="n">SearchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name NOT LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="n">and_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+        <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;not_ilike&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span> <span class="k">else</span> <span class="s2">&quot;not_like&quot;</span><span class="p">)</span>
 </pre></div>
 
                 </article>
@@ -1073,7 +1072,7 @@ document.write(`
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
 </div>
@@ -1082,8 +1081,6 @@ document.write(`
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>
@@ -1096,8 +1093,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1130,7 +1127,7 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.3.
 </p></div>
       
     </div>
