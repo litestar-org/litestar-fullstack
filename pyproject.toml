@@ -140,7 +140,7 @@ branch = true
 omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "--ignore", "migrations"]
+addopts = ["-ra", "--ignore", "migrations", "-n", "2", "--dist", "loadfile"]
 # env_files = [".env.testing"]
 # env_override_existing_values = 1
 filterwarnings = [
