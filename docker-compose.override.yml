@@ -1,4 +1,3 @@
-version: "3.3"
 x-development-volumes: &development-volumes
   volumes:
     - ./docs:/workspace/app/docs/
