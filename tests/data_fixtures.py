@@ -25,7 +25,7 @@ def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     return create_app()
 
 
-@pytest.fixture(name="raw_users")
+@pytest.fixture(name="raw_users", scope="session")
 def fx_raw_users() -> list[User | dict[str, Any]]:
     """Unstructured user representations."""
 
@@ -73,7 +73,7 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
     ]
 
 
-@pytest.fixture(name="raw_teams")
+@pytest.fixture(name="raw_teams", scope="session")
 def fx_raw_teams() -> list[Team | dict[str, Any]]:
     """Unstructured team representations."""
 

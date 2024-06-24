@@ -25,7 +25,7 @@ here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="engine", autouse=True)
+@pytest.fixture(name="engine", autouse=True, scope="session")
 async def fx_engine(
     postgres_docker_ip: str,
     postgres_service: None,
@@ -55,18 +55,12 @@ async def fx_engine(
     )
 
 
-@pytest.fixture(name="sessionmaker")
+@pytest.fixture(name="sessionmaker", scope="session")
 def fx_session_maker_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
-@pytest.fixture(name="session")
-async def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
-    async with sessionmaker() as session:
-        yield session
-
-
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 async def _seed_db(
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
@@ -102,6 +96,16 @@ async def _seed_db(
         await teams_services.repository.session.commit()
 
     yield
+
+
+@pytest.fixture(name="session", scope="session")
+async def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
+    async with sessionmaker() as session:
+        try:
+            session.begin_nested()
+            yield session
+        finally:
+            await session.rollback()
 
 
 @pytest.fixture(autouse=True)
