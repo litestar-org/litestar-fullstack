@@ -43,8 +43,7 @@ class TagController(Controller):
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Tag]:
         """List tags."""
-        results, total = await tags_service.list_and_count(*filters)
-        return tags_service.to_schema(data=results, total=total, filters=filters)
+        return await tags_service.list_and_count(*filters, to_schema=Tag)
 
     @get(
         operation_id="GetTag",
@@ -64,8 +63,7 @@ class TagController(Controller):
         ],
     ) -> Tag:
         """Get a tag."""
-        db_obj = await tags_service.get(tag_id)
-        return tags_service.to_schema(db_obj)
+        return await tags_service.get(tag_id, to_schema=Tag)
 
     @post(
         operation_id="CreateTag",
@@ -83,8 +81,7 @@ class TagController(Controller):
         data: DTOData[Tag],
     ) -> Tag:
         """Create a new tag."""
-        db_obj = await tags_service.create(data.create_instance())
-        return tags_service.to_schema(db_obj)
+        return await tags_service.create(data.create_instance(), to_schema=Tag)
 
     @patch(
         operation_id="UpdateTag",
@@ -106,8 +103,7 @@ class TagController(Controller):
         ],
     ) -> Tag:
         """Update a tag."""
-        db_obj = await tags_service.update(item_id=tag_id, data=data.create_instance())
-        return tags_service.to_schema(db_obj)
+        return await tags_service.update(item_id=tag_id, data=data.create_instance(), to_schema=Tag)
 
     @delete(
         operation_id="DeleteTag",

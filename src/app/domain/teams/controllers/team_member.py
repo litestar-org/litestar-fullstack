@@ -59,8 +59,7 @@ class TeamMemberController(Controller):
             msg = "User is already a member of the team."
             raise IntegrityError(msg)
         team_obj.members.append(TeamMember(user_id=user_obj.id, role=TeamRoles.MEMBER))
-        team_obj = await teams_service.update(item_id=team_id, data=team_obj)
-        return teams_service.to_schema(schema_type=Team, data=team_obj)
+        return await teams_service.update(item_id=team_id, data=team_obj, to_schema=Team)
 
     @post(
         operation_id="RemoveMemberFromTeam",
@@ -90,5 +89,4 @@ class TeamMemberController(Controller):
         if not removed_member:
             msg = "User is not a member of this team."
             raise IntegrityError(msg)
-        team_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(schema_type=Team, data=team_obj)
+        return await teams_service.get(team_id, to_schema=Team)

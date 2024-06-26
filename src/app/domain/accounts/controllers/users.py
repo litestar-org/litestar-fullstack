@@ -45,8 +45,7 @@ class UserController(Controller):
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[User]:
         """List users."""
-        results, total = await users_service.list_and_count(*filters)
-        return users_service.to_schema(data=results, total=total, schema_type=User, filters=filters)
+        return await users_service.list_and_count(*filters, to_schema=User)
 
     @get(
         operation_id="GetUser",
@@ -66,8 +65,7 @@ class UserController(Controller):
         ],
     ) -> User:
         """Get a user."""
-        db_obj = await users_service.get(user_id)
-        return users_service.to_schema(db_obj, schema_type=User)
+        return await users_service.get(user_id, to_schema=User)
 
     @post(
         operation_id="CreateUser",
@@ -83,8 +81,7 @@ class UserController(Controller):
         data: UserCreate,
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.create(data.to_dict())
-        return users_service.to_schema(db_obj, schema_type=User)
+        return await users_service.create(data.to_dict(), to_schema=User)
 
     @patch(
         operation_id="UpdateUser",
@@ -101,8 +98,7 @@ class UserController(Controller):
         ),
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.update(item_id=user_id, data=data.to_dict())
-        return users_service.to_schema(db_obj, schema_type=User)
+        return await users_service.update(item_id=user_id, data=data.to_dict(), to_schema=User)
 
     @delete(
         operation_id="DeleteUser",

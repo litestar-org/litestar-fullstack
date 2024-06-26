@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.4.10
     hooks:
       - id: ruff
         args:
@@ -28,7 +28,7 @@ repos:
         exclude: test_*|docs|migrations|scripts
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.10.1
     hooks:
       - id: mypy
         exclude: scripts/
@@ -37,7 +37,8 @@ repos:
           - asyncpg
           - asyncpg-stubs
           - litestar[jinja,jwt,redis,structlog]
-          - advanced-alchemy[uuid]>=0.10.0
+          - "advanced-alchemy[uuid] @ git+https://github.com/litestar-org/advanced-alchemy.git"
+
           - litestar-granian
           - litestar-vite>=0.1.21
           - litestar-saq

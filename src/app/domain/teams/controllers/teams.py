@@ -62,10 +62,8 @@ class TeamController(Controller):
             ),
         )
         if show_all:
-            results, total = await teams_service.list_and_count(*filters)
-        else:
-            results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
-        return teams_service.to_schema(data=results, total=total, schema_type=Team, filters=filters)
+            return await teams_service.list_and_count(*filters, to_schema=Team)
+        return await teams_service.get_user_teams(*filters, user_id=current_user.id, to_schema=Team)
 
     @post(
         operation_id="CreateTeam",
@@ -82,8 +80,7 @@ class TeamController(Controller):
         """Create a new team."""
         obj = data.to_dict()
         obj.update({"owner_id": current_user.id, "owner": current_user})
-        db_obj = await teams_service.create(obj)
-        return teams_service.to_schema(schema_type=Team, data=db_obj)
+        return await teams_service.create(obj, to_schema=Team)
 
     @get(
         operation_id="GetTeam",
@@ -104,8 +101,7 @@ class TeamController(Controller):
         ],
     ) -> Team:
         """Get details about a team."""
-        db_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(schema_type=Team, data=db_obj)
+        return await teams_service.get(team_id, to_schema=Team)
 
     @patch(
         operation_id="UpdateTeam",
@@ -126,11 +122,7 @@ class TeamController(Controller):
         ],
     ) -> Team:
         """Update a migration team."""
-        db_obj = await teams_service.update(
-            item_id=team_id,
-            data=data.to_dict(),
-        )
-        return teams_service.to_schema(schema_type=Team, data=db_obj)
+        return await teams_service.update(item_id=team_id, data=data.to_dict(), to_schema=Team)
 
     @delete(
         operation_id="DeleteTeam",

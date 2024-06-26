@@ -1,9 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, overload
 
 from advanced_alchemy.exceptions import RepositoryError
-from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
+from advanced_alchemy.service import (
+    OffsetPagination,
+    SQLAlchemyAsyncRepositoryService,
+    is_dict,
+    is_msgspec_model,
+    is_pydantic_model,
+)
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
 
@@ -19,6 +25,8 @@ if TYPE_CHECKING:
 
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.repository._util import LoadSpec
+    from advanced_alchemy.service import ModelDictT, ModelDTOT
+    from msgspec import Struct
     from sqlalchemy.orm import InstrumentedAttribute
 
 __all__ = (
@@ -38,24 +46,68 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         self.repository: TeamRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
+    @overload
     async def get_user_teams(
         self,
         *filters: FilterTypes,
         user_id: UUID,
+        to_schema: None = None,
         **kwargs: Any,
-    ) -> tuple[list[Team], int]:
-        """Get all teams for a user."""
-        return await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs)
+    ) -> tuple[list[Team], int]: ...
 
+    @overload
+    async def get_user_teams(
+        self,
+        *filters: FilterTypes,
+        user_id: UUID,
+        to_schema: type[ModelDTOT],
+        **kwargs: Any,
+    ) -> OffsetPagination[ModelDTOT]: ...
+
+    async def get_user_teams(
+        self,
+        *filters: FilterTypes,
+        user_id: UUID,
+        to_schema: type[ModelDTOT] | None = None,
+        **kwargs: Any,
+    ) -> tuple[list[Team], int] | OffsetPagination[ModelDTOT]:
+        """Get all teams for a user."""
+        result, total = await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs, to_schema=to_schema)
+        if to_schema is not None:
+            return self.to_schema(data=result, total=total, schema_type=to_schema, filters=filters)
+        return result, total
+
+    @overload
     async def create(
         self,
-        data: Team | dict[str, Any],
+        data: ModelDictT[Team],
+        *,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
-    ) -> Team:
+        to_schema: type[ModelDTOT],
+    ) -> ModelDTOT: ...
+
+    @overload
+    async def create(
+        self,
+        data: ModelDictT[Team],
+        *,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        to_schema: None = None,
+    ) -> Team: ...
+
+    async def create(
+        self,
+        data: ModelDictT[Team],
+        *,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        to_schema: type[ModelDTOT] | None = None,
+    ) -> Team | ModelDTOT:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
         owner: User | None = None
@@ -68,7 +120,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                 msg = "'owner_id' is required to create a team."
                 raise RepositoryError(msg)
             tags_added = data.pop("tags", [])
-            data = await self.to_model(data, "create")
+        data = await self.to_model(data, "create")
         if owner:
             data.members.append(TeamMember(user=owner, role=TeamRoles.ADMIN, is_owner=True))
         elif owner_id:
@@ -80,29 +132,64 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                     for tag_text in tags_added
                 ],
             )
-        _ = await super().create(
+        await super().create(
             data=data,
             auto_commit=auto_commit,
             auto_expunge=True,
             auto_refresh=False,
-            load=load,
-            execution_options=execution_options,
+            to_schema=to_schema,
         )
         return data
 
+    @overload
     async def update(
         self,
-        data: Team | dict[str, Any],
+        data: ModelDictT[Team],
         item_id: Any | None = None,
+        *,
+        id_attribute: str | InstrumentedAttribute[Any] | None = None,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        id_attribute: str | InstrumentedAttribute | None = None,
+        to_schema: None = None,
+    ) -> Team: ...
+
+    @overload
+    async def update(
+        self,
+        data: ModelDictT[Team],
+        item_id: Any | None = None,
+        *,
+        id_attribute: str | InstrumentedAttribute[Any] | None = None,
         load: LoadSpec | None = None,
         execution_options: dict[str, Any] | None = None,
-    ) -> Team:
+        attribute_names: Iterable[str] | None = None,
+        with_for_update: bool | None = None,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        to_schema: type[ModelDTOT],
+    ) -> ModelDTOT: ...
+
+    async def update(
+        self,
+        data: ModelDictT[Team],
+        item_id: Any | None = None,
+        *,
+        id_attribute: str | InstrumentedAttribute[Any] | None = None,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
+        attribute_names: Iterable[str] | None = None,
+        with_for_update: bool | None = None,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        to_schema: type[ModelDTOT] | None = None,
+    ) -> Team | ModelDTOT:
         """Wrap repository update operation.
 
         Returns:
@@ -124,23 +211,28 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                     for tag_text in tags_to_add
                 ],
             )
-        return await super().update(
-            item_id=item_id,
+        return await super().update(  # type: ignore
             data=data,
+            item_id=item_id,
             attribute_names=attribute_names,
+            id_attribute=id_attribute,
+            load=load,
+            execution_options=execution_options,
             with_for_update=with_for_update,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
-            id_attribute=id_attribute,
-            load=load,
-            execution_options=execution_options,
+            to_schema=to_schema,  # type: ignore
         )
 
-    async def to_model(self, data: Team | dict[str, Any], operation: str | None = None) -> Team:
-        if isinstance(data, dict) and "slug" not in data and operation == "create":
+    async def to_model(self, data: Team | dict[str, Any] | Struct, operation: str | None = None) -> Team:
+        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
+        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
+        if is_dict(data) and "slug" not in data and operation == "create":
             data["slug"] = await self.repository.get_available_slug(data["name"])
-        if isinstance(data, dict) and "slug" not in data and "name" in data and operation == "update":
+        if is_dict(data) and "slug" not in data and "name" in data and operation == "update":
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return await super().to_model(data, operation)
 
