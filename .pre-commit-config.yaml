@@ -37,8 +37,7 @@ repos:
           - asyncpg
           - asyncpg-stubs
           - litestar[jinja,jwt,redis,structlog]
-          - "advanced-alchemy[uuid] @ git+https://github.com/litestar-org/advanced-alchemy.git"
-
+          - "advanced-alchemy[uuid]"
           - litestar-granian
           - litestar-vite>=0.1.21
           - litestar-saq

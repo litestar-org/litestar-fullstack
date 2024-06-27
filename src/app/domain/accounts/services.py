@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, overload
+from typing import TYPE_CHECKING, Any
 from uuid import UUID  # noqa: TCH003
 
 from advanced_alchemy.service import (
     ModelDictT,
-    ModelDTOT,
     SQLAlchemyAsyncRepositoryService,
     is_dict,
     is_msgspec_model,
@@ -37,50 +36,31 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         self.repository: UserRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    @overload
     async def create(
         self,
         data: ModelDictT[User],
         *,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT],
-    ) -> ModelDTOT: ...
-    @overload
-    async def create(
-        self,
-        data: ModelDictT[User],
-        *,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: None = None,
-    ) -> User: ...
-    async def create(
-        self,
-        data: ModelDictT[User],
-        *,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT] | None = None,
-    ) -> User | ModelDTOT:
+    ) -> User:
         """Create a new User and assign default Role."""
         if isinstance(data, dict):
             role_id: UUID | None = data.pop("role_id", None)
             data = await self.to_model(data, "create")
             if role_id:
                 data.roles.append(UserRole(role_id=role_id, assigned_at=datetime.now(timezone.utc)))  # noqa: UP017
-        return await super().create(  # type: ignore
+        return await super().create(
             data=data,
+            load=load,
+            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
-            to_schema=to_schema,  # type: ignore
         )
 
-    @overload
     async def update(
         self,
         data: ModelDictT[User],
@@ -94,47 +74,13 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        to_schema: None = None,
-    ) -> User: ...
-
-    @overload
-    async def update(
-        self,
-        data: ModelDictT[User],
-        item_id: Any | None = None,
-        *,
-        id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
-        attribute_names: Iterable[str] | None = None,
-        with_for_update: bool | None = None,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT] = ...,
-    ) -> ModelDTOT: ...
-
-    async def update(
-        self,
-        data: ModelDictT[User],
-        item_id: Any | None = None,
-        *,
-        id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
-        attribute_names: Iterable[str] | None = None,
-        with_for_update: bool | None = None,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT] | None = None,
-    ) -> User | ModelDTOT:
+    ) -> User:
         if isinstance(data, dict):
             role_id: UUID | None = data.pop("role_id", None)
             data = await self.to_model(data, "update")
             if role_id:
                 data.roles.append(UserRole(role_id=role_id, assigned_at=datetime.now(timezone.utc)))  # noqa: UP017
-        return await super().update(  # type: ignore
+        return await super().update(
             data=data,
             item_id=item_id,
             attribute_names=attribute_names,
@@ -145,7 +91,6 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             id_attribute=id_attribute,
             load=load,
             execution_options=execution_options,
-            to_schema=to_schema,  # type: ignore
         )
 
     async def authenticate(self, username: str, password: bytes | str) -> User:

@@ -1,15 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, overload
+from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
-from advanced_alchemy.service import (
-    OffsetPagination,
-    SQLAlchemyAsyncRepositoryService,
-    is_dict,
-    is_msgspec_model,
-    is_pydantic_model,
-)
+from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, is_msgspec_model, is_pydantic_model
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
 
@@ -25,7 +19,7 @@ if TYPE_CHECKING:
 
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.repository._util import LoadSpec
-    from advanced_alchemy.service import ModelDictT, ModelDTOT
+    from advanced_alchemy.service import ModelDictT
     from msgspec import Struct
     from sqlalchemy.orm import InstrumentedAttribute
 
@@ -46,68 +40,25 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         self.repository: TeamRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    @overload
     async def get_user_teams(
         self,
         *filters: FilterTypes,
         user_id: UUID,
-        to_schema: None = None,
         **kwargs: Any,
-    ) -> tuple[list[Team], int]: ...
-
-    @overload
-    async def get_user_teams(
-        self,
-        *filters: FilterTypes,
-        user_id: UUID,
-        to_schema: type[ModelDTOT],
-        **kwargs: Any,
-    ) -> OffsetPagination[ModelDTOT]: ...
-
-    async def get_user_teams(
-        self,
-        *filters: FilterTypes,
-        user_id: UUID,
-        to_schema: type[ModelDTOT] | None = None,
-        **kwargs: Any,
-    ) -> tuple[list[Team], int] | OffsetPagination[ModelDTOT]:
+    ) -> tuple[list[Team], int]:
         """Get all teams for a user."""
-        result, total = await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs, to_schema=to_schema)
-        if to_schema is not None:
-            return self.to_schema(data=result, total=total, schema_type=to_schema, filters=filters)
-        return result, total
-
-    @overload
-    async def create(
-        self,
-        data: ModelDictT[Team],
-        *,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT],
-    ) -> ModelDTOT: ...
-
-    @overload
-    async def create(
-        self,
-        data: ModelDictT[Team],
-        *,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: None = None,
-    ) -> Team: ...
+        return await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs)
 
     async def create(
         self,
         data: ModelDictT[Team],
         *,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT] | None = None,
-    ) -> Team | ModelDTOT:
+    ) -> Team:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
         owner: User | None = None
@@ -134,14 +85,14 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             )
         await super().create(
             data=data,
+            load=load,
+            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=True,
             auto_refresh=False,
-            to_schema=to_schema,
         )
         return data
 
-    @overload
     async def update(
         self,
         data: ModelDictT[Team],
@@ -155,41 +106,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        to_schema: None = None,
-    ) -> Team: ...
-
-    @overload
-    async def update(
-        self,
-        data: ModelDictT[Team],
-        item_id: Any | None = None,
-        *,
-        id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
-        attribute_names: Iterable[str] | None = None,
-        with_for_update: bool | None = None,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT],
-    ) -> ModelDTOT: ...
-
-    async def update(
-        self,
-        data: ModelDictT[Team],
-        item_id: Any | None = None,
-        *,
-        id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
-        attribute_names: Iterable[str] | None = None,
-        with_for_update: bool | None = None,
-        auto_commit: bool | None = None,
-        auto_expunge: bool | None = None,
-        auto_refresh: bool | None = None,
-        to_schema: type[ModelDTOT] | None = None,
-    ) -> Team | ModelDTOT:
+    ) -> Team:
         """Wrap repository update operation.
 
         Returns:
@@ -211,7 +128,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
                     for tag_text in tags_to_add
                 ],
             )
-        return await super().update(  # type: ignore
+        return await super().update(
             data=data,
             item_id=item_id,
             attribute_names=attribute_names,
@@ -222,7 +139,6 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
-            to_schema=to_schema,  # type: ignore
         )
 
     async def to_model(self, data: Team | dict[str, Any] | Struct, operation: str | None = None) -> Team:

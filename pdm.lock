@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:bb9bace2600468d7681e941db70ef22ba69e98103a1a5f4f68fd804027b0827e"
+content_hash = "sha256:f1bcd6b3f4ed2b003d698b9b406111c61cc47b33f9aca9a76c4dc111c33856db"
 
 [[package]]
 name = "accessible-pygments"
@@ -23,10 +23,8 @@ files = [
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.15.1"
+version = "0.16.0"
 requires_python = ">=3.8"
-git = "https://github.com/litestar-org/advanced-alchemy.git"
-revision = "d828e651a515f46564ef2b4d3bfcb75c96b44740"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -35,19 +33,25 @@ dependencies = [
     "sqlalchemy>=2.0.20",
     "typing-extensions>=4.0.0",
 ]
+files = [
+    {file = "advanced_alchemy-0.16.0-py3-none-any.whl", hash = "sha256:1102e92b30f313ccc2e1134875b4270667805345360a89c64d723beab4102160"},
+    {file = "advanced_alchemy-0.16.0.tar.gz", hash = "sha256:9fcbe81a548cd0ffc651ad5615b1f4bee999ae7ed6454e0d396a122e233e008d"},
+]
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.15.1"
+version = "0.16.0"
 extras = ["uuid"]
 requires_python = ">=3.8"
-git = "https://github.com/litestar-org/advanced-alchemy.git"
-revision = "d828e651a515f46564ef2b4d3bfcb75c96b44740"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy @ git+https://github.com/litestar-org/advanced-alchemy.git",
+    "advanced-alchemy==0.16.0",
     "uuid-utils>=0.6.1",
+]
+files = [
+    {file = "advanced_alchemy-0.16.0-py3-none-any.whl", hash = "sha256:1102e92b30f313ccc2e1134875b4270667805345360a89c64d723beab4102160"},
+    {file = "advanced_alchemy-0.16.0.tar.gz", hash = "sha256:9fcbe81a548cd0ffc651ad5615b1f4bee999ae7ed6454e0d396a122e233e008d"},
 ]
 
 [[package]]
