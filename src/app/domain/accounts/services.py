@@ -4,7 +4,13 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 from uuid import UUID  # noqa: TCH003
 
-from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
+from advanced_alchemy.service import (
+    ModelDictT,
+    SQLAlchemyAsyncRepositoryService,
+    is_dict,
+    is_msgspec_model,
+    is_pydantic_model,
+)
 from litestar.exceptions import PermissionDeniedException
 
 from app.config import constants
@@ -32,12 +38,13 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
 
     async def create(
         self,
-        data: User | dict[str, Any],
+        data: ModelDictT[User],
+        *,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
     ) -> User:
         """Create a new User and assign default Role."""
         if isinstance(data, dict):
@@ -47,25 +54,26 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
                 data.roles.append(UserRole(role_id=role_id, assigned_at=datetime.now(timezone.utc)))  # noqa: UP017
         return await super().create(
             data=data,
+            load=load,
+            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
-            load=load,
-            execution_options=execution_options,
         )
 
     async def update(
         self,
-        data: User | dict[str, Any],
+        data: ModelDictT[User],
         item_id: Any | None = None,
+        *,
+        id_attribute: str | InstrumentedAttribute[Any] | None = None,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
-        id_attribute: str | InstrumentedAttribute | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
     ) -> User:
         if isinstance(data, dict):
             role_id: UUID | None = data.pop("role_id", None)
@@ -137,7 +145,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
 
-    async def to_model(self, data: User | dict[str, Any], operation: str | None = None) -> User:
+    async def to_model(self, data: ModelDictT[User], operation: str | None = None) -> User:
         if isinstance(data, dict) and "password" in data:
             password: bytes | str | None = data.pop("password", None)
             if password is not None:
@@ -155,10 +163,14 @@ class RoleService(SQLAlchemyAsyncRepositoryService[Role]):
         self.repository: RoleRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def to_model(self, data: Role | dict[str, Any], operation: str | None = None) -> Role:
-        if isinstance(data, dict) and "slug" not in data and operation == "create":
+    async def to_model(self, data: ModelDictT[Role], operation: str | None = None) -> Role:
+        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
+        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
+        if is_dict(data) and "slug" not in data and operation == "create":
             data["slug"] = await self.repository.get_available_slug(data["name"])
-        if isinstance(data, dict) and "slug" not in data and "name" in data and operation == "update":
+        if is_dict(data) and "slug" not in data and "name" in data and operation == "update":
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return await super().to_model(data, operation)
 
