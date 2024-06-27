@@ -710,7 +710,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">RepositoryError</span>
-<span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepositoryService</span>
+<span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">,</span> <span class="n">is_dict</span><span class="p">,</span> <span class="n">is_msgspec_model</span><span class="p">,</span> <span class="n">is_pydantic_model</span>
 <span class="kn">from</span> <span class="nn">advanced_alchemy.utils.text</span> <span class="kn">import</span> <span class="n">slugify</span>
 <span class="kn">from</span> <span class="nn">uuid_utils.compat</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
@@ -726,6 +726,8 @@ document.write(`
 
     <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
     <span class="kn">from</span> <span class="nn">advanced_alchemy.repository._util</span> <span class="kn">import</span> <span class="n">LoadSpec</span>
+    <span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">ModelDictT</span>
+    <span class="kn">from</span> <span class="nn">msgspec</span> <span class="kn">import</span> <span class="n">Struct</span>
     <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
@@ -766,12 +768,13 @@ document.write(`
 <a class="viewcode-back" href="../../../../api/domain/teams/services.html#app.domain.teams.services.TeamService.create">[docs]</a>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">Team</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">Team</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new team with an owner.&quot;&quot;&quot;</span>
         <span class="n">owner_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -785,7 +788,7 @@ document.write(`
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;owner_id&#39; is required to create a team.&quot;</span>
                 <span class="k">raise</span> <span class="n">RepositoryError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">tags_added</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;create&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;create&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">owner</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TeamMember</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">owner</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">TeamRoles</span><span class="o">.</span><span class="n">ADMIN</span><span class="p">,</span> <span class="n">is_owner</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">owner_id</span><span class="p">:</span>
@@ -797,13 +800,13 @@ document.write(`
                     <span class="k">for</span> <span class="n">tag_text</span> <span class="ow">in</span> <span class="n">tags_added</span>
                 <span class="p">],</span>
             <span class="p">)</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
             <span class="n">auto_commit</span><span class="o">=</span><span class="n">auto_commit</span><span class="p">,</span>
             <span class="n">auto_expunge</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">auto_refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
-            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
@@ -812,16 +815,17 @@ document.write(`
 <a class="viewcode-back" href="../../../../api/domain/teams/services.html#app.domain.teams.services.TeamService.update">[docs]</a>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">Team</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">Team</span><span class="p">],</span>
         <span class="n">item_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">id_attribute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">attribute_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">with_for_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_expunge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">id_attribute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">load</span><span class="p">:</span> <span class="n">LoadSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">execution_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap repository update operation.</span>
 
@@ -845,25 +849,29 @@ document.write(`
                 <span class="p">],</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">item_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
             <span class="n">attribute_names</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span>
+            <span class="n">id_attribute</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
+            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
             <span class="n">with_for_update</span><span class="o">=</span><span class="n">with_for_update</span><span class="p">,</span>
             <span class="n">auto_commit</span><span class="o">=</span><span class="n">auto_commit</span><span class="p">,</span>
             <span class="n">auto_expunge</span><span class="o">=</span><span class="n">auto_expunge</span><span class="p">,</span>
             <span class="n">auto_refresh</span><span class="o">=</span><span class="n">auto_refresh</span><span class="p">,</span>
-            <span class="n">id_attribute</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
-            <span class="n">load</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
-            <span class="n">execution_options</span><span class="o">=</span><span class="n">execution_options</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TeamService.to_model">
 <a class="viewcode-back" href="../../../../api/domain/teams/services.html#app.domain.teams.services.TeamService.to_model">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Team</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Team</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Struct</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Team</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore[union-attr]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore[union-attr]</span>
+        <span class="k">if</span> <span class="n">is_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;slug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;slug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span></div>
 </div>
