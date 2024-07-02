@@ -112,12 +112,20 @@ def _patch_db(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
-    monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
-    monkeypatch.setitem(
-        app.state,
-        alchemy._config.session_maker_app_state_key,
-        async_sessionmaker(bind=engine, expire_on_commit=False),
-    )
+    if isinstance(alchemy._config, list):
+        monkeypatch.setitem(app.state, alchemy._config[0].engine_app_state_key, engine)
+        monkeypatch.setitem(
+            app.state,
+            alchemy._config[0].session_maker_app_state_key,
+            async_sessionmaker(bind=engine, expire_on_commit=False),
+        )
+    else:
+        monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
+        monkeypatch.setitem(
+            app.state,
+            alchemy._config.session_maker_app_state_key,
+            async_sessionmaker(bind=engine, expire_on_commit=False),
+        )
 
 
 @pytest.fixture(autouse=True)
