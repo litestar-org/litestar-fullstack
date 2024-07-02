@@ -1231,6 +1231,25 @@ instance.</p>
 </dd></dl>
 
 </section>
+<section id="app-database-drop-all">
+<h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">#</a></h5>
+<p>Drop all tables from the database.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>drop-all<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-drop-all-no-prompt">
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">#</a></dt>
+<dd><p>Do not prompt for confirmation before upgrading.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="app-database-init">
 <h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">#</a></h5>
 <p>Initialize migrations for the project.</p>
@@ -1546,6 +1565,7 @@ instance.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#database-cli">Database CLI</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database">app database</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-downgrade">downgrade</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-drop-all">drop-all</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-init">init</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-make-migrations">make-migrations</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-merge-migrations">merge-migrations</a></li>
