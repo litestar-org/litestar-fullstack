@@ -1,6 +1,6 @@
 services:
   cache:
-    image: valkey:valkey
+    image: valkey/valkey:latest
     ports:
       - "16379:6379"
     hostname: cache
