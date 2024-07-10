@@ -1,5 +1,4 @@
 from litestar import Controller, get
-from litestar.status_codes import HTTP_200_OK
 
 from app.lib.schema import Message
 
@@ -13,10 +12,26 @@ class WebController(Controller):
     @get(
         component="home",
         path="/",
-        operation_id="WebIndex",
-        name="frontend:index",
-        status_code=HTTP_200_OK,
+        name="home",
     )
-    async def index(self, path: str | None = None) -> Message:
+    async def home(self, path: str | None = None) -> Message:
+        """Serve site root."""
+        return Message("Welcome back.")
+
+    @get(
+        component="dashboard",
+        path="/dashboard",
+        name="dashboard",
+    )
+    async def dashboard(self, path: str | None = None) -> Message:
+        """Serve site root."""
+        return Message("Welcome back.")
+
+    @get(
+        component="about",
+        path="/about",
+        name="about",
+    )
+    async def about(self, path: str | None = None) -> Message:
         """Serve site root."""
         return Message("Welcome back.")
