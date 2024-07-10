@@ -1,20 +1,33 @@
-import "vite/modulepreload-polyfill"
-
-import React from "react"
-import ReactDOM from "react-dom/client"
-import App from "@/App.tsx"
 import "@/main.css"
-import { BrowserRouter } from "react-router-dom"
-import AuthProvider from "@/contexts/AuthProvider.tsx"
-import { Toaster } from "@/components/ui/sonner"
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <Toaster />
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
-)
+import { createRoot, hydrateRoot } from "react-dom/client"
+import { createInertiaApp } from "@inertiajs/react"
+import { resolvePageComponent } from "litestar-vite-plugin/inertia-helpers"
+import { ThemeProvider } from "@/components/theme-provider"
+
+const appName = import.meta.env.VITE_APP_NAME || "Fullstack"
+
+createInertiaApp({
+  title: (title) => `${title} - ${appName}`,
+  resolve: (name) =>
+    resolvePageComponent(
+      `./pages/${name}.tsx`,
+      import.meta.glob("./pages/**/*.tsx")
+    ),
+  setup({ el, App, props }) {
+    const appElement = (
+      <ThemeProvider defaultTheme="system" storageKey="ui-theme">
+        <App {...props} />
+      </ThemeProvider>
+    )
+    if (import.meta.env.DEV) {
+      createRoot(el).render(appElement)
+      return
+    }
+
+    hydrateRoot(el, appElement)
+  },
+  progress: {
+    color: "#4B5563",
+  },
+})

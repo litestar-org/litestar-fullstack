@@ -1,8 +1,7 @@
 from litestar import Controller, get
-from litestar.response import Template
 from litestar.status_codes import HTTP_200_OK
 
-from app.config import constants
+from app.lib.schema import Message
 
 
 class WebController(Controller):
@@ -12,11 +11,12 @@ class WebController(Controller):
     opt = {"exclude_from_auth": True}
 
     @get(
-        path=[constants.SITE_INDEX, f"{constants.SITE_INDEX}/{{path:str}}"],
+        component="home",
+        path="/",
         operation_id="WebIndex",
         name="frontend:index",
         status_code=HTTP_200_OK,
     )
-    async def index(self, path: str | None = None) -> Template:
+    async def index(self, path: str | None = None) -> Message:
         """Serve site root."""
-        return Template(template_name="site/index.html.j2")
+        return Message("Welcome back.")

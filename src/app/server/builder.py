@@ -50,6 +50,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         """
 
         from advanced_alchemy.exceptions import RepositoryError
+        from litestar.middleware.session.server_side import ServerSideSessionConfig
         from litestar.security.jwt import Token
 
         from app.config import constants, get_settings
@@ -63,6 +64,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,
         )
+        app_config.middleware = [ServerSideSessionConfig().middleware]
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         app_config.signature_namespace.update(

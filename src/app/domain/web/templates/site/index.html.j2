@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html class="h-full">
+<html>
 
 <head>
   <meta charset="utf-8" />
+  <title inertia>Fullstack</title>
   <!--IE compatibility-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 </head>
 
-<body class="h-full">
-  <div id="root" class="h-full"></div>
+<body class="font-sans antialiased">
+  <div class="h-full" id="app" data-page="{{ inertia | escape }}"></div>
   {{ vite_hmr() }}
   {{ vite('resources/main.tsx') }}
 </body>
