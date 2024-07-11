@@ -1,12 +1,11 @@
 import { Head } from "@inertiajs/react"
 import { AppLayout } from "@/layouts/app-layout"
-import { Logo } from "@/components/logo"
 import { Header } from "@/components/header"
 import { Container } from "@/components/container"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 
-import { CuboidIcon, ChevronsUpDown, BeakerIcon } from "lucide-react"
+import { BeakerIcon } from "lucide-react"
 export default function Home() {
   return (
     <>

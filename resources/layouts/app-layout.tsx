@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react"
+import { PropsWithChildren } from "react"
 import Navbar from "@/layouts/partials/navbar"
 import Footer from "@/layouts/partials/footer"
 import { Toaster } from "@/components/ui/toaster"

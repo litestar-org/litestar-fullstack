@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react"
+import { PropsWithChildren } from "react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 
 import { InertiaLinkProps, Link } from "@inertiajs/react"
