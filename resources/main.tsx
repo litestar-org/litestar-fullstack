@@ -1,10 +1,9 @@
-import "@/main.css"
-
 import { createRoot, hydrateRoot } from "react-dom/client"
 import { createInertiaApp } from "@inertiajs/react"
 import { resolvePageComponent } from "litestar-vite-plugin/inertia-helpers"
 import { ThemeProvider } from "@/components/theme-provider"
 
+import "./main.css"
 const appName = import.meta.env.VITE_APP_NAME || "Fullstack"
 
 createInertiaApp({
