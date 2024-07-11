@@ -9,7 +9,10 @@ export default function About({ about }: { about: string }) {
     <>
       <Head title="About Us" />
       <Header title="About Us" />
-      <Container>{/* Your about page content goes here. */}</Container>
+      <Container>
+        {/* Your about page content goes here. */}
+        <p>hello world</p>
+      </Container>
     </>
   )
 }

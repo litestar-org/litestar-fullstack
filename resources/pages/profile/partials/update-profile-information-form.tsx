@@ -30,8 +30,8 @@ export default function UpdateProfileInformation({
   const { auth } = usePage<PagePropsData>().props
   const { data, setData, patch, errors, processing, recentlySuccessful } =
     useForm({
-      name: auth.user.name ?? "",
-      email: auth.user.email ?? "",
+      name: auth?.user.name ?? "",
+      email: auth?.user.email ?? "",
     })
 
   const submit = (e: { preventDefault: () => void }) => {
@@ -86,7 +86,7 @@ export default function UpdateProfileInformation({
             <InputError className="mt-2" message={errors.email} />
           </div>
 
-          {mustVerifyEmail && auth.user.email_verified_at === null && (
+          {mustVerifyEmail && auth?.user.email_verified_at === null && (
             <div>
               <p className="mt-2 text-sm">
                 Your email address is unverified.

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { PagePropsData } from "@/types"
 import { LogInIcon, SettingsIcon } from "lucide-react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
+import { Icons } from "@/components/icons"
 
 export default function Navbar() {
   const { auth } = usePage<PagePropsData>().props
@@ -26,7 +27,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-x-4">
               <Link href="/" className="mr-3">
-                <Logo className="w-9 fill-foreground" />
+                <Icons.logo className="w-9 fill-foreground" />
               </Link>
               <NavLink
                 active={route("home") == window.location.toString()}
@@ -41,19 +42,19 @@ export default function Navbar() {
                 About
               </NavLink>
             </div>
-            {auth.user ? (
+            {auth?.user ? (
               <div className="flex items-center gap-x-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <Avatar className="size-8">
-                      <AvatarImage src={auth.user.gravatar} />
+                      <AvatarImage src={auth?.user.gravatar} />
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="mr-8 w-60">
                     <DropdownMenuLabel>
-                      <div>{auth.user.name}</div>
+                      <div>{auth?.user.name}</div>
                       <div className="text-muted-foreground font-normal text-sm">
-                        {auth.user.email}
+                        {auth?.user.email}
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />

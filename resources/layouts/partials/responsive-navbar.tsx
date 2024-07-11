@@ -32,12 +32,12 @@ const ResponsiveNavbar = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="focus:outline-none">
               <button className="flex items-center focus:outline-none">
-                {auth.user?.id ? getFirstWord(auth.user?.name) : "Menu"}
+                {auth?.user?.id ? getFirstWord(auth.user.name) : "Menu"}
                 <ChevronDownIcon className="ml-2 size-4" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mr-8 w-72">
-              {auth.user && (
+              {auth?.user && (
                 <>
                   <DropdownMenuLabel>
                     <div className="flex items-center font-normal">

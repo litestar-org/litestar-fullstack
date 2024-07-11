@@ -39,7 +39,7 @@ repos:
           - litestar[jinja,jwt,redis,structlog]
           - "advanced-alchemy[uuid]"
           - litestar-granian
-          - litestar-vite>=0.1.21
+          - "litestar-vite[nodeenv] @ git+https://github.com/cofin/litestar-vite.git@inertia-tests"
           - litestar-saq
           - types-python-jose
           - types-click

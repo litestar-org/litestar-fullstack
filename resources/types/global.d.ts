@@ -1,10 +1,10 @@
-import { AxiosInstance } from 'axios';
-import { route as ziggyRoute } from 'ziggy-js';
+import { AxiosInstance } from "axios"
+import { route as litestarRoute } from "litestar-vite-plugin/inertia-helpers"
 
 declare global {
-    interface Window {
-        axios: AxiosInstance;
-    }
+  interface Window {
+    axios: AxiosInstance
+  }
 
-    var route: typeof ziggyRoute;
+  var route: typeof litestarRoute
 }

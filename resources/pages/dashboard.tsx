@@ -22,11 +22,11 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>Dashboard</CardTitle>
             <CardDescription>
-              Hi {auth.user.name}, you are now logged in.
+              Hi {auth?.user?.name}, you are now logged in.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            Hi {auth.user.name}, you are now logged in.
+            Hi {auth?.user?.name}, you are now logged in.
             <div className="mb-2 text-muted-foreground">
               // The page you are currently visiting is
             </div>

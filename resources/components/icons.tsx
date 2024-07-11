@@ -129,6 +129,40 @@ export const Icons = {
       />
     </svg>
   ),
+  inertia: (props: IconProps) => (
+    <svg role="img" viewBox="0 0 500 500" {...props}>
+      <rect
+        height="500"
+        width="500"
+        rx="250"
+        stroke="currentColor"
+        fill="none"
+      />
+      <path
+        d="M184 165H95L181 251L95 337H184L270 251L184 165Z"
+        stroke="currentColor"
+        fill="white"
+      />
+      <path
+        d="M318.5 165H229.5L315.5 251L229.5 337H318.5L404.5 251L318.5 165Z"
+        stroke="currentColor"
+        fill="white"
+      />
+      <defs>
+        <linearGradient
+          id="paint0_linear"
+          x1="3"
+          y1="20"
+          x2="24"
+          y2="20"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stop-color="#934EE7" />
+          <stop offset="1" stop-color="#7270EC" />
+        </linearGradient>
+      </defs>
+    </svg>
+  ),
   spinner: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
