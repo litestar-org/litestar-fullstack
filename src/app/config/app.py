@@ -12,9 +12,11 @@ from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
 from litestar.logging.config import LoggingConfig, StructLoggingConfig
 from litestar.middleware.logging import LoggingMiddlewareConfig
+from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.plugins.structlog import StructlogConfig
 from litestar_saq import CronJob, QueueConfig, SAQConfig
 from litestar_vite import ViteConfig
+from litestar_vite.inertia import InertiaConfig
 
 from .base import get_settings
 
@@ -48,6 +50,8 @@ vite = ViteConfig(
     port=settings.vite.PORT,
     host=settings.vite.HOST,
 )
+inertia = InertiaConfig(root_template="site/index.html.j2")
+session = ServerSideSessionConfig(max_age=3600)
 saq = SAQConfig(
     redis=settings.redis.client,
     web_enabled=settings.saq.WEB_ENABLED,

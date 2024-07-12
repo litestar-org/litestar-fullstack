@@ -3,14 +3,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import PermissionDeniedException
+from litestar.middleware.session.server_side import ServerSideSessionBackend
 from litestar.security.jwt import OAuth2PasswordBearerAuth
+from litestar.security.session_auth import SessionAuth
+from litestar_vite.inertia import share
 
 from app.config import constants
 from app.config.app import alchemy
+from app.config.app import session as session_config
 from app.config.base import get_settings
 from app.db.models import User
 from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.schemas import User as UserSchema
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection
@@ -18,7 +23,13 @@ if TYPE_CHECKING:
     from litestar.security.jwt import Token
 
 
-__all__ = ("requires_superuser", "requires_active_user", "requires_verified_user", "current_user_from_token", "auth")
+__all__ = (
+    "requires_superuser",
+    "requires_active_user",
+    "requires_verified_user",
+    "current_user_from_token",
+    "jwt_auth",
+)
 
 
 settings = get_settings()
@@ -97,7 +108,46 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     return user if user and user.is_active else None
 
 
-auth = OAuth2PasswordBearerAuth[User](
+async def current_user_from_session(
+    session: dict[str, Any],
+    connection: ASGIConnection[Any, Any, Any, Any],
+) -> User | None:
+    """Lookup current user from server session state.
+
+    Fetches the user information from the database
+
+
+    Args:
+        session (dict[str,Any]): Litestar session dictionary
+        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.
+
+
+    Returns:
+        User: User record mapped to the JWT identifier
+    """
+
+    if (user_id := session.get("user_id")) is None:
+        return None
+    service = await anext(provide_users_service(alchemy.provide_session(connection.app.state, connection.scope)))
+    user = await service.get_one_or_none(email=user_id)
+    if user and user.is_active:
+        share(connection, "auth", service.to_schema(user, schema_type=UserSchema))
+        return user
+    return None
+
+
+session_auth = SessionAuth[User, ServerSideSessionBackend](
+    session_backend_config=session_config,
+    retrieve_user_handler=current_user_from_session,
+    exclude=[
+        constants.OPENAPI_SCHEMA,
+        constants.HEALTH_ENDPOINT,
+        urls.ACCOUNT_LOGIN,
+        urls.ACCOUNT_REGISTER,
+    ],
+)
+
+jwt_auth = OAuth2PasswordBearerAuth[User](
     retrieve_user_handler=current_user_from_token,
     token_secret=settings.app.SECRET_KEY,
     token_url=urls.ACCOUNT_LOGIN,

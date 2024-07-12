@@ -10,6 +10,14 @@ class WebController(Controller):
     opt = {"exclude_from_auth": True}
 
     @get(
+        path="/",
+        name="index",
+    )
+    async def index(self, path: str | None = None) -> Message:
+        """Serve site root."""
+        return Message("Welcome back.")
+
+    @get(
         component="home",
         path="/",
         name="home",
@@ -24,7 +32,7 @@ class WebController(Controller):
         name="dashboard",
     )
     async def dashboard(self, path: str | None = None) -> Message:
-        """Serve site root."""
+        """Serve Dashboard Page."""
         return Message("Welcome back.")
 
     @get(
@@ -33,5 +41,14 @@ class WebController(Controller):
         name="about",
     )
     async def about(self, path: str | None = None) -> Message:
+        """Serve About Page."""
+        return Message("Welcome back.")
+
+    @get(
+        component="legal",
+        path="/legal",
+        name="legal",
+    )
+    async def legal(self, path: str | None = None) -> Message:
         """Serve site root."""
         return Message("Welcome back.")

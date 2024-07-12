@@ -9,12 +9,14 @@ from litestar import Controller, Request, Response, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
+from litestar.plugins.flash import flash
 from litestar.security.jwt import OAuth2Login
+from litestar_vite.inertia import InertiaRedirect
 
 from app.db.models import User as UserModel  # noqa: TCH001
 from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.guards import auth, requires_active_user
+from app.domain.accounts.guards import jwt_auth, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
 from app.domain.accounts.services import RoleService, UserService
 
@@ -33,9 +35,47 @@ class AccessController(Controller):
         "User": User,
     }
 
+    @get(
+        component="auth/login",
+        name="login",
+        path="/login",
+        cache=False,
+        exclude_from_auth=True,
+        include_in_schema=False,
+    )
+    async def show_login(
+        self,
+        request: Request,
+    ) -> Response | dict[str, str]:
+        """Show the user login page."""
+        if request.session.get("current_user", False):
+            flash(request, "Your account is already authenticated.  Welcome back!", category="info")
+            return InertiaRedirect(request.url_for("dashboard"))
+        return {}
+
     @post(
+        component="auth/login",
         operation_id="AccountLogin",
-        name="account:login",
+        name="authenticate-user",
+        path="/login",
+        cache=False,
+        summary="Login",
+        exclude_from_auth=True,
+    )
+    async def login_web(
+        self,
+        users_service: UserService,
+        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
+    ) -> Response[OAuth2Login]:
+        """Authenticate a user."""
+        user = await users_service.authenticate(data.username, data.password)
+
+        return jwt_auth.login(user.email)
+
+    @post(
+        component="",
+        operation_id="AccountLogin",
+        name="api:login",
         path=urls.ACCOUNT_LOGIN,
         cache=False,
         summary="Login",
@@ -48,7 +88,7 @@ class AccessController(Controller):
     ) -> Response[OAuth2Login]:
         """Authenticate a user."""
         user = await users_service.authenticate(data.username, data.password)
-        return auth.login(user.email)
+        return jwt_auth.login(user.email)
 
     @post(
         operation_id="AccountLogout",
@@ -63,14 +103,14 @@ class AccessController(Controller):
         request: Request,
     ) -> Response:
         """Account Logout"""
-        request.cookies.pop(auth.key, None)
+        request.cookies.pop(jwt_auth.key, None)
         request.clear_session()
 
         response = Response(
             {"message": "OK"},
             status_code=200,
         )
-        response.delete_cookie(auth.key)
+        response.delete_cookie(jwt_auth.key)
 
         return response
 

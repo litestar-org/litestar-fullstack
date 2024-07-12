@@ -16,7 +16,7 @@ interface LoginProps {
 export default function Login(args: LoginProps) {
   const { status, canResetPassword } = args
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: "",
+    username: "",
     password: "",
     remember: "",
   })
@@ -49,19 +49,19 @@ export default function Login(args: LoginProps) {
 
       <form onSubmit={submit} className="space-y-6">
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="username">Email</Label>
 
           <Input
             type="text"
-            name="email"
-            value={data.email}
+            name="username"
+            value={data.username}
             className="mt-1"
             autoComplete="username"
             autoFocus
             onChange={onChange}
           />
 
-          <InputError message={errors.email} className="mt-2" />
+          <InputError message={errors.username} className="mt-2" />
         </div>
 
         <div className="mt-4">
