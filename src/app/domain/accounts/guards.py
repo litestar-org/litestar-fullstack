@@ -26,7 +26,7 @@ __all__ = (
     "requires_active_user",
     "requires_verified_user",
     "current_user_from_token",
-    "jwt_auth",
+    "session_auth",
 )
 
 
