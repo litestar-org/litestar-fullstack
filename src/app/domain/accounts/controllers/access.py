@@ -11,7 +11,6 @@ from litestar.plugins.flash import flash
 from litestar_vite.inertia import InertiaRedirect
 
 from app.db.models import User as UserModel  # noqa: TCH001
-from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
 from app.domain.accounts.guards import requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
@@ -118,12 +117,10 @@ class AccessController(Controller):
         return InertiaRedirect(request.url_for("login"))
 
     @get(
-        operation_id="AccountProfile",
+        component="auth/profile",
         name="account:profile",
-        path=urls.ACCOUNT_PROFILE,
+        path="/profile",
         guards=[requires_active_user],
-        summary="User Profile",
-        description="User profile information.",
     )
     async def profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
