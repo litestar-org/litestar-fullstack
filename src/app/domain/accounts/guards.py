@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import PermissionDeniedException
 from litestar.middleware.session.server_side import ServerSideSessionBackend
-from litestar.security.jwt import OAuth2PasswordBearerAuth
 from litestar.security.session_auth import SessionAuth
 from litestar_vite.inertia import share
 
@@ -13,7 +12,6 @@ from app.config.app import alchemy
 from app.config.app import session as session_config
 from app.config.base import get_settings
 from app.db.models import User
-from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_users_service
 from app.domain.accounts.schemas import User as UserSchema
 
@@ -142,19 +140,7 @@ session_auth = SessionAuth[User, ServerSideSessionBackend](
     exclude=[
         constants.OPENAPI_SCHEMA,
         constants.HEALTH_ENDPOINT,
-        urls.ACCOUNT_LOGIN,
-        urls.ACCOUNT_REGISTER,
-    ],
-)
-
-jwt_auth = OAuth2PasswordBearerAuth[User](
-    retrieve_user_handler=current_user_from_token,
-    token_secret=settings.app.SECRET_KEY,
-    token_url=urls.ACCOUNT_LOGIN,
-    exclude=[
-        constants.OPENAPI_SCHEMA,
-        constants.HEALTH_ENDPOINT,
-        urls.ACCOUNT_LOGIN,
-        urls.ACCOUNT_REGISTER,
+        "/login",
+        "/register",
     ],
 )

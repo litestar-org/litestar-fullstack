@@ -23,7 +23,7 @@ files = [
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.17.2"
+version = "0.17.3"
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
@@ -34,24 +34,24 @@ dependencies = [
     "typing-extensions>=4.0.0",
 ]
 files = [
-    {file = "advanced_alchemy-0.17.2-py3-none-any.whl", hash = "sha256:c3ec72c43200a4f8c8138808addab5e00a136f758822291851de824ea843a8d9"},
-    {file = "advanced_alchemy-0.17.2.tar.gz", hash = "sha256:7026fd6fe3aadb665ab0b87dc2a581e68e0df12fe62dcb5ce395bfe101abf663"},
+    {file = "advanced_alchemy-0.17.3-py3-none-any.whl", hash = "sha256:f4a98779f71fec2ae3a24c41732e6125854a61e8ade7ce10c6b39eedcb766f18"},
+    {file = "advanced_alchemy-0.17.3.tar.gz", hash = "sha256:45b274a18f5878b76511738639633ce448c68ee433aa800a8c6613cab8207f65"},
 ]
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.17.2"
+version = "0.17.3"
 extras = ["uuid"]
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy==0.17.2",
+    "advanced-alchemy==0.17.3",
     "uuid-utils>=0.6.1",
 ]
 files = [
-    {file = "advanced_alchemy-0.17.2-py3-none-any.whl", hash = "sha256:c3ec72c43200a4f8c8138808addab5e00a136f758822291851de824ea843a8d9"},
-    {file = "advanced_alchemy-0.17.2.tar.gz", hash = "sha256:7026fd6fe3aadb665ab0b87dc2a581e68e0df12fe62dcb5ce395bfe101abf663"},
+    {file = "advanced_alchemy-0.17.3-py3-none-any.whl", hash = "sha256:f4a98779f71fec2ae3a24c41732e6125854a61e8ade7ce10c6b39eedcb766f18"},
+    {file = "advanced_alchemy-0.17.3.tar.gz", hash = "sha256:45b274a18f5878b76511738639633ce448c68ee433aa800a8c6613cab8207f65"},
 ]
 
 [[package]]
@@ -1330,7 +1330,7 @@ version = "0.1.22"
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "inertia-tests"
-revision = "83350c1605052cd5fcbdeffffe4f3cc86854d147"
+revision = "71ec937d78014afc9927cfe0eb6f4019940216a6"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
@@ -1344,7 +1344,7 @@ extras = ["nodeenv"]
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "inertia-tests"
-revision = "83350c1605052cd5fcbdeffffe4f3cc86854d147"
+revision = "71ec937d78014afc9927cfe0eb6f4019940216a6"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [

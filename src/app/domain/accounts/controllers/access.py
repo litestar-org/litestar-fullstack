@@ -2,21 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Any
 
 from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, get, post
 from litestar.di import Provide
-from litestar.enums import RequestEncodingType
-from litestar.params import Body
 from litestar.plugins.flash import flash
-from litestar.security.jwt import OAuth2Login
 from litestar_vite.inertia import InertiaRedirect
 
 from app.db.models import User as UserModel  # noqa: TCH001
 from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.guards import jwt_auth, requires_active_user
+from app.domain.accounts.guards import requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
 from app.domain.accounts.services import RoleService, UserService
 
@@ -24,14 +21,11 @@ from app.domain.accounts.services import RoleService, UserService
 class AccessController(Controller):
     """User login and registration."""
 
-    tags = ["Access"]
+    include_in_schema = False
     dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
     signature_namespace = {
         "UserService": UserService,
         "RoleService": RoleService,
-        "OAuth2Login": OAuth2Login,
-        "RequestEncodingType": RequestEncodingType,
-        "Body": Body,
         "User": User,
     }
 
@@ -43,59 +37,37 @@ class AccessController(Controller):
         exclude_from_auth=True,
         include_in_schema=False,
     )
-    async def show_login(
+    async def login(
         self,
         request: Request,
-    ) -> Response | dict[str, str]:
+    ) -> Response | None:
         """Show the user login page."""
-        if request.session.get("current_user", False):
+        if request.session.get("user_id", False):
             flash(request, "Your account is already authenticated.  Welcome back!", category="info")
             return InertiaRedirect(request.url_for("dashboard"))
-        return {}
+        return None
 
     @post(
         component="auth/login",
-        operation_id="AccountLogin",
         name="authenticate-user",
         path="/login",
-        cache=False,
-        summary="Login",
         exclude_from_auth=True,
     )
-    async def login_web(
+    async def login_handler(
         self,
+        request: Request[Any, Any, Any],
         users_service: UserService,
-        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
-    ) -> Response[OAuth2Login]:
+        data: AccountLogin,
+    ) -> Response:
         """Authenticate a user."""
         user = await users_service.authenticate(data.username, data.password)
-
-        return jwt_auth.login(user.email)
-
-    @post(
-        component="",
-        operation_id="AccountLogin",
-        name="api:login",
-        path=urls.ACCOUNT_LOGIN,
-        cache=False,
-        summary="Login",
-        exclude_from_auth=True,
-    )
-    async def login(
-        self,
-        users_service: UserService,
-        data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
-    ) -> Response[OAuth2Login]:
-        """Authenticate a user."""
-        user = await users_service.authenticate(data.username, data.password)
-        return jwt_auth.login(user.email)
+        request.set_session({"user_id": user.email})
+        flash(request, "Your account was successfully authenticated.", category="info")
+        return InertiaRedirect(request.url_for("dashboard"))
 
     @post(
-        operation_id="AccountLogout",
-        name="account:logout",
-        path=urls.ACCOUNT_LOGOUT,
-        cache=False,
-        summary="Logout",
+        name="logout",
+        path="/logout",
         exclude_from_auth=True,
     )
     async def logout(
@@ -103,32 +75,38 @@ class AccessController(Controller):
         request: Request,
     ) -> Response:
         """Account Logout"""
-        request.cookies.pop(jwt_auth.key, None)
         request.clear_session()
+        flash(request, "You have been logged out.", category="info")
+        return InertiaRedirect(request.url_for("login"))
 
-        response = Response(
-            {"message": "OK"},
-            status_code=200,
-        )
-        response.delete_cookie(jwt_auth.key)
-
-        return response
-
-    @post(
-        operation_id="AccountRegister",
-        name="account:register",
-        path=urls.ACCOUNT_REGISTER,
-        cache=False,
-        summary="Create User",
-        description="Register a new account.",
+    @get(
+        component="auth/register",
+        name="register",
+        path="/register",
+        exclude_from_auth=True,
     )
     async def signup(
+        self,
+        request: Request,
+    ) -> Response | None:
+        """Show the user login page."""
+        if request.session.get("user_id", False):
+            flash(request, "Your account is already authenticated.  Welcome back!", category="info")
+            return InertiaRedirect(request.url_for("dashboard"))
+        return None
+
+    @post(
+        component="auth/register",
+        path="/register",
+        exclude_from_auth=True,
+    )
+    async def signup_handler(
         self,
         request: Request,
         users_service: UserService,
         roles_service: RoleService,
         data: AccountRegister,
-    ) -> User:
+    ) -> Response:
         """User Signup."""
         user_data = data.to_dict()
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
@@ -136,7 +114,8 @@ class AccessController(Controller):
             user_data.update({"role_id": role_obj.id})
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
-        return users_service.to_schema(user, schema_type=User)
+        flash(request, "Account created successfully.  Please sign in to continue!", category="info")
+        return InertiaRedirect(request.url_for("login"))
 
     @get(
         operation_id="AccountProfile",
@@ -146,6 +125,6 @@ class AccessController(Controller):
         summary="User Profile",
         description="User profile information.",
     )
-    async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
+    async def profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)
