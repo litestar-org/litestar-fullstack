@@ -50,7 +50,7 @@ vite = ViteConfig(
     port=settings.vite.PORT,
     host=settings.vite.HOST,
 )
-inertia = InertiaConfig(root_template="site/index.html.j2")
+inertia = InertiaConfig(root_template="site/index.html.j2", redirect_unauthorized_to="/")
 session = ServerSideSessionConfig(max_age=3600)
 saq = SAQConfig(
     redis=settings.redis.client,

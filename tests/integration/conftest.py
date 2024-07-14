@@ -15,7 +15,7 @@ from sqlalchemy.pool import NullPool
 
 from app.config import get_settings
 from app.db.models import Team, User
-from app.domain.accounts.guards import jwt_auth
+from app.domain.accounts.guards import session_auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.server.builder import ApplicationConfigurator
@@ -161,7 +161,7 @@ def fx_superuser_token_headers() -> dict[str, str]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    return {"Authorization": f"Bearer {jwt_auth.create_token(identifier='superuser@example.com')}"}
+    return {"Authorization": f"Bearer {session_auth.create_token(identifier='superuser@example.com')}"}
 
 
 @pytest.fixture(name="user_token_headers")
@@ -172,4 +172,4 @@ def fx_user_token_headers() -> dict[str, str]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    return {"Authorization": f"Bearer {jwt_auth.create_token(identifier='user@example.com')}"}
+    return {"Authorization": f"Bearer {session_auth.create_token(identifier='user@example.com')}"}

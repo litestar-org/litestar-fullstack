@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, TypeVar
 
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
-from litestar.security.jwt import OAuth2Login
 from litestar.stores.redis import RedisStore
 from litestar.stores.registry import StoreRegistry
 
@@ -49,26 +48,22 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
 
-        from litestar.middleware.session.server_side import ServerSideSessionConfig
-        from litestar.security.jwt import Token
-
         from app.config import constants, get_settings
         from app.db.models import User as UserModel
+        from app.domain.accounts.guards import session_auth
 
         settings = get_settings()
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
+        app_config = session_auth.on_app_init(app_config)
         app_config.response_cache_config = ResponseCacheConfig(
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,
         )
-        app_config.middleware = [ServerSideSessionConfig().middleware]
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         app_config.signature_namespace.update(
             {
-                "Token": Token,
-                "OAuth2Login": OAuth2Login,
                 "UserModel": UserModel,
             },
         )

@@ -21,7 +21,6 @@ def create_app() -> Litestar:
     from app.config.base import get_settings
     from app.domain.accounts import signals as account_signals
     from app.domain.accounts.dependencies import provide_user
-    from app.domain.accounts.guards import session_auth
     from app.domain.teams import signals as team_signals
     from app.lib.dependencies import create_collection_dependencies
     from app.server import openapi, plugins, routers
@@ -46,7 +45,6 @@ def create_app() -> Litestar:
             plugins.inertia,
             plugins.flasher,
         ],
-        on_app_init=[session_auth.on_app_init],
         listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
     )
 

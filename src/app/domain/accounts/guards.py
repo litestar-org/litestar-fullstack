@@ -7,7 +7,6 @@ from litestar.middleware.session.server_side import ServerSideSessionBackend
 from litestar.security.session_auth import SessionAuth
 from litestar_vite.inertia import share
 
-from app.config import constants
 from app.config.app import alchemy
 from app.config.app import session as session_config
 from app.config.base import get_settings
@@ -120,9 +119,9 @@ session_auth = SessionAuth[User, ServerSideSessionBackend](
     session_backend_config=session_config,
     retrieve_user_handler=current_user_from_session,
     exclude=[
-        constants.OPENAPI_SCHEMA,
-        constants.HEALTH_ENDPOINT,
-        "/login",
-        "/register",
+        "^/schema",
+        "^/health",
+        "^/login",
+        "^/register",
     ],
 )
