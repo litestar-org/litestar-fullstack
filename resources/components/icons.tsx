@@ -157,8 +157,8 @@ export const Icons = {
           y2="20"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#934EE7" />
-          <stop offset="1" stop-color="#7270EC" />
+          <stop stopColor="#934EE7" />
+          <stop offset="1" stopColor="#7270EC" />
         </linearGradient>
       </defs>
     </svg>
