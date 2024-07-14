@@ -14,11 +14,10 @@ if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from litestar.connection import Request
-    from litestar.security.jwt import Token
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def provide_user(request: Request[UserModel, Token, Any]) -> UserModel:
+async def provide_user(request: Request[UserModel, Any, Any]) -> UserModel:
     """Get the user from the connection.
 
     Args:

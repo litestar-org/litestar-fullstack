@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from advanced_alchemy.utils.text import slugify
-from litestar import Controller, Request, Response, get, post
+from litestar import Controller, HttpMethod, Request, Response, get, post, route
 from litestar.di import Provide
 from litestar.plugins.flash import flash
 from litestar_vite.inertia import InertiaRedirect
@@ -36,7 +36,7 @@ class AccessController(Controller):
         """Show the user login page."""
         if request.session.get("user_id", False):
             flash(request, "Your account is already authenticated.  Welcome back!", category="info")
-            return InertiaRedirect(request.url_for("dashboard"))
+            return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
     @post(component="auth/login", path="/login")
@@ -50,17 +50,18 @@ class AccessController(Controller):
         user = await users_service.authenticate(data.username, data.password)
         request.set_session({"user_id": user.email})
         flash(request, "Your account was successfully authenticated.", category="info")
-        return InertiaRedirect(request.url_for("dashboard"))
+        request.logger.info("Redirecting to %s ", request.url_for("dashboard"))
+        return InertiaRedirect(request, request.url_for("dashboard"))
 
-    @post(name="logout", path="/logout", exclude_from_auth=False)
+    @route(name="logout", path="/logout", exclude_from_auth=False, http_method=[HttpMethod.GET, HttpMethod.POST])
     async def logout(
         self,
         request: Request,
     ) -> Response:
         """Account Logout"""
-        request.clear_session()
         flash(request, "You have been logged out.", category="info")
-        return InertiaRedirect(request.url_for("login"))
+        request.clear_session()
+        return InertiaRedirect(request, request.url_for("login"))
 
 
 class RegistrationController(Controller):
@@ -81,7 +82,7 @@ class RegistrationController(Controller):
         """Show the user login page."""
         if request.session.get("user_id", False):
             flash(request, "Your account is already authenticated.  Welcome back!", category="info")
-            return InertiaRedirect(request.url_for("dashboard"))
+            return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
     @post(component="auth/register")
@@ -100,7 +101,7 @@ class RegistrationController(Controller):
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
         flash(request, "Account created successfully.  Please sign in to continue!", category="info")
-        return InertiaRedirect(request.url_for("login"))
+        return InertiaRedirect(request, request.url_for("login"))
 
 
 class ProfileController(Controller):
