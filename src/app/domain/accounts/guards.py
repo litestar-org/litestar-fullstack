@@ -18,14 +18,13 @@ from app.domain.accounts.schemas import User as UserSchema
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection
     from litestar.handlers.base import BaseRouteHandler
-    from litestar.security.jwt import Token
 
 
 __all__ = (
     "requires_superuser",
     "requires_active_user",
     "requires_verified_user",
-    "current_user_from_token",
+    "current_user_from_session",
     "session_auth",
 )
 
@@ -47,7 +46,7 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
     """
     if connection.user.is_active:
         return
-    msg = "Inactive account"
+    msg = "Your user account is inactive."
     raise PermissionDeniedException(msg)
 
 
@@ -66,7 +65,8 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     """
     if connection.user.is_superuser:
         return
-    raise PermissionDeniedException(detail="Insufficient privileges")
+    msg = "Your account does not have enough privileges to access this content."
+    raise PermissionDeniedException(msg)
 
 
 def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -84,26 +84,8 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
     """
     if connection.user.is_verified:
         return
-    raise PermissionDeniedException(detail="User account is not verified.")
-
-
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
-    """Lookup current user from local JWT token.
-
-    Fetches the user information from the database
-
-
-    Args:
-        token (str): JWT Token Object
-        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.
-
-
-    Returns:
-        User: User record mapped to the JWT identifier
-    """
-    service = await anext(provide_users_service(alchemy.provide_session(connection.app.state, connection.scope)))
-    user = await service.get_one_or_none(email=token.sub)
-    return user if user and user.is_active else None
+    msg = "Your account has not been verified."
+    raise PermissionDeniedException(msg)
 
 
 async def current_user_from_session(

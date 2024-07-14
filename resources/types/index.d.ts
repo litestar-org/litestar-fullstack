@@ -1,3 +1,5 @@
+export type Flash = Record<string, string>
+
 export type AuthData = {
   user: AuthenticatedUserData
 }
@@ -7,7 +9,4 @@ export type AuthenticatedUserData = {
   name: string
   gravatar: string
   email_verified_at: string | null
-}
-export type PagePropsData = {
-  auth?: AuthData
 }

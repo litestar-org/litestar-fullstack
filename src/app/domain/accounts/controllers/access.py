@@ -21,38 +21,26 @@ class AccessController(Controller):
     """User login and registration."""
 
     include_in_schema = False
-    dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
+    dependencies = {"users_service": Provide(provide_users_service)}
     signature_namespace = {
         "UserService": UserService,
-        "RoleService": RoleService,
-        "User": User,
     }
+    cache = False
+    exclude_from_auth = True
 
-    @get(
-        component="auth/login",
-        name="login",
-        path="/login",
-        cache=False,
-        exclude_from_auth=True,
-        include_in_schema=False,
-    )
-    async def login(
+    @get(component="auth/login", name="login", path="/login")
+    async def show_login(
         self,
         request: Request,
-    ) -> Response | None:
+    ) -> Response | dict:
         """Show the user login page."""
         if request.session.get("user_id", False):
             flash(request, "Your account is already authenticated.  Welcome back!", category="info")
             return InertiaRedirect(request.url_for("dashboard"))
-        return None
+        return {}
 
-    @post(
-        component="auth/login",
-        name="authenticate-user",
-        path="/login",
-        exclude_from_auth=True,
-    )
-    async def login_handler(
+    @post(component="auth/login", path="/login")
+    async def login(
         self,
         request: Request[Any, Any, Any],
         users_service: UserService,
@@ -64,11 +52,7 @@ class AccessController(Controller):
         flash(request, "Your account was successfully authenticated.", category="info")
         return InertiaRedirect(request.url_for("dashboard"))
 
-    @post(
-        name="logout",
-        path="/logout",
-        exclude_from_auth=True,
-    )
+    @post(name="logout", path="/logout", exclude_from_auth=False)
     async def logout(
         self,
         request: Request,
@@ -78,28 +62,30 @@ class AccessController(Controller):
         flash(request, "You have been logged out.", category="info")
         return InertiaRedirect(request.url_for("login"))
 
-    @get(
-        component="auth/register",
-        name="register",
-        path="/register",
-        exclude_from_auth=True,
-    )
-    async def signup(
+
+class RegistrationController(Controller):
+    path = "/register"
+    include_in_schema = False
+    dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
+    signature_namespace = {
+        "UserService": UserService,
+        "RoleService": RoleService,
+    }
+    exclude_from_auth = True
+
+    @get(component="auth/register", name="register")
+    async def show_signup(
         self,
         request: Request,
-    ) -> Response | None:
+    ) -> Response | dict:
         """Show the user login page."""
         if request.session.get("user_id", False):
             flash(request, "Your account is already authenticated.  Welcome back!", category="info")
             return InertiaRedirect(request.url_for("dashboard"))
-        return None
+        return {}
 
-    @post(
-        component="auth/register",
-        path="/register",
-        exclude_from_auth=True,
-    )
-    async def signup_handler(
+    @post(component="auth/register")
+    async def signup(
         self,
         request: Request,
         users_service: UserService,
@@ -116,12 +102,18 @@ class AccessController(Controller):
         flash(request, "Account created successfully.  Please sign in to continue!", category="info")
         return InertiaRedirect(request.url_for("login"))
 
-    @get(
-        component="auth/profile",
-        name="account:profile",
-        path="/profile",
-        guards=[requires_active_user],
-    )
+
+class ProfileController(Controller):
+    path = "/profile"
+    include_in_schema = False
+    dependencies = {"users_service": Provide(provide_users_service)}
+    signature_namespace = {
+        "UserService": UserService,
+        "User": User,
+    }
+    guards = [requires_active_user]
+
+    @get(component="auth/profile", name="account:profile")
     async def profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)

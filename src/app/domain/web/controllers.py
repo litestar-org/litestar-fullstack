@@ -1,46 +1,27 @@
 from litestar import Controller, get
 
-from app.lib.schema import Message
-
 
 class WebController(Controller):
     """Web Controller."""
 
     include_in_schema = False
-    opt = {"exclude_from_auth": True}
 
-    @get(
-        component="home",
-        path="/",
-        name="home",
-    )
-    async def home(self, path: str | None = None) -> Message:
+    @get(component="home", path="/", name="home", exclude_from_auth=True)
+    async def home(self) -> dict:
         """Serve site root."""
-        return Message("Welcome back.")
+        return {}
 
-    @get(
-        component="dashboard",
-        path="/dashboard",
-        name="dashboard",
-    )
-    async def dashboard(self, path: str | None = None) -> Message:
+    @get(component="dashboard", path="/dashboard", name="dashboard")
+    async def dashboard(self) -> dict:
         """Serve Dashboard Page."""
-        return Message("Welcome back.")
+        return {}
 
-    @get(
-        component="about",
-        path="/about",
-        name="about",
-    )
-    async def about(self, path: str | None = None) -> Message:
+    @get(component="about", path="/about", name="about")
+    async def about(self) -> dict:
         """Serve About Page."""
-        return Message("Welcome back.")
+        return {}
 
-    @get(
-        component="legal",
-        path="/legal",
-        name="legal",
-    )
-    async def legal(self, path: str | None = None) -> Message:
+    @get(component="legal", path="/legal", name="legal")
+    async def legal(self) -> dict:
         """Serve site root."""
-        return Message("Welcome back.")
+        return {}

@@ -442,7 +442,7 @@ class Settings:
 
             console.print(f"[yellow]Loading environment configuration from {dotenv_filename}[/]")
 
-            load_dotenv(env_file)
+            load_dotenv(env_file, override=True)
         return Settings()
 
 

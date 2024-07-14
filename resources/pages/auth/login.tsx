@@ -9,12 +9,15 @@ import { Head, Link, useForm } from "@inertiajs/react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 
 interface LoginProps {
-  status: string
+  content?: {
+    status_code: number
+    detail: string
+  }
   canResetPassword: boolean
 }
 
 export default function Login(args: LoginProps) {
-  const { status, canResetPassword } = args
+  const { content, canResetPassword } = args
   const { data, setData, post, processing, errors, reset } = useForm({
     username: "",
     password: "",
@@ -41,9 +44,9 @@ export default function Login(args: LoginProps) {
     <>
       <Head title="Log in" />
 
-      {status && (
-        <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
-          {status}
+      {content && (
+        <div className="mb-4 text-sm font-medium text-red-600 dark:text-red-400">
+          {content.detail}
         </div>
       )}
 
