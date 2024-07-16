@@ -39,7 +39,7 @@ class AccessController(Controller):
             return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
-    @post(component="auth/login", path="/login")
+    @post(component="auth/login", name="login.store", path="/login")
     async def login(
         self,
         request: Request[Any, Any, Any],

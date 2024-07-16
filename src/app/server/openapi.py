@@ -12,6 +12,6 @@ config = OpenAPIConfig(
     components=[session_auth.openapi_components],
     security=[session_auth.security_requirement],
     use_handler_docstrings=True,
-    render_plugins=[ScalarRenderPlugin(), SwaggerRenderPlugin()],
+    render_plugins=[ScalarRenderPlugin(version="1.24.46"), SwaggerRenderPlugin()],
 )
 """OpenAPI config for app.  See OpenAPISettings for configuration."""
