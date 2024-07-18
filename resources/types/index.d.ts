@@ -1,4 +1,6 @@
-export type Flash = Record<string, string>
+interface FlashMessages {
+  [category: string]: string[]
+}
 
 export type AuthData = {
   user: AuthenticatedUserData

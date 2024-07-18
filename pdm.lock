@@ -1330,7 +1330,7 @@ version = "0.1.22"
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "inertia-tests"
-revision = "bb5b244af25124881c6c200b43539eb132ea673d"
+revision = "a58ce77006a795e5adcb9f5510c6a1fa0dc1e4ad"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
@@ -1344,7 +1344,7 @@ extras = ["nodeenv"]
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "inertia-tests"
-revision = "bb5b244af25124881c6c200b43539eb132ea673d"
+revision = "a58ce77006a795e5adcb9f5510c6a1fa0dc1e4ad"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [

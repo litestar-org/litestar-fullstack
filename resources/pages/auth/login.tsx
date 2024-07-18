@@ -5,7 +5,7 @@ import { z } from "zod"
 import { GuestLayout } from "@/layouts/guest-layout"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { PropsWithoutRef, useEffect } from "react"
+import { useState } from "react"
 import {
   Form,
   FormControl,
@@ -16,21 +16,26 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { FlashMessages } from "@/types"
 
 const formSchema = z.object({
-  username: z.string().email("Please enter a valid email address."),
+  username: z.string().min(1, {
+    message: "Username is required.",
+  }),
   password: z.string().min(1, "Please enter a valid password."),
   remember: z.boolean().default(false),
 })
 
 export default function Login() {
-  const { message, canResetPassword, errors } = usePage<{
+  const { message, canResetPassword, errors, flash } = usePage<{
     content: {
       status_code: number
       message: string
     }
     canResetPassword: boolean
+    flash: FlashMessages
   }>().props
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,29 +45,23 @@ export default function Login() {
     },
   })
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    router.post(route("login"), values, {
-      onError: (err) => {
-        console.log(err)
-        if ("username" in err && typeof err.username === "string") {
-          form.setError("root", { message: err.username })
-        }
-      },
-    })
-  }
-  useEffect(() => {
-    if (errors) {
-      for (const [key, value] of Object.entries(errors)) {
-        if (key.startsWith("root")) continue
-
-        form.setError(key as any, {
-          type: "submit",
-          message: value,
-        })
-      }
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsLoading(true)
+      router.post(route("login"), values, {
+        onError: (err) => {
+          console.log(err)
+          if ("username" in err && typeof err.username === "string") {
+            form.setError("root", { message: err.username })
+          }
+        },
+      })
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
     }
-  }, [errors])
+  }
   return (
     <>
       <Head title="Log in" />
@@ -70,9 +69,9 @@ export default function Login() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2 text-center">
-            {form.formState.errors.root && (
+            {flash?.error && (
               <p className="text-sm font-medium text-destructive">
-                {form.formState.errors.root.message}
+                {flash.error.join("\n")}
               </p>
             )}
           </div>
@@ -83,7 +82,13 @@ export default function Login() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    autoCapitalize="none"
+                    autoComplete="username"
+                    autoCorrect="off"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +102,14 @@ export default function Login() {
               <FormItem className="mt-4">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <Input
+                    type="password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    autoComplete="current-password"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,7 +138,7 @@ export default function Login() {
           <Button
             type="submit"
             className="w-full text-base"
-            disabled={!form.formState.isValid}
+            disabled={isLoading}
           >
             Sign in
           </Button>
