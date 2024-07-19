@@ -1,163 +1,244 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { GuestLayout } from "@/layouts/guest-layout"
 import { InputError } from "@/components/input-error"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Head, Link, useForm, usePage } from "@inertiajs/react"
+import { Head, Link, router, usePage } from "@inertiajs/react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { route } from "litestar-vite-plugin/inertia-helpers"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { FlashMessages } from "@/types"
+import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import { getServerSideErrors } from "@/lib/utils"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 
+const formSchema = z
+  .object({
+    name: z.string().min(3),
+    email: z.string().email({ message: "Please enter a valid email address" }),
+    password: z.string().min(8, {
+      message: "Password must be at least 8 characters.",
+    }),
+    password_confirmation: z.string(),
+    terms: z.literal(true),
+  })
+  .superRefine(({ password_confirmation, password }, ctx) => {
+    if (password_confirmation !== password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "The passwords did not match",
+        path: ["password_confirmation"],
+      })
+    }
+  })
+type FormProps = z.infer<typeof formSchema>
 export default function Register() {
-  const { hasTermsAndPrivacyPolicyFeature } = usePage<{
+  const {
+    hasTermsAndPrivacyPolicyFeature,
+    flash,
+    errors: serverSideErrors,
+  } = usePage<{
+    content: {
+      status_code: number
+      message: string
+    }
+    canResetPassword: boolean
+    flash: FlashMessages
     hasTermsAndPrivacyPolicyFeature: boolean
   }>().props
-  const { data, setData, post, processing, errors, reset } = useForm({
-    name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-    terms: false,
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const form = useForm<
+    FormProps & { password_confirmation: string; terms: boolean }
+  >({
+    resolver: zodResolver(formSchema),
   })
 
-  useEffect(() => {
-    return () => {
-      reset("password", "password_confirmation")
-    }
-  }, [])
-
-  const onChange = (event: { target: { name: any; value: any } }) => {
-    setData(event.target.name, event.target.value)
+  const errors = {
+    ...getServerSideErrors(serverSideErrors),
+    ...form.formState.errors,
   }
 
-  const submit = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-
-    post("/register")
+  async function onSubmit(values: FormProps) {
+    try {
+      setIsLoading(true)
+      router.post(route("register"), values, {
+        onError: (err) => {
+          console.log(err)
+          if ("email" in err && typeof err.email === "string") {
+            form.setError("root", { message: err.email })
+          }
+        },
+      })
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <>
-      <Head title="Register" />
-
-      <form onSubmit={submit}>
-        <>
-          <div>
-            <Label htmlFor="name">Name</Label>
-
-            <Input
-              type="text"
-              name="name"
-              value={data.name}
-              className="mt-1"
-              autoComplete="name"
-              autoFocus
-              onChange={onChange}
-              required
-            />
-
-            <InputError message={errors.name} className="mt-2" />
+      <Head title="Create a Fullstack Account" />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-2 text-center">
+            {flash?.error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{flash.error.join("\n")}</AlertDescription>
+              </Alert>
+            )}
           </div>
-
-          <div className="mt-4">
-            <Label htmlFor="email">Email</Label>
-
-            <Input
-              type="email"
-              name="email"
-              value={data.email}
-              className="mt-1"
-              autoComplete="username"
-              onChange={onChange}
-              required
-            />
-
-            <InputError message={errors.email} className="mt-2" />
-          </div>
-
-          <div className="mt-4">
-            <Label htmlFor="password">Password</Label>
-
-            <Input
-              type="password"
-              name="password"
-              value={data.password}
-              className="mt-1"
-              autoComplete="new-password"
-              onChange={onChange}
-              required
-            />
-
-            <InputError message={errors.password} className="mt-2" />
-          </div>
-
-          <div className="mt-4">
-            <Label htmlFor="password_confirmation">Confirm Password</Label>
-
-            <Input
-              type="password"
-              name="password_confirmation"
-              value={data.password_confirmation}
-              className="mt-1"
-              onChange={onChange}
-              required
-            />
-
-            <InputError
-              message={errors.password_confirmation}
-              className="mt-2"
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    autoComplete="name"
+                    autoCorrect="off"
+                    autoFocus
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    autoComplete="email"
+                    autoCorrect="off"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="mt-4">
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    autoComplete="password"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password_confirmation"
+            render={({ field }) => (
+              <FormItem className="mt-4">
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    autoComplete="password_confirmation"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {hasTermsAndPrivacyPolicyFeature && (
-            <div className="mt-4">
-              <Label htmlFor="terms">
-                <div className="flex items-center text-muted-foreground">
-                  <Checkbox
-                    name="terms"
-                    id="terms"
-                    onCheckedChange={(e: any) => setData("terms", e)}
-                    required
-                  />
-
-                  <div className="ml-2">
-                    I agree to the{" "}
-                    <a
-                      target="_blank"
-                      href={route("terms.show")}
-                      className="text-sm text-muted-foreground hover:text-primary"
-                    >
-                      terms of service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      target="_blank"
-                      href={route("privacy.show")}
-                      className="text-sm text-muted-foreground hover:text-primary"
-                    >
-                      privacy policy
-                    </a>
-                  </div>
-                </div>
-                <InputError className="mt-2" message={errors.terms} />
-              </Label>
+            <div>
+              <FormField
+                control={form.control}
+                name="terms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="mt-2 flex items-center space-x-2">
+                        <Checkbox
+                          id="terms"
+                          name="terms"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                        <Label htmlFor="terms">Terms</Label>
+                        <div className="ml-2">
+                          I agree to the{" "}
+                          <a
+                            target="_blank"
+                            href={route("terms-of-service")}
+                            className="text-sm text-muted-foreground hover:text-primary"
+                          >
+                            terms of service
+                          </a>{" "}
+                          and{" "}
+                          <a
+                            target="_blank"
+                            href={route("privacy-policy")}
+                            className="text-sm text-muted-foreground hover:text-primary"
+                          >
+                            privacy policy
+                          </a>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           )}
-
           <div className="mt-4 flex items-center justify-end">
             <Link
-              href="/login"
-              className="text-sm text-muted-foreground hover:text-primary"
+              href={route("login")}
+              className="w-50 text-sm text-muted-foreground hover:text-primary"
             >
               Already registered?
             </Link>
-
-            <Button type="submit" className="ml-4" disabled={processing}>
+            <Button
+              type="submit"
+              className="w-full text-base"
+              disabled={isLoading}
+            >
               Register
             </Button>
           </div>
-        </>
-      </form>
+        </form>
+      </Form>
     </>
   )
 }
@@ -166,7 +247,7 @@ Register.layout = (page: React.ReactNode) => {
   return (
     <GuestLayout
       header="Register"
-      description="Register for your new account."
+      description="Create a Fullstack Account"
       children={page}
     />
   )

@@ -12,13 +12,12 @@ import ResponsiveNavbar from "@/layouts/partials/responsive-navbar"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
-import { PagePropsData } from "@/types"
 import { LogInIcon, SettingsIcon } from "lucide-react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 import { Icons } from "@/components/icons"
 
 export default function Navbar() {
-  const { auth } = usePage<PagePropsData>().props
+  const { auth } = usePage<InertiaProps>().props
   return (
     <>
       <ResponsiveNavbar />

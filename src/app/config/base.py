@@ -389,8 +389,10 @@ class AppSettings:
     """Application name."""
     ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=lambda: os.getenv("ALLOWED_CORS_ORIGINS", '["*"]'))
     """Allowed CORS Origins"""
-    CSRF_COOKIE_NAME: str = field(default_factory=lambda: "csrftoken")
+    CSRF_COOKIE_NAME: str = field(default_factory=lambda: "XSRF-TOKEN")
     """CSRF Cookie Name"""
+    CSRF_HEADER_NAME: str = field(default_factory=lambda: "X-XSRF-TOKEN")
+    """CSRF Header Name"""
     CSRF_COOKIE_SECURE: bool = field(default_factory=lambda: False)
     """CSRF Secure Cookie"""
     JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")

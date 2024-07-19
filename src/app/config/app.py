@@ -27,6 +27,7 @@ csrf = CSRFConfig(
     secret=settings.app.SECRET_KEY,
     cookie_secure=settings.app.CSRF_COOKIE_SECURE,
     cookie_name=settings.app.CSRF_COOKIE_NAME,
+    header_name=settings.app.CSRF_HEADER_NAME,
 )
 cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
 alchemy = SQLAlchemyAsyncConfig(

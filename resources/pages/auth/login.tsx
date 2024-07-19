@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FlashMessages } from "@/types"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -25,6 +27,7 @@ const formSchema = z.object({
   password: z.string().min(1, "Please enter a valid password."),
   remember: z.boolean().default(false),
 })
+type FormProps = z.infer<typeof formSchema>
 
 export default function Login() {
   const { message, canResetPassword, errors, flash } = usePage<{
@@ -36,7 +39,7 @@ export default function Login() {
     flash: FlashMessages
   }>().props
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormProps>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
@@ -45,7 +48,7 @@ export default function Login() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormProps) {
     try {
       setIsLoading(true)
       router.post(route("login"), values, {
@@ -70,9 +73,11 @@ export default function Login() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2 text-center">
             {flash?.error && (
-              <p className="text-sm font-medium text-destructive">
-                {flash.error.join("\n")}
-              </p>
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{flash.error.join("\n")}</AlertDescription>
+              </Alert>
             )}
           </div>
           <FormField

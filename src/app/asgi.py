@@ -31,6 +31,7 @@ def create_app() -> Litestar:
 
     return Litestar(
         cors_config=config.cors,
+        csrf_config=config.csrf,
         dependencies=dependencies,
         debug=settings.app.DEBUG,
         openapi_config=openapi.config,
