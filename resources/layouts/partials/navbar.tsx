@@ -28,16 +28,10 @@ export default function Navbar() {
               <Link href="/" className="mr-3">
                 <Icons.logo className="w-9 fill-foreground" />
               </Link>
-              <NavLink
-                active={route("home") == window.location.toString()}
-                href="/"
-              >
+              <NavLink active={isCurrentRoute("home")} href={route("home")}>
                 Home
               </NavLink>
-              <NavLink
-                active={route("about") == window.location.toString()}
-                href={route("about")}
-              >
+              <NavLink active={isCurrentRoute("about")} href={route("about")}>
                 About
               </NavLink>
             </div>

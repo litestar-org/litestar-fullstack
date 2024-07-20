@@ -12,7 +12,6 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { getFirstWord, strLimit } from "@/lib/utils"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 
-import { PagePropsData } from "@/types"
 import {
   ChevronDownIcon,
   CircleUserIcon,
@@ -21,7 +20,7 @@ import {
 } from "lucide-react"
 
 const ResponsiveNavbar = () => {
-  const { auth } = usePage<PagePropsData>().props
+  const { auth } = usePage<InertiaProps>().props
   return (
     <nav className="block border-b px-4 py-2 sm:hidden">
       <div className="flex items-center justify-between py-1">

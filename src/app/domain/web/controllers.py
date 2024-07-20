@@ -24,7 +24,7 @@ class WebController(Controller):
         """Serve Dashboard Page."""
         return {}
 
-    @get(component="about", path="/about", name="about", exclude_from_auth=True)
+    @get(component="about", path="/about", name="about")
     async def about(self) -> dict:
         """Serve About Page."""
         return {}

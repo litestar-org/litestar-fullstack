@@ -3,22 +3,20 @@ import { Head, Link, router, usePage } from "@inertiajs/react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { GuestLayout } from "@/layouts/guest-layout"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { buttonVariants } from "@/components/ui/button"
 import { useState } from "react"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { FlashMessages } from "@/types"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { Icons } from "@/components/icons"
+import UserLoginForm from "./partials/user-login-form"
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -30,155 +28,72 @@ const formSchema = z.object({
 type FormProps = z.infer<typeof formSchema>
 
 export default function Login() {
-  const { message, canResetPassword, errors, flash } = usePage<{
-    content: {
-      status_code: number
-      message: string
-    }
-    canResetPassword: boolean
-    flash: FlashMessages
-  }>().props
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const form = useForm<FormProps>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      remember: false,
-    },
-  })
-
-  async function onSubmit(values: FormProps) {
-    try {
-      setIsLoading(true)
-      router.post(route("login"), values, {
-        onError: (err) => {
-          console.log(err)
-          if ("username" in err && typeof err.username === "string") {
-            form.setError("root", { message: err.username })
-          }
-        },
-      })
-    } catch (error: any) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
   return (
     <>
       <Head title="Log in" />
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2 text-center">
-            {flash?.error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{flash.error.join("\n")}</AlertDescription>
-              </Alert>
-            )}
+      <Link
+        href={route("register")}
+        className={cn(
+          buttonVariants({ variant: "ghost" }),
+          "absolute right-4 top-4 md:right-8 md:top-8"
+        )}
+      >
+        Need an account?
+      </Link>
+      <div className="relative hidden h-full flex-col  p-10 dark:border-r lg:flex">
+        <div className="absolute inset-0 bg-none" />
+        <Link href={route("home")}>
+          <div className="relative z-20 flex items-center text-lg font-medium">
+            <Icons.logo className="mr-2 h-6 w-6" />
+            Litestar Fullstack Application
           </div>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    autoCapitalize="none"
-                    autoComplete="username"
-                    autoCorrect="off"
-                    {...field}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="mt-4">
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    autoComplete="current-password"
-                    {...field}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="remember"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="mt-2 flex items-center space-x-2">
-                    <Checkbox
-                      id="remember-me"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <Label htmlFor="remember-me">Remember me</Label>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="submit"
-            className="w-full text-base"
-            disabled={isLoading}
-          >
-            Sign in
-          </Button>
-          {canResetPassword && (
-            <p className="text-center text-sm text-muted-foreground">
-              <span className="">Forgot your password?</span>
-              <Link
-                href={route("reset-password.show")}
-                className=" text-primary hover:underline"
-              >
-                Sign up
-              </Link>
+        </Link>
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              &ldquo;This library has saved me countless hours of work and
+              helped me deliver stunning designs to my clients faster than ever
+              before.&rdquo;
             </p>
-          )}
-          <p className="text-center text-sm text-muted-foreground">
-            <span className="">Don't have an account?</span>
+            <footer className="text-sm">Sofia Davis</footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div className="lg:p-8 sm:pt-5">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="flex mx-auto text-2xl font-semibold tracking-tight">
+              <Icons.sparkle className="w-5 h-5 mr-3 " /> Login to Continue{" "}
+            </h1>
+            <p className="text-sm text-muted-foreground ">
+              Enter your credentials to get started!
+            </p>
+          </div>
+          <UserLoginForm />
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            By clicking continue, you agree to our{" "}
             <Link
-              href={route("register")}
-              className=" text-primary hover:underline"
+              href={route("terms-of-service")}
+              className="underline underline-offset-4 hover:text-primary"
             >
-              Sign up
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href={route("privacy-policy")}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Privacy Policy
             </Link>
+            .
           </p>
-        </form>
-      </Form>
+        </div>
+      </div>
     </>
   )
 }
 
 Login.layout = (page: React.ReactNode) => {
-  return (
-    <GuestLayout
-      header="Login"
-      description="Please enter your email and password to login."
-      children={page}
-    />
-  )
+  return <GuestLayout children={page} />
 }

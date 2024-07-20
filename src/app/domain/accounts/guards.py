@@ -106,12 +106,14 @@ async def current_user_from_session(
     """
 
     if (user_id := session.get("user_id")) is None:
+        share(connection, "auth", {"is_authenticated": False})
         return None
     service = await anext(provide_users_service(alchemy.provide_session(connection.app.state, connection.scope)))
     user = await service.get_one_or_none(email=user_id)
     if user and user.is_active:
-        share(connection, "auth", service.to_schema(user, schema_type=UserSchema))
+        share(connection, "auth", {"is_authenticated": True, "user": service.to_schema(user, schema_type=UserSchema)})
         return user
+    share(connection, "auth", {"is_authenticated": False})
     return None
 
 

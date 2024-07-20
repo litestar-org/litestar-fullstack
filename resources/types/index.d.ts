@@ -3,7 +3,8 @@ interface FlashMessages {
 }
 
 export type AuthData = {
-  user: AuthenticatedUserData
+  is_authenticated: boolean
+  user?: AuthenticatedUserData
 }
 export type AuthenticatedUserData = {
   id: number
