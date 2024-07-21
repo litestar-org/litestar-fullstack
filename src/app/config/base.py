@@ -279,7 +279,7 @@ class LogSettings:
     """
     OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session"})
     """Request cookie keys to obfuscate."""
-    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY"})
+    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY", "X-XSRF-TOKEN"})
     """Request header keys to obfuscate."""
     JOB_FIELDS: list[str] = field(
         default_factory=lambda: [
@@ -397,6 +397,10 @@ class AppSettings:
     """CSRF Secure Cookie"""
     JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
     """JWT Encryption Algorithm"""
+    OPENTELEMETRY_ENABLED: bool = field(
+        default_factory=lambda: os.getenv("OPENTELEMETRY_ENABLED", "False") in TRUE_VALUES
+    )
+    """Enable Opentelemetry configuration."""
 
     @property
     def slug(self) -> str:

@@ -1,10 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Head, Link, router, usePage } from "@inertiajs/react"
+import { router, usePage } from "@inertiajs/react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { GuestLayout } from "@/layouts/guest-layout"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
 import {
   Form,

@@ -15,15 +15,18 @@ def create_app() -> Litestar:
 
     from litestar import Litestar
     from litestar.di import Provide
+    from litestar.openapi.config import OpenAPIConfig
+    from litestar.openapi.plugins import ScalarRenderPlugin, SwaggerRenderPlugin
 
+    from app.__about__ import __version__ as current_version
     from app.config import app as config
-    from app.config import constants
-    from app.config.base import get_settings
+    from app.config import constants, get_settings
     from app.domain.accounts import signals as account_signals
     from app.domain.accounts.dependencies import provide_user
+    from app.domain.accounts.guards import session_auth
     from app.domain.teams import signals as team_signals
     from app.lib.dependencies import create_collection_dependencies
-    from app.server import openapi, plugins, routers
+    from app.server import plugins, routers
 
     dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     dependencies.update(create_collection_dependencies())
@@ -34,11 +37,18 @@ def create_app() -> Litestar:
         csrf_config=config.csrf,
         dependencies=dependencies,
         debug=settings.app.DEBUG,
-        openapi_config=openapi.config,
+        openapi_config=OpenAPIConfig(
+            title=settings.app.NAME,
+            version=current_version,
+            components=[session_auth.openapi_components],
+            security=[session_auth.security_requirement],
+            use_handler_docstrings=True,
+            render_plugins=[ScalarRenderPlugin(version="1.24.46"), SwaggerRenderPlugin()],
+        ),
         route_handlers=routers.route_handlers,
         plugins=[
-            plugins.app_config,
             plugins.structlog,
+            plugins.app_config,
             plugins.alchemy,
             plugins.vite,
             plugins.saq,

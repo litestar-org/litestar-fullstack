@@ -22,6 +22,7 @@ from .base import get_settings
 
 settings = get_settings()
 
+
 compression = CompressionConfig(backend="gzip")
 csrf = CSRFConfig(
     secret=settings.app.SECRET_KEY,

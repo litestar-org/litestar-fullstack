@@ -53,6 +53,15 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         from app.domain.accounts.guards import session_auth
 
         settings = get_settings()
+        if settings.app.OPENTELEMETRY_ENABLED:
+            import logfire
+
+            from app.lib.otel import configure_instrumentation
+
+            config = configure_instrumentation()
+            logfire.configure()
+            app_config.middleware.insert(0, config.middleware)
+
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         app_config = session_auth.on_app_init(app_config)
@@ -62,11 +71,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         )
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
-        app_config.signature_namespace.update(
-            {
-                "UserModel": UserModel,
-            },
-        )
+        app_config.signature_namespace.update({"UserModel": UserModel})
 
         return app_config
 
