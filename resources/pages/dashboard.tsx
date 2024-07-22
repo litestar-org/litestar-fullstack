@@ -9,10 +9,9 @@ import {
 import { AppLayout } from "@/layouts/app-layout"
 import { Container } from "@/components/container"
 import { Header } from "@/components/header"
-import { PagePropsData } from "@/types"
 
 export default function Dashboard() {
-  const { auth } = usePage<PagePropsData>().props
+  const { auth } = usePage<InertiaProps>().props
   return (
     <>
       <Head title="Dashboard" />

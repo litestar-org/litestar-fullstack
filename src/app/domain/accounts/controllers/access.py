@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from advanced_alchemy.utils.text import slugify
-from litestar import Controller, HttpMethod, Request, Response, get, post, route
+from litestar import Controller, HttpMethod, Request, Response, get, patch, post, route
 from litestar.di import Provide
 from litestar.plugins.flash import flash
 from litestar_vite.inertia import InertiaRedirect
@@ -114,7 +114,12 @@ class ProfileController(Controller):
     }
     guards = [requires_active_user]
 
-    @get(component="auth/profile", name="account:profile")
+    @get(component="profile/edit", name="profile.show")
     async def profile(self, current_user: UserModel, users_service: UserService) -> User:
+        """User Profile."""
+        return users_service.to_schema(current_user, schema_type=User)
+
+    @patch(component="profile/edit", name="profile.edit")
+    async def update_profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)

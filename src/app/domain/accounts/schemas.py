@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import hashlib
 from datetime import datetime  # noqa: TCH003
-from functools import cached_property
 from uuid import UUID  # noqa: TCH003
 
 import msgspec
@@ -72,17 +70,6 @@ class User(CamelizedBaseStruct):
     roles: list[UserRole] = []
     oauth_accounts: list[OauthAccount] = []
     avatar_url: str | None = None
-
-    def __post_init__(self) -> None:
-        if not self.avatar_url:
-            self.avatar_url = f"https://www.gravatar.com/avatar/{self.gravatar_id}?s=128&d=identicon"
-
-    @cached_property
-    def gravatar_id(self) -> str:
-        """Generate the has required for a Gravatar Avatar lookup"""
-        # https://en.gravatar.com/site/implement/hash/
-        email = self.email.lower().strip().encode("utf-8")
-        return hashlib.md5(email).hexdigest()  # noqa: S324
 
 
 class UserCreate(CamelizedBaseStruct):

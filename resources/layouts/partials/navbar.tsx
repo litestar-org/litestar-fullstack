@@ -1,5 +1,4 @@
 import { InertiaLinkProps, Link, router, usePage } from "@inertiajs/react"
-import { Logo } from "@/components/logo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,14 +9,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import ResponsiveNavbar from "@/layouts/partials/responsive-navbar"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { cn, getGravatarUrl, getInitials } from "@/lib/utils"
 import { LogInIcon, SettingsIcon } from "lucide-react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 import { Icons } from "@/components/icons"
 
 export default function Navbar() {
   const { auth } = usePage<InertiaProps>().props
+
   return (
     <>
       <ResponsiveNavbar />
@@ -40,14 +40,21 @@ export default function Navbar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <Avatar className="size-8">
-                      <AvatarImage src={auth?.user.gravatar} />
+                      <AvatarImage
+                        src={
+                          auth.user.avatarUrl ?? getGravatarUrl(auth.user.email)
+                        }
+                      />
+                      <AvatarFallback>
+                        {getInitials(auth.user.email)}
+                      </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="mr-8 w-60">
                     <DropdownMenuLabel>
-                      <div>{auth?.user.name}</div>
+                      <div>{auth.user.name}</div>
                       <div className="text-muted-foreground font-normal text-sm">
-                        {auth?.user.email}
+                        {auth.user.email}
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -55,7 +62,7 @@ export default function Navbar() {
                       <Link href={route("dashboard")}>Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="justify-between">
-                      <Link href={route("profile.edit")}>Settings</Link>
+                      <Link href={route("profile.show")}>Settings</Link>
                       <SettingsIcon className="size-4" />
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:2f313e53faf667897b03f3af288ebc90b232d0811cab8c4e8f778eeeb5eee750"
+content_hash = "sha256:7edce57b22d77eb783563ce2e78e96f9b4f4aee882119b23bb2e07cab35151b8"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -1340,32 +1340,30 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.0"
+version = "0.2.2"
 requires_python = ">=3.8"
+git = "https://github.com/cofin/litestar-vite.git"
+ref = "exc-handler"
+revision = "e85fe3713d5f009ad9d04f1dbdd99605cc336aa5"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar[jinja]>=2.4.0",
-]
-files = [
-    {file = "litestar_vite-0.2.0-py3-none-any.whl", hash = "sha256:75b714e75da3cc3542421d2f92abeb81f56a305adc813dd777a695b253c8a6c1"},
-    {file = "litestar_vite-0.2.0.tar.gz", hash = "sha256:1004a3784b887012ca8517c4b7d277bcd97630b0924383d04f7c3420ff8cb259"},
+    "litestar[jinja]>=2.7.0",
 ]
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.0"
+version = "0.2.2"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
+git = "https://github.com/cofin/litestar-vite.git"
+ref = "exc-handler"
+revision = "e85fe3713d5f009ad9d04f1dbdd99605cc336aa5"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite==0.2.0",
+    "litestar-vite @ git+https://github.com/cofin/litestar-vite.git@exc-handler",
     "nodeenv",
-]
-files = [
-    {file = "litestar_vite-0.2.0-py3-none-any.whl", hash = "sha256:75b714e75da3cc3542421d2f92abeb81f56a305adc813dd777a695b253c8a6c1"},
-    {file = "litestar_vite-0.2.0.tar.gz", hash = "sha256:1004a3784b887012ca8517c4b7d277bcd97630b0924383d04f7c3420ff8cb259"},
 ]
 
 [[package]]
@@ -2159,12 +2157,12 @@ files = [
 
 [[package]]
 name = "pylint"
-version = "3.2.5"
+version = "3.2.6"
 requires_python = ">=3.8.0"
 summary = "python code static checker"
 groups = ["linting"]
 dependencies = [
-    "astroid<=3.3.0-dev0,>=3.2.2",
+    "astroid<=3.3.0-dev0,>=3.2.4",
     "colorama>=0.4.5; sys_platform == \"win32\"",
     "dill>=0.2; python_version < \"3.11\"",
     "dill>=0.3.6; python_version >= \"3.11\"",
@@ -2177,8 +2175,8 @@ dependencies = [
     "typing-extensions>=3.10.0; python_version < \"3.10\"",
 ]
 files = [
-    {file = "pylint-3.2.5-py3-none-any.whl", hash = "sha256:32cd6c042b5004b8e857d727708720c54a676d1e22917cf1a2df9b4d4868abd6"},
-    {file = "pylint-3.2.5.tar.gz", hash = "sha256:e9b7171e242dcc6ebd0aaa7540481d1a72860748a0a7816b8fe6cf6c80a6fe7e"},
+    {file = "pylint-3.2.6-py3-none-any.whl", hash = "sha256:03c8e3baa1d9fb995b12c1dbe00aa6c4bcef210c2a2634374aedeb22fb4a8f8f"},
+    {file = "pylint-3.2.6.tar.gz", hash = "sha256:a5d01678349454806cff6d886fb072294f56a58c4761278c97fb557d708e1eb3"},
 ]
 
 [[package]]
@@ -2582,13 +2580,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "71.0.4"
+version = "71.1.0"
 requires_python = ">=3.8"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["default"]
 files = [
-    {file = "setuptools-71.0.4-py3-none-any.whl", hash = "sha256:ed2feca703be3bdbd94e6bb17365d91c6935c6b2a8d0bb09b66a2c435ba0b1a5"},
-    {file = "setuptools-71.0.4.tar.gz", hash = "sha256:48297e5d393a62b7cb2a10b8f76c63a73af933bd809c9e0d0d6352a1a0135dd8"},
+    {file = "setuptools-71.1.0-py3-none-any.whl", hash = "sha256:33874fdc59b3188304b2e7c80d9029097ea31627180896fb549c578ceb8a0855"},
+    {file = "setuptools-71.1.0.tar.gz", hash = "sha256:032d42ee9fb536e33087fb66cac5f840eb9391ed05637b3f2a76a7c8fb477936"},
 ]
 
 [[package]]

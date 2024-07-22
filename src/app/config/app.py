@@ -52,7 +52,7 @@ vite = ViteConfig(
     port=settings.vite.PORT,
     host=settings.vite.HOST,
 )
-inertia = InertiaConfig(root_template="site/index.html.j2", redirect_unauthorized_to="/")
+inertia = InertiaConfig(root_template="site/index.html.j2", redirect_unauthorized_to="/login")
 session = ServerSideSessionConfig(max_age=3600)
 saq = SAQConfig(
     redis=settings.redis.client,
@@ -104,6 +104,21 @@ log = StructlogConfig(
                     "handlers": ["queue_listener"],
                 },
                 "sqlalchemy.pool": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "logfire": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "urllib3": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "_granian.asgi.serve": {
                     "propagate": False,
                     "level": settings.log.SQLALCHEMY_LEVEL,
                     "handlers": ["queue_listener"],

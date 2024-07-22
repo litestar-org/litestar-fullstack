@@ -395,10 +395,8 @@ class AppSettings:
     """CSRF Header Name"""
     CSRF_COOKIE_SECURE: bool = field(default_factory=lambda: False)
     """CSRF Secure Cookie"""
-    JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
-    """JWT Encryption Algorithm"""
     OPENTELEMETRY_ENABLED: bool = field(
-        default_factory=lambda: os.getenv("OPENTELEMETRY_ENABLED", "False") in TRUE_VALUES
+        default_factory=lambda: os.getenv("OPENTELEMETRY_ENABLED", "False") in TRUE_VALUES,
     )
     """Enable Opentelemetry configuration."""
 

@@ -6,10 +6,56 @@ export type AuthData = {
   is_authenticated: boolean
   user?: AuthenticatedUserData
 }
-export type AuthenticatedUserData = {
-  id: number
+export type UserTeam = {
   email: string
+  id: string
+  userId: string
+  isOwner?: boolean
   name: string
-  gravatar: string
-  email_verified_at: string | null
+  role?: "ADMIN" | "MEMBER"
+  teamId: string
+  teamName: string
+  createdAt?: string
+  updatedAt?: string
+}
+export type AuthenticatedUserData = {
+  email: string
+  id: string
+  isActive?: boolean
+  isSuperuser?: boolean
+  isVerified?: boolean
+  joinedAt?: string
+  loginCount?: number
+  name?: null | string
+  oauthAccounts: {
+    accessToken: string
+    accountEmail: string
+    accountId: string
+    createdAt?: string
+    expiresAt?: null | number
+    id?: string
+    oauthName: string
+    refreshToken?: null | string
+    updatedAt?: string
+    userEmail: string
+    userId: string
+    userName: string
+  }[]
+  roles: {
+    assignedAt?: string
+    createdAt?: string
+    id?: string
+    roleId: string
+    roleName: string
+    roleSlug: string
+    updatedAt?: string
+    userEmail: string
+    userId: string
+    userName: string
+  }[]
+  teams: UserTeam[]
+  avatarUrl?: null | string
+  verifiedAt?: string
+  createdAt?: string
+  updatedAt?: string
 }

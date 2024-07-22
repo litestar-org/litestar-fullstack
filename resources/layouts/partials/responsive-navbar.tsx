@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { getFirstWord, strLimit } from "@/lib/utils"
+import { getFirstWord, getGravatarUrl, strLimit } from "@/lib/utils"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 
 import {
@@ -31,7 +31,9 @@ const ResponsiveNavbar = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="focus:outline-none">
               <button className="flex items-center focus:outline-none">
-                {auth?.user?.id ? getFirstWord(auth.user.name) : "Menu"}
+                {auth?.user?.id
+                  ? getFirstWord(auth?.user.name ?? auth.user.email)
+                  : "Menu"}
                 <ChevronDownIcon className="ml-2 size-4" />
               </button>
             </DropdownMenuTrigger>
@@ -42,8 +44,11 @@ const ResponsiveNavbar = () => {
                     <div className="flex items-center font-normal">
                       <Avatar>
                         <AvatarImage
-                          src={auth.user.gravatar}
-                          alt={auth.user.name}
+                          src={
+                            auth.user.avatarUrl ??
+                            getGravatarUrl(auth.user.email)
+                          }
+                          alt={auth?.user.name ?? auth.user.email}
                         />
                       </Avatar>
                       <div className="ml-3">

@@ -69,7 +69,5 @@ async def provide_user_roles_service(db_session: AsyncSession | None = None) -> 
     Returns:
         UserRoleService: A user role service object
     """
-    async with UserRoleService.new(
-        session=db_session,
-    ) as service:
+    async with UserRoleService.new(session=db_session) as service:
         yield service
