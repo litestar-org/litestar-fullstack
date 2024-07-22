@@ -36,7 +36,7 @@ export const getGravatarUrl = (email: string, size?: number) => {
   const emailMd5 = md5(email)
   return `https://www.gravatar.com/avatar/${emailMd5}?s=${String(
     Math.max(size, 250)
-  )}&d=blank`
+  )}&d=identicon`
 }
 
 export function getServerSideErrors(errors: Errors & ErrorBag = {}) {

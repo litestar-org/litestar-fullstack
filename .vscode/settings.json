@@ -21,6 +21,14 @@
     ".coverage": true,
     "node_modules": false
   },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/.direnv/**/*": true,
+    "**/.venv/**/*": true,
+    "src/app/domain/web/public/**/*": true
+  },
   "ruff.format.args": ["--config=${workspaceFolder}/pyproject.toml"],
   "ruff.lint.run": "onType",
   "ruff.lint.args": ["--config=${workspaceFolder}/pyproject.toml"],

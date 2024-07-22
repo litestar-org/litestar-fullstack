@@ -21,7 +21,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["vite/client","node"]
+    "types": ["vite/client","node","md5"]
   },
   "include": [ 
     "resources/**/*.d.ts",
