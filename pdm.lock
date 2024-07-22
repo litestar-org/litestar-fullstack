@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:7edce57b22d77eb783563ce2e78e96f9b4f4aee882119b23bb2e07cab35151b8"
+content_hash = "sha256:b81c4500cc3aec46932ffa9f91a347e498d02de83105dd7d3747390891f11b1e"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -1342,13 +1342,14 @@ dependencies = [
 name = "litestar-vite"
 version = "0.2.2"
 requires_python = ">=3.8"
-git = "https://github.com/cofin/litestar-vite.git"
-ref = "exc-handler"
-revision = "e85fe3713d5f009ad9d04f1dbdd99605cc336aa5"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
     "litestar[jinja]>=2.7.0",
+]
+files = [
+    {file = "litestar_vite-0.2.2-py3-none-any.whl", hash = "sha256:0cd498618bca0738b80af155fd66079808e94e9e7ea7c45bd72e7bad86b338d6"},
+    {file = "litestar_vite-0.2.2.tar.gz", hash = "sha256:a64b48ad6de4545b29d2497d72f2468ffebcb42e9fa8643d00d00ba621b93286"},
 ]
 
 [[package]]
@@ -1356,14 +1357,15 @@ name = "litestar-vite"
 version = "0.2.2"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
-git = "https://github.com/cofin/litestar-vite.git"
-ref = "exc-handler"
-revision = "e85fe3713d5f009ad9d04f1dbdd99605cc336aa5"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite @ git+https://github.com/cofin/litestar-vite.git@exc-handler",
+    "litestar-vite==0.2.2",
     "nodeenv",
+]
+files = [
+    {file = "litestar_vite-0.2.2-py3-none-any.whl", hash = "sha256:0cd498618bca0738b80af155fd66079808e94e9e7ea7c45bd72e7bad86b338d6"},
+    {file = "litestar_vite-0.2.2.tar.gz", hash = "sha256:a64b48ad6de4545b29d2497d72f2468ffebcb42e9fa8643d00d00ba621b93286"},
 ]
 
 [[package]]
@@ -3059,7 +3061,7 @@ files = [
 
 [[package]]
 name = "types-pyopenssl"
-version = "24.1.0.20240425"
+version = "24.1.0.20240722"
 requires_python = ">=3.8"
 summary = "Typing stubs for pyOpenSSL"
 groups = ["linting"]
@@ -3068,8 +3070,8 @@ dependencies = [
     "types-cffi",
 ]
 files = [
-    {file = "types-pyOpenSSL-24.1.0.20240425.tar.gz", hash = "sha256:0a7e82626c1983dc8dc59292bf20654a51c3c3881bcbb9b337c1da6e32f0204e"},
-    {file = "types_pyOpenSSL-24.1.0.20240425-py3-none-any.whl", hash = "sha256:f51a156835555dd2a1f025621e8c4fbe7493470331afeef96884d1d29bf3a473"},
+    {file = "types-pyOpenSSL-24.1.0.20240722.tar.gz", hash = "sha256:47913b4678a01d879f503a12044468221ed8576263c1540dcb0484ca21b08c39"},
+    {file = "types_pyOpenSSL-24.1.0.20240722-py3-none-any.whl", hash = "sha256:6a7a5d2ec042537934cfb4c9d4deb0e16c4c6250b09358df1f083682fe6fda54"},
 ]
 
 [[package]]
@@ -3100,13 +3102,13 @@ files = [
 
 [[package]]
 name = "types-setuptools"
-version = "70.3.0.20240710"
+version = "71.0.0.20240722"
 requires_python = ">=3.8"
 summary = "Typing stubs for setuptools"
 groups = ["linting"]
 files = [
-    {file = "types-setuptools-70.3.0.20240710.tar.gz", hash = "sha256:842cbf399812d2b65042c9d6ff35113bbf282dee38794779aa1f94e597bafc35"},
-    {file = "types_setuptools-70.3.0.20240710-py3-none-any.whl", hash = "sha256:bd0db2a4b9f2c49ac5564be4e0fb3125c4c46b1f73eafdcbceffa5b005cceca4"},
+    {file = "types-setuptools-71.0.0.20240722.tar.gz", hash = "sha256:8f1fd5281945ed8f5a896f05dd50bc31917d6e2487ff9508f4bac522d13ad395"},
+    {file = "types_setuptools-71.0.0.20240722-py3-none-any.whl", hash = "sha256:04a383bd1a2dcdb6a85397516ce2d7b46617d89f1d758f686d0d9069943d9811"},
 ]
 
 [[package]]

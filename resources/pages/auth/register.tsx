@@ -198,21 +198,21 @@ export default function Register() {
                         <Label htmlFor="terms">Terms</Label>
                         <div className="ml-2">
                           I agree to the{" "}
-                          <a
+                          <Link
                             target="_blank"
                             href={route("terms-of-service")}
                             className="text-sm text-muted-foreground hover:text-primary"
                           >
                             terms of service
-                          </a>{" "}
+                          </Link>{" "}
                           and{" "}
-                          <a
+                          <Link
                             target="_blank"
                             href={route("privacy-policy")}
                             className="text-sm text-muted-foreground hover:text-primary"
                           >
                             privacy policy
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </FormControl>
