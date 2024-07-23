@@ -16,7 +16,7 @@ import {
   ChevronDownIcon,
   CircleUserIcon,
   LogOutIcon,
-  SettingsIcon,
+  UserRoundCogIcon,
 } from "lucide-react"
 
 const ResponsiveNavbar = () => {
@@ -80,9 +80,9 @@ const ResponsiveNavbar = () => {
                     className="flex justify-between items-center"
                     asChild
                   >
-                    <Link href={route("profile.edit")}>
+                    <Link href={route("profile.show")}>
                       Profile
-                      <SettingsIcon className="size-4" />
+                      <UserRoundCogIcon className="size-4" />
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

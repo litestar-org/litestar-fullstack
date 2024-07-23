@@ -18,12 +18,12 @@ export function getFirstWord(value: string) {
 export const getInitials = (name: string) => {
   name = name.trim()
 
-  if (name.length <= 3) return name
+  if (name.length <= 2) return name
 
   return name
     .split(/\s+/)
     .map((w) => [...w][0])
-    .slice(0, 3)
+    .slice(0, 2)
     .join("")
 }
 

@@ -11,9 +11,11 @@ import ResponsiveNavbar from "@/layouts/partials/responsive-navbar"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn, getGravatarUrl, getInitials } from "@/lib/utils"
-import { LogInIcon, SettingsIcon } from "lucide-react"
+import { LogInIcon, UserRoundCogIcon } from "lucide-react"
 import { route } from "litestar-vite-plugin/inertia-helpers"
 import { Icons } from "@/components/icons"
+import { TeamSwitcher } from "@/components/team-switcher"
+import { Separator } from "@/components/ui/separator"
 
 export default function Navbar() {
   const { auth } = usePage<InertiaProps>().props
@@ -21,6 +23,7 @@ export default function Navbar() {
   return (
     <>
       <ResponsiveNavbar />
+      <Separator orientation="vertical" />
       <nav className="relative bg-background z-10 hidden border-b py-3 sm:block">
         <div className="mx-auto max-w-screen-2xl items-center sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -34,6 +37,7 @@ export default function Navbar() {
               <NavLink active={isCurrentRoute("about")} href={route("about")}>
                 About
               </NavLink>
+              <TeamSwitcher />
             </div>
             {auth?.user ? (
               <div className="flex items-center gap-x-1">
@@ -58,12 +62,9 @@ export default function Navbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href={route("dashboard")}>Dashboard</Link>
-                    </DropdownMenuItem>
                     <DropdownMenuItem className="justify-between">
-                      <Link href={route("profile.show")}>Settings</Link>
-                      <SettingsIcon className="size-4" />
+                      <Link href={route("profile.show")}>Profile</Link>
+                      <UserRoundCogIcon className="size-4" />
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -75,25 +76,27 @@ export default function Navbar() {
                 </DropdownMenu>
               </div>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="bg-secondary/50 hover:bg-secondary/60 border"
-                  >
-                    Login
-                    <LogInIcon className="ml-2 size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="mr-8 w-40">
-                  <DropdownMenuItem asChild>
-                    <Link href={route("login")}>Login</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={route("register")}>Register</Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      className="bg-secondary/50 hover:bg-secondary/60 border"
+                    >
+                      Login
+                      <LogInIcon className="ml-2 size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="mr-8 w-40">
+                    <DropdownMenuItem asChild>
+                      <Link href={route("login")}>Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href={route("register")}>Register</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
           </div>
         </div>

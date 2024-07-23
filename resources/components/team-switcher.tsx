@@ -1,7 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { PlusCircleIcon, CheckIcon, SortAscIcon } from "lucide-react"
+import {
+  PlusCircleIcon,
+  CheckIcon,
+  ChevronsUpDown,
+  CircleCheckBigIcon,
+  Check,
+} from "lucide-react"
 
 import { cn, getInitials } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -39,50 +45,21 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { usePage } from "@inertiajs/react"
-import { UserTeam } from "@/types"
-
-const groups = [
-  {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
-  },
-  {
-    label: "teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-]
+import { CurrentTeam, UserTeam } from "@/types"
+import { string } from "zod"
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {}
 
 export function TeamSwitcher({ className }: TeamSwitcherProps) {
-  const { auth } = usePage<InertiaProps>().props
+  const { auth, currentTeam } = usePage<InertiaProps>().props
   const [open, setOpen] = React.useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<UserTeam>(
-    auth?.user?.teams[0] ?? {
+  const [selectedTeam, setSelectedTeam] = React.useState<CurrentTeam>(
+    currentTeam ?? {
       teamId: "none",
       teamName: "Default Team",
-      email: "none@none.com",
-      userId: "none",
-      isOwner: false,
-      id: "none",
-      name: "Default User",
     }
   )
 
@@ -91,7 +68,8 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
+            size="sm"
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
@@ -99,11 +77,11 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarFallback>
-                {getInitials(selectedTeam?.teamName ?? "Team")}
+                {getInitials(currentTeam?.teamName ?? "Team")}
               </AvatarFallback>
             </Avatar>
-            {selectedTeam?.teamName}
-            <SortAscIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+            {currentTeam?.teamName}
+            <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
@@ -111,10 +89,10 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
             <CommandList>
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No team found.</CommandEmpty>
-              <CommandGroup key="teams" heading="Teams">
+              <CommandGroup key="Teams" heading="Teams">
                 {auth?.user?.teams.map((team) => (
                   <CommandItem
-                    key={team.id}
+                    key={team.teamId}
                     onSelect={() => {
                       setSelectedTeam(team)
                       setOpen(false)
@@ -127,22 +105,23 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                       </AvatarFallback>
                     </Avatar>
                     {team.teamName}
-                    <CheckIcon
+                    <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        selectedTeam?.id === team.id
-                          ? "opacity-100"
+                        currentTeam?.teamId === team.teamId
+                          ? "opacity-100 border-lime-900 stroke-lime-500"
                           : "opacity-0"
                       )}
                     />
                   </CommandItem>
                 ))}
+                ){" "}
               </CommandGroup>
             </CommandList>
             <CommandSeparator />
             <CommandList>
               <CommandGroup>
-                <DialogTrigger asChild>
+                <DialogTrigger>
                   <CommandItem
                     onSelect={() => {
                       setOpen(false)

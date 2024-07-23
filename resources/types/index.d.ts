@@ -1,9 +1,9 @@
 interface FlashMessages {
   [category: string]: string[]
 }
-
+export type CurrentTeam = { teamId: string; teamName: string }
 export type AuthData = {
-  is_authenticated: boolean
+  isAuthenticated: boolean
   user?: AuthenticatedUserData
 }
 export type UserTeam = {
