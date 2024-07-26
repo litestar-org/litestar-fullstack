@@ -6,7 +6,6 @@ import {
   CircleCheckBigIcon,
   Check,
 } from "lucide-react"
-
 import { cn, getInitials } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -35,16 +34,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { usePage } from "@inertiajs/react"
-import { CurrentTeam, UserTeam } from "@/types"
-import { string } from "zod"
+import { CurrentTeam } from "@/types"
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
@@ -54,17 +45,11 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { auth, currentTeam } = usePage<InertiaProps>().props
   const [open, setOpen] = React.useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<CurrentTeam>(
-    currentTeam ?? {
-      teamId: "none",
-      teamName: "Default Team",
-    }
-  )
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger>
           <Button
             variant="ghost"
             size="sm"
@@ -82,7 +67,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-[200px] p-0" asChild>
           <Command>
             <CommandList>
               <CommandInput placeholder="Search team..." />
@@ -90,9 +75,8 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandGroup key="Teams" heading="Teams">
                 {auth?.user?.teams.map((team) => (
                   <CommandItem
-                    key={team.id}
+                    key={team.teamId}
                     onSelect={() => {
-                      setSelectedTeam(team)
                       setOpen(false)
                     }}
                     className="text-sm"
@@ -125,8 +109,16 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                       setShowNewTeamDialog(true)
                     }}
                   >
-                    <PlusCircleIcon className="mr-2 h-5 w-5" />
-                    Create Team
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-expanded={open}
+                      aria-label="Create a team"
+                      className={cn("w-max justify-between", className)}
+                    >
+                      <PlusCircleIcon className="mr-2 h-5 w-5" />
+                      Create Team
+                    </Button>
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>

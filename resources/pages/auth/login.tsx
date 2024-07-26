@@ -1,19 +1,9 @@
 import { Head, Link } from "@inertiajs/react"
-import { z } from "zod"
 import { GuestLayout } from "@/layouts/guest-layout"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import UserLoginForm from "./partials/user-login-form"
-
-const formSchema = z.object({
-  username: z.string().min(1, {
-    message: "Username is required.",
-  }),
-  password: z.string().min(1, "Please enter a valid password."),
-  remember: z.boolean().default(false),
-})
-type FormProps = z.infer<typeof formSchema>
 
 export default function Login() {
   return (

@@ -49,12 +49,12 @@ def create_app() -> Litestar:
         plugins=[
             plugins.structlog,
             plugins.app_config,
+            plugins.flasher,
+            plugins.granian,
             plugins.alchemy,
             plugins.vite,
             plugins.saq,
-            plugins.granian,
             plugins.inertia,
-            plugins.flasher,
         ],
         listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
     )

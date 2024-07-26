@@ -23,7 +23,7 @@ export default function Navbar() {
   return (
     <>
       <ResponsiveNavbar />
-      <Separator orientation="vertical" />
+
       <nav className="relative bg-background z-10 hidden border-b py-3 sm:block">
         <div className="mx-auto max-w-screen-2xl items-center sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -37,10 +37,11 @@ export default function Navbar() {
               <NavLink active={isCurrentRoute("about")} href={route("about")}>
                 About
               </NavLink>
-              <TeamSwitcher />
             </div>
             {auth?.user ? (
               <div className="flex items-center gap-x-1">
+                <TeamSwitcher className="mr-5" />
+                <div className="mr-3 min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <Avatar className="size-8">

@@ -437,6 +437,7 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
 
     @classmethod
+    @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
         from litestar.cli._utils import console
 
@@ -450,6 +451,5 @@ class Settings:
         return Settings()
 
 
-@lru_cache(maxsize=1, typed=True)
 def get_settings() -> Settings:
     return Settings.from_env()

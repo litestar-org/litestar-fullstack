@@ -135,7 +135,7 @@ export default function UserLoginForm({
 
             <div className="grid gap-1 mt-10">
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Icons.spinner />}
+                {isLoading && <Icons.spinner className="w-5 mr-2 h-5" />}
                 Sign In
               </Button>
             </div>
