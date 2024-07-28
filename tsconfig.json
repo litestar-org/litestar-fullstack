@@ -23,7 +23,7 @@
     },
     "types": ["vite/client","node","md5"]
   },
-  "include": [ 
+  "include": [
     "resources/**/*.d.ts",
     "resources/**/*.tsx",
     "resources/**/*.jsx",
