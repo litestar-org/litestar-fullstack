@@ -13,13 +13,13 @@ export const Icons = {
         <clipPath id="52a09d205e">
           <path
             d="M 15.933594 105 L 328 105 L 328 259 L 15.933594 259 Z M 15.933594 105 "
-            clip-rule="nonzero"
+            clipRule="nonzero"
           />
         </clipPath>
         <clipPath id="d31e6716a7">
           <path
             d="M 142 78.769531 L 359.433594 78.769531 L 359.433594 296.269531 L 142 296.269531 Z M 142 78.769531 "
-            clip-rule="nonzero"
+            clipRule="nonzero"
           />
         </clipPath>
       </defs>
