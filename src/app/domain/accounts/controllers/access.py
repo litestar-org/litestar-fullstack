@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from advanced_alchemy.utils.text import slugify
-from litestar import Controller, HttpMethod, Request, Response, get, patch, post, route
+from litestar import Controller, Request, Response, get, patch, post
 from litestar.di import Provide
 from litestar.plugins.flash import flash
 from litestar_vite.inertia import InertiaRedirect
@@ -28,18 +28,18 @@ class AccessController(Controller):
     cache = False
     exclude_from_auth = True
 
-    @get(component="auth/login", name="login", path="/login")
+    @get(component="auth/login", name="login", path="/login/")
     async def show_login(
         self,
         request: Request,
     ) -> Response | dict:
         """Show the user login page."""
         if request.session.get("user_id", False):
-            flash(request, "Your account is already authenticated.  Welcome back!", category="info")
+            flash(request, "Your account is already authenticated.", category="info")
             return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
-    @post(component="auth/login", name="login.store", path="/login")
+    @post(component="auth/login", name="login.check", path="/login/")
     async def login(
         self,
         request: Request[Any, Any, Any],
@@ -53,7 +53,7 @@ class AccessController(Controller):
         request.logger.info("Redirecting to %s ", request.url_for("dashboard"))
         return InertiaRedirect(request, request.url_for("dashboard"))
 
-    @route(name="logout", path="/logout", exclude_from_auth=False, http_method=[HttpMethod.GET, HttpMethod.POST])
+    @post(name="logout", path="/logout/", exclude_from_auth=False)
     async def logout(
         self,
         request: Request,
@@ -74,7 +74,7 @@ class RegistrationController(Controller):
     }
     exclude_from_auth = True
 
-    @get(component="auth/register", name="register")
+    @get(component="auth/register", name="register", path="/")
     async def show_signup(
         self,
         request: Request,
@@ -85,7 +85,7 @@ class RegistrationController(Controller):
             return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
-    @post(component="auth/register")
+    @post(component="auth/register", name="register.add", path="/")
     async def signup(
         self,
         request: Request,
@@ -98,10 +98,11 @@ class RegistrationController(Controller):
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
-        user = await users_service.create(user_data)
+        user = await users_service.create(user_data, auto_commit=True)
+        request.set_session({"user_id": user.email})
         request.app.emit(event_id="user_created", user_id=user.id)
-        flash(request, "Account created successfully.  Please sign in to continue!", category="info")
-        return InertiaRedirect(request, request.url_for("login"))
+        flash(request, "Account created successfully.  Welcome!", category="info")
+        return InertiaRedirect(request, request.url_for("dashboard"))
 
 
 class ProfileController(Controller):
@@ -114,12 +115,12 @@ class ProfileController(Controller):
     }
     guards = [requires_active_user]
 
-    @get(component="profile/edit", name="profile.show")
+    @get(component="profile/edit", name="profile.show", path="/")
     async def profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)
 
-    @patch(component="profile/edit", name="profile.edit")
+    @patch(component="profile/edit", name="profile.edit", path="/")
     async def update_profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)

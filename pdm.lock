@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:a60e56f452e10094d6a4f3fc5faca2545b0e564f2614e66cb6c863af7cbc29c3"
+content_hash = "sha256:fcb8c22dbb07cd95e69437f37749d1ebc8f0f4da09a7cdd3769dd67b5f9d3b55"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -1238,7 +1238,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.9.1"
+version = "2.10.0"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
@@ -1258,8 +1258,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.9.1-py3-none-any.whl", hash = "sha256:fe3e4ec91a9c24af652775fed5fa4d789902f165cabbd7d2e62821fec1f69462"},
-    {file = "litestar-2.9.1.tar.gz", hash = "sha256:7c13bb4dd7b1c77f6c462262cfe401ca6429eab3e4d98f38586b68268bd5ac97"},
+    {file = "litestar-2.10.0-py3-none-any.whl", hash = "sha256:a4fbdb108bfb41e07b56aee6dbdd70f94328f4d4265ebfde1662aef320224375"},
+    {file = "litestar-2.10.0.tar.gz", hash = "sha256:c25d5134c6848dfa752494948a644af1fb085143a0bce6d0840fe957b0738432"},
 ]
 
 [[package]]
@@ -1268,7 +1268,7 @@ version = "0.5.1"
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-granian.git"
 ref = "extras"
-revision = "9c70e14f567181e0a17d4d3a16ac928848033643"
+revision = "301a1780384ba76503a4251ee2e06927261d1abf"
 summary = "Granian plugin for Litestar"
 groups = ["default"]
 dependencies = [
@@ -1309,65 +1309,67 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.2"
+version = "0.2.4"
 requires_python = ">=3.8"
-git = "https://github.com/cofin/litestar-vite.git"
-ref = "extra-session-props"
-revision = "737e2d41b9f538be47cc579d05f0dfd0570c8437"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
     "litestar[jinja]>=2.7.0",
 ]
+files = [
+    {file = "litestar_vite-0.2.4-py3-none-any.whl", hash = "sha256:fb16428574e2f2139d1621f470e5c512e52c228cf02f39906b18fe1312cb70b9"},
+    {file = "litestar_vite-0.2.4.tar.gz", hash = "sha256:904c8f6cc6351bd41fb2c0bb533578d332c902c633d2c434dc2e18ec2ba0f3a0"},
+]
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.2"
+version = "0.2.4"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
-git = "https://github.com/cofin/litestar-vite.git"
-ref = "extra-session-props"
-revision = "737e2d41b9f538be47cc579d05f0dfd0570c8437"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite @ git+https://github.com/cofin/litestar-vite.git@extra-session-props",
+    "litestar-vite==0.2.4",
     "nodeenv",
+]
+files = [
+    {file = "litestar_vite-0.2.4-py3-none-any.whl", hash = "sha256:fb16428574e2f2139d1621f470e5c512e52c228cf02f39906b18fe1312cb70b9"},
+    {file = "litestar_vite-0.2.4.tar.gz", hash = "sha256:904c8f6cc6351bd41fb2c0bb533578d332c902c633d2c434dc2e18ec2ba0f3a0"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.9.1"
+version = "2.10.0"
 extras = ["jinja", "opentelemetry", "redis", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
-    "litestar==2.9.1",
+    "litestar==2.10.0",
     "opentelemetry-instrumentation-asgi",
     "redis[hiredis]>=4.4.4",
     "structlog",
 ]
 files = [
-    {file = "litestar-2.9.1-py3-none-any.whl", hash = "sha256:fe3e4ec91a9c24af652775fed5fa4d789902f165cabbd7d2e62821fec1f69462"},
-    {file = "litestar-2.9.1.tar.gz", hash = "sha256:7c13bb4dd7b1c77f6c462262cfe401ca6429eab3e4d98f38586b68268bd5ac97"},
+    {file = "litestar-2.10.0-py3-none-any.whl", hash = "sha256:a4fbdb108bfb41e07b56aee6dbdd70f94328f4d4265ebfde1662aef320224375"},
+    {file = "litestar-2.10.0.tar.gz", hash = "sha256:c25d5134c6848dfa752494948a644af1fb085143a0bce6d0840fe957b0738432"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.9.1"
+version = "2.10.0"
 extras = ["jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 groups = ["default"]
 dependencies = [
     "jinja2>=3.1.2",
-    "litestar==2.9.1",
+    "litestar==2.10.0",
 ]
 files = [
-    {file = "litestar-2.9.1-py3-none-any.whl", hash = "sha256:fe3e4ec91a9c24af652775fed5fa4d789902f165cabbd7d2e62821fec1f69462"},
-    {file = "litestar-2.9.1.tar.gz", hash = "sha256:7c13bb4dd7b1c77f6c462262cfe401ca6429eab3e4d98f38586b68268bd5ac97"},
+    {file = "litestar-2.10.0-py3-none-any.whl", hash = "sha256:a4fbdb108bfb41e07b56aee6dbdd70f94328f4d4265ebfde1662aef320224375"},
+    {file = "litestar-2.10.0.tar.gz", hash = "sha256:c25d5134c6848dfa752494948a644af1fb085143a0bce6d0840fe957b0738432"},
 ]
 
 [[package]]
@@ -1774,6 +1776,72 @@ files = [
 ]
 
 [[package]]
+name = "opentelemetry-instrumentation-asyncio"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "OpenTelemetry instrumentation for asyncio"
+groups = ["default"]
+dependencies = [
+    "opentelemetry-api~=1.14",
+    "opentelemetry-instrumentation==0.47b0",
+    "opentelemetry-semantic-conventions==0.47b0",
+    "opentelemetry-test-utils==0.47b0",
+    "wrapt<2.0.0,>=1.0.0",
+]
+files = [
+    {file = "opentelemetry_instrumentation_asyncio-0.47b0-py3-none-any.whl", hash = "sha256:6883d8f9f7ab41bc5a036f8efbcd93795a435295875960b48d5517fcaa526aa8"},
+    {file = "opentelemetry_instrumentation_asyncio-0.47b0.tar.gz", hash = "sha256:a0d6ccdd5488abd69c189bd76e25b1974f3c043ae41cc11263028ae9fec22bc9"},
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-jinja2"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "OpenTelemetry jinja2 instrumentation"
+groups = ["default"]
+dependencies = [
+    "opentelemetry-api~=1.12",
+    "opentelemetry-instrumentation==0.47b0",
+    "wrapt<2.0.0,>=1.0.0",
+]
+files = [
+    {file = "opentelemetry_instrumentation_jinja2-0.47b0-py3-none-any.whl", hash = "sha256:d4da27276c49a51c6fb242d3ee1d7ce2b3c1bded4cd7396a97e05c5559235295"},
+    {file = "opentelemetry_instrumentation_jinja2-0.47b0.tar.gz", hash = "sha256:941a8df1d1f223e33841110ef29f72c839a316f71dc81585145b4029ec716c01"},
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-logging"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "OpenTelemetry Logging instrumentation"
+groups = ["default"]
+dependencies = [
+    "opentelemetry-api~=1.12",
+    "opentelemetry-instrumentation==0.47b0",
+]
+files = [
+    {file = "opentelemetry_instrumentation_logging-0.47b0-py3-none-any.whl", hash = "sha256:9106242b0e0df1ff021e56de399678aa91191a212d8a8953d2a3eb4a2d1bdc83"},
+    {file = "opentelemetry_instrumentation_logging-0.47b0.tar.gz", hash = "sha256:823e0d866513e1e485c9af68e6fcbe7e339c321dbb4758cfe6e62cc53dde84fa"},
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-redis"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "OpenTelemetry Redis instrumentation"
+groups = ["default"]
+dependencies = [
+    "opentelemetry-api~=1.12",
+    "opentelemetry-instrumentation==0.47b0",
+    "opentelemetry-semantic-conventions==0.47b0",
+    "wrapt>=1.12.1",
+]
+files = [
+    {file = "opentelemetry_instrumentation_redis-0.47b0-py3-none-any.whl", hash = "sha256:169de5154cc37ccf402dd43ac06a47f7f883abba7c0a8f99b2731164ec4f1132"},
+    {file = "opentelemetry_instrumentation_redis-0.47b0.tar.gz", hash = "sha256:15886c725c7e3b6f706964bd72dbfcbefeeeaa1254e98f662516cfed453aaebe"},
+]
+
+[[package]]
 name = "opentelemetry-instrumentation-sqlalchemy"
 version = "0.47b0"
 requires_python = ">=3.8"
@@ -1789,6 +1857,22 @@ dependencies = [
 files = [
     {file = "opentelemetry_instrumentation_sqlalchemy-0.47b0-py3-none-any.whl", hash = "sha256:997b2c4a624ebcba45b9bda27882622d0ab3028d66a5fb50cdcf3581af04b3d1"},
     {file = "opentelemetry_instrumentation_sqlalchemy-0.47b0.tar.gz", hash = "sha256:bbeab06fc421ddae16bb69ca287abb81a131d3dff97de60b02c092887794103d"},
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-threading"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "Thread context propagation support for OpenTelemetry"
+groups = ["default"]
+dependencies = [
+    "opentelemetry-api~=1.12",
+    "opentelemetry-instrumentation==0.47b0",
+    "wrapt<2.0.0,>=1.0.0",
+]
+files = [
+    {file = "opentelemetry_instrumentation_threading-0.47b0-py3-none-any.whl", hash = "sha256:6f174603715a4b83da6b69d63a6428fbe78d5d2d136866d1c7728dc50c1d25e5"},
+    {file = "opentelemetry_instrumentation_threading-0.47b0.tar.gz", hash = "sha256:5961d9e5faa2a9b3b7e35bfdee2c72a0679ee31a4fddff907672bbd15f315505"},
 ]
 
 [[package]]
@@ -1834,6 +1918,22 @@ dependencies = [
 files = [
     {file = "opentelemetry_semantic_conventions-0.47b0-py3-none-any.whl", hash = "sha256:4ff9d595b85a59c1c1413f02bba320ce7ea6bf9e2ead2b0913c4395c7bbc1063"},
     {file = "opentelemetry_semantic_conventions-0.47b0.tar.gz", hash = "sha256:a8d57999bbe3495ffd4d510de26a97dadc1dace53e0275001b2c1b2f67992a7e"},
+]
+
+[[package]]
+name = "opentelemetry-test-utils"
+version = "0.47b0"
+requires_python = ">=3.8"
+summary = "Test utilities for OpenTelemetry unit tests"
+groups = ["default"]
+dependencies = [
+    "asgiref~=3.0",
+    "opentelemetry-api==1.26.0",
+    "opentelemetry-sdk==1.26.0",
+]
+files = [
+    {file = "opentelemetry_test_utils-0.47b0-py3-none-any.whl", hash = "sha256:c542f8bc8b1e7c151dd699c8b729dd02f62c1188e24934b5eac9769aa7ef08fd"},
+    {file = "opentelemetry_test_utils-0.47b0.tar.gz", hash = "sha256:2b10784e4f830ff20a954b104a77a7804930ea51dfefb91050ad7570cdba992f"},
 ]
 
 [[package]]

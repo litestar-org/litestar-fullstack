@@ -64,8 +64,8 @@ const ResponsiveNavbar = () => {
                   <DropdownMenuSeparator />
                 </>
               )}
-              <DropdownMenuItem asChild>
-                <Link href={route("home")}>Home</Link>
+              <DropdownMenuItem>
+                <Link href={route("dashboard")}>Home</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Link href={route("about")}>About</Link>
@@ -76,13 +76,13 @@ const ResponsiveNavbar = () => {
                   <DropdownMenuItem>
                     <Link href={route("dashboard")}>Dashboard</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex justify-between items-center"
-                    asChild
-                  >
-                    <Link href={route("profile.show")}>
+                  <DropdownMenuItem className="flex justify-between items-center">
+                    <Link
+                      className="flex items-center"
+                      href={route("profile.show")}
+                    >
+                      <UserRoundCogIcon className="mr-2 size-4" />
                       Profile
-                      <UserRoundCogIcon className="size-4" />
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

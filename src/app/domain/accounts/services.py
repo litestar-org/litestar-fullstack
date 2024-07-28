@@ -145,6 +145,17 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
 
+    @staticmethod
+    def is_superuser(user: User) -> bool:
+        return bool(
+            user.is_superuser
+            or any(
+                assigned_role.role.name
+                for assigned_role in user.roles
+                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
+            ),
+        )
+
     async def to_model(self, data: ModelDictT[User], operation: str | None = None) -> User:
         if isinstance(data, dict) and "password" in data:
             password: bytes | str | None = data.pop("password", None)

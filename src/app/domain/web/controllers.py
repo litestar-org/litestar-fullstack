@@ -14,27 +14,27 @@ class WebController(Controller):
             return InertiaRedirect(request, request.url_for("dashboard"))
         return InertiaRedirect(request, request.url_for("landing"))
 
-    @get(component="home", path="/landing", name="landing", exclude_from_auth=True)
+    @get(component="landing", path="/landing/", name="landing", exclude_from_auth=True)
     async def landing(self) -> dict:
         """Serve site root."""
         return {}
 
-    @get(component="dashboard", path="/dashboard", name="dashboard")
+    @get(component="dashboard", path="/dashboard/", name="dashboard")
     async def dashboard(self) -> dict:
         """Serve Dashboard Page."""
         return {}
 
-    @get(component="about", path="/about", name="about")
+    @get(component="about", path="/about/", name="about")
     async def about(self) -> dict:
         """Serve About Page."""
         return {}
 
-    @get(component="legal/privacy-policy", path="/privacy-policy", name="privacy-policy", exclude_from_auth=True)
+    @get(component="legal/privacy-policy", path="/privacy-policy/", name="privacy-policy", exclude_from_auth=True)
     async def privacy_policy(self) -> dict:
         """Serve site root."""
         return {}
 
-    @get(component="legal/terms-of-service", path="/terms-of-service", name="terms-of-service", exclude_from_auth=True)
+    @get(component="legal/terms-of-service", path="/terms-of-service/", name="terms-of-service", exclude_from_auth=True)
     async def legal(self) -> dict:
         """Serve site root."""
         return {}

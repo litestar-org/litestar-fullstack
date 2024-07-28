@@ -57,7 +57,7 @@ export default function UserRegistrationForm({
   async function onSubmit(values: FormProps) {
     try {
       setIsLoading(true)
-      router.post(route("login"), values, {
+      router.post(route("register.add"), values, {
         onError: (err) => {
           console.log(err)
           if ("email" in err && typeof err.email === "string") {
@@ -116,7 +116,7 @@ export default function UserRegistrationForm({
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel className="sr-only">Password</FormLabel>
                     <FormControl>
                       <Input
@@ -134,10 +134,12 @@ export default function UserRegistrationForm({
                 )}
               />
             </div>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading && <Icons.spinner className="w-5 mr-2 h-5" />}
-              Sign Up
-            </Button>
+            <div className="grid gap-1 mt-10">
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Icons.spinner className="w-5 mr-2 h-5" />}
+                Sign Up
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

@@ -113,21 +113,16 @@ export default function PrivacyPolicy({ terms }: { terms: string }) {
         <div className="relative px-6 lg:px-8">
           <div className="mx-auto max-w-prose text-lg">
             <Link href={route("home")}>
-              <Logo className="mx-auto h-16 w-16 fill-current text-foreground" />
+              <Logo className="mx-auto h-48 w-48 fill-current text-foreground" />
             </Link>
             <h1>
-              <span className="mt-4 block text-center text-lg font-semibold text-foreground">
-                Introducing
-              </span>
               <span className="mt-2 block text-center text-3xl font-bold leading-8 tracking-tight text-foreground sm:text-4xl">
                 Terms of Service
               </span>
             </h1>
-
-            <div
-              className="prose prose-lg prose-zinc dark:prose-invert mx-auto mt-6 text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: terms }}
-            />
+            <div className="prose prose-lg prose-zinc mx-auto mt-6 text-muted-foreground dark:prose-invert">
+              Lorem ipsum
+            </div>{" "}
           </div>
         </div>
       </div>

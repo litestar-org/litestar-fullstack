@@ -112,8 +112,6 @@ async def current_user_from_session(
     user = await service.get_one_or_none(email=user_id)
     if user and user.is_active:
         share(connection, "auth", {"isAuthenticated": True, "user": service.to_schema(user, schema_type=UserSchema)})
-        if (current_team := session.get("current_team")) is not None:
-            share(connection, "currentTeam", current_team)
         return user
     share(connection, "auth", {"isAuthenticated": False})
     return None

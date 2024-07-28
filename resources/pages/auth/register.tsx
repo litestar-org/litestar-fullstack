@@ -34,10 +34,10 @@ export default function Login() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="flex mx-auto text-2xl font-semibold tracking-tight">
-              <Icons.sparkle className="w-5 h-5 mr-3 " /> Login to Continue{" "}
+              <Icons.sparkle className="w-5 h-5 mr-3 " /> Signup to get started{" "}
             </h1>
             <p className="text-sm text-muted-foreground ">
-              Enter your credentials to get started!
+              Create an account to continue.
             </p>
           </div>
           <UserRegistrationForm />

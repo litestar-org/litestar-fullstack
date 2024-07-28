@@ -7,6 +7,7 @@ from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, 
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
 
+from app.config import constants
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
 from app.db.models.user import User  # noqa: TCH001
@@ -17,10 +18,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from uuid import UUID
 
-    from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.repository._util import LoadSpec
     from advanced_alchemy.service import ModelDictT
-    from msgspec import Struct
     from sqlalchemy.orm import InstrumentedAttribute
 
 __all__ = (
@@ -39,15 +38,6 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
     def __init__(self, **repo_kwargs: Any) -> None:
         self.repository: TeamRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
-
-    async def get_user_teams(
-        self,
-        *filters: FilterTypes,
-        user_id: UUID,
-        **kwargs: Any,
-    ) -> tuple[list[Team], int]:
-        """Get all teams for a user."""
-        return await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs)
 
     async def create(
         self,
@@ -141,7 +131,18 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             auto_refresh=auto_refresh,
         )
 
-    async def to_model(self, data: Team | dict[str, Any] | Struct, operation: str | None = None) -> Team:
+    @staticmethod
+    def can_view_all(user: User) -> bool:
+        return bool(
+            user.is_superuser
+            or any(
+                assigned_role.role.name
+                for assigned_role in user.roles
+                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
+            ),
+        )
+
+    async def to_model(self, data: ModelDictT[Team], operation: str | None = None) -> Team:
         if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]

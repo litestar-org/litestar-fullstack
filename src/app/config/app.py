@@ -1,6 +1,10 @@
 import logging
+import sys
+from functools import lru_cache
 from typing import cast
 
+import logfire
+import structlog
 from advanced_alchemy.extensions.litestar import (
     AlembicAsyncConfig,
     AsyncSessionConfig,
@@ -10,7 +14,13 @@ from advanced_alchemy.extensions.litestar import (
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
-from litestar.logging.config import LoggingConfig, StructLoggingConfig
+from litestar.logging.config import (
+    LoggingConfig,
+    StructLoggingConfig,
+    default_logger_factory,
+    default_structlog_processors,
+    default_structlog_standard_lib_processors,
+)
 from litestar.middleware.logging import LoggingMiddlewareConfig
 from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.plugins.structlog import StructlogConfig
@@ -92,11 +102,29 @@ saq = SAQConfig(
     ],
 )
 
+
+@lru_cache
+def _is_tty() -> bool:
+    return bool(sys.stderr.isatty() or sys.stdout.isatty())
+
+
+_render_as_json = not _is_tty()
+_structlog_processors = default_structlog_processors(as_json=_render_as_json)
+if settings.app.OPENTELEMETRY_ENABLED:
+    _structlog_processors.insert(-1, logfire.StructlogProcessor())
 log = StructlogConfig(
     structlog_logging_config=StructLoggingConfig(
         log_exceptions="always",
+        processors=_structlog_processors,
+        logger_factory=default_logger_factory(as_json=_render_as_json),
         standard_lib_logging_config=LoggingConfig(
             root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
+            formatters={
+                "standard": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": default_structlog_standard_lib_processors(as_json=_render_as_json),
+                },
+            },
             loggers={
                 "saq": {
                     "propagate": False,
@@ -126,6 +154,11 @@ log = StructlogConfig(
                 "_granian.asgi.serve": {
                     "propagate": False,
                     "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "opentelemetry.sdk.metrics._internal": {
+                    "propagate": False,
+                    "level": 40,
                     "handlers": ["queue_listener"],
                 },
             },

@@ -5,10 +5,12 @@ import { Toaster } from "@/components/ui/toaster"
 
 export function AppLayout({ children }: PropsWithChildren) {
   return (
-    <div className="min-h-svh bg-muted/20">
+    <div className="h-screen bg-muted/20">
       <Toaster />
       <Navbar />
-      <main>{children}</main>
+      <main>
+        <div className="mb-auto">{children}</div>
+      </main>
       <Footer />
     </div>
   )
