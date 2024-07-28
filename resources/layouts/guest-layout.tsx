@@ -1,16 +1,4 @@
 import { PropsWithChildren, ReactNode } from "react"
-import { Logo } from "@/components/logo"
-import { Link } from "@inertiajs/react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { route } from "litestar-vite-plugin/inertia-helpers"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
 
 interface GuestLayoutProps {
   header?: string | null

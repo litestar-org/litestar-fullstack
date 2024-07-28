@@ -1309,7 +1309,7 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.4"
+version = "0.2.6"
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
@@ -1317,24 +1317,24 @@ dependencies = [
     "litestar[jinja]>=2.7.0",
 ]
 files = [
-    {file = "litestar_vite-0.2.4-py3-none-any.whl", hash = "sha256:fb16428574e2f2139d1621f470e5c512e52c228cf02f39906b18fe1312cb70b9"},
-    {file = "litestar_vite-0.2.4.tar.gz", hash = "sha256:904c8f6cc6351bd41fb2c0bb533578d332c902c633d2c434dc2e18ec2ba0f3a0"},
+    {file = "litestar_vite-0.2.6-py3-none-any.whl", hash = "sha256:2dc0b5e931b8daa40285ecb82ec442aa6419f1d118961441ddf298c7e03cbdbb"},
+    {file = "litestar_vite-0.2.6.tar.gz", hash = "sha256:912bd9ca9c86b8d86ad41c2c1b799981274fd0690b1d729eba30febe9125536b"},
 ]
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.4"
+version = "0.2.6"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite==0.2.4",
+    "litestar-vite==0.2.6",
     "nodeenv",
 ]
 files = [
-    {file = "litestar_vite-0.2.4-py3-none-any.whl", hash = "sha256:fb16428574e2f2139d1621f470e5c512e52c228cf02f39906b18fe1312cb70b9"},
-    {file = "litestar_vite-0.2.4.tar.gz", hash = "sha256:904c8f6cc6351bd41fb2c0bb533578d332c902c633d2c434dc2e18ec2ba0f3a0"},
+    {file = "litestar_vite-0.2.6-py3-none-any.whl", hash = "sha256:2dc0b5e931b8daa40285ecb82ec442aa6419f1d118961441ddf298c7e03cbdbb"},
+    {file = "litestar_vite-0.2.6.tar.gz", hash = "sha256:912bd9ca9c86b8d86ad41c2c1b799981274fd0690b1d729eba30febe9125536b"},
 ]
 
 [[package]]

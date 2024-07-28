@@ -11,13 +11,13 @@ export function Logo({ className }: { className: string }) {
         <clipPath id="eafa7eff7d">
           <path
             d="M 150.042969 66 L 453 66 L 453 215 L 150.042969 215 Z M 150.042969 66 "
-            clip-rule="nonzero"
+            clipRule="nonzero"
           />
         </clipPath>
         <clipPath id="4ff1edd300">
           <path
             d="M 272 40.050781 L 483.011719 40.050781 L 483.011719 251.53125 L 272 251.53125 Z M 272 40.050781 "
-            clip-rule="nonzero"
+            clipRule="nonzero"
           />
         </clipPath>
       </defs>
@@ -177,7 +177,7 @@ export function Logo({ className }: { className: string }) {
       <path
         strokeLinecap="round"
         transform="matrix(0.000000000000000138, 2.256529, -2.249777, 0.000000000000000138, 511.164488, 40.058951)"
-        stroke-linejoin="miter"
+        strokeLinejoin="miter"
         d="M 0.500126 0.500239 L 93.225863 0.500239 "
         fill="none"
         stroke="currentColor"
