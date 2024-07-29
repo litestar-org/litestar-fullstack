@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:fcb8c22dbb07cd95e69437f37749d1ebc8f0f4da09a7cdd3769dd67b5f9d3b55"
+content_hash = "sha256:2af79d60f6df54b08f64cbef5ae1351419fbe8b8f485f0b0e09e62d92ac5129d"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -28,6 +28,9 @@ files = [
 name = "advanced-alchemy"
 version = "0.17.3"
 requires_python = ">=3.8"
+git = "https://github.com/litestar-org/advanced-alchemy.git"
+ref = "dto-service"
+revision = "01be4a910771be48cdd7cd77ffcf3d64b20de6d2"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -37,25 +40,20 @@ dependencies = [
     "sqlalchemy>=2.0.20",
     "typing-extensions>=4.0.0",
 ]
-files = [
-    {file = "advanced_alchemy-0.17.3-py3-none-any.whl", hash = "sha256:f4a98779f71fec2ae3a24c41732e6125854a61e8ade7ce10c6b39eedcb766f18"},
-    {file = "advanced_alchemy-0.17.3.tar.gz", hash = "sha256:45b274a18f5878b76511738639633ce448c68ee433aa800a8c6613cab8207f65"},
-]
 
 [[package]]
 name = "advanced-alchemy"
 version = "0.17.3"
 extras = ["uuid"]
 requires_python = ">=3.8"
+git = "https://github.com/litestar-org/advanced-alchemy.git"
+ref = "dto-service"
+revision = "01be4a910771be48cdd7cd77ffcf3d64b20de6d2"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy==0.17.3",
+    "advanced-alchemy @ git+https://github.com/litestar-org/advanced-alchemy.git@dto-service",
     "uuid-utils>=0.6.1",
-]
-files = [
-    {file = "advanced_alchemy-0.17.3-py3-none-any.whl", hash = "sha256:f4a98779f71fec2ae3a24c41732e6125854a61e8ade7ce10c6b39eedcb766f18"},
-    {file = "advanced_alchemy-0.17.3.tar.gz", hash = "sha256:45b274a18f5878b76511738639633ce448c68ee433aa800a8c6613cab8207f65"},
 ]
 
 [[package]]
@@ -1164,6 +1162,20 @@ files = [
 ]
 
 [[package]]
+name = "httpx-oauth"
+version = "0.15.0"
+requires_python = ">=3.8"
+summary = "Async OAuth client using HTTPX"
+groups = ["default"]
+dependencies = [
+    "httpx<1.0.0,>=0.18",
+]
+files = [
+    {file = "httpx_oauth-0.15.0-py3-none-any.whl", hash = "sha256:39ac91b2b98b8bf97176bc55a70a77cb9cff6cb3a964d2abb1b1256f901aa8ef"},
+    {file = "httpx_oauth-0.15.0.tar.gz", hash = "sha256:b4bb1115d7f18fd88718feb70767d6badc72891afee2d32d2af7a1d9395a11f7"},
+]
+
+[[package]]
 name = "identify"
 version = "2.6.0"
 requires_python = ">=3.8"
@@ -1309,7 +1321,7 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.6"
+version = "0.2.7"
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
@@ -1317,24 +1329,24 @@ dependencies = [
     "litestar[jinja]>=2.7.0",
 ]
 files = [
-    {file = "litestar_vite-0.2.6-py3-none-any.whl", hash = "sha256:2dc0b5e931b8daa40285ecb82ec442aa6419f1d118961441ddf298c7e03cbdbb"},
-    {file = "litestar_vite-0.2.6.tar.gz", hash = "sha256:912bd9ca9c86b8d86ad41c2c1b799981274fd0690b1d729eba30febe9125536b"},
+    {file = "litestar_vite-0.2.7-py3-none-any.whl", hash = "sha256:a6ec723871b5d86050ac84de70ab2d4b435f080fd4698f0507243918b536777c"},
+    {file = "litestar_vite-0.2.7.tar.gz", hash = "sha256:94d00e31525dddc79f76400be046a85a25e5e979625d30239f255daaeb03052e"},
 ]
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.6"
+version = "0.2.7"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite==0.2.6",
+    "litestar-vite==0.2.7",
     "nodeenv",
 ]
 files = [
-    {file = "litestar_vite-0.2.6-py3-none-any.whl", hash = "sha256:2dc0b5e931b8daa40285ecb82ec442aa6419f1d118961441ddf298c7e03cbdbb"},
-    {file = "litestar_vite-0.2.6.tar.gz", hash = "sha256:912bd9ca9c86b8d86ad41c2c1b799981274fd0690b1d729eba30febe9125536b"},
+    {file = "litestar_vite-0.2.7-py3-none-any.whl", hash = "sha256:a6ec723871b5d86050ac84de70ab2d4b435f080fd4698f0507243918b536777c"},
+    {file = "litestar_vite-0.2.7.tar.gz", hash = "sha256:94d00e31525dddc79f76400be046a85a25e5e979625d30239f255daaeb03052e"},
 ]
 
 [[package]]
@@ -1997,7 +2009,7 @@ files = [
 
 [[package]]
 name = "pre-commit"
-version = "3.7.1"
+version = "3.8.0"
 requires_python = ">=3.9"
 summary = "A framework for managing and maintaining multi-language pre-commit hooks."
 groups = ["linting"]
@@ -2009,8 +2021,8 @@ dependencies = [
     "virtualenv>=20.10.0",
 ]
 files = [
-    {file = "pre_commit-3.7.1-py2.py3-none-any.whl", hash = "sha256:fae36fd1d7ad7d6a5a1c0b0d5adb2ed1a3bda5a21bf6c3e5372073d7a11cd4c5"},
-    {file = "pre_commit-3.7.1.tar.gz", hash = "sha256:8ca3ad567bc78a4972a3f1a477e94a79d4597e8140a6e0b651c5e33899c3654a"},
+    {file = "pre_commit-3.8.0-py2.py3-none-any.whl", hash = "sha256:9a90a53bf82fdd8778d58085faf8d83df56e40dfe18f45b19446e26bf1b3a63f"},
+    {file = "pre_commit-3.8.0.tar.gz", hash = "sha256:8bb6494d4a20423842e198980c9ecf9f96607a07ea29549e180eef9ae80fe7af"},
 ]
 
 [[package]]

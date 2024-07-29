@@ -9,7 +9,7 @@ from advanced_alchemy.extensions.litestar import (
     AlembicAsyncConfig,
     AsyncSessionConfig,
     SQLAlchemyAsyncConfig,
-    async_autocommit_before_send_handler,
+    async_autocommit_handler_maker,
 )
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
@@ -41,9 +41,13 @@ csrf = CSRFConfig(
     header_name=settings.app.CSRF_HEADER_NAME,
 )
 cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
+
+
 alchemy = SQLAlchemyAsyncConfig(
     engine_instance=settings.db.get_engine(),
-    before_send_handler=async_autocommit_before_send_handler,
+    before_send_handler=async_autocommit_handler_maker(  # note: change the session scope key if using multiple engines
+        commit_on_redirect=True,
+    ),
     session_config=AsyncSessionConfig(expire_on_commit=False),
     alembic_config=AlembicAsyncConfig(
         version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,
@@ -113,6 +117,7 @@ _structlog_processors = default_structlog_processors(as_json=_render_as_json)
 if settings.app.OPENTELEMETRY_ENABLED:
     _structlog_processors.insert(-1, logfire.StructlogProcessor())
 log = StructlogConfig(
+    enable_middleware_logging=False,
     structlog_logging_config=StructLoggingConfig(
         log_exceptions="always",
         processors=_structlog_processors,
@@ -151,7 +156,12 @@ log = StructlogConfig(
                     "level": settings.log.SQLALCHEMY_LEVEL,
                     "handlers": ["queue_listener"],
                 },
-                "_granian.asgi.serve": {
+                "_granian": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "granian.access": {
                     "propagate": False,
                     "level": settings.log.SQLALCHEMY_LEVEL,
                     "handlers": ["queue_listener"],

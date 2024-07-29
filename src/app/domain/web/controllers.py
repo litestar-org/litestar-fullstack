@@ -1,5 +1,8 @@
 from litestar import Controller, Request, get
+from litestar.response import File
 from litestar_vite.inertia import InertiaRedirect
+
+from app.config import app as config
 
 
 class WebController(Controller):
@@ -38,3 +41,8 @@ class WebController(Controller):
     async def legal(self) -> dict:
         """Serve site root."""
         return {}
+
+    @get(path="/favicon.ico", name="favicon", exclude_from_auth=True, include_in_schema=False, sync_to_thread=False)
+    def favicon(self) -> File:
+        """Serve site root."""
+        return File(path=f"{config.vite.public_dir}/favicon.ico")

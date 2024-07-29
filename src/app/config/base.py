@@ -277,7 +277,7 @@ class LogSettings:
 
     Only emit logs at this level, or higher.
     """
-    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session"})
+    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session", "XSRF-TOKEN"})
     """Request cookie keys to obfuscate."""
     OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY", "X-XSRF-TOKEN"})
     """Request header keys to obfuscate."""
@@ -304,11 +304,8 @@ class LogSettings:
         default_factory=lambda: [
             "path",
             "method",
-            "headers",
-            "cookies",
             "query",
             "path_params",
-            "body",
         ],
     )
     """Attributes of the [Request][litestar.connection.request.Request] to be
@@ -316,9 +313,6 @@ class LogSettings:
     RESPONSE_FIELDS: list[ResponseExtractorField] = field(
         default_factory=lambda: [
             "status_code",
-            "cookies",
-            "headers",
-            "body",
         ],
     )
     """Attributes of the [Response][litestar.response.Response] to be

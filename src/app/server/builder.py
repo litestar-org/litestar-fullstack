@@ -51,6 +51,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         from app.config import constants, get_settings
         from app.db.models import User as UserModel
         from app.domain.accounts.guards import session_auth
+        from app.lib import log
 
         settings = get_settings()
         if settings.app.OPENTELEMETRY_ENABLED:
@@ -58,10 +59,11 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
 
             from app.lib.otel import configure_instrumentation
 
-            config = configure_instrumentation()
             logfire.configure()
+            config = configure_instrumentation()
             app_config.middleware.insert(0, config.middleware)
-
+        app_config.middleware.insert(0, log.StructlogMiddleware)
+        app_config.before_send.append(log.BeforeSendHandler())
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         app_config = session_auth.on_app_init(app_config)

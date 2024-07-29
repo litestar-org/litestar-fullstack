@@ -83,7 +83,7 @@ class TagController(Controller):
         data: DTOData[Tag],
     ) -> Tag:
         """Create a new tag."""
-        db_obj = await tags_service.create(data.create_instance())
+        db_obj = await tags_service.create(data)
         return tags_service.to_schema(db_obj)
 
     @patch(
@@ -106,7 +106,7 @@ class TagController(Controller):
         ],
     ) -> Tag:
         """Update a tag."""
-        db_obj = await tags_service.update(item_id=tag_id, data=data.create_instance())
+        db_obj = await tags_service.update(item_id=tag_id, data=data)
         return tags_service.to_schema(db_obj)
 
     @delete(

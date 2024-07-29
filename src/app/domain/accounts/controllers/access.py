@@ -13,8 +13,9 @@ from litestar_vite.inertia import InertiaRedirect
 from app.db.models import User as UserModel  # noqa: TCH001
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
 from app.domain.accounts.guards import requires_active_user
-from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
+from app.domain.accounts.schemas import AccountLogin, AccountRegister, PasswordUpdate, ProfileUpdate, User
 from app.domain.accounts.services import RoleService, UserService
+from app.lib.schema import Message
 
 
 class AccessController(Controller):
@@ -98,7 +99,7 @@ class RegistrationController(Controller):
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
-        user = await users_service.create(user_data, auto_commit=True)
+        user = await users_service.create(user_data)
         request.set_session({"user_id": user.email})
         request.app.emit(event_id="user_created", user_id=user.id)
         flash(request, "Account created successfully.  Welcome!", category="info")
@@ -106,7 +107,6 @@ class RegistrationController(Controller):
 
 
 class ProfileController(Controller):
-    path = "/profile"
     include_in_schema = False
     dependencies = {"users_service": Provide(provide_users_service)}
     signature_namespace = {
@@ -115,22 +115,37 @@ class ProfileController(Controller):
     }
     guards = [requires_active_user]
 
-    @get(component="profile/edit", name="profile.show", path="/")
+    @get(component="profile/edit", name="profile.show", path="/profile/")
     async def profile(self, current_user: UserModel, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)
 
-    @patch(component="profile/edit", name="profile.edit", path="/")
-    async def update_profile(self, current_user: UserModel, users_service: UserService) -> User:
+    @patch(component="profile/edit", name="profile.update", path="/profile/")
+    async def update_profile(self, current_user: UserModel, data: ProfileUpdate, users_service: UserService) -> User:
         """User Profile."""
-        return users_service.to_schema(current_user, schema_type=User)
+        db_obj = await users_service.update(data, item_id=current_user.id)
+        return users_service.to_schema(db_obj, schema_type=User)
 
-    @patch(component="profile/edit", name="profile.edit", path="/")
-    async def update_password(self, current_user: UserModel, users_service: UserService) -> dict:
+    @patch(component="profile/edit", name="password.update", path="/profile/password-update/")
+    async def update_password(
+        self,
+        current_user: UserModel,
+        data: PasswordUpdate,
+        users_service: UserService,
+    ) -> Message:
         """Update user password."""
-        return {}
+        await users_service.update_password(data.to_dict(), db_obj=current_user)
+        return Message(message="Your password was successfully modified.")
 
-    @delete(name="profile.edit", path="/", status_code=303)
-    async def remove_account(self, current_user: UserModel, users_service: UserService) -> dict:
+    @delete(name="account.remove", path="/profile/", status_code=303)
+    async def remove_account(
+        self,
+        request: Request,
+        current_user: UserModel,
+        users_service: UserService,
+    ) -> InertiaRedirect:
         """Remove your account."""
-        return {}
+        request.session.clear()
+        _ = await users_service.delete(current_user.id)
+        flash(request, "Your account has been removed from the system.", category="info")
+        return InertiaRedirect(request, request.url_for("landing"))
