@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs", "linting", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:2af79d60f6df54b08f64cbef5ae1351419fbe8b8f485f0b0e09e62d92ac5129d"
+content_hash = "sha256:0df87f7d66a6e163e9c37f326a2b0495cc256af7eef3ab8c7203318c37c261ba"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -26,11 +26,8 @@ files = [
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.17.3"
+version = "0.18.0"
 requires_python = ">=3.8"
-git = "https://github.com/litestar-org/advanced-alchemy.git"
-ref = "dto-service"
-revision = "01be4a910771be48cdd7cd77ffcf3d64b20de6d2"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -40,20 +37,25 @@ dependencies = [
     "sqlalchemy>=2.0.20",
     "typing-extensions>=4.0.0",
 ]
+files = [
+    {file = "advanced_alchemy-0.18.0-py3-none-any.whl", hash = "sha256:0aa0ea37acf4148d260941f84cd0110bc34865f6fbbef9059157d83c1be3c047"},
+    {file = "advanced_alchemy-0.18.0.tar.gz", hash = "sha256:45c722693c52d6d16ed6652d0c1f4bef1d05f361ec399333e39761f17458d903"},
+]
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.17.3"
+version = "0.18.0"
 extras = ["uuid"]
 requires_python = ">=3.8"
-git = "https://github.com/litestar-org/advanced-alchemy.git"
-ref = "dto-service"
-revision = "01be4a910771be48cdd7cd77ffcf3d64b20de6d2"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
-    "advanced-alchemy @ git+https://github.com/litestar-org/advanced-alchemy.git@dto-service",
+    "advanced-alchemy==0.18.0",
     "uuid-utils>=0.6.1",
+]
+files = [
+    {file = "advanced_alchemy-0.18.0-py3-none-any.whl", hash = "sha256:0aa0ea37acf4148d260941f84cd0110bc34865f6fbbef9059157d83c1be3c047"},
+    {file = "advanced_alchemy-0.18.0.tar.gz", hash = "sha256:45c722693c52d6d16ed6652d0c1f4bef1d05f361ec399333e39761f17458d903"},
 ]
 
 [[package]]
@@ -1278,9 +1280,6 @@ files = [
 name = "litestar-granian"
 version = "0.5.1"
 requires_python = ">=3.8"
-git = "https://github.com/cofin/litestar-granian.git"
-ref = "extras"
-revision = "301a1780384ba76503a4251ee2e06927261d1abf"
 summary = "Granian plugin for Litestar"
 groups = ["default"]
 dependencies = [
@@ -1289,6 +1288,10 @@ dependencies = [
     "httptools",
     "litestar>=2.7.0",
     "uvloop; sys_platform != \"win32\"",
+]
+files = [
+    {file = "litestar_granian-0.5.1-py3-none-any.whl", hash = "sha256:cc4119df32b137167aa2ef1a9e51d3237c908ff710d0ae4dacfa7f80667131ff"},
+    {file = "litestar_granian-0.5.1.tar.gz", hash = "sha256:0aa065e09caf12820940f05c8f30336a4f0082d9bfd87db8eefd85471212c54d"},
 ]
 
 [[package]]
