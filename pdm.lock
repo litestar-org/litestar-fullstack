@@ -1324,7 +1324,7 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.7"
+version = "0.2.8"
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
@@ -1332,24 +1332,24 @@ dependencies = [
     "litestar[jinja]>=2.7.0",
 ]
 files = [
-    {file = "litestar_vite-0.2.7-py3-none-any.whl", hash = "sha256:a6ec723871b5d86050ac84de70ab2d4b435f080fd4698f0507243918b536777c"},
-    {file = "litestar_vite-0.2.7.tar.gz", hash = "sha256:94d00e31525dddc79f76400be046a85a25e5e979625d30239f255daaeb03052e"},
+    {file = "litestar_vite-0.2.8-py3-none-any.whl", hash = "sha256:4bec869dd99b2627ca0145e71b50f353e1a79c3ea21f1af09037782e61d5d53b"},
+    {file = "litestar_vite-0.2.8.tar.gz", hash = "sha256:0ebb6f9a9ad03463c673eda885e9e72338dbc4cc00f2d2a8a63630bfdf5544db"},
 ]
 
 [[package]]
 name = "litestar-vite"
-version = "0.2.7"
+version = "0.2.8"
 extras = ["nodeenv"]
 requires_python = ">=3.8"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
-    "litestar-vite==0.2.7",
+    "litestar-vite==0.2.8",
     "nodeenv",
 ]
 files = [
-    {file = "litestar_vite-0.2.7-py3-none-any.whl", hash = "sha256:a6ec723871b5d86050ac84de70ab2d4b435f080fd4698f0507243918b536777c"},
-    {file = "litestar_vite-0.2.7.tar.gz", hash = "sha256:94d00e31525dddc79f76400be046a85a25e5e979625d30239f255daaeb03052e"},
+    {file = "litestar_vite-0.2.8-py3-none-any.whl", hash = "sha256:4bec869dd99b2627ca0145e71b50f353e1a79c3ea21f1af09037782e61d5d53b"},
+    {file = "litestar_vite-0.2.8.tar.gz", hash = "sha256:0ebb6f9a9ad03463c673eda885e9e72338dbc4cc00f2d2a8a63630bfdf5544db"},
 ]
 
 [[package]]
@@ -1389,7 +1389,7 @@ files = [
 
 [[package]]
 name = "logfire"
-version = "0.48.0"
+version = "0.48.1"
 summary = "The best Python observability tool! 🪵🔥"
 groups = ["default"]
 dependencies = [
@@ -1403,8 +1403,8 @@ dependencies = [
     "typing-extensions>=4.1.0",
 ]
 files = [
-    {file = "logfire-0.48.0-py2.py3-none-any.whl", hash = "sha256:1f07f2513f67eb70c1cb6e2785db07421f082f96d9b16cd3b96a38314eed3817"},
-    {file = "logfire-0.48.0.tar.gz", hash = "sha256:baebece8d35184ec1d3649c51b043132d07eed5fbcc170fee887ef76303b8bbf"},
+    {file = "logfire-0.48.1-py2.py3-none-any.whl", hash = "sha256:038201610fcda9f690dc62fe90593cd23a54ade1264f737a7da8e7961f37ad0a"},
+    {file = "logfire-0.48.1.tar.gz", hash = "sha256:b3fcc52590cf20c2df7c4788576ed10f47efd47bacb418c16c65778d94478baf"},
 ]
 
 [[package]]
