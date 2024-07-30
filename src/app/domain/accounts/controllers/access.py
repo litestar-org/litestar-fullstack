@@ -8,13 +8,15 @@ from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, delete, get, patch, post
 from litestar.di import Provide
 from litestar.plugins.flash import flash
-from litestar_vite.inertia import InertiaRedirect
+from litestar_vite.inertia import InertiaExternalRedirect, InertiaRedirect
 
+from app.config.app import github_oauth2_client
 from app.db.models import User as UserModel  # noqa: TCH001
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.guards import requires_active_user
+from app.domain.accounts.guards import github_oauth_callback, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, PasswordUpdate, ProfileUpdate, User
 from app.domain.accounts.services import RoleService, UserService
+from app.lib.oauth import AccessTokenState
 from app.lib.schema import Message
 
 
@@ -66,7 +68,6 @@ class AccessController(Controller):
 
 
 class RegistrationController(Controller):
-    path = "/register"
     include_in_schema = False
     dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
     signature_namespace = {
@@ -75,7 +76,7 @@ class RegistrationController(Controller):
     }
     exclude_from_auth = True
 
-    @get(component="auth/register", name="register", path="/")
+    @get(component="auth/register", name="register", path="/register/")
     async def show_signup(
         self,
         request: Request,
@@ -86,7 +87,7 @@ class RegistrationController(Controller):
             return InertiaRedirect(request, request.url_for("dashboard"))
         return {}
 
-    @post(component="auth/register", name="register.add", path="/")
+    @post(component="auth/register", name="register.add", path="/register/")
     async def signup(
         self,
         request: Request,
@@ -104,6 +105,30 @@ class RegistrationController(Controller):
         request.app.emit(event_id="user_created", user_id=user.id)
         flash(request, "Account created successfully.  Welcome!", category="info")
         return InertiaRedirect(request, request.url_for("dashboard"))
+
+    @post(name="github.register", path="/register/github/")
+    async def github_signup(
+        self,
+        request: Request,
+    ) -> InertiaExternalRedirect:
+        """Redirect to the Github Login page."""
+        redirect_to = await github_oauth2_client.get_authorization_url(redirect_uri=request.url_for("github.complete"))
+        return InertiaExternalRedirect(request, redirect_to=redirect_to)
+
+    @get(
+        name="github.complete",
+        path="/o/github/complete/",
+        dependencies={"access_token_state": Provide(github_oauth_callback)},
+    )
+    async def github_complete(
+        self,
+        request: Request,
+        access_token_state: AccessTokenState,
+    ) -> AccessTokenState:
+        """Redirect to the Github Login page."""
+        msg = f"{access_token_state!s}"
+        request.logger.info(msg)
+        return access_token_state
 
 
 class ProfileController(Controller):

@@ -23,7 +23,7 @@ export default function Home() {
         </Link>
         <div className="relative z-20 mt-auto"></div>
       </div>
-      <Container>
+      <Container className="pb-16">
         <Link
           href={route("login")}
           className={cn(
@@ -124,6 +124,23 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <p className="px-16 text-center text-sm text-muted-foreground">
+          To enter this site, you must agree to our{" "}
+          <Link
+            href={route("terms-of-service")}
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href={route("privacy-policy")}
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </Container>
     </>
   )

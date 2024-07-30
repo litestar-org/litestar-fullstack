@@ -153,7 +153,12 @@ export default function UserRegistrationForm({
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        onClick={() => router.post(route("github.register"))}
+      >
         {isLoading ? (
           <Icons.spinner className="w-5 mr-2 h-5" />
         ) : (

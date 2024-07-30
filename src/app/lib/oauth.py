@@ -1,3 +1,4 @@
+# pylint: disable=[invalid-name,import-outside-toplevel]
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, TypeAlias, Union  # noqa: UP035
@@ -5,11 +6,13 @@ from typing import TYPE_CHECKING, Any, Dict, TypeAlias, Union  # noqa: UP035
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
 from litestar.exceptions import HTTPException, ImproperlyConfiguredException
 from litestar.params import Parameter
+from litestar.plugins import InitPluginProtocol
 from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 if TYPE_CHECKING:
     import httpx
     from litestar import Request
+    from litestar.config.app import AppConfig
 
 
 AccessTokenState: TypeAlias = tuple[OAuth2Token, str | None]
@@ -39,7 +42,7 @@ class OAuth2AuthorizeCallback:
     Examples:
         ```py
         from litestar import get
-        from httpx_oauth.integrations.fastapi import OAuth2AuthorizeCallback
+        from httpx_oauth.integrations.litestar import OAuth2AuthorizeCallback
         from httpx_oauth.oauth2 import OAuth2
 
         client = OAuth2("CLIENT_ID", "CLIENT_SECRET", "AUTHORIZE_ENDPOINT", "ACCESS_TOKEN_ENDPOINT")
@@ -109,3 +112,24 @@ class OAuth2AuthorizeCallback:
             ) from e
 
         return access_token, callback_state
+
+
+class OAuth2ProviderPlugin(InitPluginProtocol):
+    """HTTPX OAuth2 Plugin configuration plugin."""
+
+    def on_app_init(self, app_config: AppConfig) -> AppConfig:
+        """Configure application for use with SQLAlchemy.
+
+        Args:
+            app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
+        """
+
+        app_config.signature_namespace.update(
+            {
+                "OAuth2AuthorizeCallback": OAuth2AuthorizeCallback,
+                "AccessTokenState": AccessTokenState,
+                "OAuth2Token": OAuth2Token,
+            },
+        )
+
+        return app_config
