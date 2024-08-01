@@ -40,8 +40,6 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         self,
         data: ModelDictT[User],
         *,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
@@ -54,8 +52,6 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
                 data.roles.append(UserRole(role_id=role_id, assigned_at=datetime.now(timezone.utc)))  # noqa: UP017
         return await super().create(
             data=data,
-            load=load,
-            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,

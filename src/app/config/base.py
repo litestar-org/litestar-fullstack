@@ -397,6 +397,10 @@ class AppSettings:
     """GitHub Client ID"""
     GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=lambda: os.getenv("GITHUB_OAUTH2_CLIENT_SECRET", ""))
     """GitHub Client Secret"""
+    GOOGLE_OAUTH2_CLIENT_ID: str = field(default_factory=lambda: os.getenv("GOOGLE_OAUTH2_CLIENT_ID", ""))
+    """Google Client ID"""
+    GOOGLE_OAUTH2_CLIENT_SECRET: str = field(default_factory=lambda: os.getenv("GOOGLE_OAUTH2_CLIENT_SECRET", ""))
+    """Google Client Secret"""
 
     @property
     def slug(self) -> str:

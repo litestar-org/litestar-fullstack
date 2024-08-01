@@ -12,6 +12,7 @@ from advanced_alchemy.extensions.litestar import (
     async_autocommit_handler_maker,
 )
 from httpx_oauth.clients.github import GitHubOAuth2
+from httpx_oauth.clients.google import GoogleOAuth2
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -184,5 +185,8 @@ log = StructlogConfig(
 github_oauth2_client = GitHubOAuth2(
     client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
     client_secret=settings.app.GITHUB_OAUTH2_CLIENT_SECRET,
-    scopes=["email"],
+)
+google_oauth2_client = GoogleOAuth2(
+    client_id=settings.app.GOOGLE_OAUTH2_CLIENT_ID,
+    client_secret=settings.app.GOOGLE_OAUTH2_CLIENT_SECRET,
 )

@@ -43,8 +43,6 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         self,
         data: ModelDictT[Team],
         *,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
@@ -75,8 +73,6 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             )
         await super().create(
             data=data,
-            load=load,
-            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=True,
             auto_refresh=False,

@@ -8,13 +8,14 @@ from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, delete, get, patch, post
 from litestar.di import Provide
 from litestar.plugins.flash import flash
-from litestar_vite.inertia import InertiaExternalRedirect, InertiaRedirect
+from litestar_vite.inertia import InertiaExternalRedirect, InertiaRedirect, share
 
-from app.config.app import github_oauth2_client
+from app.config.app import github_oauth2_client, google_oauth2_client
 from app.db.models import User as UserModel  # noqa: TCH001
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
-from app.domain.accounts.guards import github_oauth_callback, requires_active_user
+from app.domain.accounts.guards import github_oauth_callback, google_oauth_callback, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, PasswordUpdate, ProfileUpdate, User
+from app.domain.accounts.schemas import User as UserSchema
 from app.domain.accounts.services import RoleService, UserService
 from app.lib.oauth import AccessTokenState
 from app.lib.schema import Message
@@ -119,16 +120,70 @@ class RegistrationController(Controller):
         name="github.complete",
         path="/o/github/complete/",
         dependencies={"access_token_state": Provide(github_oauth_callback)},
+        signature_namespace={"AccessTokenState": AccessTokenState},
     )
     async def github_complete(
         self,
         request: Request,
         access_token_state: AccessTokenState,
-    ) -> AccessTokenState:
+        users_service: UserService,
+    ) -> InertiaRedirect:
         """Redirect to the Github Login page."""
-        msg = f"{access_token_state!s}"
-        request.logger.info(msg)
-        return access_token_state
+        token, _state = access_token_state
+        _id, email = await github_oauth2_client.get_id_email(token=token["access_token"])
+
+        user, created = await users_service.get_or_upsert(
+            match_fields=["email"],
+            email=email,
+            is_verified=True,
+            is_active=True,
+        )
+        request.set_session({"user_id": user.email})
+        request.logger.info("github auth request", id=_id, email=email)
+        if created:
+            request.logger.info("created a new user", id=user.id)
+            flash(request, "Welcome to fullstack.  Your account is ready", category="info")
+        share(request, "auth", {"isAuthenticated": True, "user": users_service.to_schema(user, schema_type=UserSchema)})
+        return InertiaRedirect(request, redirect_to=request.url_for("dashboard"))
+
+    @post(name="google.register", path="/register/google/")
+    async def google_signup(
+        self,
+        request: Request,
+    ) -> InertiaExternalRedirect:
+        """Redirect to the Github Login page."""
+        redirect_to = await google_oauth2_client.get_authorization_url(redirect_uri=request.url_for("google.complete"))
+        return InertiaExternalRedirect(request, redirect_to=redirect_to)
+
+    @get(
+        name="google.complete",
+        path="/o/google/complete/",
+        dependencies={"access_token_state": Provide(google_oauth_callback)},
+        signature_namespace={"AccessTokenState": AccessTokenState},
+    )
+    async def google_complete(
+        self,
+        request: Request,
+        access_token_state: AccessTokenState,
+        users_service: UserService,
+    ) -> InertiaRedirect:
+        """Redirect to the Github Login page."""
+        token, _state = access_token_state
+        _id, email = await google_oauth2_client.get_id_email(token=token["access_token"])
+
+        user, created = await users_service.get_or_upsert(
+            match_fields=["email"],
+            email=email,
+            is_verified=True,
+            is_active=True,
+        )
+        request.set_session({"user_id": user.email})
+        request.logger.info("google auth request", id=_id, email=email)
+        if created:
+            request.logger.info("created a new user", id=user.id)
+            flash(request, "Welcome to fullstack.  Your account is ready", category="info")
+        share(request, "auth", {"isAuthenticated": True, "user": users_service.to_schema(user, schema_type=UserSchema)})
+        return InertiaRedirect(request, redirect_to=request.url_for("dashboard"))
 
 
 class ProfileController(Controller):

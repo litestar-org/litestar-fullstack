@@ -143,7 +143,10 @@ class BeforeSendHandler:
                     await self.log_request(scope)
                 if self.do_log_response:
                     await self.log_response(scope)
-                await LOGGER.alog(scope["state"]["log_level"], settings.log.HTTP_EVENT)
+                await LOGGER.alog(
+                    scope["state"]["log_level"],
+                    f"{scope['method'] if scope['type'] == ScopeType.HTTP else scope['type']} {scope['path']}",
+                )
             # RuntimeError: Expected ASGI message 'http.response.body', but got 'http.response.start'.
             except Exception as e:  # noqa: BLE001  # pylint: disable=broad-except
                 # just in-case something in the context causes the error
@@ -160,7 +163,7 @@ class BeforeSendHandler:
             None
         """
         extracted_data = await self.extract_request_data(request=scope["app"].request_class(scope))
-        structlog.contextvars.bind_contextvars(request=extracted_data)
+        structlog.contextvars.bind_contextvars(**extracted_data)
 
     async def log_response(self, scope: Scope) -> None:
         """Handle extracting the response data and logging the message.
@@ -172,7 +175,7 @@ class BeforeSendHandler:
             None
         """
         extracted_data = self.extract_response_data(scope=scope)
-        structlog.contextvars.bind_contextvars(response=extracted_data)
+        structlog.contextvars.bind_contextvars(**extracted_data)
 
     async def extract_request_data(self, request: Request) -> dict[str, Any]:
         """Create a dictionary of values for the log.

@@ -1,13 +1,13 @@
 # pylint: disable=[invalid-name,import-outside-toplevel]
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, TypeAlias, Union  # noqa: UP035
+from typing import TYPE_CHECKING, Any, Dict, List, TypeAlias, Union  # noqa: UP035
 
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
-from litestar.exceptions import HTTPException, ImproperlyConfiguredException
+from litestar import status_codes as status
+from litestar.exceptions import HTTPException
 from litestar.params import Parameter
 from litestar.plugins import InitPluginProtocol
-from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 if TYPE_CHECKING:
     import httpx
@@ -18,11 +18,15 @@ if TYPE_CHECKING:
 AccessTokenState: TypeAlias = tuple[OAuth2Token, str | None]
 
 
-class OAuth2AuthorizeCallbackError(HTTPException, OAuth2Error):
+class OAuth2AuthorizeCallbackError(OAuth2Error, HTTPException):
     """Error raised when an error occurs during the OAuth2 authorization callback.
 
     It inherits from [HTTPException][litestar.exceptions.HTTPException], so you can either keep
-    the default Litestar error handling or implement something dedicated
+    the default Litestar error handling or implement something dedicated.
+
+    !!! Note
+        Due to the way the base `LitestarException` handles the `detail` argument,
+        the `OAuth2Error` is ordered first here
     """
 
     def __init__(
@@ -31,9 +35,17 @@ class OAuth2AuthorizeCallbackError(HTTPException, OAuth2Error):
         detail: Any = None,
         headers: Union[Dict[str, str], None] = None,  # noqa: UP007, UP006
         response: Union[httpx.Response, None] = None,  # noqa: UP007
+        extra: Union[Dict[str, Any], List[Any]] | None = None,  # noqa: UP007, UP006
     ) -> None:
+        super().__init__(message=detail)
+        HTTPException.__init__(
+            self,
+            detail=detail,
+            status_code=status_code,
+            extra=extra,
+            headers=headers,
+        )
         self.response = response
-        super().__init__(status_code, detail, headers)
 
 
 class OAuth2AuthorizeCallback:
@@ -70,11 +82,9 @@ class OAuth2AuthorizeCallback:
         route_name: Name of the callback route, as defined in the `name` parameter of the route decorator.
         redirect_url: Full URL to the callback route.
         """
-        if (route_name is not None and redirect_url is not None) or (route_name is None and redirect_url is None):
-            raise ImproperlyConfiguredException(
-                detail="You should either set route_name or redirect_url",
-                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        assert (route_name is not None and redirect_url is None) or (  # noqa: S101
+            route_name is None and redirect_url is not None
+        ), "You should either set route_name or redirect_url"
         self.client = client
         self.route_name = route_name
         self.redirect_url = redirect_url
@@ -89,7 +99,7 @@ class OAuth2AuthorizeCallback:
     ) -> AccessTokenState:
         if code is None or error is not None:
             raise OAuth2AuthorizeCallbackError(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=error if error is not None else None,
             )
 
@@ -106,9 +116,10 @@ class OAuth2AuthorizeCallback:
             )
         except GetAccessTokenError as e:
             raise OAuth2AuthorizeCallbackError(
-                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=e.message,
                 response=e.response,
+                extra={"message": e.message},
             ) from e
 
         return access_token, callback_state

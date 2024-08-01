@@ -7,7 +7,7 @@ from litestar.middleware.session.server_side import ServerSideSessionBackend
 from litestar.security.session_auth import SessionAuth
 from litestar_vite.inertia import share
 
-from app.config.app import alchemy, github_oauth2_client
+from app.config.app import alchemy, github_oauth2_client, google_oauth2_client
 from app.config.app import session as session_config
 from app.config.base import get_settings
 from app.db.models import User
@@ -130,3 +130,4 @@ session_auth = SessionAuth[User, ServerSideSessionBackend](
     ],
 )
 github_oauth_callback = OAuth2AuthorizeCallback(github_oauth2_client, route_name="github.complete")
+google_oauth_callback = OAuth2AuthorizeCallback(google_oauth2_client, route_name="google.complete")
