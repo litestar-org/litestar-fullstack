@@ -105,16 +105,16 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         db_obj = await self.get_one_or_none(email=username)
         if db_obj is None:
             msg = "User not found or password invalid"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if db_obj.hashed_password is None:
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not await crypt.verify_password(password, db_obj.hashed_password):
             msg = "User not found or password invalid"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not db_obj.is_active:
             msg = "User account is inactive"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         return db_obj
 
     async def update_password(self, data: dict[str, Any], db_obj: User) -> None:
@@ -131,13 +131,13 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         """
         if db_obj.hashed_password is None:
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not await crypt.verify_password(data["current_password"], db_obj.hashed_password):
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not db_obj.is_active:
             msg = "User account is not active"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
 

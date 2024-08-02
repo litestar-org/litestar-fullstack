@@ -8,6 +8,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from litestar.exceptions import (
+    HTTPException,
+    InternalServerException,
+)
+from litestar.status_codes import HTTP_409_CONFLICT
+from litestar_vite.inertia import exception_to_http_response as inertia_exception_to_http_response
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from litestar.connection import Request
+    from litestar.middleware.exceptions.middleware import ExceptionResponseContent
+    from litestar.response import Response
+
 if TYPE_CHECKING:
     from typing import Any
 
@@ -68,3 +83,30 @@ class AuthorizationError(ApplicationClientError):
 
 class HealthCheckConfigurationError(ApplicationError):
     """An error occurred while registering an health check."""
+
+
+class _HTTPConflictException(HTTPException):
+    """Request conflict with the current state of the target resource."""
+
+    status_code = HTTP_409_CONFLICT
+
+
+def exception_to_http_response(
+    request: Request[Any, Any, Any],
+    exc: ApplicationError | SQLAlchemyError,
+) -> Response[ExceptionResponseContent]:
+    """Transform repository exceptions to HTTP exceptions.
+
+    Args:
+        request: The request that experienced the exception.
+        exc: Exception raised during handling of the request.
+
+    Returns:
+        Exception response appropriate to the type of original exception.
+    """
+    http_exc: type[HTTPException]
+    if isinstance(exc, SQLAlchemyError | IntegrityError):
+        http_exc = _HTTPConflictException
+    else:
+        http_exc = InternalServerException
+    return inertia_exception_to_http_response(request, http_exc(detail=str(exc.__cause__)))

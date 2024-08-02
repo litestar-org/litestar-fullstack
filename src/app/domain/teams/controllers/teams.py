@@ -15,7 +15,7 @@ from app.db.models import User as UserModel
 from app.db.models.team_member import TeamMember as TeamMemberModel
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams.dependencies import provide_teams_service
-from app.domain.teams.guards import requires_team_admin, requires_team_membership
+from app.domain.teams.guards import requires_team_admin, requires_team_membership, requires_team_ownership
 from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
 
@@ -135,7 +135,7 @@ class TeamController(Controller):
     @delete(
         name="teams.remove",
         operation_id="DeleteTeam",
-        guards=[requires_team_admin],
+        guards=[requires_team_ownership],
         path="/teams/{team_id:uuid}/",
         status_code=303,  # This is the correct inertia redirect code
     )

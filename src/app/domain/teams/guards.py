@@ -29,7 +29,7 @@ def requires_team_membership(connection: ASGIConnection, _: BaseRouteHandler) ->
     has_team_role = any(membership.team.id == team_id for membership in connection.user.teams)
     if connection.user.is_superuser or has_system_role or has_team_role:
         return
-    raise PermissionDeniedException(detail="Insufficient permissions to access team.")
+    raise PermissionDeniedException(detail="You can't access this team")
 
 
 def requires_team_admin(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -53,7 +53,7 @@ def requires_team_admin(connection: ASGIConnection, _: BaseRouteHandler) -> None
     )
     if connection.user.is_superuser or has_system_role or has_team_role:
         return
-    raise PermissionDeniedException(detail="Insufficient permissions to access team.")
+    raise PermissionDeniedException(detail="Admin access is required to access this resource")
 
 
 def requires_team_ownership(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -76,5 +76,5 @@ def requires_team_ownership(connection: ASGIConnection, _: BaseRouteHandler) -> 
     if connection.user.is_superuser or has_system_role or has_team_role:
         return
 
-    msg = "Insufficient permissions to access team."
+    msg = "Owner access is required to access this resource."
     raise PermissionDeniedException(detail=msg)

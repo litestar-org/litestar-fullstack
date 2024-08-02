@@ -2,19 +2,25 @@ from __future__ import annotations
 
 import logging
 import re
+import sys
 from inspect import isawaitable
 from typing import TYPE_CHECKING
 
 import structlog
 from litestar.data_extractors import ConnectionDataExtractor, ResponseDataExtractor
 from litestar.enums import ScopeType
+from litestar.exceptions import (
+    HTTPException,
+)
 from litestar.status_codes import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from litestar.utils.empty import value_or_default
 from litestar.utils.scope.state import ScopeState
+from structlog.contextvars import bind_contextvars
 
 from app.config import get_settings
+from app.lib.exceptions import ApplicationError
 
 if TYPE_CHECKING:
     from typing import Any, Literal
@@ -74,6 +80,23 @@ def StructlogMiddleware(app: ASGIApp) -> ASGIApp:  # noqa: N802
         await app(scope, receive, send)
 
     return middleware
+
+
+async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
+    """Binds `exc_info` key with exception instance as value to structlog
+    context vars.
+
+    This must be a coroutine so that it is not wrapped in a thread where we'll lose context.
+
+    Args:
+        exc: the exception that was raised.
+        _scope: scope of the request
+    """
+    if isinstance(exc, ApplicationError):
+        return
+    if isinstance(exc, HTTPException) and exc.status_code < HTTP_500_INTERNAL_SERVER_ERROR:
+        return
+    bind_contextvars(exc_info=sys.exc_info())
 
 
 class BeforeSendHandler:

@@ -48,10 +48,12 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
 
+        from sqlalchemy.exc import SQLAlchemyError
+
         from app.config import constants, get_settings
         from app.db.models import User as UserModel
         from app.domain.accounts.guards import session_auth
-        from app.lib import log
+        from app.lib import exceptions, log
 
         settings = get_settings()
         if settings.app.OPENTELEMETRY_ENABLED:
@@ -63,6 +65,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             config = configure_instrumentation()
             app_config.middleware.insert(0, config.middleware)
         app_config.middleware.insert(0, log.StructlogMiddleware)
+        app_config.after_exception.append(log.after_exception_hook_handler)
         app_config.before_send.append(log.BeforeSendHandler())
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
@@ -71,6 +74,10 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,
         )
+        app_config.exception_handlers = {
+            SQLAlchemyError: exceptions.exception_to_http_response,
+            Exception: exceptions.exception_to_http_response,
+        }
         app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         app_config.signature_namespace.update({"UserModel": UserModel})
