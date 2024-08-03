@@ -1352,7 +1352,7 @@ version = "0.2.9"
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "conflict-error"
-revision = "9b558089ca82a837853c92062e177f83403b99a7"
+revision = "89210e14bd705ff9e880020c0212dd9abc72b8dc"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
@@ -1366,7 +1366,7 @@ extras = ["nodeenv"]
 requires_python = ">=3.8"
 git = "https://github.com/cofin/litestar-vite.git"
 ref = "conflict-error"
-revision = "9b558089ca82a837853c92062e177f83403b99a7"
+revision = "89210e14bd705ff9e880020c0212dd9abc72b8dc"
 summary = "Vite plugin for Litestar"
 groups = ["default"]
 dependencies = [
