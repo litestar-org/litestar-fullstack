@@ -30,7 +30,7 @@ version = "0.18.0"
 requires_python = ">=3.8"
 git = "https://github.com/litestar-org/advanced-alchemy.git"
 ref = "custom-errors"
-revision = "3a24529d81a0742f355c9094c7d02cdedab94bda"
+revision = "7d1bd35d4c1b9dccc36190002ed33433548e7ca7"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
@@ -48,7 +48,7 @@ extras = ["uuid"]
 requires_python = ">=3.8"
 git = "https://github.com/litestar-org/advanced-alchemy.git"
 ref = "custom-errors"
-revision = "3a24529d81a0742f355c9094c7d02cdedab94bda"
+revision = "7d1bd35d4c1b9dccc36190002ed33433548e7ca7"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
 dependencies = [
