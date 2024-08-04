@@ -40,7 +40,7 @@ async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[User
                 joinedload(TeamMember.team, innerjoin=True).options(load_only(Team.name)),
             ),
         ],
-        error_messages={"duplicate_key": "This user already exists."},
+        error_messages={"duplicate_key": "This user already exists.", "integrity": "User operation failed."},
     ) as service:
         yield service
 
