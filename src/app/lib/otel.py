@@ -47,14 +47,8 @@ def configure_instrumentation() -> OpenTelemetryConfig:
     """Initialize Open Telemetry configuration."""
     import logfire
     from opentelemetry import metrics
-    from opentelemetry.instrumentation.asyncio import AsyncioInstrumentor
-    from opentelemetry.instrumentation.logging import LoggingInstrumentor
     from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
-    from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 
-    AsyncioInstrumentor().instrument()
-    LoggingInstrumentor().instrument()
-    ThreadingInstrumentor().instrument()
     SQLAlchemyInstrumentor().instrument(engine=settings.db.engine.sync_engine)
     logfire.configure()
     return OpenTelemetryConfig(meter=metrics.get_meter(__name__), middleware_class=OpenTelemetrySingletonMiddleware)

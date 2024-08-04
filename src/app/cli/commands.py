@@ -177,7 +177,6 @@ def create_default_roles() -> None:
     async def _create_default_roles() -> None:
         await load_database_fixtures()
         async with alchemy.get_session() as db_session:
-            db_session.refresh()
             users_service = await anext(provide_users_service(db_session))
             roles_service = await anext(provide_roles_service(db_session))
             default_role = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
