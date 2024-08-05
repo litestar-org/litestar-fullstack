@@ -49,7 +49,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [selectedTeam, setSelectedTeam] = React.useState(currentTeam)
 
   return (
-    <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
+    <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog} modal>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -79,21 +79,28 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0 focus:outline-none">
-          <Command className="rounded-lg border shadow-md">
-            {" "}
-            <CommandInput placeholder="Search team..." />
+        <PopoverContent className="w-[200px] p-0 ">
+          <Command className="rounded-lg border shadow-md ">
+            <CommandInput
+              className="border-none focus:ring-transparent"
+              placeholder="Search team..."
+            />
+
+            <CommandEmpty>No team found.</CommandEmpty>
             <CommandList>
-              <CommandEmpty>No team found.</CommandEmpty>
               <CommandGroup key="teams" heading="Teams">
                 {auth?.user?.teams.map((team) => (
                   <CommandItem
                     key={team.teamId}
+                    value={team.teamId}
                     onSelect={(currentValue) => {
                       setSelectedTeam(
-                        currentValue === selectedTeam?.teamId ? undefined : team
+                        currentValue === selectedTeam?.teamName
+                          ? undefined
+                          : team
                       )
                       setOpen(false)
+                      console.log("click")
                     }}
                     className="text-sm"
                   >
@@ -116,10 +123,9 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               </CommandGroup>
               <CommandSeparator />
 
-              <CommandGroup key="create">
-                <DialogTrigger asChild>
+              <CommandGroup heading="Commands">
+                <DialogTrigger>
                   <CommandItem
-                    key="show-create-team"
                     onSelect={() => {
                       setOpen(false)
                       setShowNewTeamDialog(true)

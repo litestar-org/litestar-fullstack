@@ -51,7 +51,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-x-1">
                   <TeamSwitcher className="mr-5" />
                   <div className="mr-3 min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
-                  <DropdownMenu>
+                  <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="size-8">
                         <AvatarImage
@@ -75,7 +75,7 @@ export default function Navbar() {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
                         <Link
-                          className="flex items-center"
+                          className="flex items-center w-full"
                           href={route("profile.show")}
                         >
                           <UserRoundCogIcon className="mr-2 size-4" />
@@ -94,7 +94,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <DropdownMenu>
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="secondary"

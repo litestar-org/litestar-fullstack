@@ -8,7 +8,8 @@ export default function Footer() {
       </h2>
       <div className="h-full" />
       <div className="align-bottom mx-auto max-w-7xl px-6 pb-8 pt-20 ">
-        <div className="border-t border-slate-900/10 md:flex md:items-center md:justify-between">
+        <div className="border-t border-slate-900/10 md:flex md:items-center md:justify-between mb-5" />
+        <div className="md:flex md:items-center md:justify-between">
           <div className="flex space-x-6 md:order-2">
             <ThemeToggle />
           </div>

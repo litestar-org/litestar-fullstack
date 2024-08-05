@@ -28,7 +28,7 @@ const ResponsiveNavbar = () => {
           <Logo className="w-8 fill-red-600" />
         </Link>
         <div className="flex items-center gap-x-1">
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild className="focus:outline-none">
               <button className="flex items-center focus:outline-none">
                 {auth?.user?.id
