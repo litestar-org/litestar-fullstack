@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 from uuid import UUID  # noqa: TCH003
 
+from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import (
     ModelDictT,
     SQLAlchemyAsyncRepositoryService,
@@ -22,7 +23,7 @@ from .repositories import RoleRepository, UserRepository, UserRoleRepository
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from advanced_alchemy.repository._util import LoadSpec
+    from advanced_alchemy.repository import LoadSpec
     from sqlalchemy.orm import InstrumentedAttribute
 
 
@@ -43,6 +44,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
     ) -> User:
         """Create a new User and assign default Role."""
         if isinstance(data, dict):
@@ -55,6 +57,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
+            error_messages=error_messages,
         )
 
     async def update(
@@ -63,13 +66,14 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         item_id: Any | None = None,
         *,
         id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
     ) -> User:
         if isinstance(data, dict):
             role_id: UUID | None = data.pop("role_id", None)
@@ -85,6 +89,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
             id_attribute=id_attribute,
+            error_messages=error_messages,
             load=load,
             execution_options=execution_options,
         )

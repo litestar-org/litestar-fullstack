@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
+from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, is_msgspec_model, is_pydantic_model
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
@@ -46,6 +47,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
     ) -> Team:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
@@ -76,6 +78,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             auto_commit=auto_commit,
             auto_expunge=True,
             auto_refresh=False,
+            error_messages=error_messages,
         )
         return data
 
@@ -85,13 +88,14 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         item_id: Any | None = None,
         *,
         id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
     ) -> Team:
         """Wrap repository update operation.
 
@@ -125,6 +129,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
+            error_messages=error_messages,
         )
 
     @staticmethod

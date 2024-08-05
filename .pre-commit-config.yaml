@@ -34,7 +34,7 @@ repos:
         exclude: scripts/
         additional_dependencies:
           - "litestar[jinja,redis,structlog,opentelemetry]>=2.8.3"
-          - "advanced-alchemy[uuid]>=0.10.0"
+          - "advanced-alchemy[uuid] @ git+https://github.com/litestar-org/advanced-alchemy.git@custom-errors"
           - "asyncpg>=0.28.0"
           - "python-dotenv>=1.0.0"
           - "litestar-saq>=0.1.3"
