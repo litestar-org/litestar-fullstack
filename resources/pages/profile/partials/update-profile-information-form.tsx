@@ -11,9 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { toast } from "sonner"
-import { PagePropsData } from "@/types"
 import { route } from "litestar-vite-plugin/inertia-helpers"
+import { toast } from "@/components/ui/use-toast"
 
 interface Props {
   mustVerifyEmail: boolean
@@ -24,13 +23,11 @@ interface Props {
 export default function UpdateProfileInformation({
   mustVerifyEmail,
   status,
-  className,
 }: Props) {
-  const { auth } = usePage<PagePropsData>().props
+  const { auth } = usePage<InertiaProps>().props
   const { data, setData, patch, errors, processing, recentlySuccessful } =
     useForm({
-      name: auth?.user.name ?? "",
-      email: auth?.user.email ?? "",
+      name: auth?.user?.name ?? "",
     })
 
   const submit = (e: { preventDefault: () => void }) => {
@@ -38,7 +35,10 @@ export default function UpdateProfileInformation({
     patch(route("profile.update"), {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("Your profile information has been updated.")
+        console.log("Your profile information has been updated.")
+        toast({
+          description: "Your profile information has been updated.",
+        })
       },
     })
   }
@@ -53,6 +53,17 @@ export default function UpdateProfileInformation({
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-6">
+          <div>
+            <Label htmlFor="email">Email</Label>
+
+            <Input
+              id="email"
+              type="email"
+              value={auth?.user?.email}
+              className="mt-1"
+              disabled
+            />
+          </div>
           <div>
             <Label htmlFor="name">Name</Label>
 
@@ -69,23 +80,8 @@ export default function UpdateProfileInformation({
 
             <InputError className="mt-2" message={errors.name} />
           </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
 
-            <Input
-              id="email"
-              type="email"
-              value={data.email}
-              className="mt-1"
-              onChange={(e) => setData("email", e.target.value)}
-              required
-              autoComplete="email"
-            />
-
-            <InputError className="mt-2" message={errors.email} />
-          </div>
-
-          {mustVerifyEmail && auth?.user.email_verified_at === null && (
+          {mustVerifyEmail && auth?.user?.verifiedAt === null && (
             <div>
               <p className="mt-2 text-sm">
                 Your email address is unverified.

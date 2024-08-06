@@ -48,6 +48,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
 
+        from app.config import app as config
         from app.config import constants, get_settings
         from app.db.models import User as UserModel
         from app.domain.accounts.guards import session_auth
@@ -60,14 +61,15 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             from app.lib.otel import configure_instrumentation
 
             logfire.configure()
-            config = configure_instrumentation()
-            app_config.middleware.insert(0, config.middleware)
+            otel_config = configure_instrumentation()
+            app_config.middleware.insert(0, otel_config.middleware)
+        app_config = session_auth.on_app_init(app_config)
+        app_config.middleware.insert(0, config.session.middleware)
         app_config.middleware.insert(0, log.StructlogMiddleware)
         app_config.after_exception.append(log.after_exception_hook_handler)
         app_config.before_send.append(log.BeforeSendHandler())
         self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
-        app_config = session_auth.on_app_init(app_config)
         app_config.response_cache_config = ResponseCacheConfig(
             default_expiration=constants.CACHE_EXPIRATION,
             key_builder=self._cache_key_builder,

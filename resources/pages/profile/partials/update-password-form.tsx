@@ -12,8 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { toast } from "sonner"
 import { route } from "litestar-vite-plugin/inertia-helpers"
+import { toast } from "@/components/ui/use-toast"
 
 export default function UpdatePasswordForm({
   className,
@@ -22,29 +22,36 @@ export default function UpdatePasswordForm({
 }) {
   const passwordInput = useRef<HTMLInputElement>(null)
   const currentPasswordInput = useRef<HTMLInputElement>(null)
-  const { data, setData, put, errors, reset, processing, recentlySuccessful } =
-    useForm({
-      current_password: "",
-      password: "",
-      password_confirmation: "",
-    })
+  const {
+    data,
+    setData,
+    patch,
+    errors,
+    reset,
+    processing,
+    recentlySuccessful,
+  } = useForm({
+    currentPassword: "",
+    newPassword: "",
+    passwordConfirmation: "",
+  })
 
   const submit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    put(route("password.update"), {
+    patch(route("password.update"), {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("Your profile information has been updated.")
+        toast({ description: "Your password has been updated." })
         reset()
       },
       onError: () => {
-        if (errors.password) {
-          reset("password", "password_confirmation")
+        if (errors.newPassword) {
+          reset("newPassword", "passwordConfirmation")
           passwordInput.current?.focus()
         }
 
-        if (errors.current_password) {
-          reset("current_password")
+        if (errors.currentPassword) {
+          reset("currentPassword")
           currentPasswordInput.current?.focus()
         }
       },
@@ -63,54 +70,54 @@ export default function UpdatePasswordForm({
       <CardContent>
         <form onSubmit={submit} className="space-y-6">
           <div>
-            <Label htmlFor="current_password">Current Password</Label>
+            <Label htmlFor="currentPassword">Current Password</Label>
 
             <Input
-              id="current_password"
+              id="currentPassword"
               ref={currentPasswordInput}
-              value={data.current_password}
+              value={data.currentPassword}
               className="mt-1"
-              onChange={(e) => setData("current_password", e.target.value)}
+              onChange={(e) => setData("currentPassword", e.target.value)}
               type="password"
-              autoComplete="current-password"
+              autoComplete="currentPassword"
               required
             />
 
-            <InputError message={errors.current_password} className="mt-2" />
+            <InputError message={errors.currentPassword} className="mt-2" />
           </div>
 
           <div>
-            <Label htmlFor="password">New Password</Label>
+            <Label htmlFor="newPassword">New Password</Label>
 
             <Input
-              id="password"
+              id="newPassword"
               ref={passwordInput}
-              value={data.password}
+              value={data.newPassword}
               className="mt-1"
-              onChange={(e) => setData("password", e.target.value)}
+              onChange={(e) => setData("newPassword", e.target.value)}
               type="password"
-              autoComplete="new-password"
+              autoComplete="newPassword"
               required
             />
 
-            <InputError message={errors.password} className="mt-2" />
+            <InputError message={errors.newPassword} className="mt-2" />
           </div>
 
           <div>
-            <Label htmlFor="password_confirmation">Confirm Password</Label>
+            <Label htmlFor="passwordConfirmation">Confirm Password</Label>
 
             <Input
-              id="password_confirmation"
-              value={data.password_confirmation}
+              id="passwordConfirmation"
+              value={data.passwordConfirmation}
               className="mt-1"
-              onChange={(e) => setData("password_confirmation", e.target.value)}
+              onChange={(e) => setData("passwordConfirmation", e.target.value)}
               type="password"
-              autoComplete="new-password"
+              autoComplete="newPassword"
               required
             />
 
             <InputError
-              message={errors.password_confirmation}
+              message={errors.passwordConfirmation}
               className="mt-2"
             />
           </div>

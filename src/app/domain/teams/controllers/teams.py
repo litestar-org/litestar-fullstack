@@ -78,7 +78,7 @@ class TeamController(Controller):
         obj.update({"owner_id": current_user.id, "owner": current_user})
         db_obj = await teams_service.create(obj)
         flash(request, f'Successfully created team "{db_obj.name}".', category="info")
-        return InertiaRedirect(request, request.url_for("team.show", team_id=db_obj.id))
+        return InertiaRedirect(request, request.url_for("teams.show", team_id=db_obj.id))
 
     @get(
         component="team/show",
@@ -101,7 +101,7 @@ class TeamController(Controller):
     ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)
-        request.set_session({"currentTeam": {"teamId": db_obj.id, "teamName": db_obj.name}})
+        request.session.update({"currentTeam": {"teamId": db_obj.id, "teamName": db_obj.name}})
         return teams_service.to_schema(schema_type=Team, data=db_obj)
 
     @patch(
@@ -129,7 +129,7 @@ class TeamController(Controller):
             item_id=team_id,
             data=data.to_dict(),
         )
-        request.set_session({"currentTeam": {"teamId": db_obj.id, "teamName": db_obj.name}})
+        request.session.update({"currentTeam": {"teamId": db_obj.id, "teamName": db_obj.name}})
         return teams_service.to_schema(schema_type=Team, data=db_obj)
 
     @delete(

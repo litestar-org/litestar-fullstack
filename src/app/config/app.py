@@ -71,7 +71,11 @@ vite = ViteConfig(
 inertia = InertiaConfig(
     root_template="site/index.html.j2",
     redirect_unauthorized_to="/login",
-    extra_static_page_props={"canResetPassword": True, "hasTermsAndPrivacyPolicyFeature": True},
+    extra_static_page_props={
+        "canResetPassword": True,
+        "hasTermsAndPrivacyPolicyFeature": True,
+        "mustVerifyEmail": True,
+    },
     extra_session_page_props={"currentTeam"},
 )
 session = ServerSideSessionConfig(max_age=3600)

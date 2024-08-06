@@ -1,12 +1,5 @@
 import * as React from "react"
-import {
-  PlusCircleIcon,
-  CheckIcon,
-  ChevronsUpDown,
-  CircleCheckBigIcon,
-  Check,
-  PlusIcon,
-} from "lucide-react"
+import { PlusCircleIcon, ChevronsUpDown, Check, PlusIcon } from "lucide-react"
 import { cn, getInitials } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -35,9 +28,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { usePage } from "@inertiajs/react"
+import { router, usePage } from "@inertiajs/react"
 import { ComponentPropsWithoutRef, useState } from "react"
-
+import { CurrentTeam } from "@/types"
+import { Head, Link, useForm } from "@inertiajs/react"
+import { InputError } from "./input-error"
+import { toast } from "./ui/use-toast"
 type PopoverTriggerProps = ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {}
@@ -46,8 +42,33 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { auth, currentTeam } = usePage<InertiaProps>().props
   const [open, setOpen] = useState(false)
   const [showNewTeamDialog, setShowNewTeamDialog] = useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState(currentTeam)
+  const { data, setData, post, reset, errors, processing } = useForm({
+    name: "",
+    description: "",
+  })
 
+  const createTeam = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+    post(route("teams.add"), {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset()
+        setShowNewTeamDialog(false)
+        toast({
+          title: "Team Created",
+          description: "Your new team has been created.",
+        })
+      },
+    })
+  }
+  async function showTeam(teamId: string) {
+    try {
+      setOpen(false)
+      router.get(route("teams.show", teamId))
+    } catch (error: any) {
+      console.log(error)
+    }
+  }
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog} modal>
       <Popover open={open} onOpenChange={setOpen}>
@@ -55,25 +76,24 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
           <Button
             variant="ghost"
             size="sm"
+            role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
             className={cn("w-[200px] justify-between opacity-50", className)}
           >
-            {selectedTeam?.teamId === currentTeam?.teamId ? (
+            {currentTeam === undefined ? (
               <>
-                {" "}
                 <PlusIcon className="mr-2 h-4 w-4" />
                 Select a team
               </>
             ) : (
               <>
-                {" "}
                 <Avatar className="mr-2 h-5 w-5">
                   <AvatarFallback>
-                    {getInitials(selectedTeam?.teamName || "Team")}
+                    {getInitials(currentTeam.teamName || "Team")}
                   </AvatarFallback>
                 </Avatar>
-                {selectedTeam?.teamName}
+                {currentTeam.teamName}
               </>
             )}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -93,12 +113,8 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                   <CommandItem
                     key={team.teamId}
                     value={team.teamId}
-                    onSelect={(currentValue) => {
-                      setSelectedTeam(
-                        currentValue === selectedTeam?.teamName
-                          ? undefined
-                          : team
-                      )
+                    onSelect={() => {
+                      showTeam(team.teamId)
                       setOpen(false)
                       console.log("click")
                     }}
@@ -124,7 +140,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandSeparator />
 
               <CommandGroup heading="Commands">
-                <DialogTrigger>
+                <DialogTrigger asChild>
                   <CommandItem
                     onSelect={() => {
                       setOpen(false)
@@ -141,28 +157,55 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
         </PopoverContent>
       </Popover>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>Add a new team.</DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Description</Label>
-              <Input id="description" placeholder="Acme Inc." />
+        {" "}
+        <form onSubmit={createTeam} className="space-y-6">
+          <DialogHeader>
+            <DialogTitle>Create team</DialogTitle>
+            <DialogDescription>Add a new team.</DialogDescription>
+          </DialogHeader>
+          <div>
+            <div className="space-y-4 py-2 pb-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Team name</Label>
+                <Input
+                  id="name"
+                  value={data.name}
+                  placeholder="Name your new team"
+                  className="mt-1"
+                  onChange={(e) => setData("name", e.target.value)}
+                  required
+                  autoFocus
+                  autoComplete="name"
+                />
+                <InputError className="mt-2" message={errors.name} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={data.description}
+                  placeholder="Tell us a little about this team"
+                  onChange={(e) => setData("description", e.target.value)}
+                />
+                <InputError className="mt-2" message={errors.description} />
+              </div>
             </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-            Cancel
-          </Button>
-          <Button type="submit">Continue</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowNewTeamDialog(false)
+                reset()
+              }}
+            >
+              Cancel
+            </Button>
+            <Button disabled={processing} type="submit">
+              Continue
+            </Button>
+          </DialogFooter>{" "}
+        </form>
       </DialogContent>
     </Dialog>
   )

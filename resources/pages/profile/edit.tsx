@@ -11,7 +11,7 @@ interface Props {
   status?: string
 }
 
-const title = "Dashboard"
+const title = "User Profile"
 export default function Edit({ mustVerifyEmail, status }: Props) {
   return (
     <>

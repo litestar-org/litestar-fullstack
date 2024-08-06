@@ -3,7 +3,6 @@ import { GuestLayout } from "@/layouts/guest-layout"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
-import UserLoginForm from "./partials/user-login-form"
 import UserRegistrationForm from "./partials/user-registration-form"
 
 export default function Login() {
