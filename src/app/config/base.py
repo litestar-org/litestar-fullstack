@@ -277,9 +277,9 @@ class LogSettings:
 
     Only emit logs at this level, or higher.
     """
-    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session"})
+    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session", "XSRF-TOKEN"})
     """Request cookie keys to obfuscate."""
-    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY"})
+    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY", "X-XSRF-TOKEN"})
     """Request header keys to obfuscate."""
     JOB_FIELDS: list[str] = field(
         default_factory=lambda: [
@@ -304,11 +304,8 @@ class LogSettings:
         default_factory=lambda: [
             "path",
             "method",
-            "headers",
-            "cookies",
             "query",
             "path_params",
-            "body",
         ],
     )
     """Attributes of the [Request][litestar.connection.request.Request] to be
@@ -316,9 +313,6 @@ class LogSettings:
     RESPONSE_FIELDS: list[ResponseExtractorField] = field(
         default_factory=lambda: [
             "status_code",
-            "cookies",
-            "headers",
-            "body",
         ],
     )
     """Attributes of the [Response][litestar.response.Response] to be
@@ -389,12 +383,24 @@ class AppSettings:
     """Application name."""
     ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=lambda: os.getenv("ALLOWED_CORS_ORIGINS", '["*"]'))
     """Allowed CORS Origins"""
-    CSRF_COOKIE_NAME: str = field(default_factory=lambda: "csrftoken")
+    CSRF_COOKIE_NAME: str = field(default_factory=lambda: "XSRF-TOKEN")
     """CSRF Cookie Name"""
+    CSRF_HEADER_NAME: str = field(default_factory=lambda: "X-XSRF-TOKEN")
+    """CSRF Header Name"""
     CSRF_COOKIE_SECURE: bool = field(default_factory=lambda: False)
     """CSRF Secure Cookie"""
-    JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
-    """JWT Encryption Algorithm"""
+    OPENTELEMETRY_ENABLED: bool = field(
+        default_factory=lambda: os.getenv("OPENTELEMETRY_ENABLED", "False") in TRUE_VALUES,
+    )
+    """Enable Opentelemetry configuration."""
+    GITHUB_OAUTH2_CLIENT_ID: str = field(default_factory=lambda: os.getenv("GITHUB_OAUTH2_CLIENT_ID", ""))
+    """GitHub Client ID"""
+    GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=lambda: os.getenv("GITHUB_OAUTH2_CLIENT_SECRET", ""))
+    """GitHub Client Secret"""
+    GOOGLE_OAUTH2_CLIENT_ID: str = field(default_factory=lambda: os.getenv("GOOGLE_OAUTH2_CLIENT_ID", ""))
+    """Google Client ID"""
+    GOOGLE_OAUTH2_CLIENT_SECRET: str = field(default_factory=lambda: os.getenv("GOOGLE_OAUTH2_CLIENT_SECRET", ""))
+    """Google Client Secret"""
 
     @property
     def slug(self) -> str:
@@ -433,6 +439,7 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
 
     @classmethod
+    @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
         from litestar.cli._utils import console
 
@@ -442,10 +449,9 @@ class Settings:
 
             console.print(f"[yellow]Loading environment configuration from {dotenv_filename}[/]")
 
-            load_dotenv(env_file)
+            load_dotenv(env_file, override=True)
         return Settings()
 
 
-@lru_cache(maxsize=1, typed=True)
 def get_settings() -> Settings:
     return Settings.from_env()

@@ -14,11 +14,10 @@ if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from litestar.connection import Request
-    from litestar.security.jwt import Token
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def provide_user(request: Request[UserModel, Token, Any]) -> UserModel:
+async def provide_user(request: Request[UserModel, Any, Any]) -> UserModel:
     """Get the user from the connection.
 
     Args:
@@ -41,6 +40,7 @@ async def provide_users_service(db_session: AsyncSession) -> AsyncGenerator[User
                 joinedload(TeamMember.team, innerjoin=True).options(load_only(Team.name)),
             ),
         ],
+        error_messages={"duplicate_key": "This user already exists.", "integrity": "User operation failed."},
     ) as service:
         yield service
 
@@ -70,7 +70,5 @@ async def provide_user_roles_service(db_session: AsyncSession | None = None) -> 
     Returns:
         UserRoleService: A user role service object
     """
-    async with UserRoleService.new(
-        session=db_session,
-    ) as service:
+    async with UserRoleService.new(session=db_session) as service:
         yield service

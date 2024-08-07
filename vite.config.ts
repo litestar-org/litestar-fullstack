@@ -21,7 +21,7 @@ export default defineConfig({
   plugins: [
     react(),
     litestar({
-      input: ["resources/main.tsx"],
+      input: ["resources/main.tsx", "resources/main.css"],
       assetUrl: `${ASSET_URL}`,
       bundleDirectory: "src/app/domain/web/public",
       resourceDirectory: "resources",
@@ -31,17 +31,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "resources"),
-    },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return "vendor"
-          }
-        },
-      },
     },
   },
 })

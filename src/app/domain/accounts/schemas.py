@@ -13,6 +13,9 @@ __all__ = (
     "AccountRegister",
     "UserRoleAdd",
     "UserRoleRevoke",
+    "ProfileUpdate",
+    "PasswordUpdate",
+    "PasswordVerify",
     "UserCreate",
     "User",
     "UserRole",
@@ -66,9 +69,11 @@ class User(CamelizedBaseStruct):
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
+    has_password: bool = False
     teams: list[UserTeam] = []
     roles: list[UserRole] = []
     oauth_accounts: list[OauthAccount] = []
+    avatar_url: str | None = None
 
 
 class UserCreate(CamelizedBaseStruct):
@@ -92,6 +97,19 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
 class AccountLogin(CamelizedBaseStruct):
     username: str
     password: str
+
+
+class PasswordUpdate(CamelizedBaseStruct):
+    current_password: str
+    new_password: str
+
+
+class PasswordVerify(CamelizedBaseStruct):
+    current_password: str
+
+
+class ProfileUpdate(CamelizedBaseStruct, omit_defaults=True):
+    name: str | None | msgspec.UnsetType = msgspec.UNSET
 
 
 class AccountRegister(CamelizedBaseStruct):

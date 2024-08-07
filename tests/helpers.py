@@ -21,7 +21,7 @@ class _ContextManagerWrapper:
         self._cm = cm
 
     async def __aenter__(self) -> T:
-        return self._cm.__enter__()
+        return self._cm.__enter__()  # type: ignore[return-value]
 
     async def __aexit__(
         self,
@@ -41,7 +41,7 @@ async def maybe_async(obj: T) -> T: ...
 
 
 async def maybe_async(obj: Awaitable[T] | T) -> T:
-    return cast(T, await obj) if inspect.isawaitable(obj) else cast(T, obj)
+    return cast(T, await obj) if inspect.isawaitable(obj) else obj
 
 
 def maybe_async_cm(obj: AbstractContextManager[T] | AbstractAsyncContextManager[T]) -> AbstractAsyncContextManager[T]:

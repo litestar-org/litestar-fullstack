@@ -101,7 +101,7 @@ class UserController(Controller):
         ),
     ) -> User:
         """Create a new user."""
-        db_obj = await users_service.update(item_id=user_id, data=data.to_dict())
+        db_obj = await users_service.update(item_id=user_id, data=data)
         return users_service.to_schema(db_obj, schema_type=User)
 
     @delete(

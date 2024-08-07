@@ -3,22 +3,30 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import PermissionDeniedException
-from litestar.security.jwt import OAuth2PasswordBearerAuth
+from litestar.middleware.session.server_side import ServerSideSessionBackend
+from litestar.security.session_auth import SessionAuth
+from litestar_vite.inertia import share
 
-from app.config import constants
-from app.config.app import alchemy
+from app.config.app import alchemy, github_oauth2_client, google_oauth2_client
+from app.config.app import session as session_config
 from app.config.base import get_settings
 from app.db.models import User
-from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.schemas import User as UserSchema
+from app.lib.oauth import OAuth2AuthorizeCallback
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection
     from litestar.handlers.base import BaseRouteHandler
-    from litestar.security.jwt import Token
 
 
-__all__ = ("requires_superuser", "requires_active_user", "requires_verified_user", "current_user_from_token", "auth")
+__all__ = (
+    "requires_superuser",
+    "requires_active_user",
+    "requires_verified_user",
+    "current_user_from_session",
+    "session_auth",
+)
 
 
 settings = get_settings()
@@ -38,8 +46,8 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
     """
     if connection.user.is_active:
         return
-    msg = "Inactive account"
-    raise PermissionDeniedException(msg)
+    msg = "Your user account is inactive."
+    raise PermissionDeniedException(detail=msg)
 
 
 def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -57,7 +65,8 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     """
     if connection.user.is_superuser:
         return
-    raise PermissionDeniedException(detail="Insufficient privileges")
+    msg = "Your account does not have enough privileges to access this content."
+    raise PermissionDeniedException(detail=msg)
 
 
 def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
@@ -75,36 +84,50 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
     """
     if connection.user.is_verified:
         return
-    raise PermissionDeniedException(detail="User account is not verified.")
+    msg = "Your account has not been verified."
+    raise PermissionDeniedException(detail=msg)
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
-    """Lookup current user from local JWT token.
+async def current_user_from_session(
+    session: dict[str, Any],
+    connection: ASGIConnection[Any, Any, Any, Any],
+) -> User | None:
+    """Lookup current user from server session state.
 
     Fetches the user information from the database
 
 
     Args:
-        token (str): JWT Token Object
+        session (dict[str,Any]): Litestar session dictionary
         connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.
 
 
     Returns:
         User: User record mapped to the JWT identifier
     """
+
+    if (user_id := session.get("user_id")) is None:
+        share(connection, "auth", {"isAuthenticated": False})
+        return None
     service = await anext(provide_users_service(alchemy.provide_session(connection.app.state, connection.scope)))
-    user = await service.get_one_or_none(email=token.sub)
-    return user if user and user.is_active else None
+    user = await service.get_one_or_none(email=user_id)
+    if user and user.is_active:
+        share(connection, "auth", {"isAuthenticated": True, "user": service.to_schema(user, schema_type=UserSchema)})
+        return user
+    share(connection, "auth", {"isAuthenticated": False})
+    return None
 
 
-auth = OAuth2PasswordBearerAuth[User](
-    retrieve_user_handler=current_user_from_token,
-    token_secret=settings.app.SECRET_KEY,
-    token_url=urls.ACCOUNT_LOGIN,
+session_auth = SessionAuth[User, ServerSideSessionBackend](
+    session_backend_config=session_config,
+    retrieve_user_handler=current_user_from_session,
     exclude=[
-        constants.OPENAPI_SCHEMA,
-        constants.HEALTH_ENDPOINT,
-        urls.ACCOUNT_LOGIN,
-        urls.ACCOUNT_REGISTER,
+        "^/schema",
+        "^/health",
+        "^/login",
+        "^/register",
+        "^/o/",
     ],
 )
+github_oauth_callback = OAuth2AuthorizeCallback(github_oauth2_client, route_name="github.complete")
+google_oauth_callback = OAuth2AuthorizeCallback(google_oauth2_client, route_name="google.complete")

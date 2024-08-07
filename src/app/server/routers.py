@@ -1,9 +1,16 @@
 """Application Modules."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from app.domain.accounts.controllers import AccessController, UserController, UserRoleController
+from app.domain.accounts.controllers import (
+    AccessController,
+    ProfileController,
+    RegistrationController,
+    UserController,
+    UserRoleController,
+)
 from app.domain.system.controllers import SystemController
 from app.domain.tags.controllers import TagController
 from app.domain.teams.controllers import TeamController, TeamMemberController
@@ -15,6 +22,8 @@ if TYPE_CHECKING:
 
 route_handlers: list[ControllerRouterHandler] = [
     AccessController,
+    ProfileController,
+    RegistrationController,
     UserController,
     TeamController,
     UserRoleController,
