@@ -112,7 +112,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                 {auth?.user?.teams.map((team) => (
                   <CommandItem
                     key={team.teamId}
-                    value={team.teamId}
+                    value={team.teamName}
                     onSelect={() => {
                       showTeam(team.teamId)
                       setOpen(false)

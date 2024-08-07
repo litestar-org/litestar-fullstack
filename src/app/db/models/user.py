@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
@@ -27,7 +28,6 @@ class User(UUIDAuditBase):
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     verified_at: Mapped[date] = mapped_column(nullable=True, default=None)
     joined_at: Mapped[date] = mapped_column(default=datetime.now)
-    login_count: Mapped[int] = mapped_column(default=0)
     # -----------
     # ORM Relationships
     # ------------
@@ -51,3 +51,7 @@ class User(UUIDAuditBase):
         cascade="all, delete",
         uselist=True,
     )
+
+    @hybrid_property
+    def has_password(self) -> bool:
+        return self.hashed_password is not None
