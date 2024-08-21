@@ -3,10 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
+from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, is_msgspec_model, is_pydantic_model
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
 
+from app.config import constants
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
 from app.db.models.user import User  # noqa: TCH001
@@ -17,10 +19,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from uuid import UUID
 
-    from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.repository._util import LoadSpec
     from advanced_alchemy.service import ModelDictT
-    from msgspec import Struct
     from sqlalchemy.orm import InstrumentedAttribute
 
 __all__ = (
@@ -40,24 +40,14 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         self.repository: TeamRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def get_user_teams(
-        self,
-        *filters: FilterTypes,
-        user_id: UUID,
-        **kwargs: Any,
-    ) -> tuple[list[Team], int]:
-        """Get all teams for a user."""
-        return await self.repository.get_user_teams(*filters, user_id=user_id, **kwargs)
-
     async def create(
         self,
         data: ModelDictT[Team],
         *,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
     ) -> Team:
         """Create a new team with an owner."""
         owner_id: UUID | None = None
@@ -85,11 +75,10 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             )
         await super().create(
             data=data,
-            load=load,
-            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=True,
             auto_refresh=False,
+            error_messages=error_messages,
         )
         return data
 
@@ -99,13 +88,14 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         item_id: Any | None = None,
         *,
         id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
     ) -> Team:
         """Wrap repository update operation.
 
@@ -139,9 +129,21 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
+            error_messages=error_messages,
         )
 
-    async def to_model(self, data: Team | dict[str, Any] | Struct, operation: str | None = None) -> Team:
+    @staticmethod
+    def can_view_all(user: User) -> bool:
+        return bool(
+            user.is_superuser
+            or any(
+                assigned_role.role.name
+                for assigned_role in user.roles
+                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
+            ),
+        )
+
+    async def to_model(self, data: ModelDictT[Team], operation: str | None = None) -> Team:
         if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]

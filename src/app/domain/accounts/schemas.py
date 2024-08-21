@@ -66,6 +66,7 @@ class User(CamelizedBaseStruct):
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
+    has_password: bool = False
     teams: list[UserTeam] = []
     roles: list[UserRole] = []
     oauth_accounts: list[OauthAccount] = []

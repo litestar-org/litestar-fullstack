@@ -6,9 +6,11 @@ from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
+from sqlalchemy import select
 
-from app.config import constants
+from app.db.models import Team as TeamModel
 from app.db.models import User as UserModel
+from app.db.models.team_member import TeamMember as TeamMemberModel
 from app.domain.accounts.guards import requires_active_user
 from app.domain.teams import urls
 from app.domain.teams.dependencies import provide_teams_service
@@ -35,16 +37,13 @@ class TeamController(Controller):
         "TeamService": TeamService,
         "TeamUpdate": TeamUpdate,
         "TeamCreate": TeamCreate,
-        "UserModel": UserModel,
     }
-    dto = None
-    return_dto = None
 
     @get(
+        component="team/list",
+        name="teams.list",
         operation_id="ListTeams",
-        name="teams:list",
-        summary="List Teams",
-        path=urls.TEAM_LIST,
+        path="/teams/",
     )
     async def list_teams(
         self,
@@ -53,18 +52,11 @@ class TeamController(Controller):
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
-        show_all = bool(
-            current_user.is_superuser
-            or any(
-                assigned_role.role.name
-                for assigned_role in current_user.roles
-                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
-            ),
-        )
-        if show_all:
-            results, total = await teams_service.list_and_count(*filters)
-        else:
-            results, total = await teams_service.get_user_teams(*filters, user_id=current_user.id)
+        if not teams_service.can_view_all(current_user):
+            filters.append(
+                TeamModel.id.in_(select(TeamMemberModel.team_id).where(TeamMemberModel.user_id == current_user.id)),  # type: ignore[arg-type]
+            )
+        results, total = await teams_service.list_and_count(*filters)
         return teams_service.to_schema(data=results, total=total, schema_type=Team, filters=filters)
 
     @post(

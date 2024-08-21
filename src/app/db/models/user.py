@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
@@ -51,3 +52,7 @@ class User(UUIDAuditBase):
         cascade="all, delete",
         uselist=True,
     )
+
+    @hybrid_property
+    def has_password(self) -> bool:
+        return self.hashed_password is not None
