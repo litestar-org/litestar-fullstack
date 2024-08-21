@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 from uuid import UUID  # noqa: TCH003
 
+from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import (
     ModelDictT,
     SQLAlchemyAsyncRepositoryService,
@@ -14,15 +15,15 @@ from advanced_alchemy.service import (
 from litestar.exceptions import PermissionDeniedException
 
 from app.config import constants
-from app.db.models import Role, User, UserRole
+from app.db.models import Role, User, UserOauthAccount, UserRole
 from app.lib import crypt
 
-from .repositories import RoleRepository, UserRepository, UserRoleRepository
+from .repositories import RoleRepository, UserOauthAccountRepository, UserRepository, UserRoleRepository
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from advanced_alchemy.repository._util import LoadSpec
+    from advanced_alchemy.repository import LoadSpec
     from sqlalchemy.orm import InstrumentedAttribute
 
 
@@ -40,11 +41,10 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         self,
         data: ModelDictT[User],
         *,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
     ) -> User:
         """Create a new User and assign default Role."""
         if isinstance(data, dict):
@@ -54,11 +54,10 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
                 data.roles.append(UserRole(role_id=role_id, assigned_at=datetime.now(timezone.utc)))  # noqa: UP017
         return await super().create(
             data=data,
-            load=load,
-            execution_options=execution_options,
             auto_commit=auto_commit,
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
+            error_messages=error_messages,
         )
 
     async def update(
@@ -67,13 +66,14 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         item_id: Any | None = None,
         *,
         id_attribute: str | InstrumentedAttribute[Any] | None = None,
-        load: LoadSpec | None = None,
-        execution_options: dict[str, Any] | None = None,
         attribute_names: Iterable[str] | None = None,
         with_for_update: bool | None = None,
         auto_commit: bool | None = None,
         auto_expunge: bool | None = None,
         auto_refresh: bool | None = None,
+        error_messages: ErrorMessages | None | EmptyType = Empty,
+        load: LoadSpec | None = None,
+        execution_options: dict[str, Any] | None = None,
     ) -> User:
         if isinstance(data, dict):
             role_id: UUID | None = data.pop("role_id", None)
@@ -89,6 +89,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
             auto_expunge=auto_expunge,
             auto_refresh=auto_refresh,
             id_attribute=id_attribute,
+            error_messages=error_messages,
             load=load,
             execution_options=execution_options,
         )
@@ -109,16 +110,16 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         db_obj = await self.get_one_or_none(email=username)
         if db_obj is None:
             msg = "User not found or password invalid"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if db_obj.hashed_password is None:
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not await crypt.verify_password(password, db_obj.hashed_password):
             msg = "User not found or password invalid"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not db_obj.is_active:
             msg = "User account is inactive"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         return db_obj
 
     async def update_password(self, data: dict[str, Any], db_obj: User) -> None:
@@ -135,15 +136,36 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
         """
         if db_obj.hashed_password is None:
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not await crypt.verify_password(data["current_password"], db_obj.hashed_password):
             msg = "User not found or password invalid."
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         if not db_obj.is_active:
             msg = "User account is not active"
-            raise PermissionDeniedException(msg)
+            raise PermissionDeniedException(detail=msg)
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
         await self.repository.update(db_obj)
+
+    @staticmethod
+    async def has_role_id(db_obj: User, role_id: UUID) -> bool:
+        """Return true if user has specified role ID"""
+        return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_id == role_id)
+
+    @staticmethod
+    async def has_role(db_obj: User, role_name: str) -> bool:
+        """Return true if user has specified role ID"""
+        return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_name == role_name)
+
+    @staticmethod
+    def is_superuser(user: User) -> bool:
+        return bool(
+            user.is_superuser
+            or any(
+                assigned_role.role.name
+                for assigned_role in user.roles
+                if assigned_role.role.name in {constants.SUPERUSER_ACCESS_ROLE}
+            ),
+        )
 
     async def to_model(self, data: ModelDictT[User], operation: str | None = None) -> User:
         if isinstance(data, dict) and "password" in data:
@@ -179,3 +201,9 @@ class UserRoleService(SQLAlchemyAsyncRepositoryService[UserRole]):
     """Handles database operations for user roles."""
 
     repository_type = UserRoleRepository
+
+
+class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[UserOauthAccount]):
+    """Handles database operations for user roles."""
+
+    repository_type = UserOauthAccountRepository
