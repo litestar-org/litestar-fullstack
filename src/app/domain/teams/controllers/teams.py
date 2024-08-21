@@ -43,7 +43,7 @@ class TeamController(Controller):
         component="team/list",
         name="teams.list",
         operation_id="ListTeams",
-        path="/teams/",
+        path=urls.TEAM_LIST,
     )
     async def list_teams(
         self,
