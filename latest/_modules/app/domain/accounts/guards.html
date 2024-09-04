@@ -823,10 +823,12 @@ document.write(`
     <span class="n">token_secret</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span>
     <span class="n">token_url</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_LOGIN</span><span class="p">,</span>
     <span class="n">exclude</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">constants</span><span class="o">.</span><span class="n">OPENAPI_SCHEMA</span><span class="p">,</span>
         <span class="n">constants</span><span class="o">.</span><span class="n">HEALTH_ENDPOINT</span><span class="p">,</span>
         <span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_LOGIN</span><span class="p">,</span>
         <span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_REGISTER</span><span class="p">,</span>
+        <span class="s2">&quot;^/schema&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;^/public/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;^/saq/static/&quot;</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
