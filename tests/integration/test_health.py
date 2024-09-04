@@ -8,12 +8,11 @@ pytestmark = pytest.mark.anyio
 
 async def test_health(client: AsyncClient) -> None:
     response = await client.get("/health")
-    assert response.status_code == 500
+    assert response.status_code == 200
 
     expected = {
         "database_status": "online",
-        "cache_status": "offline",
-        "worker_status": "offline",
+        "cache_status": "online",
         "app": "app",
         "version": __version__,
     }
