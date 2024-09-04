@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 import pytest
@@ -18,7 +19,7 @@ pytest_plugins = [
     "tests.data_fixtures",
     "pytest_databases.docker",
     "pytest_databases.docker.postgres",
-    "pytest_databases.docker.redis",
+    "pytest_databases.docker.valkey",
 ]
 
 
@@ -39,11 +40,18 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(base, "get_settings", get_settings)
 
 
+@pytest.fixture(name="valkey_port", autouse=True, scope="session")
+async def fx_valkey_port() -> int:
+    """Set port for valkey testing"""
+
+    return int(os.environ.get("VALKEY_PORT", 6308))
+
+
 @pytest.fixture(name="redis", autouse=True)
-async def fx_redis(redis_docker_ip: str, redis_service: None, redis_port: int) -> AsyncGenerator[Redis, None]:
+async def fx_redis(valkey_docker_ip: str, valkey_service: None, valkey_port: int) -> AsyncGenerator[Redis, None]:
     """Redis instance for testing.
 
     Returns:
         Redis client instance, function scoped.
     """
-    yield Redis(host=redis_docker_ip, port=redis_port)
+    yield Redis(host=valkey_docker_ip, port=valkey_port)

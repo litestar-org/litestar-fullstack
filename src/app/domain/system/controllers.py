@@ -54,26 +54,22 @@ class SystemController(Controller):
         except RedisError:
             cache_ping = False
         cache_status = "online" if cache_ping else "offline"
-        worker_ping = bool([await queue.info() for queue in task_queues.queues.values()])
-        worker_status = "online" if worker_ping else "offline"
-        healthy = worker_ping and cache_ping and db_ping
+        healthy = cache_ping and db_ping
         if healthy:
             await logger.adebug(
                 "System Health",
                 database_status=db_status,
                 cache_status=cache_status,
-                worker_status=worker_status,
             )
         else:
             await logger.awarn(
                 "System Health Check",
                 database_status=db_status,
                 cache_status=cache_status,
-                worker_status=worker_status,
             )
 
         return Response(
-            content=SystemHealth(database_status=db_status, cache_status=cache_status, worker_status=worker_status),  # type: ignore
-            status_code=200 if db_ping and cache_ping and worker_ping else 500,
+            content=SystemHealth(database_status=db_status, cache_status=cache_status),  # type: ignore
+            status_code=200 if db_ping and cache_ping else 500,
             media_type=MediaType.JSON,
         )

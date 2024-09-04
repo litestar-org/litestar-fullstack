@@ -29,7 +29,7 @@ pytestmark = pytest.mark.anyio
 async def fx_engine(
     postgres_docker_ip: str,
     postgres_service: None,
-    redis_service: None,
+    valkey_service: None,
     postgres_port: int,
     postgres_user: str,
     postgres_password: str,
