@@ -1,4 +1,5 @@
 """User Routes."""
+
 from __future__ import annotations
 
 from litestar import Controller, post
@@ -44,8 +45,13 @@ class UserRoleController(Controller):
         """Create a new migration role."""
         role_id = (await roles_service.get_one(slug=role_slug)).id
         user_obj = await users_service.get_one(email=data.user_name)
-        if all(user_role.role_id != role_id for user_role in user_obj.roles):
-            obj, created = await user_roles_service.get_or_upsert(role_id=role_id, user_id=user_obj.id)
+        # if all(user_role.role_id != role_id for user_role in user_obj.roles):
+        obj, created = await user_roles_service.get_or_upsert(
+            role_id=role_id,
+            user_id=user_obj.id,
+            # with_for_update=True,
+            # auto_commit=True,
+        )
         if created:
             return Message(message=f"Successfully assigned the '{obj.role_slug}' role to {obj.user_email}.")
         return Message(message=f"User {obj.user_email} already has the '{obj.role_slug}' role.")

@@ -327,7 +327,7 @@ class LogSettings:
     """Log event name for logs from SAQ worker."""
     SAQ_LEVEL: int = 20
     """Level to log SAQ logs."""
-    SQLALCHEMY_LEVEL: int = 20
+    SQLALCHEMY_LEVEL: int = 30
     """Level to log SQLAlchemy logs."""
     UVICORN_ACCESS_LEVEL: int = 20
     """Level to log uvicorn access logs."""

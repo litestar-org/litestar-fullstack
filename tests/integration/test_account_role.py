@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING
 
 import pytest
+from httpx import Response
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
@@ -66,3 +68,27 @@ async def test_superuser_role_access(
     response = await client.get("/api/teams", headers=user_token_headers)
     assert response.status_code == 200
     assert int(response.json()["total"]) == 0
+
+
+@pytest.mark.parametrize("n_requests", [1, 4])
+async def test_assign_role_concurrent(
+    client: "AsyncClient",
+    superuser_token_headers: dict[str, str],
+    n_requests: int,
+) -> None:
+    async def post() -> Response:
+        return await client.post(
+            "/api/roles/superuser/assign",
+            json={"userName": "user@example.com"},
+            headers=superuser_token_headers,
+        )
+
+    responses = await asyncio.gather(*[post() for _ in range(n_requests)])
+
+    assert all(res.status_code == 201 for res in responses)
+    messages = [res.json()["message"] for res in responses]
+    assert "Successfully assigned the 'superuser' role to user@example.com." in messages
+
+    responses = await asyncio.gather(*[post() for _ in range(n_requests)])
+    messages = [res.json()["message"] for res in responses]
+    assert "User user@example.com already has the 'superuser' role." in messages
