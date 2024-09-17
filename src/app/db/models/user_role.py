@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from uuid import UUID  # noqa: TCH003
 
 from advanced_alchemy.base import UUIDAuditBase
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,7 +18,10 @@ class UserRole(UUIDAuditBase):
     """User Role."""
 
     __tablename__ = "user_account_role"
-    __table_args__ = {"comment": "Links a user to a specific role."}
+    __table_args__ = (
+        UniqueConstraint("user_id", "role_id"),  # Avoid multiple assignments of the same role
+        {"comment": "Links a user to a specific role."},
+    )
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user_account.id", ondelete="cascade"), nullable=False)
     role_id: Mapped[UUID] = mapped_column(ForeignKey("role.id", ondelete="cascade"), nullable=False)
     assigned_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
