@@ -49,8 +49,6 @@ class UserRoleController(Controller):
         obj, created = await user_roles_service.get_or_upsert(
             role_id=role_id,
             user_id=user_obj.id,
-            # with_for_update=True,
-            # auto_commit=True,
         )
         if created:
             return Message(message=f"Successfully assigned the '{obj.role_slug}' role to {obj.user_email}.")

@@ -4,10 +4,9 @@ import asyncio
 from typing import TYPE_CHECKING
 
 import pytest
-from httpx import Response
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx import AsyncClient, Response
 
 
 pytestmark = pytest.mark.anyio
