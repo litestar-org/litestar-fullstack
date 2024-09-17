@@ -90,5 +90,6 @@ async def test_assign_role_concurrent(
     assert "Successfully assigned the 'superuser' role to user@example.com." in messages
 
     responses = await asyncio.gather(*[post() for _ in range(n_requests)])
+    assert all(res.status_code == 201 for res in responses)
     messages = [res.json()["message"] for res in responses]
-    assert "User user@example.com already has the 'superuser' role." in messages
+    assert all(msg == "User user@example.com already has the 'superuser' role." for msg in messages)
