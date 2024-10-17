@@ -49,6 +49,8 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
 
+        from uuid import UUID
+
         from advanced_alchemy.exceptions import RepositoryError
         from litestar.security.jwt import Token
 
@@ -70,6 +72,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
                 "Token": Token,
                 "OAuth2Login": OAuth2Login,
                 "UserModel": UserModel,
+                "UUID": UUID,
             },
         )
         app_config.exception_handlers = {
