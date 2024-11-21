@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-"""Name of the favicon file in the static directory"""
 DB_SESSION_DEPENDENCY_KEY = "db_session"
 """The name of the key used for dependency injection of the database
 session."""
@@ -21,7 +20,5 @@ SITE_INDEX = "/"
 """The site index URL."""
 OPENAPI_SCHEMA = "/schema"
 """The URL path to use for the OpenAPI documentation."""
-DEFAULT_USER_ROLE = "Application Access"
-"""The name of the default role assigned to all users."""
 SUPERUSER_ACCESS_ROLE = "Superuser"
 """The name of the super user role."""
