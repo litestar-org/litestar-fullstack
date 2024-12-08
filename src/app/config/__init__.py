@@ -5,10 +5,10 @@ from . import constants
 from .base import BASE_DIR, DEFAULT_MODULE_NAME, Settings, get_settings
 
 __all__ = (
-    "Settings",
-    "get_settings",
-    "constants",
-    "plugin_configs",
-    "DEFAULT_MODULE_NAME",
     "BASE_DIR",
+    "DEFAULT_MODULE_NAME",
+    "Settings",
+    "constants",
+    "get_settings",
+    "plugin_configs",
 )

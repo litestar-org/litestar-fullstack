@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
-from uuid import UUID  # noqa: TCH003
+from uuid import UUID  # noqa: TC003
 
 from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
 from advanced_alchemy.service import (
@@ -34,7 +34,7 @@ class UserService(SQLAlchemyAsyncRepositoryService[User]):
     default_role = constants.DEFAULT_USER_ROLE
 
     def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: UserRepository = self.repository_type(**repo_kwargs)
+        self.repository: UserRepository = self.repository_type(**repo_kwargs)  # pyright: ignore[reportAttributeAccessIssue]
         self.model_type = self.repository.model_type
 
     async def create(
@@ -182,7 +182,7 @@ class RoleService(SQLAlchemyAsyncRepositoryService[Role]):
     match_fields = ["name"]
 
     def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: RoleRepository = self.repository_type(**repo_kwargs)
+        self.repository: RoleRepository = self.repository_type(**repo_kwargs)  # pyright: ignore[reportAttributeAccessIssue]
         self.model_type = self.repository.model_type
 
     async def to_model(self, data: ModelDictT[Role], operation: str | None = None) -> Role:

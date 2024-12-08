@@ -11,7 +11,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.6.9
+    rev: v0.8.2
     hooks:
       - id: ruff
         args:
@@ -22,13 +22,13 @@ repos:
       - id: prettier
         exclude: templates|migrations|scripts|docs|dist|.venv|public
   - repo: https://github.com/ariebovenberg/slotscheck
-    rev: v0.19.0
+    rev: v0.19.1
     hooks:
       - id: slotscheck
         exclude: test_*|docs|migrations|scripts
         entry: env PYTHONPATH=src slotscheck
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.12.0
+    rev: v1.13.0
     hooks:
       - id: mypy
         exclude: scripts/

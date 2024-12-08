@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
     from litestar.dto import RenameStrategy
 
-__all__ = ("config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO")
+__all__ = ("DTOConfig", "DataclassDTO", "SQLAlchemyDTO", "config", "dto_field")
 
 DTOT = TypeVar("DTOT", bound=DataclassProtocol | DeclarativeBase)
 DTOFactoryT = TypeVar("DTOFactoryT", bound=DataclassDTO | SQLAlchemyDTO)

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.base import SlugKey, UUIDAuditBase
+from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.mixins import SlugKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

@@ -11,7 +11,7 @@ from uuid_utils.compat import uuid4
 from app.config import constants
 from app.db.models import Team, TeamInvitation, TeamMember, TeamRoles
 from app.db.models.tag import Tag
-from app.db.models.user import User  # noqa: TCH001
+from app.db.models.user import User  # noqa: TC001
 
 from .repositories import TeamInvitationRepository, TeamMemberRepository, TeamRepository
 
@@ -37,7 +37,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
     match_fields = ["name"]
 
     def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: TeamRepository = self.repository_type(**repo_kwargs)
+        self.repository: TeamRepository = self.repository_type(**repo_kwargs)  # pyright: ignore[reportAttributeAccessIssue]
         self.model_type = self.repository.model_type
 
     async def create(

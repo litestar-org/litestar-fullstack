@@ -36,6 +36,7 @@ def create_app() -> Litestar:
         debug=settings.app.DEBUG,
         openapi_config=openapi.config,
         route_handlers=routers.route_handlers,
+        template_config=config.templates,
         plugins=[
             plugins.app_config,
             plugins.structlog,

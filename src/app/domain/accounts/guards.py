@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from litestar.security.jwt import Token
 
 
-__all__ = ("requires_superuser", "requires_active_user", "requires_verified_user", "current_user_from_token", "auth")
+__all__ = ("auth", "current_user_from_token", "requires_active_user", "requires_superuser", "requires_verified_user")
 
 
 settings = get_settings()

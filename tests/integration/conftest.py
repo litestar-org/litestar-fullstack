@@ -7,19 +7,20 @@ from advanced_alchemy.base import UUIDAuditBase
 from advanced_alchemy.utils.fixtures import open_fixture_async
 from httpx import AsyncClient
 from litestar import Litestar
+from litestar.testing import AsyncTestClient
 from litestar_saq.cli import get_saq_plugin
 from redis.asyncio import Redis
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
+from app.config import app as config
 from app.config import get_settings
 from app.db.models import Team, User
 from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.server.builder import ApplicationConfigurator
-from app.server.plugins import alchemy
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
@@ -56,8 +57,8 @@ async def fx_engine(
 
 
 @pytest.fixture(name="sessionmaker")
-def fx_session_maker_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
-    return async_sessionmaker(bind=engine, expire_on_commit=False)
+async def fx_session_maker_factory(engine: AsyncEngine) -> AsyncGenerator[async_sessionmaker[AsyncSession], None]:
+    yield async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
 @pytest.fixture(name="session")
@@ -72,7 +73,7 @@ async def _seed_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     raw_users: list[User | dict[str, Any]],
     raw_teams: list[Team | dict[str, Any]],
-) -> AsyncIterator[None]:
+) -> AsyncGenerator[None, None]:
     """Populate test database with.
 
     Args:
@@ -111,21 +112,8 @@ def _patch_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
-    if isinstance(alchemy._config, list):
-        monkeypatch.setitem(app.state, alchemy._config[0].engine_app_state_key, engine)
-        monkeypatch.setitem(
-            app.state,
-            alchemy._config[0].session_maker_app_state_key,
-            async_sessionmaker(bind=engine, expire_on_commit=False),
-        )
-    else:
-        monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
-        monkeypatch.setitem(
-            app.state,
-            alchemy._config.session_maker_app_state_key,
-            async_sessionmaker(bind=engine, expire_on_commit=False),
-        )
+    monkeypatch.setattr(config.alchemy, "session_maker", sessionmaker)
+    monkeypatch.setattr(config.alchemy, "engine_instance", engine)
 
 
 @pytest.fixture(autouse=True)
@@ -149,7 +137,7 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncTestClient(app, base_url="http://testserver") as client:  # type: ignore[misc,arg-type]
         yield client
 
 

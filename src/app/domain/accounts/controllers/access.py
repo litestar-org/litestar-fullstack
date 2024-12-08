@@ -11,7 +11,7 @@ from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.security.jwt import OAuth2Login
 
-from app.db.models import User as UserModel  # noqa: TCH001
+from app.db.models import User as UserModel  # noqa: TC001
 from app.domain.accounts import urls
 from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
 from app.domain.accounts.guards import auth, requires_active_user
