@@ -137,7 +137,7 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    async with AsyncTestClient(app, base_url="http://testserver") as client:  # type: ignore[misc,arg-type]
+    async with AsyncTestClient(app, base_url="http://testserver") as client:
         yield client
 
 
