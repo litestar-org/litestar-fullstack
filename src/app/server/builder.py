@@ -22,7 +22,7 @@ T = TypeVar("T")
 class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
     """Application configuration plugin."""
 
-    __slots__ = ("redis", "app_slug")
+    __slots__ = ("app_slug", "redis")
     redis: Redis
     app_slug: str
 

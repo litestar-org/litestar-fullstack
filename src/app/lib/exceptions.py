@@ -30,9 +30,9 @@ if TYPE_CHECKING:
     from litestar.types import Scope
 
 __all__ = (
+    "ApplicationError",
     "AuthorizationError",
     "HealthCheckConfigurationError",
-    "ApplicationError",
     "after_exception_hook_handler",
 )
 

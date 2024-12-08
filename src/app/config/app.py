@@ -1,17 +1,19 @@
 import logging
 from typing import cast
 
-from advanced_alchemy.extensions.litestar import (
+from litestar.config.compression import CompressionConfig
+from litestar.config.cors import CORSConfig
+from litestar.config.csrf import CSRFConfig
+from litestar.contrib.jinja import JinjaTemplateEngine
+from litestar.logging.config import LoggingConfig, StructLoggingConfig
+from litestar.middleware.logging import LoggingMiddlewareConfig
+from litestar.plugins.sqlalchemy import (
     AlembicAsyncConfig,
     AsyncSessionConfig,
     SQLAlchemyAsyncConfig,
 )
-from litestar.config.compression import CompressionConfig
-from litestar.config.cors import CORSConfig
-from litestar.config.csrf import CSRFConfig
-from litestar.logging.config import LoggingConfig, StructLoggingConfig
-from litestar.middleware.logging import LoggingMiddlewareConfig
 from litestar.plugins.structlog import StructlogConfig
+from litestar.template import TemplateConfig
 from litestar_saq import CronJob, QueueConfig, SAQConfig
 from litestar_vite import ViteConfig
 
@@ -36,10 +38,11 @@ alchemy = SQLAlchemyAsyncConfig(
         script_location=settings.db.MIGRATION_PATH,
     ),
 )
+templates = TemplateConfig(engine=JinjaTemplateEngine(directory=settings.vite.TEMPLATE_DIR))
+
 vite = ViteConfig(
     bundle_dir=settings.vite.BUNDLE_DIR,
     resource_dir=settings.vite.RESOURCE_DIR,
-    template_dir=settings.vite.TEMPLATE_DIR,
     use_server_lifespan=settings.vite.USE_SERVER_LIFESPAN,
     dev_mode=settings.vite.DEV_MODE,
     hot_reload=settings.vite.HOT_RELOAD,

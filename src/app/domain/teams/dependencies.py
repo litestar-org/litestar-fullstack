@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, noload, selectinload
 from app.db.models import Team, TeamInvitation, TeamMember
 from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
 
-__all__ = ("provide_team_members_service", "provide_teams_service", "provide_team_invitations_service")
+__all__ = ("provide_team_invitations_service", "provide_team_members_service", "provide_teams_service")
 
 
 if TYPE_CHECKING:

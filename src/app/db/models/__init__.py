@@ -10,14 +10,14 @@ from .user import User
 from .user_role import UserRole
 
 __all__ = (
-    "User",
-    "UserOauthAccount",
     "Role",
-    "UserRole",
     "Tag",
-    "team_tag",
     "Team",
     "TeamInvitation",
     "TeamMember",
     "TeamRoles",
+    "User",
+    "UserOauthAccount",
+    "UserRole",
+    "team_tag",
 )

@@ -3,10 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import pytest
-from httpx import AsyncClient
 from litestar import get
-
-from app.config import app as config
+from litestar.testing import AsyncTestClient
 
 if TYPE_CHECKING:
     from litestar import Litestar
@@ -17,7 +15,8 @@ if TYPE_CHECKING:
 pytestmark = pytest.mark.anyio
 
 
-def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
+@pytest.mark.anyio
+async def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
     """Test that the app's cache is patched.
 
     Args:
@@ -25,16 +24,6 @@ def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
         redis: The test Redis client instance.
     """
     assert cast("RedisStore", app.stores.get("response_cache"))._redis is redis
-
-
-def test_engine_on_app(app: "Litestar", engine: "AsyncEngine") -> None:
-    """Test that the app's engine is patched.
-
-    Args:
-        app: The test Litestar instance
-        engine: The test SQLAlchemy engine instance.
-    """
-    assert app.state[config.alchemy.engine_app_state_key] is engine
 
 
 @pytest.mark.anyio
@@ -52,6 +41,6 @@ async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> 
 
     app.register(db_session_dependency_patched)
     # can't use test client as it always starts its own event loop
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncTestClient(app, base_url="http://testserver") as client:
         response = await client.get("/db-session-test")
         assert response.json()["result"] == "db_session.bind is engine = True"

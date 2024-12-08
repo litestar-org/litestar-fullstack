@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
-from uuid import UUID  # noqa: TCH003
+from uuid import UUID  # noqa: TC003
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import ForeignKey
