@@ -16,27 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
@@ -53,6 +56,7 @@
     <link rel="prev" title="models" href="models.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -68,19 +72,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../../search.html"
       method="get">
@@ -88,7 +81,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -96,8 +88,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -131,7 +123,7 @@
     
     
     <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
-    <script>document.write(`<img src="../../../_static/logo.svg" class="logo__image only-dark" alt="Litestar Fullstack Docs - Home"/>`);</script>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Litestar Fullstack Docs - Home"/>
   
   
 </a></div>
@@ -330,27 +322,19 @@
         <div class="navbar-item navbar-persistent--container">
           
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
         </div>
       
         <div class="navbar-item navbar-persistent--container">
           
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
         </div>
       
       
@@ -389,26 +373,18 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
     </div>
   
     <div class="navbar-persistent--mobile">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
     </div>
   
 
@@ -427,7 +403,8 @@ document.write(`
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -787,10 +764,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -803,12 +776,12 @@ document.write(`
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">API Reference</a></li>
     
     
-    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">domain</a></li>
     
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">accounts</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">services</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">services</span></li>
   </ul>
 </nav>
 </div>
@@ -880,7 +853,7 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.accounts.services.UserService.create">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">~app.db.models.user.User</span> <span class="pre">|</span> <span class="pre">~msgspec.Struct</span> <span class="pre">|</span> <span class="pre">~advanced_alchemy.service.typing.BaseModel</span> <span class="pre">|</span> <span class="pre">~litestar.dto.data_structures.DTOData[~app.db.models.user.User],</span> <span class="pre">*,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">~typing.Type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">User</span></span></span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserService.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserService.create" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">~app.db.models.user.User</span> <span class="pre">|</span> <span class="pre">~msgspec.Struct</span> <span class="pre">|</span> <span class="pre">~advanced_alchemy.service._typing.BaseModel</span> <span class="pre">|</span> <span class="pre">~litestar.dto.data_structures.DTOData[~app.db.models.user.User],</span> <span class="pre">*,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">~typing.Type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">User</span></span></span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserService.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserService.create" title="Link to this definition">#</a></dt>
 <dd><p>Create a new User and assign default Role.</p>
 </dd></dl>
 
@@ -898,12 +871,9 @@ method.</p></li>
 <li><p><strong>with_for_update</strong> – indicating FOR UPDATE should be used, or may be a
 dictionary containing flags to indicate a more specific set of
 FOR UPDATE flags for the SELECT</p></li>
-<li><p><strong>auto_expunge</strong> – Remove object from session before returning. Defaults to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepository.auto_expunge</span></code>.</p></li>
-<li><p><strong>auto_refresh</strong> – Refresh object from session before returning. Defaults to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepository.auto_refresh</span></code></p></li>
-<li><p><strong>auto_commit</strong> – Commit objects before returning. Defaults to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepository.auto_commit</span></code></p></li>
+<li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
+<li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
+<li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
 <li><p><strong>id_attribute</strong> – Allows customization of the unique identifier to use for model fetching.
 Defaults to <cite>id</cite>, but can reference any surrogate or candidate key for the table.</p></li>
 <li><p><strong>error_messages</strong> – An optional dictionary of templates to use
@@ -1018,6 +988,12 @@ for friendlier error messages to clients</p></li>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">RoleRepository</span></code></p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.services.RoleService.match_fields">
+<span class="sig-name descname"><span class="pre">match_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['name']</span></em><a class="headerlink" href="#app.domain.accounts.services.RoleService.match_fields" title="Link to this definition">#</a></dt>
+<dd><p>List of dialects that prefer to use <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">=</span> <span class="pre">ANY(:1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">IN</span> <span class="pre">(...)</span></code>.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.accounts.services.RoleService.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">repo_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#RoleService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.RoleService.__init__" title="Link to this definition">#</a></dt>
@@ -1061,7 +1037,7 @@ for friendlier error messages to clients</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.accounts.services.UserRoleService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.services.</span></span><span class="sig-name descname"><span class="pre">UserRoleService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">StatementLambdaElement</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserRoleService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserRoleService" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.services.</span></span><span class="sig-name descname"><span class="pre">UserRoleService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserRoleService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserRoleService" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">UserRole</span></code>]</p>
 <p>Handles database operations for user roles.</p>
 <p>Configure the service object.</p>
@@ -1091,7 +1067,7 @@ for friendlier error messages to clients</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.accounts.services.UserOAuthAccountService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.services.</span></span><span class="sig-name descname"><span class="pre">UserOAuthAccountService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">StatementLambdaElement</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserOAuthAccountService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserOAuthAccountService" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.services.</span></span><span class="sig-name descname"><span class="pre">UserOAuthAccountService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/accounts/services.html#UserOAuthAccountService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.services.UserOAuthAccountService" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">UserOauthAccount</span></code>]</p>
 <p>Handles database operations for user roles.</p>
 <p>Configure the service object.</p>
@@ -1156,7 +1132,8 @@ for friendlier error messages to clients</p></li>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1181,6 +1158,7 @@ for friendlier error messages to clients</p></li>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.services.RoleService"><code class="docutils literal notranslate"><span class="pre">RoleService</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.services.RoleService.repository_type"><code class="docutils literal notranslate"><span class="pre">RoleService.repository_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.services.RoleService.match_fields"><code class="docutils literal notranslate"><span class="pre">RoleService.match_fields</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.services.RoleService.__init__"><code class="docutils literal notranslate"><span class="pre">RoleService.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.accounts.services.RoleService.to_model"><code class="docutils literal notranslate"><span class="pre">RoleService.to_model()</span></code></a></li>
 </ul>
@@ -1234,8 +1212,8 @@ for friendlier error messages to clients</p></li>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1268,7 +1246,7 @@ for friendlier error messages to clients</p></li>
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
 </p></div>
       
     </div>

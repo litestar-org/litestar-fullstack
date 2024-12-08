@@ -16,27 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
@@ -53,6 +56,7 @@
     <link rel="prev" title="csrf" href="csrf.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -68,19 +72,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -88,7 +81,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -96,8 +88,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -131,7 +123,7 @@
     
     
     <img src="../../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
-    <script>document.write(`<img src="../../_static/logo.svg" class="logo__image only-dark" alt="Litestar Fullstack Docs - Home"/>`);</script>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Litestar Fullstack Docs - Home"/>
   
   
 </a></div>
@@ -330,27 +322,19 @@
         <div class="navbar-item navbar-persistent--container">
           
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
         </div>
       
         <div class="navbar-item navbar-persistent--container">
           
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
         </div>
       
       
@@ -389,26 +373,18 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
     </div>
   
     <div class="navbar-persistent--mobile">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
     </div>
   
 
@@ -427,7 +403,8 @@ document.write(`
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -787,8 +764,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -803,7 +778,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">lib</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">dependencies</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dependencies</span></li>
   </ul>
 </nav>
 </div>
@@ -824,6 +799,139 @@ document.write(`
 <h1>dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h1>
 <p>Application dependency layer</p>
 <p id="module-app.lib.dependencies">Application dependency providers.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">BeforeAfter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#BeforeAfter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.BeforeAfter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
+<p>Data required to filter a query on a <code class="docutils literal notranslate"><span class="pre">datetime</span></code> column.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.field_name">
+<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.field_name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the model attribute to filter on.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.before">
+<span class="sig-name descname"><span class="pre">before</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.before" title="Link to this definition">#</a></dt>
+<dd><p>Filter results where field earlier than this.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.after">
+<span class="sig-name descname"><span class="pre">after</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.after" title="Link to this definition">#</a></dt>
+<dd><p>Filter results where field later than this.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">CollectionFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#CollectionFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.CollectionFilter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">InAnyFilter</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">...</span> <span class="pre">IN</span> <span class="pre">(...)</span></code> clause.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.field_name">
+<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.field_name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the model attribute to filter on.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.values">
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.values" title="Link to this definition">#</a></dt>
+<dd><p>Values for <code class="docutils literal notranslate"><span class="pre">IN</span></code> clause.</p>
+<p>An empty list will return an empty result set, however, if <code class="docutils literal notranslate"><span class="pre">None</span></code>, the filter is not applied to the query, and all rows are returned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">LimitOffset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#LimitOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.LimitOffset" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PaginationFilter</span></code></p>
+<p>Data required to add limit/offset filtering to a query.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.limit">
+<span class="sig-name descname"><span class="pre">limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.limit" title="Link to this definition">#</a></dt>
+<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">LIMIT</span></code> clause of query.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.offset">
+<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.offset" title="Link to this definition">#</a></dt>
+<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code> clause of query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.LimitOffset.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">OrderBy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'asc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#OrderBy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.OrderBy" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
+<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span> <span class="pre">...</span></code> clause.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.field_name">
+<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.field_name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the model attribute to sort on.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'asc'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.OrderBy.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.sort_order">
+<span class="sig-name descname"><span class="pre">sort_order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'asc'</span></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.sort_order" title="Link to this definition">#</a></dt>
+<dd><p>Sort ascending or descending</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">SearchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#SearchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.SearchFilter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
+<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">field_name</span> <span class="pre">LIKE</span> <span class="pre">'%'</span> <span class="pre">||</span> <span class="pre">:value</span> <span class="pre">||</span> <span class="pre">'%'</span></code> clause.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.SearchFilter.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.field_name">
+<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.field_name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the model attribute to search on.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.value" title="Link to this definition">#</a></dt>
+<dd><p>Search value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.ignore_case">
+<span class="sig-name descname"><span class="pre">ignore_case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.ignore_case" title="Link to this definition">#</a></dt>
+<dd><p>Should the search be case insensitive.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="app.lib.dependencies.create_collection_dependencies">
 <span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">create_collection_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.litestar.dev/latest/reference/di.html#litestar.di.Provide" title="(in Litestar)"><span class="pre">Provide</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/app/lib/dependencies.html#create_collection_dependencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.create_collection_dependencies" title="Link to this definition">#</a></dt>
@@ -930,22 +1038,22 @@ necessary.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="app.lib.dependencies.provide_updated_filter">
-<span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">provide_updated_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">before:</span> <span class="pre">~datetime.datetime</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='updatedBefore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after:</span> <span class="pre">~datetime.datetime</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='updatedAfter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.dependencies.BeforeAfter" title="advanced_alchemy.filters.BeforeAfter"><span class="pre">BeforeAfter</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/dependencies.html#provide_updated_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.provide_updated_filter" title="Link to this definition">#</a></dt>
-<dd><p>Add updated filter.</p>
-<p>Return type consumed by <code class="docutils literal notranslate"><span class="pre">Repository.filter_on_datetime_field()</span></code>.</p>
+<dt class="sig sig-object py" id="app.lib.dependencies.provide_order_by">
+<span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">provide_order_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title='Order</span> <span class="pre">by</span> <span class="pre">field'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='orderBy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order:</span> <span class="pre">~typing.Literal['asc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'desc']</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default='desc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title='Field</span> <span class="pre">to</span> <span class="pre">search'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='sortOrder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.dependencies.OrderBy" title="advanced_alchemy.filters.OrderBy"><span class="pre">OrderBy</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/dependencies.html#provide_order_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.provide_order_by" title="Link to this definition">#</a></dt>
+<dd><p>Add offset/limit pagination.</p>
+<p>Return type consumed by <code class="docutils literal notranslate"><span class="pre">Repository.apply_order_by()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>before</strong> (<em>DTorNone</em>) – Filter for records updated before this date/time.</p></li>
-<li><p><strong>after</strong> (<em>DTorNone</em>) – Filter for records updated after this date/time.</p></li>
+<li><p><strong>field_name</strong> (<em>StringOrNone</em>) – Field name to order by.</p></li>
+<li><p><strong>sort_order</strong> (<em>SortOrderOrNone</em>) – Order field ascending (‘asc’) or descending (‘desc)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Filter for scoping query to instance update date/time.</p>
+<dd class="field-even"><p>Order by for query.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#app.lib.dependencies.BeforeAfter" title="app.lib.dependencies.BeforeAfter">BeforeAfter</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#app.lib.dependencies.OrderBy" title="app.lib.dependencies.OrderBy">OrderBy</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -973,157 +1081,24 @@ necessary.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="app.lib.dependencies.provide_order_by">
-<span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">provide_order_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title='Order</span> <span class="pre">by</span> <span class="pre">field'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='orderBy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order:</span> <span class="pre">~typing.Literal['asc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'desc']</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default='desc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title='Field</span> <span class="pre">to</span> <span class="pre">search'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='sortOrder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.dependencies.OrderBy" title="advanced_alchemy.filters.OrderBy"><span class="pre">OrderBy</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/dependencies.html#provide_order_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.provide_order_by" title="Link to this definition">#</a></dt>
-<dd><p>Add offset/limit pagination.</p>
-<p>Return type consumed by <code class="docutils literal notranslate"><span class="pre">Repository.apply_order_by()</span></code>.</p>
+<dt class="sig sig-object py" id="app.lib.dependencies.provide_updated_filter">
+<span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">provide_updated_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">before:</span> <span class="pre">~datetime.datetime</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='updatedBefore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after:</span> <span class="pre">~datetime.datetime</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">ParameterKwarg(examples=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_docs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_encoding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_case=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_extra=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_component_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation=&lt;_EmptyEnum.EMPTY:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query='updatedAfter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required=False)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.dependencies.BeforeAfter" title="advanced_alchemy.filters.BeforeAfter"><span class="pre">BeforeAfter</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/dependencies.html#provide_updated_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.provide_updated_filter" title="Link to this definition">#</a></dt>
+<dd><p>Add updated filter.</p>
+<p>Return type consumed by <code class="docutils literal notranslate"><span class="pre">Repository.filter_on_datetime_field()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>field_name</strong> (<em>StringOrNone</em>) – Field name to order by.</p></li>
-<li><p><strong>sort_order</strong> (<em>SortOrderOrNone</em>) – Order field ascending (‘asc’) or descending (‘desc)</p></li>
+<li><p><strong>before</strong> (<em>DTorNone</em>) – Filter for records updated before this date/time.</p></li>
+<li><p><strong>after</strong> (<em>DTorNone</em>) – Filter for records updated after this date/time.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Order by for query.</p>
+<dd class="field-even"><p>Filter for scoping query to instance update date/time.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#app.lib.dependencies.OrderBy" title="app.lib.dependencies.OrderBy">OrderBy</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#app.lib.dependencies.BeforeAfter" title="app.lib.dependencies.BeforeAfter">BeforeAfter</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">BeforeAfter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#BeforeAfter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.BeforeAfter" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to filter a query on a <code class="docutils literal notranslate"><span class="pre">datetime</span></code> column.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.field_name">
-<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.field_name" title="Link to this definition">#</a></dt>
-<dd><p>Name of the model attribute to filter on.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.before">
-<span class="sig-name descname"><span class="pre">before</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.before" title="Link to this definition">#</a></dt>
-<dd><p>Filter results where field earlier than this.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.after">
-<span class="sig-name descname"><span class="pre">after</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.after" title="Link to this definition">#</a></dt>
-<dd><p>Filter results where field later than this.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">CollectionFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#CollectionFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.CollectionFilter" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">InAnyFilter</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">...</span> <span class="pre">IN</span> <span class="pre">(...)</span></code> clause.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.field_name">
-<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.field_name" title="Link to this definition">#</a></dt>
-<dd><p>Name of the model attribute to filter on.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.values">
-<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.values" title="Link to this definition">#</a></dt>
-<dd><p>Values for <code class="docutils literal notranslate"><span class="pre">IN</span></code> clause.</p>
-<p>An empty list will return an empty result set, however, if <code class="docutils literal notranslate"><span class="pre">None</span></code>, the filter is not applied to the query, and all rows are returned.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">LimitOffset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#LimitOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.LimitOffset" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PaginationFilter</span></code></p>
-<p>Data required to add limit/offset filtering to a query.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.limit">
-<span class="sig-name descname"><span class="pre">limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.limit" title="Link to this definition">#</a></dt>
-<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">LIMIT</span></code> clause of query.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.offset">
-<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.offset" title="Link to this definition">#</a></dt>
-<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code> clause of query.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.LimitOffset.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">OrderBy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'asc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#OrderBy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.OrderBy" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span> <span class="pre">...</span></code> clause.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.field_name">
-<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.field_name" title="Link to this definition">#</a></dt>
-<dd><p>Name of the model attribute to sort on.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.sort_order">
-<span class="sig-name descname"><span class="pre">sort_order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'asc'</span></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.sort_order" title="Link to this definition">#</a></dt>
-<dd><p>Sort ascending or descending</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'asc'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.OrderBy.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">SearchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#SearchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.SearchFilter" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">field_name</span> <span class="pre">LIKE</span> <span class="pre">'%'</span> <span class="pre">||</span> <span class="pre">:value</span> <span class="pre">||</span> <span class="pre">'%'</span></code> clause.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.SearchFilter.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.field_name">
-<span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.field_name" title="Link to this definition">#</a></dt>
-<dd><p>Name of the model attribute to search on.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.value">
-<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.value" title="Link to this definition">#</a></dt>
-<dd><p>Values for <code class="docutils literal notranslate"><span class="pre">NOT</span> <span class="pre">LIKE</span></code> clause.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.ignore_case">
-<span class="sig-name descname"><span class="pre">ignore_case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.ignore_case" title="Link to this definition">#</a></dt>
-<dd><p>Should the search be case insensitive.</p>
-</dd></dl>
-
 </dd></dl>
 
 </section>
@@ -1163,7 +1138,8 @@ necessary.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1174,14 +1150,6 @@ necessary.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.create_collection_dependencies"><code class="docutils literal notranslate"><span class="pre">create_collection_dependencies()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_created_filter"><code class="docutils literal notranslate"><span class="pre">provide_created_filter()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_filter_dependencies"><code class="docutils literal notranslate"><span class="pre">provide_filter_dependencies()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_id_filter"><code class="docutils literal notranslate"><span class="pre">provide_id_filter()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_limit_offset_pagination"><code class="docutils literal notranslate"><span class="pre">provide_limit_offset_pagination()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_updated_filter"><code class="docutils literal notranslate"><span class="pre">provide_updated_filter()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_search_filter"><code class="docutils literal notranslate"><span class="pre">provide_search_filter()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_order_by"><code class="docutils literal notranslate"><span class="pre">provide_order_by()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter"><code class="docutils literal notranslate"><span class="pre">BeforeAfter</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.field_name"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.field_name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.before"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.before</span></code></a></li>
@@ -1203,8 +1171,8 @@ necessary.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy"><code class="docutils literal notranslate"><span class="pre">OrderBy</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.field_name"><code class="docutils literal notranslate"><span class="pre">OrderBy.field_name</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.sort_order"><code class="docutils literal notranslate"><span class="pre">OrderBy.sort_order</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.__init__"><code class="docutils literal notranslate"><span class="pre">OrderBy.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.sort_order"><code class="docutils literal notranslate"><span class="pre">OrderBy.sort_order</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter"><code class="docutils literal notranslate"><span class="pre">SearchFilter</span></code></a><ul class="visible nav section-nav flex-column">
@@ -1214,6 +1182,14 @@ necessary.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.ignore_case"><code class="docutils literal notranslate"><span class="pre">SearchFilter.ignore_case</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.create_collection_dependencies"><code class="docutils literal notranslate"><span class="pre">create_collection_dependencies()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_created_filter"><code class="docutils literal notranslate"><span class="pre">provide_created_filter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_filter_dependencies"><code class="docutils literal notranslate"><span class="pre">provide_filter_dependencies()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_id_filter"><code class="docutils literal notranslate"><span class="pre">provide_id_filter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_limit_offset_pagination"><code class="docutils literal notranslate"><span class="pre">provide_limit_offset_pagination()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_order_by"><code class="docutils literal notranslate"><span class="pre">provide_order_by()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_search_filter"><code class="docutils literal notranslate"><span class="pre">provide_search_filter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.provide_updated_filter"><code class="docutils literal notranslate"><span class="pre">provide_updated_filter()</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -1255,8 +1231,8 @@ necessary.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1289,7 +1265,7 @@ necessary.</p>
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
 </p></div>
       
     </div>
