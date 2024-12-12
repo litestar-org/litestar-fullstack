@@ -12,7 +12,7 @@ class WebController(Controller):
     opt = {"exclude_from_auth": True}
 
     @get(
-        path=[constants.SITE_INDEX, f"{constants.SITE_INDEX}/{{path:str}}"],
+        path=[constants.SITE_INDEX, f"{constants.SITE_INDEX}/{{path:path}}"],
         operation_id="WebIndex",
         name="frontend:index",
         status_code=HTTP_200_OK,
