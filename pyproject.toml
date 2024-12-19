@@ -57,16 +57,10 @@ packages = ["src/app"]
 
 [tool.hatch.build.targets.app]
 
-[tool.pdm.scripts]
-lint = "pdm run pre-commit run --all-files"
-post_install = "pdm run python scripts/pre-build.py --install-packages"
-pre_build = "pdm run python scripts/pre-build.py --build-assets"
-start-infra = "docker compose -f docker-compose.infra.yml up --force-recreate -d"
-stop-infra = "docker compose -f docker-compose.infra.yml down --remove-orphans"
-test = "pdm run pytest tests"
-test_coverage = { composite = ["pdm run pytest tests", "pdm run coverage html", "pdm run coverage xml"] }
+[tool.uv]
+default-groups = ["dev", "docs", "linting", "test"]
 
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = ["nodeenv"]
 docs = [
   "sphinx>=7.2.6",
@@ -263,7 +257,7 @@ strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog"
-skip = 'pdm.lock, package-lock.json'
+skip = 'uv.lock, package-lock.json'
 
 [tool.mypy]
 disallow_any_generics = false

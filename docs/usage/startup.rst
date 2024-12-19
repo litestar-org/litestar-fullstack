@@ -16,7 +16,7 @@ Additionally, when you start the application with ``VITE_HOT_RELOAD`` set to tru
 
   .. code-block:: bash
 
-      (.venv) cody@localtop:~/Code/Litestar/litestar-fullstack$ pdm run app run -p 8089
+      (.venv) cody@localtop:~/Code/Litestar/litestar-fullstack$ uv run app run -p 8089
       Using Litestar app from env: 'app.asgi:app'
       Loading environment configuration from .env
       Starting Granian server process ───────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ Production
 ^^^^^^^^^^
 
 If ``VITE_DEV_MODE`` is false, the server will look for the static assets that are produced from the ``npm run build`` command.
-This command is automatically executed and the assets are bundled when running ``pdm build``.
+This command is automatically executed and the assets are bundled when running ``uv build``.
 
 To manually rebuild assets, use the following:
 

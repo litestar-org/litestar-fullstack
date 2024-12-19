@@ -21,7 +21,7 @@ logger = logging.getLogger("post-build")
 
 def package_standalone_app(options: argparse.Namespace) -> None:
     subprocess.run(
-        ["/usr/bin/env", "pdm", "export", "--without-hashes", "--prod", "--output", "dist/requirements.txt"],
+        ["/usr/bin/env", "uv", "export", "--no-hashes", "--no-dev", "--output-file", "dist/requirements.txt"],
         check=False,
     )
     with Path(PROJECT_ROOT / "dist/requirements.txt").open("+a") as f:

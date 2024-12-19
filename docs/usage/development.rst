@@ -24,7 +24,7 @@ Upgrade Project Dependencies
 
 This command will upgrade all components of the application at the same time. It automatically executes:
 
-- ``pdm upgrade``
+- ``uv lock --upgrade``
 - ``npm update``
 - ``pre-commit autoupdate``
 
