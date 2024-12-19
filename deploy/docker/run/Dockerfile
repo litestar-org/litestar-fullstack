@@ -30,8 +30,8 @@ RUN apt-get update \
 ## ------------------------- Python build base -------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python-base AS build-base
-ARG PDM_INSTALL_ARGS=""
-ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
+ARG UV_INSTALL_ARGS=""
+ENV UV_INSTALL_ARGS="${UV_INSTALL_ARGS}" \
   GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
   PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add build packages ----------------------------------- ##
@@ -53,11 +53,11 @@ COPY scripts ./scripts/
 COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
-  && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython  \
-  && pdm install ${PDM_INSTALL_ARGS} --no-self  \
-  && pdm export ${PDM_INSTALL_ARGS} --without-hashes --prod --output=requirements.txt
+  && /workspace/app/.venv/bin/pip install --quiet uv nodeenv cython  \
+  && uv install ${UV_INSTALL_ARGS} \
+  && uv export ${UV_INSTALL_ARGS} --no-hashes --no-dev --output-file=requirements.txt
 COPY src ./src/
-RUN pdm build
+RUN uv build
 
 
 ## ---------------------------------------------------------------------------------- ##

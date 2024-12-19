@@ -92,10 +92,10 @@ stop-infra:
 	docker compose -f docker-compose.infra.yml down --remove-orphans
 
 post_install:
-	pdm run python scripts/pre-build.py --install-packages
+	uv run python scripts/pre-build.py --install-packages
 
 pre_build:
-	pdm run python scripts/pre-build.py --build-assets
+	uv run python scripts/pre-build.py --build-assets
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================

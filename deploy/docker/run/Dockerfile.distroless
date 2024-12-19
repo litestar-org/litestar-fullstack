@@ -6,8 +6,8 @@ ARG PYTHON_RUN_IMAGE=gcr.io/distroless/cc:nonroot
 ## ------------------------- Python base -------------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python:${PYTHON_BUILDER_IMAGE} as python-base
-ARG PDM_INSTALL_ARGS=""
-ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
+ARG UV_INSTALL_ARGS=""
+ENV UV_INSTALL_ARGS="${UV_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH" \
     PIP_DEFAULT_TIMEOUT=100 \
@@ -37,8 +37,8 @@ RUN apt-get update \
 ## ------------------------- Python build base -------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python-base AS build-base
-ARG PDM_INSTALL_ARGS=""
-ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
+ARG UV_INSTALL_ARGS=""
+ENV UV_INSTALL_ARGS="${UV_INSTALL_ARGS}" \
     GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add development packages ------------------------------ ##
@@ -56,15 +56,15 @@ COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
     tailwind.config.cjs postcss.config.cjs components.json \
     ./
 RUN python -m venv --copies /workspace/app/.venv \
-    && /workspace/app/.venv/bin/pip install --quiet pdm nodeenv cython mypy
+    && /workspace/app/.venv/bin/pip install --quiet uv nodeenv cython mypy
 COPY scripts ./scripts/
 COPY public ./public/
 COPY resources ./resources/
-RUN pdm install ${PDM_INSTALL_ARGS} --no-self  \
-    && pdm export ${PDM_INSTALL_ARGS} --without-hashes --prod --output=requirements.txt
+RUN uv sync ${UV_INSTALL_ARGS} --no-self  \
+    && uv export ${UV_INSTALL_ARGS} --no-hashes --no-dev --output-file=requirements.txt
 COPY src ./src/
 
-RUN pdm build
+RUN uv build
 VOLUME /workspace/app
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- runtime build ----------------------------------- ##

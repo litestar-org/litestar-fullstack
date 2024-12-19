@@ -30,8 +30,8 @@ RUN apt-get update \
 ## ------------------------- Python build base -------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 FROM python-base AS build-base
-ARG PDM_INSTALL_ARGS="-G:all"
-ENV PDM_INSTALL_ARGS="${PDM_INSTALL_ARGS}" \
+ARG UV_INSTALL_ARGS="--all-groups"
+ENV UV_INSTALL_ARGS="${UV_INSTALL_ARGS}" \
   GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
   PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
 ## -------------------------- add build packages ----------------------------------- ##
@@ -53,8 +53,8 @@ COPY scripts ./scripts/
 COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
-  && /workspace/app/.venv/bin/pip install cython pdm nodeenv  \
-  && pdm install ${PDM_INSTALL_ARGS} --no-self
+  && /workspace/app/.venv/bin/pip install cython uv nodeenv  \
+  && uv install ${UV_INSTALL_ARGS}
 COPY src ./src/
 
 ## ---------------------------------------------------------------------------------- ##
@@ -82,7 +82,7 @@ WORKDIR /workspace/app
 COPY docs/ docs/
 COPY tests/ tests/
 COPY src src/
-RUN pdm install $PDM_INSTALL_ARGS
+RUN uv install $UV_INSTALL_ARGS
 STOPSIGNAL SIGINT
 EXPOSE 8000
 ENTRYPOINT ["tini","--" ]

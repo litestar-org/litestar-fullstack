@@ -16,7 +16,7 @@ To install an environment, with all development packages run:
 
 This command does the following:
 
-- Install ``pdm`` if it is not available in the path.
+- Install ``uv`` if it is not available in the path.
 - Create a virtual environment with all dependencies configured
 - Build assets to be hosted by production asset server
 
