@@ -5,15 +5,12 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL:=help
 .ONESHELL:
-USING_PDM		          	=	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
 USING_NPM             		= $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
 ENV_PREFIX		        	=.venv/bin/
 VENV_EXISTS           		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
 NODE_MODULES_EXISTS			=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
 SRC_DIR               		=src
 BUILD_DIR             		=dist
-PDM_OPTS 		          	?=
-PDM 			            ?= 	pdm $(PDM_OPTS)
 
 .EXPORT_ALL_VARIABLES:
 
@@ -30,43 +27,20 @@ help: 		   										## Display this help text for Makefile
 .PHONY: upgrade
 upgrade:       										## Upgrade all dependencies to the latest stable versions
 	@echo "=> Updating all dependencies"
-	@if [ "$(USING_PDM)" ]; then $(PDM) update; fi
+	@uv lock --upgrade
 	@echo "=> Python Dependencies Updated"
 	@if [ "$(USING_NPM)" ]; then npm upgrade --latest; fi
 	@echo "=> Node Dependencies Updated"
 	@$(ENV_PREFIX)pre-commit autoupdate
 	@echo "=> Updated Pre-commit"
 
-.PHONY: uninstall
-uninstall:
-	@echo "=> Uninstalling PDM"
-ifeq ($(OS),Windows_NT)
-	@echo "=> Removing PDM from %APPDATA%\Python\Scripts"
-	@if exist "%APPDATA%\Python\Scripts\pdm" (del "%APPDATA%\Python\Scripts\pdm")
-else
-	@echo "=> Removing PDM from ~/.local/bin"
-	@rm -f ~/.local/bin/pdm
-endif
-	@echo "=> PDM removal complete"
-	@echo "=> Uninstallation complete!"
-
 # =============================================================================
 # Developer Utils
 # =============================================================================
-install-pdm: 										## Install latest version of PDM
-	@curl -sSLO https://pdm.fming.dev/install-pdm.py && \
-	curl -sSL https://pdm.fming.dev/install-pdm.py.sha256 | shasum -a 256 -c - && \
-	python3 install-pdm.py
-
 install:											## Install the project and
-	@if ! $(PDM) --version > /dev/null; then echo '=> Installing PDM'; $(MAKE) install-pdm; fi
-	@if [ "$(VENV_EXISTS)" ]; then echo "=> Removing existing virtual environment"; fi
-	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy-venv; fi
-	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
+	@uv sync
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node modules"; fi
 	if [ "$(NODE_MODULES_EXISTS)" ]; then $(MAKE) destroy-node_modules; fi
-	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip mypy nodeenv; fi
-	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
 
 
@@ -105,16 +79,12 @@ migrate:          ## Generate database migrations
 .PHONY: build
 build:
 	@echo "=> Building package..."
-	@if [ "$(USING_PDM)" ]; then pdm build; fi
+	@uv build
 	@echo "=> Package build complete..."
-
-.PHONY: refresh-lockfiles
-refresh-lockfiles:                                 ## Sync lockfiles with requirements files.
-	@pdm update --update-reuse --group :all
 
 .PHONY: lock
 lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
-	@pdm update --update-eager --group :all
+	@uv lock
 
 # =============================================================================
 # Tests, Linting, Coverage
@@ -151,7 +121,7 @@ test:  												## Run the tests
 .PHONY: docs-install
 docs-install: 										## Install docs dependencies
 	@echo "=> Installing documentation dependencies"
-	@$(PDM) install -dG:docs
+	@uv sync --group docs
 	@echo "=> Installed documentation dependencies"
 
 docs-clean: 										## Dump the existing built docs
@@ -161,8 +131,8 @@ docs-clean: 										## Dump the existing built docs
 
 docs-serve: docs-clean 								## Serve the docs locally
 	@echo "=> Serving documentation"
-	$(PDM_RUN_BIN) sphinx-autobuild docs docs/_build/ -j auto --watch src --watch docs --watch tests --watch CONTRIBUTING.rst --port 8002
+	$uv run sphinx-autobuild docs docs/_build/ -j auto --watch src --watch docs --watch tests --watch CONTRIBUTING.rst --port 8002
 
 docs: docs-clean 									## Dump the existing built docs and rebuild them
 	@echo "=> Building documentation"
-	@$(PDM_RUN_BIN) sphinx-build -M html docs docs/_build/ -E -a -j auto --keep-going
+	@uv run sphinx-build -M html docs docs/_build/ -E -a -j auto --keep-going
