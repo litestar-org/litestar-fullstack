@@ -37,7 +37,7 @@ ENV UV_INSTALL_ARGS="${UV_INSTALL_ARGS}" \
 ## -------------------------- add build packages ----------------------------------- ##
 RUN apt-get install -y --no-install-recommends build-essential curl \
   && apt-get autoremove -y \
-  && apt-get clean -y \
+  && apt-get clean make -y \
   && rm -rf /root/.cache \
   && rm -rf /var/apt/lists/* \
   && rm -rf /var/cache/apt/* \
@@ -54,10 +54,10 @@ COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install --quiet uv nodeenv cython  \
-  && uv install ${UV_INSTALL_ARGS} \
+  && make install ${UV_INSTALL_ARGS} \
   && uv export ${UV_INSTALL_ARGS} --no-hashes --no-dev --output-file=requirements.txt
 COPY src ./src/
-RUN uv build
+RUN make build
 
 
 ## ---------------------------------------------------------------------------------- ##

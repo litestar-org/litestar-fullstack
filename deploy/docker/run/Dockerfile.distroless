@@ -64,7 +64,7 @@ RUN uv sync ${UV_INSTALL_ARGS} --no-self  \
     && uv export ${UV_INSTALL_ARGS} --no-hashes --no-dev --output-file=requirements.txt
 COPY src ./src/
 
-RUN uv build
+RUN make build
 VOLUME /workspace/app
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- runtime build ----------------------------------- ##

@@ -38,6 +38,7 @@ upgrade:       										## Upgrade all dependencies to the latest stable versio
 # =============================================================================
 install:											## Install the project and
 	@uv sync
+	uv run python scripts/pre-build.py --install-packages
 	@if [ "$(NODE_MODULES_EXISTS)" ]; then echo "=> Removing existing node modules"; fi
 	if [ "$(NODE_MODULES_EXISTS)" ]; then $(MAKE) destroy-node_modules; fi
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
@@ -78,6 +79,7 @@ migrate:          ## Generate database migrations
 .PHONY: build
 build:
 	@echo "=> Building package..."
+	uv run python scripts/pre-build.py --build-assets
 	@uv build
 	@echo "=> Package build complete..."
 
@@ -90,12 +92,6 @@ start-infra:
 
 stop-infra:
 	docker compose -f docker-compose.infra.yml down --remove-orphans
-
-post_install:
-	uv run python scripts/pre-build.py --install-packages
-
-pre_build:
-	uv run python scripts/pre-build.py --build-assets
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================
