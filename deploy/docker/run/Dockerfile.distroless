@@ -51,7 +51,7 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml pdm.lock README.md .pre-commit-config.yaml LICENSE Makefile \
+COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
     package.json package-lock.json vite.config.ts tsconfig.json tsconfig.node.json \
     tailwind.config.cjs postcss.config.cjs components.json \
     ./
