@@ -24,8 +24,9 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
-        version: "0.5.10"
-        enable-cache: true
+        with:
+          version: "0.5.10"
+          enable-cache: true
 
       - name: Install dependencies
         run: uv sync --all-groups
