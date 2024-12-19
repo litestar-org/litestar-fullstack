@@ -5,7 +5,7 @@ Contribution Guide
 Setting up the environment
 --------------------------
 
-1. Install `Pizza Delivery Man <https://pdm.fming.dev/latest/>`_
+1. If you do not have already have Astral's UV installed, run `make install-uv`
 2. Run ``uv sync --all-groups`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
    the dependencies
 3. If you're working on the documentation and need to build it locally, install the extra dependencies with `` uv sync --group docs``
