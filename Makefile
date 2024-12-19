@@ -7,7 +7,6 @@ SHELL := /bin/bash
 .ONESHELL:
 USING_NPM             		= $(shell python3 -c "if __import__('pathlib').Path('package-lock.json').exists(): print('yes')")
 ENV_PREFIX		        	=.venv/bin/
-VENV_EXISTS           		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
 NODE_MODULES_EXISTS			=	$(shell python3 -c "if __import__('pathlib').Path('node_modules').exists(): print('yes')")
 SRC_DIR               		=src
 BUILD_DIR             		=dist
@@ -86,6 +85,17 @@ build:
 lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
 	@uv lock
 
+start-infra:
+	docker compose -f docker-compose.infra.yml up --force-recreate -d
+
+stop-infra:
+	docker compose -f docker-compose.infra.yml down --remove-orphans
+
+post_install:
+	pdm run python scripts/pre-build.py --install-packages
+
+pre_build:
+	pdm run python scripts/pre-build.py --build-assets
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================
