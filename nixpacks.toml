@@ -15,7 +15,7 @@ nixPkgs = ['...'] # add nodejs since it is needed to build the frontend
 
 [phases.install]
 cmds = [
-  'python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -U mypy cython setuptools uv==NIXPACKS_UV_VERSION && uv sync --frozen --no-dev',
+  'python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -U mypy cython setuptools uv==$NIXPACKS_UV_VERSION && uv sync --frozen --no-dev',
 ] # custom install command allows for setting uv version above
 
 [start]
