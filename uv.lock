@@ -134,7 +134,32 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "nodeenv" },
+    { name = "asyncpg-stubs" },
+    { name = "coverage" },
+    { name = "litestar-sphinx-theme" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pylint" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extra = ["postgres", "redis"] },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "slotscheck" },
+    { name = "sphinx" },
+    { name = "sphinx-autobuild" },
+    { name = "sphinx-click" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-toolbox" },
+    { name = "sphinxcontrib-mermaid" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-python-jose" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
 ]
 docs = [
     { name = "litestar-sphinx-theme" },
@@ -185,7 +210,34 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "nodeenv" }]
+dev = [
+    { name = "asyncpg-stubs" },
+    { name = "coverage" },
+    { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
+    { name = "mypy", specifier = ">=1.5.1" },
+    { name = "pre-commit", specifier = ">=3.4.0" },
+    { name = "pylint" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extras = ["postgres", "redis"], specifier = ">=0.1.0" },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+    { name = "ruff", specifier = ">=0.0.287" },
+    { name = "slotscheck" },
+    { name = "sphinx", specifier = ">=7.2.6" },
+    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
+    { name = "sphinx-click", specifier = ">=5.0.1" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
+    { name = "sphinx-design", specifier = ">=0.5.0" },
+    { name = "sphinx-toolbox", specifier = ">=3.5.0" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-python-jose" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
+]
 docs = [
     { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
     { name = "sphinx", specifier = ">=7.2.6" },
