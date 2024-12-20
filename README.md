@@ -49,12 +49,12 @@ make install
 
 ```bash
 cp .env.local.example .env
-pdm run start-infra # this starts a database and redis instance only
+make start-infra # this starts a database and redis instance only
 # this will start the SAQ worker, Vite development process, and Litestar
-pdm run app run
+uv run app run
 
 # to stop the database and redis, run
-pdm run stop-infra
+make stop-infra
 ```
 
 ### Docker

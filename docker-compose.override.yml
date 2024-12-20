@@ -5,7 +5,7 @@ x-development-volumes: &development-volumes
     - ./src:/workspace/app/src/
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
-    - ./pdm.lock:/workspace/app/pdm.lock
+    - ./uv.lock:/workspace/app/uv.lock
     - ./tsconfig.json:/workspace/app/tsconfig.json
     - ./tsconfig.node.json:/workspace/app/tsconfig.node.json
     - ./package.json:/workspace/app/package.json
