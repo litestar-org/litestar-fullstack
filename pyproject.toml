@@ -61,7 +61,7 @@ packages = ["src/app"]
 default-groups = ["dev", "docs", "linting", "test"]
 
 [dependency-groups]
-dev = ["nodeenv"]
+dev = [{ include-group = "docs" }, { include-group = "linting" }, { include-group = "test" }]
 docs = [
   "sphinx>=7.2.6",
   "sphinx-autobuild>=2021.3.14",
