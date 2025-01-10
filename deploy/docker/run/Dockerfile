@@ -49,7 +49,7 @@ COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
   package.json package-lock.json vite.config.ts tsconfig.json tsconfig.node.json \
   tailwind.config.cjs postcss.config.cjs components.json \
   ./
-COPY scripts ./scripts/
+COPY tools ./tools/
 COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \

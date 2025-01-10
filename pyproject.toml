@@ -1,5 +1,5 @@
 [project]
-authors = [{ name = "Cody Fincher", email = "cody.fincher@gmail.com" }]
+authors = [{ name = "Cody Fincher", email = "cody@litestar.dev" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Web Environment",
@@ -14,16 +14,15 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,redis,structlog]>=2.8.3",
-  "jsbeautifier",
-  "advanced-alchemy[uuid]>=0.10.0",
-  "asyncpg>=0.28.0",
-  "python-dotenv>=1.0.0",
-  "passlib[argon2]>=1.7.4",
-  "litestar-saq>=0.1.3",
-  "litestar-vite[nodeenv]>=0.1.21",
-  "litestar-granian>=0.1.4",
-  "aiosqlite>=0.19.0",
+  "litestar[jinja,jwt,redis,structlog]",
+  "advanced-alchemy[uuid]",
+  "asyncpg",
+  "python-dotenv",
+  "passlib[argon2]",
+  "litestar-saq",
+  "litestar-vite",
+  "litestar-granian",
+  "aiosqlite",
   "httptools",
 ]
 description = "Opinionated template for a Litestar application."
@@ -52,10 +51,9 @@ allow-direct-references = true
 
 [tool.hatch.build]
 dev-mode-dirs = ["src/"]
-include = ["CHANGELOG.md", "src/public/**/*", "src/app/**/*.sql", "src/app/lib/db/**/*.ini"]
+include = ["CHANGELOG.md", "public/**/*", "src/app/db/**/*.ini"]
 packages = ["src/app"]
 
-[tool.hatch.build.targets.app]
 
 [tool.uv]
 default-groups = ["dev", "docs", "linting", "test"]
@@ -131,7 +129,7 @@ show_missing = true
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/*/migrations/**/*.py", "scripts/*"]
+omit = ["tests/*", "**/*/migrations/**/*.py", "tools/*"]
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--ignore", "migrations"]
@@ -247,10 +245,10 @@ known-first-party = ['tests', 'app']
 "__init__.py" = ['F401', 'D104']
 "docs/**/*.*" = ["S", "B", "DTZ", "A", "TC", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
-"scripts/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
-"scripts/*.py" = ["INP001", "ERA001"]
 "src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
+"tools/*.py" = ["INP001", "ERA001"]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 
 [tool.slotscheck]
 strict-imports = false

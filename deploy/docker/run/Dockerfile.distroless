@@ -57,7 +57,7 @@ COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
     ./
 RUN python -m venv --copies /workspace/app/.venv \
     && /workspace/app/.venv/bin/pip install --quiet uv nodeenv cython mypy
-COPY scripts ./scripts/
+COPY tools ./tools/
 COPY public ./public/
 COPY resources ./resources/
 RUN uv sync ${UV_INSTALL_ARGS} --no-self  \

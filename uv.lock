@@ -123,11 +123,10 @@ dependencies = [
     { name = "aiosqlite" },
     { name = "asyncpg" },
     { name = "httptools" },
-    { name = "jsbeautifier" },
     { name = "litestar", extra = ["jinja", "jwt", "redis", "structlog"] },
     { name = "litestar-granian" },
     { name = "litestar-saq" },
-    { name = "litestar-vite", extra = ["nodeenv"] },
+    { name = "litestar-vite" },
     { name = "passlib", extra = ["argon2"] },
     { name = "python-dotenv" },
 ]
@@ -196,17 +195,16 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "advanced-alchemy", extras = ["uuid"], specifier = ">=0.10.0" },
-    { name = "aiosqlite", specifier = ">=0.19.0" },
-    { name = "asyncpg", specifier = ">=0.28.0" },
+    { name = "advanced-alchemy", extras = ["uuid"] },
+    { name = "aiosqlite" },
+    { name = "asyncpg" },
     { name = "httptools" },
-    { name = "jsbeautifier" },
-    { name = "litestar", extras = ["jinja", "jwt", "redis", "structlog"], specifier = ">=2.8.3" },
-    { name = "litestar-granian", specifier = ">=0.1.4" },
-    { name = "litestar-saq", specifier = ">=0.1.3" },
-    { name = "litestar-vite", extras = ["nodeenv"], specifier = ">=0.1.21" },
-    { name = "passlib", extras = ["argon2"], specifier = ">=1.7.4" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "litestar", extras = ["jinja", "jwt", "redis", "structlog"] },
+    { name = "litestar-granian" },
+    { name = "litestar-saq" },
+    { name = "litestar-vite" },
+    { name = "passlib", extras = ["argon2"] },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata.requires-dev]
@@ -661,15 +659,6 @@ wheels = [
 ]
 
 [[package]]
-name = "editorconfig"
-version = "0.17.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b4/29/785595a0d8b30ab8d2486559cfba1d46487b8dcbd99f74960b6b4cca92a4/editorconfig-0.17.0.tar.gz", hash = "sha256:8739052279699840065d3a9f5c125d7d5a98daeefe53b0e5274261d77cb49aa2", size = 13369 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/af/e5/8dba39ea24ca3de0e954e668107692f4dfc13a85300a531fa9a39e83fde4/EditorConfig-0.17.0-py3-none-any.whl", hash = "sha256:fe491719c5f65959ec00b167d07740e7ffec9a3f362038c72b289330b9991dfc", size = 16276 },
-]
-
-[[package]]
 name = "execnet"
 version = "2.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -949,16 +938,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl", hash = "sha256:aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb", size = 134596 },
 ]
-
-[[package]]
-name = "jsbeautifier"
-version = "1.15.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "editorconfig" },
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/69/3e/dd37e1a7223247e3ef94714abf572415b89c4e121c4af48e9e4c392e2ca0/jsbeautifier-1.15.1.tar.gz", hash = "sha256:ebd733b560704c602d744eafc839db60a1ee9326e30a2a80c4adb8718adc1b24", size = 75606 }
 
 [[package]]
 name = "litestar"

@@ -31,7 +31,7 @@ repos:
     rev: v1.14.1
     hooks:
       - id: mypy
-        exclude: scripts/
+        exclude: tools/
         additional_dependencies:
           - passlib[argon2]
           - asyncpg
