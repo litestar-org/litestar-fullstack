@@ -1,4 +1,4 @@
-ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
+ARG PYTHON_BUILDER_IMAGE=3.12-slim-bookworm
 
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
@@ -53,8 +53,10 @@ COPY scripts ./scripts/
 COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
-  && /workspace/app/.venv/bin/pip install cython uv nodeenv  \
-  && uv install ${UV_INSTALL_ARGS}
+  && /workspace/app/.venv/bin/pip install cython uv nodeenv \
+  && nodeenv -p \
+  && uv sync $UV_INSTALL_ARGS --no-install-project \
+  && npm install
 COPY src ./src/
 
 ## ---------------------------------------------------------------------------------- ##
@@ -82,7 +84,7 @@ WORKDIR /workspace/app
 COPY docs/ docs/
 COPY tests/ tests/
 COPY src src/
-RUN uv install $UV_INSTALL_ARGS
+RUN uv sync $UV_INSTALL_ARGS
 STOPSIGNAL SIGINT
 EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
