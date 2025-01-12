@@ -55,8 +55,8 @@ COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython uv nodeenv \
   && nodeenv -p \
-  && uv sync $UV_INSTALL_ARGS --no-install-project \
-  && npm install
+  && uv sync ${UV_INSTALL_ARGS} --no-install-project \
+  && npm install --ignore-scripts
 COPY src ./src/
 
 ## ---------------------------------------------------------------------------------- ##
@@ -84,7 +84,7 @@ WORKDIR /workspace/app
 COPY docs/ docs/
 COPY tests/ tests/
 COPY src src/
-RUN uv sync $UV_INSTALL_ARGS
+RUN uv sync ${UV_INSTALL_ARGS}
 STOPSIGNAL SIGINT
 EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
