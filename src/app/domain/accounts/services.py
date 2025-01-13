@@ -28,6 +28,8 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
     class UserRepository(SQLAlchemyAsyncRepository[m.User]):
         """User SQLAlchemy Repository."""
 
+        model_type = m.User
+
     repository_type = UserRepository
     default_role = constants.DEFAULT_USER_ROLE
     match_fields = ["email"]
