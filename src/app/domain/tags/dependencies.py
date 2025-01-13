@@ -28,6 +28,6 @@ async def provide_tags_service(
     """
     async with TagService.new(
         session=db_session,
-        load=selectinload(Tag.teams, recursion_depth=2),
+        load=selectinload(Tag.teams),
     ) as service:
         yield service
