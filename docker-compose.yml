@@ -51,7 +51,6 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/run/Dockerfile
-    image: app:latest
     restart: always
     depends_on:
       db:
@@ -66,7 +65,9 @@ services:
     env_file:
       - .env.docker.example
   worker:
-    image: app:latest
+    build:
+      context: .
+      dockerfile: deploy/docker/run/Dockerfile
     command: litestar workers run
     restart: always
     depends_on:
@@ -77,7 +78,9 @@ services:
     env_file:
       - .env.docker.example
   migrator:
-    image: app:latest
+    build:
+      context: .
+      dockerfile: deploy/docker/run/Dockerfile
     restart: "no"
     command: litestar database upgrade --no-prompt
     env_file:

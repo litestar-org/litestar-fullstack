@@ -67,7 +67,7 @@ RUN make build
 
 FROM python-base as run-image
 ARG ENV_SECRETS="runtime-secrets"
-ARG LITESTAR_APP="app.asgi:app"
+ARG LITESTAR_APP="app.asgi:create_app"
 ENV ENV_SECRETS="${ENV_SECRETS}" \
   LITESTAR_APP="${LITESTAR_APP}"
 

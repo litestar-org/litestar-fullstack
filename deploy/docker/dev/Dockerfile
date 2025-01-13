@@ -3,7 +3,7 @@ ARG PYTHON_BUILDER_IMAGE=3.11-slim-bookworm
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- Python base -------------------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
-FROM python:${PYTHON_BUILDER_IMAGE} as python-base
+FROM python:${PYTHON_BUILDER_IMAGE} AS python-base
 ENV PIP_DEFAULT_TIMEOUT=100 \
   PIP_DISABLE_PIP_VERSION_CHECK=1 \
   PIP_NO_CACHE_DIR=1 \
@@ -46,7 +46,7 @@ RUN apt-get install -y --no-install-recommends build-essential curl \
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
 COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
-  package.json package-lock.json vite.config.ts tsconfig.json tsconfig.node.json \
+  package.json package-lock.json vite.config.ts tsconfig.json \
   tailwind.config.cjs postcss.config.cjs components.json \
   ./
 COPY tools ./tools/
@@ -54,16 +54,19 @@ COPY public ./public/
 COPY resources ./resources/
 RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython uv nodeenv  \
-  && uv install ${UV_INSTALL_ARGS}
+  && uv sync ${UV_INSTALL_ARGS} \
+  && uvx nodeenv .venv --force --quiet \
+  && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --no-fund
+
 COPY src ./src/
 
 ## ---------------------------------------------------------------------------------- ##
 ## -------------------------------- development build ------------------------------- ##
 ## ---------------------------------------------------------------------------------- ##
 ## ------------------------- use builder base --------------------------------------- ##
-FROM build-base as dev-image
+FROM build-base AS dev-image
 ARG ENV_SECRETS="runtime-secrets"
-ARG LITESTAR_APP="app.asgi:app"
+ARG LITESTAR_APP="app.asgi:create_app"
 ## --------------------------- standardize execution env ----------------------------- ##
 ENV PATH="/workspace/app/.venv/bin:$PATH" \
   VIRTUAL_ENV="/workspace/app/.venv" \
@@ -82,7 +85,7 @@ WORKDIR /workspace/app
 COPY docs/ docs/
 COPY tests/ tests/
 COPY src src/
-RUN uv install $UV_INSTALL_ARGS
+RUN uv sync $UV_INSTALL_ARGS
 STOPSIGNAL SIGINT
 EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
