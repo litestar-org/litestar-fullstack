@@ -8,9 +8,9 @@ from litestar.security.jwt import OAuth2PasswordBearerAuth
 from app.config import constants
 from app.config.app import alchemy
 from app.config.base import get_settings
-from app.db.models import User
+from app.db import models as m
 from app.domain.accounts import urls
-from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.deps import provide_users_service
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection
@@ -42,7 +42,7 @@ def requires_active_user(connection: ASGIConnection, _: BaseRouteHandler) -> Non
     raise PermissionDeniedException(msg)
 
 
-def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
+def requires_superuser(connection: ASGIConnection[m.User, Any, Any, Any], _: BaseRouteHandler) -> None:
     """Request requires active superuser.
 
     Args:
@@ -60,7 +60,7 @@ def requires_superuser(connection: ASGIConnection, _: BaseRouteHandler) -> None:
     raise PermissionDeniedException(detail="Insufficient privileges")
 
 
-def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> None:
+def requires_verified_user(connection: ASGIConnection[m.User, Any, Any, Any], _: BaseRouteHandler) -> None:
     """Verify the connection user is a superuser.
 
     Args:
@@ -78,7 +78,7 @@ def requires_verified_user(connection: ASGIConnection, _: BaseRouteHandler) -> N
     raise PermissionDeniedException(detail="User account is not verified.")
 
 
-async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> User | None:
+async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> m.User | None:
     """Lookup current user from local JWT token.
 
     Fetches the user information from the database
@@ -97,7 +97,7 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     return user if user and user.is_active else None
 
 
-auth = OAuth2PasswordBearerAuth[User](
+auth = OAuth2PasswordBearerAuth[m.User](
     retrieve_user_handler=current_user_from_token,
     token_secret=settings.app.SECRET_KEY,
     token_url=urls.ACCOUNT_LOGIN,

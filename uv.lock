@@ -195,7 +195,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "advanced-alchemy", extras = ["uuid"] },
+    { name = "advanced-alchemy", extras = ["uuid"], git = "https://github.com/litestar-org/advanced-alchemy.git?rev=cli-fix" },
     { name = "aiosqlite" },
     { name = "asyncpg" },
     { name = "httptools" },

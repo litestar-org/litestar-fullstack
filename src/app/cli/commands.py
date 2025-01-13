@@ -76,20 +76,22 @@ def create_user(
     superuser: bool | None,
 ) -> None:
     """Create a user."""
+    from typing import cast
+
     import anyio
     import click
     from rich import get_console
 
     from app.config.app import alchemy
-    from app.domain.accounts.dependencies import provide_users_service
+    from app.domain.accounts.deps import provide_users_service
     from app.domain.accounts.schemas import UserCreate
 
     console = get_console()
 
     async def _create_user(
         email: str,
-        name: str,
         password: str,
+        name: str | None = None,
         superuser: bool = False,
     ) -> None:
         obj_in = UserCreate(
@@ -109,7 +111,7 @@ def create_user(
     password = password or click.prompt("Password", hide_input=True, confirmation_prompt=True)
     superuser = superuser or click.prompt("Create as superuser?", show_default=True, type=click.BOOL)
 
-    anyio.run(_create_user, email, name, password, superuser)
+    anyio.run(_create_user, cast("str", email), cast("str", password), name, cast("bool", superuser))
 
 
 @user_management_app.command(name="promote-to-superuser", help="Promotes a user to application superuser")
@@ -170,8 +172,11 @@ def create_default_roles() -> None:
 
     from app.config.app import alchemy
     from app.db.models import UserRole
-    from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
+    from app.domain.accounts.deps import provide_users_service
+    from app.domain.accounts.services import RoleService
+    from app.lib.deps import create_service_provider
 
+    provide_roles_service = create_service_provider(RoleService)
     console = get_console()
 
     async def _create_default_roles() -> None:

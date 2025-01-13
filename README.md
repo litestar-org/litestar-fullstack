@@ -162,7 +162,7 @@ Are you sure you you want migrate the database to the "head" revision? [y/n]: y
 
 ## Worker Commands
 
-The following shows the commands available with the `worker` CLI command.  This controls the `saq` worker processes.  However, when using the `SAQ_USE_SERVER_LIFESPAN=True` environment variable, the background workers are automatically started and stopped with the Litestar HTTP server.
+The following shows the commands available with the `worker` CLI command. This controls the `saq` worker processes. However, when using the `SAQ_USE_SERVER_LIFESPAN=True` environment variable, the background workers are automatically started and stopped with the Litestar HTTP server.
 
 ```bash
 ❯ app worker

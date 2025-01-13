@@ -1,12 +1,13 @@
 """Role Routes."""
+
 from __future__ import annotations
 
-from litestar import Controller
-from litestar.di import Provide
+from uuid import UUID
 
-from app.domain.accounts.dependencies import provide_roles_service
+from litestar import Controller
+
 from app.domain.accounts.guards import requires_superuser
-from app.domain.accounts.services import RoleService
+from app.lib.deps import create_filter_dependencies
 
 
 class RoleController(Controller):
@@ -15,6 +16,14 @@ class RoleController(Controller):
     tags = ["Roles"]
     guards = [requires_superuser]
     dependencies = {
-        "roles_service": Provide(provide_roles_service),
+        "filters": create_filter_dependencies(
+            {
+                "id_filter": UUID,
+                "created_at": True,
+                "updated_at": True,
+                "pagination_size": 5,
+                "sort_field": "name",
+                "search_fields": ["name", "slug"],
+            },
+        ),
     }
-    signature_namespace = {"RoleService": RoleService}

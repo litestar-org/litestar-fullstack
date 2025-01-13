@@ -2,45 +2,30 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, get, post
-from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
-from litestar.security.jwt import OAuth2Login
 
-from app.db.models import User as UserModel  # noqa: TC001
 from app.domain.accounts import urls
-from app.domain.accounts.dependencies import provide_roles_service, provide_users_service
 from app.domain.accounts.guards import auth, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
-from app.domain.accounts.services import RoleService, UserService
+
+if TYPE_CHECKING:
+    from litestar.security.jwt import OAuth2Login
+
+    from app.db import models as m
+    from app.domain.accounts.services import RoleService, UserService
 
 
 class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
-    dependencies = {"users_service": Provide(provide_users_service), "roles_service": Provide(provide_roles_service)}
-    signature_namespace = {
-        "UserService": UserService,
-        "RoleService": RoleService,
-        "OAuth2Login": OAuth2Login,
-        "RequestEncodingType": RequestEncodingType,
-        "Body": Body,
-        "User": User,
-    }
 
-    @post(
-        operation_id="AccountLogin",
-        name="account:login",
-        path=urls.ACCOUNT_LOGIN,
-        cache=False,
-        summary="Login",
-        exclude_from_auth=True,
-    )
+    @post(operation_id="AccountLogin", path=urls.ACCOUNT_LOGIN, exclude_from_auth=True)
     async def login(
         self,
         users_service: UserService,
@@ -50,18 +35,8 @@ class AccessController(Controller):
         user = await users_service.authenticate(data.username, data.password)
         return auth.login(user.email)
 
-    @post(
-        operation_id="AccountLogout",
-        name="account:logout",
-        path=urls.ACCOUNT_LOGOUT,
-        cache=False,
-        summary="Logout",
-        exclude_from_auth=True,
-    )
-    async def logout(
-        self,
-        request: Request,
-    ) -> Response:
+    @post(operation_id="AccountLogout", path=urls.ACCOUNT_LOGOUT, exclude_from_auth=True)
+    async def logout(self, request: Request) -> Response:
         """Account Logout"""
         request.cookies.pop(auth.key, None)
         request.clear_session()
@@ -74,14 +49,7 @@ class AccessController(Controller):
 
         return response
 
-    @post(
-        operation_id="AccountRegister",
-        name="account:register",
-        path=urls.ACCOUNT_REGISTER,
-        cache=False,
-        summary="Create User",
-        description="Register a new account.",
-    )
+    @post(operation_id="AccountRegister", path=urls.ACCOUNT_REGISTER)
     async def signup(
         self,
         request: Request,
@@ -98,14 +66,7 @@ class AccessController(Controller):
         request.app.emit(event_id="user_created", user_id=user.id)
         return users_service.to_schema(user, schema_type=User)
 
-    @get(
-        operation_id="AccountProfile",
-        name="account:profile",
-        path=urls.ACCOUNT_PROFILE,
-        guards=[requires_active_user],
-        summary="User Profile",
-        description="User profile information.",
-    )
-    async def profile(self, request: Request, current_user: UserModel, users_service: UserService) -> User:
+    @get(operation_id="AccountProfile", path=urls.ACCOUNT_PROFILE, guards=[requires_active_user])
+    async def profile(self, current_user: m.User, users_service: UserService) -> User:
         """User Profile."""
         return users_service.to_schema(current_user, schema_type=User)
