@@ -71,7 +71,7 @@ def get_config_val(
         return value in TRUE_VALUES
     if type(default) is int:
         return int(value)
-    if type(default) is list[str]:
+    if type(default) is list:
         if value.startswith("[") and value.endswith("]"):
             try:
                 return cast("list[str]", json.loads(value))
