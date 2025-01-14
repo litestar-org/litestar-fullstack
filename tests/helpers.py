@@ -5,7 +5,7 @@ from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from functools import partial
 from typing import TYPE_CHECKING, TypeVar, cast, overload
 
-import anyio
+from anyio import to_thread
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
@@ -17,11 +17,11 @@ P = ParamSpec("P")
 
 
 class _ContextManagerWrapper:
-    def __init__(self, cm: AbstractContextManager[T]) -> None:
+    def __init__(self, cm: AbstractContextManager[object]) -> None:
         self._cm = cm
 
-    async def __aenter__(self) -> T:
-        return self._cm.__enter__()  # type: ignore[return-value]
+    async def __aenter__(self) -> object:
+        return self._cm.__enter__()
 
     async def __aexit__(
         self,
@@ -55,6 +55,6 @@ def wrap_sync(fn: Callable[P, T]) -> Callable[P, Awaitable[T]]:
         return fn
 
     async def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-        return await anyio.to_thread.run_sync(partial(fn, *args, **kwargs))
+        return await to_thread.run_sync(partial(fn, *args, **kwargs))
 
     return wrapped

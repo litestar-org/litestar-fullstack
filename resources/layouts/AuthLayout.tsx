@@ -1,4 +1,3 @@
-import { Helmet, HelmetProvider } from "react-helmet-async"
 import favicon from "@/assets/favicon.png"
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -16,16 +15,14 @@ const AuthLayout = ({
   keywords,
 }: AuthLayoutProps) => {
   return (
-    <HelmetProvider context={helmetContext}>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <meta name="description" content={description} />
-        <meta name="keywords" content={keywords} />
-        <link rel="icon" type="image/x-icon" href={favicon} />
-        <title>{title}</title>
-      </Helmet>
+    <>
+      <meta charSet="utf-8" />
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
+      <link rel="icon" type="image/x-icon" href={favicon} />
+      <title>{title}</title>
       {children}
-    </HelmetProvider>
+    </>
   )
 }
 

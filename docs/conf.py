@@ -1,4 +1,5 @@
 """Sphinx configuration."""
+
 from __future__ import annotations
 
 import importlib.metadata
@@ -17,7 +18,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)  # RemovedInSphin
 
 # -- Project information -----------------------------------------------------
 project = importlib.metadata.metadata("app")["Name"]
-copyright = "2023, Litestar Organization"
+copyright = "2025, Litestar Organization"
 author = "Cody Fincher"
 release = importlib.metadata.version("app")
 
@@ -46,7 +47,7 @@ intersphinx_mapping = {
     "litestar": ("https://docs.litestar.dev/latest/", None),
     "msgspec": ("https://jcristharif.com/msgspec/", None),
     "saq": ("https://saq-py.readthedocs.io/en/latest/", None),
-    "advanced-alchemy": ("https://docs.advanced-alchemy.jolt.rs/latest/", None),
+    "advanced-alchemy": ("https://docs.advanced-alchemy.litestar.dev/latest/", None),
 }
 
 napoleon_google_docstring = True
@@ -75,7 +76,7 @@ suppress_warnings = [
 todo_include_todos = True
 
 # -- Style configuration -----------------------------------------------------
-html_theme = "litestar_sphinx_theme"
+html_theme = "shibuya"
 html_static_path = ["_static"]
 html_show_sourcelink = True
 html_title = "Litestar Fullstack Docs"
@@ -84,36 +85,6 @@ html_context = {
     "github_repo": "litestar-fullstack",
     "github_version": "main",
     "doc_path": "docs",
-}
-html_theme_options = {
-    "use_page_nav": False,
-    "use_edit_page_button": True,
-    "github_repo_name": "litestar-fullstack",
-    "logo": {
-        "link": "https://docs.fullstack.litestar.dev",
-    },
-    "extra_navbar_items": {
-        "Documentation": "index",
-        "Community": {
-            "Contributing": {
-                "description": "Learn how to contribute to Litestar Fullstack",
-                "link": "contribution-guide",
-                "icon": "contributing",
-            },
-            "Code of Conduct": {
-                "description": "Review the etiquette for interacting with the Litestar community",
-                "link": "https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md",
-                "icon": "coc",
-            },
-        },
-        "About": {
-            "Litestar Organization": {
-                "description": "About the Litestar organization",
-                "link": "https://litestar.dev/about/organization.html",
-                "icon": "org",
-            },
-        },
-    },
 }
 
 
@@ -124,12 +95,12 @@ def update_html_context(
     context: dict[str, Any],
     doctree: document,
 ) -> None:
-    context["generate_toctree_html"] = partial(context["generate_toctree_html"], startdepth=0)
+    if "generate_toctree_html" in context:
+        context["generate_toctree_html"] = partial(context["generate_toctree_html"], startdepth=0)
 
 
 def setup(app: Sphinx) -> dict[str, bool]:
-    app.setup_extension("litestar_sphinx_theme")
-    app.setup_extension("pydata_sphinx_theme")
+    app.setup_extension("shibuya")
     app.connect("html-page-context", update_html_context)
 
     return {"parallel_read_safe": True, "parallel_write_safe": True}

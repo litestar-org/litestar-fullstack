@@ -33,5 +33,5 @@
     "resources/**/*.ts",
     "vite.config.ts",
     "vite.config.js"
-  ], "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }

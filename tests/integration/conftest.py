@@ -20,7 +20,7 @@ from app.db.models import Team, User
 from app.domain.accounts.guards import auth
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
-from app.server.builder import ApplicationConfigurator
+from app.server.core import ApplicationCore
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
@@ -121,7 +121,7 @@ def _patch_redis(app: "Litestar", redis: Redis, monkeypatch: pytest.MonkeyPatch)
     cache_config = app.response_cache_config
     assert cache_config is not None
     saq_plugin = get_saq_plugin(app)
-    app_plugin = app.plugins.get(ApplicationConfigurator)
+    app_plugin = app.plugins.get(ApplicationCore)
     monkeypatch.setattr(app_plugin, "redis", redis)
     monkeypatch.setattr(app.stores.get(cache_config.store), "_redis", redis)
     if saq_plugin._config.queue_instances is not None:
