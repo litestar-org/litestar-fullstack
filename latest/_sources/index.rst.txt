@@ -12,7 +12,11 @@ It includes the following capabilities out of the box:
 .. seealso:: It is built on the `Litestar <https://litestar.dev>`_, ReactJS, `Vite <https://vitejs.dev/>`_,
   :doc:`SAQ <saq:index>`, `TailwindCSS <https://tailwindcss.com/>`_ and comes with great features to reference:
 
-  - User creation, authentication, and authorization
+  - User creation, authentication, and authorization via `UserController` and `AccessController`
+  - Endpoints for listing, creating, updating, and deleting users
+  - Login, logout, and signup functionalities with OAuth2 support
+  - Profile management for authenticated users
+  - Role-based access control using `RoleService` and guards
   - Job/Task Queues via :doc:`SAQ <saq:index>`
   - Fully featured frontend stack with ReactJS (supports Vue, Angular, and all other JS frameworks) and native Vite integration via
     the `litestar-vite <https://github.com/cofin/litestar-vite>`_ plugin

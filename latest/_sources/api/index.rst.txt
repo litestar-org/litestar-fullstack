@@ -4,12 +4,15 @@ API Reference
 
 .. toctree::
     :titlesonly:
-    :caption: API Reference Documentation
+    :caption: Application Core Components
     :hidden:
 
-    asgi
     cli
-    utils
+    asgi
+    server
+    config
+    db
+    lib/index
 
 .. toctree::
     :titlesonly:
@@ -17,10 +20,3 @@ API Reference
     :hidden:
 
     domain/index
-
-.. toctree::
-    :titlesonly:
-    :caption: Library API Reference
-    :hidden:
-
-    lib/index

@@ -1,815 +1,216 @@
-
 <!DOCTYPE html>
-
-
-<html lang="en" data-content_root="../../../" >
-
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>services &#8212; Litestar Fullstack Docs</title>
-  
-  
-  
-  <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
-  </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
-  
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+<html lang="en" data-accent-color="violet" data-content_root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>services - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="teams" href="controllers/index.html" /><link rel="prev" title="guards" href="guards.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
-  
-  <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
-
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/domain/teams/services';</script>
-    <link rel="icon" href="../../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="teams" href="controllers/index.html" />
-    <link rel="prev" title="models" href="models.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="services"/>
+<meta name="twitter:card" content="summary"/>
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
-  
-  
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
-  
-  <dialog id="pst-search-dialog">
-    
-<form class="bd-search d-flex align-items-center"
-      action="../../../search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
-
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-
-  
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class=" navbar-header-items__start">
-    
-      <div class="navbar-item">
-
-  
-     
-  
-
-<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
-  
-  
-  
-  
-  
-    
-    
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../index.html">
       
-    
-    
-    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
-    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Litestar Fullstack Docs - Home"/>
-  
-  
-</a></div>
-    
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
   </div>
-  
-  <div class=" navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="../../../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../../../contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
 </div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-        </div>
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-        </div>
-      
-      
-        <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-    </div>
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
-    </header>
-  
-
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      
-      
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          
-          
-            <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="../../../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../../../contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
-</div>
-          
-        
-      </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-        
-      </div>
-    
-  </div>
-  
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../usage/index.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/development.html">Development</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the server</a></li>
 </ul>
-</details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../asgi.html">app</a></li>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../utils.html">utils</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">domain</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../urls.html">urls</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../security.html">security</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../system/index.html">system</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/tasks.html">tasks</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../web/index.html">web</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../web/controllers.html">controllers</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="index.html">teams</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="models.html">models</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="controllers/index.html">teams</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../tags/index.html">tags</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../tags/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tags/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tags/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tags/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tags/services.html">services</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../analytics/index.html">analytics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../analytics/queries.html">queries</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../accounts/index.html">accounts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a></li>
-</ul>
-</details></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../lib/index.html">lib</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/cache.html">cache</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/compression.html">compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/constants.html">constants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/cors.html">cors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../db.html">db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../lib/index.html">lib</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/csrf.html">csrf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/deps.html">deps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/dto.html">dto</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/exceptions.html">exceptions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/openapi.html">openapi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/repository.html">repository</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/serialization.html">serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/service.html">service</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/settings.html">settings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/static_files.html">static files</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../lib/log/index.html">logging</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/controller.html">controller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/init.html">init</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/utils.html">utils</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/log/worker.html">worker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/schema.html">schema</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../lib/db/index.html">db</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/base.html">base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/orm.html">orm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../lib/db/utils.html">utils</a></li>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">domain</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/access.html">access</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/accounts.html">accounts</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/users.html">controllers</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-</details></li>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">teams</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="guards.html">guards</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="controllers/index.html">teams</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="controllers/team_invitation.html">team invitation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="controllers/team_member.html">team member</a></li>
+<li class="toctree-l5"><a class="reference internal" href="controllers/teams.html">teams</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul class="nav bd-sidenav">
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../web/index.html">web</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../system/tasks.html">tasks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contribution-guide.html">Contribution Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 </ul>
-</div>
-</nav></div>
-    </div>
-  
-  
-  <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
-  </div>
 
-
+        </div>
       </div>
-      
-      <main id="main-content" class="bd-main" role="main">
-        
-        
-          <div class="bd-content">
-            <div class="bd-article-container">
-              
-              <div class="bd-header-article d-print-none">
-<div class="header-article-items header-article__inner">
-  
-    <div class="header-article-items__start">
-      
-        <div class="header-article-item">
-
-<nav aria-label="Breadcrumb" class="d-print-none">
-  <ul class="bd-breadcrumbs">
-    
-    <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../../index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
-      </a>
-    </li>
-    
-    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">API Reference</a></li>
-    
-    
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">domain</a></li>
-    
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">teams</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">services</span></li>
-  </ul>
-</nav>
-</div>
-      
     </div>
-  
-  
-</div>
-</div>
-              
-              
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article">
-                  
-  <section id="services">
-<h1>services<a class="headerlink" href="#services" title="Link to this heading">#</a></h1>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamInvitationService"><code class="docutils literal notranslate"><span class="pre">TeamInvitationService</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository"><code class="docutils literal notranslate">TeamInvitationRepository</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository.model_type"><code class="docutils literal notranslate">TeamInvitationRepository.model_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamInvitationService.repository_type"><code class="docutils literal notranslate">repository_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamMemberService"><code class="docutils literal notranslate"><span class="pre">TeamMemberService</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamMemberService.TeamMemberRepository"><code class="docutils literal notranslate">TeamMemberRepository</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamMemberService.TeamMemberRepository.model_type"><code class="docutils literal notranslate">TeamMemberRepository.model_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamMemberService.repository_type"><code class="docutils literal notranslate">repository_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService"><code class="docutils literal notranslate"><span class="pre">TeamService</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService.TeamRepository"><code class="docutils literal notranslate">TeamRepository</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService.TeamRepository.model_type"><code class="docutils literal notranslate">TeamRepository.model_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService.repository_type"><code class="docutils literal notranslate">repository_type</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService.match_fields"><code class="docutils literal notranslate">match_fields</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.teams.services.TeamService.to_model"><code class="docutils literal notranslate">to_model()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">domain</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">teams</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="4" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">services</strong>
+        <meta itemprop="position" content="5" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="services">
+<h1>services<a class="headerlink" href="#services" title="Link to this heading">¶</a></h1>
 <p>Services for the teams domain.</p>
 <dl class="py class" id="module-app.domain.teams.services">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamInvitationService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamInvitationService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamInvitationService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitation</span></code>]</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamInvitationService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamInvitationService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.advanced-alchemy.litestar.dev/latest/reference/service.html#advanced_alchemy.service.SQLAlchemyAsyncRepositoryService" title="(in advanced_alchemy)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitation</span></code>]</p>
 <p>Team Invitation Service.</p>
 <p>Configure the service object.</p>
 <dl class="field-list simple">
@@ -828,18 +229,48 @@
 </ul>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamInvitationService.TeamInvitationRepository">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TeamInvitationRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamInvitationService.TeamInvitationRepository"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepository</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitation</span></code>]</p>
+<p>Team Invitation Repository.</p>
+<p>Repository for SQLAlchemy models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> – To facilitate customization of the underlying select query.</p></li>
+<li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
+<li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
+<li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
+<li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
+<li><p><strong>order_by</strong> – Set default order options for queries.</p></li>
+<li><p><strong>load</strong> – Set default relationships to be loaded</p></li>
+<li><p><strong>execution_options</strong> – Set default execution options</p></li>
+<li><p><strong>error_messages</strong> – A set of custom error messages to use for operations</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamInvitationService.TeamInvitationRepository.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository.model_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitation</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamInvitationService.repository_type">
-<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService.repository_type" title="Link to this definition">#</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitationRepository</span></code></p>
+<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamInvitationService.repository_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository" title="app.domain.teams.services.TeamInvitationService.TeamInvitationRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">TeamInvitationRepository</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamMemberService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamMemberService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamMemberService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamMemberService" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMember</span></code>]</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamMemberService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamMemberService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamMemberService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.advanced-alchemy.litestar.dev/latest/reference/service.html#advanced_alchemy.service.SQLAlchemyAsyncRepositoryService" title="(in advanced_alchemy)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMember</span></code>]</p>
 <p>Team Member Service.</p>
 <p>Configure the service object.</p>
 <dl class="field-list simple">
@@ -858,18 +289,48 @@
 </ul>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamMemberService.TeamMemberRepository">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TeamMemberRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamMemberService.TeamMemberRepository"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamMemberService.TeamMemberRepository" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepository</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMember</span></code>]</p>
+<p>Team Member Repository.</p>
+<p>Repository for SQLAlchemy models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> – To facilitate customization of the underlying select query.</p></li>
+<li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
+<li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
+<li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
+<li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
+<li><p><strong>order_by</strong> – Set default order options for queries.</p></li>
+<li><p><strong>load</strong> – Set default relationships to be loaded</p></li>
+<li><p><strong>execution_options</strong> – Set default execution options</p></li>
+<li><p><strong>error_messages</strong> – A set of custom error messages to use for operations</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamMemberService.TeamMemberRepository.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamMemberService.TeamMemberRepository.model_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMember</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamMemberService.repository_type">
-<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamMemberService.repository_type" title="Link to this definition">#</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMemberRepository</span></code></p>
+<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamMemberService.repository_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#app.domain.teams.services.TeamMemberService.TeamMemberRepository" title="app.domain.teams.services.TeamMemberService.TeamMemberRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">TeamMemberRepository</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">repo_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Team</span></code>]</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.teams.services.</span></span><span class="sig-name descname"><span class="pre">TeamService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.advanced-alchemy.litestar.dev/latest/reference/service.html#advanced_alchemy.service.SQLAlchemyAsyncRepositoryService" title="(in advanced_alchemy)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Team</span></code>]</p>
 <p>Team Service.</p>
 <p>Configure the service object.</p>
 <dl class="field-list simple">
@@ -888,60 +349,51 @@
 </ul>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.repository_type">
-<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamService.repository_type" title="Link to this definition">#</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TeamRepository</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.match_fields">
-<span class="sig-name descname"><span class="pre">match_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['name']</span></em><a class="headerlink" href="#app.domain.teams.services.TeamService.match_fields" title="Link to this definition">#</a></dt>
-<dd><p>List of dialects that prefer to use <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">=</span> <span class="pre">ANY(:1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">IN</span> <span class="pre">(...)</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">repo_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.__init__" title="Link to this definition">#</a></dt>
-<dd><p>Configure the service object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.TeamRepository">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TeamRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">Select[tuple[ModelT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">AsyncSession</span> <span class="pre">|</span> <span class="pre">async_scoped_session[AsyncSession],</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[OrderingPair]</span> <span class="pre">|</span> <span class="pre">OrderingPair</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.TeamRepository"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.TeamRepository" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncSlugRepository</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Team</span></code>]</p>
+<p>Team Repository.</p>
+<p>Repository for SQLAlchemy models.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
 <li><p><strong>statement</strong> – To facilitate customization of the underlying select query.</p></li>
+<li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
 <li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
 <li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
 <li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
 <li><p><strong>order_by</strong> – Set default order options for queries.</p></li>
-<li><p><strong>error_messages</strong> – A set of custom error messages to use for operations</p></li>
 <li><p><strong>load</strong> – Set default relationships to be loaded</p></li>
 <li><p><strong>execution_options</strong> – Set default execution options</p></li>
-<li><p><strong>**repo_kwargs</strong> – passed as keyword args to repo instantiation.</p></li>
+<li><p><strong>error_messages</strong> – A set of custom error messages to use for operations</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.TeamRepository.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamService.TeamRepository.model_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Team</span></code></p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.create">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">ModelDictT[Team],</span> <span class="pre">*,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Team</span></span></span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.create" title="Link to this definition">#</a></dt>
-<dd><p>Create a new team with an owner.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.update">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">ModelDictT[Team],</span> <span class="pre">item_id:</span> <span class="pre">Any</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">*,</span> <span class="pre">id_attribute:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">InstrumentedAttribute[Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">attribute_names:</span> <span class="pre">Iterable[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">with_for_update:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">ErrorMessages</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">|</span> <span class="pre">EmptyType</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">LoadSpec</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Team</span></span></span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.update" title="Link to this definition">#</a></dt>
-<dd><p>Wrap repository update operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Updated representation.</p>
-</dd>
-</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.repository_type">
+<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.teams.services.TeamService.repository_type" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#app.domain.teams.services.TeamService.TeamRepository" title="app.domain.teams.services.TeamService.TeamRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">TeamRepository</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.teams.services.TeamService.match_fields">
+<span class="sig-name descname"><span class="pre">match_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['name']</span></em><a class="headerlink" href="#app.domain.teams.services.TeamService.match_fields" title="Link to this definition">¶</a></dt>
+<dd><p>List of dialects that prefer to use <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">=</span> <span class="pre">ANY(:1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">IN</span> <span class="pre">(...)</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.teams.services.TeamService.to_model">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">Team</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Team</span></span></span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.to_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.to_model" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Team</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">m.Team</span></span></span><a class="reference internal" href="../../../_modules/app/domain/teams/services.html#TeamService.to_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.teams.services.TeamService.to_model" title="Link to this definition">¶</a></dt>
 <dd><p>Parse and Convert input into a model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -960,153 +412,51 @@
 
 </section>
 
-
-                </article>
-              
-              
-              
-              
-              
-                <footer class="prev-next-footer d-print-none">
-                  
-<div class="prev-next-area">
-    <a class="left-prev"
-       href="models.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">models</p>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="guards.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">guards</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="controllers/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">teams</div>
       </div>
+      <i class="i-lucide chevron-right"></i>
     </a>
-    <a class="right-next"
-       href="controllers/index.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">teams</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
-</div>
-                </footer>
-              
-            </div>
-            
-            
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamInvitationService"><code class="docutils literal notranslate"><span class="pre">TeamInvitationService</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamInvitationService.repository_type"><code class="docutils literal notranslate"><span class="pre">TeamInvitationService.repository_type</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamMemberService"><code class="docutils literal notranslate"><span class="pre">TeamMemberService</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamMemberService.repository_type"><code class="docutils literal notranslate"><span class="pre">TeamMemberService.repository_type</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService"><code class="docutils literal notranslate"><span class="pre">TeamService</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.repository_type"><code class="docutils literal notranslate"><span class="pre">TeamService.repository_type</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.match_fields"><code class="docutils literal notranslate"><span class="pre">TeamService.match_fields</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.__init__"><code class="docutils literal notranslate"><span class="pre">TeamService.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.create"><code class="docutils literal notranslate"><span class="pre">TeamService.create()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.update"><code class="docutils literal notranslate"><span class="pre">TeamService.update()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.domain.teams.services.TeamService.to_model"><code class="docutils literal notranslate"><span class="pre">TeamService.to_model()</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/litestar-org/litestar-fullstack/edit/main/docs/api/domain/teams/services.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../_sources/api/domain/teams/services.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
-
-</div></div>
-              
-            
-          </div>
-          <footer class="bd-footer-content">
-            
-          </footer>
-        
-      </main>
+  </div></div></div>
     </div>
-  </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
+  <p>
+    Made with
     
-      © Copyright 2023, Litestar Organization.
-      <br/>
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
     
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
   </p>
 </div>
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
-    <br/>
-  </p>
-</div>
-      
+      <div class="sy-foot-socials"></div>
     </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
-    </div>
-  
-</div>
-
-  </footer>
-  </body>
+  </div>
+</footer>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../_static/shibuya.js?v=55e26b35"></script></body>
 </html>

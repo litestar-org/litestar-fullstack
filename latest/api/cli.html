@@ -1,892 +1,307 @@
-
 <!DOCTYPE html>
-
-
-<html lang="en" data-content_root="../" >
-
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>cli &#8212; Litestar Fullstack Docs</title>
-  
-  
-  
-  <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
-  </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
-  
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+<html lang="en" data-accent-color="violet" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cli - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="app" href="asgi.html" /><link rel="prev" title="API Reference" href="index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css?v=9e3812bb" />
-  
-  <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
-
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/cli';</script>
-    <link rel="icon" href="../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="utils" href="utils.html" />
-    <link rel="prev" title="app" href="asgi.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="cli"/>
+<meta name="twitter:card" content="summary"/>
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
-  
-  
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
-  
-  <dialog id="pst-search-dialog">
-    
-<form class="bd-search d-flex align-items-center"
-      action="../search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
-
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-
-  
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class=" navbar-header-items__start">
-    
-      <div class="navbar-item">
-
-  
-     
-  
-
-<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
-  
-  
-  
-  
-  
-    
-    
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
       
-    
-    
-    <img src="../_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
-    <img src="../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Litestar Fullstack Docs - Home"/>
-  
-  
-</a></div>
-    
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
   </div>
-  
-  <div class=" navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
 </div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-        </div>
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-        </div>
-      
-      
-        <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-    </div>
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
-    </header>
-  
-
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      
-      
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          
-          
-            <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
-</div>
-          
-        
-      </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-        
-      </div>
-    
-  </div>
-  
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../usage/development.html">Development</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../usage/startup.html">Starting the server</a></li>
 </ul>
-</details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="asgi.html">app</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="domain/index.html">domain</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="domain/urls.html">urls</a></li>
-<li class="toctree-l3"><a class="reference internal" href="domain/security.html">security</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/system/index.html">system</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/tasks.html">tasks</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/web/index.html">web</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/web/controllers.html">controllers</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/teams/index.html">teams</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/controllers/index.html">teams</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/tags/index.html">tags</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/tags/services.html">services</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/analytics/index.html">analytics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/analytics/queries.html">queries</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="domain/accounts/index.html">accounts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/dependencies.html">dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/dtos.html">dtos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/guards.html">guards</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/models.html">models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/controllers/index.html">accounts</a></li>
-</ul>
-</details></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="lib/index.html">lib</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="lib/cache.html">cache</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/compression.html">compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/constants.html">constants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/cors.html">cors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db.html">db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib/index.html">lib</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/csrf.html">csrf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/dependencies.html">dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib/deps.html">deps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lib/dto.html">dto</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lib/exceptions.html">exceptions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/openapi.html">openapi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/repository.html">repository</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/serialization.html">serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/service.html">service</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/settings.html">settings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/static_files.html">static files</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="lib/log/index.html">logging</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/controller.html">controller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/init.html">init</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/utils.html">utils</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/log/worker.html">worker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib/schema.html">schema</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="lib/db/index.html">db</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/base.html">base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/orm.html">orm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib/db/utils.html">utils</a></li>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="domain/index.html">domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="domain/accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/controllers/index.html">accounts</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="domain/accounts/controllers/access.html">access</a></li>
+<li class="toctree-l5"><a class="reference internal" href="domain/accounts/controllers/accounts.html">accounts</a></li>
+<li class="toctree-l5"><a class="reference internal" href="domain/accounts/controllers/users.html">controllers</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-</details></li>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="domain/teams/index.html">teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/teams/controllers/index.html">teams</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="domain/teams/controllers/team_invitation.html">team invitation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="domain/teams/controllers/team_member.html">team member</a></li>
+<li class="toctree-l5"><a class="reference internal" href="domain/teams/controllers/teams.html">teams</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul class="nav bd-sidenav">
+</li>
+<li class="toctree-l3"><a class="reference internal" href="domain/tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="domain/web/index.html">web</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="domain/system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/system/tasks.html">tasks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../contribution-guide.html">Contribution Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
-</div>
-</nav></div>
-    </div>
-  
-  
-  <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
-  </div>
 
-
+        </div>
       </div>
-      
-      <main id="main-content" class="bd-main" role="main">
-        
-        
-          <div class="bd-content">
-            <div class="bd-article-container">
-              
-              <div class="bd-header-article d-print-none">
-<div class="header-article-items header-article__inner">
-  
-    <div class="header-article-items__start">
-      
-        <div class="header-article-item">
-
-<nav aria-label="Breadcrumb" class="d-print-none">
-  <ul class="bd-breadcrumbs">
-    
-    <li class="breadcrumb-item breadcrumb-home">
-      <a href="../index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
-      </a>
-    </li>
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">cli</span></li>
-  </ul>
-</nav>
-</div>
-      
     </div>
-  
-  
-</div>
-</div>
-              
-              
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article">
-                  
-  <section id="cli">
-<h1>cli<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#litestar-cli">Litestar CLI</a><ul>
+<li><a class="reference internal" href="#app">app</a><ul>
+<li><a class="reference internal" href="#app-info">info</a></li>
+<li><a class="reference internal" href="#app-routes">routes</a></li>
+<li><a class="reference internal" href="#app-run">run</a></li>
+<li><a class="reference internal" href="#app-schema">schema</a><ul>
+<li><a class="reference internal" href="#app-schema-openapi">openapi</a></li>
+<li><a class="reference internal" href="#app-schema-typescript">typescript</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app-sessions">sessions</a><ul>
+<li><a class="reference internal" href="#app-sessions-clear">clear</a></li>
+<li><a class="reference internal" href="#app-sessions-delete">delete</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app-version">version</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#database-cli">Database CLI</a><ul>
+<li><a class="reference internal" href="#app-database">app database</a><ul>
+<li><a class="reference internal" href="#app-database-downgrade">downgrade</a></li>
+<li><a class="reference internal" href="#app-database-drop-all">drop-all</a></li>
+<li><a class="reference internal" href="#app-database-dump-data">dump-data</a></li>
+<li><a class="reference internal" href="#app-database-init">init</a></li>
+<li><a class="reference internal" href="#app-database-make-migrations">make-migrations</a></li>
+<li><a class="reference internal" href="#app-database-show-current-revision">show-current-revision</a></li>
+<li><a class="reference internal" href="#app-database-upgrade">upgrade</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#user-management-cli">User management CLI</a><ul>
+<li><a class="reference internal" href="#app-user">app user</a><ul>
+<li><a class="reference internal" href="#app-user-create-roles">create-roles</a></li>
+<li><a class="reference internal" href="#app-user-create-user">create-user</a></li>
+<li><a class="reference internal" href="#app-user-promote-to-superuser">promote-to-superuser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">cli</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="cli">
+<h1>cli<a class="headerlink" href="#cli" title="Link to this heading">¶</a></h1>
 <p>Command line interface for the application.</p>
 <section id="litestar-cli">
-<h2>Litestar CLI<a class="headerlink" href="#litestar-cli" title="Link to this heading">#</a></h2>
+<h2>Litestar CLI<a class="headerlink" href="#litestar-cli" title="Link to this heading">¶</a></h2>
 <section id="app">
-<h3>app<a class="headerlink" href="#app" title="Link to this heading">#</a></h3>
+<h3>app<a class="headerlink" href="#app" title="Link to this heading">¶</a></h3>
 <p>Litestar CLI.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-app">
-<span class="sig-name descname"><span class="pre">--app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-app" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-app" title="Link to this definition">¶</a></dt>
 <dd><p>Module path to a Litestar application</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-app-dir">
-<span class="sig-name descname"><span class="pre">--app-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-app-dir" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--app-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-app-dir" title="Link to this definition">¶</a></dt>
 <dd><p>Look for APP in the specified directory, by adding this to the PYTHONPATH. Defaults to the current working directory.</p>
 </dd></dl>
 
 <section id="app-info">
-<h4>info<a class="headerlink" href="#app-info" title="Link to this heading">#</a></h4>
+<h4>info<a class="headerlink" href="#app-info" title="Link to this heading">¶</a></h4>
 <p>Show information about the detected Litestar app.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 </section>
 <section id="app-routes">
-<h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">#</a></h4>
+<h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">¶</a></h4>
 <p>Display information about the application’s routes.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-routes-schema">
-<span class="sig-name descname"><span class="pre">--schema</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-routes-schema" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--schema</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-routes-schema" title="Link to this definition">¶</a></dt>
 <dd><p>Include schema routes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-routes-exclude">
-<span class="sig-name descname"><span class="pre">--exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-routes-exclude" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-routes-exclude" title="Link to this definition">¶</a></dt>
 <dd><p>routes to exclude via regex</p>
 </dd></dl>
 
 </section>
 <section id="app-run">
-<h4>run<a class="headerlink" href="#app-run" title="Link to this heading">#</a></h4>
+<h4>run<a class="headerlink" href="#app-run" title="Link to this heading">¶</a></h4>
 <p>Run a Litestar app; requires <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code>.</p>
 <p>The app can be either passed as a module path in the form of <code class="docutils literal notranslate"><span class="pre">&lt;module</span> <span class="pre">name&gt;.&lt;submodule&gt;:&lt;app</span> <span class="pre">instance</span> <span class="pre">or</span> <span class="pre">factory&gt;</span></code>
 set as an environment variable <code class="docutils literal notranslate"><span class="pre">LITESTAR_APP</span></code> with the same format or automatically discovered from one of these
 canonical paths: <code class="docutils literal notranslate"><span class="pre">app.py</span></code>, <code class="docutils literal notranslate"><span class="pre">asgi.py</span></code>, <code class="docutils literal notranslate"><span class="pre">application.py</span></code> or <code class="docutils literal notranslate"><span class="pre">app/__init__.py</span></code>.
 When auto-discovering application factories, functions with the name <code class="docutils literal notranslate"><span class="pre">create_app</span></code> are considered,
 or functions that are annotated as returning a <code class="docutils literal notranslate"><span class="pre">Litestar</span></code> instance.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-r">
-<span id="cmdoption-app-run-reload"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-r" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-reload"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-r" title="Link to this definition">¶</a></dt>
 <dd><p>Reload server on changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-R">
-<span id="cmdoption-app-run-reload-dir"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-R" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-reload-dir"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-R" title="Link to this definition">¶</a></dt>
 <dd><p>Directories to watch for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-I">
-<span id="cmdoption-app-run-reload-include"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-include</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_include&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-I" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-reload-include"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-include</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_include&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-I" title="Link to this definition">¶</a></dt>
 <dd><p>Glob patterns for files to include when watching for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-E">
-<span id="cmdoption-app-run-reload-exclude"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-E" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-reload-exclude"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-E" title="Link to this definition">¶</a></dt>
 <dd><p>Glob patterns for files to exclude when watching for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-p">
-<span id="cmdoption-app-run-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-p" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-p" title="Link to this definition">¶</a></dt>
 <dd><p>Serve under this port</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -897,7 +312,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-W">
-<span id="cmdoption-app-run-wc"></span><span id="cmdoption-app-run-web-concurrency"></span><span class="sig-name descname"><span class="pre">-W</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--web-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;wc&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-W" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-wc"></span><span id="cmdoption-app-run-web-concurrency"></span><span class="sig-name descname"><span class="pre">-W</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--web-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;wc&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-W" title="Link to this definition">¶</a></dt>
 <dd><p>The number of HTTP workers to launch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -908,7 +323,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-H">
-<span id="cmdoption-app-run-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-H" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-H" title="Link to this definition">¶</a></dt>
 <dd><p>Server under this host</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -919,43 +334,43 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-F">
-<span id="cmdoption-app-run-fd"></span><span id="cmdoption-app-run-file-descriptor"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file-descriptor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fd&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-F" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-fd"></span><span id="cmdoption-app-run-file-descriptor"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file-descriptor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fd&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-F" title="Link to this definition">¶</a></dt>
 <dd><p>Bind to a socket from this file descriptor.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-U">
-<span id="cmdoption-app-run-uds"></span><span id="cmdoption-app-run-unix-domain-socket"></span><span class="sig-name descname"><span class="pre">-U</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uds</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unix-domain-socket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;uds&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-U" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-uds"></span><span id="cmdoption-app-run-unix-domain-socket"></span><span class="sig-name descname"><span class="pre">-U</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uds</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unix-domain-socket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;uds&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-U" title="Link to this definition">¶</a></dt>
 <dd><p>Bind to a UNIX domain socket.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-d">
-<span id="cmdoption-app-run-debug"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-d" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-debug"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-d" title="Link to this definition">¶</a></dt>
 <dd><p>Run app in debug mode</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-P">
-<span id="cmdoption-app-run-pdb"></span><span id="cmdoption-app-run-use-pdb"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--pdb</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-pdb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-P" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-run-pdb"></span><span id="cmdoption-app-run-use-pdb"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--pdb</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-pdb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-P" title="Link to this definition">¶</a></dt>
 <dd><p>Drop into PDB on an exception</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-ssl-certfile">
-<span class="sig-name descname"><span class="pre">--ssl-certfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_certfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-certfile" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--ssl-certfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_certfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-certfile" title="Link to this definition">¶</a></dt>
 <dd><p>Location of the SSL cert file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-ssl-keyfile">
-<span class="sig-name descname"><span class="pre">--ssl-keyfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_keyfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-keyfile" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--ssl-keyfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_keyfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-keyfile" title="Link to this definition">¶</a></dt>
 <dd><p>Location of the SSL key file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-create-self-signed-cert">
-<span class="sig-name descname"><span class="pre">--create-self-signed-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-create-self-signed-cert" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--create-self-signed-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-create-self-signed-cert" title="Link to this definition">¶</a></dt>
 <dd><p>If certificate and key are not found at specified locations, create a self-signed certificate and a key</p>
 </dd></dl>
 
@@ -1074,21 +489,21 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 </section>
 <section id="app-schema">
-<h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">#</a></h4>
+<h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">¶</a></h4>
 <p>Manage server-side OpenAPI schemas.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
 </div>
 <section id="app-schema-openapi">
-<h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">#</a></h5>
+<h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">¶</a></h5>
 <p>Generate an OpenAPI Schema.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span>openapi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>openapi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-openapi-output">
-<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-openapi-output" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-openapi-output" title="Link to this definition">¶</a></dt>
 <dd><p>output file path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1099,15 +514,15 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 </section>
 <section id="app-schema-typescript">
-<h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">#</a></h5>
+<h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">¶</a></h5>
 <p>Generate TypeScript specs from the OpenAPI schema.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>schema<span class="w"> </span>typescript<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>typescript<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-typescript-output">
-<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-output" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-output" title="Link to this definition">¶</a></dt>
 <dd><p>output file path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1118,91 +533,91 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-typescript-namespace">
-<span class="sig-name descname"><span class="pre">--namespace</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;namespace&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-namespace" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--namespace</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;namespace&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-namespace" title="Link to this definition">¶</a></dt>
 <dd><p>namespace to use for the typescript specs</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="app-sessions">
-<h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">#</a></h4>
+<h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">¶</a></h4>
 <p>Manage server-side sessions.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
 </div>
 <section id="app-sessions-clear">
-<h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">#</a></h5>
+<h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">¶</a></h5>
 <p>Delete all sessions.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span>clear<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>clear<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 </section>
 <section id="app-sessions-delete">
-<h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">#</a></h5>
+<h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">¶</a></h5>
 <p>Delete a specific session.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>sessions<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SESSION_ID
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SESSION_ID
+</span></pre></div>
 </div>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-sessions-delete-arg-SESSION_ID">
-<span class="sig-name descname"><span class="pre">SESSION_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-sessions-delete-arg-SESSION_ID" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">SESSION_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-sessions-delete-arg-SESSION_ID" title="Link to this definition">¶</a></dt>
 <dd><p>Required argument</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="app-version">
-<h4>version<a class="headerlink" href="#app-version" title="Link to this heading">#</a></h4>
+<h4>version<a class="headerlink" href="#app-version" title="Link to this heading">¶</a></h4>
 <p>Show the currently installed Litestar version.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-version-s">
-<span id="cmdoption-app-version-short"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--short</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-version-s" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-version-short"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--short</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-version-s" title="Link to this definition">¶</a></dt>
 <dd><p>Exclude release level and serial information</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="database-cli">
-<h3>Database CLI<a class="headerlink" href="#database-cli" title="Link to this heading">#</a></h3>
+<h3>Database CLI<a class="headerlink" href="#database-cli" title="Link to this heading">¶</a></h3>
 <section id="app-database">
-<h4>app database<a class="headerlink" href="#app-database" title="Link to this heading">#</a></h4>
+<h4>app database<a class="headerlink" href="#app-database" title="Link to this heading">¶</a></h4>
 <p>Manage SQLAlchemy database components.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
 </div>
 <section id="app-database-downgrade">
-<h5>downgrade<a class="headerlink" href="#app-database-downgrade" title="Link to this heading">#</a></h5>
+<h5>downgrade<a class="headerlink" href="#app-database-downgrade" title="Link to this heading">¶</a></h5>
 <p>Downgrade database to a specific revision.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>downgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>downgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-sql" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-sql" title="Link to this definition">¶</a></dt>
 <dd><p>Generate SQL output for offline migrations.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-tag" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-tag" title="Link to this definition">¶</a></dt>
 <dd><p>an arbitrary ‘tag’ that can be intercepted by custom env.py scripts via the .EnvironmentContext.get_tag_argument method.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-no-prompt" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-no-prompt" title="Link to this definition">¶</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1214,27 +629,27 @@ or functions that are annotated as returning a <code class="docutils literal not
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-arg-REVISION" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-arg-REVISION" title="Link to this definition">¶</a></dt>
 <dd><p>Optional argument</p>
 </dd></dl>
 
 </section>
 <section id="app-database-drop-all">
-<h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">#</a></h5>
+<h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">¶</a></h5>
 <p>Drop all tables from the database.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>drop-all<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>drop-all<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-drop-all-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-drop-all-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">¶</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1245,59 +660,59 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 </section>
 <section id="app-database-dump-data">
-<h5>dump-data<a class="headerlink" href="#app-database-dump-data" title="Link to this heading">#</a></h5>
+<h5>dump-data<a class="headerlink" href="#app-database-dump-data" title="Link to this heading">¶</a></h5>
 <p>Dump specified tables from the database to JSON files.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>dump-data<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>dump-data<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-table">
-<span class="sig-name descname"><span class="pre">--table</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;table_names&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-table" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--table</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;table_names&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-table" title="Link to this definition">¶</a></dt>
 <dd><p><strong>Required</strong> Name of the table to dump. Multiple tables can be specified. Use ‘*’ to dump all tables.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-dir">
-<span class="sig-name descname"><span class="pre">--dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dump_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-dir" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dump_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-dir" title="Link to this definition">¶</a></dt>
 <dd><p>Directory to save the JSON files. Defaults to WORKDIR/fixtures</p>
 </dd></dl>
 
 </section>
 <section id="app-database-init">
-<h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">#</a></h5>
+<h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">¶</a></h5>
 <p>Initialize migrations for the project.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>DIRECTORY
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>DIRECTORY
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-multidb">
-<span class="sig-name descname"><span class="pre">--multidb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-multidb" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--multidb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-multidb" title="Link to this definition">¶</a></dt>
 <dd><p>Support multiple databases</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-package">
-<span class="sig-name descname"><span class="pre">--package</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-package" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--package</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-package" title="Link to this definition">¶</a></dt>
 <dd><p>Create <cite>__init__.py</cite> for created folder</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-no-prompt" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-no-prompt" title="Link to this definition">¶</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1309,75 +724,75 @@ or functions that are annotated as returning a <code class="docutils literal not
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-arg-DIRECTORY">
-<span class="sig-name descname"><span class="pre">DIRECTORY</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-arg-DIRECTORY" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">DIRECTORY</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-arg-DIRECTORY" title="Link to this definition">¶</a></dt>
 <dd><p>Required argument</p>
 </dd></dl>
 
 </section>
 <section id="app-database-make-migrations">
-<h5>make-migrations<a class="headerlink" href="#app-database-make-migrations" title="Link to this heading">#</a></h5>
+<h5>make-migrations<a class="headerlink" href="#app-database-make-migrations" title="Link to this heading">¶</a></h5>
 <p>Create a new migration revision.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>make-migrations<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>make-migrations<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-m">
-<span id="cmdoption-app-database-make-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-m" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-database-make-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-m" title="Link to this definition">¶</a></dt>
 <dd><p>Revision message</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-autogenerate">
-<span id="cmdoption-app-database-make-migrations-no-autogenerate"></span><span class="sig-name descname"><span class="pre">--autogenerate</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-autogenerate</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-autogenerate" title="Link to this definition">#</a></dt>
+<span id="cmdoption-app-database-make-migrations-no-autogenerate"></span><span class="sig-name descname"><span class="pre">--autogenerate</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-autogenerate</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-autogenerate" title="Link to this definition">¶</a></dt>
 <dd><p>Automatically populate revision with detected changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-sql" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-sql" title="Link to this definition">¶</a></dt>
 <dd><p>Export to <cite>.sql</cite> instead of writing to the database.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-head">
-<span class="sig-name descname"><span class="pre">--head</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;head&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-head" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--head</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;head&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-head" title="Link to this definition">¶</a></dt>
 <dd><p>Specify head revision to use as base for new revision.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-splice">
-<span class="sig-name descname"><span class="pre">--splice</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-splice" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--splice</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-splice" title="Link to this definition">¶</a></dt>
 <dd><p>Allow a non-head revision as the “head” to splice onto</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-branch-label">
-<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-branch-label" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-branch-label" title="Link to this definition">¶</a></dt>
 <dd><p>Specify a branch label to apply to the new revision</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-version-path">
-<span class="sig-name descname"><span class="pre">--version-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-version-path" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--version-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-version-path" title="Link to this definition">¶</a></dt>
 <dd><p>Specify specific path from config for version file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-rev-id">
-<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-rev-id" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-rev-id" title="Link to this definition">¶</a></dt>
 <dd><p>Specify a ID to use for revision.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-no-prompt" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-no-prompt" title="Link to this definition">¶</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1388,53 +803,53 @@ or functions that are annotated as returning a <code class="docutils literal not
 
 </section>
 <section id="app-database-show-current-revision">
-<h5>show-current-revision<a class="headerlink" href="#app-database-show-current-revision" title="Link to this heading">#</a></h5>
+<h5>show-current-revision<a class="headerlink" href="#app-database-show-current-revision" title="Link to this heading">¶</a></h5>
 <p>Shows the current revision for the database.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>show-current-revision<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show-current-revision<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-verbose">
-<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-verbose" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-verbose" title="Link to this definition">¶</a></dt>
 <dd><p>Enable verbose output.</p>
 </dd></dl>
 
 </section>
 <section id="app-database-upgrade">
-<h5>upgrade<a class="headerlink" href="#app-database-upgrade" title="Link to this heading">#</a></h5>
+<h5>upgrade<a class="headerlink" href="#app-database-upgrade" title="Link to this heading">¶</a></h5>
 <p>Upgrade database to a specific revision.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>upgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
-</pre></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>upgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
+</span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-bind-key" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-bind-key" title="Link to this definition">¶</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-sql" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-sql" title="Link to this definition">¶</a></dt>
 <dd><p>Generate SQL output for offline migrations.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-tag" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-tag" title="Link to this definition">¶</a></dt>
 <dd><p>an arbitrary ‘tag’ that can be intercepted by custom env.py scripts via the .EnvironmentContext.get_tag_argument method.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-no-prompt" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-no-prompt" title="Link to this definition">¶</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1446,8 +861,71 @@ or functions that are annotated as returning a <code class="docutils literal not
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-arg-REVISION" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-arg-REVISION" title="Link to this definition">¶</a></dt>
 <dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+<section id="user-management-cli">
+<h3>User management CLI<a class="headerlink" href="#user-management-cli" title="Link to this heading">¶</a></h3>
+<section id="app-user">
+<h4>app user<a class="headerlink" href="#app-user" title="Link to this heading">¶</a></h4>
+<p>Manage application users and roles.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
+</div>
+<section id="app-user-create-roles">
+<h5>create-roles<a class="headerlink" href="#app-user-create-roles" title="Link to this heading">¶</a></h5>
+<p>Create pre-configured application roles and assign to users.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-roles<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+</section>
+<section id="app-user-create-user">
+<h5>create-user<a class="headerlink" href="#app-user-create-user" title="Link to this heading">¶</a></h5>
+<p>Create a user</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-user-create-user-email">
+<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-email" title="Link to this definition">¶</a></dt>
+<dd><p>Email of the new user</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-user-create-user-name">
+<span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-name" title="Link to this definition">¶</a></dt>
+<dd><p>Full name of the new user</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-user-create-user-password">
+<span class="sig-name descname"><span class="pre">--password</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;password&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-password" title="Link to this definition">¶</a></dt>
+<dd><p>Password</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-user-create-user-superuser">
+<span class="sig-name descname"><span class="pre">--superuser</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-user-create-user-superuser" title="Link to this definition">¶</a></dt>
+<dd><p>Is a superuser</p>
+</dd></dl>
+
+</section>
+<section id="app-user-promote-to-superuser">
+<h5>promote-to-superuser<a class="headerlink" href="#app-user-promote-to-superuser" title="Link to this heading">¶</a></h5>
+<p>Promotes a user to application superuser</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>promote-to-superuser<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-user-promote-to-superuser-email">
+<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-promote-to-superuser-email" title="Link to this definition">¶</a></dt>
+<dd><p>Email of the user</p>
 </dd></dl>
 
 </section>
@@ -1456,169 +934,51 @@ or functions that are annotated as returning a <code class="docutils literal not
 </section>
 </section>
 
-
-                </article>
-              
-              
-              
-              
-              
-                <footer class="prev-next-footer d-print-none">
-                  
-<div class="prev-next-area">
-    <a class="left-prev"
-       href="asgi.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">app</p>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">API Reference</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="asgi.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">app</div>
       </div>
+      <i class="i-lucide chevron-right"></i>
     </a>
-    <a class="right-next"
-       href="utils.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">utils</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
-</div>
-                </footer>
-              
-            </div>
-            
-            
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#litestar-cli">Litestar CLI</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app">app</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-info">info</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-routes">routes</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-run">run</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema">schema</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema-openapi">openapi</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-schema-typescript">typescript</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions">sessions</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions-clear">clear</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-sessions-delete">delete</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-version">version</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#database-cli">Database CLI</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database">app database</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-downgrade">downgrade</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-drop-all">drop-all</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-dump-data">dump-data</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-init">init</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-make-migrations">make-migrations</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-show-current-revision">show-current-revision</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-upgrade">upgrade</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/litestar-org/litestar-fullstack/edit/main/docs/api/cli.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/api/cli.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
-
-</div></div>
-              
-            
-          </div>
-          <footer class="bd-footer-content">
-            
-          </footer>
-        
-      </main>
+  </div></div></div>
     </div>
-  </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
+  <p>
+    Made with
     
-      © Copyright 2023, Litestar Organization.
-      <br/>
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
     
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
   </p>
 </div>
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
-    <br/>
-  </p>
-</div>
-      
+      <div class="sy-foot-socials"></div>
     </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
-    </div>
-  
-</div>
-
-  </footer>
-  </body>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=55e26b35"></script></body>
 </html>

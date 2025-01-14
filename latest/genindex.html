@@ -1,670 +1,58 @@
-
 <!DOCTYPE html>
-
-
-<html lang="en" data-content_root="./" >
-
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; Litestar Fullstack Docs</title>
-  
-  
-  
-  <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
-  </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
-  
-  <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+<html lang="en" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Index - Litestar Fullstack Docs</title><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/litestar-sphinx-theme.css?v=9e3812bb" />
-  
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
-
-    <script src="_static/documentation_options.js?v=938c9ccc"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
-</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
-    <link rel="icon" href="_static/favicon.png"/>
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
-  </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
-  
-  
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
-  
-  <dialog id="pst-search-dialog">
-    
-<form class="bd-search d-flex align-items-center"
-      action="search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
-
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-
-  
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class=" navbar-header-items__start">
-    
-      <div class="navbar-item">
-
-  
-     
-  
-
-<a class="navbar-brand logo" href="https://docs.fullstack.litestar.dev">
-  
-  
-  
-  
-  
-    
-    
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
       
-    
-    
-    <img src="_static/logo.svg" class="logo__image only-light" alt="Litestar Fullstack Docs - Home"/>
-    <img src="_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Litestar Fullstack Docs - Home"/>
-  
-  
-</a></div>
-    
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
   </div>
-  
-  <div class=" navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
+</div><div class="sy-container mx-auto body">
+    <main class="sy-content mx-auto pt-12 px-6 xl:px-12 break-words">
+      <article class="yue" role="main">
         
-    
-        
-            <a href="index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
-</div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-        </div>
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-        </div>
-      
-      
-        <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
-    </div>
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
-    </div>
-  
-
-  
-</div>
-
-    </header>
-  
-
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      
-      
-        
-      
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          
-          
-            <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="contribution-guide.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Litestar Fullstack</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
-</div>
-          
-        
-      </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item"><ul class="navbar-icon-links"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/litestar-fullstack" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar" title="Discord" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-        
-      </div>
-    
-  </div>
-  
-  
-  <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
-  </div>
-
-
-      </div>
-      
-      <main id="main-content" class="bd-main" role="main">
-        
-        
-          <div class="bd-content">
-            <div class="bd-article-container">
-              
-              <div class="bd-header-article d-print-none"></div>
-              
-              
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article">
-                  
 
 <h1 id="index">Index</h1>
 
@@ -680,9 +68,7 @@ window.addEventListener("load", () => mermaid.run());
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -765,6 +151,15 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    --email
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-email">app-user-create-user command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-user-promote-to-superuser-email">app-user-promote-to-superuser command line option</a>
+</li>
+      </ul></li>
+      <li>
     --exclude
 
       <ul>
@@ -814,6 +209,13 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    --name
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-name">app-user-create-user command line option</a>
+</li>
+      </ul></li>
+      <li>
     --namespace
 
       <ul>
@@ -859,6 +261,13 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    --password
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-password">app-user-create-user command line option</a>
+</li>
+      </ul></li>
+      <li>
     --pdb
 
       <ul>
@@ -886,6 +295,8 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-run-R">app-run command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --reload-exclude
 
@@ -900,8 +311,6 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-run-I">app-run command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --rev-id
 
@@ -953,6 +362,13 @@ window.addEventListener("load", () => mermaid.run());
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-run-ssl-keyfile">app-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --superuser
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-superuser">app-user-create-user command line option</a>
 </li>
       </ul></li>
       <li>
@@ -1117,23 +533,9 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.__init__">__init__() (app.domain.accounts.services.RoleService method)</a>
+      <li><a href="api/config.html#app.config.Settings.__init__">__init__() (app.config.Settings method)</a>
 
       <ul>
-        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.__init__">(app.domain.accounts.services.UserService method)</a>
-</li>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.__init__">(app.domain.teams.services.TeamService method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.__init__">(app.lib.dependencies.BeforeAfter method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.__init__">(app.lib.dependencies.CollectionFilter method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset.__init__">(app.lib.dependencies.LimitOffset method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy.__init__">(app.lib.dependencies.OrderBy method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.__init__">(app.lib.dependencies.SearchFilter method)</a>
-</li>
         <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.__init__">(app.lib.dto.DTOConfig method)</a>
 </li>
         <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError.__init__">(app.lib.exceptions.ApplicationError method)</a>
@@ -1145,15 +547,19 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController">AccessController (class in app.domain.accounts.controllers.access)</a>
-</li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.after">after (app.lib.dependencies.BeforeAfter attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController">AccessController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.after_exception_hook_handler">after_exception_hook_handler() (in module app.lib.exceptions)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.after_request">after_request (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.after_request">after_request (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.after_request">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.after_request">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.after_request">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.after_request">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.after_request">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1167,9 +573,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.after_request">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.after_response">after_response (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.after_response">after_response (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.after_response">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.after_response">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.after_response">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.after_response">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.after_response">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1393,6 +805,26 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    app-user-create-user command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-email">--email</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-name">--name</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-password">--password</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-user-create-user-superuser">--superuser</a>
+</li>
+      </ul></li>
+      <li>
+    app-user-promote-to-superuser command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-user-promote-to-superuser-email">--email</a>
+</li>
+      </ul></li>
+      <li>
     app-version command line option
 
       <ul>
@@ -1409,17 +841,31 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
-    app.domain.accounts.controllers.access
+    app.config
 
       <ul>
-        <li><a href="api/domain/accounts/controllers/access.html#module-app.domain.accounts.controllers.access">module</a>
+        <li><a href="api/config.html#module-app.config">module</a>
 </li>
       </ul></li>
       <li>
-    app.domain.accounts.dependencies
+    app.db
 
       <ul>
-        <li><a href="api/domain/accounts/dependencies.html#module-app.domain.accounts.dependencies">module</a>
+        <li><a href="api/db.html#module-app.db">module</a>
+</li>
+      </ul></li>
+      <li>
+    app.domain.accounts.controllers
+
+      <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#module-app.domain.accounts.controllers">module</a>
+</li>
+      </ul></li>
+      <li>
+    app.domain.accounts.deps
+
+      <ul>
+        <li><a href="api/domain/accounts/deps.html#module-app.domain.accounts.deps">module</a>
 </li>
       </ul></li>
       <li>
@@ -1458,20 +904,6 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
-    app.domain.tags.dependencies
-
-      <ul>
-        <li><a href="api/domain/tags/dependencies.html#module-app.domain.tags.dependencies">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.domain.tags.dtos
-
-      <ul>
-        <li><a href="api/domain/tags/dtos.html#module-app.domain.tags.dtos">module</a>
-</li>
-      </ul></li>
-      <li>
     app.domain.tags.services
 
       <ul>
@@ -1497,13 +929,6 @@ window.addEventListener("load", () => mermaid.run());
 
       <ul>
         <li><a href="api/domain/teams/controllers/teams.html#module-app.domain.teams.controllers.teams">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.domain.teams.dependencies
-
-      <ul>
-        <li><a href="api/domain/teams/dependencies.html#module-app.domain.teams.dependencies">module</a>
 </li>
       </ul></li>
       <li>
@@ -1535,10 +960,10 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
-    app.lib.dependencies
+    app.lib.deps
 
       <ul>
-        <li><a href="api/lib/dependencies.html#module-app.lib.dependencies">module</a>
+        <li><a href="api/lib/deps.html#module-app.lib.deps">module</a>
 </li>
       </ul></li>
       <li>
@@ -1555,16 +980,18 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/lib/exceptions.html#module-app.lib.exceptions">module</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.append_to_statement">append_to_statement() (app.lib.dependencies.BeforeAfter method)</a>
+      <li>
+    app.lib.schema
 
       <ul>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.append_to_statement">(app.lib.dependencies.CollectionFilter method)</a>
+        <li><a href="api/lib/schema.html#module-app.lib.schema">module</a>
 </li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset.append_to_statement">(app.lib.dependencies.LimitOffset method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy.append_to_statement">(app.lib.dependencies.OrderBy method)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.append_to_statement">(app.lib.dependencies.SearchFilter method)</a>
+      </ul></li>
+      <li>
+    app.server
+
+      <ul>
+        <li><a href="api/server.html#module-app.server">module</a>
 </li>
       </ul></li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError">ApplicationError</a>
@@ -1579,11 +1006,17 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.before">before (app.lib.dependencies.BeforeAfter attribute)</a>
+      <li><a href="api/lib/schema.html#app.lib.schema.BaseStruct">BaseStruct (class in app.lib.schema)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.before_request">before_request (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.before_request">before_request (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.before_request">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.before_request">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.before_request">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.before_request">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.before_request">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1598,18 +1031,20 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter">BeforeAfter (class in app.lib.dependencies)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.cache_control">cache_control (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.cache_control">cache_control (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.cache_control">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.cache_control">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.cache_control">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.cache_control">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.cache_control">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1623,31 +1058,27 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.cache_control">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter">CollectionFilter (class in app.lib.dependencies)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseStruct">CamelizedBaseStruct (class in app.lib.schema)</a>
 </li>
-      <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagCreateDTO.config">config (app.domain.tags.dtos.TagCreateDTO attribute)</a>
+      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagCreateDTO.config">config (app.domain.tags.controllers.TagCreateDTO attribute)</a>
 
       <ul>
-        <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagDTO.config">(app.domain.tags.dtos.TagDTO attribute)</a>
+        <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagDTO.config">(app.domain.tags.controllers.TagDTO attribute)</a>
 </li>
-        <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagUpdateDTO.config">(app.domain.tags.dtos.TagUpdateDTO attribute)</a>
+        <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagUpdateDTO.config">(app.domain.tags.controllers.TagUpdateDTO attribute)</a>
 </li>
         <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO.config">(app.lib.dto.SQLAlchemyDTO attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.config">config() (in module app.lib.dto)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.create">create() (app.domain.accounts.services.UserService method)</a>
-
-      <ul>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.create">(app.domain.teams.services.TeamService method)</a>
-</li>
-      </ul></li>
       <li><a href="api/asgi.html#app.asgi.create_app">create_app() (in module app.asgi)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.create_collection_dependencies">create_collection_dependencies() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.create_collection_dependencies">create_collection_dependencies() (in module app.lib.deps)</a>
+</li>
+      <li><a href="api/lib/deps.html#app.lib.deps.create_service_provider">create_service_provider() (in module app.lib.deps)</a>
 </li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.current_user_from_token">current_user_from_token() (in module app.domain.accounts.guards)</a>
 </li>
@@ -1659,9 +1090,15 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.DataclassDTO">DataclassDTO (class in app.lib.dto)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.dependencies">dependencies (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.dependencies">dependencies (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.dependencies">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.dependencies">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.dependencies">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.dependencies">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.dependencies">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1690,9 +1127,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-database-init-arg-DIRECTORY">app-database-init command line option</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.dto">dto (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.dto">dto (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.dto">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.dto">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.dto">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.dto">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.dto">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1716,9 +1159,15 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.etag">etag (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.etag">etag (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.etag">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.etag">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.etag">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.etag">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.etag">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1732,9 +1181,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.etag">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.exception_handlers">exception_handlers (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.exception_handlers">exception_handlers (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.exception_handlers">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.exception_handlers">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.exception_handlers">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.exception_handlers">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.exception_handlers">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1760,18 +1215,6 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.field_name">field_name (app.lib.dependencies.BeforeAfter attribute)</a>
-
-      <ul>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.field_name">(app.lib.dependencies.CollectionFilter attribute)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy.field_name">(app.lib.dependencies.OrderBy attribute)</a>
-</li>
-        <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.field_name">(app.lib.dependencies.SearchFilter attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.forbid_unknown_fields">forbid_unknown_fields (app.lib.dto.DTOConfig attribute)</a>
 </li>
   </ul></td>
@@ -1790,11 +1233,15 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.get_password_hash">get_password_hash() (in module app.lib.crypt)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.get_search_clauses">get_search_clauses() (app.lib.dependencies.SearchFilter method)</a>
-</li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.guards">guards (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.guards">guards (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.guards">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.guards">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.guards">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.guards">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.guards">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1828,13 +1275,17 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.ignore_case">ignore_case (app.lib.dependencies.SearchFilter attribute)</a>
-</li>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.include">include (app.lib.dto.DTOConfig attribute)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.include_in_schema">include_in_schema (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.include_in_schema">include_in_schema (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.include_in_schema">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.include_in_schema">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.include_in_schema">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.include_in_schema">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.include_in_schema">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1851,24 +1302,14 @@ window.addEventListener("load", () => mermaid.run());
   </ul></td>
 </tr></table>
 
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset.limit">limit (app.lib.dependencies.LimitOffset attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset">LimitOffset (class in app.lib.dependencies)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.match_fields">match_fields (app.domain.accounts.services.RoleService attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.match_fields">(app.domain.accounts.services.UserService attribute)</a>
+</li>
         <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.match_fields">(app.domain.tags.services.TagService attribute)</a>
 </li>
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.match_fields">(app.domain.teams.services.TeamService attribute)</a>
@@ -1876,9 +1317,17 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.max_nested_depth">max_nested_depth (app.lib.dto.DTOConfig attribute)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.middleware">middleware (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/lib/schema.html#app.lib.schema.Message">Message (class in app.lib.schema)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.middleware">middleware (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.middleware">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.middleware">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.middleware">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.middleware">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.middleware">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1892,15 +1341,39 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.middleware">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repository.model_type">model_type (app.domain.accounts.services.RoleService.Repository attribute)</a>
+
+      <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repository.model_type">(app.domain.accounts.services.UserOAuthAccountService.Repository attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repository.model_type">(app.domain.accounts.services.UserRoleService.Repository attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.UserRepository.model_type">(app.domain.accounts.services.UserService.UserRepository attribute)</a>
+</li>
+        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repository.model_type">(app.domain.tags.services.TagService.Repository attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository.model_type">(app.domain.teams.services.TeamInvitationService.TeamInvitationRepository attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.TeamMemberRepository.model_type">(app.domain.teams.services.TeamMemberService.TeamMemberRepository attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.TeamRepository.model_type">(app.domain.teams.services.TeamService.TeamRepository attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
       <ul>
         <li><a href="api/asgi.html#module-app.asgi">app.asgi</a>
 </li>
-        <li><a href="api/domain/accounts/controllers/access.html#module-app.domain.accounts.controllers.access">app.domain.accounts.controllers.access</a>
+        <li><a href="api/config.html#module-app.config">app.config</a>
 </li>
-        <li><a href="api/domain/accounts/dependencies.html#module-app.domain.accounts.dependencies">app.domain.accounts.dependencies</a>
+        <li><a href="api/db.html#module-app.db">app.db</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#module-app.domain.accounts.controllers">app.domain.accounts.controllers</a>
+</li>
+        <li><a href="api/domain/accounts/deps.html#module-app.domain.accounts.deps">app.domain.accounts.deps</a>
 </li>
         <li><a href="api/domain/accounts/guards.html#module-app.domain.accounts.guards">app.domain.accounts.guards</a>
 </li>
@@ -1912,10 +1385,6 @@ window.addEventListener("load", () => mermaid.run());
 </li>
         <li><a href="api/domain/tags/controllers.html#module-app.domain.tags.controllers">app.domain.tags.controllers</a>
 </li>
-        <li><a href="api/domain/tags/dependencies.html#module-app.domain.tags.dependencies">app.domain.tags.dependencies</a>
-</li>
-        <li><a href="api/domain/tags/dtos.html#module-app.domain.tags.dtos">app.domain.tags.dtos</a>
-</li>
         <li><a href="api/domain/tags/services.html#module-app.domain.tags.services">app.domain.tags.services</a>
 </li>
         <li><a href="api/domain/teams/controllers/team_invitation.html#module-app.domain.teams.controllers.team_invitation">app.domain.teams.controllers.team_invitation</a>
@@ -1923,8 +1392,6 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/teams/controllers/team_member.html#module-app.domain.teams.controllers.team_member">app.domain.teams.controllers.team_member</a>
 </li>
         <li><a href="api/domain/teams/controllers/teams.html#module-app.domain.teams.controllers.teams">app.domain.teams.controllers.teams</a>
-</li>
-        <li><a href="api/domain/teams/dependencies.html#module-app.domain.teams.dependencies">app.domain.teams.dependencies</a>
 </li>
         <li><a href="api/domain/teams/guards.html#module-app.domain.teams.guards">app.domain.teams.guards</a>
 </li>
@@ -1934,32 +1401,32 @@ window.addEventListener("load", () => mermaid.run());
 </li>
         <li><a href="api/lib/crypt.html#module-app.lib.crypt">app.lib.crypt</a>
 </li>
-        <li><a href="api/lib/dependencies.html#module-app.lib.dependencies">app.lib.dependencies</a>
+        <li><a href="api/lib/deps.html#module-app.lib.deps">app.lib.deps</a>
 </li>
         <li><a href="api/lib/dto.html#module-app.lib.dto">app.lib.dto</a>
 </li>
         <li><a href="api/lib/exceptions.html#module-app.lib.exceptions">app.lib.exceptions</a>
 </li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.normalized_field_names">normalized_field_names (app.lib.dependencies.SearchFilter property)</a>
+        <li><a href="api/lib/schema.html#module-app.lib.schema">app.lib.schema</a>
 </li>
+        <li><a href="api/server.html#module-app.server">app.server</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset.offset">offset (app.lib.dependencies.LimitOffset attribute)</a>
-</li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.opt">opt (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.opt">opt (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.opt">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.opt">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.opt">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.opt">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.opt">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1975,11 +1442,15 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy">OrderBy (class in app.lib.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.owner">owner (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.owner">owner (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.owner">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.owner">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.owner">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.owner">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.owner">(app.domain.tags.controllers.TagController attribute)</a>
@@ -1999,9 +1470,15 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.parameters">parameters (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.parameters">parameters (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.parameters">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.parameters">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.parameters">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.parameters">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.parameters">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2017,9 +1494,15 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.partial">partial (app.lib.dto.DTOConfig attribute)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.path">path (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.path">path (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.path">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.path">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.path">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.path">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.path">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2035,37 +1518,21 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_created_filter">provide_created_filter() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_created_filter">provide_created_filter() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_filter_dependencies">provide_filter_dependencies() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_filter_dependencies">provide_filter_dependencies() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_id_filter">provide_id_filter() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_id_filter">provide_id_filter() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_limit_offset_pagination">provide_limit_offset_pagination() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_limit_offset_pagination">provide_limit_offset_pagination() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_order_by">provide_order_by() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_order_by">provide_order_by() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/domain/accounts/dependencies.html#app.domain.accounts.dependencies.provide_roles_service">provide_roles_service() (in module app.domain.accounts.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_search_filter">provide_search_filter() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_search_filter">provide_search_filter() (in module app.lib.dependencies)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_updated_filter">provide_updated_filter() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/domain/tags/dependencies.html#app.domain.tags.dependencies.provide_tags_service">provide_tags_service() (in module app.domain.tags.dependencies)</a>
-</li>
-      <li><a href="api/domain/teams/dependencies.html#app.domain.teams.dependencies.provide_team_invitations_service">provide_team_invitations_service() (in module app.domain.teams.dependencies)</a>
-</li>
-      <li><a href="api/domain/teams/dependencies.html#app.domain.teams.dependencies.provide_team_members_service">provide_team_members_service() (in module app.domain.teams.dependencies)</a>
-</li>
-      <li><a href="api/domain/teams/dependencies.html#app.domain.teams.dependencies.provide_teams_service">provide_teams_service() (in module app.domain.teams.dependencies)</a>
-</li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.provide_updated_filter">provide_updated_filter() (in module app.lib.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/dependencies.html#app.domain.accounts.dependencies.provide_user">provide_user() (in module app.domain.accounts.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/dependencies.html#app.domain.accounts.dependencies.provide_user_oauth_account_service">provide_user_oauth_account_service() (in module app.domain.accounts.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/dependencies.html#app.domain.accounts.dependencies.provide_user_roles_service">provide_user_roles_service() (in module app.domain.accounts.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/dependencies.html#app.domain.accounts.dependencies.provide_users_service">provide_users_service() (in module app.domain.accounts.dependencies)</a>
+      <li><a href="api/domain/accounts/deps.html#app.domain.accounts.deps.provide_user">provide_user() (in module app.domain.accounts.deps)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2095,9 +1562,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.repository_type">(app.domain.teams.services.TeamService attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.request_class">request_class (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.request_class">request_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.request_class">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.request_class">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.request_class">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.request_class">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.request_class">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2111,9 +1584,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.request_class">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.request_max_body_size">request_max_body_size (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.request_max_body_size">request_max_body_size (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.request_max_body_size">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.request_max_body_size">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.request_max_body_size">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.request_max_body_size">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.request_max_body_size">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2139,9 +1618,15 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.requires_verified_user">requires_verified_user() (in module app.domain.accounts.guards)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.response_class">response_class (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_class">response_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_class">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_class">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.response_class">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.response_class">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_class">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2157,9 +1642,15 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.response_cookies">response_cookies (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_cookies">response_cookies (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_cookies">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_cookies">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.response_cookies">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.response_cookies">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_cookies">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2173,9 +1664,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.response_cookies">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.response_headers">response_headers (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_headers">response_headers (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_headers">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_headers">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.response_headers">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.response_headers">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_headers">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2189,9 +1686,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.response_headers">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.return_dto">return_dto (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.return_dto">return_dto (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.return_dto">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.return_dto">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.return_dto">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.return_dto">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.return_dto">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2214,7 +1717,11 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-arg-REVISION">app-database-upgrade command line option</a>
 </li>
       </ul></li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController">RoleController (class in app.domain.accounts.controllers)</a>
+</li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService">RoleService (class in app.domain.accounts.services)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repository">RoleService.Repository (class in app.domain.accounts.services)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2222,11 +1729,15 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter">SearchFilter (class in app.lib.dependencies)</a>
-</li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.security">security (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.security">security (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.security">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.security">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.security">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.security">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.security">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2240,6 +1751,8 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.security">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/lib/deps.html#app.lib.deps.ServiceT_co">ServiceT_co (class in app.lib.deps)</a>
+</li>
       <li>
     SESSION_ID
 
@@ -2247,9 +1760,17 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-sessions-delete-arg-SESSION_ID">app-sessions-delete command line option</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.signature_namespace">signature_namespace (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/config.html#app.config.Settings">Settings (class in app.config)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.signature_namespace">signature_namespace (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.signature_namespace">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.signature_namespace">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.signature_namespace">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.signature_namespace">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.signature_namespace">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2265,9 +1786,15 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.signature_types">signature_types (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.signature_types">signature_types (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.signature_types">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.signature_types">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.signature_types">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.signature_types">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.signature_types">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2281,8 +1808,6 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.signature_types">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy.sort_order">sort_order (app.lib.dependencies.OrderBy attribute)</a>
-</li>
       <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO">SQLAlchemyDTO (class in app.lib.dto)</a>
 </li>
       <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController">SystemController (class in app.domain.system.controllers)</a>
@@ -2295,13 +1820,19 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController">TagController (class in app.domain.tags.controllers)</a>
 </li>
-      <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagCreateDTO">TagCreateDTO (class in app.domain.tags.dtos)</a>
+      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagCreateDTO">TagCreateDTO (class in app.domain.tags.controllers)</a>
 </li>
-      <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagDTO">TagDTO (class in app.domain.tags.dtos)</a>
+      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagDTO">TagDTO (class in app.domain.tags.controllers)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.tags">tags (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.tags">tags (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.tags">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.tags">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.tags">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.tags">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.tags">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2317,7 +1848,9 @@ window.addEventListener("load", () => mermaid.run());
       </ul></li>
       <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService">TagService (class in app.domain.tags.services)</a>
 </li>
-      <li><a href="api/domain/tags/dtos.html#app.domain.tags.dtos.TagUpdateDTO">TagUpdateDTO (class in app.domain.tags.dtos)</a>
+      <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repository">TagService.Repository (class in app.domain.tags.services)</a>
+</li>
+      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagUpdateDTO">TagUpdateDTO (class in app.domain.tags.controllers)</a>
 </li>
       <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController">TeamController (class in app.domain.teams.controllers.teams)</a>
 </li>
@@ -2325,13 +1858,19 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService">TeamInvitationService (class in app.domain.teams.services)</a>
 </li>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository">TeamInvitationService.TeamInvitationRepository (class in app.domain.teams.services)</a>
+</li>
       <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController">TeamMemberController (class in app.domain.teams.controllers.team_member)</a>
 </li>
       <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService">TeamMemberService (class in app.domain.teams.services)</a>
 </li>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.TeamMemberRepository">TeamMemberService.TeamMemberRepository (class in app.domain.teams.services)</a>
+</li>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService">TeamService (class in app.domain.teams.services)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService">TeamService (class in app.domain.teams.services)</a>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.TeamRepository">TeamService.TeamRepository (class in app.domain.teams.services)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model">to_model() (app.domain.accounts.services.RoleService method)</a>
 
@@ -2341,9 +1880,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.to_model">(app.domain.teams.services.TeamService method)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.type_decoders">type_decoders (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.type_decoders">type_decoders (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.type_decoders">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.type_decoders">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.type_decoders">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.type_decoders">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.type_decoders">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2357,9 +1902,15 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.type_decoders">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.type_encoders">type_encoders (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.type_encoders">type_encoders (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.type_encoders">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.type_encoders">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.type_encoders">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.type_encoders">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.type_encoders">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2381,21 +1932,25 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.underscore_fields_private">underscore_fields_private (app.lib.dto.DTOConfig attribute)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.update">update() (app.domain.accounts.services.UserService method)</a>
-
-      <ul>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.update">(app.domain.teams.services.TeamService method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.update_password">update_password() (app.domain.accounts.services.UserService method)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController">UserController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService">UserOAuthAccountService (class in app.domain.accounts.services)</a>
 </li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repository">UserOAuthAccountService.Repository (class in app.domain.accounts.services)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController">UserRoleController (class in app.domain.accounts.controllers)</a>
+</li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService">UserRoleService (class in app.domain.accounts.services)</a>
 </li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repository">UserRoleService.Repository (class in app.domain.accounts.services)</a>
+</li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService">UserService (class in app.domain.accounts.services)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.UserRepository">UserService.UserRepository (class in app.domain.accounts.services)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2403,12 +1958,6 @@ window.addEventListener("load", () => mermaid.run());
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.value">value (app.lib.dependencies.SearchFilter attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.values">values (app.lib.dependencies.CollectionFilter attribute)</a>
-</li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.verify_password">verify_password() (in module app.lib.crypt)</a>
 </li>
   </ul></td>
@@ -2419,9 +1968,15 @@ window.addEventListener("load", () => mermaid.run());
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController">WebController (class in app.domain.web.controllers)</a>
 </li>
-      <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.websocket_class">websocket_class (app.domain.accounts.controllers.access.AccessController attribute)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.websocket_class">websocket_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.websocket_class">(app.domain.accounts.controllers.RoleController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.websocket_class">(app.domain.accounts.controllers.UserController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController.websocket_class">(app.domain.accounts.controllers.UserRoleController attribute)</a>
+</li>
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.websocket_class">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.websocket_class">(app.domain.tags.controllers.TagController attribute)</a>
@@ -2440,75 +1995,39 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
-                </article>
-              
-              
-              
-              
-              
-                <footer class="prev-next-footer d-print-none">
-                  
-<div class="prev-next-area">
+      </article>
+      
+    </main>
+  </div><footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
 </div>
-                </footer>
-              
-            </div>
-            
-            
-              
-            
-          </div>
-          <footer class="bd-footer-content">
-            
-          </footer>
-        
-      </main>
+      <div class="sy-foot-socials"></div>
     </div>
   </div>
-  
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
-    
-      © Copyright 2023, Litestar Organization.
-      <br/>
-    
-  </p>
-</div>
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
-    <br/>
-  </p>
-</div>
-      
-    </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
-    </div>
-  
-</div>
-
-  </footer>
-  </body>
+</footer>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=55e26b35"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script></body>
 </html>
