@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
+from advanced_alchemy.service import FilterTypeT  # noqa: TC002
 from litestar import Controller, delete, get, patch, post
 from sqlalchemy import select
 
@@ -19,7 +20,6 @@ from app.lib.deps import create_service_provider
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from advanced_alchemy.service import FilterTypeT
     from advanced_alchemy.service.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
 
@@ -60,13 +60,7 @@ class TeamController(Controller):
     async def get_team(
         self,
         teams_service: TeamService,
-        team_id: Annotated[
-            UUID,
-            Parameter(
-                title="Team ID",
-                description="The team to retrieve.",
-            ),
-        ],
+        team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to retrieve.")],
     ) -> Team:
         """Get details about a team."""
         db_obj = await teams_service.get(team_id)

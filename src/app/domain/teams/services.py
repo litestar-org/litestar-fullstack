@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.exceptions import RepositoryError
 from advanced_alchemy.repository import (
     SQLAlchemyAsyncRepository,
     SQLAlchemyAsyncSlugRepository,
@@ -76,17 +75,11 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
         operation: str | None,
     ) -> ModelDictT[m.Team]:
         if operation == "create" and is_dict(data):
-            owner_id: UUID | None = None
-            owner: m.User | None = None
-            tags_added: list[str] = []
+            owner_id: UUID | None = data.pop("owner_id", None)
+            owner: m.User | None = data.pop("owner", None)
+            tags_added: list[str] = data.pop("tags", [])
             data["id"] = data.get("id", uuid4())
-            owner = data.pop("owner", None)
-            owner_id = data.pop("owner_id", None)
-            if owner_id is None:
-                msg = "'owner_id' is required to create a team."
-                raise RepositoryError(msg)
-            tags_added = data.pop("tags", [])
-            data = await self.to_model(data, "create")
+            data = await super().to_model(data, "create")
             if tags_added:
                 data.tags.extend(
                     [
@@ -101,7 +94,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
 
         if operation == "update" and is_dict(data):
             tags_updated = data.pop("tags", None)
-            data = await self.to_model(data, "update")
+            data = await super().to_model(data, "update")
             if tags_updated:
                 existing_tags = [tag.name for tag in data.tags]
                 tags_to_remove = [tag for tag in data.tags if tag.name not in tags_updated]
