@@ -56,7 +56,7 @@ RUN python -m venv --copies /workspace/app/.venv \
   && /workspace/app/.venv/bin/pip install cython uv nodeenv  \
   && uv sync ${UV_INSTALL_ARGS} \
   && uvx nodeenv .venv --force --quiet \
-  && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --no-fund
+  && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --ignore-scripts --no-fund
 
 COPY src ./src/
 
