@@ -79,7 +79,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
             owner: m.User | None = data.pop("owner", None)
             tags_added: list[str] = data.pop("tags", [])
             data["id"] = data.get("id", uuid4())
-            data = await super().to_model(data, "create")
+            data = await super().to_model(data, operation)
             if tags_added:
                 data.tags.extend(
                     [
@@ -94,7 +94,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
 
         if operation == "update" and is_dict(data):
             tags_updated = data.pop("tags", None)
-            data = await super().to_model(data, "update")
+            data = await super().to_model(data, operation)
             if tags_updated:
                 existing_tags = [tag.name for tag in data.tags]
                 tags_to_remove = [tag for tag in data.tags if tag.name not in tags_updated]
