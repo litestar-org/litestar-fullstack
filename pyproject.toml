@@ -28,7 +28,7 @@ dependencies = [
 description = "Opinionated template for a Litestar application."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
 license = { text = "MIT" }
-name = "app"
+name = "litestar-fullstack"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 version = "0.2.0"
@@ -77,11 +77,10 @@ linting = [
   "slotscheck",
   "types-click",
   "types-passlib",
-  "types-python-jose",
   "types-pyyaml",
   "types-redis",
   "asyncpg-stubs",
-  "pylint",
+  "pyright",
 ]
 test = [
   "pytest",

@@ -1,9 +1,5 @@
 version = 1
 requires-python = ">=3.11, <3.13"
-resolution-markers = [
-    "python_full_version >= '3.12'",
-    "python_full_version < '3.12'",
-]
 
 [[package]]
 name = "accessible-pygments"
@@ -115,161 +111,6 @@ wheels = [
 ]
 
 [[package]]
-name = "app"
-version = "0.2.0"
-source = { editable = "." }
-dependencies = [
-    { name = "advanced-alchemy", extra = ["uuid"] },
-    { name = "aiosqlite" },
-    { name = "asyncpg" },
-    { name = "httptools" },
-    { name = "litestar", extra = ["jinja", "jwt", "redis", "structlog"] },
-    { name = "litestar-granian" },
-    { name = "litestar-saq" },
-    { name = "litestar-vite" },
-    { name = "passlib", extra = ["argon2"] },
-    { name = "python-dotenv" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "asyncpg-stubs" },
-    { name = "coverage" },
-    { name = "litestar-sphinx-theme" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pylint" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-databases", extra = ["postgres", "redis"] },
-    { name = "pytest-mock" },
-    { name = "pytest-sugar" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "slotscheck" },
-    { name = "sphinx" },
-    { name = "sphinx-autobuild" },
-    { name = "sphinx-click" },
-    { name = "sphinx-copybutton" },
-    { name = "sphinx-design" },
-    { name = "sphinx-toolbox" },
-    { name = "sphinxcontrib-mermaid" },
-    { name = "types-click" },
-    { name = "types-passlib" },
-    { name = "types-python-jose" },
-    { name = "types-pyyaml" },
-    { name = "types-redis" },
-]
-docs = [
-    { name = "litestar-sphinx-theme" },
-    { name = "sphinx" },
-    { name = "sphinx-autobuild" },
-    { name = "sphinx-click" },
-    { name = "sphinx-copybutton" },
-    { name = "sphinx-design" },
-    { name = "sphinx-toolbox" },
-    { name = "sphinxcontrib-mermaid" },
-]
-linting = [
-    { name = "asyncpg-stubs" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pylint" },
-    { name = "ruff" },
-    { name = "slotscheck" },
-    { name = "types-click" },
-    { name = "types-passlib" },
-    { name = "types-python-jose" },
-    { name = "types-pyyaml" },
-    { name = "types-redis" },
-]
-test = [
-    { name = "coverage" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-databases", extra = ["postgres", "redis"] },
-    { name = "pytest-mock" },
-    { name = "pytest-sugar" },
-    { name = "pytest-xdist" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "advanced-alchemy", extras = ["uuid"] },
-    { name = "aiosqlite" },
-    { name = "asyncpg" },
-    { name = "httptools" },
-    { name = "litestar", extras = ["jinja", "jwt", "redis", "structlog"] },
-    { name = "litestar-granian" },
-    { name = "litestar-saq" },
-    { name = "litestar-vite" },
-    { name = "passlib", extras = ["argon2"] },
-    { name = "python-dotenv" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "asyncpg-stubs" },
-    { name = "coverage" },
-    { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
-    { name = "mypy", specifier = ">=1.5.1" },
-    { name = "pre-commit", specifier = ">=3.4.0" },
-    { name = "pylint" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-databases", extras = ["postgres", "redis"], specifier = ">=0.1.0" },
-    { name = "pytest-mock" },
-    { name = "pytest-sugar" },
-    { name = "pytest-xdist" },
-    { name = "ruff", specifier = ">=0.0.287" },
-    { name = "slotscheck" },
-    { name = "sphinx", specifier = ">=7.2.6" },
-    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
-    { name = "sphinx-click", specifier = ">=5.0.1" },
-    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
-    { name = "sphinx-design", specifier = ">=0.5.0" },
-    { name = "sphinx-toolbox", specifier = ">=3.5.0" },
-    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
-    { name = "types-click" },
-    { name = "types-passlib" },
-    { name = "types-python-jose" },
-    { name = "types-pyyaml" },
-    { name = "types-redis" },
-]
-docs = [
-    { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
-    { name = "sphinx", specifier = ">=7.2.6" },
-    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
-    { name = "sphinx-click", specifier = ">=5.0.1" },
-    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
-    { name = "sphinx-design", specifier = ">=0.5.0" },
-    { name = "sphinx-toolbox", specifier = ">=3.5.0" },
-    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
-]
-linting = [
-    { name = "asyncpg-stubs" },
-    { name = "mypy", specifier = ">=1.5.1" },
-    { name = "pre-commit", specifier = ">=3.4.0" },
-    { name = "pylint" },
-    { name = "ruff", specifier = ">=0.0.287" },
-    { name = "slotscheck" },
-    { name = "types-click" },
-    { name = "types-passlib" },
-    { name = "types-python-jose" },
-    { name = "types-pyyaml" },
-    { name = "types-redis" },
-]
-test = [
-    { name = "coverage" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-databases", extras = ["postgres", "redis"], specifier = ">=0.1.0" },
-    { name = "pytest-mock" },
-    { name = "pytest-sugar" },
-    { name = "pytest-xdist" },
-]
-
-[[package]]
 name = "argon2-cffi"
 version = "23.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -300,15 +141,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/95/143cd64feb24a15fa4b189a3e1e7efbaeeb00f39a51e99b26fc62fbacabd/argon2_cffi_bindings-21.2.0-cp36-abi3-win32.whl", hash = "sha256:603ca0aba86b1349b147cab91ae970c63118a0f30444d4bc80355937c950c082", size = 27698 },
     { url = "https://files.pythonhosted.org/packages/37/2c/e34e47c7dee97ba6f01a6203e0383e15b60fb85d78ac9a15cd066f6fe28b/argon2_cffi_bindings-21.2.0-cp36-abi3-win_amd64.whl", hash = "sha256:b2ef1c30440dbbcba7a5dc3e319408b59676e2e039e2ae11a8775ecf482b192f", size = 30817 },
     { url = "https://files.pythonhosted.org/packages/5a/e4/bf8034d25edaa495da3c8a3405627d2e35758e44ff6eaa7948092646fdcc/argon2_cffi_bindings-21.2.0-cp38-abi3-macosx_10_9_universal2.whl", hash = "sha256:e415e3f62c8d124ee16018e491a009937f8cf7ebf5eb430ffc5de21b900dad93", size = 53104 },
-]
-
-[[package]]
-name = "astroid"
-version = "3.3.8"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/80/c5/5c83c48bbf547f3dd8b587529db7cf5a265a3368b33e85e76af8ff6061d3/astroid-3.3.8.tar.gz", hash = "sha256:a88c7994f914a4ea8572fac479459f4955eeccc877be3f2d959a33273b0cf40b", size = 398196 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/07/28/0bc8a17d6cd4cc3c79ae41b7105a2b9a327c110e5ddd37a8a27b29a5c8a2/astroid-3.3.8-py3-none-any.whl", hash = "sha256:187ccc0c248bfbba564826c26f070494f7bc964fd286b6d9fff4420e55de828c", size = 275153 },
 ]
 
 [[package]]
@@ -619,15 +451,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dill"
-version = "0.3.9"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/70/43/86fe3f9e130c4137b0f1b50784dd70a5087b911fe07fa81e53e0c4c47fea/dill-0.3.9.tar.gz", hash = "sha256:81aa267dddf68cbfe8029c42ca9ec6a4ab3b22371d1c450abc54422577b4512c", size = 187000 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/d1/e73b6ad76f0b1fb7f23c35c6d95dbc506a9c8804f43dda8cb5b0fa6331fd/dill-0.3.9-py3-none-any.whl", hash = "sha256:468dff3b89520b474c0397703366b7b95eebe6303f108adf9b19da1f702be87a", size = 119418 },
-]
-
-[[package]]
 name = "distlib"
 version = "0.3.9"
 source = { registry = "https://pypi.org/simple" }
@@ -919,15 +742,6 @@ wheels = [
 ]
 
 [[package]]
-name = "isort"
-version = "5.13.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/87/f9/c1eb8635a24e87ade2efce21e3ce8cd6b8630bb685ddc9cdaca1349b2eb5/isort-5.13.2.tar.gz", hash = "sha256:48fdfcb9face5d58a4f6dde2e72a1fb8dcaf8ab26f95ab49fab84c2ddefb0109", size = 175303 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/b3/8def84f539e7d2289a02f0524b944b15d7c75dab7628bedf1c4f0992029c/isort-5.13.2-py3-none-any.whl", hash = "sha256:8ca5e72a8d85860d5a3fa69b8745237f2939afe12dbf656afbcb47fe72d947a6", size = 92310 },
-]
-
-[[package]]
 name = "jinja2"
 version = "3.1.5"
 source = { registry = "https://pypi.org/simple" }
@@ -975,6 +789,157 @@ redis = [
 ]
 structlog = [
     { name = "structlog" },
+]
+
+[[package]]
+name = "litestar-fullstack"
+version = "0.2.0"
+source = { editable = "." }
+dependencies = [
+    { name = "advanced-alchemy", extra = ["uuid"] },
+    { name = "aiosqlite" },
+    { name = "asyncpg" },
+    { name = "httptools" },
+    { name = "litestar", extra = ["jinja", "jwt", "redis", "structlog"] },
+    { name = "litestar-granian" },
+    { name = "litestar-saq" },
+    { name = "litestar-vite" },
+    { name = "passlib", extra = ["argon2"] },
+    { name = "python-dotenv" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "asyncpg-stubs" },
+    { name = "coverage" },
+    { name = "litestar-sphinx-theme" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extra = ["postgres", "redis"] },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "slotscheck" },
+    { name = "sphinx" },
+    { name = "sphinx-autobuild" },
+    { name = "sphinx-click" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-toolbox" },
+    { name = "sphinxcontrib-mermaid" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
+]
+docs = [
+    { name = "litestar-sphinx-theme" },
+    { name = "sphinx" },
+    { name = "sphinx-autobuild" },
+    { name = "sphinx-click" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-toolbox" },
+    { name = "sphinxcontrib-mermaid" },
+]
+linting = [
+    { name = "asyncpg-stubs" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "ruff" },
+    { name = "slotscheck" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
+]
+test = [
+    { name = "coverage" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extra = ["postgres", "redis"] },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "advanced-alchemy", extras = ["uuid"] },
+    { name = "aiosqlite" },
+    { name = "asyncpg" },
+    { name = "httptools" },
+    { name = "litestar", extras = ["jinja", "jwt", "redis", "structlog"] },
+    { name = "litestar-granian" },
+    { name = "litestar-saq" },
+    { name = "litestar-vite" },
+    { name = "passlib", extras = ["argon2"] },
+    { name = "python-dotenv" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "asyncpg-stubs" },
+    { name = "coverage" },
+    { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
+    { name = "mypy", specifier = ">=1.5.1" },
+    { name = "pre-commit", specifier = ">=3.4.0" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extras = ["postgres", "redis"], specifier = ">=0.1.0" },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
+    { name = "ruff", specifier = ">=0.0.287" },
+    { name = "slotscheck" },
+    { name = "sphinx", specifier = ">=7.2.6" },
+    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
+    { name = "sphinx-click", specifier = ">=5.0.1" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
+    { name = "sphinx-design", specifier = ">=0.5.0" },
+    { name = "sphinx-toolbox", specifier = ">=3.5.0" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
+]
+docs = [
+    { name = "litestar-sphinx-theme", git = "https://github.com/litestar-org/litestar-sphinx-theme.git" },
+    { name = "sphinx", specifier = ">=7.2.6" },
+    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
+    { name = "sphinx-click", specifier = ">=5.0.1" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
+    { name = "sphinx-design", specifier = ">=0.5.0" },
+    { name = "sphinx-toolbox", specifier = ">=3.5.0" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
+]
+linting = [
+    { name = "asyncpg-stubs" },
+    { name = "mypy", specifier = ">=1.5.1" },
+    { name = "pre-commit", specifier = ">=3.4.0" },
+    { name = "pyright" },
+    { name = "ruff", specifier = ">=0.0.287" },
+    { name = "slotscheck" },
+    { name = "types-click" },
+    { name = "types-passlib" },
+    { name = "types-pyyaml" },
+    { name = "types-redis" },
+]
+test = [
+    { name = "coverage" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-databases", extras = ["postgres", "redis"], specifier = ">=0.1.0" },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
 ]
 
 [[package]]
@@ -1086,15 +1051,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a2/82/8be4c96ffee03c5b4a034e60a31294daf481e12c7c43ab8e34a1453ee48b/MarkupSafe-3.0.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:ad10d3ded218f1039f11a75f8091880239651b52e9bb592ca27de44eed242a48", size = 23352 },
     { url = "https://files.pythonhosted.org/packages/51/ae/97827349d3fcffee7e184bdf7f41cd6b88d9919c80f0263ba7acd1bbcb18/MarkupSafe-3.0.2-cp312-cp312-win32.whl", hash = "sha256:0f4ca02bea9a23221c0182836703cbf8930c5e9454bacce27e767509fa286a30", size = 15097 },
     { url = "https://files.pythonhosted.org/packages/c1/80/a61f99dc3a936413c3ee4e1eecac96c0da5ed07ad56fd975f1a9da5bc630/MarkupSafe-3.0.2-cp312-cp312-win_amd64.whl", hash = "sha256:8e06879fc22a25ca47312fbe7c8264eb0b662f6db27cb2d3bbbc74b1df4b9b87", size = 15601 },
-]
-
-[[package]]
-name = "mccabe"
-version = "0.7.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e7/ff/0ffefdcac38932a54d2b5eed4e0ba8a408f215002cd178ad1df0f2806ff8/mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325", size = 9658 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/1a/1f68f9ba0c207934b35b86a8ca3aad8395a3d6dd7921c0686e23853ff5a9/mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e", size = 7350 },
 ]
 
 [[package]]
@@ -1396,21 +1352,16 @@ wheels = [
 ]
 
 [[package]]
-name = "pylint"
-version = "3.3.3"
+name = "pyright"
+version = "1.1.391"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "astroid" },
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-    { name = "dill" },
-    { name = "isort" },
-    { name = "mccabe" },
-    { name = "platformdirs" },
-    { name = "tomlkit" },
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/17/fd/e9a739afac274a39596bbe562e9d966db6f3917fdb2bd7322ffc56da0ba2/pylint-3.3.3.tar.gz", hash = "sha256:07c607523b17e6d16e2ae0d7ef59602e332caa762af64203c24b41c27139f36a", size = 1516550 }
+sdist = { url = "https://files.pythonhosted.org/packages/11/05/4ea52a8a45cc28897edb485b4102d37cbfd5fce8445d679cdeb62bfad221/pyright-1.1.391.tar.gz", hash = "sha256:66b2d42cdf5c3cbab05f2f4b76e8bec8aa78e679bfa0b6ad7b923d9e027cadb2", size = 21965 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/91/e1/26d55acea92b1ea4d33672e48f09ceeb274e84d7d542a4fb9a32a556db46/pylint-3.3.3-py3-none-any.whl", hash = "sha256:26e271a2bc8bce0fc23833805a9076dd9b4d5194e2a02164942cb3cdc37b4183", size = 521918 },
+    { url = "https://files.pythonhosted.org/packages/ad/89/66f49552fbeb21944c8077d11834b2201514a56fd1b7747ffff9630f1bd9/pyright-1.1.391-py3-none-any.whl", hash = "sha256:54fa186f8b3e8a55a44ebfa842636635688670c6896dcf6cf4a7fc75062f4d15", size = 18579 },
 ]
 
 [[package]]
@@ -2101,15 +2052,6 @@ wheels = [
 ]
 
 [[package]]
-name = "tomlkit"
-version = "0.13.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b1/09/a439bec5888f00a54b8b9f05fa94d7f901d6735ef4e55dcec9bc37b5d8fa/tomlkit-0.13.2.tar.gz", hash = "sha256:fff5fe59a87295b278abd31bec92c15d9bc4a06885ab12bcea52c71119392e79", size = 192885 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f9/b6/a447b5e4ec71e13871be01ba81f5dfc9d0af7e473da256ff46bc0e24026f/tomlkit-0.13.2-py3-none-any.whl", hash = "sha256:7a974427f6e119197f670fbbbeae7bef749a6c14e793db934baefc1b5f03efde", size = 37955 },
-]
-
-[[package]]
 name = "types-cffi"
 version = "1.16.0.20241221"
 source = { registry = "https://pypi.org/simple" }
@@ -2140,15 +2082,6 @@ wheels = [
 ]
 
 [[package]]
-name = "types-pyasn1"
-version = "0.6.0.20240913"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c5/e2/42410b64ba53584a8f2b681e76b23569a61869a22325cfeef2728e999ffd/types-pyasn1-0.6.0.20240913.tar.gz", hash = "sha256:a1da054db13d3d4ccfa69c515678154014336ad3d9f9ade01845f9edb1a2bc71", size = 12375 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/6a/847b2a137dba37974e17cc2ae5f62bed0d68006ac609a063810038adecff/types_pyasn1-0.6.0.20240913-py3-none-any.whl", hash = "sha256:95f3cb1fbd63ff91cd0410945f8aeae6b0be359533c00f39d8e17124884157af", size = 19338 },
-]
-
-[[package]]
 name = "types-pyopenssl"
 version = "24.1.0.20240722"
 source = { registry = "https://pypi.org/simple" }
@@ -2159,18 +2092,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/93/29/47a346550fd2020dac9a7a6d033ea03fccb92fa47c726056618cc889745e/types-pyOpenSSL-24.1.0.20240722.tar.gz", hash = "sha256:47913b4678a01d879f503a12044468221ed8576263c1540dcb0484ca21b08c39", size = 8458 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/98/05/c868a850b6fbb79c26f5f299b768ee0adc1f9816d3461dcf4287916f655b/types_pyOpenSSL-24.1.0.20240722-py3-none-any.whl", hash = "sha256:6a7a5d2ec042537934cfb4c9d4deb0e16c4c6250b09358df1f083682fe6fda54", size = 7499 },
-]
-
-[[package]]
-name = "types-python-jose"
-version = "3.3.4.20240106"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "types-pyasn1" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/4d/83/5824277f62a0a07ab3eaade216f19b59fadea4efdad9071d70799d97f170/types-python-jose-3.3.4.20240106.tar.gz", hash = "sha256:b18cf8c5080bbfe1ef7c3b707986435d9efca3e90889acb6a06f65e06bc3405a", size = 6937 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/bd/fe23e814f1ca70f8427bf5defb981b8e0636731863c7836a6d6b6e49c715/types_python_jose-3.3.4.20240106-py3-none-any.whl", hash = "sha256:b515a6c0c61f5e2a53bc93e3a2b024cbd42563e2e19cbde9fd1c2cc2cfe77ccc", size = 9712 },
 ]
 
 [[package]]

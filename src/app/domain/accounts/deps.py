@@ -27,13 +27,13 @@ provide_users_service = create_service_provider(
 )
 
 
-async def provide_user(connection: Request[m.User, Any, Any]) -> m.User:
-    """Get the user from the connection.
+async def provide_user(request: Request[m.User, Any, Any]) -> m.User:
+    """Get the user from the request.
 
     Args:
-        connection: current connection.
+        request: current Request.
 
     Returns:
         User
     """
-    return connection.user
+    return request.user
