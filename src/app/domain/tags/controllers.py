@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
-from uuid import UUID
 
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar import Controller, delete, get, patch, post
@@ -11,11 +10,13 @@ from app.db import models as m
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags.services import TagService
 from app.lib import dto
-from app.lib.deps import create_filter_dependencies, create_service_provider
+from app.lib.deps import create_service_provider
 
 from . import urls
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service import OffsetPagination
     from litestar.dto import DTOData
@@ -44,16 +45,6 @@ class TagController(Controller):
 
     guards = [requires_active_user]
     dependencies = {
-        "filters": create_filter_dependencies(
-            {
-                "id_filter": UUID,
-                "created_at": True,
-                "updated_at": True,
-                "pagination_size": 10,
-                "search_fields": ["name", "slug"],
-                "search_is_case_sensitive": False,
-            },
-        ),
         "tags_service": create_service_provider(
             TagService,
             load=[selectinload(m.Tag.teams, recursion_depth=2)],

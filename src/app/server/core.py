@@ -13,6 +13,7 @@ from litestar.stores.redis import RedisStore
 from litestar.stores.registry import StoreRegistry
 
 from app.domain.accounts.services import UserRoleService
+from app.lib.deps import create_collection_dependencies
 
 if TYPE_CHECKING:
     from click import Group
@@ -149,6 +150,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         # dependencies
         dependencies = {"current_user": Provide(provide_user)}
+        dependencies.update(create_collection_dependencies())
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(

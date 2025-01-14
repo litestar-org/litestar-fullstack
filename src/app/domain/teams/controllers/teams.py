@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
-from uuid import UUID
 
 from litestar import Controller, delete, get, patch, post
 from sqlalchemy import select
@@ -15,13 +14,14 @@ from app.domain.teams import urls
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
-from app.lib.deps import create_filter_dependencies, create_service_provider
+from app.lib.deps import create_service_provider
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
+    from advanced_alchemy.service import FilterTypeT
     from advanced_alchemy.service.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
-
-    from app.lib.dependencies import FilterTypes
 
 
 class TeamController(Controller):
@@ -30,17 +30,6 @@ class TeamController(Controller):
     tags = ["Teams"]
     dependencies = {
         "teams_service": create_service_provider(TeamService, load=[m.Team.tags, m.Team.members]),
-        "filters": create_filter_dependencies(
-            {
-                "id_filter": UUID,
-                "created_at": True,
-                "updated_at": True,
-                "pagination_size": 1,
-                "sort_field": "name",
-                "sort_order": "asc",
-                "search_fields": ["name", "slug"],
-            },
-        ),
     }
     guards = [requires_active_user]
 
@@ -49,7 +38,7 @@ class TeamController(Controller):
         self,
         teams_service: TeamService,
         current_user: m.User,
-        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+        filters: Annotated[list[FilterTypeT], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.."""
         if not teams_service.can_view_all(current_user):
@@ -60,12 +49,7 @@ class TeamController(Controller):
         return teams_service.to_schema(data=results, total=total, schema_type=Team, filters=filters)
 
     @post(operation_id="CreateTeam", path=urls.TEAM_CREATE)
-    async def create_team(
-        self,
-        teams_service: TeamService,
-        current_user: m.User,
-        data: TeamCreate,
-    ) -> Team:
+    async def create_team(self, teams_service: TeamService, current_user: m.User, data: TeamCreate) -> Team:
         """Create a new team."""
         obj = data.to_dict()
         obj.update({"owner_id": current_user.id, "owner": current_user})

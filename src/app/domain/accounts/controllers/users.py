@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
-from uuid import UUID
 
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
@@ -13,9 +12,10 @@ from app.domain.accounts import urls
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.schemas import User, UserCreate, UserUpdate
-from app.lib.deps import create_filter_dependencies
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service import OffsetPagination
 
@@ -29,19 +29,6 @@ class UserController(Controller):
     guards = [requires_superuser]
     dependencies = {
         "users_service": Provide(provide_users_service),
-        "filters": Provide(
-            create_filter_dependencies(
-                {
-                    "id_filter": UUID,
-                    "created_at": True,
-                    "updated_at": True,
-                    "pagination_size": 20,
-                    "sort_field": "email",
-                    "sort_order": "asc",
-                    "search_fields": ["name", "email"],
-                },
-            )
-        ),
     }
 
     @get(operation_id="ListUsers", path=urls.ACCOUNT_LIST, cache=60)

@@ -2,7 +2,7 @@
 """Users and Teams
 
 Revision ID: 1c703154d1d8
-Revises: 
+Revises:
 Create Date: 2025-01-13 18:19:37.270730+00:00
 
 """
