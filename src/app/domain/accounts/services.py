@@ -9,7 +9,7 @@ from advanced_alchemy.service import (
     ModelDictT,
     SQLAlchemyAsyncRepositoryService,
     is_dict,
-    is_msgspec_model,
+    is_msgspec_struct,
     is_pydantic_model,
 )
 from litestar.exceptions import PermissionDeniedException
@@ -186,9 +186,9 @@ class RoleService(SQLAlchemyAsyncRepositoryService[Role]):
         self.model_type = self.repository.model_type
 
     async def to_model(self, data: ModelDictT[Role], operation: str | None = None) -> Role:
-        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
+        if (is_msgspec_struct(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
-        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
+        if (is_msgspec_struct(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if is_dict(data) and "slug" not in data and operation == "create":
             data["slug"] = await self.repository.get_available_slug(data["name"])
