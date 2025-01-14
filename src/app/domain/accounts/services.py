@@ -98,12 +98,12 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
 class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
     """Handles database operations for users."""
 
-    class RoleRepository(SQLAlchemyAsyncSlugRepository[m.Role]):
+    class Repository(SQLAlchemyAsyncSlugRepository[m.Role]):
         """User SQLAlchemy Repository."""
 
         model_type = m.Role
 
-    repository_type = RoleRepository
+    repository_type = Repository
     match_fields = ["name"]
 
     async def to_model(self, data: ModelDictT[m.Role], operation: str | None = None) -> m.Role:
@@ -125,20 +125,20 @@ class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
 class UserRoleService(SQLAlchemyAsyncRepositoryService[m.UserRole]):
     """Handles database operations for user roles."""
 
-    class UserRoleRepository(SQLAlchemyAsyncRepository[m.UserRole]):
+    class Repository(SQLAlchemyAsyncRepository[m.UserRole]):
         """User Role SQLAlchemy Repository."""
 
         model_type = m.UserRole
 
-    repository_type = UserRoleRepository
+    repository_type = Repository
 
 
 class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOauthAccount]):
     """Handles database operations for user roles."""
 
-    class UserOauthAccountRepository(SQLAlchemyAsyncRepository[m.UserOauthAccount]):
+    class Repository(SQLAlchemyAsyncRepository[m.UserOauthAccount]):
         """User SQLAlchemy Repository."""
 
         model_type = m.UserOauthAccount
 
-    repository_type = UserOauthAccountRepository
+    repository_type = Repository

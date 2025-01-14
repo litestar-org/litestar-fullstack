@@ -6,24 +6,32 @@ from typing import TYPE_CHECKING, Annotated
 
 from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, get, post
+from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 
 from app.domain.accounts import urls
+from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.guards import auth, requires_active_user
 from app.domain.accounts.schemas import AccountLogin, AccountRegister, User
+from app.domain.accounts.services import RoleService
+from app.lib.deps import create_service_provider
 
 if TYPE_CHECKING:
     from litestar.security.jwt import OAuth2Login
 
     from app.db import models as m
-    from app.domain.accounts.services import RoleService, UserService
+    from app.domain.accounts.services import UserService
 
 
 class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
+    dependencies = {
+        "users_service": Provide(provide_users_service),
+        "roles_service": Provide(create_service_provider(RoleService)),
+    }
 
     @post(operation_id="AccountLogin", path=urls.ACCOUNT_LOGIN, exclude_from_auth=True)
     async def login(

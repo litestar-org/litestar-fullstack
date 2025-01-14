@@ -54,7 +54,6 @@ class TagController(Controller):
                 "search_is_case_sensitive": False,
             },
         ),
-    } | {
         "tags_service": create_service_provider(
             TagService,
             load=[selectinload(m.Tag.teams, recursion_depth=2)],

@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from litestar import Controller, post
+from litestar.di import Provide
 from litestar.params import Parameter
 from litestar.repository.exceptions import ConflictError
 
-from app.domain.accounts import schemas, urls
+from app.domain.accounts import deps, schemas, urls
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import RoleService, UserRoleService, UserService
 from app.lib.deps import create_service_provider
@@ -19,7 +20,9 @@ class UserRoleController(Controller):
     tags = ["User Account Roles"]
     guards = [requires_superuser]
     dependencies = {
-        "user_roles_service": create_service_provider(UserRoleService),
+        "user_roles_service": Provide(create_service_provider(UserRoleService)),
+        "roles_service": Provide(create_service_provider(RoleService)),
+        "users_service": Provide(deps.provide_users_service),
     }
 
     @post(operation_id="AssignUserRole", path=urls.ACCOUNT_ASSIGN_ROLE)
