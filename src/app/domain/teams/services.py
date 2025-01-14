@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
 from advanced_alchemy.repository import Empty, EmptyType, ErrorMessages
-from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, is_msgspec_model, is_pydantic_model
+from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService, is_dict, is_msgspec_struct, is_pydantic_model
 from advanced_alchemy.utils.text import slugify
 from uuid_utils.compat import uuid4
 
@@ -144,9 +144,9 @@ class TeamService(SQLAlchemyAsyncRepositoryService[Team]):
         )
 
     async def to_model(self, data: ModelDictT[Team], operation: str | None = None) -> Team:
-        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
+        if (is_msgspec_struct(data) or is_pydantic_model(data)) and operation == "create" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
-        if (is_msgspec_model(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
+        if (is_msgspec_struct(data) or is_pydantic_model(data)) and operation == "update" and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if is_dict(data) and "slug" not in data and operation == "create":
             data["slug"] = await self.repository.get_available_slug(data["name"])
