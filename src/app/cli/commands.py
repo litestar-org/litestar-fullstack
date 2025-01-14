@@ -7,7 +7,7 @@ import click
 
 @click.group(name="users", invoke_without_command=False, help="Manage application users and roles.")
 @click.pass_context
-def user_management_app(_: dict[str, Any]) -> None:
+def user_management_group(_: dict[str, Any]) -> None:
     """Manage application users."""
 
 
@@ -38,7 +38,7 @@ async def load_database_fixtures() -> None:
         await logger.ainfo("loaded roles")
 
 
-@user_management_app.command(name="create-user", help="Create a user")
+@user_management_group.command(name="create-user", help="Create a user")
 @click.option(
     "--email",
     help="Email of the new user",
@@ -114,7 +114,7 @@ def create_user(
     anyio.run(_create_user, cast("str", email), cast("str", password), name, cast("bool", superuser))
 
 
-@user_management_app.command(name="promote-to-superuser", help="Promotes a user to application superuser")
+@user_management_group.command(name="promote-to-superuser", help="Promotes a user to application superuser")
 @click.option(
     "--email",
     help="Email of the user",
@@ -159,7 +159,7 @@ def promote_to_superuser(email: str) -> None:
     anyio.run(_promote_to_superuser, email)
 
 
-@user_management_app.command(name="create-roles", help="Create pre-configured application roles and assign to users.")
+@user_management_group.command(name="create-roles", help="Create pre-configured application roles and assign to users.")
 def create_default_roles() -> None:
     """Create the default Roles for the system
 

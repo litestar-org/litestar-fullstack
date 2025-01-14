@@ -46,7 +46,7 @@ def manage_resources(setup_kwargs: Any) -> Any:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Manage Package Resources")
+    parser = argparse.ArgumentParser("Manage Resources")
     parser.add_argument("--build-assets", action="store_true", help="Build assets for static hosting.", default=None)
     parser.add_argument("--install-packages", action="store_true", help="Install NPM packages.", default=None)
     args = parser.parse_args()

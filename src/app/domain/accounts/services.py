@@ -110,7 +110,7 @@ class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
         data = await self._populate_slug(data, operation)
         return await super().to_model(data, operation)
 
-    async def _populate_slug(self, data: ModelDictT[m.Team], operation: str | None) -> ModelDictT[m.Team]:
+    async def _populate_slug(self, data: ModelDictT[m.Role], operation: str | None) -> ModelDictT[m.Role]:
         if operation == "create" and is_schema_with_field(data, "slug") and data.slug is None:  # type: ignore[union-attr]
             data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[attr-defined,union-attr]
         if operation == "create" and is_dict_without_field(data, "slug"):

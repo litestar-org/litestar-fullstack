@@ -9,5 +9,3 @@ lib
     :hidden:
 
     *
-    log/index
-    db/index

@@ -111,3 +111,9 @@ To manually rebuild assets, use the following:
       Loading environment configuration from .env
       [INFO] Started worker-1
       [INFO] Started worker-1 runtime-1
+
+.. note::
+   - ``VITE_DEV_MODE``: Enables the Vite development server when set to true.
+   - ``VITE_USE_SERVER_LIFESPAN``: Automatically starts and stops Vite processes during the server lifespan in development mode.
+   - ``VITE_HOT_RELOAD``: Enables hot module reloading (HMR) with Vite when set to true.
+   - ``SAQ_USE_SERVER_LIFESPAN``: Automatically starts and stops SAQ workers during the server lifespan in development mode.
