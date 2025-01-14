@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,10 +693,10 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for app.domain.tags.dtos</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">advanced_alchemy.extensions.litestar.dto</span> <span class="kn">import</span> <span class="n">SQLAlchemyDTO</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.extensions.litestar.dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyDTO</span>
 
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Tag</span>
-<span class="kn">from</span> <span class="nn">app.lib</span> <span class="kn">import</span> <span class="n">dto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">dto</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TagCreateDTO&quot;</span><span class="p">,</span> <span class="s2">&quot;TagDTO&quot;</span><span class="p">,</span> <span class="s2">&quot;TagUpdateDTO&quot;</span><span class="p">]</span>
 
@@ -706,21 +706,21 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TagDTO">
 <a class="viewcode-back" href="../../../../api/domain/tags/dtos.html#app.domain.tags.controllers.TagDTO">[docs]</a>
-<span class="k">class</span> <span class="nc">TagDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">dto</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">max_nested_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="s2">&quot;teams&quot;</span><span class="p">})</span></div>
 
 
 
 <div class="viewcode-block" id="TagCreateDTO">
 <a class="viewcode-back" href="../../../../api/domain/tags/dtos.html#app.domain.tags.controllers.TagCreateDTO">[docs]</a>
-<span class="k">class</span> <span class="nc">TagCreateDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagCreateDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">dto</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">max_nested_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="s2">&quot;teams&quot;</span><span class="p">})</span></div>
 
 
 
 <div class="viewcode-block" id="TagUpdateDTO">
 <a class="viewcode-back" href="../../../../api/domain/tags/dtos.html#app.domain.tags.controllers.TagUpdateDTO">[docs]</a>
-<span class="k">class</span> <span class="nc">TagUpdateDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagUpdateDTO</span><span class="p">(</span><span class="n">SQLAlchemyDTO</span><span class="p">[</span><span class="n">Tag</span><span class="p">]):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">dto</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">max_nested_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="s2">&quot;teams&quot;</span><span class="p">},</span> <span class="n">partial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>

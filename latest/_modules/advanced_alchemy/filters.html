@@ -29,7 +29,7 @@
   <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,29 +693,61 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for advanced_alchemy.filters</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Collection filter datastructures.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;SQLAlchemy filter constructs for advanced query operations.</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="sd">This module provides a comprehensive collection of filter datastructures designed to</span>
+<span class="sd">enhance SQLAlchemy query construction. It implements type-safe, reusable filter patterns</span>
+<span class="sd">for common database query operations.</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">abc</span>  <span class="c1"># noqa: TC003</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>  <span class="c1"># noqa: TC003</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">cast</span>
+<span class="sd">Features:</span>
+<span class="sd">    Type-safe filter construction, datetime range filtering, collection-based filtering,</span>
+<span class="sd">    pagination support, search operations, and customizable ordering.</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">Delete</span><span class="p">,</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Update</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">any_</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">text</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+<span class="sd">Example:</span>
+<span class="sd">    Basic usage with a datetime filter::</span>
+
+<span class="sd">        from datetime import datetime</span>
+<span class="sd">        from advanced_alchemy.filters import BeforeAfter</span>
+
+<span class="sd">        filter = BeforeAfter(</span>
+<span class="sd">            field_name=&quot;created_at&quot;,</span>
+<span class="sd">            before=datetime.now(),</span>
+<span class="sd">            after=datetime(2023, 1, 1),</span>
+<span class="sd">        )</span>
+<span class="sd">        statement = filter.append_to_statement(select(Model), Model)</span>
+
+<span class="sd">Note:</span>
+<span class="sd">    All filter classes implement the :class:`StatementFilter` ABC, ensuring consistent</span>
+<span class="sd">    interface across different filter types.</span>
+
+<span class="sd">See Also:</span>
+<span class="sd">    - :class:`sqlalchemy.sql.expression.Select`: Core SQLAlchemy select expression</span>
+<span class="sd">    - :class:`sqlalchemy.orm.Query`: SQLAlchemy ORM query interface</span>
+<span class="sd">    - :mod:`advanced_alchemy.base`: Base model definitions</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">abc</span>  <span class="c1"># noqa: TC003</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>  <span class="c1"># noqa: TC003</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">Delete</span><span class="p">,</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Update</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">any_</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-    <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ColumnElement</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.sql.dml</span> <span class="kn">import</span> <span class="n">ReturningDelete</span><span class="p">,</span> <span class="n">ReturningUpdate</span>
-    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnElement</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.sql.dml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReturningDelete</span><span class="p">,</span> <span class="n">ReturningUpdate</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
 
-    <span class="kn">from</span> <span class="nn">advanced_alchemy</span> <span class="kn">import</span> <span class="n">base</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">base</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
@@ -746,15 +778,54 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">&quot;&quot;&quot;Aggregate type alias of the types supported for collection filtering.&quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">StatementFilter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatementFilter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for SQLAlchemy statement filters.</span>
+
+<span class="sd">    This class defines the interface for all filter types in the system. Each filter</span>
+<span class="sd">    implementation must provide a method to append its filtering logic to an existing</span>
+<span class="sd">    SQLAlchemy statement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append filter conditions to a SQLAlchemy statement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            statement: The SQLAlchemy statement to modify</span>
+<span class="sd">            model: The SQLAlchemy model class</span>
+<span class="sd">            *args: Additional positional arguments</span>
+<span class="sd">            **kwargs: Additional keyword arguments</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StatementTypeT: Modified SQLAlchemy statement with filter conditions applied</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: If the concrete class doesn&#39;t implement this method</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            This method must be implemented by all concrete filter classes.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :meth:`sqlalchemy.sql.expression.Select.where`: SQLAlchemy where clause</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">statement</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get SQLAlchemy instrumented attribute from model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: SQLAlchemy model class or instance</span>
+<span class="sd">            key: Attribute name or instrumented attribute</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            InstrumentedAttribute[Any]: SQLAlchemy instrumented attribute</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :class:`sqlalchemy.orm.attributes.InstrumentedAttribute`: SQLAlchemy attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;InstrumentedAttribute[Any]&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">key</span>
@@ -763,201 +834,475 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="BeforeAfter">
 <a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.BeforeAfter">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BeforeAfter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to filter a query on a ``datetime`` column.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BeforeAfter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DateTime range filter with exclusive bounds.</span>
+
+<span class="sd">    This filter creates date/time range conditions using &lt; and &gt; operators,</span>
+<span class="sd">    excluding the boundary values.</span>
+
+<span class="sd">    If either `before` or `after` is None, that boundary condition is not applied.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">    ---------</span>
+<span class="sd">        :class:`OnBeforeAfter` : Inclusive datetime range filtering</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
     <span class="n">before</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field earlier than this.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is earlier than this value.&quot;&quot;&quot;</span>
     <span class="n">after</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field later than this.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is later than this value.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<div class="viewcode-block" id="BeforeAfter.append_to_statement">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.append_to_statement">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply datetime range conditions to statement.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        statement : StatementTypeT</span>
+<span class="sd">            The SQLAlchemy statement to modify</span>
+<span class="sd">        model : type[ModelT]</span>
+<span class="sd">            The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        StatementTypeT</span>
+<span class="sd">            Modified statement with datetime range conditions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">before</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">before</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">statement</span></div>
+</div>
 
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OnBeforeAfter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to filter a query on a ``datetime`` column.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnBeforeAfter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DateTime range filter with inclusive bounds.</span>
+
+<span class="sd">    This filter creates date/time range conditions using &lt;= and &gt;= operators,</span>
+<span class="sd">    including the boundary values.</span>
+
+<span class="sd">    If either `on_or_before` or `on_or_after` is None, that boundary condition</span>
+<span class="sd">    is not applied.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">    ---------</span>
+<span class="sd">        :class:`BeforeAfter` : Exclusive datetime range filtering</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
     <span class="n">on_or_before</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is on or earlier than this.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is on or earlier than this value.&quot;&quot;&quot;</span>
     <span class="n">on_or_after</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field on or later than this.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter results where field is on or later than this value.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply inclusive datetime range conditions to statement.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        statement : StatementTypeT</span>
+<span class="sd">            The SQLAlchemy statement to modify</span>
+<span class="sd">        model : type[ModelT]</span>
+<span class="sd">            The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        StatementTypeT</span>
+<span class="sd">            Modified statement with inclusive datetime range conditions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_before</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_before</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_after</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownLambdaType,reportUnknownMemberType]</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_or_after</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">statement</span>
 
 
-<span class="k">class</span> <span class="nc">InAnyFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subclass for methods that have a `prefer_any` attribute.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InAnyFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for filters using IN or ANY operators.</span>
+
+<span class="sd">    This abstract class provides common functionality for filters that check</span>
+<span class="sd">    membership in a collection using either the SQL IN operator or the ANY operator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="CollectionFilter">
 <a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.CollectionFilter">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">CollectionFilter</span><span class="p">(</span><span class="n">InAnyFilter</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE ... IN (...)`` clause.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CollectionFilter</span><span class="p">(</span><span class="n">InAnyFilter</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a WHERE ... IN (...) clause.</span>
+
+<span class="sd">    This filter restricts records based on a field&#39;s presence in a collection of values.</span>
+
+<span class="sd">    The filter supports both ``IN`` and ``ANY`` operators for collection membership testing.</span>
+<span class="sd">    Use ``prefer_any=True`` in ``append_to_statement`` to use the ``ANY`` operator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">abc</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``IN`` clause.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for the ``IN`` clause. If this is None, no filter is applied.</span>
+<span class="sd">        An empty list will force an empty result set (WHERE 1=-1)&quot;&quot;&quot;</span>
 
-<span class="sd">    An empty list will return an empty result set, however, if ``None``, the filter is not applied to the query, and all rows are returned. &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
+<div class="viewcode-block" id="CollectionFilter.append_to_statement">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.append_to_statement">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
         <span class="n">prefer_any</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a WHERE ... IN or WHERE ... ANY (...) clause to the statement.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        statement : StatementTypeT</span>
+<span class="sd">            The SQLAlchemy statement to modify</span>
+<span class="sd">        model : type[ModelT]</span>
+<span class="sd">            The SQLAlchemy model class</span>
+<span class="sd">        prefer_any : bool, optional</span>
+<span class="sd">            If True, uses the SQLAlchemy :func:`any_` operator instead of</span>
+<span class="sd">            :func:`in_` for the filter condition</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        StatementTypeT</span>
+<span class="sd">            Modified statement with the appropriate IN conditions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">statement</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="c1"># Return empty result set by forcing a false condition</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;1=-1&quot;</span><span class="p">)))</span>
         <span class="k">if</span> <span class="n">prefer_any</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">any_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="n">field</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)))</span></div>
+</div>
 
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">NotInCollectionFilter</span><span class="p">(</span><span class="n">InAnyFilter</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE ... NOT IN (...)`` clause.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotInCollectionFilter</span><span class="p">(</span><span class="n">InAnyFilter</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a WHERE ... NOT IN (...) clause.</span>
+
+<span class="sd">    This filter restricts records based on a field&#39;s absence in a collection of values.</span>
+
+<span class="sd">    The filter supports both ``NOT IN`` and ``!= ANY`` operators for collection exclusion.</span>
+<span class="sd">    Use ``prefer_any=True`` in ``append_to_statement`` to use the ``ANY`` operator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    field_name : str</span>
+<span class="sd">        Name of the model attribute to filter on</span>
+<span class="sd">    values : abc.Collection[T] | None</span>
+<span class="sd">        Values for the ``NOT IN`` clause. If this is None or empty,</span>
+<span class="sd">        the filter is not applied.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to filter on.&quot;&quot;&quot;</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">abc</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for ``NOT IN`` clause.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Values for the ``NOT IN`` clause. If None or empty, no filter is applied.&quot;&quot;&quot;</span>
 
-<span class="sd">    An empty list or ``None`` will return all rows.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
         <span class="n">prefer_any</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a WHERE ... NOT IN or WHERE ... != ANY(...) clause to the statement.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        statement : StatementTypeT</span>
+<span class="sd">            The SQLAlchemy statement to modify</span>
+<span class="sd">        model : type[ModelT]</span>
+<span class="sd">            The SQLAlchemy model class</span>
+<span class="sd">        prefer_any : bool, optional</span>
+<span class="sd">            If True, uses the SQLAlchemy :func:`any_` operator instead of</span>
+<span class="sd">            :func:`notin_` for the filter condition</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        StatementTypeT</span>
+<span class="sd">            Modified statement with the appropriate NOT IN conditions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="c1"># If None or empty, we do not modify the statement</span>
             <span class="k">return</span> <span class="n">statement</span>
         <span class="k">if</span> <span class="n">prefer_any</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">any_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="n">field</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)))</span>
 
 
-<span class="k">class</span> <span class="nc">PaginationFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subclass for methods that function as a pagination type.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PaginationFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for pagination filters.</span>
+
+<span class="sd">    Subclasses should implement pagination logic, such as limit/offset or</span>
+<span class="sd">    cursor-based pagination.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="LimitOffset">
 <a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.LimitOffset">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">LimitOffset</span><span class="p">(</span><span class="n">PaginationFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to add limit/offset filtering to a query.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LimitOffset</span><span class="p">(</span><span class="n">PaginationFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Limit and offset pagination filter.</span>
+
+<span class="sd">    Implements traditional pagination using SQL LIMIT and OFFSET clauses.</span>
+<span class="sd">    Only applies to SELECT statements; other statement types are returned unmodified.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This filter only modifies SELECT statements. For other statement types</span>
+<span class="sd">        (UPDATE, DELETE), the statement is returned unchanged.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.Select.limit`: SQLAlchemy LIMIT clause</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.Select.offset`: SQLAlchemy OFFSET clause</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Value for ``LIMIT`` clause of query.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maximum number of rows to return.&quot;&quot;&quot;</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Value for ``OFFSET`` clause of query.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of rows to skip before returning results.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<div class="viewcode-block" id="LimitOffset.append_to_statement">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.LimitOffset.append_to_statement">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply LIMIT/OFFSET pagination to the statement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            statement: The SQLAlchemy statement to modify</span>
+<span class="sd">            model: The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StatementTypeT: Modified statement with limit and offset applied</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Only modifies SELECT statements. Other statement types are returned as-is.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :class:`sqlalchemy.sql.expression.Select`: SQLAlchemy SELECT statement</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Select</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">statement</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="OrderBy">
 <a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.OrderBy">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OrderBy</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``ORDER BY ...`` clause.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OrderBy</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Order by a specific field.</span>
+
+<span class="sd">    Appends an ORDER BY clause to SELECT statements, sorting records by the</span>
+<span class="sd">    specified field in ascending or descending order.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This filter only modifies SELECT statements. For other statement types,</span>
+<span class="sd">        the statement is returned unchanged.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.Select.order_by`: SQLAlchemy ORDER BY clause</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnElement.asc`: Ascending order</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnElement.desc`: Descending order</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to sort on.&quot;&quot;&quot;</span>
     <span class="n">sort_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;asc&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort ascending or descending&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort direction (&quot;asc&quot; or &quot;desc&quot;).&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<div class="viewcode-block" id="OrderBy.append_to_statement">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.OrderBy.append_to_statement">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append an ORDER BY clause to the statement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            statement: The SQLAlchemy statement to modify</span>
+<span class="sd">            model: The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StatementTypeT: Modified statement with an ORDER BY clause</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Only modifies SELECT statements. Other statement types are returned as-is.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :meth:`sqlalchemy.sql.expression.Select.order_by`: SQLAlchemy ORDER BY</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Select</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">statement</span>
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_order</span> <span class="o">==</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">desc</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">asc</span><span class="p">()))</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="SearchFilter">
 <a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.SearchFilter">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SearchFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SearchFilter</span><span class="p">(</span><span class="n">StatementFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Case-sensitive or case-insensitive substring matching filter.</span>
+
+<span class="sd">    Implements text search using SQL LIKE or ILIKE operators. Can search across</span>
+<span class="sd">    multiple fields using OR conditions.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The search pattern automatically adds wildcards before and after the search</span>
+<span class="sd">        value, equivalent to SQL pattern &#39;%value%&#39;.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        - :class:`.NotInSearchFilter`: Opposite filter using NOT LIKE/ILIKE</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnOperators.like`: Case-sensitive LIKE</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnOperators.ilike`: Case-insensitive LIKE</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the model attribute to search on.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name or set of names of model attributes to search on.&quot;&quot;&quot;</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search value.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Text to match within the field(s).&quot;&quot;&quot;</span>
     <span class="n">ignore_case</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should the search be case insensitive.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether to use case-insensitive matching.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the SQL operator for combining multiple search clauses.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable[..., ColumnElement[bool]]: The `or_` operator for OR conditions</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :func:`sqlalchemy.sql.expression.or_`: SQLAlchemy OR operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">or_</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the appropriate LIKE or ILIKE operator as a function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            attrgetter: Bound method for LIKE or ILIKE operations</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            - :meth:`sqlalchemy.sql.expression.ColumnOperators.like`: LIKE operator</span>
+<span class="sd">            - :meth:`sqlalchemy.sql.expression.ColumnOperators.ilike`: ILIKE operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;ilike&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span> <span class="k">else</span> <span class="s2">&quot;like&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">normalized_field_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalized_field_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert field_name to a set if it&#39;s a single string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            set[str]: Set of field names to be searched</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">}</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_name</span>
 
-    <span class="k">def</span> <span class="nf">get_search_clauses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+<div class="viewcode-block" id="SearchFilter.get_search_clauses">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.SearchFilter.get_search_clauses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_search_clauses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the LIKE/ILIKE clauses for all specified fields.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[BinaryExpression[bool]]: List of text matching expressions</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :class:`sqlalchemy.sql.expression.BinaryExpression`: SQLAlchemy expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">search_clause</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized_field_names</span><span class="p">:</span>
             <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_instrumented_attr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
             <span class="n">search_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">%&quot;</span>
             <span class="n">search_clause</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="n">field</span><span class="p">)(</span><span class="n">search_text</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">search_clause</span>
+        <span class="k">return</span> <span class="n">search_clause</span></div>
 
-    <span class="k">def</span> <span class="nf">append_to_statement</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SearchFilter.append_to_statement">
+<a class="viewcode-back" href="../../api/lib/dependencies.html#app.lib.dependencies.SearchFilter.append_to_statement">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">StatementTypeT</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StatementTypeT</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a LIKE/ILIKE clause to the statement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            statement: The SQLAlchemy statement to modify</span>
+<span class="sd">            model: The SQLAlchemy model class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StatementTypeT: Modified statement with text search clauses</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :meth:`sqlalchemy.sql.expression.Select.where`: SQLAlchemy WHERE clause</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">where_clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">get_search_clauses</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StatementTypeT&quot;</span><span class="p">,</span> <span class="n">statement</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">where_clause</span><span class="p">))</span></div>
+</div>
 
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">NotInSearchFilter</span><span class="p">(</span><span class="n">SearchFilter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data required to construct a ``WHERE field_name NOT LIKE &#39;%&#39; || :value || &#39;%&#39;`` clause.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotInSearchFilter</span><span class="p">(</span><span class="n">SearchFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter for excluding records that match a substring.</span>
+
+<span class="sd">    Implements negative text search using SQL NOT LIKE or NOT ILIKE operators.</span>
+<span class="sd">    Can exclude across multiple fields using AND conditions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field_name: Name or set of names of model attributes to search on</span>
+<span class="sd">        value: Text to exclude from the field(s)</span>
+<span class="sd">        ignore_case: If True, uses NOT ILIKE for case-insensitive matching</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Uses AND for multiple fields, meaning records matching any field will be excluded.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        - :class:`.SearchFilter`: Opposite filter using LIKE/ILIKE</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnOperators.notlike`: NOT LIKE operator</span>
+<span class="sd">        - :meth:`sqlalchemy.sql.expression.ColumnOperators.notilike`: NOT ILIKE operator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ColumnElement</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the SQL operator for combining multiple negated search clauses.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable[..., ColumnElement[bool]]: The `and_` operator for AND conditions</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :func:`sqlalchemy.sql.expression.and_`: SQLAlchemy AND operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">and_</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">attrgetter</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">BinaryExpression</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the appropriate NOT LIKE or NOT ILIKE operator as a function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            attrgetter: Bound method for NOT LIKE or NOT ILIKE operations</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            - :meth:`sqlalchemy.sql.expression.ColumnOperators.notlike`: NOT LIKE</span>
+<span class="sd">            - :meth:`sqlalchemy.sql.expression.ColumnOperators.notilike`: NOT ILIKE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;not_ilike&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_case</span> <span class="k">else</span> <span class="s2">&quot;not_like&quot;</span><span class="p">)</span>
 </pre></div>
 

@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,32 +693,32 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for app.domain.tags.controllers</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Annotated</span>
 
-<span class="kn">from</span> <span class="nn">litestar</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">post</span>
-<span class="kn">from</span> <span class="nn">litestar.di</span> <span class="kn">import</span> <span class="n">Provide</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.di</span><span class="w"> </span><span class="kn">import</span> <span class="n">Provide</span>
 
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Tag</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.guards</span> <span class="kn">import</span> <span class="n">requires_active_user</span><span class="p">,</span> <span class="n">requires_superuser</span>
-<span class="kn">from</span> <span class="nn">app.domain.tags</span> <span class="kn">import</span> <span class="n">urls</span>
-<span class="kn">from</span> <span class="nn">app.domain.tags.dependencies</span> <span class="kn">import</span> <span class="n">provide_tags_service</span>
-<span class="kn">from</span> <span class="nn">app.domain.tags.dtos</span> <span class="kn">import</span> <span class="n">TagCreateDTO</span><span class="p">,</span> <span class="n">TagDTO</span><span class="p">,</span> <span class="n">TagUpdateDTO</span>
-<span class="kn">from</span> <span class="nn">app.domain.tags.services</span> <span class="kn">import</span> <span class="n">TagService</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">requires_active_user</span><span class="p">,</span> <span class="n">requires_superuser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">urls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.tags.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_tags_service</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.tags.dtos</span><span class="w"> </span><span class="kn">import</span> <span class="n">TagCreateDTO</span><span class="p">,</span> <span class="n">TagDTO</span><span class="p">,</span> <span class="n">TagUpdateDTO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.tags.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">TagService</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
 
-    <span class="kn">from</span> <span class="nn">advanced_alchemy.filters</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
-    <span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="n">OffsetPagination</span>
-    <span class="kn">from</span> <span class="nn">litestar.dto</span> <span class="kn">import</span> <span class="n">DTOData</span>
-    <span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterTypes</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetPagination</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOData</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
 
 
 <div class="viewcode-block" id="TagController">
 <a class="viewcode-back" href="../../../../api/domain/tags/controllers.html#app.domain.tags.controllers.TagController">[docs]</a>
-<span class="k">class</span> <span class="nc">TagController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles the interactions within the Tag objects.&quot;&quot;&quot;</span>
 
     <span class="n">guards</span> <span class="o">=</span> <span class="p">[</span><span class="n">requires_active_user</span><span class="p">]</span>
@@ -734,7 +734,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Retrieve the tags.&quot;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TAG_LIST</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_tags</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_tags</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tags_service</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span>
         <span class="n">filters</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilterTypes</span><span class="p">],</span> <span class="n">Dependency</span><span class="p">(</span><span class="n">skip_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
@@ -749,7 +749,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TAG_DETAILS</span><span class="p">,</span>
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Retrieve the details of a tag.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_tag</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_tag</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tags_service</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span>
         <span class="n">tag_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
@@ -774,7 +774,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TAG_CREATE</span><span class="p">,</span>
         <span class="n">dto</span><span class="o">=</span><span class="n">TagCreateDTO</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_tag</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_tag</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tags_service</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">DTOData</span><span class="p">[</span><span class="n">Tag</span><span class="p">],</span>
@@ -790,7 +790,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">guards</span><span class="o">=</span><span class="p">[</span><span class="n">requires_superuser</span><span class="p">],</span>
         <span class="n">dto</span><span class="o">=</span><span class="n">TagUpdateDTO</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_tag</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_tag</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tags_service</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">DTOData</span><span class="p">[</span><span class="n">Tag</span><span class="p">],</span>
@@ -815,7 +815,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">guards</span><span class="o">=</span><span class="p">[</span><span class="n">requires_superuser</span><span class="p">],</span>
         <span class="n">return_dto</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_tag</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_tag</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tags_service</span><span class="p">:</span> <span class="n">TagService</span><span class="p">,</span>
         <span class="n">tag_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>

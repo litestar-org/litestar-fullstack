@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -699,30 +699,30 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">into HTTP exceptions.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">IntegrityError</span>
-<span class="kn">from</span> <span class="nn">litestar.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrityError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">HTTPException</span><span class="p">,</span>
     <span class="n">InternalServerException</span><span class="p">,</span>
     <span class="n">NotFoundException</span><span class="p">,</span>
     <span class="n">PermissionDeniedException</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">litestar.exceptions.responses</span> <span class="kn">import</span> <span class="n">create_debug_response</span><span class="p">,</span> <span class="n">create_exception_response</span>
-<span class="kn">from</span> <span class="nn">litestar.repository.exceptions</span> <span class="kn">import</span> <span class="n">ConflictError</span><span class="p">,</span> <span class="n">NotFoundError</span><span class="p">,</span> <span class="n">RepositoryError</span>
-<span class="kn">from</span> <span class="nn">litestar.status_codes</span> <span class="kn">import</span> <span class="n">HTTP_409_CONFLICT</span><span class="p">,</span> <span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
-<span class="kn">from</span> <span class="nn">structlog.contextvars</span> <span class="kn">import</span> <span class="n">bind_contextvars</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_debug_response</span><span class="p">,</span> <span class="n">create_exception_response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.repository.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConflictError</span><span class="p">,</span> <span class="n">NotFoundError</span><span class="p">,</span> <span class="n">RepositoryError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.status_codes</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTP_409_CONFLICT</span><span class="p">,</span> <span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">structlog.contextvars</span><span class="w"> </span><span class="kn">import</span> <span class="n">bind_contextvars</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-    <span class="kn">from</span> <span class="nn">litestar.connection</span> <span class="kn">import</span> <span class="n">Request</span>
-    <span class="kn">from</span> <span class="nn">litestar.middleware.exceptions.middleware</span> <span class="kn">import</span> <span class="n">ExceptionResponseContent</span>
-    <span class="kn">from</span> <span class="nn">litestar.response</span> <span class="kn">import</span> <span class="n">Response</span>
-    <span class="kn">from</span> <span class="nn">litestar.types</span> <span class="kn">import</span> <span class="n">Scope</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Request</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.middleware.exceptions.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExceptionResponseContent</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Scope</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;ApplicationError&quot;</span><span class="p">,</span>
@@ -734,14 +734,14 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ApplicationError">
 <a class="viewcode-back" href="../../../api/lib/exceptions.html#app.lib.exceptions.ApplicationError">[docs]</a>
-<span class="k">class</span> <span class="nc">ApplicationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApplicationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base exception type for the lib&#39;s custom exception types.&quot;&quot;&quot;</span>
 
     <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="ApplicationError.__init__">
 <a class="viewcode-back" href="../../../api/lib/exceptions.html#app.lib.exceptions.ApplicationError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ``AdvancedAlchemyException``.</span>
 
 <span class="sd">        Args:</span>
@@ -758,42 +758,42 @@ window.addEventListener("load", () => mermaid.run());
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">str_args</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detail</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">detail</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">detail</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">MissingDependencyError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingDependencyError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Missing optional dependency.</span>
 
 <span class="sd">    This exception is raised only when a module depends on a dependency that has not been installed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">ApplicationClientError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApplicationClientError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base exception type for client errors.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="AuthorizationError">
 <a class="viewcode-back" href="../../../api/lib/exceptions.html#app.lib.exceptions.AuthorizationError">[docs]</a>
-<span class="k">class</span> <span class="nc">AuthorizationError</span><span class="p">(</span><span class="n">ApplicationClientError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AuthorizationError</span><span class="p">(</span><span class="n">ApplicationClientError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A user tried to do something they shouldn&#39;t have.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="HealthCheckConfigurationError">
 <a class="viewcode-back" href="../../../api/lib/exceptions.html#app.lib.exceptions.HealthCheckConfigurationError">[docs]</a>
-<span class="k">class</span> <span class="nc">HealthCheckConfigurationError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HealthCheckConfigurationError</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An error occurred while registering an health check.&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">_HTTPConflictException</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_HTTPConflictException</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Request conflict with the current state of the target resource.&quot;&quot;&quot;</span>
 
     <span class="n">status_code</span> <span class="o">=</span> <span class="n">HTTP_409_CONFLICT</span>
@@ -801,7 +801,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="after_exception_hook_handler">
 <a class="viewcode-back" href="../../../api/lib/exceptions.html#app.lib.exceptions.after_exception_hook_handler">[docs]</a>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">after_exception_hook_handler</span><span class="p">(</span><span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">_scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">after_exception_hook_handler</span><span class="p">(</span><span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">_scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Binds `exc_info` key with exception instance as value to structlog</span>
 <span class="sd">    context vars.</span>
 
@@ -819,7 +819,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
-<span class="k">def</span> <span class="nf">exception_to_http_response</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">exception_to_http_response</span><span class="p">(</span>
     <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">exc</span><span class="p">:</span> <span class="n">ApplicationError</span> <span class="o">|</span> <span class="n">RepositoryError</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">ExceptionResponseContent</span><span class="p">]:</span>

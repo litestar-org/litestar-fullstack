@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -808,7 +808,15 @@
 <dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">BeforeAfter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#BeforeAfter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.BeforeAfter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to filter a query on a <code class="docutils literal notranslate"><span class="pre">datetime</span></code> column.</p>
+<p>DateTime range filter with exclusive bounds.</p>
+<p>This filter creates date/time range conditions using &lt; and &gt; operators,
+excluding the boundary values.</p>
+<p>If either <cite>before</cite> or <cite>after</cite> is None, that boundary condition is not applied.</p>
+<section id="see-also">
+<h2>See Also:<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><code class="xref py py-class docutils literal notranslate"><span class="pre">OnBeforeAfter</span></code> : Inclusive datetime range filtering</p>
+</div></blockquote>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.field_name">
 <span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.field_name" title="Link to this definition">#</a></dt>
@@ -818,13 +826,30 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.before">
 <span class="sig-name descname"><span class="pre">before</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.before" title="Link to this definition">#</a></dt>
-<dd><p>Filter results where field earlier than this.</p>
+<dd><p>Filter results where field is earlier than this value.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.after">
 <span class="sig-name descname"><span class="pre">after</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.after" title="Link to this definition">#</a></dt>
-<dd><p>Filter results where field later than this.</p>
+<dd><p>Filter results where field is later than this value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.BeforeAfter.append_to_statement">
+<span class="sig-name descname"><span class="pre">append_to_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StatementTypeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StatementTypeT</span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#BeforeAfter.append_to_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.append_to_statement" title="Link to this definition">#</a></dt>
+<dd><p>Apply datetime range conditions to statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> (<em>StatementTypeT</em>) – The SQLAlchemy statement to modify</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a><em>[</em><em>ModelT</em><em>]</em>) – The SQLAlchemy model class</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>StatementTypeT</strong> – Modified statement with datetime range conditions</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -832,13 +857,17 @@
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.BeforeAfter.__init__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+</section>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">CollectionFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#CollectionFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.CollectionFilter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">InAnyFilter</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">...</span> <span class="pre">IN</span> <span class="pre">(...)</span></code> clause.</p>
+<p>Data required to construct a WHERE … IN (…) clause.</p>
+<p>This filter restricts records based on a field’s presence in a collection of values.</p>
+<p>The filter supports both <code class="docutils literal notranslate"><span class="pre">IN</span></code> and <code class="docutils literal notranslate"><span class="pre">ANY</span></code> operators for collection membership testing.
+Use <code class="docutils literal notranslate"><span class="pre">prefer_any=True</span></code> in <code class="docutils literal notranslate"><span class="pre">append_to_statement</span></code> to use the <code class="docutils literal notranslate"><span class="pre">ANY</span></code> operator.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.field_name">
 <span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.field_name" title="Link to this definition">#</a></dt>
@@ -848,8 +877,27 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.values">
 <span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.13)"><span class="pre">Collection</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.values" title="Link to this definition">#</a></dt>
-<dd><p>Values for <code class="docutils literal notranslate"><span class="pre">IN</span></code> clause.</p>
-<p>An empty list will return an empty result set, however, if <code class="docutils literal notranslate"><span class="pre">None</span></code>, the filter is not applied to the query, and all rows are returned.</p>
+<dd><p>Values for the <code class="docutils literal notranslate"><span class="pre">IN</span></code> clause. If this is None, no filter is applied.
+An empty list will force an empty result set (WHERE 1=-1)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.CollectionFilter.append_to_statement">
+<span class="sig-name descname"><span class="pre">append_to_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StatementTypeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefer_any</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StatementTypeT</span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#CollectionFilter.append_to_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.CollectionFilter.append_to_statement" title="Link to this definition">#</a></dt>
+<dd><p>Apply a WHERE … IN or WHERE … ANY (…) clause to the statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> (<em>StatementTypeT</em>) – The SQLAlchemy statement to modify</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a><em>[</em><em>ModelT</em><em>]</em>) – The SQLAlchemy model class</p></li>
+<li><p><strong>prefer_any</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses the SQLAlchemy <code class="xref py py-func docutils literal notranslate"><span class="pre">any_()</span></code> operator instead of
+<code class="xref py py-func docutils literal notranslate"><span class="pre">in_()</span></code> for the filter condition</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>StatementTypeT</strong> – Modified statement with the appropriate IN conditions</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -863,17 +911,59 @@
 <dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">LimitOffset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#LimitOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.LimitOffset" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PaginationFilter</span></code></p>
-<p>Data required to add limit/offset filtering to a query.</p>
+<p>Limit and offset pagination filter.</p>
+<p>Implements traditional pagination using SQL LIMIT and OFFSET clauses.
+Only applies to SELECT statements; other statement types are returned unmodified.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This filter only modifies SELECT statements. For other statement types
+(UPDATE, DELETE), the statement is returned unchanged.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select.limit()</span></code>: SQLAlchemy LIMIT clause</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select.offset()</span></code>: SQLAlchemy OFFSET clause</p></li>
+</ul>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.limit">
 <span class="sig-name descname"><span class="pre">limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.limit" title="Link to this definition">#</a></dt>
-<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">LIMIT</span></code> clause of query.</p>
+<dd><p>Maximum number of rows to return.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.offset">
 <span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#app.lib.dependencies.LimitOffset.offset" title="Link to this definition">#</a></dt>
-<dd><p>Value for <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code> clause of query.</p>
+<dd><p>Number of rows to skip before returning results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.LimitOffset.append_to_statement">
+<span class="sig-name descname"><span class="pre">append_to_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StatementTypeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StatementTypeT</span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#LimitOffset.append_to_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.LimitOffset.append_to_statement" title="Link to this definition">#</a></dt>
+<dd><p>Apply LIMIT/OFFSET pagination to the statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> – The SQLAlchemy statement to modify</p></li>
+<li><p><strong>model</strong> – The SQLAlchemy model class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified statement with limit and offset applied</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StatementTypeT</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only modifies SELECT statements. Other statement types are returned as-is.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select</span></code>: SQLAlchemy SELECT statement</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -887,7 +977,22 @@
 <dt class="sig sig-object py" id="app.lib.dependencies.OrderBy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">OrderBy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'asc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#OrderBy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.OrderBy" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span> <span class="pre">...</span></code> clause.</p>
+<p>Order by a specific field.</p>
+<p>Appends an ORDER BY clause to SELECT statements, sorting records by the
+specified field in ascending or descending order.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This filter only modifies SELECT statements. For other statement types,
+the statement is returned unchanged.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select.order_by()</span></code>: SQLAlchemy ORDER BY clause</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.ColumnElement.asc()</span></code>: Ascending order</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.ColumnElement.desc()</span></code>: Descending order</p></li>
+</ul>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.field_name">
 <span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.field_name" title="Link to this definition">#</a></dt>
@@ -902,7 +1007,35 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.sort_order">
 <span class="sig-name descname"><span class="pre">sort_order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'asc'</span></em><a class="headerlink" href="#app.lib.dependencies.OrderBy.sort_order" title="Link to this definition">#</a></dt>
-<dd><p>Sort ascending or descending</p>
+<dd><p>Sort direction (“asc” or “desc”).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.OrderBy.append_to_statement">
+<span class="sig-name descname"><span class="pre">append_to_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StatementTypeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StatementTypeT</span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#OrderBy.append_to_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.OrderBy.append_to_statement" title="Link to this definition">#</a></dt>
+<dd><p>Append an ORDER BY clause to the statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> – The SQLAlchemy statement to modify</p></li>
+<li><p><strong>model</strong> – The SQLAlchemy model class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified statement with an ORDER BY clause</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StatementTypeT</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only modifies SELECT statements. Other statement types are returned as-is.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select.order_by()</span></code>: SQLAlchemy ORDER BY</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -911,7 +1044,22 @@
 <dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dependencies.</span></span><span class="sig-name descname"><span class="pre">SearchFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#SearchFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.SearchFilter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StatementFilter</span></code></p>
-<p>Data required to construct a <code class="docutils literal notranslate"><span class="pre">WHERE</span> <span class="pre">field_name</span> <span class="pre">LIKE</span> <span class="pre">'%'</span> <span class="pre">||</span> <span class="pre">:value</span> <span class="pre">||</span> <span class="pre">'%'</span></code> clause.</p>
+<p>Case-sensitive or case-insensitive substring matching filter.</p>
+<p>Implements text search using SQL LIKE or ILIKE operators. Can search across
+multiple fields using OR conditions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The search pattern automatically adds wildcards before and after the search
+value, equivalent to SQL pattern ‘%value%’.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">NotInSearchFilter</span></code>: Opposite filter using NOT LIKE/ILIKE</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.ColumnOperators.like()</span></code>: Case-sensitive LIKE</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.ColumnOperators.ilike()</span></code>: Case-insensitive LIKE</p></li>
+</ul>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dependencies.SearchFilter.__init__" title="Link to this definition">#</a></dt>
@@ -920,19 +1068,78 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.field_name">
 <span class="sig-name descname"><span class="pre">field_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.field_name" title="Link to this definition">#</a></dt>
-<dd><p>Name of the model attribute to search on.</p>
+<dd><p>Name or set of names of model attributes to search on.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.value">
 <span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.value" title="Link to this definition">#</a></dt>
-<dd><p>Search value.</p>
+<dd><p>Text to match within the field(s).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.ignore_case">
 <span class="sig-name descname"><span class="pre">ignore_case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.ignore_case" title="Link to this definition">#</a></dt>
-<dd><p>Should the search be case insensitive.</p>
+<dd><p>Whether to use case-insensitive matching.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.normalized_field_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalized_field_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dependencies.SearchFilter.normalized_field_names" title="Link to this definition">#</a></dt>
+<dd><p>Convert field_name to a set if it’s a single string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Set of field names to be searched</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)">set</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.get_search_clauses">
+<span class="sig-name descname"><span class="pre">get_search_clauses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BinaryExpression</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#SearchFilter.get_search_clauses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.SearchFilter.get_search_clauses" title="Link to this definition">#</a></dt>
+<dd><p>Generate the LIKE/ILIKE clauses for all specified fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – The SQLAlchemy model class</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of text matching expressions</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[BinaryExpression[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a>]]</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.BinaryExpression</span></code>: SQLAlchemy expression</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dependencies.SearchFilter.append_to_statement">
+<span class="sig-name descname"><span class="pre">append_to_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StatementTypeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ModelT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StatementTypeT</span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/filters.html#SearchFilter.append_to_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dependencies.SearchFilter.append_to_statement" title="Link to this definition">#</a></dt>
+<dd><p>Append a LIKE/ILIKE clause to the statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> – The SQLAlchemy statement to modify</p></li>
+<li><p><strong>model</strong> – The SQLAlchemy model class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modified statement with text search clauses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StatementTypeT</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.sql.expression.Select.where()</span></code>: SQLAlchemy WHERE clause</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -978,7 +1185,7 @@
 <dd><p>Provide common collection route filtering dependencies.</p>
 <p>Add all filters to any route by including this function as a dependency, e.g.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@get</span>
-<span class="k">def</span> <span class="nf">get_collection_handler</span><span class="p">(</span><span class="n">filters</span><span class="p">:</span> <span class="n">Filters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_collection_handler</span><span class="p">(</span><span class="n">filters</span><span class="p">:</span> <span class="n">Filters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>
     <span class="o">...</span>
 </pre></div>
 </div>
@@ -1159,18 +1366,21 @@ necessary.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.field_name"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.field_name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.before"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.before</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.after"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.after</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.append_to_statement"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.append_to_statement()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.BeforeAfter.__init__"><code class="docutils literal notranslate"><span class="pre">BeforeAfter.__init__()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.CollectionFilter"><code class="docutils literal notranslate"><span class="pre">CollectionFilter</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.CollectionFilter.field_name"><code class="docutils literal notranslate"><span class="pre">CollectionFilter.field_name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.CollectionFilter.values"><code class="docutils literal notranslate"><span class="pre">CollectionFilter.values</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.CollectionFilter.append_to_statement"><code class="docutils literal notranslate"><span class="pre">CollectionFilter.append_to_statement()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.CollectionFilter.__init__"><code class="docutils literal notranslate"><span class="pre">CollectionFilter.__init__()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.LimitOffset"><code class="docutils literal notranslate"><span class="pre">LimitOffset</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.LimitOffset.limit"><code class="docutils literal notranslate"><span class="pre">LimitOffset.limit</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.LimitOffset.offset"><code class="docutils literal notranslate"><span class="pre">LimitOffset.offset</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.LimitOffset.append_to_statement"><code class="docutils literal notranslate"><span class="pre">LimitOffset.append_to_statement()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.LimitOffset.__init__"><code class="docutils literal notranslate"><span class="pre">LimitOffset.__init__()</span></code></a></li>
 </ul>
 </li>
@@ -1178,6 +1388,7 @@ necessary.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.field_name"><code class="docutils literal notranslate"><span class="pre">OrderBy.field_name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.__init__"><code class="docutils literal notranslate"><span class="pre">OrderBy.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.sort_order"><code class="docutils literal notranslate"><span class="pre">OrderBy.sort_order</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.OrderBy.append_to_statement"><code class="docutils literal notranslate"><span class="pre">OrderBy.append_to_statement()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter"><code class="docutils literal notranslate"><span class="pre">SearchFilter</span></code></a><ul class="visible nav section-nav flex-column">
@@ -1185,6 +1396,9 @@ necessary.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.field_name"><code class="docutils literal notranslate"><span class="pre">SearchFilter.field_name</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.value"><code class="docutils literal notranslate"><span class="pre">SearchFilter.value</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.ignore_case"><code class="docutils literal notranslate"><span class="pre">SearchFilter.ignore_case</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.normalized_field_names"><code class="docutils literal notranslate"><span class="pre">SearchFilter.normalized_field_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.get_search_clauses"><code class="docutils literal notranslate"><span class="pre">SearchFilter.get_search_clauses()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.SearchFilter.append_to_statement"><code class="docutils literal notranslate"><span class="pre">SearchFilter.append_to_statement()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#app.lib.dependencies.create_collection_dependencies"><code class="docutils literal notranslate"><span class="pre">create_collection_dependencies()</span></code></a></li>

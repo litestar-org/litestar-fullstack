@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -695,28 +695,28 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for app.domain.accounts.controllers.access</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;User Account Controllers.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.utils.text</span> <span class="kn">import</span> <span class="n">slugify</span>
-<span class="kn">from</span> <span class="nn">litestar</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">post</span>
-<span class="kn">from</span> <span class="nn">litestar.di</span> <span class="kn">import</span> <span class="n">Provide</span>
-<span class="kn">from</span> <span class="nn">litestar.enums</span> <span class="kn">import</span> <span class="n">RequestEncodingType</span>
-<span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">Body</span>
-<span class="kn">from</span> <span class="nn">litestar.security.jwt</span> <span class="kn">import</span> <span class="n">OAuth2Login</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.utils.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">slugify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.di</span><span class="w"> </span><span class="kn">import</span> <span class="n">Provide</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestEncodingType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">Body</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2Login</span>
 
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>  <span class="c1"># noqa: TC001</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts</span> <span class="kn">import</span> <span class="n">urls</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.dependencies</span> <span class="kn">import</span> <span class="n">provide_roles_service</span><span class="p">,</span> <span class="n">provide_users_service</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.guards</span> <span class="kn">import</span> <span class="n">auth</span><span class="p">,</span> <span class="n">requires_active_user</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.schemas</span> <span class="kn">import</span> <span class="n">AccountLogin</span><span class="p">,</span> <span class="n">AccountRegister</span><span class="p">,</span> <span class="n">User</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.services</span> <span class="kn">import</span> <span class="n">RoleService</span><span class="p">,</span> <span class="n">UserService</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>  <span class="c1"># noqa: TC001</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts</span><span class="w"> </span><span class="kn">import</span> <span class="n">urls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_roles_service</span><span class="p">,</span> <span class="n">provide_users_service</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span><span class="p">,</span> <span class="n">requires_active_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccountLogin</span><span class="p">,</span> <span class="n">AccountRegister</span><span class="p">,</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoleService</span><span class="p">,</span> <span class="n">UserService</span>
 
 
 <div class="viewcode-block" id="AccessController">
 <a class="viewcode-back" href="../../../../../api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController">[docs]</a>
-<span class="k">class</span> <span class="nc">AccessController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AccessController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;User login and registration.&quot;&quot;&quot;</span>
 
     <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Access&quot;</span><span class="p">]</span>
@@ -738,7 +738,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Login&quot;</span><span class="p">,</span>
         <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">login</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">AccountLogin</span><span class="p">,</span> <span class="n">Body</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;OAuth2 Login&quot;</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">RequestEncodingType</span><span class="o">.</span><span class="n">URL_ENCODED</span><span class="p">)],</span>
@@ -755,7 +755,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Logout&quot;</span><span class="p">,</span>
         <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
@@ -779,7 +779,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Create User&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Register a new account.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">signup</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">signup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span>
         <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
@@ -803,7 +803,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;User Profile&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;User profile information.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">current_user</span><span class="p">:</span> <span class="n">UserModel</span><span class="p">,</span> <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">current_user</span><span class="p">:</span> <span class="n">UserModel</span><span class="p">,</span> <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;User Profile.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">users_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">current_user</span><span class="p">,</span> <span class="n">schema_type</span><span class="o">=</span><span class="n">User</span><span class="p">)</span></div>
 

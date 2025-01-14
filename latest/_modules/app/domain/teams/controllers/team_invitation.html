@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -694,17 +694,17 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for app.domain.teams.controllers.team_invitation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;User Account Controllers.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">litestar</span> <span class="kn">import</span> <span class="n">Controller</span>
-<span class="kn">from</span> <span class="nn">litestar.di</span> <span class="kn">import</span> <span class="n">Provide</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.di</span><span class="w"> </span><span class="kn">import</span> <span class="n">Provide</span>
 
-<span class="kn">from</span> <span class="nn">app.domain.teams.dependencies</span> <span class="kn">import</span> <span class="n">provide_team_invitations_service</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_team_invitations_service</span>
 
 
 <div class="viewcode-block" id="TeamInvitationController">
 <a class="viewcode-back" href="../../../../../api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController">[docs]</a>
-<span class="k">class</span> <span class="nc">TeamInvitationController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TeamInvitationController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Team Invitations.&quot;&quot;&quot;</span>
 
     <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Teams&quot;</span><span class="p">]</span>

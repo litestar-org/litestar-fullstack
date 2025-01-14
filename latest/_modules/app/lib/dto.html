@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,20 +693,20 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for app.lib.dto</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.extensions.litestar.dto</span> <span class="kn">import</span> <span class="n">SQLAlchemyDTO</span><span class="p">,</span> <span class="n">SQLAlchemyDTOConfig</span>
-<span class="kn">from</span> <span class="nn">litestar.dto</span> <span class="kn">import</span> <span class="n">DataclassDTO</span><span class="p">,</span> <span class="n">dto_field</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.config</span> <span class="kn">import</span> <span class="n">DTOConfig</span>
-<span class="kn">from</span> <span class="nn">litestar.types.protocols</span> <span class="kn">import</span> <span class="n">DataclassProtocol</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.extensions.litestar.dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyDTO</span><span class="p">,</span> <span class="n">SQLAlchemyDTOConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataclassDTO</span><span class="p">,</span> <span class="n">dto_field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataclassProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Set</span> <span class="k">as</span> <span class="n">AbstractSet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span> <span class="k">as</span> <span class="n">AbstractSet</span>
 
-    <span class="kn">from</span> <span class="nn">litestar.dto</span> <span class="kn">import</span> <span class="n">RenameStrategy</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">RenameStrategy</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;DTOConfig&quot;</span><span class="p">,</span> <span class="s2">&quot;DataclassDTO&quot;</span><span class="p">,</span> <span class="s2">&quot;SQLAlchemyDTO&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;dto_field&quot;</span><span class="p">)</span>
 
@@ -718,7 +718,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">config</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
     <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sqlalchemy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlalchemy&quot;</span><span class="p">,</span>
     <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -730,7 +730,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">config</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
     <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
     <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -743,7 +743,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="config">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.config">[docs]</a>
-<span class="k">def</span> <span class="nf">config</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
     <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlalchemy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
     <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

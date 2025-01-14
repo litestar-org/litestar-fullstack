@@ -29,7 +29,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -682,6 +682,7 @@ window.addEventListener("load", () => mermaid.run());
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -717,12 +718,29 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    --bind-key
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-downgrade-bind-key">app-database-downgrade command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-drop-all-bind-key">app-database-drop-all command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-dump-data-bind-key">app-database-dump-data command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-init-bind-key">app-database-init command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-make-migrations-bind-key">app-database-make-migrations command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-bind-key">app-database-show-current-revision command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-upgrade-bind-key">app-database-upgrade command line option</a>
+</li>
+      </ul></li>
+      <li>
     --branch-label
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-branch-label">app-database-make-migrations command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-branch-label">app-database-merge-migrations command line option</a>
 </li>
       </ul></li>
       <li>
@@ -787,8 +805,6 @@ window.addEventListener("load", () => mermaid.run());
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-m">app-database-make-migrations command line option</a>
 </li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-m">app-database-merge-migrations command line option</a>
-</li>
       </ul></li>
       <li>
     --multidb
@@ -822,10 +838,6 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-database-init-no-prompt">app-database-init command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-no-prompt">app-database-make-migrations command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-no-prompt">app-database-merge-migrations command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-no-prompt">app-database-stamp-migration command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-no-prompt">app-database-upgrade command line option</a>
 </li>
@@ -861,13 +873,6 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
-    --purge
-
-      <ul>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-purge">app-database-stamp-migration command line option</a>
-</li>
-      </ul></li>
-      <li>
     --reload
 
       <ul>
@@ -895,29 +900,13 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/cli.html#cmdoption-app-run-I">app-run command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --rev-id
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-rev-id">app-database-make-migrations command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-rev-id">app-database-merge-migrations command line option</a>
-</li>
-      </ul></li>
-      <li>
-    --revision
-
-      <ul>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-revision">app-database-stamp-migration command line option</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    --revisions
-
-      <ul>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-revisions">app-database-merge-migrations command line option</a>
 </li>
       </ul></li>
       <li>
@@ -949,8 +938,6 @@ window.addEventListener("load", () => mermaid.run());
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-sql">app-database-make-migrations command line option</a>
 </li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-sql">app-database-stamp-migration command line option</a>
-</li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-sql">app-database-upgrade command line option</a>
 </li>
       </ul></li>
@@ -980,8 +967,6 @@ window.addEventListener("load", () => mermaid.run());
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-tag">app-database-downgrade command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-tag">app-database-stamp-migration command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-tag">app-database-upgrade command line option</a>
 </li>
@@ -1075,8 +1060,6 @@ window.addEventListener("load", () => mermaid.run());
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-m">app-database-make-migrations command line option</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-m">app-database-merge-migrations command line option</a>
 </li>
       </ul></li>
       <li>
@@ -1213,6 +1196,8 @@ window.addEventListener("load", () => mermaid.run());
     app-database-downgrade command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-downgrade-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-no-prompt">--no-prompt</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-sql">--sql</a>
@@ -1226,6 +1211,8 @@ window.addEventListener("load", () => mermaid.run());
     app-database-drop-all command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-drop-all-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-drop-all-no-prompt">--no-prompt</a>
 </li>
       </ul></li>
@@ -1233,6 +1220,8 @@ window.addEventListener("load", () => mermaid.run());
     app-database-dump-data command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-dump-data-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-dump-data-dir">--dir</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-dump-data-table">--table</a>
@@ -1242,6 +1231,8 @@ window.addEventListener("load", () => mermaid.run());
     app-database-init command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-init-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-init-multidb">--multidb</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-init-no-prompt">--no-prompt</a>
@@ -1256,6 +1247,8 @@ window.addEventListener("load", () => mermaid.run());
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-autogenerate">--autogenerate</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-make-migrations-bind-key">--bind-key</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-branch-label">--branch-label</a>
 </li>
@@ -1279,48 +1272,20 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
-    app-database-merge-migrations command line option
-
-      <ul>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-branch-label">--branch-label</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-m">--message</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-no-prompt">--no-prompt</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-rev-id">--rev-id</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-revisions">--revisions</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-merge-migrations-m">-m</a>
-</li>
-      </ul></li>
-      <li>
     app-database-show-current-revision command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-verbose">--verbose</a>
-</li>
-      </ul></li>
-      <li>
-    app-database-stamp-migration command line option
-
-      <ul>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-no-prompt">--no-prompt</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-purge">--purge</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-revision">--revision</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-sql">--sql</a>
-</li>
-        <li><a href="api/cli.html#cmdoption-app-database-stamp-migration-tag">--tag</a>
 </li>
       </ul></li>
       <li>
     app-database-upgrade command line option
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-upgrade-bind-key">--bind-key</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-no-prompt">--no-prompt</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-sql">--sql</a>
@@ -1590,6 +1555,18 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/lib/exceptions.html#module-app.lib.exceptions">module</a>
 </li>
       </ul></li>
+      <li><a href="api/lib/dependencies.html#app.lib.dependencies.BeforeAfter.append_to_statement">append_to_statement() (app.lib.dependencies.BeforeAfter method)</a>
+
+      <ul>
+        <li><a href="api/lib/dependencies.html#app.lib.dependencies.CollectionFilter.append_to_statement">(app.lib.dependencies.CollectionFilter method)</a>
+</li>
+        <li><a href="api/lib/dependencies.html#app.lib.dependencies.LimitOffset.append_to_statement">(app.lib.dependencies.LimitOffset method)</a>
+</li>
+        <li><a href="api/lib/dependencies.html#app.lib.dependencies.OrderBy.append_to_statement">(app.lib.dependencies.OrderBy method)</a>
+</li>
+        <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.append_to_statement">(app.lib.dependencies.SearchFilter method)</a>
+</li>
+      </ul></li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError">ApplicationError</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.authenticate">authenticate() (app.domain.accounts.services.UserService method)</a>
@@ -1813,6 +1790,8 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.get_password_hash">get_password_hash() (in module app.lib.crypt)</a>
 </li>
+      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.get_search_clauses">get_search_clauses() (app.lib.dependencies.SearchFilter method)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/access.html#app.domain.accounts.controllers.access.AccessController.guards">guards (app.domain.accounts.controllers.access.AccessController attribute)</a>
 
       <ul>
@@ -1962,6 +1941,14 @@ window.addEventListener("load", () => mermaid.run());
         <li><a href="api/lib/exceptions.html#module-app.lib.exceptions">app.lib.exceptions</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/lib/dependencies.html#app.lib.dependencies.SearchFilter.normalized_field_names">normalized_field_names (app.lib.dependencies.SearchFilter property)</a>
+</li>
   </ul></td>
 </tr></table>
 

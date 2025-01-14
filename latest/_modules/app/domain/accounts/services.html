@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,38 +693,38 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for app.domain.accounts.services</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>  <span class="c1"># noqa: TC003</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>  <span class="c1"># noqa: TC003</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.repository</span> <span class="kn">import</span> <span class="n">Empty</span><span class="p">,</span> <span class="n">EmptyType</span><span class="p">,</span> <span class="n">ErrorMessages</span>
-<span class="kn">from</span> <span class="nn">advanced_alchemy.service</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span><span class="p">,</span> <span class="n">EmptyType</span><span class="p">,</span> <span class="n">ErrorMessages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.service</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ModelDictT</span><span class="p">,</span>
     <span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">,</span>
     <span class="n">is_dict</span><span class="p">,</span>
-    <span class="n">is_msgspec_model</span><span class="p">,</span>
+    <span class="n">is_msgspec_struct</span><span class="p">,</span>
     <span class="n">is_pydantic_model</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">litestar.exceptions</span> <span class="kn">import</span> <span class="n">PermissionDeniedException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionDeniedException</span>
 
-<span class="kn">from</span> <span class="nn">app.config</span> <span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span> <span class="n">UserOauthAccount</span><span class="p">,</span> <span class="n">UserRole</span>
-<span class="kn">from</span> <span class="nn">app.lib</span> <span class="kn">import</span> <span class="n">crypt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span> <span class="n">UserOauthAccount</span><span class="p">,</span> <span class="n">UserRole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">crypt</span>
 
-<span class="kn">from</span> <span class="nn">.repositories</span> <span class="kn">import</span> <span class="n">RoleRepository</span><span class="p">,</span> <span class="n">UserOauthAccountRepository</span><span class="p">,</span> <span class="n">UserRepository</span><span class="p">,</span> <span class="n">UserRoleRepository</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.repositories</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoleRepository</span><span class="p">,</span> <span class="n">UserOauthAccountRepository</span><span class="p">,</span> <span class="n">UserRepository</span><span class="p">,</span> <span class="n">UserRoleRepository</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 
-    <span class="kn">from</span> <span class="nn">advanced_alchemy.repository</span> <span class="kn">import</span> <span class="n">LoadSpec</span>
-    <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoadSpec</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentedAttribute</span>
 
 
 <div class="viewcode-block" id="UserService">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService">[docs]</a>
-<span class="k">class</span> <span class="nc">UserService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles database operations for users.&quot;&quot;&quot;</span>
 
     <span class="n">repository_type</span> <span class="o">=</span> <span class="n">UserRepository</span>
@@ -732,14 +732,14 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserService.__init__">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">repo_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">repo_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">:</span> <span class="n">UserRepository</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository_type</span><span class="p">(</span><span class="o">**</span><span class="n">repo_kwargs</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportAttributeAccessIssue]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">model_type</span></div>
 
 
 <div class="viewcode-block" id="UserService.create">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.create">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">User</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
@@ -765,7 +765,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserService.update">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.update">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">User</span><span class="p">],</span>
         <span class="n">item_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -802,7 +802,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserService.authenticate">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.authenticate">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate a user.</span>
 
 <span class="sd">        Args:</span>
@@ -833,7 +833,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserService.update_password">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.update_password">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update stored user password.</span>
 
 <span class="sd">        This is only used when not used IAP authentication.</span>
@@ -861,7 +861,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="UserService.has_role_id">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.has_role_id">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">has_role_id</span><span class="p">(</span><span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">has_role_id</span><span class="p">(</span><span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return true if user has specified role ID&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">assigned_role</span><span class="o">.</span><span class="n">role_id</span> <span class="k">for</span> <span class="n">assigned_role</span> <span class="ow">in</span> <span class="n">db_obj</span><span class="o">.</span><span class="n">roles</span> <span class="k">if</span> <span class="n">assigned_role</span><span class="o">.</span><span class="n">role_id</span> <span class="o">==</span> <span class="n">role_id</span><span class="p">)</span></div>
 
@@ -869,13 +869,13 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="UserService.has_role">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.has_role">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">has_role</span><span class="p">(</span><span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="n">role_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">has_role</span><span class="p">(</span><span class="n">db_obj</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="n">role_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return true if user has specified role ID&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">assigned_role</span><span class="o">.</span><span class="n">role_id</span> <span class="k">for</span> <span class="n">assigned_role</span> <span class="ow">in</span> <span class="n">db_obj</span><span class="o">.</span><span class="n">roles</span> <span class="k">if</span> <span class="n">assigned_role</span><span class="o">.</span><span class="n">role_name</span> <span class="o">==</span> <span class="n">role_name</span><span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">is_superuser</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_superuser</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span>
             <span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span>
             <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
@@ -887,7 +887,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserService.to_model">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserService.to_model">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">User</span><span class="p">],</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">User</span><span class="p">],</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;password&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">password</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">password</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -899,7 +899,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RoleService">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.RoleService">[docs]</a>
-<span class="k">class</span> <span class="nc">RoleService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">Role</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoleService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">Role</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles database operations for users.&quot;&quot;&quot;</span>
 
     <span class="n">repository_type</span> <span class="o">=</span> <span class="n">RoleRepository</span>
@@ -907,17 +907,17 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RoleService.__init__">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.RoleService.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">repo_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">repo_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">:</span> <span class="n">RoleRepository</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository_type</span><span class="p">(</span><span class="o">**</span><span class="n">repo_kwargs</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportAttributeAccessIssue]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">model_type</span></div>
 
 
 <div class="viewcode-block" id="RoleService.to_model">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">Role</span><span class="p">],</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Role</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ModelDictT</span><span class="p">[</span><span class="n">Role</span><span class="p">],</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Role</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_struct</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
             <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore[union-attr]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">is_msgspec_struct</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pydantic_model</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore[union-attr]</span>
             <span class="n">data</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore[union-attr]</span>
         <span class="k">if</span> <span class="n">is_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">operation</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;slug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">get_available_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
@@ -930,7 +930,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserRoleService">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService">[docs]</a>
-<span class="k">class</span> <span class="nc">UserRoleService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">UserRole</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserRoleService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">UserRole</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles database operations for user roles.&quot;&quot;&quot;</span>
 
     <span class="n">repository_type</span> <span class="o">=</span> <span class="n">UserRoleRepository</span></div>
@@ -939,7 +939,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UserOAuthAccountService">
 <a class="viewcode-back" href="../../../../api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService">[docs]</a>
-<span class="k">class</span> <span class="nc">UserOAuthAccountService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">UserOauthAccount</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserOAuthAccountService</span><span class="p">(</span><span class="n">SQLAlchemyAsyncRepositoryService</span><span class="p">[</span><span class="n">UserOauthAccount</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles database operations for user roles.&quot;&quot;&quot;</span>
 
     <span class="n">repository_type</span> <span class="o">=</span> <span class="n">UserOauthAccountRepository</span></div>

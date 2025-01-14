@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -1183,6 +1183,12 @@ or functions that are annotated as returning a <code class="docutils literal not
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-downgrade-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-sql">
 <span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-sql" title="Link to this definition">#</a></dt>
 <dd><p>Generate SQL output for offline migrations.</p>
@@ -1197,7 +1203,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-no-prompt">
 <span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for confirmation before downgrading.</p>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1221,9 +1227,15 @@ or functions that are annotated as returning a <code class="docutils literal not
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-drop-all-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-drop-all-no-prompt">
 <span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for confirmation before upgrading.</p>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1239,6 +1251,12 @@ or functions that are annotated as returning a <code class="docutils literal not
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-table">
 <span class="sig-name descname"><span class="pre">--table</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;table_names&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-table" title="Link to this definition">#</a></dt>
@@ -1260,6 +1278,12 @@ or functions that are annotated as returning a <code class="docutils literal not
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-init-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-multidb">
 <span class="sig-name descname"><span class="pre">--multidb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-multidb" title="Link to this definition">#</a></dt>
 <dd><p>Support multiple databases</p>
@@ -1274,7 +1298,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-no-prompt">
 <span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for confirmation before initializing.</p>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1297,6 +1321,12 @@ or functions that are annotated as returning a <code class="docutils literal not
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-m">
 <span id="cmdoption-app-database-make-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-m" title="Link to this definition">#</a></dt>
@@ -1348,50 +1378,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-no-prompt">
 <span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for a migration message.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="app-database-merge-migrations">
-<h5>merge-migrations<a class="headerlink" href="#app-database-merge-migrations" title="Link to this heading">#</a></h5>
-<p>Merge multiple revisions into a single new revision.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>merge-migrations<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
-</div>
-<p class="rubric">Options</p>
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-merge-migrations-revisions">
-<span class="sig-name descname"><span class="pre">--revisions</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;revisions&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-migrations-revisions" title="Link to this definition">#</a></dt>
-<dd><p>Specify head revision to use as base for new revision.</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-merge-migrations-m">
-<span id="cmdoption-app-database-merge-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-migrations-m" title="Link to this definition">#</a></dt>
-<dd><p>Revision message</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-merge-migrations-branch-label">
-<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-migrations-branch-label" title="Link to this definition">#</a></dt>
-<dd><p>Specify a branch label to apply to the new revision</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-merge-migrations-rev-id">
-<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-migrations-rev-id" title="Link to this definition">#</a></dt>
-<dd><p>Specify a ID to use for revision.</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-merge-migrations-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-migrations-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for a migration message.</p>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1408,52 +1395,15 @@ or functions that are annotated as returning a <code class="docutils literal not
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-verbose">
 <span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-verbose" title="Link to this definition">#</a></dt>
 <dd><p>Enable verbose output.</p>
-</dd></dl>
-
-</section>
-<section id="app-database-stamp-migration">
-<h5>stamp-migration<a class="headerlink" href="#app-database-stamp-migration" title="Link to this heading">#</a></h5>
-<p>Mark (Stamp) a specific revision as current without applying the migrations.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>app<span class="w"> </span>database<span class="w"> </span>stamp-migration<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
-</div>
-<p class="rubric">Options</p>
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-stamp-migration-revision">
-<span class="sig-name descname"><span class="pre">--revision</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;revision&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-migration-revision" title="Link to this definition">#</a></dt>
-<dd><p>Revision to stamp to</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-stamp-migration-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-migration-sql" title="Link to this definition">#</a></dt>
-<dd><p>Generate SQL output for offline migrations.</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-stamp-migration-purge">
-<span class="sig-name descname"><span class="pre">--purge</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-migration-purge" title="Link to this definition">#</a></dt>
-<dd><p>Delete existing records in the alembic version table before stamping.</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-stamp-migration-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-migration-tag" title="Link to this definition">#</a></dt>
-<dd><p>an arbitrary ‘tag’ that can be intercepted by custom env.py scripts via the .EnvironmentContext.get_tag_argument method.</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-app-database-stamp-migration-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-migration-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for confirmation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>
@@ -1464,6 +1414,12 @@ or functions that are annotated as returning a <code class="docutils literal not
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-upgrade-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-sql">
 <span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-sql" title="Link to this definition">#</a></dt>
@@ -1479,7 +1435,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-no-prompt">
 <span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-no-prompt" title="Link to this definition">#</a></dt>
-<dd><p>Do not prompt for confirmation before upgrading.</p>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1572,9 +1528,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-dump-data">dump-data</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-init">init</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-make-migrations">make-migrations</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-merge-migrations">merge-migrations</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-show-current-revision">show-current-revision</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-stamp-migration">stamp-migration</a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#app-database-upgrade">upgrade</a></li>
 </ul>
 </li>

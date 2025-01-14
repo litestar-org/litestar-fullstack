@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -693,11 +693,11 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for advanced_alchemy.extensions.litestar.dto</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">replace</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">singledispatchmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">replace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatchmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">AbstractSet</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
@@ -709,17 +709,17 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">Optional</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">litestar.dto.base_dto</span> <span class="kn">import</span> <span class="n">AbstractDTO</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.config</span> <span class="kn">import</span> <span class="n">DTOConfig</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.data_structures</span> <span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.field</span> <span class="kn">import</span> <span class="n">DTO_FIELD_META_KEY</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">,</span> <span class="n">Mark</span>
-<span class="kn">from</span> <span class="nn">litestar.types.empty</span> <span class="kn">import</span> <span class="n">Empty</span>
-<span class="kn">from</span> <span class="nn">litestar.typing</span> <span class="kn">import</span> <span class="n">FieldDefinition</span>
-<span class="kn">from</span> <span class="nn">litestar.utils.signature</span> <span class="kn">import</span> <span class="n">ParsedSignature</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">orm</span><span class="p">,</span> <span class="n">sql</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.associationproxy</span> <span class="kn">import</span> <span class="n">AssociationProxy</span><span class="p">,</span> <span class="n">AssociationProxyExtensionType</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.hybrid</span> <span class="kn">import</span> <span class="n">HybridExtensionType</span><span class="p">,</span> <span class="n">hybrid_property</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.base_dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDTO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.data_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTO_FIELD_META_KEY</span><span class="p">,</span> <span class="n">DTOField</span><span class="p">,</span> <span class="n">Mark</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types.empty</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.utils.signature</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParsedSignature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">orm</span><span class="p">,</span> <span class="n">sql</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.associationproxy</span><span class="w"> </span><span class="kn">import</span> <span class="n">AssociationProxy</span><span class="p">,</span> <span class="n">AssociationProxyExtensionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.hybrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">HybridExtensionType</span><span class="p">,</span> <span class="n">hybrid_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ColumnProperty</span><span class="p">,</span>
     <span class="n">CompositeProperty</span><span class="p">,</span>
     <span class="n">DeclarativeBase</span><span class="p">,</span>
@@ -734,13 +734,13 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">RelationshipProperty</span><span class="p">,</span>
     <span class="n">WriteOnlyMapped</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">ColumnClause</span><span class="p">,</span> <span class="n">Label</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.sql.expression</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnClause</span><span class="p">,</span> <span class="n">Label</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
-<span class="kn">from</span> <span class="nn">advanced_alchemy.exceptions</span> <span class="kn">import</span> <span class="n">ImproperConfigurationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImproperConfigurationError</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SQLAlchemyDTO&quot;</span><span class="p">,)</span>
 
@@ -753,7 +753,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">SQLAlchemyDTOConfig</span><span class="p">(</span><span class="n">DTOConfig</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SQLAlchemyDTOConfig</span><span class="p">(</span><span class="n">DTOConfig</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Additional controls for the generated SQLAlchemy DTO.&quot;&quot;&quot;</span>
 
     <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentedAttribute</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment] # pyright: ignore[reportIncompatibleVariableOverride]</span>
@@ -790,7 +790,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    with the exception for hybrid properties.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;exclude&quot;</span><span class="p">,</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">key</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">InstrumentedAttribute</span><span class="p">)</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">}</span>
@@ -807,26 +807,26 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SQLAlchemyDTO">
 <a class="viewcode-back" href="../../../../api/lib/dto.html#app.domain.tags.dtos.SQLAlchemyDTO">[docs]</a>
-<span class="k">class</span> <span class="nc">SQLAlchemyDTO</span><span class="p">(</span><span class="n">AbstractDTO</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SQLAlchemyDTO</span><span class="p">(</span><span class="n">AbstractDTO</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Support for domain modelling with SQLAlchemy.&quot;&quot;&quot;</span>
 
     <span class="n">config</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">SQLAlchemyDTOConfig</span><span class="p">]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_ensure_sqla_dto_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DTOConfig</span> <span class="o">|</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_sqla_dto_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DTOConfig</span> <span class="o">|</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">config</span>
 
-    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">):</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_sqla_dto_config</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportIncompatibleVariableOverride]</span>
 
     <span class="nd">@singledispatchmethod</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">handle_orm_descriptor</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_orm_descriptor</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">extension_type</span><span class="p">:</span> <span class="n">NotExtension</span> <span class="o">|</span> <span class="n">AssociationProxyExtensionType</span> <span class="o">|</span> <span class="n">HybridExtensionType</span><span class="p">,</span>
         <span class="n">orm_descriptor</span><span class="p">:</span> <span class="n">InspectionAttr</span><span class="p">,</span>
@@ -839,7 +839,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="nd">@handle_orm_descriptor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">NotExtension</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">extension_type</span><span class="p">:</span> <span class="n">NotExtension</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -895,7 +895,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="nd">@handle_orm_descriptor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">AssociationProxyExtensionType</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">extension_type</span><span class="p">:</span> <span class="n">AssociationProxyExtensionType</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -928,7 +928,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="nd">@handle_orm_descriptor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">HybridExtensionType</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">extension_type</span><span class="p">:</span> <span class="n">HybridExtensionType</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -975,7 +975,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="SQLAlchemyDTO.generate_field_definitions">
 <a class="viewcode-back" href="../../../../api/lib/dto.html#app.domain.tags.dtos.SQLAlchemyDTO.generate_field_definitions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">generate_field_definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">DeclarativeBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">DTOFieldDefinition</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_field_definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">DeclarativeBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">DTOFieldDefinition</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate DTO field definitions from a SQLAlchemy model.</span>
 
 <span class="sd">        Args:</span>
@@ -1059,13 +1059,13 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="SQLAlchemyDTO.detect_nested_field">
 <a class="viewcode-back" href="../../../../api/lib/dto.html#app.domain.tags.dtos.SQLAlchemyDTO.detect_nested_field">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">field_definition</span><span class="o">.</span><span class="n">is_subclass_of</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">)</span></div>
 </div>
 
 
 
-<span class="k">def</span> <span class="nf">_detect_defaults</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">ElementType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_detect_defaults</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">ElementType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Empty</span>
     <span class="n">default_factory</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># pyright:ignore  # noqa: PGH003</span>
     <span class="k">if</span> <span class="n">sqla_default</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
@@ -1073,7 +1073,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">default</span> <span class="o">=</span> <span class="n">sqla_default</span><span class="o">.</span><span class="n">arg</span>
         <span class="k">elif</span> <span class="n">sqla_default</span><span class="o">.</span><span class="n">is_callable</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">default_factory</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">sqla_default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">default_factory</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">sqla_default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">arg</span><span class="p">({})</span>
 
         <span class="k">elif</span> <span class="n">sqla_default</span><span class="o">.</span><span class="n">is_sequence</span> <span class="ow">or</span> <span class="n">sqla_default</span><span class="o">.</span><span class="n">is_sentinel</span><span class="p">:</span>
@@ -1092,7 +1092,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">default</span><span class="p">,</span> <span class="n">default_factory</span>
 
 
-<span class="k">def</span> <span class="nf">parse_type_from_element</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">ElementType</span><span class="p">,</span> <span class="n">orm_descriptor</span><span class="p">:</span> <span class="n">InspectionAttr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldDefinition</span><span class="p">:</span>  <span class="c1"># noqa: PLR0911</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_type_from_element</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">ElementType</span><span class="p">,</span> <span class="n">orm_descriptor</span><span class="p">:</span> <span class="n">InspectionAttr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldDefinition</span><span class="p">:</span>  <span class="c1"># noqa: PLR0911</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a type from a SQLAlchemy element.</span>
 
 <span class="sd">    Args:</span>
@@ -1133,7 +1133,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">detect_nullable_relationship</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">RelationshipProperty</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_nullable_relationship</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">RelationshipProperty</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Detects if a relationship is nullable.</span>
 
 <span class="sd">    This attempts to decide if we should allow a ``None`` default value for a relationship by looking at the</span>

@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
@@ -695,36 +695,36 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for app.domain.teams.controllers.teams</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;User Account Controllers.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Annotated</span>
 
-<span class="kn">from</span> <span class="nn">litestar</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">post</span>
-<span class="kn">from</span> <span class="nn">litestar.di</span> <span class="kn">import</span> <span class="n">Provide</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.di</span><span class="w"> </span><span class="kn">import</span> <span class="n">Provide</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">select</span>
 
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">Team</span> <span class="k">as</span> <span class="n">TeamModel</span>
-<span class="kn">from</span> <span class="nn">app.db.models</span> <span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>
-<span class="kn">from</span> <span class="nn">app.db.models.team_member</span> <span class="kn">import</span> <span class="n">TeamMember</span> <span class="k">as</span> <span class="n">TeamMemberModel</span>
-<span class="kn">from</span> <span class="nn">app.domain.accounts.guards</span> <span class="kn">import</span> <span class="n">requires_active_user</span>
-<span class="kn">from</span> <span class="nn">app.domain.teams</span> <span class="kn">import</span> <span class="n">urls</span>
-<span class="kn">from</span> <span class="nn">app.domain.teams.dependencies</span> <span class="kn">import</span> <span class="n">provide_teams_service</span>
-<span class="kn">from</span> <span class="nn">app.domain.teams.guards</span> <span class="kn">import</span> <span class="n">requires_team_admin</span><span class="p">,</span> <span class="n">requires_team_membership</span>
-<span class="kn">from</span> <span class="nn">app.domain.teams.schemas</span> <span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamCreate</span><span class="p">,</span> <span class="n">TeamUpdate</span>
-<span class="kn">from</span> <span class="nn">app.domain.teams.services</span> <span class="kn">import</span> <span class="n">TeamService</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Team</span> <span class="k">as</span> <span class="n">TeamModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.db.models.team_member</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeamMember</span> <span class="k">as</span> <span class="n">TeamMemberModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">requires_active_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams</span><span class="w"> </span><span class="kn">import</span> <span class="n">urls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_teams_service</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">requires_team_admin</span><span class="p">,</span> <span class="n">requires_team_membership</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Team</span><span class="p">,</span> <span class="n">TeamCreate</span><span class="p">,</span> <span class="n">TeamUpdate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.teams.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeamService</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
 
-    <span class="kn">from</span> <span class="nn">advanced_alchemy.service.pagination</span> <span class="kn">import</span> <span class="n">OffsetPagination</span>
-    <span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.service.pagination</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetPagination</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
 
-    <span class="kn">from</span> <span class="nn">app.lib.dependencies</span> <span class="kn">import</span> <span class="n">FilterTypes</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterTypes</span>
 
 
 <div class="viewcode-block" id="TeamController">
 <a class="viewcode-back" href="../../../../../api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController">[docs]</a>
-<span class="k">class</span> <span class="nc">TeamController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TeamController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Teams.&quot;&quot;&quot;</span>
 
     <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Teams&quot;</span><span class="p">]</span>
@@ -742,7 +742,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;ListTeams&quot;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TEAM_LIST</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_teams</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_teams</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">teams_service</span><span class="p">:</span> <span class="n">TeamService</span><span class="p">,</span>
         <span class="n">current_user</span><span class="p">:</span> <span class="n">UserModel</span><span class="p">,</span>
@@ -762,7 +762,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Create a new team.&quot;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TEAM_CREATE</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_team</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_team</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">teams_service</span><span class="p">:</span> <span class="n">TeamService</span><span class="p">,</span>
         <span class="n">current_user</span><span class="p">:</span> <span class="n">UserModel</span><span class="p">,</span>
@@ -781,7 +781,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Retrieve the details of a team.&quot;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TEAM_DETAIL</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_team</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_team</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">teams_service</span><span class="p">:</span> <span class="n">TeamService</span><span class="p">,</span>
         <span class="n">team_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
@@ -802,7 +802,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">guards</span><span class="o">=</span><span class="p">[</span><span class="n">requires_team_admin</span><span class="p">],</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TEAM_UPDATE</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_team</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_team</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">TeamUpdate</span><span class="p">,</span>
         <span class="n">teams_service</span><span class="p">:</span> <span class="n">TeamService</span><span class="p">,</span>
@@ -828,7 +828,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Remove Team&quot;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">TEAM_DELETE</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_team</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_team</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">teams_service</span><span class="p">:</span> <span class="n">TeamService</span><span class="p">,</span>
         <span class="n">team_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
