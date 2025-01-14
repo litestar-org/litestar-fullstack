@@ -195,6 +195,7 @@ exclude = [
   "venv",
   '__pycache__',
   "src/app/db/migrations/versions/*.py",
+
 ]
 fix = true
 line-length = 120
@@ -272,7 +273,7 @@ known-first-party = ['tests', 'app']
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
 "src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
-"tools/*.py" = ["INP001", "ERA001"]
+"tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
 
 [tool.slotscheck]

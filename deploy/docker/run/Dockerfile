@@ -66,7 +66,7 @@ RUN uv run pip install --quiet cython \
 COPY src ./src/
 
 # build the frontend and sync the project
-RUN uv run tools/manage-assets.py --build-assets \
+RUN uv run tools/manage_assets.py --build-assets \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
   && uv build
 

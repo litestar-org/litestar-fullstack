@@ -12,7 +12,7 @@ from typing import Any
 
 NODEENV_INSTALLED = find_spec("nodeenv") is not None
 
-logger = logging.getLogger("pre-build")
+logger = logging.getLogger("manage_assets")
 
 PROJECT_ROOT = Path(__file__).parent.parent
 NODEENV = "nodeenv"
