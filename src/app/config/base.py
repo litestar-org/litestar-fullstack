@@ -201,7 +201,7 @@ class ServerSettings:
 
     HOST: str = field(default_factory=get_env("LITESTAR_HOST", "0.0.0.0"))  # noqa: S104
     """Server network host."""
-    PORT: int = field(default_factory=get_env("LITESTAR_PORT", 8000))
+    PORT: int = field(default_factory=get_env("LITESTAR_PORT", 8080))
     """Server port."""
     KEEPALIVE: int = field(default_factory=get_env("LITESTAR_KEEPALIVE", 65))
     """Seconds to hold connections open (65 is > AWS lb idle timeout)."""
@@ -347,7 +347,7 @@ class AppSettings:
 
     APP_LOC: str = "app.asgi:create_app"
     """Path to app executable, or factory."""
-    URL: str = field(default_factory=get_env("APP_URL", "http://localhost:8000"))
+    URL: str = field(default_factory=get_env("APP_URL", "http://localhost:8080"))
     """The frontend base URL"""
     DEBUG: bool = field(default_factory=get_env("LITESTAR_DEBUG", False))
     """Run `Litestar` with `debug=True`."""

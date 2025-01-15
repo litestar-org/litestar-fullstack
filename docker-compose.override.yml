@@ -27,10 +27,7 @@ services:
       - "8080:8080"
       - "3006:3006"
     tty: true
-    environment:
-      VITE_USE_SERVER_LIFESPAN: "true" # true in dev or run
-      SAQ_USE_SERVER_LIFESPAN: "false"
-    command: litestar run --reload --host 0.0.0.0 --port 8000
+    command: litestar run --reload --host 0.0.0.0 --port 8080
     restart: always
     <<: *development-volumes
   worker:

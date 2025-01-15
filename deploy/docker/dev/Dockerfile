@@ -67,12 +67,13 @@ COPY src ./src/
 FROM build-base AS dev-image
 ARG ENV_SECRETS="runtime-secrets"
 ARG LITESTAR_APP="app.asgi:create_app"
-ARG VITE_USE_SERVER_LIFESPAN="false"
+ARG VITE_USE_SERVER_LIFESPAN="true"
 ARG SAQ_USE_SERVER_LIFESPAN="false"
 ## --------------------------- standardize execution env ----------------------------- ##
 ENV PATH="/workspace/app/.venv/bin:$PATH" \
   VIRTUAL_ENV="/workspace/app/.venv" \
   ENV_SECRETS="${ENV_SECRETS}"  \
+  VITE_DEV_MODE=True  \
   VITE_USE_SERVER_LIFESPAN="${VITE_USE_SERVER_LIFESPAN}" \
   SAQ_USE_SERVER_LIFESPAN="${SAQ_USE_SERVER_LIFESPAN}" \
   PIP_DEFAULT_TIMEOUT=100 \
@@ -91,7 +92,7 @@ COPY tests/ tests/
 COPY src src/
 RUN uv sync ${UV_INSTALL_ARGS}
 STOPSIGNAL SIGINT
-EXPOSE 8000
+EXPOSE 8080
 ENTRYPOINT ["tini","--" ]
 CMD [ "litestar","run","--host","0.0.0.0"]
 VOLUME /workspace/app
