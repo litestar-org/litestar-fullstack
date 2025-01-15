@@ -41,7 +41,7 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.fixture(name="valkey_port", autouse=True, scope="session")
-async def fx_valkey_port() -> int:
+def fx_valkey_port() -> int:
     """Set port for valkey testing"""
 
     return int(os.environ.get("VALKEY_PORT", 6308))

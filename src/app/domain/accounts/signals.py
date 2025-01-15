@@ -7,7 +7,7 @@ from litestar.events import listener
 
 from app.config.app import alchemy
 
-from .dependencies import provide_users_service
+from .deps import provide_users_service
 
 if TYPE_CHECKING:
     from uuid import UUID

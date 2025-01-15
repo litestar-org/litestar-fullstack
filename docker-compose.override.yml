@@ -19,19 +19,13 @@ x-development-volumes: &development-volumes
     - ./.env.docker.example:/workspace/app/.env
 
 services:
-  localmail:
-    image: mailhog/mailhog:v1.0.0
-    container_name: localmail
-    ports:
-      - "8025:8025"
   app:
     build:
       context: .
       dockerfile: deploy/docker/dev/Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
       - "3006:3006"
-    image: app:latest-dev
     tty: true
     environment:
       VITE_USE_SERVER_LIFESPAN: "true" # true in dev or run
@@ -40,7 +34,9 @@ services:
     restart: always
     <<: *development-volumes
   worker:
-    image: app:latest-dev
+    build:
+      context: .
+      dockerfile: deploy/docker/dev/Dockerfile
     command: litestar workers run
     tty: true
     restart: always
@@ -54,7 +50,9 @@ services:
     env_file:
       - .env.docker.example
   migrator:
-    image: app:latest-dev
+    build:
+      context: .
+      dockerfile: deploy/docker/dev/Dockerfile
     command: litestar database upgrade --no-prompt
     restart: "no"
     <<: *development-volumes

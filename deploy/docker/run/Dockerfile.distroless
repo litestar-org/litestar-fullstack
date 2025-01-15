@@ -57,7 +57,7 @@ COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
     ./
 RUN python -m venv --copies /workspace/app/.venv \
     && /workspace/app/.venv/bin/pip install --quiet uv nodeenv cython mypy
-COPY scripts ./scripts/
+COPY tools ./tools/
 COPY public ./public/
 COPY resources ./resources/
 RUN uv sync ${UV_INSTALL_ARGS} --no-self  \
@@ -95,7 +95,7 @@ RUN /workspace/app/.venv/bin/pip install --quiet --disable-pip-version-check --n
 FROM ${PYTHON_RUN_IMAGE} as run-image
 ARG ENV_SECRETS="runtime-secrets"
 ARG CHIPSET_ARCH=x86_64-linux-gnu
-ARG LITESTAR_APP="app.asgi:app"
+ARG LITESTAR_APP="app.asgi:create_app"
 ENV PATH="/workspace/app/.venv/bin:/bin:/usr/local/bin:$PATH" \
     ENV_SECRETS="${ENV_SECRETS}" \
     CHIPSET_ARCH="${CHIPSET_ARCH}" \

@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Literal
+import datetime
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Literal,
+    TypeVar,
+)
 from uuid import UUID
 
 from advanced_alchemy.filters import (
@@ -14,34 +19,38 @@ from advanced_alchemy.filters import (
     OrderBy,
     SearchFilter,
 )
+from advanced_alchemy.service import (
+    Empty,
+    EmptyType,
+    ErrorMessages,
+    LoadSpec,
+    ModelT,
+    SQLAlchemyAsyncRepositoryService,
+)
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
+from app.config import app as c
 from app.config import constants
 
-__all__ = [
-    "BeforeAfter",
-    "CollectionFilter",
-    "FilterTypes",
-    "LimitOffset",
-    "OrderBy",
-    "SearchFilter",
-    "create_collection_dependencies",
-    "provide_created_filter",
-    "provide_filter_dependencies",
-    "provide_id_filter",
-    "provide_limit_offset_pagination",
-    "provide_order_by",
-    "provide_search_filter",
-    "provide_updated_filter",
-]
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, Callable
 
-DTorNone = datetime | None
+    from advanced_alchemy.config.asyncio import SQLAlchemyAsyncConfig
+    from sqlalchemy import Select
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+
+DTorNone = datetime.datetime | None
 StringOrNone = str | None
 UuidOrNone = UUID | None
 BooleanOrNone = bool | None
-SortOrderOrNone = Literal["asc", "desc"] | None
-"""Aggregate type alias of the types supported for collection filtering."""
+SortOrder = Literal["asc", "desc"]
+SortOrderOrNone = SortOrder | None
+PaginationTypes = Literal["limit_offset"]
+IdentityT = TypeVar("IdentityT", bound=UUID | int)
+ServiceT_co = TypeVar("ServiceT_co", bound=SQLAlchemyAsyncRepositoryService[Any], covariant=True)
+"""Application dependency providers."""
 FILTERS_DEPENDENCY_KEY = "filters"
 CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
 ID_FILTER_DEPENDENCY_KEY = "id_filter"
@@ -226,3 +235,30 @@ def create_collection_dependencies() -> dict[str, Provide]:
         ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by, sync_to_thread=False),
         FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies, sync_to_thread=False),
     }
+
+
+def create_service_provider(
+    service_class: type[ServiceT_co],
+    /,
+    statement: Select[tuple[ModelT]] | None = None,
+    config: SQLAlchemyAsyncConfig | None = c.alchemy,
+    error_messages: ErrorMessages | None | EmptyType = Empty,
+    load: LoadSpec | None = None,
+    execution_options: dict[str, Any] | None = None,
+) -> Callable[..., AsyncGenerator[ServiceT_co, None]]:
+    """Create a dependency provider for a service."""
+
+    async def provide_service(
+        db_session: AsyncSession | None = None,
+    ) -> AsyncGenerator[ServiceT_co, None]:
+        async with service_class.new(
+            session=db_session,
+            statement=statement,
+            config=config,
+            error_messages=error_messages,
+            load=load,
+            execution_options=execution_options,
+        ) as service:
+            yield service
+
+    return provide_service

@@ -8,11 +8,8 @@ domain
     :caption: Domain API Reference
     :hidden:
 
-    urls
-    security
-    system/index
-    web/index
+    accounts/index
     teams/index
     tags/index
-    analytics/index
-    accounts/index
+    web/index
+    system/index

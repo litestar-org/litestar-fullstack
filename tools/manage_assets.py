@@ -12,7 +12,7 @@ from typing import Any
 
 NODEENV_INSTALLED = find_spec("nodeenv") is not None
 
-logger = logging.getLogger("pre-build")
+logger = logging.getLogger("manage_assets")
 
 PROJECT_ROOT = Path(__file__).parent.parent
 NODEENV = "nodeenv"
@@ -46,7 +46,7 @@ def manage_resources(setup_kwargs: Any) -> Any:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Manage Package Resources")
+    parser = argparse.ArgumentParser("Manage Resources")
     parser.add_argument("--build-assets", action="store_true", help="Build assets for static hosting.", default=None)
     parser.add_argument("--install-packages", action="store_true", help="Install NPM packages.", default=None)
     args = parser.parse_args()
