@@ -109,7 +109,7 @@ RUN uv pip ${UV_INSTALL_ARGS} install --quiet --disable-pip-version-check /tmp/*
   && chown -R nonroot:nonroot /workspace/app
 USER nonroot
 STOPSIGNAL SIGINT
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
-CMD [ "app", "run", "--port","8080", "--host", "0.0.0.0"]
+CMD [ "app", "run", "--port","8000", "--host", "0.0.0.0"]
 VOLUME /workspace/app
