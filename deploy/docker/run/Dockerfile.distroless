@@ -140,5 +140,5 @@ COPY --from=run-base --chown=65532:65532 /workspace/app/.venv /workspace/app/.ve
 STOPSIGNAL SIGINT
 EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
-CMD [ "litestar","run","--host","0.0.0.0"]
+CMD [ "litestar","run","--host","0.0.0.0","--port","8000"]
 VOLUME /workspace/app
