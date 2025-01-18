@@ -69,7 +69,6 @@ RUN apt-get install -y --no-install-recommends git build-essential curl \
   && rm -rf /var/apt/lists/* \
   && rm -rf /var/cache/apt/* \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
@@ -90,7 +89,7 @@ COPY src src/
 RUN uv sync $UV_INSTALL_ARGS
 
 STOPSIGNAL SIGINT
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT ["tini","--" ]
 CMD [ "litestar","run","--host","0.0.0.0","--port","8000"]
 VOLUME /workspace/app
