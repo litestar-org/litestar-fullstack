@@ -24,10 +24,15 @@ services:
       context: .
       dockerfile: deploy/docker/dev/Dockerfile
     ports:
-      - "8080:8080"
+      - "8000:8000"
       - "3006:3006"
     tty: true
-    command: litestar run --reload --host 0.0.0.0 --port 8080
+    environment:
+      VITE_USE_SERVER_LIFESPAN: "true" # true in dev or run
+      VITE_DEV_MODE: "true"
+      VITE_HOT_RELOAD: "true"
+      SAQ_USE_SERVER_LIFESPAN: "false"
+    command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
     <<: *development-volumes
   worker:

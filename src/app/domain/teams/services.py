@@ -60,13 +60,13 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
 
     async def _populate_slug(self, data: ModelDictT[m.Team], operation: str | None) -> ModelDictT[m.Team]:
         if operation == "create" and is_schema_with_field(data, "slug") and data.slug is None:  # type: ignore[union-attr]
-            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[attr-defined,union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if operation == "create" and is_dict_without_field(data, "slug"):
-            data["slug"] = await self.repository.get_available_slug(data["name"])  # type: ignore[attr-defined ]
+            data["slug"] = await self.repository.get_available_slug(data["name"])
         if operation == "update" and is_schema_with_field(data, "slug") and data.slug is None:  # type: ignore[union-attr]
-            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[attr-defined,union-attr]
+            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
         if operation == "update" and is_dict_without_field(data, "slug") and is_dict_with_field(data, "name"):
-            data["slug"] = await self.repository.get_available_slug(data["name"])  # type: ignore[attr-defined ]
+            data["slug"] = await self.repository.get_available_slug(data["name"])
         return data
 
     async def _populate_with_owner_and_tags(
