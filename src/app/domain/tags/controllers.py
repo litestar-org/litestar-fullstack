@@ -1,26 +1,24 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
+from uuid import UUID
 
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar import Controller, delete, get, patch, post
-from sqlalchemy.orm import selectinload
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags.services import TagService
 from app.lib import dto
-from app.lib.deps import create_service_provider
+from app.lib.deps import create_service_dependencies
 
 from . import urls
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service import OffsetPagination
     from litestar.dto import DTOData
-    from litestar.params import Dependency, Parameter
+    from litestar.params import Parameter
 
 
 class TagDTO(SQLAlchemyDTO[m.Tag]):
@@ -44,22 +42,17 @@ class TagController(Controller):
     """
 
     guards = [requires_active_user]
-    dependencies = {
-        "tags_service": create_service_provider(
-            TagService,
-            load=[selectinload(m.Tag.teams, recursion_depth=2)],
-        ),
-    }
-    signature_types = [TagService]
+    dependencies = create_service_dependencies(
+        TagService,
+        key="tags_service",
+        load=[m.Tag.teams],
+        filters={"id_filter": UUID, "created_at": True, "updated_at": True, "sort_field": "name", "search": True},
+    )
     tags = ["Tags"]
     return_dto = TagDTO
 
     @get(operation_id="ListTags", path=urls.TAG_LIST)
-    async def list_tags(
-        self,
-        tags_service: TagService,
-        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
-    ) -> OffsetPagination[m.Tag]:
+    async def list_tags(self, tags_service: TagService, filters: list[FilterTypes]) -> OffsetPagination[m.Tag]:
         """List tags."""
         results, total = await tags_service.list_and_count(*filters)
         return tags_service.to_schema(data=results, total=total, filters=filters)
@@ -77,7 +70,7 @@ class TagController(Controller):
     @post(operation_id="CreateTag", guards=[requires_superuser], path=urls.TAG_CREATE, dto=TagCreateDTO)
     async def create_tag(self, tags_service: TagService, data: DTOData[m.Tag]) -> m.Tag:
         """Create a new tag."""
-        db_obj = await tags_service.create(data.create_instance())
+        db_obj = await tags_service.create(data)
         return tags_service.to_schema(db_obj)
 
     @patch(operation_id="UpdateTag", path=urls.TAG_UPDATE, guards=[requires_superuser], dto=TagUpdateDTO)

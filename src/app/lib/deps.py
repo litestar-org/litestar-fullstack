@@ -1,13 +1,22 @@
-"""Application dependency providers."""
+"""Application dependency providers generators.
+
+This module contains functions to create dependency providers for services and filters.
+
+You should not have modify this module very often and should only be invoked under normal usage.
+"""
 
 from __future__ import annotations
 
 import datetime
+import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    NotRequired,
+    TypedDict,
     TypeVar,
+    cast,
 )
 from uuid import UUID
 
@@ -31,7 +40,6 @@ from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
 from app.config import app as c
-from app.config import constants
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Callable
@@ -40,201 +48,111 @@ if TYPE_CHECKING:
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
 
+__all__ = (
+    "CREATED_FILTER_DEPENDENCY_KEY",
+    "DEFAULT_IDENTITY_FIELD",
+    "DEFAULT_PAGINATION_SIZE",
+    "FILTERS_DEPENDENCY_KEY",
+    "ID_FILTER_DEPENDENCY_KEY",
+    "LIMIT_OFFSET_DEPENDENCY_KEY",
+    "ORDER_BY_DEPENDENCY_KEY",
+    "SEARCH_FILTER_DEPENDENCY_KEY",
+    "UPDATED_FILTER_DEPENDENCY_KEY",
+    "BooleanOrNone",
+    "DTorNone",
+    "DependencyCache",
+    "FilterConfig",
+    "IntOrNone",
+    "ServiceT_co",
+    "SortOrder",
+    "SortOrderOrNone",
+    "StringOrNone",
+    "UuidOrNone",
+    "create_filter_dependencies",
+    "create_service_dependencies",
+    "create_service_provider",
+    "dep_cache",
+)
 
 DTorNone = datetime.datetime | None
 StringOrNone = str | None
 UuidOrNone = UUID | None
+IntOrNone = int | None
 BooleanOrNone = bool | None
 SortOrder = Literal["asc", "desc"]
 SortOrderOrNone = SortOrder | None
-PaginationTypes = Literal["limit_offset"]
-IdentityT = TypeVar("IdentityT", bound=UUID | int)
 ServiceT_co = TypeVar("ServiceT_co", bound=SQLAlchemyAsyncRepositoryService[Any], covariant=True)
-"""Application dependency providers."""
+
 FILTERS_DEPENDENCY_KEY = "filters"
+"""Key for the filters dependency."""
 CREATED_FILTER_DEPENDENCY_KEY = "created_filter"
+"""Key for the created filter dependency."""
 ID_FILTER_DEPENDENCY_KEY = "id_filter"
+"""Key for the id filter dependency."""
 LIMIT_OFFSET_DEPENDENCY_KEY = "limit_offset"
+"""Key for the limit offset dependency."""
 UPDATED_FILTER_DEPENDENCY_KEY = "updated_filter"
+"""Key for the updated filter dependency."""
 ORDER_BY_DEPENDENCY_KEY = "order_by"
+"""Key for the order by dependency."""
 SEARCH_FILTER_DEPENDENCY_KEY = "search_filter"
+"""Key for the search filter dependency."""
+DEFAULT_IDENTITY_FIELD: str = "id"
+"""Default identity field on SQLAlchemy models."""
+DEFAULT_PAGINATION_SIZE: int = 20
+"""Default pagination size."""
 
 
-def provide_id_filter(
-    ids: list[UUID] | None = Parameter(query="ids", default=None, required=False),
-) -> CollectionFilter[UUID]:
-    """Return type consumed by ``Repository.filter_in_collection()``.
+class FilterConfig(TypedDict):
+    """Configuration for generating dynamic filters."""
 
-    Args:
-        ids (list[UUID] | None): Parsed out of a comma-separated list of values in query params.
-
-    Returns:
-        CollectionFilter[UUID]: Filter for a scoping query to a limited set of identities.
-    """
-    return CollectionFilter(field_name="id", values=ids or [])
-
-
-def provide_created_filter(
-    before: DTorNone = Parameter(query="createdBefore", default=None, required=False),
-    after: DTorNone = Parameter(query="createdAfter", default=None, required=False),
-) -> BeforeAfter:
-    """Return type consumed by `Repository.filter_on_datetime_field()`.
-
-    Args:
-        before (DTorNone): Filter for records created before this date/time.
-        after (DTorNone): Filter for records created after this date/time.
-
-    Returns:
-        BeforeAfter: Filter for scoping query to instance creation date/time.
-    """
-    return BeforeAfter("created_at", before, after)
+    id_filter: NotRequired[type[UUID | int]]
+    """Indicates that the id filter should be enabled.  When set, the type specified will be used for the :class:`CollectionFilter`."""
+    id_field: NotRequired[str]
+    """The field on the model that stored the primary key or identifier."""
+    sort_field: NotRequired[str]
+    """The default field to use for the sort filter."""
+    sort_order: NotRequired[SortOrder]
+    """The default order to use for the sort filter."""
+    pagination_type: NotRequired[Literal["limit_offset"]]
+    """When set, pagination is enabled based on the type specified."""
+    pagination_size: NotRequired[int]
+    """The size of the pagination."""
+    search: NotRequired[bool]
+    """When set, search is enabled."""
+    search_ignore_case: NotRequired[bool]
+    """When set, search is case insensitive by default."""
+    created_at: NotRequired[bool]
+    """When set, created_at filter is enabled."""
+    updated_at: NotRequired[bool]
+    """When set, updated_at filter is enabled."""
 
 
-def provide_search_filter(
-    field: StringOrNone = Parameter(title="Field to search", query="searchField", default=None, required=False),
-    search: StringOrNone = Parameter(title="Field to search", query="searchString", default=None, required=False),
-    ignore_case: BooleanOrNone = Parameter(
-        title="Search should be case sensitive",
-        query="searchIgnoreCase",
-        default=None,
-        required=False,
-    ),
-) -> SearchFilter:
-    """Add offset/limit pagination.
+class SingletonMeta(type):
+    """Metaclass for singleton pattern."""
 
-    Return type consumed by `Repository.apply_search_filter()`.
+    _instances: dict[type, Any] = {}
 
-    Args:
-        field (StringOrNone): Field name to search.
-        search (StringOrNone): Value to search for.
-        ignore_case (BooleanOrNone): Whether to ignore case when searching.
-
-    Returns:
-        SearchFilter: Filter for searching fields.
-    """
-    return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)  # type: ignore[arg-type]
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
 
 
-def provide_order_by(
-    field_name: StringOrNone = Parameter(title="Order by field", query="orderBy", default=None, required=False),
-    sort_order: SortOrderOrNone = Parameter(title="Field to search", query="sortOrder", default="desc", required=False),
-) -> OrderBy:
-    """Add offset/limit pagination.
+class DependencyCache(metaclass=SingletonMeta):
+    """Simple dependency cache for the application.  This is used to help memoize dependencies that are generated dynamically."""
 
-    Return type consumed by ``Repository.apply_order_by()``.
+    def __init__(self) -> None:
+        self.dependencies: dict[str, dict[str, Provide]] = {}
 
-    Args:
-        field_name (StringOrNone): Field name to order by.
-        sort_order (SortOrderOrNone): Order field ascending ('asc') or descending ('desc)
+    def add_dependencies(self, key: str, dependencies: dict[str, Provide]) -> None:
+        self.dependencies[key] = dependencies
 
-    Returns:
-        OrderBy: Order by for query.
-    """
-    return OrderBy(field_name=field_name, sort_order=sort_order)  # type: ignore[arg-type]
+    def get_dependencies(self, key: str) -> dict[str, Provide] | None:
+        return self.dependencies.get(key)
 
 
-def provide_updated_filter(
-    before: DTorNone = Parameter(query="updatedBefore", default=None, required=False),
-    after: DTorNone = Parameter(query="updatedAfter", default=None, required=False),
-) -> BeforeAfter:
-    """Add updated filter.
-
-    Return type consumed by ``Repository.filter_on_datetime_field()``.
-
-    Args:
-        before (DTorNone): Filter for records updated before this date/time.
-        after (DTorNone): Filter for records updated after this date/time.
-
-    Returns:
-        BeforeAfter: Filter for scoping query to instance update date/time.
-    """
-    return BeforeAfter("updated_at", before, after)
-
-
-def provide_limit_offset_pagination(
-    current_page: int = Parameter(ge=1, query="currentPage", default=1, required=False),
-    page_size: int = Parameter(
-        query="pageSize",
-        ge=1,
-        default=constants.DEFAULT_PAGINATION_SIZE,
-        required=False,
-    ),
-) -> LimitOffset:
-    """Add offset/limit pagination.
-
-    Return type consumed by ``Repository.apply_limit_offset_pagination()``.
-
-    Args:
-        current_page (int): Page number to return.
-        page_size (int): Number of records per page.
-
-    Returns:
-        LimitOffset: Filter for query pagination.
-    """
-    return LimitOffset(page_size, page_size * (current_page - 1))
-
-
-def provide_filter_dependencies(
-    created_filter: BeforeAfter = Dependency(skip_validation=True),
-    updated_filter: BeforeAfter = Dependency(skip_validation=True),
-    id_filter: CollectionFilter = Dependency(skip_validation=True),
-    limit_offset: LimitOffset = Dependency(skip_validation=True),
-    search_filter: SearchFilter = Dependency(skip_validation=True),
-    order_by: OrderBy = Dependency(skip_validation=True),
-) -> list[FilterTypes]:
-    """Provide common collection route filtering dependencies.
-
-    Add all filters to any route by including this function as a dependency, e.g.:
-
-    .. code-block:: python
-
-        @get
-        def get_collection_handler(filters: Filters) -> ...:
-            ...
-
-    The dependency is provided in the application layer, so only need to inject the dependency where
-    necessary.
-
-    Args:
-        created_filter (BeforeAfter): Filter for a scoping query to instance creation date/time.
-        updated_filter (BeforeAfter): Filter for a scoping query to instance update date/time.
-        id_filter (CollectionFilter): Filter for a scoping query to a limited set of identities.
-        limit_offset (LimitOffset): Filter for query pagination.
-        search_filter (SearchFilter): Filter for searching fields.
-        order_by (OrderBy): Order by for query.
-
-    Returns:
-        list[FilterTypes]: List of filters parsed from connection.
-    """
-    filters: list[FilterTypes] = []
-    if id_filter.values:
-        filters.append(id_filter)
-    filters.extend([created_filter, limit_offset, updated_filter])
-
-    if search_filter.field_name is not None and search_filter.value is not None:
-        filters.append(search_filter)
-    if order_by.field_name is not None:
-        filters.append(order_by)
-    return filters
-
-
-def create_collection_dependencies() -> dict[str, Provide]:
-    """Create ORM dependencies.
-
-    Creates a dictionary of provides for pagination endpoints.
-
-    Returns:
-        dict[str, Provide]: Dictionary of provides for pagination endpoints.
-    """
-    return {
-        LIMIT_OFFSET_DEPENDENCY_KEY: Provide(provide_limit_offset_pagination, sync_to_thread=False),
-        UPDATED_FILTER_DEPENDENCY_KEY: Provide(provide_updated_filter, sync_to_thread=False),
-        CREATED_FILTER_DEPENDENCY_KEY: Provide(provide_created_filter, sync_to_thread=False),
-        ID_FILTER_DEPENDENCY_KEY: Provide(provide_id_filter, sync_to_thread=False),
-        SEARCH_FILTER_DEPENDENCY_KEY: Provide(provide_search_filter, sync_to_thread=False),
-        ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by, sync_to_thread=False),
-        FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies, sync_to_thread=False),
-    }
+dep_cache = DependencyCache()
 
 
 def create_service_provider(
@@ -262,3 +180,261 @@ def create_service_provider(
             yield service
 
     return provide_service
+
+
+def create_service_dependencies(
+    service_class: type[ServiceT_co],
+    /,
+    key: str,
+    statement: Select[tuple[ModelT]] | None = None,
+    config: SQLAlchemyAsyncConfig | None = c.alchemy,
+    error_messages: ErrorMessages | None | EmptyType = Empty,
+    load: LoadSpec | None = None,
+    execution_options: dict[str, Any] | None = None,
+    filters: FilterConfig | None = None,
+) -> dict[str, Provide]:
+    """Create a dependency provider for the combined filter function.
+
+    Args:
+        key: The key to use for the dependency provider.
+        service_class: The service class to create a dependency provider for.
+        statement: The statement to use for the service.
+        config: The configuration to use for the service.
+        error_messages: The error messages to use for the service.
+        load: The load spec to use for the service.
+        execution_options: The execution options to use for the service.
+        filters: The filter configuration to use for the service.
+
+    Returns:
+        A dictionary of dependency providers for the service.
+    """
+    svc = create_service_provider(service_class, statement, config, error_messages, load, execution_options)
+    deps = {key: Provide(svc)}
+    if filters:
+        deps.update(create_filter_dependencies(filters))
+    return deps
+
+
+def create_filter_dependencies(config: FilterConfig) -> dict[str, Provide]:
+    """Create a dependency provider for the combined filter function.
+
+    Args:
+        config: FilterConfig instance with desired settings.
+
+    Returns:
+        A dependency provider function for the combined filter function.
+    """
+    cache_key = str(config)
+    deps = dep_cache.get_dependencies(cache_key)
+    if deps is None:
+        deps = _create_statement_filters(config)
+        dep_cache.add_dependencies(cache_key, deps)
+    return deps
+
+
+def _create_statement_filters(config: FilterConfig) -> dict[str, Provide]:  # noqa: C901
+    """Create filter dependencies based on configuration.
+
+    Args:
+        config (FilterConfig): Configuration dictionary specifying which filters to enable
+
+    Returns:
+        dict[str, Provide]: Dictionary of filter provider functions
+    """
+    filters: dict[str, Provide] = {}
+
+    if config.get("id_filter", False):
+
+        def provide_id_filter(
+            ids: list[str] | None = Parameter(query="ids", default=None, required=False),
+        ) -> CollectionFilter:
+            return CollectionFilter(field_name=config.get("id_field", "id"), values=ids)
+
+        filters[ID_FILTER_DEPENDENCY_KEY] = Provide(provide_id_filter, sync_to_thread=False)
+
+    if config.get("created_at", False):
+
+        def provide_created_filter(
+            before: DTorNone = Parameter(query="createdBefore", default=None, required=False),
+            after: DTorNone = Parameter(query="createdAfter", default=None, required=False),
+        ) -> BeforeAfter:
+            return BeforeAfter("created_at", before, after)
+
+        filters[CREATED_FILTER_DEPENDENCY_KEY] = Provide(provide_created_filter, sync_to_thread=False)
+
+    if config.get("updated_at", False):
+
+        def provide_updated_filter(
+            before: DTorNone = Parameter(query="updatedBefore", default=None, required=False),
+            after: DTorNone = Parameter(query="updatedAfter", default=None, required=False),
+        ) -> BeforeAfter:
+            return BeforeAfter("updated_at", before, after)
+
+        filters[UPDATED_FILTER_DEPENDENCY_KEY] = Provide(provide_updated_filter, sync_to_thread=False)
+
+    if config.get("pagination_type") == "limit_offset":
+
+        def provide_limit_offset_pagination(
+            current_page: int = Parameter(ge=1, query="currentPage", default=1, required=False),
+            page_size: int = Parameter(
+                query="pageSize",
+                ge=1,
+                default=config.get("pagination_size", DEFAULT_PAGINATION_SIZE),
+                required=False,
+            ),
+        ) -> LimitOffset:
+            return LimitOffset(page_size, page_size * (current_page - 1))
+
+        filters[LIMIT_OFFSET_DEPENDENCY_KEY] = Provide(provide_limit_offset_pagination, sync_to_thread=False)
+
+    if config.get("search", False):
+
+        def provide_search_filter(
+            field: StringOrNone = Parameter(title="Field to search", query="searchField", default=None, required=False),
+            search: StringOrNone = Parameter(
+                title="Field to search",
+                query="searchString",
+                default=None,
+                required=False,
+            ),
+            ignore_case: BooleanOrNone = Parameter(
+                title="Search should be case sensitive",
+                query="searchIgnoreCase",
+                default=config.get("search_ignore_case", False),
+                required=False,
+            ),
+        ) -> SearchFilter:
+            return SearchFilter(field_name=field, value=search, ignore_case=ignore_case or False)  # type: ignore[arg-type]
+
+        filters[SEARCH_FILTER_DEPENDENCY_KEY] = Provide(provide_search_filter, sync_to_thread=False)
+
+    if sort_field := config.get("sort_field"):
+
+        def provide_order_by(
+            field_name: StringOrNone = Parameter(
+                title="Order by field",
+                query="orderBy",
+                default=sort_field,
+                required=False,
+            ),
+            sort_order: SortOrderOrNone = Parameter(
+                title="Field to search",
+                query="sortOrder",
+                default=config.get("sort_order", "desc"),
+                required=False,
+            ),
+        ) -> OrderBy:
+            return OrderBy(field_name=field_name, sort_order=sort_order)  # type: ignore[arg-type]
+
+        filters[ORDER_BY_DEPENDENCY_KEY] = Provide(provide_order_by, sync_to_thread=False)
+    if filters:
+        filters[FILTERS_DEPENDENCY_KEY] = Provide(_create_filter_aggregate_function(config), sync_to_thread=False)
+
+    return filters
+
+
+def _create_filter_aggregate_function(config: FilterConfig) -> Callable[..., list[FilterTypes]]:  # noqa: C901
+    """Create a filter function based on the provided configuration.
+
+    Args:
+        config: The filter configuration.
+
+    Returns:
+        A function that returns a list of filters based on the configuration.
+    """
+
+    parameters: dict[str, inspect.Parameter] = {}
+    annotations: dict[str, Any] = {}
+
+    # Build parameters based on config
+    if cls := config.get("id_filter"):
+        parameters["id_filter"] = inspect.Parameter(
+            name="id_filter",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=CollectionFilter[cls],  # type: ignore[valid-type]
+        )
+        annotations["id_filter"] = CollectionFilter[cls]  # type: ignore[valid-type]
+
+    if config.get("created_at"):
+        parameters["created_filter"] = inspect.Parameter(
+            name="created_filter",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=BeforeAfter,
+        )
+        annotations["created_filter"] = BeforeAfter
+
+    if config.get("updated_at"):
+        parameters["updated_filter"] = inspect.Parameter(
+            name="updated_filter",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=BeforeAfter,
+        )
+        annotations["updated_filter"] = BeforeAfter
+
+    if config.get("search"):
+        parameters["search_filter"] = inspect.Parameter(
+            name="search_filter",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=SearchFilter,
+        )
+        annotations["search_filter"] = SearchFilter
+
+    if config.get("pagination_type") == "limit_offset":
+        parameters["limit_offset"] = inspect.Parameter(
+            name="limit_offset",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=LimitOffset,
+        )
+        annotations["limit_offset"] = LimitOffset
+
+    if config.get("sort_field"):
+        parameters["order_by"] = inspect.Parameter(
+            name="order_by",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            default=Dependency(skip_validation=True),
+            annotation=OrderBy,
+        )
+        annotations["order_by"] = OrderBy
+
+    def provide_filters(**kwargs: FilterTypes) -> list[FilterTypes]:
+        """Provide filter dependencies based on configuration.
+
+        Args:
+            **kwargs: Filter parameters dynamically provided based on configuration.
+
+        Returns:
+            list[FilterTypes]: List of configured filters.
+        """
+        filters: list[FilterTypes] = []
+        if id_filter := kwargs.get("id_filter"):
+            filters.append(id_filter)
+        if created_filter := kwargs.get("created_filter"):
+            filters.append(created_filter)
+        if limit_offset := kwargs.get("limit_offset"):
+            filters.append(limit_offset)
+        if updated_filter := kwargs.get("updated_filter"):
+            filters.append(updated_filter)
+        if (
+            (search_filter := cast("SearchFilter | None", kwargs.get("search_filter")))
+            and search_filter.field_name is not None
+            and search_filter.value is not None
+        ):
+            filters.append(search_filter)
+        if (order_by := cast("OrderBy | None", kwargs.get("order_by"))) and order_by.field_name is not None:
+            filters.append(order_by)
+        return filters
+
+    # Set both signature and annotations
+    provide_filters.__signature__ = inspect.Signature(  # type: ignore
+        parameters=list(parameters.values()),
+        return_annotation=list[FilterTypes],
+    )
+    provide_filters.__annotations__ = annotations
+    provide_filters.__annotations__["return"] = list[FilterTypes]
+
+    return provide_filters

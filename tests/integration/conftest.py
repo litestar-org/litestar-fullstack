@@ -26,7 +26,7 @@ here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="engine", autouse=True)
+@pytest.fixture(name="engine")
 async def fx_engine(
     postgres_docker_ip: str,
     postgres_service: None,
@@ -137,7 +137,7 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    async with AsyncTestClient(app, base_url="http://testserver") as client:
+    async with AsyncTestClient(app) as client:
         yield client
 
 
