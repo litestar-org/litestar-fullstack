@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 AccessTokenState: TypeAlias = tuple[OAuth2Token, str | None]
 
 
-class OAuth2AuthorizeCallbackError(OAuth2Error, HTTPException):
+class OAuth2AuthorizeCallbackError(OAuth2Error, HTTPException):  # type: ignore[misc,unused-ignore]
     """Error raised when an error occurs during the OAuth2 authorization callback.
 
     It inherits from HTTPException, so you can either keep
@@ -37,7 +37,7 @@ class OAuth2AuthorizeCallbackError(OAuth2Error, HTTPException):
         response: httpx.Response | None = None,
         extra: dict[str, Any] | list[Any] | None = None,
     ) -> None:
-        super().__init__(message=detail)
+        super().__init__(message=detail)  # type: ignore[call-arg,unused-ignore]
         HTTPException.__init__(
             self,
             detail=detail,
