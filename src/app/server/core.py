@@ -6,14 +6,13 @@ from typing import TYPE_CHECKING, TypeVar
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
 from litestar.di import Provide
 from litestar.openapi.config import OpenAPIConfig
-from litestar.openapi.plugins import ScalarRenderPlugin, SwaggerRenderPlugin
+from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar.security.jwt import OAuth2Login
 from litestar.stores.redis import RedisStore
 from litestar.stores.registry import StoreRegistry
 
 from app.domain.accounts.services import UserRoleService
-from app.lib.deps import create_collection_dependencies
 
 if TYPE_CHECKING:
     from click import Group
@@ -88,7 +87,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             components=[jwt_auth.openapi_components],
             security=[jwt_auth.security_requirement],
             use_handler_docstrings=True,
-            render_plugins=[ScalarRenderPlugin(version="latest"), SwaggerRenderPlugin()],
+            render_plugins=[ScalarRenderPlugin(version="latest")],
         )
         # jwt auth (updates openapi config)
         app_config = jwt_auth.on_app_init(app_config)
@@ -104,6 +103,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 plugins.alchemy,
                 plugins.vite,
                 plugins.saq,
+                plugins.problem_details,
+                plugins.oauth,
             ],
         )
 
@@ -150,7 +151,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         # dependencies
         dependencies = {"current_user": Provide(provide_user)}
-        dependencies.update(create_collection_dependencies())
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(

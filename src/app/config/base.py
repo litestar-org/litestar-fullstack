@@ -320,17 +320,13 @@ class RedisSettings:
     """Length of time to wait (in seconds) before testing connection health."""
     SOCKET_KEEPALIVE: bool = field(default_factory=get_env("REDIS_SOCKET_KEEPALIVE", True))
     """Length of time to wait (in seconds) between keepalive commands."""
-    _redis_instance: Redis | None = None
-    """Redis instance generated from settings."""
 
     @property
     def client(self) -> Redis:
         return self.get_client()
 
     def get_client(self) -> Redis:
-        if self._redis_instance is not None:
-            return self._redis_instance
-        self._redis_instance = Redis.from_url(
+        return Redis.from_url(
             url=self.URL,
             encoding="utf-8",
             decode_responses=False,
@@ -338,7 +334,6 @@ class RedisSettings:
             socket_keepalive=self.SOCKET_KEEPALIVE,
             health_check_interval=self.HEALTH_CHECK_INTERVAL,
         )
-        return self._redis_instance
 
 
 @dataclass
@@ -365,6 +360,10 @@ class AppSettings:
     """CSRF Secure Cookie"""
     JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
     """JWT Encryption Algorithm"""
+    GITHUB_OAUTH2_CLIENT_ID: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_ID", ""))
+    """Github OAuth2 Client ID"""
+    GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_SECRET", ""))
+    """Github OAuth2 Client Secret"""
 
     @property
     def slug(self) -> str:

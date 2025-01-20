@@ -1,12 +1,23 @@
 import logging
+import sys
+from functools import lru_cache
 from typing import cast
 
+import structlog
+from httpx_oauth.clients.github import GitHubOAuth2
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
-from litestar.logging.config import LoggingConfig, StructLoggingConfig
+from litestar.logging.config import (
+    LoggingConfig,
+    StructLoggingConfig,
+    default_logger_factory,
+    default_structlog_processors,
+    default_structlog_standard_lib_processors,
+)
 from litestar.middleware.logging import LoggingMiddlewareConfig
+from litestar.plugins.problem_details import ProblemDetailsConfig
 from litestar.plugins.sqlalchemy import (
     AlembicAsyncConfig,
     AsyncSessionConfig,
@@ -39,7 +50,7 @@ alchemy = SQLAlchemyAsyncConfig(
     ),
 )
 templates = TemplateConfig(engine=JinjaTemplateEngine(directory=settings.vite.TEMPLATE_DIR))
-
+problem_details = ProblemDetailsConfig(enable_for_all_http_exceptions=True)
 vite = ViteConfig(
     bundle_dir=settings.vite.BUNDLE_DIR,
     resource_dir=settings.vite.RESOURCE_DIR,
@@ -50,6 +61,11 @@ vite = ViteConfig(
     port=settings.vite.PORT,
     host=settings.vite.HOST,
 )
+github_oauth = GitHubOAuth2(
+    client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
+    client_secret=settings.app.GITHUB_OAUTH2_CLIENT_SECRET,
+)
+
 saq = SAQConfig(
     redis=settings.redis.client,
     web_enabled=settings.saq.WEB_ENABLED,
@@ -83,11 +99,31 @@ saq = SAQConfig(
     ],
 )
 
+
+@lru_cache
+def _is_tty() -> bool:
+    return bool(sys.stderr.isatty() or sys.stdout.isatty())
+
+
+_render_as_json = not _is_tty()
+_structlog_default_processors = default_structlog_processors(as_json=_render_as_json)
+_structlog_default_processors.insert(1, structlog.processors.EventRenamer("message"))
+_structlog_standard_lib_processors = default_structlog_standard_lib_processors(as_json=_render_as_json)
+_structlog_standard_lib_processors.insert(1, structlog.processors.EventRenamer("message"))
+
 log = StructlogConfig(
     structlog_logging_config=StructLoggingConfig(
         log_exceptions="always",
+        processors=_structlog_default_processors,
+        logger_factory=default_logger_factory(as_json=_render_as_json),
         standard_lib_logging_config=LoggingConfig(
             root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
+            formatters={
+                "standard": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": _structlog_standard_lib_processors,
+                },
+            },
             loggers={
                 "granian.access": {
                     "propagate": False,

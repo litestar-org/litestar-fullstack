@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
+from uuid import UUID
 
 from advanced_alchemy.service import FilterTypeT  # noqa: TC002
 from litestar import Controller, delete, get, patch, post
@@ -15,11 +16,9 @@ from app.domain.teams import urls
 from app.domain.teams.guards import requires_team_admin, requires_team_membership
 from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
-from app.lib.deps import create_service_provider
+from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from advanced_alchemy.service.pagination import OffsetPagination
     from litestar.params import Dependency, Parameter
 
@@ -28,9 +27,13 @@ class TeamController(Controller):
     """Teams."""
 
     tags = ["Teams"]
-    dependencies = {
-        "teams_service": create_service_provider(TeamService, load=[m.Team.tags, m.Team.members]),
-    }
+    dependencies = create_service_dependencies(
+        TeamService,
+        key="teams_service",
+        load=[m.Team.tags, m.Team.members],
+        filters={"id_filter": UUID},
+    )
+
     guards = [requires_active_user]
 
     @get(component="team/list", operation_id="ListTeams", path=urls.TEAM_LIST)

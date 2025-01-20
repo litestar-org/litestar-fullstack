@@ -24,6 +24,7 @@ dependencies = [
   "litestar-granian",
   "aiosqlite",
   "httptools",
+  "httpx-oauth>=0.16.1",
 ]
 description = "Opinionated template for a Litestar application."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
