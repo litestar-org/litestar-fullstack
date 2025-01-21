@@ -6,8 +6,6 @@ interface AuthLayoutProps {
   keywords: string
 }
 
-const helmetContext = {}
-
 const AuthLayout = ({
   children,
   title,

@@ -71,6 +71,7 @@ saq = SAQConfig(
     web_enabled=settings.saq.WEB_ENABLED,
     worker_processes=settings.saq.PROCESSES,
     use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
+    web_include_in_schema=False,
     queue_configs=[
         QueueConfig(
             name="system-tasks",
