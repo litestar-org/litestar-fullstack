@@ -27,10 +27,10 @@
   },
   "include": [
     "**/*.d.ts",
-    "resources/**/*.tsx",
-    "resources/**/*.jsx",
-    "resources/**/*.js",
-    "resources/**/*.ts",
+    "src/ui/**/*.tsx",
+    "src/ui/**/*.jsx",
+    "src/ui/**/*.js",
+    "src/ui/**/*.ts",
     "vite.config.ts",
     "vite.config.js"
   ]

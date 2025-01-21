@@ -6,10 +6,12 @@
     "lint": "biome check --apply-unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "watch": "vite build --watch",
     "generate-client": "openapi-ts",
-    "export-openapi": "uv run app schema openapi --output resources/openapi.json"
+    "export-openapi": "uv run app schema openapi --output src/ui/openapi.json"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@hey-api/client-axios": "^0.5.0",
+    "@hey-api/client-fetch": "^0.7.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.1.3",
