@@ -278,7 +278,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="37"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>
 </span><span data-line="38"><span class="nf">install</span><span class="o">:</span><span class="w"> </span><span class="n">destroy</span> <span class="n">clean</span>                              <span class="c">## Install the project, dependencies, and pre-commit for local development</span>
 </span><span data-line="39"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting fresh installation...&quot;</span>
-</span><span data-line="40"><span class="w">	</span>@uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span><span class="m">3</span>.12<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="40"><span class="w">	</span>@uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span><span class="m">3</span>.13<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 </span><span data-line="41"><span class="w">	</span>@uv<span class="w"> </span>venv<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 </span><span data-line="42"><span class="w">	</span>@uv<span class="w"> </span>sync<span class="w"> </span>--all-extras<span class="w"> </span>--dev
 </span><span data-line="43"><span class="w">	</span>@if<span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>npm<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="se">\</span>
@@ -339,7 +339,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="98"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">mypy</span>
 </span><span data-line="99"><span class="nf">mypy</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Run mypy</span>
 </span><span data-line="100"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running mypy... 🔍&quot;</span>
-</span><span data-line="101"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>dmypy<span class="w"> </span>run
+</span><span data-line="101"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>dmypy<span class="w"> </span>run<span class="w"> </span>src/app
 </span><span data-line="102"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Mypy checks passed ✨&quot;</span>
 </span><span data-line="103">
 </span><span data-line="104"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">pyright</span>

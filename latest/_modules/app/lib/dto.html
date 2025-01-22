@@ -201,49 +201,47 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="30">    <span class="n">rename_strategy</span><span class="p">:</span> <span class="n">RenameStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span data-line="31">    <span class="n">max_nested_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span data-line="32">    <span class="n">partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="33"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span>
-</span><span data-line="34">    <span class="o">...</span>
+</span><span data-line="33"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span> <span class="o">...</span>
+</span><span data-line="34">
 </span><span data-line="35">
-</span><span data-line="36">
-</span><span data-line="37"><span class="nd">@overload</span>
-</span><span data-line="38"><span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
-</span><span data-line="39">    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
-</span><span data-line="40">    <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="41">    <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="42">    <span class="n">rename_strategy</span><span class="p">:</span> <span class="n">RenameStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="43">    <span class="n">max_nested_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="44">    <span class="n">partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="45"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DTOConfig</span><span class="p">:</span>
-</span><span data-line="46">    <span class="o">...</span>
-</span><span data-line="47">
-</span><span data-line="48">
+</span><span data-line="36"><span class="nd">@overload</span>
+</span><span data-line="37"><span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
+</span><span data-line="38">    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
+</span><span data-line="39">    <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="40">    <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="41">    <span class="n">rename_strategy</span><span class="p">:</span> <span class="n">RenameStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="42">    <span class="n">max_nested_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="43">    <span class="n">partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="44"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DTOConfig</span><span class="p">:</span> <span class="o">...</span>
+</span><span data-line="45">
+</span><span data-line="46">
 <div class="viewcode-block" id="config">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.config">[docs]</a>
-</span><span data-line="49"><span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
-</span><span data-line="50">    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlalchemy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
-</span><span data-line="51">    <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="52">    <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="53">    <span class="n">rename_strategy</span><span class="p">:</span> <span class="n">RenameStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="54">    <span class="n">max_nested_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="55">    <span class="n">partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="56"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DTOConfig</span> <span class="o">|</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span>
-</span><span data-line="57"><span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
-</span><span data-line="58">
-</span><span data-line="59"><span class="sd">    Returns:</span>
-</span><span data-line="60"><span class="sd">        DTOConfig: Configured DTO class</span>
-</span><span data-line="61"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="62">    <span class="n">default_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rename_strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;camel&quot;</span><span class="p">,</span> <span class="s2">&quot;max_nested_depth&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
-</span><span data-line="63">    <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
-</span><span data-line="64">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;exclude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exclude</span>
-</span><span data-line="65">    <span class="k">if</span> <span class="n">rename_fields</span><span class="p">:</span>
-</span><span data-line="66">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;rename_fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename_fields</span>
-</span><span data-line="67">    <span class="k">if</span> <span class="n">rename_strategy</span><span class="p">:</span>
-</span><span data-line="68">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;rename_strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename_strategy</span>
-</span><span data-line="69">    <span class="k">if</span> <span class="n">max_nested_depth</span><span class="p">:</span>
-</span><span data-line="70">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;max_nested_depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_nested_depth</span>
-</span><span data-line="71">    <span class="k">if</span> <span class="n">partial</span><span class="p">:</span>
-</span><span data-line="72">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;partial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial</span>
-</span><span data-line="73">    <span class="k">return</span> <span class="n">DTOConfig</span><span class="p">(</span><span class="o">**</span><span class="n">default_kwargs</span><span class="p">)</span></div>
+</span><span data-line="47"><span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span>
+</span><span data-line="48">    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataclass&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlalchemy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataclass&quot;</span><span class="p">,</span>
+</span><span data-line="49">    <span class="n">exclude</span><span class="p">:</span> <span class="n">AbstractSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="50">    <span class="n">rename_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="51">    <span class="n">rename_strategy</span><span class="p">:</span> <span class="n">RenameStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="52">    <span class="n">max_nested_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="53">    <span class="n">partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="54"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DTOConfig</span> <span class="o">|</span> <span class="n">SQLAlchemyDTOConfig</span><span class="p">:</span>
+</span><span data-line="55"><span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+</span><span data-line="56">
+</span><span data-line="57"><span class="sd">    Returns:</span>
+</span><span data-line="58"><span class="sd">        DTOConfig: Configured DTO class</span>
+</span><span data-line="59"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="60">    <span class="n">default_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rename_strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;camel&quot;</span><span class="p">,</span> <span class="s2">&quot;max_nested_depth&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+</span><span data-line="61">    <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
+</span><span data-line="62">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;exclude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exclude</span>
+</span><span data-line="63">    <span class="k">if</span> <span class="n">rename_fields</span><span class="p">:</span>
+</span><span data-line="64">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;rename_fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename_fields</span>
+</span><span data-line="65">    <span class="k">if</span> <span class="n">rename_strategy</span><span class="p">:</span>
+</span><span data-line="66">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;rename_strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename_strategy</span>
+</span><span data-line="67">    <span class="k">if</span> <span class="n">max_nested_depth</span><span class="p">:</span>
+</span><span data-line="68">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;max_nested_depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_nested_depth</span>
+</span><span data-line="69">    <span class="k">if</span> <span class="n">partial</span><span class="p">:</span>
+</span><span data-line="70">        <span class="n">default_kwargs</span><span class="p">[</span><span class="s2">&quot;partial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial</span>
+</span><span data-line="71">    <span class="k">return</span> <span class="n">DTOConfig</span><span class="p">(</span><span class="o">**</span><span class="n">default_kwargs</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
