@@ -8,6 +8,7 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development",
@@ -31,7 +32,7 @@ keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "li
 license = { text = "MIT" }
 name = "app"
 readme = "README.md"
-requires-python = ">3.11,<3.13"
+requires-python = ">=3.11"
 version = "0.2.0"
 
 [project.urls]
