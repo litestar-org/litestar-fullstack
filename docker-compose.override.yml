@@ -7,7 +7,6 @@ x-development-volumes: &development-volumes
     - ./pyproject.toml:/workspace/app/pyproject.toml
     - ./uv.lock:/workspace/app/uv.lock
     - ./tsconfig.json:/workspace/app/tsconfig.json
-    - ./tsconfig.node.json:/workspace/app/tsconfig.node.json
     - ./package.json:/workspace/app/package.json
     - ./package-lock.json:/workspace/app/package-lock.json
     - ./vite.config.ts:/workspace/app/vite.config.ts
