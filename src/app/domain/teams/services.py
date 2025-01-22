@@ -69,7 +69,7 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
         )
 
     async def _populate_slug(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        if is_dict_with_field(data, "slug") and is_dict_without_field(data, "name"):
+        if is_dict_without_field(data, "slug") and is_dict_with_field(data, "name"):
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return data
 
