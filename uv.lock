@@ -3,7 +3,7 @@ requires-python = ">3.11, <3.13"
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.30.1"
+version = "0.30.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "alembic" },
@@ -11,9 +11,9 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ec/8e/e6cc35baaffd14c15f4cc4758df84d504d05beea912d8a8c7af2153566e2/advanced_alchemy-0.30.1.tar.gz", hash = "sha256:f8f0eced91e29e953f755d851188d6c63228421ced215372f6b9298c6c22cd3a", size = 584134 }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/cd/1801e8ebca919dae9d046ba74c7ec0fac917ee86225d436d8e6b5d3eb44c/advanced_alchemy-0.30.2.tar.gz", hash = "sha256:984a18f3686632cf33e9f25dc44a6480a0138be9779bff750f668370271c00da", size = 584157 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/f0/d66d67e780f8dfc06f9241b92d04dc180b143b168f4ba6b02b8a4f0cb938/advanced_alchemy-0.30.1-py3-none-any.whl", hash = "sha256:f44424397b046245c485c38b88510c57b3c42ed5416152cf87531a0558eda46a", size = 169853 },
+    { url = "https://files.pythonhosted.org/packages/27/1a/f3dbd68d842e1f617d6bf13ba2a51afe1da535ba93b72c1aed3db634ef28/advanced_alchemy-0.30.2-py3-none-any.whl", hash = "sha256:f91b1e940576816763b4256a324f9bfad793e4cd87678c390930b2c64120d11d", size = 170092 },
 ]
 
 [package.optional-dependencies]
@@ -705,11 +705,11 @@ wheels = [
 
 [[package]]
 name = "filelock"
-version = "3.16.1"
+version = "3.17.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9d/db/3ef5bb276dae18d6ec2124224403d1d67bccdbefc17af4cc8f553e341ab1/filelock-3.16.1.tar.gz", hash = "sha256:c249fbfcd5db47e5e2d6d62198e565475ee65e4831e2561c8e313fa7eb961435", size = 18037 }
+sdist = { url = "https://files.pythonhosted.org/packages/dc/9c/0b15fb47b464e1b663b1acd1253a062aa5feecb07d4e597daea542ebd2b5/filelock-3.17.0.tar.gz", hash = "sha256:ee4e77401ef576ebb38cd7f13b9b28893194acc20a8e68e18730ba9c0e54660e", size = 18027 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/f8/feced7779d755758a52d1f6635d990b8d98dc0a29fa568bbe0625f18fdf3/filelock-3.16.1-py3-none-any.whl", hash = "sha256:2082e5703d51fbf98ea75855d9d5527e33d8ff23099bec374a134febee6946b0", size = 16163 },
+    { url = "https://files.pythonhosted.org/packages/89/ec/00d68c4ddfedfe64159999e5f8a98fb8442729a63e2077eb9dcd89623d27/filelock-3.17.0-py3-none-any.whl", hash = "sha256:533dc2f7ba78dc2f0f531fc6c4940addf7b70a481e269a5a3b93be94ffbe8338", size = 16164 },
 ]
 
 [[package]]
@@ -896,11 +896,11 @@ wheels = [
 
 [[package]]
 name = "identify"
-version = "2.6.5"
+version = "2.6.6"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cf/92/69934b9ef3c31ca2470980423fda3d00f0460ddefdf30a67adf7f17e2e00/identify-2.6.5.tar.gz", hash = "sha256:c10b33f250e5bba374fae86fb57f3adcebf1161bce7cdf92031915fd480c13bc", size = 99213 }
+sdist = { url = "https://files.pythonhosted.org/packages/82/bf/c68c46601bacd4c6fb4dd751a42b6e7087240eaabc6487f2ef7a48e0e8fc/identify-2.6.6.tar.gz", hash = "sha256:7bec12768ed44ea4761efb47806f0a41f86e7c0a5fdf5950d4648c90eca7e251", size = 99217 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/fa/dce098f4cdf7621aa8f7b4f919ce545891f489482f0bfa5102f3eca8608b/identify-2.6.5-py2.py3-none-any.whl", hash = "sha256:14181a47091eb75b337af4c23078c9d09225cd4c48929f521f3bf16b09d02566", size = 99078 },
+    { url = "https://files.pythonhosted.org/packages/74/a1/68a395c17eeefb04917034bd0a1bfa765e7654fa150cca473d669aa3afb5/identify-2.6.6-py2.py3-none-any.whl", hash = "sha256:cbd1810bce79f8b671ecb20f53ee0ae8e86ae84b557de31d89709dc2a48ba881", size = 99083 },
 ]
 
 [[package]]
@@ -1007,15 +1007,15 @@ wheels = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.3.0"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "litestar" },
     { name = "saq" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/42/f6/c8a5dd23b9f31952e691f5ffac15af5bd2722f8690a1664bce66b8f96b00/litestar_saq-0.3.0.tar.gz", hash = "sha256:4a885edc6fc90e2aaad239b566c7e0f09e13ebf42b7ac7fbc75a547e5b36745d", size = 86114 }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/31/edb3935fba108af0ec0d759419c70479864f0e19d471c8db7dac7e751e90/litestar_saq-0.4.0.tar.gz", hash = "sha256:2e49cb2cb6d413f27c1becff1fbe99a35ab986326eba91c1825a3e5cb5abf669", size = 125346 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/5e/df4db72b9427a5e77c2bbbf4c0df204cfd58c795debf9b3d3acd3b443637/litestar_saq-0.3.0-py3-none-any.whl", hash = "sha256:7c58c60203b76b66b482bde98b5686f3541e3c36f1e5dbbc2d9d572b91011dcb", size = 15140 },
+    { url = "https://files.pythonhosted.org/packages/69/b1/fb86430a56c32a6bfcf96cf67280c1dcf318486fb39f972f77369d79ab9f/litestar_saq-0.4.0-py3-none-any.whl", hash = "sha256:38a6aede0c3e55e4fab5c175286e5c4f5237a3f2ef5dfd3bc0ab1f080db65c74", size = 14705 },
 ]
 
 [[package]]
@@ -1732,14 +1732,14 @@ wheels = [
 
 [[package]]
 name = "saq"
-version = "0.19.0"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "croniter" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dd/ef/2268726ff1fa13b13b8add63c58dad797306d30651d02a4e91f6d07ef793/saq-0.19.0.tar.gz", hash = "sha256:b52ed5c58699ddd2153658aaa0fe9bd7304fd3b65e198bdccab9c8af9f3b999d", size = 55340 }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/93/05a8405a6d403a88851f452ba815f7d2399f0acfee879a6a333f4668c2f4/saq-0.20.0.tar.gz", hash = "sha256:ab079d9cf9b067876624e6a1e7c74a75a13713fbdfb80cfa08b0166761b5c276", size = 57068 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/20/5d93886a5dfd5a8e4705b97f41e1d13f9532e736b070eb30b16a518486e9/saq-0.19.0-py3-none-any.whl", hash = "sha256:e6636c4995b102ddec8308ebf839a84a6fbe4b2142485b6e53f16e61bf31f8f5", size = 58732 },
+    { url = "https://files.pythonhosted.org/packages/ad/22/826e0831cf99e77e1661aa2512c3fdec16eef35a1d220f89edad12eff1e3/saq-0.20.0-py3-none-any.whl", hash = "sha256:02edee7d6ea9f20439ecf1ff6f9f6b584c03fcf1779b5524a7458e380b001e79", size = 60134 },
 ]
 
 [[package]]
@@ -2229,11 +2229,11 @@ wheels = [
 
 [[package]]
 name = "tzdata"
-version = "2024.2"
+version = "2025.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e1/34/943888654477a574a86a98e9896bae89c7aa15078ec29f490fef2f1e5384/tzdata-2024.2.tar.gz", hash = "sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc", size = 193282 }
+sdist = { url = "https://files.pythonhosted.org/packages/43/0f/fa4723f22942480be4ca9527bbde8d43f6c3f2fe8412f00e7f5f6746bc8b/tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694", size = 194950 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/ab/7e5f53c3b9d14972843a647d8d7a853969a58aecc7559cb3267302c94774/tzdata-2024.2-py2.py3-none-any.whl", hash = "sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd", size = 346586 },
+    { url = "https://files.pythonhosted.org/packages/0f/dd/84f10e23edd882c6f968c21c2434fe67bd4a528967067515feca9e611e5e/tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639", size = 346762 },
 ]
 
 [[package]]
