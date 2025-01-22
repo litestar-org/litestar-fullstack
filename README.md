@@ -28,7 +28,7 @@ It contains most of the boilerplate required for a production web API with featu
 - Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](<(https://www.structlog.org/en/stable/)](https://github.com/emmett-framework/granian)>)
 - Extends built-in Litestar click CLI
 - Frontend integrated with Vite and includes Jinja2 templates that integrate with Vite websocket/HMR support
-- Multi-stage Docker build using a minimal Python 3.12 runtime image.
+- Multi-stage Docker build using a minimal Python 3.13 runtime image.
   - Optional Multi-stage Distroless Docker build.
 - Pre-configured user model that includes teams and associated team roles
 - Examples of using guards for superuser and team-based auth.

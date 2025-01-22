@@ -41,6 +41,6 @@ async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> 
 
     app.register(db_session_dependency_patched)
     # can't use test client as it always starts its own event loop
-    async with AsyncTestClient(app, base_url="http://testserver") as client:
+    async with AsyncTestClient(app) as client:
         response = await client.get("/db-session-test")
         assert response.json()["result"] == "db_session.bind is engine = True"
