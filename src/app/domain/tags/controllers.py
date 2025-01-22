@@ -52,7 +52,11 @@ class TagController(Controller):
     return_dto = TagDTO
 
     @get(operation_id="ListTags", path=urls.TAG_LIST)
-    async def list_tags(self, tags_service: TagService, filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)]) -> OffsetPagination[m.Tag]:
+    async def list_tags(
+        self,
+        tags_service: TagService,
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> OffsetPagination[m.Tag]:
         """List tags."""
         results, total = await tags_service.list_and_count(*filters)
         return tags_service.to_schema(data=results, total=total, filters=filters)

@@ -243,6 +243,7 @@ lint.ignore = [
   "PT",
   "TD",
   "PERF203", # ignore for now; investigate
+  "COM812",
 ]
 lint.select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
@@ -281,7 +282,7 @@ known-first-party = ['tests', 'app']
 strict-imports = false
 
 [tool.codespell]
-ignore-words-list = "alog"
+ignore-words-list = "alog,selectin,selectinload"
 skip = 'uv.lock, package-lock.json'
 
 [tool.mypy]

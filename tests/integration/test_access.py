@@ -20,12 +20,9 @@ async def test_user_login(client: AsyncClient, username: str, password: str, exp
     assert response.status_code == expected_status_code
 
 
-
 @pytest.mark.parametrize(
     ("username", "password"),
-    (
-        ("superuser@example.com", "Test_Password1!" ),
-    ),
+    (("superuser@example.com", "Test_Password1!"),),
 )
 async def test_user_logout(client: AsyncClient, username: str, password: str) -> None:
     response = await client.post("/api/access/login", data={"username": username, "password": password})

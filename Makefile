@@ -98,7 +98,7 @@ release:                                           ## Bump version and create re
 .PHONY: mypy
 mypy:                                              ## Run mypy
 	@echo "${INFO} Running mypy... 🔍"
-	@uv run dmypy run
+	@uv run dmypy run src/app
 	@echo "${OK} Mypy checks passed ✨"
 
 .PHONY: pyright
