@@ -36,19 +36,13 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
     match_fields = ["email"]
 
     async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        data = schema_dump(data)
-        data = await self._populate_with_hashed_password(data)
-        return await self._populate_with_role(data)
+        return await self._populate_model(data)
 
     async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        data = schema_dump(data)
-        data = await self._populate_with_hashed_password(data)
-        return await self._populate_with_role(data)
+        return await self._populate_model(data)
 
     async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        data = schema_dump(data)
-        data = await self._populate_with_hashed_password(data)
-        return await self._populate_with_role(data)
+        return await self._populate_model(data)
 
     async def authenticate(self, username: str, password: bytes | str) -> m.User:
         """Authenticate a user against the stored hashed password."""
@@ -97,6 +91,11 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
             user.is_superuser
             or any(assigned_role.role.name for assigned_role in user.roles if assigned_role.role.name in {"Superuser"}),
         )
+
+    async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        data = schema_dump(data)
+        data = await self._populate_with_hashed_password(data)
+        return await self._populate_with_role(data)
 
     async def _populate_with_hashed_password(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
         if is_dict(data) and (password := data.pop("password", None)) is not None:
