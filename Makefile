@@ -37,7 +37,7 @@ install-uv:                                         ## Install latest version of
 .PHONY: install
 install: destroy clean                              ## Install the project, dependencies, and pre-commit for local development
 	@echo "${INFO} Starting fresh installation..."
-	@uv python pin 3.12 >/dev/null 2>&1
+	@uv python pin 3.13 >/dev/null 2>&1
 	@uv venv >/dev/null 2>&1
 	@uv sync --all-extras --dev
 	@if ! command -v npm >/dev/null 2>&1; then \
@@ -98,7 +98,7 @@ release:                                           ## Bump version and create re
 .PHONY: mypy
 mypy:                                              ## Run mypy
 	@echo "${INFO} Running mypy... 🔍"
-	@uv run dmypy run
+	@uv run dmypy run src/app
 	@echo "${OK} Mypy checks passed ✨"
 
 .PHONY: pyright

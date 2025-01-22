@@ -11,9 +11,10 @@ from advanced_alchemy.repository import (
 from advanced_alchemy.service import (
     ModelDictT,
     SQLAlchemyAsyncRepositoryService,
+    is_dict,
     is_dict_with_field,
     is_dict_without_field,
-    is_schema_with_field,
+    schema_dump,
 )
 from litestar.exceptions import PermissionDeniedException
 
@@ -33,6 +34,15 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
     repository_type = UserRepository
     default_role = constants.DEFAULT_USER_ROLE
     match_fields = ["email"]
+
+    async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        return await self._populate_model(data)
+
+    async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        return await self._populate_model(data)
+
+    async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        return await self._populate_model(data)
 
     async def authenticate(self, username: str, password: bytes | str) -> m.User:
         """Authenticate a user against the stored hashed password."""
@@ -82,17 +92,21 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
             or any(assigned_role.role.name for assigned_role in user.roles if assigned_role.role.name in {"Superuser"}),
         )
 
-    async def to_model(self, data: ModelDictT[m.User], operation: str | None = None) -> m.User:
-        if is_dict_with_field(data, "password"):
-            password: bytes | str | None = data.pop("password", None)
-            if password is not None:
-                data.update({"hashed_password": await crypt.get_password_hash(password)})
-        if is_dict_with_field(data, "role_id") and operation in {"create", "update", "upsert"}:
-            role_id: UUID | None = data.pop("role_id", None)
-            data = await self.to_model(data, operation)
-            if role_id:
-                data.roles.append(m.UserRole(role_id=role_id, assigned_at=datetime.now(UTC)))
-        return await super().to_model(data, operation)
+    async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        data = schema_dump(data)
+        data = await self._populate_with_hashed_password(data)
+        return await self._populate_with_role(data)
+
+    async def _populate_with_hashed_password(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        if is_dict(data) and (password := data.pop("password", None)) is not None:
+            data["hashed_password"] = await crypt.get_password_hash(password)
+        return data
+
+    async def _populate_with_role(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        if is_dict(data) and (role_id := data.pop("role_id", None)) is not None:
+            data = await self.to_model(data)
+            data.roles.append(m.UserRole(role_id=role_id, assigned_at=datetime.now(UTC)))
+        return data
 
 
 class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
@@ -106,18 +120,15 @@ class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
     repository_type = Repository
     match_fields = ["name"]
 
-    async def to_model(self, data: ModelDictT[m.Role], operation: str | None = None) -> m.Role:
-        data = await self._populate_slug(data, operation)
-        return await super().to_model(data, operation)
-
-    async def _populate_slug(self, data: ModelDictT[m.Role], operation: str | None) -> ModelDictT[m.Role]:
-        if operation == "create" and is_schema_with_field(data, "slug") and data.slug is None:  # type: ignore[union-attr]
-            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[union-attr]
-        if operation == "create" and is_dict_without_field(data, "slug"):
+    async def to_model_on_create(self, data: ModelDictT[m.Role]) -> ModelDictT[m.Role]:
+        data = schema_dump(data)
+        if is_dict_without_field(data, "slug"):
             data["slug"] = await self.repository.get_available_slug(data["name"])
-        if operation == "update" and is_schema_with_field(data, "slug") and data.slug is None:  # type: ignore[union-attr]
-            data.slug = await self.repository.get_available_slug(data.name)  # type: ignore[ union-attr]
-        if operation == "update" and is_dict_without_field(data, "slug") and is_dict_with_field(data, "name"):
+        return data
+
+    async def to_model_on_update(self, data: ModelDictT[m.Role]) -> ModelDictT[m.Role]:
+        data = schema_dump(data)
+        if is_dict_without_field(data, "slug") and is_dict_with_field(data, "name"):
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return data
 
