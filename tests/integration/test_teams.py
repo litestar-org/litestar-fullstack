@@ -87,3 +87,21 @@ async def test_teams_delete(client: "AsyncClient", superuser_token_headers: dict
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
+
+
+async def test_teams_add_remove_member(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
+    response = await client.post(
+        "/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999/members/add",
+        headers=superuser_token_headers,
+        json={"userName": "user@example.com"},
+    )
+    assert response.status_code == 201
+    assert "user@example.com" in [e["email"] for e in response.json()["members"]]
+
+    response = await client.post(
+        "/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999/members/remove",
+        headers=superuser_token_headers,
+        json={"userName": "user@example.com"},
+    )
+    assert response.status_code == 201
+    assert "user@example.com" not in [e["email"] for e in response.json()["members"]]
