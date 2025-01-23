@@ -107,7 +107,9 @@ class TeamService(SQLAlchemyAsyncRepositoryService[m.Team]):
                     data.tags.remove(tag_rm)
                 data.tags.extend(
                     [
-                        await m.Tag.as_unique_async(self.repository.session, name=tag_text, slug=slugify(tag_text))
+                        await m.Tag.as_unique_async(
+                            self.repository.session, name=tag_text.name, slug=slugify(tag_text.name)
+                        )
                         for tag_text in tags_to_add
                     ],
                 )
