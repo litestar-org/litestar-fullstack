@@ -1,8 +1,8 @@
 import { defineConfig, defaultPlugins } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  input: './src/ui/openapi.json',
-  output: './src/ui/lib/api',
+  input: './resources/openapi.json',
+  output: './resources/lib/api',
   client: '@hey-api/client-axios',
    plugins: [
     "@hey-api/typescript",

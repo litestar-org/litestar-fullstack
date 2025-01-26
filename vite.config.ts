@@ -21,16 +21,16 @@ export default defineConfig({
   plugins: [
     react(),
     litestar({
-      input: ["src/ui/main.tsx"],
+      input: ["resources/main.tsx"],
       assetUrl: `${ASSET_URL}`,
-      bundleDirectory: "src/app/domain/web/public",
-      resourceDirectory: "src/ui",
-      hotFile: "src/app/domain/web/public/hot",
+      bundleDirectory: "app/domain/web/public",
+      resourceDirectory: "resources",
+      hotFile: "app/domain/web/public/hot",
     }),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src/ui"),
+      "@": path.resolve(__dirname, "resources"),
     },
   },
 })

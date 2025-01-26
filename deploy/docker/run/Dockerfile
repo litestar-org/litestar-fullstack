@@ -59,11 +59,11 @@ RUN uv venv \
   && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
 
 COPY public ./public/
-COPY src/ui ./src/ui/
+COPY resources ./resources/
 RUN uv run pip install --quiet cython \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
   && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
-COPY src/app ./src/app/
+COPY app ./app/
 
 # build the frontend and sync the project
 RUN uv run tools/manage_assets.py --build-assets \

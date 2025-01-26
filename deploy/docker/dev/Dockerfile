@@ -82,10 +82,10 @@ RUN NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm in
 RUN uv sync ${UV_INSTALL_ARGS} --no-install-project
 
 COPY public ./public/
-COPY src/ui ./src/ui/
+COPY resources ./resources/
 COPY docs/ docs/
 COPY tests/ tests/
-COPY src/app src/app/
+COPY app app/
 RUN uv sync $UV_INSTALL_ARGS
 
 STOPSIGNAL SIGINT

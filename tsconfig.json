@@ -19,7 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "src/ui",
+    "baseUrl": "resources",
     "paths": {
       "@/*": ["./*"]
     },
@@ -27,10 +27,10 @@
   },
   "include": [
     "**/*.d.ts",
-    "src/ui/**/*.tsx",
-    "src/ui/**/*.jsx",
-    "src/ui/**/*.js",
-    "src/ui/**/*.ts",
+    "resources/**/*.tsx",
+    "resources/**/*.jsx",
+    "resources/**/*.js",
+    "resources/**/*.ts",
     "vite.config.ts",
     "vite.config.js"
   ]

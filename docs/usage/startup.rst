@@ -76,11 +76,11 @@ To manually rebuild assets, use the following:
 
     vite v5.2.9 building for production...
     ✓ 222 modules transformed.
-    src/app/domain/web/public/manifest.json                  0.53 kB │ gzip:   0.22 kB
-    src/app/domain/web/public/assets/favicon-DXHXvpft.png    7.69 kB
-    src/app/domain/web/public/assets/main-D9hDRSjL.css      34.22 kB │ gzip:   6.88 kB
-    src/app/domain/web/public/assets/main-gDMW9BNa.js       41.96 kB │ gzip:  10.46 kB
-    src/app/domain/web/public/assets/vendor-DcvSTexI.js    493.83 kB │ gzip: 155.51 kB
+    app/domain/web/public/manifest.json                  0.53 kB │ gzip:   0.22 kB
+    app/domain/web/public/assets/favicon-DXHXvpft.png    7.69 kB
+    app/domain/web/public/assets/main-D9hDRSjL.css      34.22 kB │ gzip:   6.88 kB
+    app/domain/web/public/assets/main-gDMW9BNa.js       41.96 kB │ gzip:  10.46 kB
+    app/domain/web/public/assets/vendor-DcvSTexI.js    493.83 kB │ gzip: 155.51 kB
     ✓ built in 2.91s
     Assets built.
 
@@ -103,7 +103,7 @@ To manually rebuild assets, use the following:
       │ Template engine              │ ViteTemplateEngine                                   │
       │ Middlewares                  │ JWTCookieAuthenticationMiddleware, LoggingMiddleware │
       └──────────────────────────────┴──────────────────────────────────────────────────────┘
-      Serving assets using manifest at `/home/cody/Code/Litestar/litestar-fullstack/src/app/domain/web/public/manifest.json`. ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+      Serving assets using manifest at `/home/cody/Code/Litestar/litestar-fullstack/app/domain/web/public/manifest.json`. ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
       Starting SAQ Workers ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
       [INFO] Starting granian (main PID: 47755)
       [INFO] Listening at: http://0.0.0.0:8089

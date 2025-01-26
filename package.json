@@ -6,7 +6,7 @@
     "lint": "biome check --apply-unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "watch": "vite build --watch",
     "generate-client": "openapi-ts",
-    "export-openapi": "uv run app schema openapi --output src/ui/openapi.json"
+    "export-openapi": "uv run app schema openapi --output resources/openapi.json"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

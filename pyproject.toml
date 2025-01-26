@@ -196,7 +196,7 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
-  "src/app/db/migrations/versions/*.py",
+  "app/db/migrations/versions/*.py",
 
 ]
 fix = true
@@ -272,9 +272,9 @@ known-first-party = ['tests', 'app']
 [tool.ruff.lint.per-file-ignores]
 "*/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "__init__.py" = ['F401', 'D104']
+"app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "docs/**/*.*" = ["S", "B", "DTZ", "A", "TC", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
-"src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "tests/*.py" = ['D103', 'S101', 'D104']
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
@@ -284,7 +284,7 @@ strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog,selectin,selectinload"
-skip = 'uv.lock, package-lock.json, src/ui/lib/api/zod.gen.ts'
+skip = 'uv.lock, package-lock.json, resources/lib/api/zod.gen.ts'
 
 [tool.mypy]
 disallow_any_generics = false
@@ -338,4 +338,4 @@ module = ["app.db.migrations.*", "app.lib.dto.*"]
 
 [tool.pyright]
 exclude = ["scripts", "docs"]
-include = ["src/app", "tests"]
+include = ["app", "tests"]
