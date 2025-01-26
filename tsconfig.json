@@ -19,7 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "resources",
+    "baseUrl": "src/ui",
     "paths": {
       "@/*": ["./*"]
     },

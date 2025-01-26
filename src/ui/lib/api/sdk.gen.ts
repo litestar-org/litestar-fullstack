@@ -26,7 +26,7 @@ export class SystemService {
             ...options
         });
     }
-    
+
 }
 
 export class AccessService {
@@ -55,7 +55,7 @@ export class AccessService {
             }
         });
     }
-    
+
     /**
      * Logout
      * Account Logout
@@ -76,7 +76,7 @@ export class AccessService {
             ...options
         });
     }
-    
+
     /**
      * Profile
      * User Profile.
@@ -97,7 +97,7 @@ export class AccessService {
             ...options
         });
     }
-    
+
     /**
      * Signup
      * User Signup.
@@ -122,7 +122,7 @@ export class AccessService {
             }
         });
     }
-    
+
 }
 
 export class UserAccountsService {
@@ -146,7 +146,7 @@ export class UserAccountsService {
             ...options
         });
     }
-    
+
     /**
      * CreateUser
      * Create a new user.
@@ -171,7 +171,7 @@ export class UserAccountsService {
             }
         });
     }
-    
+
     /**
      * DeleteUser
      * Delete a user from the system.
@@ -192,7 +192,7 @@ export class UserAccountsService {
             ...options
         });
     }
-    
+
     /**
      * GetUser
      * Get a user.
@@ -213,7 +213,7 @@ export class UserAccountsService {
             ...options
         });
     }
-    
+
     /**
      * UpdateUser
      * Create a new user.
@@ -238,7 +238,7 @@ export class UserAccountsService {
             }
         });
     }
-    
+
 }
 
 export class TeamsService {
@@ -262,7 +262,7 @@ export class TeamsService {
             ...options
         });
     }
-    
+
     /**
      * CreateTeam
      * Create a new team.
@@ -287,7 +287,7 @@ export class TeamsService {
             }
         });
     }
-    
+
     /**
      * DeleteTeam
      * Delete a team.
@@ -308,7 +308,7 @@ export class TeamsService {
             ...options
         });
     }
-    
+
     /**
      * GetTeam
      * Get details about a team.
@@ -329,7 +329,7 @@ export class TeamsService {
             ...options
         });
     }
-    
+
     /**
      * UpdateTeam
      * Update a migration team.
@@ -354,7 +354,7 @@ export class TeamsService {
             }
         });
     }
-    
+
 }
 
 export class UserAccountRolesService {
@@ -382,7 +382,7 @@ export class UserAccountRolesService {
             }
         });
     }
-    
+
     /**
      * RevokeRole
      * Delete a role from the system.
@@ -407,7 +407,7 @@ export class UserAccountRolesService {
             }
         });
     }
-    
+
 }
 
 export class TeamMembersService {
@@ -435,7 +435,7 @@ export class TeamMembersService {
             }
         });
     }
-    
+
     /**
      * RemoveMemberFromTeam
      * Revoke a members access to a team.
@@ -460,7 +460,7 @@ export class TeamMembersService {
             }
         });
     }
-    
+
 }
 
 export class TagsService {
@@ -484,7 +484,7 @@ export class TagsService {
             ...options
         });
     }
-    
+
     /**
      * CreateTag
      * Create a new tag.
@@ -509,7 +509,7 @@ export class TagsService {
             }
         });
     }
-    
+
     /**
      * DeleteTag
      * Delete a tag.
@@ -530,7 +530,7 @@ export class TagsService {
             ...options
         });
     }
-    
+
     /**
      * GetTag
      * Get a tag.
@@ -551,7 +551,7 @@ export class TagsService {
             ...options
         });
     }
-    
+
     /**
      * UpdateTag
      * Update a tag.
@@ -576,5 +576,5 @@ export class TagsService {
             }
         });
     }
-    
+
 }

@@ -24,13 +24,13 @@ export default defineConfig({
       input: ["src/ui/main.tsx"],
       assetUrl: `${ASSET_URL}`,
       bundleDirectory: "src/app/domain/web/public",
-      resourceDirectory: "resources",
+      resourceDirectory: "src/ui",
       hotFile: "src/app/domain/web/public/hot",
     }),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "resources"),
+      "@": path.resolve(__dirname, "src/ui"),
     },
   },
 })
