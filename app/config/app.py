@@ -28,7 +28,7 @@ from litestar.template import TemplateConfig
 from litestar_saq import CronJob, QueueConfig, SAQConfig
 from litestar_vite import ViteConfig
 
-from .base import get_settings
+from app.config.base import get_settings
 
 settings = get_settings()
 
@@ -67,13 +67,13 @@ github_oauth = GitHubOAuth2(
 )
 
 saq = SAQConfig(
-    dsn=settings.redis.URL,
     web_enabled=settings.saq.WEB_ENABLED,
     worker_processes=settings.saq.PROCESSES,
     use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
     web_include_in_schema=False,
     queue_configs=[
         QueueConfig(
+            dsn=settings.redis.URL,
             name="system-tasks",
             tasks=["app.domain.system.tasks.system_task", "app.domain.system.tasks.system_upkeep"],
             scheduled_tasks=[
@@ -86,6 +86,7 @@ saq = SAQConfig(
             ],
         ),
         QueueConfig(
+            dsn=settings.redis.URL,
             name="background-tasks",
             tasks=["app.domain.system.tasks.background_worker_task"],
             scheduled_tasks=[

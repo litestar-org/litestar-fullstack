@@ -17,10 +17,10 @@ classifiers = [
 dependencies = [
   "litestar[jinja,jwt,redis,structlog]",
   "advanced-alchemy[uuid]",
-  "asyncpg",
+  "psycopg[pool,binary]",
   "python-dotenv",
   "passlib[argon2]",
-  "litestar-saq",
+  "litestar-saq @ git+https://github.com/cofin/litestar-saq.git@ui-fix",
   "litestar-vite",
   "litestar-granian",
   "aiosqlite",
@@ -66,7 +66,6 @@ linting = [
   "types-passlib",
   "types-pyyaml",
   "types-redis",
-  "asyncpg-stubs",
   "pyright",
 ]
 test = [
