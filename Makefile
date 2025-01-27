@@ -73,7 +73,6 @@ clean:                                              ## Cleanup temporary build a
 .PHONY: destroy
 destroy:                                            ## Destroy the virtual environment
 	@echo "${INFO} Destroying virtual environment... 🗑️"
-	@uv run pre-commit clean >/dev/null 2>&1
 	@rm -rf .venv
 	@echo "${OK} Virtual environment destroyed 🗑️"
 
