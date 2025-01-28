@@ -28,14 +28,7 @@ from advanced_alchemy.filters import (
     OrderBy,
     SearchFilter,
 )
-from advanced_alchemy.service import (
-    Empty,
-    EmptyType,
-    ErrorMessages,
-    LoadSpec,
-    ModelT,
-    SQLAlchemyAsyncRepositoryService,
-)
+from advanced_alchemy.service import Empty, EmptyType, ErrorMessages, LoadSpec, ModelT, SQLAlchemyAsyncRepositoryService
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
@@ -143,12 +136,12 @@ class DependencyCache(metaclass=SingletonMeta):
     """Simple dependency cache for the application.  This is used to help memoize dependencies that are generated dynamically."""
 
     def __init__(self) -> None:
-        self.dependencies: dict[str, dict[str, Provide]] = {}
+        self.dependencies: dict[int | str, dict[str, Provide]] = {}
 
-    def add_dependencies(self, key: str, dependencies: dict[str, Provide]) -> None:
+    def add_dependencies(self, key: str | int, dependencies: dict[str, Provide]) -> None:
         self.dependencies[key] = dependencies
 
-    def get_dependencies(self, key: str) -> dict[str, Provide] | None:
+    def get_dependencies(self, key: str | int) -> dict[str, Provide] | None:
         return self.dependencies.get(key)
 
 
@@ -224,11 +217,12 @@ def create_filter_dependencies(config: FilterConfig) -> dict[str, Provide]:
     Returns:
         A dependency provider function for the combined filter function.
     """
-    cache_key = str(config)
+    cache_key = sum(map(hash, config.items()))
     deps = dep_cache.get_dependencies(cache_key)
-    if deps is None:
-        deps = _create_statement_filters(config)
-        dep_cache.add_dependencies(cache_key, deps)
+    if deps is not None:
+        return deps
+    deps = _create_statement_filters(config)
+    dep_cache.add_dependencies(cache_key, deps)
     return deps
 
 

@@ -23,9 +23,9 @@ export default defineConfig({
     litestar({
       input: ["resources/main.tsx"],
       assetUrl: `${ASSET_URL}`,
-      bundleDirectory: "src/app/domain/web/public",
+      bundleDirectory: "app/domain/web/public",
       resourceDirectory: "resources",
-      hotFile: "src/app/domain/web/public/hot",
+      hotFile: "app/domain/web/public/hot",
     }),
   ],
   resolve: {

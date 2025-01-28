@@ -62,7 +62,7 @@ COPY public ./public/
 COPY resources ./resources/
 RUN uv sync ${UV_INSTALL_ARGS} --no-self  \
     && uv export ${UV_INSTALL_ARGS} --no-hashes --no-dev --output-file=requirements.txt
-COPY src ./src/
+COPY app ./app/
 
 RUN make build
 VOLUME /workspace/app

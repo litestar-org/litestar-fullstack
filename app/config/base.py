@@ -189,11 +189,6 @@ class ViteSettings:
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
     """Base URL for assets"""
 
-    @property
-    def set_static_files(self) -> bool:
-        """Serve static assets."""
-        return self.ASSET_URL.startswith("/")
-
 
 @dataclass
 class ServerSettings:

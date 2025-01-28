@@ -85,7 +85,7 @@ COPY public ./public/
 COPY resources ./resources/
 COPY docs/ docs/
 COPY tests/ tests/
-COPY src src/
+COPY app app/
 RUN uv sync $UV_INSTALL_ARGS
 
 STOPSIGNAL SIGINT

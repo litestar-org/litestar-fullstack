@@ -63,7 +63,7 @@ COPY resources ./resources/
 RUN uv run pip install --quiet cython \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
   && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
-COPY src ./src/
+COPY app ./app/
 
 # build the frontend and sync the project
 RUN uv run tools/manage_assets.py --build-assets \

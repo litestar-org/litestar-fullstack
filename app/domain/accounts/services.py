@@ -4,44 +4,33 @@ from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID  # noqa: TC003
 
-from advanced_alchemy.repository import (
-    SQLAlchemyAsyncRepository,
-    SQLAlchemyAsyncSlugRepository,
-)
-from advanced_alchemy.service import (
-    ModelDictT,
-    SQLAlchemyAsyncRepositoryService,
-    is_dict,
-    is_dict_with_field,
-    is_dict_without_field,
-    schema_dump,
-)
 from litestar.exceptions import PermissionDeniedException
+from litestar.plugins.sqlalchemy import repository, service
 
 from app.config import constants
 from app.db import models as m
 from app.lib import crypt
 
 
-class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
+class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Handles database operations for users."""
 
-    class UserRepository(SQLAlchemyAsyncRepository[m.User]):
+    class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
         """User SQLAlchemy Repository."""
 
         model_type = m.User
 
-    repository_type = UserRepository
+    repository_type = Repo
     default_role = constants.DEFAULT_USER_ROLE
     match_fields = ["email"]
 
-    async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+    async def to_model_on_create(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         return await self._populate_model(data)
 
-    async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+    async def to_model_on_update(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         return await self._populate_model(data)
 
-    async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+    async def to_model_on_upsert(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         return await self._populate_model(data)
 
     async def authenticate(self, username: str, password: bytes | str) -> m.User:
@@ -92,64 +81,70 @@ class UserService(SQLAlchemyAsyncRepositoryService[m.User]):
             or any(assigned_role.role.name for assigned_role in user.roles if assigned_role.role.name in {"Superuser"}),
         )
 
-    async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        data = schema_dump(data)
+    async def _populate_model(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+        data = service.schema_dump(data)
         data = await self._populate_with_hashed_password(data)
         return await self._populate_with_role(data)
 
-    async def _populate_with_hashed_password(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        if is_dict(data) and (password := data.pop("password", None)) is not None:
+    async def _populate_with_hashed_password(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+        if service.is_dict(data) and (password := data.pop("password", None)) is not None:
             data["hashed_password"] = await crypt.get_password_hash(password)
         return data
 
-    async def _populate_with_role(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        if is_dict(data) and (role_id := data.pop("role_id", None)) is not None:
+    async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+        if service.is_dict(data) and (role_id := data.pop("role_id", None)) is not None:
             data = await self.to_model(data)
             data.roles.append(m.UserRole(role_id=role_id, assigned_at=datetime.now(UTC)))
         return data
 
 
-class RoleService(SQLAlchemyAsyncRepositoryService[m.Role]):
+class RoleService(service.SQLAlchemyAsyncRepositoryService[m.Role]):
     """Handles database operations for users."""
 
-    class Repository(SQLAlchemyAsyncSlugRepository[m.Role]):
+    class Repo(repository.SQLAlchemyAsyncSlugRepository[m.Role]):
         """User SQLAlchemy Repository."""
 
         model_type = m.Role
 
-    repository_type = Repository
+    repository_type = Repo
     match_fields = ["name"]
 
-    async def to_model_on_create(self, data: ModelDictT[m.Role]) -> ModelDictT[m.Role]:
-        data = schema_dump(data)
-        if is_dict_without_field(data, "slug"):
+    async def to_model_on_create(self, data: service.ModelDictT[m.Role]) -> service.ModelDictT[m.Role]:
+        data = service.schema_dump(data)
+        if service.is_dict_without_field(data, "slug"):
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return data
 
-    async def to_model_on_update(self, data: ModelDictT[m.Role]) -> ModelDictT[m.Role]:
-        data = schema_dump(data)
-        if is_dict_without_field(data, "slug") and is_dict_with_field(data, "name"):
+    async def to_model_on_update(self, data: service.ModelDictT[m.Role]) -> service.ModelDictT[m.Role]:
+        data = service.schema_dump(data)
+        if service.is_dict_without_field(data, "slug") and service.is_dict_with_field(data, "name"):
             data["slug"] = await self.repository.get_available_slug(data["name"])
         return data
 
+    async def to_model_on_upsert(self, data: service.ModelDictT[m.Role]) -> service.ModelDictT[m.Role]:
+        data = service.schema_dump(data)
+        if service.is_dict_without_field(data, "slug") and (role_name := data.get("name")) is not None:
+            data["slug"] = await self.repository.get_available_slug(role_name)
+        return data
 
-class UserRoleService(SQLAlchemyAsyncRepositoryService[m.UserRole]):
+
+class UserRoleService(service.SQLAlchemyAsyncRepositoryService[m.UserRole]):
     """Handles database operations for user roles."""
 
-    class Repository(SQLAlchemyAsyncRepository[m.UserRole]):
+    class Repo(repository.SQLAlchemyAsyncRepository[m.UserRole]):
         """User Role SQLAlchemy Repository."""
 
         model_type = m.UserRole
 
-    repository_type = Repository
+    repository_type = Repo
 
 
-class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOauthAccount]):
+class UserOAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOauthAccount]):
     """Handles database operations for user roles."""
 
-    class Repository(SQLAlchemyAsyncRepository[m.UserOauthAccount]):
+    class Repo(repository.SQLAlchemyAsyncRepository[m.UserOauthAccount]):
         """User SQLAlchemy Repository."""
 
         model_type = m.UserOauthAccount
 
-    repository_type = Repository
+    repository_type = Repo
