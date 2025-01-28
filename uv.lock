@@ -197,7 +197,7 @@ requires-dist = [
     { name = "httpx-oauth", specifier = ">=0.16.1" },
     { name = "litestar", extras = ["jinja", "jwt", "redis", "structlog"] },
     { name = "litestar-granian" },
-    { name = "litestar-saq", git = "https://github.com/cofin/litestar-saq.git?rev=ui-fix" },
+    { name = "litestar-saq" },
     { name = "litestar-vite" },
     { name = "passlib", extras = ["argon2"] },
     { name = "psycopg", extras = ["pool", "binary"] },
@@ -1064,11 +1064,15 @@ wheels = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.4.0"
-source = { git = "https://github.com/cofin/litestar-saq.git?rev=ui-fix#0ebe6d2dfcaff8e21ed00b63c0fcdbd44be764db" }
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "litestar" },
     { name = "saq" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e4/10/01ab05ac1540c06a7df59a72cb12627d6a05a91925108ed5a10ffb560c49/litestar_saq-0.5.0.tar.gz", hash = "sha256:ec1d245d71a5f434235c19442af580ef4afa88cdc52551135379949cdfa21d74", size = 126191 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/19/1a1065bdb9fc8bbb132e33ff7f1ec91532369ad2a69a2e90218d9b9d3b49/litestar_saq-0.5.0-py3-none-any.whl", hash = "sha256:40f4b6e9fe34c41f1c7f799d74746be9c0a48d835cdd068cf7bcbc9dde104662", size = 15315 },
 ]
 
 [[package]]
@@ -1936,14 +1940,14 @@ wheels = [
 
 [[package]]
 name = "saq"
-version = "0.20.0"
+version = "0.20.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "croniter" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/93/05a8405a6d403a88851f452ba815f7d2399f0acfee879a6a333f4668c2f4/saq-0.20.0.tar.gz", hash = "sha256:ab079d9cf9b067876624e6a1e7c74a75a13713fbdfb80cfa08b0166761b5c276", size = 57068 }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/1e/6c2b8c5777671cba4a3a76ad484a699c609068dfca7a9eca647c23067d92/saq-0.20.1.tar.gz", hash = "sha256:35a1f72d7e2124d3f9337bb28e09204473eb52c890f8a2122ed3c8a4fb251ea6", size = 57123 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/22/826e0831cf99e77e1661aa2512c3fdec16eef35a1d220f89edad12eff1e3/saq-0.20.0-py3-none-any.whl", hash = "sha256:02edee7d6ea9f20439ecf1ff6f9f6b584c03fcf1779b5524a7458e380b001e79", size = 60134 },
+    { url = "https://files.pythonhosted.org/packages/a5/d2/e8a58d5d9bfb643a57e00d450f0a9c1a0b3398d308c393b953b5459c8a2a/saq-0.20.1-py3-none-any.whl", hash = "sha256:69cbc99ce19f7b84e6c57e8226cf985455c9797ba3fbca6e5a60d9b6010fa33b", size = 60143 },
 ]
 
 [[package]]

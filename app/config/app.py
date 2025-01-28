@@ -73,7 +73,7 @@ saq = SAQConfig(
     web_include_in_schema=False,
     queue_configs=[
         QueueConfig(
-            dsn=settings.redis.URL,
+            dsn=settings.db.URL.replace("postgresql+psycopg", "postgresql"),
             name="system-tasks",
             tasks=["app.domain.system.tasks.system_task", "app.domain.system.tasks.system_upkeep"],
             scheduled_tasks=[
@@ -86,7 +86,7 @@ saq = SAQConfig(
             ],
         ),
         QueueConfig(
-            dsn=settings.redis.URL,
+            dsn=settings.db.URL.replace("postgresql+psycopg", "postgresql"),
             name="background-tasks",
             tasks=["app.domain.system.tasks.background_worker_task"],
             scheduled_tasks=[

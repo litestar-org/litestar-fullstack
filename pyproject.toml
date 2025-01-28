@@ -20,7 +20,7 @@ dependencies = [
   "psycopg[pool,binary]",
   "python-dotenv",
   "passlib[argon2]",
-  "litestar-saq @ git+https://github.com/cofin/litestar-saq.git@ui-fix",
+  "litestar-saq",
   "litestar-vite",
   "litestar-granian",
   "aiosqlite",
