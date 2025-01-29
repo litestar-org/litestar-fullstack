@@ -104,7 +104,7 @@ RUN addgroup --system --gid 65532 nonroot \
   && chown -R nonroot:nonroot /workspace
 COPY --from=builder --chown=65532:65532 /cloudsql /cloudsql
 COPY --from=builder --chown=65532:65532 /workspace/app/dist /tmp/
-COPY --from=builder --chown=65532:65532 /workspace/app/requirements.txt /tmp/
+COPY --from=builder --chown=65532:65532 --chmod=755 /workspace/app/requirements.txt /tmp/
 WORKDIR /workspace/app
 RUN uv pip ${UV_INSTALL_ARGS} install --quiet --disable-pip-version-check /tmp/*.whl --no-deps \
   && uv pip ${UV_INSTALL_ARGS} install -r /tmp/requirements.txt \
