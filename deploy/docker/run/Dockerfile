@@ -62,7 +62,8 @@ COPY public ./public/
 COPY resources ./resources/
 RUN uv run pip install --quiet cython \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
-  && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
+  && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt \
+  --no-emit-workspace --no-group dev --no-group test --no-group linting --no-group docs
 COPY src ./src/
 
 # build the frontend and sync the project
@@ -103,8 +104,10 @@ RUN addgroup --system --gid 65532 nonroot \
   && chown -R nonroot:nonroot /workspace
 COPY --from=builder --chown=65532:65532 /cloudsql /cloudsql
 COPY --from=builder --chown=65532:65532 /workspace/app/dist /tmp/
+COPY --from=builder --chown=65532:65532 /workspace/app/requirements.txt /tmp/
 WORKDIR /workspace/app
-RUN uv pip ${UV_INSTALL_ARGS} install --quiet --disable-pip-version-check /tmp/*.whl \
+RUN uv pip ${UV_INSTALL_ARGS} install --quiet --disable-pip-version-check /tmp/*.whl --no-deps \
+  && uv pip ${UV_INSTALL_ARGS} install -r /tmp/requirements.txt \
   && rm -Rf /tmp/* \
   && chown -R nonroot:nonroot /workspace/app
 USER nonroot
