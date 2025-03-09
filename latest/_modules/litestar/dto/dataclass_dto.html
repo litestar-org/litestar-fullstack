@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
@@ -83,23 +83,13 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/deps.html">deps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/controllers/index.html">accounts</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/accounts/controllers/access.html">access</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/accounts/controllers/accounts.html">accounts</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/accounts/controllers/users.html">controllers</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/domain/teams/index.html">teams</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/controllers/index.html">teams</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/teams/controllers/team_invitation.html">team invitation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/teams/controllers/team_member.html">team member</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../api/domain/teams/controllers/teams.html">teams</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/domain/tags/index.html">tags</a><ul>
@@ -176,7 +166,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="5">
 </span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.base_dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDTO</span>
 </span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.data_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_dto_field</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOField</span><span class="p">,</span> <span class="n">extract_dto_field</span>
 </span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyKwarg</span><span class="p">,</span> <span class="n">KwargDefinition</span>
 </span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types.empty</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span>
 </span><span data-line="11">
@@ -205,35 +195,48 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="30">        <span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">DataclassProtocol</span><span class="p">]</span>
 </span><span data-line="31">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">DTOFieldDefinition</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 </span><span data-line="32">        <span class="n">dc_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">model_type</span><span class="p">)}</span>
-</span><span data-line="33">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">field_definition</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_type_hints</span><span class="p">(</span><span class="n">model_type</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="34">            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dc_field</span> <span class="o">:=</span> <span class="n">dc_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)):</span>
-</span><span data-line="35">                <span class="k">continue</span>
-</span><span data-line="36">
-</span><span data-line="37">            <span class="n">default</span> <span class="o">=</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default</span> <span class="k">if</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span> <span class="k">else</span> <span class="n">Empty</span>
-</span><span data-line="38">            <span class="n">default_factory</span> <span class="o">=</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default_factory</span> <span class="k">if</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span data-line="39">            <span class="n">field_defintion</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span>
-</span><span data-line="40">                <span class="n">DTOFieldDefinition</span><span class="o">.</span><span class="n">from_field_definition</span><span class="p">(</span>
-</span><span data-line="41">                    <span class="n">field_definition</span><span class="o">=</span><span class="n">field_definition</span><span class="p">,</span>
-</span><span data-line="42">                    <span class="n">default_factory</span><span class="o">=</span><span class="n">default_factory</span><span class="p">,</span>
-</span><span data-line="43">                    <span class="n">dto_field</span><span class="o">=</span><span class="n">extract_dto_field</span><span class="p">(</span><span class="n">field_definition</span><span class="p">,</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
-</span><span data-line="44">                    <span class="n">model_name</span><span class="o">=</span><span class="n">model_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-</span><span data-line="45">                <span class="p">),</span>
-</span><span data-line="46">                <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
-</span><span data-line="47">                <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
-</span><span data-line="48">            <span class="p">)</span>
-</span><span data-line="49">
-</span><span data-line="50">            <span class="k">yield</span> <span class="p">(</span>
-</span><span data-line="51">                <span class="n">replace</span><span class="p">(</span><span class="n">field_defintion</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Empty</span><span class="p">,</span> <span class="n">kwarg_definition</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
-</span><span data-line="52">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="n">KwargDefinition</span><span class="p">,</span> <span class="n">DependencyKwarg</span><span class="p">))</span>
-</span><span data-line="53">                <span class="k">else</span> <span class="n">field_defintion</span>
-</span><span data-line="54">            <span class="p">)</span></div>
+</span><span data-line="33">        <span class="n">properties</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_property_fields</span><span class="p">(</span><span class="n">model_type</span><span class="p">)</span>
+</span><span data-line="34">
+</span><span data-line="35">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">field_definition</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_type_hints</span><span class="p">(</span><span class="n">model_type</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="36">            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dc_field</span> <span class="o">:=</span> <span class="n">dc_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)):</span>
+</span><span data-line="37">                <span class="k">continue</span>
+</span><span data-line="38">
+</span><span data-line="39">            <span class="n">default</span> <span class="o">=</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default</span> <span class="k">if</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span> <span class="k">else</span> <span class="n">Empty</span>
+</span><span data-line="40">            <span class="n">default_factory</span> <span class="o">=</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default_factory</span> <span class="k">if</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="41">            <span class="n">field_defintion</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span>
+</span><span data-line="42">                <span class="n">DTOFieldDefinition</span><span class="o">.</span><span class="n">from_field_definition</span><span class="p">(</span>
+</span><span data-line="43">                    <span class="n">field_definition</span><span class="o">=</span><span class="n">field_definition</span><span class="p">,</span>
+</span><span data-line="44">                    <span class="n">default_factory</span><span class="o">=</span><span class="n">default_factory</span><span class="p">,</span>
+</span><span data-line="45">                    <span class="n">dto_field</span><span class="o">=</span><span class="n">extract_dto_field</span><span class="p">(</span><span class="n">field_definition</span><span class="p">,</span> <span class="n">dc_field</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
+</span><span data-line="46">                    <span class="n">model_name</span><span class="o">=</span><span class="n">model_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span data-line="47">                <span class="p">),</span>
+</span><span data-line="48">                <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+</span><span data-line="49">                <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+</span><span data-line="50">            <span class="p">)</span>
+</span><span data-line="51">
+</span><span data-line="52">            <span class="k">yield</span> <span class="p">(</span>
+</span><span data-line="53">                <span class="n">replace</span><span class="p">(</span><span class="n">field_defintion</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Empty</span><span class="p">,</span> <span class="n">kwarg_definition</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+</span><span data-line="54">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="n">KwargDefinition</span><span class="p">,</span> <span class="n">DependencyKwarg</span><span class="p">))</span>
+</span><span data-line="55">                <span class="k">else</span> <span class="n">field_defintion</span>
+</span><span data-line="56">            <span class="p">)</span>
+</span><span data-line="57">
+</span><span data-line="58">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">property_field</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="59">            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+</span><span data-line="60">                <span class="k">continue</span>
+</span><span data-line="61">
+</span><span data-line="62">            <span class="k">yield</span> <span class="n">DTOFieldDefinition</span><span class="o">.</span><span class="n">from_field_definition</span><span class="p">(</span>
+</span><span data-line="63">                <span class="n">property_field</span><span class="p">,</span>
+</span><span data-line="64">                <span class="n">model_name</span><span class="o">=</span><span class="n">model_type</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span data-line="65">                <span class="n">default_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="66">                <span class="n">dto_field</span><span class="o">=</span><span class="n">DTOField</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="s2">&quot;read-only&quot;</span><span class="p">),</span>
+</span><span data-line="67">            <span class="p">)</span></div>
 
-</span><span data-line="55">
+</span><span data-line="68">
 <div class="viewcode-block" id="DataclassDTO.detect_nested_field">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.DataclassDTO.detect_nested_field">[docs]</a>
-</span><span data-line="56">    <span class="nd">@classmethod</span>
-</span><span data-line="57">    <span class="k">def</span><span class="w"> </span><span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="58">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_definition</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">&quot;__dataclass_fields__&quot;</span><span class="p">)</span></div>
+</span><span data-line="69">    <span class="nd">@classmethod</span>
+</span><span data-line="70">    <span class="k">def</span><span class="w"> </span><span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="71">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_definition</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">&quot;__dataclass_fields__&quot;</span><span class="p">)</span></div>
 </div>
 
 </span></pre></div>
@@ -269,7 +272,7 @@ data-aria-dark="Switch to auto color mode">
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=55e26b35"></script>
+      <script src="../../../_static/shibuya.js?v=e2230717"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
       <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>

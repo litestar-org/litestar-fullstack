@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
@@ -83,23 +83,13 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../deps.html">deps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../services.html">services</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="index.html">accounts</a><ul class="current">
-<li class="toctree-l5"><a class="reference internal" href="access.html">access</a></li>
-<li class="toctree-l5 current"><a class="current reference internal" href="#">accounts</a></li>
-<li class="toctree-l5"><a class="reference internal" href="users.html">controllers</a></li>
-</ul>
-</li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">accounts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../teams/index.html">teams</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../teams/controllers/index.html">teams</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../teams/controllers/team_invitation.html">team invitation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../teams/controllers/team_member.html">team member</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../teams/controllers/teams.html">teams</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../../teams/controllers/index.html">teams</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../tags/index.html">tags</a><ul>
@@ -138,12 +128,11 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController"><code class="docutils literal notranslate"><span class="pre">AccessController</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.cache_control"><code class="docutils literal notranslate">cache_control</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.dto"><code class="docutils literal notranslate">dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.etag"><code class="docutils literal notranslate">etag</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.exception_handlers"><code class="docutils literal notranslate">exception_handlers</span></code></a></li>
@@ -163,14 +152,13 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.security"><code class="docutils literal notranslate">security</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.signature_namespace"><code class="docutils literal notranslate">signature_namespace</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.signature_types"><code class="docutils literal notranslate">signature_types</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.type_decoders"><code class="docutils literal notranslate">type_decoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.type_encoders"><code class="docutils literal notranslate">type_encoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.AccessController.websocket_class"><code class="docutils literal notranslate">websocket_class</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController"><code class="docutils literal notranslate"><span class="pre">RoleController</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
@@ -179,6 +167,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.dto"><code class="docutils literal notranslate">dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.etag"><code class="docutils literal notranslate">etag</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.exception_handlers"><code class="docutils literal notranslate">exception_handlers</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.include_in_schema"><code class="docutils literal notranslate">include_in_schema</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.middleware"><code class="docutils literal notranslate">middleware</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.opt"><code class="docutils literal notranslate">opt</span></code></a></li>
@@ -194,22 +183,22 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.security"><code class="docutils literal notranslate">security</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.signature_namespace"><code class="docutils literal notranslate">signature_namespace</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.signature_types"><code class="docutils literal notranslate">signature_types</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.type_decoders"><code class="docutils literal notranslate">type_decoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.type_encoders"><code class="docutils literal notranslate">type_encoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.RoleController.websocket_class"><code class="docutils literal notranslate">websocket_class</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController"><code class="docutils literal notranslate"><span class="pre">UserController</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.cache_control"><code class="docutils literal notranslate">cache_control</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.dto"><code class="docutils literal notranslate">dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.etag"><code class="docutils literal notranslate">etag</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.exception_handlers"><code class="docutils literal notranslate">exception_handlers</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.include_in_schema"><code class="docutils literal notranslate">include_in_schema</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.middleware"><code class="docutils literal notranslate">middleware</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.opt"><code class="docutils literal notranslate">opt</span></code></a></li>
@@ -225,22 +214,22 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.security"><code class="docutils literal notranslate">security</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.signature_namespace"><code class="docutils literal notranslate">signature_namespace</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.signature_types"><code class="docutils literal notranslate">signature_types</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.type_decoders"><code class="docutils literal notranslate">type_decoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.type_encoders"><code class="docutils literal notranslate">type_encoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserController.websocket_class"><code class="docutils literal notranslate">websocket_class</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController"><code class="docutils literal notranslate"><span class="pre">UserRoleController</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.cache_control"><code class="docutils literal notranslate">cache_control</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.dto"><code class="docutils literal notranslate">dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.etag"><code class="docutils literal notranslate">etag</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.exception_handlers"><code class="docutils literal notranslate">exception_handlers</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.include_in_schema"><code class="docutils literal notranslate">include_in_schema</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.middleware"><code class="docutils literal notranslate">middleware</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.opt"><code class="docutils literal notranslate">opt</span></code></a></li>
@@ -256,6 +245,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.security"><code class="docutils literal notranslate">security</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.signature_namespace"><code class="docutils literal notranslate">signature_namespace</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.signature_types"><code class="docutils literal notranslate">signature_types</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.type_decoders"><code class="docutils literal notranslate">type_decoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.type_encoders"><code class="docutils literal notranslate">type_encoders</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.accounts.controllers.UserRoleController.websocket_class"><code class="docutils literal notranslate">websocket_class</span></code></a></li>
@@ -311,7 +301,7 @@ data-aria-dark="Switch to auto color mode">
 <p>Controllers for the accounts routes for the accounts domain.</p>
 <dl class="py class" id="module-app.domain.accounts.controllers">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">AccessController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/access.html#AccessController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.AccessController" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">AccessController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/access.html#AccessController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.AccessController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>User login and registration.</p>
 <p>Initialize a controller.</p>
@@ -321,18 +311,6 @@ data-aria-dark="Switch to auto color mode">
 <dd class="field-odd"><p><strong>owner</strong> – An instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Router</span></code></p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.tags" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.dependencies">
-<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.dependencies" title="Link to this definition">¶</a></dt>
-<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.after_request">
 <span class="sig-name descname"><span class="pre">after_request</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AfterRequestHookHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.after_request" title="Link to this definition">¶</a></dt>
@@ -361,6 +339,12 @@ response, bypassing the route handler.</p>
 <dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
 controller.</p>
 <p>Can be overridden by route handlers.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.dependencies">
+<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.dependencies" title="Link to this definition">¶</a></dt>
+<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -487,6 +471,12 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.tags" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.AccessController.type_decoders">
 <span class="sig-name descname"><span class="pre">type_decoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeDecodersSequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.AccessController.type_decoders" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of tuples, each composed of a predicate testing for type identity and a msgspec hook for deserialization.</p>
@@ -509,7 +499,7 @@ handlers under the controller.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">RoleController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/roles.html#RoleController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.RoleController" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">RoleController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/roles.html#RoleController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.RoleController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>Handles the adding and removing of new Roles.</p>
 <p>Initialize a controller.</p>
@@ -519,18 +509,6 @@ handlers under the controller.</p>
 <dd class="field-odd"><p><strong>owner</strong> – An instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Router</span></code></p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.tags" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.guards">
-<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.guards" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.after_request">
 <span class="sig-name descname"><span class="pre">after_request</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AfterRequestHookHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.after_request" title="Link to this definition">¶</a></dt>
@@ -584,6 +562,12 @@ controller.</p>
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.exception_handlers">
 <span class="sig-name descname"><span class="pre">exception_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ExceptionHandlersMap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.exception_handlers" title="Link to this definition">¶</a></dt>
 <dd><p>A map of handler functions to status codes and/or exception types.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.guards">
+<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.guards" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -685,6 +669,12 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.tags" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.RoleController.type_decoders">
 <span class="sig-name descname"><span class="pre">type_decoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeDecodersSequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.RoleController.type_decoders" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of tuples, each composed of a predicate testing for type identity and a msgspec hook for deserialization.</p>
@@ -707,7 +697,7 @@ handlers under the controller.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">UserController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/users.html#UserController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.UserController" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">UserController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/users.html#UserController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.UserController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>User Account Controller.</p>
 <p>Initialize a controller.</p>
@@ -717,24 +707,6 @@ handlers under the controller.</p>
 <dd class="field-odd"><p><strong>owner</strong> – An instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Router</span></code></p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.tags" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.guards">
-<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.guards" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.dependencies">
-<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.dependencies" title="Link to this definition">¶</a></dt>
-<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.after_request">
 <span class="sig-name descname"><span class="pre">after_request</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AfterRequestHookHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.after_request" title="Link to this definition">¶</a></dt>
@@ -766,6 +738,12 @@ controller.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.dependencies">
+<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.dependencies" title="Link to this definition">¶</a></dt>
+<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.dto">
 <span class="sig-name descname"><span class="pre">dto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">AbstractDTO</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EmptyType</span></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.dto" title="Link to this definition">¶</a></dt>
 <dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code> to use for (de)serializing and validation of request data.</p>
@@ -782,6 +760,12 @@ controller.</p>
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.exception_handlers">
 <span class="sig-name descname"><span class="pre">exception_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ExceptionHandlersMap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.exception_handlers" title="Link to this definition">¶</a></dt>
 <dd><p>A map of handler functions to status codes and/or exception types.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.guards">
+<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.guards" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -883,6 +867,12 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.tags" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserController.type_decoders">
 <span class="sig-name descname"><span class="pre">type_decoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeDecodersSequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserController.type_decoders" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of tuples, each composed of a predicate testing for type identity and a msgspec hook for deserialization.</p>
@@ -905,7 +895,7 @@ handlers under the controller.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">UserRoleController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/user_role.html#UserRoleController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.accounts.controllers.</span></span><span class="sig-name descname"><span class="pre">UserRoleController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/app/domain/accounts/controllers/user_role.html#UserRoleController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>Handles the adding and removing of User Role records.</p>
 <p>Initialize a controller.</p>
@@ -915,24 +905,6 @@ handlers under the controller.</p>
 <dd class="field-odd"><p><strong>owner</strong> – An instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Router</span></code></p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.tags" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.guards">
-<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.guards" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.dependencies">
-<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.dependencies" title="Link to this definition">¶</a></dt>
-<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.after_request">
 <span class="sig-name descname"><span class="pre">after_request</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AfterRequestHookHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.after_request" title="Link to this definition">¶</a></dt>
@@ -964,6 +936,12 @@ controller.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.dependencies">
+<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.dependencies" title="Link to this definition">¶</a></dt>
+<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.dto">
 <span class="sig-name descname"><span class="pre">dto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">AbstractDTO</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EmptyType</span></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.dto" title="Link to this definition">¶</a></dt>
 <dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code> to use for (de)serializing and validation of request data.</p>
@@ -980,6 +958,12 @@ controller.</p>
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.exception_handlers">
 <span class="sig-name descname"><span class="pre">exception_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ExceptionHandlersMap</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.exception_handlers" title="Link to this definition">¶</a></dt>
 <dd><p>A map of handler functions to status codes and/or exception types.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.guards">
+<span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.guards" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of <code class="xref py py-class docutils literal notranslate"><span class="pre">Guard</span></code> callables.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1081,6 +1065,12 @@ data.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.tags" title="Link to this definition">¶</a></dt>
+<dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.accounts.controllers.UserRoleController.type_decoders">
 <span class="sig-name descname"><span class="pre">type_decoders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TypeDecodersSequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.accounts.controllers.UserRoleController.type_decoders" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of tuples, each composed of a predicate testing for type identity and a msgspec hook for deserialization.</p>
@@ -1149,5 +1139,5 @@ handlers under the controller.</p>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../../_static/shibuya.js?v=55e26b35"></script></body>
+      <script src="../../../../_static/shibuya.js?v=e2230717"></script></body>
 </html>

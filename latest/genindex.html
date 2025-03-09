@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
@@ -68,7 +68,6 @@ data-aria-dark="Switch to auto color mode">
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -1061,10 +1060,10 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.cache_control">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseStruct">CamelizedBaseStruct (class in app.lib.schema)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseStruct">CamelizedBaseStruct (class in app.lib.schema)</a>
+</li>
       <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagCreateDTO.config">config (app.domain.tags.controllers.TagCreateDTO attribute)</a>
 
       <ul>
@@ -1085,10 +1084,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
       <li><a href="api/lib/deps.html#app.lib.deps.create_service_provider">create_service_provider() (in module app.lib.deps)</a>
 </li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.created_at">created_at (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.CREATED_FILTER_DEPENDENCY_KEY">CREATED_FILTER_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.current_user_from_token">current_user_from_token() (in module app.domain.accounts.guards)</a>
 </li>
   </ul></td>
@@ -1098,10 +1093,6 @@ data-aria-dark="Switch to auto color mode">
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.DataclassDTO">DataclassDTO (class in app.lib.dto)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.DEFAULT_IDENTITY_FIELD">DEFAULT_IDENTITY_FIELD (in module app.lib.deps)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.DEFAULT_PAGINATION_SIZE">DEFAULT_PAGINATION_SIZE (in module app.lib.deps)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.dependencies">dependencies (app.domain.accounts.controllers.AccessController attribute)</a>
 
@@ -1230,12 +1221,6 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig">FilterConfig (class in app.lib.deps)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.FILTERS_DEPENDENCY_KEY">FILTERS_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.forbid_unknown_fields">forbid_unknown_fields (app.lib.dto.DTOConfig attribute)</a>
 </li>
   </ul></td>
@@ -1296,12 +1281,6 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.id_field">id_field (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.id_filter">id_filter (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.ID_FILTER_DEPENDENCY_KEY">ID_FILTER_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.include">include (app.lib.dto.DTOConfig attribute)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.include_in_schema">include_in_schema (app.domain.accounts.controllers.AccessController attribute)</a>
@@ -1326,14 +1305,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.include_in_schema">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.LIMIT_OFFSET_DEPENDENCY_KEY">LIMIT_OFFSET_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1477,8 +1448,6 @@ data-aria-dark="Switch to auto color mode">
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.ORDER_BY_DEPENDENCY_KEY">ORDER_BY_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.owner">owner (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
@@ -1507,10 +1476,6 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.pagination_size">pagination_size (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.pagination_type">pagination_type (app.lib.deps.FilterConfig attribute)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.parameters">parameters (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
@@ -1533,10 +1498,10 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.parameters">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.partial">partial (app.lib.dto.DTOConfig attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.path">path (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
@@ -1756,12 +1721,6 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.search">search (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.SEARCH_FILTER_DEPENDENCY_KEY">SEARCH_FILTER_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.search_ignore_case">search_ignore_case (app.lib.deps.FilterConfig attribute)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.security">security (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
@@ -1839,10 +1798,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.signature_types">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.sort_field">sort_field (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.sort_order">sort_order (app.lib.deps.FilterConfig attribute)</a>
-</li>
       <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO">SQLAlchemyDTO (class in app.lib.dto)</a>
 </li>
       <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController">SystemController (class in app.domain.system.controllers)</a>
@@ -1983,18 +1938,14 @@ data-aria-dark="Switch to auto color mode">
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.update_password">update_password() (app.domain.accounts.services.UserService method)</a>
 </li>
-      <li><a href="api/lib/deps.html#app.lib.deps.FilterConfig.updated_at">updated_at (app.lib.deps.FilterConfig attribute)</a>
-</li>
-      <li><a href="api/lib/deps.html#app.lib.deps.UPDATED_FILTER_DEPENDENCY_KEY">UPDATED_FILTER_DEPENDENCY_KEY (in module app.lib.deps)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController">UserController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService">UserOAuthAccountService (class in app.domain.accounts.services)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repository">UserOAuthAccountService.Repository (class in app.domain.accounts.services)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController">UserRoleController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService">UserRoleService (class in app.domain.accounts.services)</a>
@@ -2074,7 +2025,7 @@ data-aria-dark="Switch to auto color mode">
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script src="_static/design-tabs.js?v=f930bc37"></script>
-      <script src="_static/shibuya.js?v=55e26b35"></script>
+      <script src="_static/shibuya.js?v=e2230717"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
       <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>

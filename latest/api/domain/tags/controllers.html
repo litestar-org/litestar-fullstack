@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
@@ -83,23 +83,13 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../accounts/deps.html">deps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../accounts/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/access.html">access</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/accounts.html">accounts</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../accounts/controllers/users.html">controllers</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../teams/index.html">teams</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../teams/controllers/index.html">teams</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../teams/controllers/team_invitation.html">team invitation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../teams/controllers/team_member.html">team member</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../teams/controllers/teams.html">teams</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../teams/controllers/index.html">teams</a></li>
 </ul>
 </li>
 <li class="toctree-l3 current"><a class="reference internal" href="index.html">tags</a><ul class="current">
@@ -226,7 +216,7 @@ data-aria-dark="Switch to auto color mode">
 <p>Controllers for the tags domain.</p>
 <dl class="py class" id="module-app.domain.tags.controllers">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagDTO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagDTO" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagDTO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
 <p>Create an AbstractDTOFactory type.</p>
 <dl class="field-list simple">
@@ -236,7 +226,7 @@ data-aria-dark="Switch to auto color mode">
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'created_at',</span> <span class="pre">'teams',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagDTO.config" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'updated_at',</span> <span class="pre">'teams',</span> <span class="pre">'created_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagDTO.config" title="Link to this definition">¶</a></dt>
 <dd><p>Config objects to define properties of the DTO.</p>
 </dd></dl>
 
@@ -244,7 +234,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagCreateDTO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagCreateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagCreateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagCreateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagCreateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
 <p>Create an AbstractDTOFactory type.</p>
 <dl class="field-list simple">
@@ -254,7 +244,7 @@ data-aria-dark="Switch to auto color mode">
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagCreateDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'created_at',</span> <span class="pre">'teams',</span> <span class="pre">'id',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO.config" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'id',</span> <span class="pre">'updated_at',</span> <span class="pre">'teams',</span> <span class="pre">'created_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO.config" title="Link to this definition">¶</a></dt>
 <dd><p>Config objects to define properties of the DTO.</p>
 </dd></dl>
 
@@ -262,7 +252,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagUpdateDTO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagUpdateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagUpdateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagUpdateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagUpdateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
 <p>Create an AbstractDTOFactory type.</p>
 <dl class="field-list simple">
@@ -272,7 +262,7 @@ data-aria-dark="Switch to auto color mode">
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagUpdateDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'created_at',</span> <span class="pre">'teams',</span> <span class="pre">'id',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=True,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO.config" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'id',</span> <span class="pre">'updated_at',</span> <span class="pre">'teams',</span> <span class="pre">'created_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=True,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO.config" title="Link to this definition">¶</a></dt>
 <dd><p>Config objects to define properties of the DTO.</p>
 </dd></dl>
 
@@ -280,7 +270,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagController" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>Handles the interactions within the Tag objects.</p>
 <p>We use a DTO in this controller purely as an example of how to integrate it with SQLAlchemy.</p>
@@ -526,5 +516,5 @@ handlers under the controller.</p>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=55e26b35"></script></body>
+      <script src="../../../_static/shibuya.js?v=e2230717"></script></body>
 </html>

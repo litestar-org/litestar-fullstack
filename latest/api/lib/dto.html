@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -83,23 +83,13 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../domain/accounts/deps.html">deps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../domain/accounts/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../domain/accounts/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/controllers/index.html">accounts</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../domain/accounts/controllers/access.html">access</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../domain/accounts/controllers/accounts.html">accounts</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../domain/accounts/controllers/users.html">controllers</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../domain/teams/index.html">teams</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../domain/teams/services.html">services</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../domain/teams/controllers/index.html">teams</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../domain/teams/controllers/team_invitation.html">team invitation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../domain/teams/controllers/team_member.html">team member</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../domain/teams/controllers/teams.html">teams</a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/teams/controllers/index.html">teams</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../domain/tags/index.html">tags</a><ul>
@@ -138,27 +128,27 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#app.lib.dto.DTOConfig"><code class="docutils literal notranslate"><span class="pre">DTOConfig</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.__init__"><code class="docutils literal notranslate">__init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.experimental_codegen_backend"><code class="docutils literal notranslate">experimental_codegen_backend</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.forbid_unknown_fields"><code class="docutils literal notranslate">forbid_unknown_fields</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.max_nested_depth"><code class="docutils literal notranslate">max_nested_depth</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.partial"><code class="docutils literal notranslate">partial</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.rename_strategy"><code class="docutils literal notranslate">rename_strategy</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DTOConfig.underscore_fields_private"><code class="docutils literal notranslate">underscore_fields_private</span></code></a></li>
 <li><a class="reference internal" href="#app.lib.dto.DTOConfig.exclude"><code class="docutils literal notranslate">exclude</span></code></a></li>
 <li><a class="reference internal" href="#app.lib.dto.DTOConfig.include"><code class="docutils literal notranslate">include</span></code></a></li>
 <li><a class="reference internal" href="#app.lib.dto.DTOConfig.rename_fields"><code class="docutils literal notranslate">rename_fields</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.rename_strategy"><code class="docutils literal notranslate">rename_strategy</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.max_nested_depth"><code class="docutils literal notranslate">max_nested_depth</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.__init__"><code class="docutils literal notranslate">__init__()</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.partial"><code class="docutils literal notranslate">partial</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.underscore_fields_private"><code class="docutils literal notranslate">underscore_fields_private</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.experimental_codegen_backend"><code class="docutils literal notranslate">experimental_codegen_backend</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.DTOConfig.forbid_unknown_fields"><code class="docutils literal notranslate">forbid_unknown_fields</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.lib.dto.DataclassDTO"><code class="docutils literal notranslate"><span class="pre">DataclassDTO</span></code></a><ul>
-<li><a class="reference internal" href="#app.lib.dto.DataclassDTO.generate_field_definitions"><code class="docutils literal notranslate">generate_field_definitions()</span></code></a></li>
 <li><a class="reference internal" href="#app.lib.dto.DataclassDTO.detect_nested_field"><code class="docutils literal notranslate">detect_nested_field()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.DataclassDTO.generate_field_definitions"><code class="docutils literal notranslate">generate_field_definitions()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyDTO</span></code></a><ul>
-<li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO.config"><code class="docutils literal notranslate">config</span></code></a></li>
-<li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO.generate_field_definitions"><code class="docutils literal notranslate">generate_field_definitions()</span></code></a></li>
 <li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO.detect_nested_field"><code class="docutils literal notranslate">detect_nested_field()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO.generate_field_definitions"><code class="docutils literal notranslate">generate_field_definitions()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.dto.SQLAlchemyDTO.config"><code class="docutils literal notranslate">config</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app.lib.dto.config"><code class="docutils literal notranslate"><span class="pre">config()</span></code></a></li>
@@ -205,9 +195,54 @@ data-aria-dark="Switch to auto color mode">
 <p>Application DTO configuration</p>
 <dl class="py class" id="module-app.lib.dto">
 <dt class="sig sig-object py" id="app.lib.dto.DTOConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">DTOConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_fields:</span> <span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_strategy:</span> <span class="pre">RenameStrategy</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nested_depth:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partial:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underscore_fields_private:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experimental_codegen_backend:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbid_unknown_fields:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar/dto/config.html#DTOConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DTOConfig" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">DTOConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_fields:</span> <span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_strategy:</span> <span class="pre">RenameStrategy</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nested_depth:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partial:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underscore_fields_private:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experimental_codegen_backend:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbid_unknown_fields:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar/dto/config.html#DTOConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DTOConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Control the generated DTO.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_fields:</span> <span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_strategy:</span> <span class="pre">RenameStrategy</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nested_depth:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partial:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underscore_fields_private:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experimental_codegen_backend:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbid_unknown_fields:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dto.DTOConfig.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.experimental_codegen_backend">
+<span class="sig-name descname"><span class="pre">experimental_codegen_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.experimental_codegen_backend" title="Link to this definition">¶</a></dt>
+<dd><p>Use the experimental codegen backend</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.forbid_unknown_fields">
+<span class="sig-name descname"><span class="pre">forbid_unknown_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.forbid_unknown_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Raise an exception for fields present in the raw data that are not defined on the model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.max_nested_depth">
+<span class="sig-name descname"><span class="pre">max_nested_depth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.max_nested_depth" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum depth of nested items allowed for data transfer.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.partial">
+<span class="sig-name descname"><span class="pre">partial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.partial" title="Link to this definition">¶</a></dt>
+<dd><p>Allow transfer of partial data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.rename_strategy">
+<span class="sig-name descname"><span class="pre">rename_strategy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RenameStrategy</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.rename_strategy" title="Link to this definition">¶</a></dt>
+<dd><p>Rename all fields using a pre-defined strategy or a custom strategy.</p>
+<p>The pre-defined strategies are: <cite>upper</cite>, <cite>lower</cite>, <cite>camel</cite>, <cite>pascal</cite>.</p>
+<p>A custom strategy is any callable that accepts a string as an argument and
+return a string.</p>
+<p>Fields defined in <code class="docutils literal notranslate"><span class="pre">rename_fields</span></code> are ignored.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.underscore_fields_private">
+<span class="sig-name descname"><span class="pre">underscore_fields_private</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.underscore_fields_private" title="Link to this definition">¶</a></dt>
+<dd><p>Fields starting with an underscore are considered private and excluded from data transfer.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.lib.dto.DTOConfig.exclude">
 <span class="sig-name descname"><span class="pre">exclude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AbstractSet</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.exclude" title="Link to this definition">¶</a></dt>
@@ -258,56 +293,11 @@ data-aria-dark="Switch to auto color mode">
 <dd><p>Mapping of field names, to new name.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.rename_strategy">
-<span class="sig-name descname"><span class="pre">rename_strategy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RenameStrategy</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.rename_strategy" title="Link to this definition">¶</a></dt>
-<dd><p>Rename all fields using a pre-defined strategy or a custom strategy.</p>
-<p>The pre-defined strategies are: <cite>upper</cite>, <cite>lower</cite>, <cite>camel</cite>, <cite>pascal</cite>.</p>
-<p>A custom strategy is any callable that accepts a string as an argument and
-return a string.</p>
-<p>Fields defined in <code class="docutils literal notranslate"><span class="pre">rename_fields</span></code> are ignored.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.max_nested_depth">
-<span class="sig-name descname"><span class="pre">max_nested_depth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.max_nested_depth" title="Link to this definition">¶</a></dt>
-<dd><p>The maximum depth of nested items allowed for data transfer.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include:</span> <span class="pre">AbstractSet[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_fields:</span> <span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_strategy:</span> <span class="pre">RenameStrategy</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nested_depth:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partial:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underscore_fields_private:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experimental_codegen_backend:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbid_unknown_fields:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.dto.DTOConfig.__init__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.partial">
-<span class="sig-name descname"><span class="pre">partial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.partial" title="Link to this definition">¶</a></dt>
-<dd><p>Allow transfer of partial data.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.underscore_fields_private">
-<span class="sig-name descname"><span class="pre">underscore_fields_private</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.underscore_fields_private" title="Link to this definition">¶</a></dt>
-<dd><p>Fields starting with an underscore are considered private and excluded from data transfer.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.experimental_codegen_backend">
-<span class="sig-name descname"><span class="pre">experimental_codegen_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.experimental_codegen_backend" title="Link to this definition">¶</a></dt>
-<dd><p>Use the experimental codegen backend</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.DTOConfig.forbid_unknown_fields">
-<span class="sig-name descname"><span class="pre">forbid_unknown_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.lib.dto.DTOConfig.forbid_unknown_fields" title="Link to this definition">¶</a></dt>
-<dd><p>Raise an exception for fields present in the raw data that are not defined on the model</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.lib.dto.DataclassDTO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">DataclassDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">DataclassDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/dto/base_dto.html#litestar.dto.base_dto.AbstractDTO" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Support for domain modelling with dataclasses.</p>
 <p>Create an AbstractDTOFactory type.</p>
@@ -317,19 +307,8 @@ return a string.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dto.DataclassDTO.generate_field_definitions">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_field_definitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">DataclassProtocol</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">DTOFieldDefinition</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO.generate_field_definitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO.generate_field_definitions" title="Link to this definition">¶</a></dt>
-<dd><p>Generate <code class="docutils literal notranslate"><span class="pre">FieldDefinition</span></code> instances from <code class="docutils literal notranslate"><span class="pre">model_type</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Yields<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">FieldDefinition</span></code> instances.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="app.lib.dto.DataclassDTO.detect_nested_field">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detect_nested_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldDefinition</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO.detect_nested_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO.detect_nested_field" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detect_nested_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldDefinition</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO.detect_nested_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO.detect_nested_field" title="Link to this definition">¶</a></dt>
 <dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">field_definition</span></code> represents a nested model field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -341,11 +320,22 @@ return a string.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dto.DataclassDTO.generate_field_definitions">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_field_definitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">DataclassProtocol</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">DTOFieldDefinition</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/litestar/dto/dataclass_dto.html#DataclassDTO.generate_field_definitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.DataclassDTO.generate_field_definitions" title="Link to this definition">¶</a></dt>
+<dd><p>Generate <code class="docutils literal notranslate"><span class="pre">FieldDefinition</span></code> instances from <code class="docutils literal notranslate"><span class="pre">model_type</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">FieldDefinition</span></code> instances.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.lib.dto.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/dto/base_dto.html#litestar.dto.base_dto.AbstractDTO" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Support for domain modelling with SQLAlchemy.</p>
 <p>Create an AbstractDTOFactory type.</p>
@@ -354,15 +344,23 @@ return a string.</p>
 <dd class="field-odd"><p><strong>asgi_connection</strong> – A <a class="reference external" href="https://docs.litestar.dev/latest/reference/connection.html#litestar.connection.ASGIConnection" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ASGIConnection</span></code></a> instance.</p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.config" title="Link to this definition">¶</a></dt>
-<dd><p>Config objects to define properties of the DTO.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO.detect_nested_field">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detect_nested_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.litestar.dev/latest/reference/typing.html#litestar.typing.FieldDefinition" title="(in Litestar)"><span class="pre">FieldDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO.detect_nested_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.detect_nested_field" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">field_definition</span></code> represents a nested model field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_definition</strong> – inspect type to determine if field represents a nested model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">field_definition</span></code> represents a nested model field.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO.generate_field_definitions">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_field_definitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">DeclarativeBase</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.litestar.dev/latest/reference/dto/data_structures.html#litestar.dto.data_structures.DTOFieldDefinition" title="(in Litestar)"><span class="pre">DTOFieldDefinition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO.generate_field_definitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.generate_field_definitions" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_field_definitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">DeclarativeBase</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.litestar.dev/latest/reference/dto/data_structures.html#litestar.dto.data_structures.DTOFieldDefinition" title="(in Litestar)"><span class="pre">DTOFieldDefinition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO.generate_field_definitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.generate_field_definitions" title="Link to this definition">¶</a></dt>
 <dd><p>Generate DTO field definitions from a SQLAlchemy model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -381,18 +379,10 @@ return a string.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO.detect_nested_field">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detect_nested_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.litestar.dev/latest/reference/typing.html#litestar.typing.FieldDefinition" title="(in Litestar)"><span class="pre">FieldDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/advanced_alchemy/extensions/litestar/dto.html#SQLAlchemyDTO.detect_nested_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.detect_nested_field" title="Link to this definition">¶</a></dt>
-<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">field_definition</span></code> represents a nested model field.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>field_definition</strong> – inspect type to determine if field represents a nested model.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">field_definition</span></code> represents a nested model field.</p>
-</dd>
-</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.dto.SQLAlchemyDTO.config">
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.13)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.advanced-alchemy.litestar.dev/latest/reference/extensions/litestar/index.html#advanced_alchemy.extensions.litestar.SQLAlchemyDTOConfig" title="(in advanced_alchemy)"><span class="pre">SQLAlchemyDTOConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.lib.dto.SQLAlchemyDTO.config" title="Link to this definition">¶</a></dt>
+<dd><p>Config objects to define properties of the DTO.</p>
 </dd></dl>
 
 </dd></dl>
@@ -478,5 +468,5 @@ field.</p>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../_static/shibuya.js?v=55e26b35"></script></body>
+      <script src="../../_static/shibuya.js?v=e2230717"></script></body>
 </html>
