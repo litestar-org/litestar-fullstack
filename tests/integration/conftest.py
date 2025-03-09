@@ -9,6 +9,7 @@ from httpx import AsyncClient
 from litestar import Litestar
 from litestar.testing import AsyncTestClient
 from litestar_saq.cli import get_saq_plugin
+from pytest_databases.docker.postgres import PostgresService
 from redis.asyncio import Redis
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -27,15 +28,7 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(name="engine")
-async def fx_engine(
-    postgres_docker_ip: str,
-    postgres_service: None,
-    valkey_service: None,
-    postgres_port: int,
-    postgres_user: str,
-    postgres_password: str,
-    postgres_database: str,
-) -> AsyncEngine:
+async def fx_engine(postgres_service: PostgresService) -> AsyncEngine:
     """Postgresql instance for end-to-end testing.
 
     Returns:
@@ -44,11 +37,11 @@ async def fx_engine(
     return create_async_engine(
         URL(
             drivername="postgresql+asyncpg",
-            username=postgres_user,
-            password=postgres_password,
-            host=postgres_docker_ip,
-            port=postgres_port,
-            database=postgres_database,
+            username=postgres_service.user,
+            password=postgres_service.password,
+            host=postgres_service.host,
+            port=postgres_service.port,
+            database=postgres_service.database,
             query={},  # type:ignore[arg-type]
         ),
         echo=False,
@@ -95,9 +88,9 @@ async def _seed_db(
         for obj in fixture:
             _ = await service.repository.get_or_upsert(match_fields="name", upsert=True, **obj)
         await service.repository.session.commit()
-    async with UserService.new(sessionmaker()) as users_service:
+    async with UserService.new(sessionmaker(), load=[User.teams]) as users_service:
         await users_service.create_many(raw_users, auto_commit=True)
-    async with TeamService.new(sessionmaker()) as teams_services:
+    async with TeamService.new(sessionmaker(), load=[Team.members, Team.tags]) as teams_services:
         for obj in raw_teams:
             await teams_services.create(obj)
         await teams_services.repository.session.commit()

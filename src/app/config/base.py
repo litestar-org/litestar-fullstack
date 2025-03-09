@@ -6,9 +6,10 @@ import os
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Any, Final, cast
 
 from advanced_alchemy.utils.text import slugify
+from litestar.data_extractors import RequestExtractorField
 from litestar.serialization import decode_json, encode_json
 from litestar.utils.module_loader import module_to_os_path
 from redis.asyncio import Redis
@@ -19,7 +20,9 @@ from sqlalchemy.pool import NullPool
 from ._utils import get_env
 
 if TYPE_CHECKING:
-    from litestar.data_extractors import RequestExtractorField, ResponseExtractorField
+    from collections.abc import Callable
+
+    from litestar.data_extractors import ResponseExtractorField
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
@@ -45,13 +48,17 @@ class DatabaseSettings:
     """Optionally ping database before fetching a session from the connection pool."""
     URL: str = field(default_factory=get_env("DATABASE_URL", "sqlite+aiosqlite:///db.sqlite3"))
     """SQLAlchemy Database URL."""
-    MIGRATION_CONFIG: str = f"{BASE_DIR}/db/migrations/alembic.ini"
+    MIGRATION_CONFIG: str = field(
+        default_factory=get_env("DATABASE_MIGRATION_CONFIG", f"{BASE_DIR}/db/migrations/alembic.ini")
+    )
     """The path to the `alembic.ini` configuration file."""
-    MIGRATION_PATH: str = f"{BASE_DIR}/db/migrations"
+    MIGRATION_PATH: str = field(default_factory=get_env("DATABASE_MIGRATION_PATH", f"{BASE_DIR}/db/migrations"))
     """The path to the `alembic` database migrations."""
-    MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
+    MIGRATION_DDL_VERSION_TABLE: str = field(
+        default_factory=get_env("DATABASE_MIGRATION_DDL_VERSION_TABLE", "ddl_version")
+    )
     """The name to use for the `alembic` versions table name."""
-    FIXTURE_PATH: str = f"{BASE_DIR}/db/fixtures"
+    FIXTURE_PATH: str = field(default_factory=get_env("DATABASE_FIXTURE_PATH", f"{BASE_DIR}/db/fixtures"))
     """The path to JSON fixture files to load into tables."""
     _engine_instance: AsyncEngine | None = None
     """SQLAlchemy engine instance generated from settings."""
@@ -159,6 +166,8 @@ class DatabaseSettings:
                 pool_timeout=self.POOL_TIMEOUT,
                 pool_recycle=self.POOL_RECYCLE,
                 pool_pre_ping=self.POOL_PRE_PING,
+                pool_use_lifo=True,  # use lifo to reduce the number of idle connections
+                poolclass=NullPool if self.POOL_DISABLED else None,
             )
         self._engine_instance = engine
         return self._engine_instance
@@ -180,11 +189,11 @@ class ViteSettings:
     """Start `vite` with HMR enabled."""
     ENABLE_REACT_HELPERS: bool = field(default_factory=get_env("VITE_ENABLE_REACT_HELPERS", True))
     """Enable React support in HMR."""
-    BUNDLE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/public"))
+    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", Path(f"{BASE_DIR}/domain/web/public")))
     """Bundle directory"""
-    RESOURCE_DIR: Path = field(default_factory=lambda: Path("resources"))
+    RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("resources")))
     """Resource directory"""
-    TEMPLATE_DIR: Path = field(default_factory=lambda: Path(f"{BASE_DIR}/domain/web/templates"))
+    TEMPLATE_DIR: Path = field(default_factory=get_env("VITE_TEMPLATE_DIR", Path(f"{BASE_DIR}/domain/web/templates")))
     """Template directory."""
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
     """Base URL for assets"""
@@ -207,7 +216,7 @@ class ServerSettings:
     """Seconds to hold connections open (65 is > AWS lb idle timeout)."""
     RELOAD: bool = field(default_factory=get_env("LITESTAR_RELOAD", False))
     """Turn on hot reloading."""
-    RELOAD_DIRS: list[str] = field(default_factory=lambda: [f"{BASE_DIR}"])
+    RELOAD_DIRS: list[str] = field(default_factory=get_env("LITESTAR_RELOAD_DIRS", [f"{BASE_DIR}"]))
     """Directories to watch for reloading."""
 
 
@@ -242,14 +251,14 @@ class LogSettings:
     """Log event name for logs from Litestar handlers."""
     INCLUDE_COMPRESSED_BODY: bool = False
     """Include 'body' of compressed responses in log output."""
-    LEVEL: int = field(default_factory=get_env("LOG_LEVEL", 10))
+    LEVEL: int = field(default_factory=get_env("LOG_LEVEL", 30))
     """Stdlib log levels.
 
     Only emit logs at this level, or higher.
     """
-    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session"})
+    OBFUSCATE_COOKIES: set[str] = field(default_factory=lambda: {"session", "XSRF-TOKEN"})
     """Request cookie keys to obfuscate."""
-    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY"})
+    OBFUSCATE_HEADERS: set[str] = field(default_factory=lambda: {"Authorization", "X-API-KEY", "X-XSRF-TOKEN"})
     """Request header keys to obfuscate."""
     JOB_FIELDS: list[str] = field(
         default_factory=lambda: [
@@ -271,41 +280,39 @@ class LogSettings:
     logged.
     """
     REQUEST_FIELDS: list[RequestExtractorField] = field(
-        default_factory=lambda: [
-            "path",
-            "method",
-            "headers",
-            "cookies",
-            "query",
-            "path_params",
-            "body",
-        ],
+        default_factory=get_env(
+            "LOG_REQUEST_FIELDS",
+            [
+                "path",
+                "method",
+                "query",
+                "path_params",
+            ],
+            list[RequestExtractorField],
+        ),
     )
     """Attributes of the [Request][litestar.connection.request.Request] to be
     logged."""
     RESPONSE_FIELDS: list[ResponseExtractorField] = field(
-        default_factory=lambda: [
-            "status_code",
-            "cookies",
-            "headers",
-            "body",
-        ],
+        default_factory=cast(
+            "Callable[[],list[ResponseExtractorField]]",
+            get_env(
+                "LOG_RESPONSE_FIELDS",
+                ["status_code"],
+            ),
+        )
     )
     """Attributes of the [Response][litestar.response.Response] to be
     logged."""
     WORKER_EVENT: str = "Worker"
     """Log event name for logs from SAQ worker."""
-    SAQ_LEVEL: int = 20
+    SAQ_LEVEL: int = field(default_factory=get_env("SAQ_LOG_LEVEL", 50))
     """Level to log SAQ logs."""
-    SQLALCHEMY_LEVEL: int = 20
+    SQLALCHEMY_LEVEL: int = field(default_factory=get_env("SQLALCHEMY_LOG_LEVEL", 30))
     """Level to log SQLAlchemy logs."""
-    UVICORN_ACCESS_LEVEL: int = 20
+    ASGI_ACCESS_LEVEL: int = field(default_factory=get_env("ASGI_ACCESS_LOG_LEVEL", 30))
     """Level to log uvicorn access logs."""
-    UVICORN_ERROR_LEVEL: int = 20
-    """Level to log uvicorn error logs."""
-    GRANIAN_ACCESS_LEVEL: int = 30
-    """Level to log uvicorn access logs."""
-    GRANIAN_ERROR_LEVEL: int = 20
+    ASGI_ERROR_LEVEL: int = field(default_factory=get_env("ASGI_ERROR_LOG_LEVEL", 30))
     """Level to log uvicorn error logs."""
 
 
@@ -352,11 +359,11 @@ class AppSettings:
     """Application secret key."""
     NAME: str = field(default_factory=lambda: "app")
     """Application name."""
-    ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=get_env("ALLOWED_CORS_ORIGINS", '["*"]'))
+    ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=get_env("ALLOWED_CORS_ORIGINS", ["*"], list[str]))
     """Allowed CORS Origins"""
-    CSRF_COOKIE_NAME: str = field(default_factory=lambda: "csrftoken")
+    CSRF_COOKIE_NAME: str = field(default_factory=get_env("CSRF_COOKIE_NAME", "XSRF-TOKEN"))
     """CSRF Cookie Name"""
-    CSRF_COOKIE_SECURE: bool = field(default_factory=lambda: False)
+    CSRF_COOKIE_SECURE: bool = field(default_factory=get_env("CSRF_COOKIE_SECURE", False))
     """CSRF Secure Cookie"""
     JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
     """JWT Encryption Algorithm"""

@@ -32,7 +32,7 @@ class UserController(Controller):
     } | create_filter_dependencies(
         {
             "id_filter": UUID,
-            "search": True,
+            "search": "name,email",
             "pagination_type": "limit_offset",
             "pagination_size": 20,
             "created_at": True,
