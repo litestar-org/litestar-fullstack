@@ -46,7 +46,13 @@ class TagController(Controller):
         TagService,
         key="tags_service",
         load=[m.Tag.teams],
-        filters={"id_filter": UUID, "created_at": True, "updated_at": True, "sort_field": "name", "search": True},
+        filters={
+            "id_filter": UUID,
+            "created_at": True,
+            "updated_at": True,
+            "sort_field": "name",
+            "search": "name,slug",
+        },
     )
     tags = ["Tags"]
     return_dto = TagDTO

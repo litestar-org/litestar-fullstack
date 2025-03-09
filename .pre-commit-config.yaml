@@ -17,7 +17,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.9.2"
+    rev: "v0.9.10"
     hooks:
       # Run the linter.
     - id: ruff
@@ -27,7 +27,7 @@ repos:
     - id: ruff-format
       types_or: [ python, pyi ]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.0
+    rev: v2.4.1
     hooks:
       - id: codespell
         exclude: "uv.lock|package.json|package-lock.json"

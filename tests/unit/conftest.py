@@ -58,6 +58,7 @@ def http_scope(app: Litestar) -> HTTPScope:
     return {
         "headers": [],
         "app": app,
+        "litestar_app": app,
         "asgi": {"spec_version": "whatever", "version": "3.0"},
         "auth": None,
         "client": None,

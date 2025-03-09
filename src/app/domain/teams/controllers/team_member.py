@@ -8,6 +8,7 @@ from advanced_alchemy.exceptions import IntegrityError
 from litestar import Controller, post
 from litestar.di import Provide
 from litestar.params import Parameter
+from sqlalchemy.orm import contains_eager, selectinload
 
 from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
@@ -30,7 +31,10 @@ class TeamMemberController(Controller):
         "teams_service": create_service_provider(TeamService, load=[m.Team.tags, m.Team.members]),
         "team_members_service": create_service_provider(
             TeamMemberService,
-            load=[m.TeamMember.team, m.TeamMember.user],
+            load=[
+                selectinload(m.TeamMember.team).options(contains_eager(m.Team.tags)),
+                selectinload(m.TeamMember.user),
+            ],
         ),
         "users_service": Provide(provide_users_service),
     }

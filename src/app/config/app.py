@@ -67,12 +67,12 @@ github_oauth = GitHubOAuth2(
 )
 
 saq = SAQConfig(
-    dsn=settings.redis.URL,
     web_enabled=settings.saq.WEB_ENABLED,
     worker_processes=settings.saq.PROCESSES,
     use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
     queue_configs=[
         QueueConfig(
+            dsn=settings.redis.URL,
             name="system-tasks",
             tasks=["app.domain.system.tasks.system_task", "app.domain.system.tasks.system_upkeep"],
             scheduled_tasks=[
@@ -85,6 +85,7 @@ saq = SAQConfig(
             ],
         ),
         QueueConfig(
+            dsn=settings.redis.URL,
             name="background-tasks",
             tasks=["app.domain.system.tasks.background_worker_task"],
             scheduled_tasks=[
@@ -125,14 +126,19 @@ log = StructlogConfig(
                 },
             },
             loggers={
-                "granian.access": {
+                "_granian": {
                     "propagate": False,
-                    "level": settings.log.GRANIAN_ACCESS_LEVEL,
+                    "level": settings.log.ASGI_ERROR_LEVEL,
                     "handlers": ["queue_listener"],
                 },
-                "granian.error": {
+                "granian.server": {
                     "propagate": False,
-                    "level": settings.log.GRANIAN_ERROR_LEVEL,
+                    "level": settings.log.ASGI_ERROR_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "granian.access": {
+                    "propagate": False,
+                    "level": settings.log.ASGI_ACCESS_LEVEL,
                     "handlers": ["queue_listener"],
                 },
                 "saq": {
@@ -154,7 +160,7 @@ log = StructlogConfig(
         ),
     ),
     middleware_logging_config=LoggingMiddlewareConfig(
-        request_log_fields=["method", "path", "path_params", "query"],
-        response_log_fields=["status_code"],
+        request_log_fields=settings.log.REQUEST_FIELDS,
+        response_log_fields=settings.log.RESPONSE_FIELDS,
     ),
 )
