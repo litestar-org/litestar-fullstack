@@ -44,14 +44,14 @@ install: destroy clean                              ## Install the project, depe
 		echo "${INFO} Installing Node environment... 📦"; \
 		uvx nodeenv .venv --force --quiet; \
 	fi
-	@NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --no-fund
+	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --no-fund
 	@echo "${OK} Installation complete! 🎉"
 
 .PHONY: upgrade
 upgrade:                                            ## Upgrade all dependencies to the latest stable versions
 	@echo "${INFO} Updating all dependencies... 🔄"
 	@uv lock --upgrade
-	@NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" uv run npm upgrade --latest
+	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm upgrade
 	@echo "${OK} Dependencies updated 🔄"
 	@NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" uv run pre-commit autoupdate
 	@echo "${OK} Updated Pre-commit hooks 🔄"
@@ -59,7 +59,7 @@ upgrade:                                            ## Upgrade all dependencies 
 .PHONY: clean
 clean:                                              ## Cleanup temporary build artifacts
 	@echo "${INFO} Cleaning working directory..."
-	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache tests/.pytest_cache tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules >/dev/null 2>&1
+	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache tests/.pytest_cache tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/node_modules >/dev/null 2>&1
 	@find . -name '*.egg-info' -exec rm -rf {} + >/dev/null 2>&1
 	@find . -type f -name '*.egg' -exec rm -f {} + >/dev/null 2>&1
 	@find . -name '*.pyc' -exec rm -f {} + >/dev/null 2>&1
