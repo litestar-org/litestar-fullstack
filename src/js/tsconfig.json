@@ -1,28 +1,25 @@
 {
-	"include": ["**/*.ts", "**/*.tsx"],
+	"include": ["src"],
 	"compilerOptions": {
-		"target": "ES2022",
-		"jsx": "react-jsx",
+		"target": "ES2020",
+		"useDefineForClassFields": true,
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"module": "ESNext",
-		"lib": ["ES2022", "DOM", "DOM.Iterable"],
-		"types": ["vite/client"],
-
-		/* Bundler mode */
+		"skipLibCheck": true,
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
-		"verbatimModuleSyntax": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
 		"noEmit": true,
-
-		/* Linting */
-		"skipLibCheck": true,
+		"jsx": "react-jsx",
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
-		"noUncheckedSideEffectImports": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["src/*"]
 		}
-	}
+	},
+	"references": [{ "path": "./tsconfig.node.json" }]
 }

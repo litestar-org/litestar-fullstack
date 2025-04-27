@@ -8,11 +8,11 @@ from sqlalchemy import ForeignKey, String, UniqueConstraint
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .team_roles import TeamRoles
+from app.db.models.team_roles import TeamRoles
 
 if TYPE_CHECKING:
-    from .team import Team
-    from .user import User
+    from app.db.models.team import Team
+    from app.db.models.user import User
 
 
 class TeamMember(UUIDAuditBase):

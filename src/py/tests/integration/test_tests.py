@@ -1,33 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
-import pytest
 from litestar import get
 from litestar.testing import AsyncTestClient
 
 if TYPE_CHECKING:
     from litestar import Litestar
-    from litestar.stores.redis import RedisStore
-    from redis.asyncio import Redis as AsyncRedis
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-pytestmark = pytest.mark.anyio
 
-
-@pytest.mark.anyio
-async def test_cache_on_app(app: "Litestar", redis: "AsyncRedis") -> None:
-    """Test that the app's cache is patched.
-
-    Args:
-        app: The test Litestar instance
-        redis: The test Redis client instance.
-    """
-    assert cast("RedisStore", app.stores.get("response_cache"))._redis is redis
-
-
-@pytest.mark.anyio
-async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> None:
+async def test_db_session_dependency(app: Litestar, engine: AsyncEngine) -> None:
     """Test that handlers receive session attached to patched engine.
 
     Args:

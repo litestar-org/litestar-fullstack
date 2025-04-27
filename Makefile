@@ -59,7 +59,7 @@ upgrade:                                            ## Upgrade all dependencies 
 .PHONY: clean
 clean:                                              ## Cleanup temporary build artifacts
 	@echo "${INFO} Cleaning working directory..."
-	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache tests/.pytest_cache tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/node_modules >/dev/null 2>&1
+	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache src/py/tests/.pytest_cache src/py/tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/node_modules >/dev/null 2>&1
 	@find . -name '*.egg-info' -exec rm -rf {} + >/dev/null 2>&1
 	@find . -type f -name '*.egg' -exec rm -f {} + >/dev/null 2>&1
 	@find . -name '*.pyc' -exec rm -f {} + >/dev/null 2>&1
@@ -97,7 +97,7 @@ release:                                           ## Bump version and create re
 .PHONY: mypy
 mypy:                                              ## Run mypy
 	@echo "${INFO} Running mypy... 🔍"
-	@uv run dmypy run src/app
+	@uv run dmypy run src/py/app
 	@echo "${OK} Mypy checks passed ✨"
 
 .PHONY: pyright
@@ -133,7 +133,7 @@ lint: pre-commit type-check slotscheck             ## Run all linting
 .PHONY: coverage
 coverage:                                          ## Run the tests and generate coverage report
 	@echo "${INFO} Running tests with coverage... 📊"
-	@uv run pytest tests --cov -n auto --quiet
+	@uv run pytest src/py/tests --cov -n auto --quiet
 	@uv run coverage html >/dev/null 2>&1
 	@uv run coverage xml >/dev/null 2>&1
 	@echo "${OK} Coverage report generated ✨"
@@ -141,13 +141,13 @@ coverage:                                          ## Run the tests and generate
 .PHONY: test
 test:                                              ## Run the tests
 	@echo "${INFO} Running test cases... 🧪"
-	@uv run pytest tests -n 2 --quiet
+	@uv run pytest src/py/tests -n 2 --quiet
 	@echo "${OK} Tests passed ✨"
 
 .PHONY: test-all
 test-all:                                          ## Run all tests
 	@echo "${INFO} Running all test cases... 🧪"
-	@uv run pytest tests -m '' -n 2 --quiet
+	@uv run pytest src/py/tests -m '' -n 2 --quiet
 	@echo "${OK} All tests passed ✨"
 
 .PHONY: check-all
@@ -194,22 +194,22 @@ docs-linkcheck-full:                               ## Run the full link check on
 .PHONY: start-infra
 start-infra:                                        ## Start local containers
 	@echo "${INFO} Starting local infrastructure... 🚀"
-	@docker compose -f deploy/docker-compose.infra.yml up -d --force-recreate >/dev/null 2>&1
+	@docker compose -f tools/deploy/docker-compose.infra.yml up -d --force-recreate
 	@echo "${OK} Infrastructure is ready"
 
 .PHONY: stop-infra
 stop-infra:                                         ## Stop local containers
 	@echo "${INFO} Stopping infrastructure... 🛑"
-	@docker compose -f deploy/docker-compose.infra.yml down >/dev/null 2>&1
+	@docker compose -f tools/deploy/docker-compose.infra.yml down
 	@echo "${OK} Infrastructure stopped"
 
 .PHONY: wipe-infra
 wipe-infra:                                           ## Remove local container info
 	@echo "${INFO} Wiping infrastructure... 🧹"
-	@docker compose -f deploy/docker-compose.infra.yml down -v --remove-orphans >/dev/null 2>&1
+	@docker compose -f tools/deploy/docker-compose.infra.yml down -v --remove-orphans
 	@echo "${OK} Infrastructure wiped clean"
 
 .PHONY: infra-logs
 infra-logs:                                           ## Tail development infrastructure logs
 	@echo "${INFO} Tailing infrastructure logs... 📋"
-	@docker compose -f deploy/docker-compose.infra.yml logs -f
+	@docker compose -f tools/deploy/docker-compose.infra.yml logs -f

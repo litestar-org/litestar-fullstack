@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class TeamRoles(str, Enum):
+class TeamRoles(StrEnum):
     """Valid Values for Team Roles."""
 
     ADMIN = "ADMIN"

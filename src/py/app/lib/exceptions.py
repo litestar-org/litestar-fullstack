@@ -16,7 +16,10 @@ from litestar.exceptions import (
     NotFoundException,
     PermissionDeniedException,
 )
-from litestar.exceptions.responses import create_debug_response, create_exception_response
+from litestar.exceptions.responses import (
+    create_debug_response,  # pyright: ignore[reportUnknownVariableType]
+    create_exception_response,  # pyright: ignore[reportUnknownVariableType]
+)
 from litestar.repository.exceptions import ConflictError, NotFoundError, RepositoryError
 from litestar.status_codes import HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from structlog.contextvars import bind_contextvars
@@ -92,7 +95,7 @@ class _HTTPConflictException(HTTPException):
     status_code = HTTP_409_CONFLICT
 
 
-async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
+def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
     """Binds `exc_info` key with exception instance as value to structlog
     context vars.
 
@@ -109,7 +112,7 @@ async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
     bind_contextvars(exc_info=sys.exc_info())
 
 
-def exception_to_http_response(
+def exception_to_http_response(  # pyright: ignore[reportUnknownParameterType]
     request: Request[Any, Any, Any],
     exc: ApplicationError | RepositoryError,
 ) -> Response[ExceptionResponseContent]:
@@ -131,6 +134,6 @@ def exception_to_http_response(
         http_exc = PermissionDeniedException
     else:
         http_exc = InternalServerException
-    if request.app.debug and http_exc not in (PermissionDeniedException, NotFoundError, AuthorizationError):
-        return create_debug_response(request, exc)
-    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
+    if request.app.debug and http_exc not in {PermissionDeniedException, NotFoundError, AuthorizationError}:
+        return create_debug_response(request, exc)  # pyright: ignore[reportUnknownVariableType]
+    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))  # pyright: ignore[reportUnknownVariableType]

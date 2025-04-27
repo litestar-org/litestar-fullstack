@@ -9,9 +9,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .oauth_account import UserOauthAccount
-    from .team_member import TeamMember
-    from .user_role import UserRole
+    from app.db.models.oauth_account import UserOauthAccount
+    from app.db.models.team_member import TeamMember
+    from app.db.models.user_role import UserRole
 
 
 class User(UUIDAuditBase):

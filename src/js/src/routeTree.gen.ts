@@ -11,13 +11,31 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PublicImport } from './routes/_public'
+import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
-import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
-import { Route as DemoTableImport } from './routes/demo.table'
-import { Route as DemoFormSimpleImport } from './routes/demo.form.simple'
-import { Route as DemoFormAddressImport } from './routes/demo.form.address'
+import { Route as PublicTermsImport } from './routes/_public/terms'
+import { Route as PublicSignupImport } from './routes/_public/signup'
+import { Route as PublicPrivacyImport } from './routes/_public/privacy'
+import { Route as PublicLoginImport } from './routes/_public/login'
+import { Route as AppTeamsImport } from './routes/_app/teams'
+import { Route as AppHomeImport } from './routes/_app/home'
+import { Route as AppAdminImport } from './routes/_app/admin'
+import { Route as AppTeamsIndexImport } from './routes/_app/teams/index'
+import { Route as AppTeamsNewImport } from './routes/_app/teams/new'
+import { Route as AppTeamsTeamIdImport } from './routes/_app/teams/$teamId'
 
 // Create/Update Routes
+
+const PublicRoute = PublicImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppRoute = AppImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -25,28 +43,64 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRoute,
+const PublicTermsRoute = PublicTermsImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => PublicRoute,
 } as any)
 
-const DemoTableRoute = DemoTableImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
-  getParentRoute: () => rootRoute,
+const PublicSignupRoute = PublicSignupImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => PublicRoute,
 } as any)
 
-const DemoFormSimpleRoute = DemoFormSimpleImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
-  getParentRoute: () => rootRoute,
+const PublicPrivacyRoute = PublicPrivacyImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => PublicRoute,
 } as any)
 
-const DemoFormAddressRoute = DemoFormAddressImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
-  getParentRoute: () => rootRoute,
+const PublicLoginRoute = PublicLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any)
+
+const AppTeamsRoute = AppTeamsImport.update({
+  id: '/teams',
+  path: '/teams',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppHomeRoute = AppHomeImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppAdminRoute = AppAdminImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppTeamsIndexRoute = AppTeamsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppTeamsRoute,
+} as any)
+
+const AppTeamsNewRoute = AppTeamsNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppTeamsRoute,
+} as any)
+
+const AppTeamsTeamIdRoute = AppTeamsTeamIdImport.update({
+  id: '/$teamId',
+  path: '/$teamId',
+  getParentRoute: () => AppTeamsRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -60,103 +114,244 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/demo/table': {
-      id: '/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof DemoTableImport
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryImport
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
     }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressImport
-      parentRoute: typeof rootRoute
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminImport
+      parentRoute: typeof AppImport
     }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleImport
-      parentRoute: typeof rootRoute
+    '/_app/home': {
+      id: '/_app/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AppHomeImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/teams': {
+      id: '/_app/teams'
+      path: '/teams'
+      fullPath: '/teams'
+      preLoaderRoute: typeof AppTeamsImport
+      parentRoute: typeof AppImport
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PublicPrivacyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/signup': {
+      id: '/_public/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof PublicSignupImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/terms': {
+      id: '/_public/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof PublicTermsImport
+      parentRoute: typeof PublicImport
+    }
+    '/_app/teams/$teamId': {
+      id: '/_app/teams/$teamId'
+      path: '/$teamId'
+      fullPath: '/teams/$teamId'
+      preLoaderRoute: typeof AppTeamsTeamIdImport
+      parentRoute: typeof AppTeamsImport
+    }
+    '/_app/teams/new': {
+      id: '/_app/teams/new'
+      path: '/new'
+      fullPath: '/teams/new'
+      preLoaderRoute: typeof AppTeamsNewImport
+      parentRoute: typeof AppTeamsImport
+    }
+    '/_app/teams/': {
+      id: '/_app/teams/'
+      path: '/'
+      fullPath: '/teams/'
+      preLoaderRoute: typeof AppTeamsIndexImport
+      parentRoute: typeof AppTeamsImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AppTeamsRouteChildren {
+  AppTeamsTeamIdRoute: typeof AppTeamsTeamIdRoute
+  AppTeamsNewRoute: typeof AppTeamsNewRoute
+  AppTeamsIndexRoute: typeof AppTeamsIndexRoute
+}
+
+const AppTeamsRouteChildren: AppTeamsRouteChildren = {
+  AppTeamsTeamIdRoute: AppTeamsTeamIdRoute,
+  AppTeamsNewRoute: AppTeamsNewRoute,
+  AppTeamsIndexRoute: AppTeamsIndexRoute,
+}
+
+const AppTeamsRouteWithChildren = AppTeamsRoute._addFileChildren(
+  AppTeamsRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
+  AppHomeRoute: typeof AppHomeRoute
+  AppTeamsRoute: typeof AppTeamsRouteWithChildren
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
+  AppHomeRoute: AppHomeRoute,
+  AppTeamsRoute: AppTeamsRouteWithChildren,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface PublicRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicSignupRoute: typeof PublicSignupRoute
+  PublicTermsRoute: typeof PublicTermsRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicSignupRoute: PublicSignupRoute,
+  PublicTermsRoute: PublicTermsRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '': typeof PublicRouteWithChildren
+  '/admin': typeof AppAdminRoute
+  '/home': typeof AppHomeRoute
+  '/teams': typeof AppTeamsRouteWithChildren
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
+  '/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/teams/new': typeof AppTeamsNewRoute
+  '/teams/': typeof AppTeamsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '': typeof PublicRouteWithChildren
+  '/admin': typeof AppAdminRoute
+  '/home': typeof AppHomeRoute
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
+  '/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/teams/new': typeof AppTeamsNewRoute
+  '/teams': typeof AppTeamsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/_app/admin': typeof AppAdminRoute
+  '/_app/home': typeof AppHomeRoute
+  '/_app/teams': typeof AppTeamsRouteWithChildren
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/signup': typeof PublicSignupRoute
+  '/_public/terms': typeof PublicTermsRoute
+  '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/_app/teams/new': typeof AppTeamsNewRoute
+  '/_app/teams/': typeof AppTeamsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | ''
+    | '/admin'
+    | '/home'
+    | '/teams'
+    | '/login'
+    | '/privacy'
+    | '/signup'
+    | '/terms'
+    | '/teams/$teamId'
+    | '/teams/new'
+    | '/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | ''
+    | '/admin'
+    | '/home'
+    | '/login'
+    | '/privacy'
+    | '/signup'
+    | '/terms'
+    | '/teams/$teamId'
+    | '/teams/new'
+    | '/teams'
   id:
     | '__root__'
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | '/_app'
+    | '/_public'
+    | '/_app/admin'
+    | '/_app/home'
+    | '/_app/teams'
+    | '/_public/login'
+    | '/_public/privacy'
+    | '/_public/signup'
+    | '/_public/terms'
+    | '/_app/teams/$teamId'
+    | '/_app/teams/new'
+    | '/_app/teams/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemoTableRoute: typeof DemoTableRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
+  AppRoute: typeof AppRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemoTableRoute: DemoTableRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoFormSimpleRoute: DemoFormSimpleRoute,
+  AppRoute: AppRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -170,26 +365,74 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/demo/table",
-        "/demo/tanstack-query",
-        "/demo/form/address",
-        "/demo/form/simple"
+        "/_app",
+        "/_public"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/demo/table": {
-      "filePath": "demo.table.tsx"
+    "/_app": {
+      "filePath": "_app.tsx",
+      "children": [
+        "/_app/admin",
+        "/_app/home",
+        "/_app/teams"
+      ]
     },
-    "/demo/tanstack-query": {
-      "filePath": "demo.tanstack-query.tsx"
+    "/_public": {
+      "filePath": "_public.tsx",
+      "children": [
+        "/_public/login",
+        "/_public/privacy",
+        "/_public/signup",
+        "/_public/terms"
+      ]
     },
-    "/demo/form/address": {
-      "filePath": "demo.form.address.tsx"
+    "/_app/admin": {
+      "filePath": "_app/admin.tsx",
+      "parent": "/_app"
     },
-    "/demo/form/simple": {
-      "filePath": "demo.form.simple.tsx"
+    "/_app/home": {
+      "filePath": "_app/home.tsx",
+      "parent": "/_app"
+    },
+    "/_app/teams": {
+      "filePath": "_app/teams.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/teams/$teamId",
+        "/_app/teams/new",
+        "/_app/teams/"
+      ]
+    },
+    "/_public/login": {
+      "filePath": "_public/login.tsx",
+      "parent": "/_public"
+    },
+    "/_public/privacy": {
+      "filePath": "_public/privacy.tsx",
+      "parent": "/_public"
+    },
+    "/_public/signup": {
+      "filePath": "_public/signup.tsx",
+      "parent": "/_public"
+    },
+    "/_public/terms": {
+      "filePath": "_public/terms.tsx",
+      "parent": "/_public"
+    },
+    "/_app/teams/$teamId": {
+      "filePath": "_app/teams/$teamId.tsx",
+      "parent": "/_app/teams"
+    },
+    "/_app/teams/new": {
+      "filePath": "_app/teams/new.tsx",
+      "parent": "/_app/teams"
+    },
+    "/_app/teams/": {
+      "filePath": "_app/teams/index.tsx",
+      "parent": "/_app/teams"
     }
   }
 }

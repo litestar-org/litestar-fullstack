@@ -1,25 +1,13 @@
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 
-import Header from "../components/Header";
-
-import TanstackQueryLayout from "../integrations/tanstack-query/layout";
-
-import type { QueryClient } from "@tanstack/react-query";
-
-interface MyRouterContext {
-	queryClient: QueryClient;
-}
-
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-	component: () => (
-		<>
-			<Header />
-
-			<Outlet />
-			<TanStackRouterDevtools />
-
-			<TanstackQueryLayout />
-		</>
-	),
+export const Route = createRootRoute({
+	component: RootRoute,
 });
+
+function RootRoute() {
+	return (
+		<div className="min-h-screen bg-background">
+			<Outlet />
+		</div>
+	);
+}

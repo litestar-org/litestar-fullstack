@@ -8,20 +8,16 @@ from advanced_alchemy.utils.fixtures import open_fixture_async
 from httpx import AsyncClient
 from litestar import Litestar
 from litestar.testing import AsyncTestClient
-from litestar_saq.cli import get_saq_plugin
 from pytest_databases.docker.postgres import PostgresService
-from redis.asyncio import Redis
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from app.config import app as config
-from app.config import get_settings
+from app import config
 from app.db.models import Team, User
-from app.domain.accounts.guards import auth
-from app.domain.accounts.services import RoleService, UserService
-from app.domain.teams.services import TeamService
-from app.server.core import ApplicationCore
+from app.lib.settings import get_settings
+from app.server import security
+from app.services import RoleService, TeamService, UserService
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
@@ -36,7 +32,7 @@ async def fx_engine(postgres_service: PostgresService) -> AsyncEngine:
     """
     return create_async_engine(
         URL(
-            drivername="postgresql+asyncpg",
+            drivername="postgresql+psycopg",
             username=postgres_service.user,
             password=postgres_service.password,
             host=postgres_service.host,
@@ -109,48 +105,20 @@ def _patch_db(
     monkeypatch.setattr(config.alchemy, "engine_instance", engine)
 
 
-@pytest.fixture(autouse=True)
-def _patch_redis(app: "Litestar", redis: Redis, monkeypatch: pytest.MonkeyPatch) -> None:
-    cache_config = app.response_cache_config
-    assert cache_config is not None
-    saq_plugin = get_saq_plugin(app)
-    app_plugin = app.plugins.get(ApplicationCore)
-    monkeypatch.setattr(app_plugin, "redis", redis)
-    monkeypatch.setattr(app.stores.get(cache_config.store), "_redis", redis)
-    if saq_plugin._config.queue_instances is not None:
-        for queue in saq_plugin._config.queue_instances.values():
-            monkeypatch.setattr(queue, "redis", redis)
-
-
 @pytest.fixture(name="client")
 async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
-    """Async client that calls requests on the app.
-
-    ```text
-    ValueError: The future belongs to a different loop than the one specified as the loop argument
-    ```
-    """
+    """Async client that calls requests on the app."""
     async with AsyncTestClient(app) as client:
         yield client
 
 
 @pytest.fixture(name="superuser_token_headers")
 def fx_superuser_token_headers() -> dict[str, str]:
-    """Valid superuser token.
-
-    ```text
-    ValueError: The future belongs to a different loop than the one specified as the loop argument
-    ```
-    """
-    return {"Authorization": f"Bearer {auth.create_token(identifier='superuser@example.com')}"}
+    """Valid superuser token."""
+    return {"Authorization": f"Bearer {security.auth.create_token(identifier='superuser@example.com')}"}
 
 
 @pytest.fixture(name="user_token_headers")
 def fx_user_token_headers() -> dict[str, str]:
-    """Valid user token.
-
-    ```text
-    ValueError: The future belongs to a different loop than the one specified as the loop argument
-    ```
-    """
-    return {"Authorization": f"Bearer {auth.create_token(identifier='user@example.com')}"}
+    """Valid user token."""
+    return {"Authorization": f"Bearer {security.auth.create_token(identifier='user@example.com')}"}

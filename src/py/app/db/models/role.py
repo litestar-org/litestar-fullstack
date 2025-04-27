@@ -7,7 +7,7 @@ from advanced_alchemy.mixins import SlugKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .user_role import UserRole
+    from app.db.models.user_role import UserRole
 
 
 class Role(UUIDAuditBase, SlugKey):

@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from collections.abc import Hashable
 
-    from .team import Team
+    from app.db.models.team import Team
 
 
 class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
@@ -34,19 +34,19 @@ class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
     )
 
     @classmethod
-    def unique_hash(cls, name: str, slug: str | None = None) -> Hashable:  # noqa: ARG003
+    def unique_hash(cls, name: str, slug: str | None = None) -> Hashable:
         return slugify(name)
 
     @classmethod
     def unique_filter(
         cls,
         name: str,
-        slug: str | None = None,  # noqa: ARG003
+        slug: str | None = None,
     ) -> ColumnElement[bool]:
         return cls.slug == slugify(name)
 
 
 def _team_tag() -> Table:
-    from .team_tag import team_tag
+    from app.db.models.team_tag import team_tag
 
     return team_tag
