@@ -18,6 +18,7 @@ import { Route as PublicTermsImport } from './routes/_public/terms'
 import { Route as PublicSignupImport } from './routes/_public/signup'
 import { Route as PublicPrivacyImport } from './routes/_public/privacy'
 import { Route as PublicLoginImport } from './routes/_public/login'
+import { Route as PublicLandingImport } from './routes/_public/landing'
 import { Route as AppTeamsImport } from './routes/_app/teams'
 import { Route as AppHomeImport } from './routes/_app/home'
 import { Route as AppAdminImport } from './routes/_app/admin'
@@ -64,6 +65,12 @@ const PublicPrivacyRoute = PublicPrivacyImport.update({
 const PublicLoginRoute = PublicLoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any)
+
+const PublicLandingRoute = PublicLandingImport.update({
+  id: '/landing',
+  path: '/landing',
   getParentRoute: () => PublicRoute,
 } as any)
 
@@ -148,6 +155,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/teams'
       preLoaderRoute: typeof AppTeamsImport
       parentRoute: typeof AppImport
+    }
+    '/_public/landing': {
+      id: '/_public/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof PublicLandingImport
+      parentRoute: typeof PublicImport
     }
     '/_public/login': {
       id: '/_public/login'
@@ -234,6 +248,7 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface PublicRouteChildren {
+  PublicLandingRoute: typeof PublicLandingRoute
   PublicLoginRoute: typeof PublicLoginRoute
   PublicPrivacyRoute: typeof PublicPrivacyRoute
   PublicSignupRoute: typeof PublicSignupRoute
@@ -241,6 +256,7 @@ interface PublicRouteChildren {
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicLandingRoute: PublicLandingRoute,
   PublicLoginRoute: PublicLoginRoute,
   PublicPrivacyRoute: PublicPrivacyRoute,
   PublicSignupRoute: PublicSignupRoute,
@@ -256,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
   '/teams': typeof AppTeamsRouteWithChildren
+  '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
   '/privacy': typeof PublicPrivacyRoute
   '/signup': typeof PublicSignupRoute
@@ -270,6 +287,7 @@ export interface FileRoutesByTo {
   '': typeof PublicRouteWithChildren
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
+  '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
   '/privacy': typeof PublicPrivacyRoute
   '/signup': typeof PublicSignupRoute
@@ -287,6 +305,7 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/teams': typeof AppTeamsRouteWithChildren
+  '/_public/landing': typeof PublicLandingRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/privacy': typeof PublicPrivacyRoute
   '/_public/signup': typeof PublicSignupRoute
@@ -304,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/home'
     | '/teams'
+    | '/landing'
     | '/login'
     | '/privacy'
     | '/signup'
@@ -317,6 +337,7 @@ export interface FileRouteTypes {
     | ''
     | '/admin'
     | '/home'
+    | '/landing'
     | '/login'
     | '/privacy'
     | '/signup'
@@ -332,6 +353,7 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/home'
     | '/_app/teams'
+    | '/_public/landing'
     | '/_public/login'
     | '/_public/privacy'
     | '/_public/signup'
@@ -383,6 +405,7 @@ export const routeTree = rootRoute
     "/_public": {
       "filePath": "_public.tsx",
       "children": [
+        "/_public/landing",
         "/_public/login",
         "/_public/privacy",
         "/_public/signup",
@@ -405,6 +428,10 @@ export const routeTree = rootRoute
         "/_app/teams/new",
         "/_app/teams/"
       ]
+    },
+    "/_public/landing": {
+      "filePath": "_public/landing.tsx",
+      "parent": "/_public"
     },
     "/_public/login": {
       "filePath": "_public/login.tsx",
