@@ -1,66 +1,52 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useAuthStore } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { useQuery } from '@tanstack/react-query'
+import { Team } from '@/lib/api'
+import { Link } from '@tanstack/react-router'
+import { listTeams } from '@/lib/api/sdk.gen'
 
 export const Route = createFileRoute('/_app/teams')({
-  component: TeamsComponent,
+  component: Teams,
 })
 
-function TeamsComponent() {
+function Teams() {
   const { currentTeam, setCurrentTeam, teams, setTeams } = useAuthStore()
-  const queryClient = useQueryClient()
 
-  const { data: teamsData = [], isLoading } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const response = await api.teams.list()
-      return response.data
-    },
+  const { data: teamsData = [], isLoading } = useQuery<Team[]>({
+    queryKey: ['teams'],
+    queryFn: () => listTeams(),
   })
 
-  const createTeamMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.teams.create({
-        data: {
-          name: "New Team",
-          slug: "new-team",
-        },
-      })
-      return response.data
-    },
-    onSuccess: (newTeam) => {
-      setTeams([...teams, newTeam])
-      setCurrentTeam(newTeam)
-      queryClient.invalidateQueries({ queryKey: ["teams"] })
-    },
-  })
+  if (teamsData.length > 0 && teams.length === 0) {
+    setTeams(teamsData)
+    if (!currentTeam) {
+      setCurrentTeam(teamsData[0])
+    }
+  }
 
   if (isLoading) {
     return <div>Loading...</div>
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Teams</h1>
-        <Button onClick={() => createTeamMutation.mutate()}>Create Team</Button>
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Teams</h1>
+        <Button asChild>
+          <Link to="/teams/new">Create Team</Link>
+        </Button>
       </div>
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {teamsData.map((team) => (
-          <div
-            key={team.id}
-            className={`rounded-lg border p-4 ${
-              currentTeam?.id === team.id
-                ? 'border-primary bg-primary/5'
-                : 'hover:border-primary/50'
-            }`}
-            onClick={() => setCurrentTeam(team)}
-          >
-            <h2 className="text-xl font-semibold">{team.name}</h2>
-            <p className="text-sm text-muted-foreground">{team.slug}</p>
+        {teamsData.map((team: Team) => (
+          <div key={team.id} className="border rounded-lg p-4">
+            <h2 className="text-xl font-semibold mb-2">{team.name}</h2>
+            <p className="text-gray-600 mb-4">{team.description}</p>
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link to={`/teams/$teamId` as const} params={{ teamId: team.id }}>View Team</Link>
+              </Button>
+            </div>
           </div>
         ))}
       </div>
@@ -68,4 +54,4 @@ function TeamsComponent() {
   )
 }
 
-export default TeamsComponent
+export default Teams

@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "@tanstack/react-router";
-import { api } from "@/lib/api";
+import { useNavigate } from "@tanstack/react-router";
+import { accountRegister } from '@/lib/api/sdk.gen'
 import {
   Form,
   FormControl,
@@ -16,40 +16,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const signupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  confirmPassword: z.string().min(8),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(1, 'Name is required'),
+  confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
-  path: ["confirmPassword"],
+  path: ['confirmPassword'],
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
   });
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      await api.access.register.post({
-        formData: {
-          email: data.email,
-          password: data.password,
-        },
-      });
-      router.invalidate();
+      await accountRegister({ body: { email: data.email, password: data.password, name: data.name } });
+      navigate({ to: '/login' as const });
     } catch (error) {
-      form.setError("root", {
-        message: "Failed to create account",
-      });
+      console.error('Signup failed:', error);
     }
   };
 
@@ -63,12 +52,25 @@ export function SignupForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input {...field} placeholder="Email" type="email" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,7 +83,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input {...field} placeholder="Password" type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,17 +96,12 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input {...field} placeholder="Confirm Password" type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {form.formState.errors.root && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.root.message}
-              </p>
-            )}
             <Button type="submit" className="w-full">
               Sign Up
             </Button>

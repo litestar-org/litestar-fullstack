@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "@tanstack/react-router";
-import { api } from "@/lib/api";
+import { accountLogin } from '@/lib/api/sdk.gen'
 import {
   Form,
   FormControl,
@@ -36,12 +36,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await api.auth.login({
-        data: {
-          username: data.username,
-          password: data.password,
-        },
-      });
+      await accountLogin({ body: { username: data.username, password: data.password } });
       router.invalidate();
     } catch (error) {
       form.setError("root", {

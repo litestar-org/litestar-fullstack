@@ -1,12 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-
-type Team = {
-  id: string;
-  name: string;
-  slug: string;
-};
+import { listTeams } from '@/lib/api/sdk.gen'
+import { Team } from '@/lib/api';
 
 type TeamContextType = {
   currentTeam: Team | null;
@@ -23,7 +18,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const { data: teams = [], isLoading } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
-      const response = await api.teams.list();
+      const response = await listTeams();
       return response.data;
     },
   });

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +27,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { addMemberToTeam } from '@/lib/api/sdk.gen'
 
 const inviteSchema = z.object({
   email: z.string().email(),
@@ -53,10 +53,7 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
 
   const onSubmit = async (data: InviteFormData) => {
     try {
-      await api.teams.members.add(teamId, {
-        email: data.email,
-        role: data.role,
-      });
+      await addMemberToTeam({ path: { team_id: teamId }, body: { userName: data.email } });
       await queryClient.invalidateQueries({ queryKey: ["team-members", teamId] });
       setOpen(false);
       form.reset();

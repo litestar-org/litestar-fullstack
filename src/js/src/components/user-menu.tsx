@@ -20,7 +20,10 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2">
           <Avatar>
-            <AvatarImage src={user.avatar_url} alt={user.email} />
+            <AvatarImage
+              src={user.avatar_url || undefined}
+              alt={user.email}
+            />
             <AvatarFallback>
               <User className="h-5 w-5" />
             </AvatarFallback>

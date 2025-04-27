@@ -1,91 +1,81 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useAuthStore } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { listUsers, updateUser } from '@/lib/api/sdk.gen'
+import { useAuthStore } from '@/lib/auth';
+import { User } from '@/lib/api';
 
 export const Route = createFileRoute('/_app/admin')({
-  component: AdminComponent,
-})
+  component: Admin,
+});
 
-function AdminComponent() {
-  const { user } = useAuthStore()
+function Admin() {
+  const { user } = useAuthStore();
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const { data: users = [], isLoading } = useQuery({
-    queryKey: ["admin-users"],
-    queryFn: async () => {
-      const response = await api.admin.users.list();
-      return response.data;
-    },
+    queryKey: ['users'],
+    queryFn: () => listUsers(),
   });
 
   const toggleSuperuserMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      const response = await api.admin.users.toggleSuperuser({
-        params: { userId },
-      });
-      return response.data;
-    },
+    mutationFn: (userId: string) => updateUser({
+      path: { user_id: userId },
+      body: { isSuperuser: true }
+    }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 
-  if (!user?.is_superuser) {
-    navigate({ to: '/_app/home' })
+  const handleToggleSuperuser = async (userId: string) => {
+    try {
+      await toggleSuperuserMutation.mutateAsync(userId);
+    } catch (error) {
+      console.error('Failed to toggle superuser status:', error);
+    }
+  };
+
+  if (!user?.isSuperuser) {
+    navigate({ to: '/home' as const });
     return null;
   }
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-      </div>
-
-      <div className="rounded-lg border">
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">Users</h2>
-        </div>
-        <div className="divide-y">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Superuser</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.is_superuser ? "Yes" : "No"}</td>
-                  <td>
-                    <Button
-                      variant={user.is_superuser ? 'default' : 'outline'}
-                      onClick={() => toggleSuperuserMutation.mutate(user.id)}
-                    >
-                      {user.is_superuser ? 'Remove Superuser' : 'Make Superuser'}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div className="container mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <table className="min-w-full">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user: User) => (
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>
+                <Button
+                  onClick={() => handleToggleSuperuser(user.id)}
+                >
+                  Toggle Superuser
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-  )
+  );
 }
 
-export default AdminComponent;
+export default Admin;

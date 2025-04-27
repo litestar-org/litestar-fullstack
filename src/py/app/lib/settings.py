@@ -208,7 +208,7 @@ class ViteSettings:
     """Start `vite` with HMR enabled."""
     ENABLE_REACT_HELPERS: bool = field(default_factory=get_env("VITE_ENABLE_REACT_HELPERS", False))
     """Enable React support in HMR."""
-    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", Path(f"{BASE_DIR}/server/web/public")))
+    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", Path(f"{BASE_DIR}/server/web/static")))
     """Bundle directory"""
     RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("resources")))
     """Resource directory"""

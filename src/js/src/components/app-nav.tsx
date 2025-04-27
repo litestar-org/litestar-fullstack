@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { accountProfile, accountLogout } from '@/lib/api/sdk.gen'
 
 export function AppNav() {
   const router = useRouter();
@@ -17,13 +17,13 @@ export function AppNav() {
   const { data: user } = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
-      const response = await api.auth.me();
+      const response = await accountProfile();
       return response.data;
     },
   });
 
   const handleLogout = async () => {
-    await api.auth.logout();
+    await accountLogout();
     router.invalidate();
   };
 

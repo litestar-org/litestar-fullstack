@@ -1,16 +1,16 @@
 import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { getTeam } from '@/lib/api/sdk.gen'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TeamManagement } from "./team-management";
 
 export function TeamDetail() {
-  const { teamId } = useParams();
+  const { teamId } = useParams({ from: '/_app/teams/$teamId' as const });
 
   const { data: team, isLoading } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
-      const response = await api.teams.get(teamId);
+      const response = await getTeam({ path: { team_id: teamId } });
       return response.data;
     },
   });

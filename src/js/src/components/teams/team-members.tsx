@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TeamsService } from '@/lib/api/services/TeamsService';
+import { getTeam, removeMemberFromTeam } from '@/lib/api/sdk.gen';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -10,24 +10,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAuthStore } from '@/lib/auth';
+import { TeamMember } from '@/lib/api';
 
 interface TeamMembersProps {
   teamId: string;
 }
 
 export function TeamMembers({ teamId }: TeamMembersProps) {
-  const teamsService = new TeamsService();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
 
   const { data: team } = useQuery({
     queryKey: ['team', teamId],
-    queryFn: () => teamsService.getTeam(teamId),
+    queryFn: () => getTeam({ path: { team_id: teamId } }),
   });
 
   const { mutate: removeMember } = useMutation({
     mutationFn: (userId: string) =>
-      teamsService.removeTeamMember(teamId, userId),
+      removeMemberFromTeam({ path: { team_id: teamId }, body: { userName: userId } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId] });
     },
@@ -37,7 +37,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
     return null;
   }
 
-  const canManageMembers = team.data.owner_id === user?.id || user?.is_superuser;
+  const canManageMembers = team.data.owner_id === user?.id || user?.isSuperuser;
 
   return (
     <div className="space-y-4">
@@ -57,14 +57,14 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {team.data.members?.map((member) => (
+          {team.data.members?.map((member: TeamMember) => (
             <TableRow key={member.id}>
               <TableCell>{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>
               <TableCell>
                 {member.id === team.data.owner_id
                   ? 'Owner'
-                  : member.is_superuser
+                  : member.role === 'ADMIN'
                   ? 'Admin'
                   : 'Member'}
               </TableCell>

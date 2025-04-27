@@ -1,32 +1,31 @@
 import { create } from 'zustand';
-import { AccessService } from '@/lib/api/services/AccessService';
+import { accountLogin, accountLogout, accountProfile } from '@/lib/api/sdk.gen';
+import { User, Team } from '@/lib/api/types.gen';
 
 interface AuthState {
-  user: any | null;
-  currentTeam: any | null;
+  user: User | null;
+  currentTeam: Team | null;
+  teams: Team[];
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
-  setCurrentTeam: (team: any) => void;
+  setCurrentTeam: (team: Team) => void;
+  setTeams: (teams: Team[]) => void;
 }
-
-const accessService = new AccessService();
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   currentTeam: null,
+  teams: [],
   isLoading: false,
   isAuthenticated: false,
   login: async (email: string, password: string) => {
     set({ isLoading: true });
     try {
-      await accessService.accountLogin({
-        username: email,
-        password,
-      });
-      const { data: user } = await accessService.accountProfile();
+      await accountLogin({ body: { username: email, password } });
+      const { data: user } = await accountProfile();
       set({ user, isAuthenticated: true });
     } finally {
       set({ isLoading: false });
@@ -35,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     set({ isLoading: true });
     try {
-      await accessService.accountLogout();
+      await accountLogout();
       set({ user: null, currentTeam: null, isAuthenticated: false });
     } finally {
       set({ isLoading: false });
@@ -44,7 +43,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true });
     try {
-      const { data: user } = await accessService.accountProfile();
+      const { data: user } = await accountProfile();
       set({ user, isAuthenticated: true });
     } catch {
       set({ user: null, currentTeam: null, isAuthenticated: false });
@@ -52,5 +51,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: false });
     }
   },
-  setCurrentTeam: (team: any) => set({ currentTeam: team }),
+  setCurrentTeam: (team: Team) => set({ currentTeam: team }),
+  setTeams: (teams: Team[]) => set({ teams }),
 }));

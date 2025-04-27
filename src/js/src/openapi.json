@@ -418,8 +418,8 @@
                         "in": "query",
                         "schema": {
                             "type": [
-                                "string",
-                                "null"
+                                "null",
+                                "string"
                             ],
                             "enum": [
                                 "asc",
@@ -2026,8 +2026,8 @@
                         "in": "query",
                         "schema": {
                             "type": [
-                                "string",
-                                "null"
+                                "null",
+                                "string"
                             ],
                             "enum": [
                                 "asc",
