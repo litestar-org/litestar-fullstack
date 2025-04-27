@@ -168,10 +168,8 @@ tmp/
 temp/
 
 # built files from the web UI
-# src/app/server/web/public
-# src/app/server/web/public/hot
-# src/app/server/web/static/
-# src/app/server/web/static/hot
+src/py/app/server/web/public/*
+src/py/app/server/web/static/*
 .vite
 public/hot
 public/bundle
