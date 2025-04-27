@@ -47,13 +47,12 @@ RUN apt-get install -y --no-install-recommends git build-essential curl \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
-  package.json package-lock.json vite.config.ts tsconfig.json \
-  tailwind.config.cjs postcss.config.cjs components.json \
+COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile
   ./
 COPY tools ./tools/
 RUN uvx nodeenv --quiet /opt/nodeenv/
-RUN NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --ignore-scripts --no-fund
+COPY src/js ./src/js/
+RUN cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --ignore-scripts --no-fund
 RUN uv venv \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
   && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
@@ -63,7 +62,7 @@ COPY resources ./resources/
 RUN uv run pip install --quiet cython \
   && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
   && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --output-file=requirements.txt
-COPY src ./src/
+COPY src/py/ ./src/py/
 
 # build the frontend and sync the project
 RUN uv run tools/manage_assets.py --build-assets \

@@ -9,7 +9,7 @@ from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .user import User
+    from app.db.models.user import User
 
 
 class UserOauthAccount(UUIDAuditBase):

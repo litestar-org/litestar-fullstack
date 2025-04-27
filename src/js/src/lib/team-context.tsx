@@ -1,0 +1,51 @@
+import { createContext, useContext, useState, ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
+type Team = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+type TeamContextType = {
+  currentTeam: Team | null;
+  setCurrentTeam: (team: Team | null) => void;
+  teams: Team[];
+  isLoading: boolean;
+};
+
+const TeamContext = createContext<TeamContextType | undefined>(undefined);
+
+export function TeamProvider({ children }: { children: ReactNode }) {
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+
+  const { data: teams = [], isLoading } = useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const response = await api.teams.list();
+      return response.data;
+    },
+  });
+
+  return (
+    <TeamContext.Provider
+      value={{
+        currentTeam,
+        setCurrentTeam,
+        teams,
+        isLoading,
+      }}
+    >
+      {children}
+    </TeamContext.Provider>
+  );
+}
+
+export function useTeam() {
+  const context = useContext(TeamContext);
+  if (context === undefined) {
+    throw new Error("useTeam must be used within a TeamProvider");
+  }
+  return context;
+}

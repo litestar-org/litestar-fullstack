@@ -20,7 +20,7 @@ def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     Returns:
         An application instance, configured via plugin.
     """
-    from app.asgi import create_app
+    from app.server.asgi import create_app
 
     return create_app()
 

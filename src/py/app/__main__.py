@@ -10,10 +10,12 @@ def setup_environment() -> None:
     """Configure the environment variables and path."""
     current_path = Path(__file__).parent.parent.resolve()
     sys.path.append(str(current_path))
-    from app.config import get_settings
+    from app import config
+    from app.lib.settings import get_settings
 
+    _ = config.log.structlog_logging_config.configure()()
     settings = get_settings()
-    os.environ.setdefault("LITESTAR_APP", "app.asgi:create_app")
+    os.environ.setdefault("LITESTAR_APP", "app.server.asgi:create_app")
     os.environ.setdefault("LITESTAR_APP_NAME", settings.app.NAME)
 
 
@@ -22,19 +24,13 @@ def run_cli() -> NoReturn:
 
     This function sets up the environment and runs the Litestar CLI.
     If there's an error loading the required libraries, it will exit with a status code of 1.
-
-    Returns:
-        NoReturn: This function does not return as it either runs the CLI or exits the program.
-
-    Raises:
-        SystemExit: If there's an error loading required libraries.
     """
     setup_environment()
 
     try:
         from litestar.cli.main import litestar_group
 
-        sys.exit(litestar_group())
+        sys.exit(litestar_group())  # pyright: ignore
     except ImportError as exc:
         print(  # noqa: T201
             "Could not load required libraries. ",

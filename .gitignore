@@ -104,6 +104,7 @@ celerybeat.pid
 .env*
 !.env.*.example
 !.env.testing
+!tools/deploy/docker/.env.docker
 .venv
 env/
 venv/

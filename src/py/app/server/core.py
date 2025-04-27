@@ -3,22 +3,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
 from litestar.di import Provide
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar.security.jwt import OAuth2Login
-from litestar.stores.redis import RedisStore
-from litestar.stores.registry import StoreRegistry
-
-from app.domain.accounts.services import UserRoleService
 
 if TYPE_CHECKING:
     from click import Group
-    from litestar import Request
     from litestar.config.app import AppConfig
-    from redis.asyncio import Redis
 
 
 T = TypeVar("T")
@@ -31,16 +24,14 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
     """
 
-    __slots__ = ("app_slug", "redis")
-    redis: Redis
+    __slots__ = ("app_slug",)
     app_slug: str
 
     def on_cli_init(self, cli: Group) -> None:
         from app.cli.commands import user_management_group
-        from app.config import get_settings
+        from app.lib.settings import get_settings
 
         settings = get_settings()
-        self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         cli.add_command(user_management_group)
 
@@ -49,6 +40,9 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
         Args:
             app_config: The :class:`AppConfig <litestar.config.app.AppConfig>` instance.
+
+        Returns:
+            The configured app config.
         """
 
         from uuid import UUID
@@ -58,39 +52,39 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from litestar.params import Body
         from litestar.security.jwt import Token
 
-        from app.__about__ import __version__ as current_version
-        from app.config import app as config
-        from app.config import constants, get_settings
+        from app import config
+        from app import schemas as s
+        from app.__metadata__ import __version__
         from app.db import models as m
-        from app.domain.accounts import signals as account_signals
-        from app.domain.accounts.controllers import AccessController, UserController, UserRoleController
-        from app.domain.accounts.deps import provide_user
-        from app.domain.accounts.guards import auth as jwt_auth
-        from app.domain.accounts.services import RoleService, UserService
-        from app.domain.system.controllers import SystemController
-        from app.domain.tags.controllers import TagController
-        from app.domain.teams import signals as team_signals
-        from app.domain.teams.controllers import TeamController, TeamMemberController
-        from app.domain.teams.services import TeamMemberService, TeamService
-        from app.domain.web.controllers import WebController
-        from app.lib.exceptions import ApplicationError, exception_to_http_response
-        from app.server import plugins
+        from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
+        from app.lib.settings import get_settings
+        from app.server import plugins, security, signals
+        from app.server.api import controllers as api_controllers
+        from app.server.web import controllers as web_controllers
+        from app.services import (
+            RoleService,
+            TagService,
+            TeamInvitationService,
+            TeamMemberService,
+            TeamService,
+            UserOAuthAccountService,
+            UserRoleService,
+            UserService,
+        )
 
         settings = get_settings()
-        self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         app_config.debug = settings.app.DEBUG
         # openapi
         app_config.openapi_config = OpenAPIConfig(
             title=settings.app.NAME,
-            version=current_version,
-            components=[jwt_auth.openapi_components],
-            security=[jwt_auth.security_requirement],
-            use_handler_docstrings=True,
+            version=__version__,
+            components=[security.auth.openapi_components],
+            security=[security.auth.security_requirement],
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
         # jwt auth (updates openapi config)
-        app_config = jwt_auth.on_app_init(app_config)
+        app_config = security.auth.on_app_init(app_config)
         # security
         app_config.cors_config = config.cors
         # templates
@@ -104,21 +98,20 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 plugins.vite,
                 plugins.saq,
                 plugins.problem_details,
-                plugins.oauth,
             ],
         )
 
         # routes
         app_config.route_handlers.extend(
             [
-                SystemController,
-                AccessController,
-                UserController,
-                TeamController,
-                UserRoleController,
-                TeamMemberController,
-                TagController,
-                WebController,
+                api_controllers.SystemController,
+                api_controllers.AccessController,
+                api_controllers.UserController,
+                api_controllers.TeamController,
+                api_controllers.UserRoleController,
+                api_controllers.TeamMemberController,
+                api_controllers.TagController,
+                web_controllers.WebController,
             ],
         )
         # signatures
@@ -129,12 +122,16 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "RequestEncodingType": RequestEncodingType,
                 "Body": Body,
                 "m": m,
+                "s": s,
                 "UUID": UUID,
                 "UserService": UserService,
                 "RoleService": RoleService,
                 "TeamService": TeamService,
+                "TeamInvitationService": TeamInvitationService,
                 "TeamMemberService": TeamMemberService,
+                "TagService": TagService,
                 "UserRoleService": UserRoleService,
+                "UserOAuthAccountService": UserOAuthAccountService,
             },
         )
         # exception handling
@@ -142,33 +139,11 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             ApplicationError: exception_to_http_response,
             RepositoryError: exception_to_http_response,
         }
-        # caching & redis
-        app_config.response_cache_config = ResponseCacheConfig(
-            default_expiration=constants.CACHE_EXPIRATION,
-            key_builder=self._cache_key_builder,
-        )
-        app_config.stores = StoreRegistry(default_factory=self.redis_store_factory)
-        app_config.on_shutdown.append(self.redis.aclose)  # type: ignore[attr-defined]
         # dependencies
-        dependencies = {"current_user": Provide(provide_user)}
+        dependencies = {"current_user": Provide(security.provide_user, sync_to_thread=False)}
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(
-            [account_signals.user_created_event_handler, team_signals.team_created_event_handler],
+            [signals.user.user_created_event_handler, signals.team.team_created_event_handler],
         )
         return app_config
-
-    def redis_store_factory(self, name: str) -> RedisStore:
-        return RedisStore(self.redis, namespace=f"{self.app_slug}:{name}")
-
-    def _cache_key_builder(self, request: Request) -> str:
-        """App name prefixed cache key builder.
-
-        Args:
-            request (Request): Current request instance.
-
-        Returns:
-            str: App slug prefixed cache key.
-        """
-
-        return f"{self.app_slug}:{default_cache_key_builder(request)}"

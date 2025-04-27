@@ -5,8 +5,7 @@ from litestar_granian import GranianPlugin
 from litestar_saq import SAQPlugin
 from litestar_vite import VitePlugin
 
-from app.config import app as config
-from app.lib.oauth import OAuth2ProviderPlugin
+from app import config
 
 structlog = StructlogPlugin(config=config.log)
 vite = VitePlugin(config=config.vite)
@@ -14,4 +13,3 @@ saq = SAQPlugin(config=config.saq)
 alchemy = SQLAlchemyPlugin(config=config.alchemy)
 granian = GranianPlugin()
 problem_details = ProblemDetailsPlugin(config=config.problem_details)
-oauth = OAuth2ProviderPlugin()

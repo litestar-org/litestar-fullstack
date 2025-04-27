@@ -41,12 +41,12 @@ async def maybe_async(obj: T) -> T: ...
 
 
 async def maybe_async(obj: Awaitable[T] | T) -> T:
-    return cast(T, await obj) if inspect.isawaitable(obj) else cast(T, obj)  # type: ignore[redundant-cast]
+    return cast("T", await obj) if inspect.isawaitable(obj) else cast("T", obj)  # type: ignore[redundant-cast]
 
 
 def maybe_async_cm(obj: AbstractContextManager[T] | AbstractAsyncContextManager[T]) -> AbstractAsyncContextManager[T]:
     if isinstance(obj, AbstractContextManager):
-        return cast(AbstractAsyncContextManager[T], _ContextManagerWrapper(obj))
+        return cast("AbstractAsyncContextManager[T]", _ContextManagerWrapper(obj))
     return obj
 
 

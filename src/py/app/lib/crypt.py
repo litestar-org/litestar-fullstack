@@ -1,11 +1,12 @@
-from __future__ import annotations  # noqa: A005
+from __future__ import annotations
 
 import asyncio
 import base64
 
-from passlib.context import CryptContext
+from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
 
-password_crypt_context = CryptContext(schemes=["argon2"], deprecated="auto")
+hasher = PasswordHash((Argon2Hasher(),))
 
 
 def get_encryption_key(secret: str) -> bytes:
@@ -17,7 +18,7 @@ def get_encryption_key(secret: str) -> bytes:
     Returns:
         bytes: a URL safe encoded version of secret
     """
-    if len(secret) <= 32:
+    if len(secret) <= 32:  # noqa: PLR2004
         secret = f"{secret:<32}"[:32]
     return base64.urlsafe_b64encode(secret.encode())
 
@@ -27,10 +28,11 @@ async def get_password_hash(password: str | bytes) -> str:
 
     Args:
         password: Plain password
+
     Returns:
         str: Hashed password
     """
-    return await asyncio.get_running_loop().run_in_executor(None, password_crypt_context.hash, password)
+    return await asyncio.get_running_loop().run_in_executor(None, hasher.hash, password)
 
 
 async def verify_password(plain_password: str | bytes, hashed_password: str) -> bool:
@@ -45,7 +47,7 @@ async def verify_password(plain_password: str | bytes, hashed_password: str) -> 
     """
     valid, _ = await asyncio.get_running_loop().run_in_executor(
         None,
-        password_crypt_context.verify_and_update,
+        hasher.verify_and_update,
         plain_password,
         hashed_password,
     )

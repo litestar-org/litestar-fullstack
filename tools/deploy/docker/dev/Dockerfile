@@ -72,20 +72,16 @@ RUN apt-get install -y --no-install-recommends git build-essential curl \
 
 ## -------------------------- install application ----------------------------------- ##
 WORKDIR /workspace/app
-COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile \
-  package.json package-lock.json vite.config.ts tsconfig.json \
-  tailwind.config.cjs postcss.config.cjs components.json \
+COPY pyproject.toml uv.lock README.md .pre-commit-config.yaml LICENSE Makefile
   ./
 COPY tools ./tools/
+COPY src/js ./src/js/
 RUN uvx nodeenv --quiet /opt/nodeenv/
-RUN NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --ignore-scripts --no-fund
+RUN cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --ignore-scripts --no-fund
 RUN uv sync ${UV_INSTALL_ARGS} --no-install-project
 
-COPY public ./public/
-COPY resources ./resources/
 COPY docs/ docs/
-COPY tests/ tests/
-COPY src src/
+COPY src/py/ src/py/
 RUN uv sync $UV_INSTALL_ARGS
 
 STOPSIGNAL SIGINT

@@ -15,17 +15,17 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,redis,structlog]",
+  "litestar[jinja,jwt,structlog]",
   "advanced-alchemy[uuid]>=0.33.2",
-  "asyncpg",
+  "psycopg[pool,binary]",
   "python-dotenv",
-  "passlib[argon2]",
+  "pwdlib[argon2]",
   "litestar-saq",
   "litestar-vite",
   "litestar-granian[uvloop]",
-  "httpx-oauth>=0.16.1",
+  "httpx-oauth",
 ]
-description = "Opinionated template for a Litestar application."
+description = "Reference application for building a fullstack application with Litestar."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
 license = { text = "MIT" }
 name = "app"
@@ -63,14 +63,13 @@ linting = [
   "types-click",
   "types-passlib",
   "types-pyyaml",
-  "types-redis",
-  "asyncpg-stubs",
   "pyright",
 ]
 test = [
   "bump-my-version",
   "pytest",
   "pytest-xdist",
+  "pytest-asyncio",
   "pytest-mock",
   "pytest-cov",
   "coverage[toml]",
@@ -94,7 +93,7 @@ sources = ["src/py"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "docs"]
-include = ["src/*", "tests/*", "public/*", "tools/*", "resources", "LICENSE"]
+include = ["src/*", "tools/*", "resources", "LICENSE"]
 skip-excluded-dirs = false
 
 [tool.hatch.build.targets.wheel]
@@ -242,6 +241,7 @@ ignore = [
   "PGH003",
   "PLC2701",
   "PLW3201",
+  "PLR6301",
 ]
 select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
@@ -253,9 +253,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
-"src/py/tests/*.py" = ['D103', 'S101', 'D104']
+"src/py/app/db/models/*.py" = ["PLW0108"]
+"src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
-"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -337,7 +338,7 @@ module = ["app.db.migrations.*", "app.lib.dto.*"]
 
 [tool.pyright]
 disableBytesTypePromotions = true
-include = ["src/py/app", "tests"]
+include = ["src/py/app", "src/py/tests"]
 pythonVersion = "3.11"
 reportMissingTypeStubs = false
 reportPrivateImportUsage = false
