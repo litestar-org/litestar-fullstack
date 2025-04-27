@@ -4,7 +4,7 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import path from 'path'
 
 const APP_URL = process.env.APP_URL || "http://localhost:8080"
-const API_URL = APP_URL + "/api"
+const API_URL = APP_URL
 const ASSET_URL = process.env.ASSET_URL || "/"
 const VITE_PORT = process.env.VITE_PORT || "5173"
 // https://vitejs.dev/config/

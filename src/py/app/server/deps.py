@@ -11,8 +11,8 @@ from app.services import UserService
 provide_users_service = create_service_provider(
     UserService,
     load=[
-        joinedload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
-        joinedload(m.User.oauth_accounts),
+        selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
+        selectinload(m.User.oauth_accounts),
         selectinload(m.User.teams).options(
             joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
         ),

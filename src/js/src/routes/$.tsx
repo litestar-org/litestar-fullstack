@@ -1,8 +1,8 @@
 import { useAuthStore } from "@/lib/auth";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
-	component: IndexPage,
+export const Route = createFileRoute("/$")({
+	component: NotFoundPage,
 	beforeLoad: () => {
 		const { isAuthenticated } = useAuthStore.getState();
 		if (isAuthenticated) {
@@ -12,6 +12,6 @@ export const Route = createFileRoute("/")({
 	},
 });
 
-function IndexPage() {
+function NotFoundPage() {
 	return null;
 }
