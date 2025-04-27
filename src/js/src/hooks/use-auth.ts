@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { api } from "@/lib/api";
+import { accountLogout } from "@/lib/api/sdk.gen";
 
 interface User {
   id: string;
@@ -24,7 +24,7 @@ export const useAuth = create<AuthState>((set) => ({
   setError: (error) => set({ error, isLoading: false }),
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await accountLogout();
       set({ user: null, isLoading: false, error: null });
     } catch (error) {
       set({ error: "Failed to logout", isLoading: false });

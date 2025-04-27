@@ -1,6 +1,5 @@
 import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { InviteMemberDialog } from "./invite-member-dialog";
+import { getTeam, listTeams, removeMemberFromTeam } from '@/lib/api/sdk.gen'
 
 interface TeamMember {
   id: string;
@@ -22,16 +22,18 @@ interface TeamMember {
 
 interface Team {
   id: string;
-  permissions: string[];
+  name: string;
+  description?: string;
+  members?: TeamMember[];
 }
 
 export function TeamManagement() {
-  const { teamId } = useParams({ from: "/teams/$teamId" });
+  const { teamId } = useParams({ from: '/_app/teams/$teamId' as const });
 
   const { data: team } = useQuery<Team>({
     queryKey: ["team", teamId],
     queryFn: async () => {
-      const response = await api.teams.get(teamId);
+      const response = await getTeam({ path: { team_id: teamId } });
       return response.data;
     },
   });
@@ -39,7 +41,7 @@ export function TeamManagement() {
   const { data: members, isLoading } = useQuery<TeamMember[]>({
     queryKey: ["team-members", teamId],
     queryFn: async () => {
-      const response = await api.teams.members.list(teamId);
+      const response = await listTeams({ query: { ids: [teamId] } });
       return response.data;
     },
   });
@@ -48,7 +50,7 @@ export function TeamManagement() {
     return <div>Loading...</div>;
   }
 
-  const canManageMembers = team.permissions.includes("manage_members");
+  const canManageMembers = team.members?.some(member => member.role === 'ADMIN');
 
   return (
     <div className="space-y-6">
@@ -81,7 +83,7 @@ export function TeamManagement() {
                         variant="destructive"
                         size="sm"
                         onClick={async () => {
-                          await api.teams.members.remove(teamId, member.id);
+                          await removeMemberFromTeam({ path: { team_id: teamId }, body: { userName: member.id } });
                         }}
                       >
                         Remove

@@ -20,4 +20,8 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: '../py/app/server/web/static',
+    emptyOutDir: true,
+  },
 })

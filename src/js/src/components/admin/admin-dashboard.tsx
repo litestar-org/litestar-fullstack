@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { User } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -10,12 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { listUsers, assignUserRole, revokeUserRole } from '@/lib/api/sdk.gen'
 
 export function AdminDashboard() {
-  const { data: users = [], isLoading } = useQuery({
+  const { data: users = [], isLoading, refetch } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const response = await api.admin.users.list();
+      const response = await listUsers();
       return response.data;
     },
   });
@@ -23,6 +24,26 @@ export function AdminDashboard() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const handleToggleSuperuser = async (user: User) => {
+    try {
+      const isSuperuser = user.roles?.some(role => role.roleSlug === 'superuser');
+      if (isSuperuser) {
+        await revokeUserRole({
+          body: { userName: user.name || user.email },
+          query: { role_slug: 'superuser' }
+        });
+      } else {
+        await assignUserRole({
+          body: { userName: user.name || user.email },
+          query: { role_slug: 'superuser' }
+        });
+      }
+      refetch();
+    } catch (error) {
+      console.error('Failed to toggle superuser status:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -41,22 +62,18 @@ export function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
+              {users.map((user: User) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.roles?.map(role => role.roleName).join(', ')}</TableCell>
                   <TableCell>
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={async () => {
-                        await api.admin.users.delete({
-                          params: { userId: user.id },
-                        });
-                      }}
+                      onClick={() => handleToggleSuperuser(user)}
                     >
-                      Delete
+                      Toggle Superuser
                     </Button>
                   </TableCell>
                 </TableRow>

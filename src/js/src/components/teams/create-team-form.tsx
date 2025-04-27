@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "@tanstack/react-router";
-import { api } from "@/lib/api";
 import {
   Form,
   FormControl,
@@ -14,12 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createTeam } from '@/lib/api/sdk.gen'
 
 const createTeamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
-  slug: z.string().min(1, "Team slug is required").regex(/^[a-z0-9-]+$/, {
-    message: "Slug must contain only lowercase letters, numbers, and hyphens",
-  }),
+  description: z.string().optional(),
 });
 
 type CreateTeamFormData = z.infer<typeof createTeamSchema>;
@@ -30,18 +28,13 @@ export function CreateTeamForm() {
     resolver: zodResolver(createTeamSchema),
     defaultValues: {
       name: "",
-      slug: "",
+      description: "",
     },
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {
     try {
-      await api.teams.create({
-        data: {
-          name: data.name,
-          slug: data.slug,
-        },
-      });
+      await createTeam({ body: { name: data.name, description: data.description } });
       router.invalidate();
       router.navigate({ to: "/" });
     } catch (error) {
@@ -74,10 +67,10 @@ export function CreateTeamForm() {
             />
             <FormField
               control={form.control}
-              name="slug"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Team Slug</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

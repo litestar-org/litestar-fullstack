@@ -1,6 +1,10 @@
-import type { CreateClientConfig } from '../client.gen';
+import type { Config, ClientOptions } from '@hey-api/client-axios';
 
-export const createClientConfig: CreateClientConfig = (config) => ({
-  ...config,
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-});
+export const createClientConfig = <T extends ClientOptions>(
+  override?: Config<T>
+): Config<Required<ClientOptions> & T> => {
+  return {
+    baseURL: '/api',
+    ...override,
+  };
+};

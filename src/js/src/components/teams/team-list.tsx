@@ -1,9 +1,10 @@
 import { useTeam } from "@/lib/team-context";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { Team } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
+import { listTeams } from '@/lib/api/sdk.gen'
 
 export function TeamList() {
   const { currentTeam, setCurrentTeam } = useTeam();
@@ -11,7 +12,7 @@ export function TeamList() {
   const { data: teams = [], isLoading } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
-      const response = await api.teams.list();
+      const response = await listTeams();
       return response.data;
     },
   });
@@ -28,7 +29,7 @@ export function TeamList() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            You don't have any teams yet. Create your first team to get started.
+            You don&apos;t have any teams yet. Create your first team to get started.
           </p>
           <Button asChild>
             <Link to="/teams/new">Create Team</Link>
@@ -40,7 +41,7 @@ export function TeamList() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {teams.map((team) => (
+      {teams.map((team: Team) => (
         <Card
           key={team.id}
           className={currentTeam?.id === team.id ? "border-primary" : ""}
@@ -57,7 +58,7 @@ export function TeamList() {
                 {currentTeam?.id === team.id ? "Current Team" : "Switch to Team"}
               </Button>
               <Button variant="outline" asChild>
-                <Link to={`/teams/${team.id}`}>View Team</Link>
+                <Link to={`/teams/$teamId` as const} params={{ teamId: team.id }}>View Team</Link>
               </Button>
             </div>
           </CardContent>

@@ -168,14 +168,15 @@ tmp/
 temp/
 
 # built files from the web UI
-src/app/domain/web/public
-src/app/domain/web/public/hot
+# src/app/server/web/public
+# src/app/server/web/public/hot
+# src/app/server/web/static/
+# src/app/server/web/static/hot
 .vite
-src/app/domain/web/static
 public/hot
 public/bundle
-pdm-pythn
 
+pdm-python
 db.duckdb
 local.duckdb
 
