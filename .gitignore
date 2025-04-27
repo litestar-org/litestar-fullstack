@@ -179,3 +179,5 @@ db.duckdb
 local.duckdb
 
 requirements.txt
+dist-ssr
+*.local
