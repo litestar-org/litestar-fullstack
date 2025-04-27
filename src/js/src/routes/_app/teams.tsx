@@ -13,9 +13,12 @@ export const Route = createFileRoute('/_app/teams')({
 function Teams() {
   const { currentTeam, setCurrentTeam, teams, setTeams } = useAuthStore()
 
-  const { data: teamsData = [], isLoading } = useQuery<Team[]>({
+  const { data: teamsData = [], isLoading } = useQuery({
     queryKey: ['teams'],
-    queryFn: () => listTeams(),
+    queryFn: async () => {
+      const response = await listTeams();
+      return response.data?.items ?? [];
+    },
   })
 
   if (teamsData.length > 0 && teams.length === 0) {

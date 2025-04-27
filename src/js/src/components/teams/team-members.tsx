@@ -37,7 +37,8 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
     return null;
   }
 
-  const canManageMembers = team.data.owner_id === user?.id || user?.isSuperuser;
+  const ownerId = team.data.members?.find(member => member.isOwner)?.id;
+  const canManageMembers = ownerId === user?.id || user?.isSuperuser;
 
   return (
     <div className="space-y-4">
@@ -62,13 +63,13 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
               <TableCell>{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>
               <TableCell>
-                {member.id === team.data.owner_id
+                {member.isOwner
                   ? 'Owner'
                   : member.role === 'ADMIN'
                   ? 'Admin'
                   : 'Member'}
               </TableCell>
-              {canManageMembers && member.id !== team.data.owner_id && (
+              {canManageMembers && !member.isOwner && (
                 <TableCell>
                   <Button
                     variant="destructive"

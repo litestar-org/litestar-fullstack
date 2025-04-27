@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { TeamMember, Team } from "@/lib/api";
+import { TeamMember } from "@/lib/api";
 import { getTeam, listTeams, addMemberToTeam, removeMemberFromTeam } from "@/lib/api/sdk.gen";
 // import { useAuthStore } from "@/lib/auth";
 import { Button } from '@/components/ui/button'
@@ -15,14 +15,20 @@ function TeamDetail() {
   // const { currentTeam } = useAuthStore();
   const queryClient = useQueryClient();
 
-  const { data: team, isLoading: isTeamLoading } = useQuery<Team>({
+  const { data: team, isLoading: isTeamLoading } = useQuery({
     queryKey: ['team', teamId],
-    queryFn: () => getTeam({ path: { team_id: teamId } }),
+    queryFn: async () => {
+      const response = await getTeam({ path: { team_id: teamId } });
+      return response.data;
+    },
   });
 
-  const { data: members = [], isLoading: isMembersLoading } = useQuery<TeamMember[]>({
+  const { data: members = [], isLoading: isMembersLoading } = useQuery({
     queryKey: ['team-members', teamId],
-    queryFn: () => listTeams({ query: { ids: [teamId] } }),
+    queryFn: async () => {
+      const response = await listTeams({ query: { ids: [teamId] } });
+      return response.data?.items?.[0]?.members ?? [];
+    },
   });
 
   const addMemberMutation = useMutation({
