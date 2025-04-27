@@ -19,7 +19,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     queryKey: ["teams"],
     queryFn: async () => {
       const response = await listTeams();
-      return response.data;
+      return response.data?.items ?? [];
     },
   });
 

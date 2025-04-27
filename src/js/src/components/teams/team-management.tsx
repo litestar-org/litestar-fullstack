@@ -12,25 +12,12 @@ import {
 } from "@/components/ui/table";
 import { InviteMemberDialog } from "./invite-member-dialog";
 import { getTeam, listTeams, removeMemberFromTeam } from '@/lib/api/sdk.gen'
-
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface Team {
-  id: string;
-  name: string;
-  description?: string;
-  members?: TeamMember[];
-}
+import { TeamMember } from '@/lib/api';
 
 export function TeamManagement() {
   const { teamId } = useParams({ from: '/_app/teams/$teamId' as const });
 
-  const { data: team } = useQuery<Team>({
+  const { data: team } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
       const response = await getTeam({ path: { team_id: teamId } });
@@ -38,11 +25,11 @@ export function TeamManagement() {
     },
   });
 
-  const { data: members, isLoading } = useQuery<TeamMember[]>({
+  const { data: members, isLoading } = useQuery({
     queryKey: ["team-members", teamId],
     queryFn: async () => {
       const response = await listTeams({ query: { ids: [teamId] } });
-      return response.data;
+      return response.data?.items?.[0]?.members ?? [];
     },
   });
 
@@ -50,7 +37,7 @@ export function TeamManagement() {
     return <div>Loading...</div>;
   }
 
-  const canManageMembers = team.members?.some(member => member.role === 'ADMIN');
+  const canManageMembers = team.members?.some((member: TeamMember) => member.role === 'ADMIN');
 
   return (
     <div className="space-y-6">
@@ -72,7 +59,7 @@ export function TeamManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {members?.map((member) => (
+              {members?.map((member: TeamMember) => (
                 <TableRow key={member.id}>
                   <TableCell>{member.name}</TableCell>
                   <TableCell>{member.email}</TableCell>

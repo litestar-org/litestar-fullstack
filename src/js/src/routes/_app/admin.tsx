@@ -17,7 +17,10 @@ function Admin() {
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['users'],
-    queryFn: () => listUsers(),
+    queryFn: async () => {
+      const response = await listUsers();
+      return response.data?.items ?? [];
+    },
   });
 
   const toggleSuperuserMutation = useMutation({
