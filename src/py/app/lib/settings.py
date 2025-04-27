@@ -210,11 +210,11 @@ class ViteSettings:
     """Enable React support in HMR."""
     BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", Path(f"{BASE_DIR}/server/web/static")))
     """Bundle directory"""
-    RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("resources")))
+    RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("src/js/src")))
     """Resource directory"""
     TEMPLATE_DIR: Path = field(default_factory=get_env("VITE_TEMPLATE_DIR", Path(f"{BASE_DIR}/server/web/templates")))
     """Template directory."""
-    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
+    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/"))
     """Base URL for assets"""
 
     @property
