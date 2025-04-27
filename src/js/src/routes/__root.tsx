@@ -1,5 +1,4 @@
-import { createRootRoute, Outlet, createRouter } from "@tanstack/react-router";
-import { Toaster } from "@/components/ui/toaster";
+import { Outlet, createRootRoute, createRouter } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
 	component: RootRoute,
@@ -15,7 +14,6 @@ function RootRoute() {
 			<main className="container mx-auto py-4">
 				<Outlet />
 			</main>
-			<Toaster />
 		</div>
 	);
 }
