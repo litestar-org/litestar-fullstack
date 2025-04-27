@@ -7,7 +7,9 @@ export const Route = createRootRoute({
 function RootRoute() {
 	return (
 		<div className="min-h-screen bg-background">
-			<Outlet />
+			<main className="container mx-auto py-4">
+				<Outlet />
+			</main>
 		</div>
 	);
 }

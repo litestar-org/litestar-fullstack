@@ -30,6 +30,8 @@ export function LoginForm() {
       username: "",
       password: "",
     },
+    mode: "onBlur",
+    reValidateMode: "onBlur",
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -63,7 +65,14 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input
+                      type="email"
+                      {...field}
+                      onBlur={() => {
+                        field.onBlur();
+                        form.trigger(field.name);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -76,7 +85,14 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input
+                      type="password"
+                      {...field}
+                      onBlur={() => {
+                        field.onBlur();
+                        form.trigger(field.name);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
