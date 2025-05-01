@@ -213,3 +213,15 @@ wipe-infra:                                           ## Remove local container 
 infra-logs:                                           ## Tail development infrastructure logs
 	@echo "${INFO} Tailing infrastructure logs... 📋"
 	@docker compose -f tools/deploy/docker-compose.infra.yml logs -f
+
+.PHONY: start-all
+start-all:                                        ## Start local containers
+	@echo "${INFO} Starting local infrastructure... 🚀"
+	@docker compose -f tools/deploy/docker-compose.yml -f tools/deploy/docker-compose.override.yml up -d --force-recreate
+	@echo "${OK} Infrastructure is ready"
+
+.PHONY: stop-all
+stop-all:                                         ## Stop local containers
+	@echo "${INFO} Stopping infrastructure... 🛑"
+	@docker compose -f tools/deploy/docker-compose.yml -f tools/deploy/docker-compose.override.yml down -v --remove-orphans
+	@echo "${OK} Infrastructure stopped"

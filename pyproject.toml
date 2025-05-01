@@ -16,7 +16,7 @@ classifiers = [
 ]
 dependencies = [
   "litestar[jinja,jwt,structlog]",
-  "advanced-alchemy[uuid]>=0.33.2",
+  "advanced-alchemy[uuid]",
   "psycopg[pool,binary]",
   "python-dotenv",
   "pwdlib[argon2]",
@@ -74,7 +74,7 @@ test = [
   "pytest-cov",
   "coverage[toml]",
   "pytest-sugar",
-  "pytest-databases[postgres,redis]>=0.1.0",
+  "pytest-databases[postgres]>=0.1.0",
 ]
 
 
