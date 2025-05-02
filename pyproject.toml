@@ -338,6 +338,7 @@ module = ["app.db.migrations.*", "app.lib.dto.*"]
 
 [tool.pyright]
 disableBytesTypePromotions = true
+exclude = ["src/py/app/db/migrations"]
 include = ["src/py/app", "src/py/tests"]
 pythonVersion = "3.11"
 reportMissingTypeStubs = false
