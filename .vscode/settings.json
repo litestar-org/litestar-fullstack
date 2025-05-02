@@ -99,8 +99,7 @@
     "source.convertImportFormat"
   ],
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.pytestArgs": ["tests"],
-  "python.testing.unittestEnabled": true,
+  "python.testing.unittestEnabled": false,
   "python.analysis.supportDocstringTemplate": true,
   "python.analysis.supportRestructuredText": true,
   "python.analysis.regenerateStdLibIndices": true,
@@ -109,7 +108,6 @@
   "python.analysis.generateWithTypeAnnotation": true,
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.executeInFileDir": true,
-  "python.testing.pytestEnabled": true,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.autoFormatStrings": true,
   "ruff.configuration": "${workspaceFolder}/pyproject.toml",
@@ -119,5 +117,9 @@
   "ruff.lineLength": 120,
   "ruff.lint.extendSelect": ["ALL"],
   "ruff.lint.select": ["ALL"],
-  "ruff.configurationPreference": "filesystemFirst"
+  "ruff.configurationPreference": "filesystemFirst",
+  "python.testing.pytestArgs": [
+    "src/py/tests",
+  ],
+  "python.testing.pytestEnabled": true
 }
