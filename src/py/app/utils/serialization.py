@@ -53,10 +53,7 @@ def convert_datetime_to_gmt_iso(dt: datetime.datetime) -> str:
     Returns:
         The ISO formatted datetime string.
     """
-    if not dt.tzinfo:
-        dt = dt.replace(tzinfo=datetime.UTC)
-    else:
-        dt = dt.astimezone(datetime.UTC)
+    dt = dt.replace(tzinfo=datetime.UTC) if not dt.tzinfo else dt.astimezone(datetime.UTC)
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 

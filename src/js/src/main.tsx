@@ -15,36 +15,36 @@ const queryClient = new QueryClient();
 
 // Create the router using the generated route tree
 const router = createRouter({
-	routeTree,
-	context: {
-		queryClient,
-	},
-	defaultPreload: "intent",
-	scrollRestoration: true,
-	defaultStructuralSharing: true,
-	defaultPreloadStaleTime: 0,
+  routeTree,
+  context: {
+    queryClient,
+  },
+  defaultPreload: "intent",
+  scrollRestoration: true,
+  defaultStructuralSharing: true,
+  defaultPreloadStaleTime: 0,
 });
 
 declare module "@tanstack/react-router" {
-	interface Register {
-		router: typeof router;
-	}
+  interface Register {
+    router: typeof router;
+  }
 }
 
 // Render the app
 const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
-	const root = ReactDOM.createRoot(rootElement);
-	root.render(
-		<React.StrictMode>
-			<QueryClientProvider client={queryClient}>
-				<TeamProvider>
-					<RouterProvider router={router} />
-					<ReactQueryDevtools />
-				</TeamProvider>
-			</QueryClientProvider>
-		</React.StrictMode>,
-	);
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TeamProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
+        </TeamProvider>
+      </QueryClientProvider>
+    </React.StrictMode>,
+  );
 }
 
 // If you want to start measuring performance in your app, pass a function

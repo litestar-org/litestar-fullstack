@@ -9,10 +9,5 @@
   "variableValues": {},
   "git": true,
   "version": 1,
-  "existingAddOns": [
-    "form",
-    "shadcn",
-    "table",
-    "tanstack-query"
-  ]
+  "existingAddOns": ["form", "shadcn", "table", "tanstack-query"]
 }

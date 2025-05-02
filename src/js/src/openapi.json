@@ -1,2559 +1,2553 @@
 {
-	"info": {
-		"title": "Litestar Fullstack Template",
-		"version": "0.2.0"
-	},
-	"openapi": "3.1.0",
-	"servers": [
-		{
-			"url": "/"
-		}
-	],
-	"paths": {
-		"/health": {
-			"get": {
-				"tags": ["System"],
-				"summary": "Health Check",
-				"operationId": "SystemHealth",
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SystemHealth"
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/access/login": {
-			"post": {
-				"tags": ["Access"],
-				"summary": "Login",
-				"operationId": "AccountLogin",
-				"requestBody": {
-					"content": {
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/AccountLogin"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/OAuth2Login"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/access/logout": {
-			"post": {
-				"tags": ["Access"],
-				"summary": "Logout",
-				"operationId": "AccountLogout",
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Message"
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/me": {
-			"get": {
-				"tags": ["Access"],
-				"summary": "Profile",
-				"operationId": "AccountProfile",
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/access/signup": {
-			"post": {
-				"tags": ["Access"],
-				"summary": "Signup",
-				"operationId": "AccountRegister",
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/AccountRegister"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/users": {
-			"get": {
-				"tags": ["User Accounts"],
-				"summary": "ListUsers",
-				"operationId": "ListUsers",
-				"parameters": [
-					{
-						"name": "ids",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "createdBefore",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "createdAfter",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "updatedBefore",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "updatedAfter",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "searchString",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string"
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Field to search"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "searchIgnoreCase",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "boolean",
-									"default": false
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Search should be case sensitive",
-							"default": false
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "currentPage",
-						"in": "query",
-						"schema": {
-							"type": "integer",
-							"minimum": 1.0,
-							"default": 1
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "pageSize",
-						"in": "query",
-						"schema": {
-							"type": "integer",
-							"minimum": 1.0,
-							"default": 20
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "orderBy",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"default": "name"
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Order by field",
-							"default": "name"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "sortOrder",
-						"in": "query",
-						"schema": {
-							"type": ["null", "string"],
-							"enum": ["asc", "desc", null],
-							"title": "Field to search",
-							"default": "asc"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"items": {
-											"items": {
-												"$ref": "#/components/schemas/User"
-											},
-											"type": "array"
-										},
-										"limit": {
-											"type": "integer",
-											"description": "Maximal number of items to send."
-										},
-										"offset": {
-											"type": "integer",
-											"description": "Offset from the beginning of the query."
-										},
-										"total": {
-											"type": "integer",
-											"description": "Total number of items."
-										}
-									},
-									"type": "object"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"post": {
-				"tags": ["User Accounts"],
-				"summary": "CreateUser",
-				"operationId": "CreateUser",
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserCreate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/users/{user_id}": {
-			"get": {
-				"tags": ["User Accounts"],
-				"summary": "GetUser",
-				"operationId": "GetUser",
-				"parameters": [
-					{
-						"name": "user_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "User ID",
-							"description": "The user to retrieve."
-						},
-						"description": "The user to retrieve.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"delete": {
-				"tags": ["User Accounts"],
-				"summary": "DeleteUser",
-				"operationId": "DeleteUser",
-				"parameters": [
-					{
-						"name": "user_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "User ID",
-							"description": "The user to delete."
-						},
-						"description": "The user to delete.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "Request fulfilled, nothing follows",
-						"headers": {}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"patch": {
-				"tags": ["User Accounts"],
-				"summary": "UpdateUser",
-				"operationId": "UpdateUser",
-				"parameters": [
-					{
-						"name": "user_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "User ID",
-							"description": "The user to update."
-						},
-						"description": "The user to update.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserUpdate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/teams": {
-			"get": {
-				"tags": ["Teams"],
-				"summary": "ListTeams",
-				"operationId": "ListTeams",
-				"parameters": [
-					{
-						"name": "ids",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"items": {
-											"items": {
-												"$ref": "#/components/schemas/Team"
-											},
-											"type": "array"
-										},
-										"limit": {
-											"type": "integer",
-											"description": "Maximal number of items to send."
-										},
-										"offset": {
-											"type": "integer",
-											"description": "Offset from the beginning of the query."
-										},
-										"total": {
-											"type": "integer",
-											"description": "Total number of items."
-										}
-									},
-									"type": "object"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"post": {
-				"tags": ["Teams"],
-				"summary": "CreateTeam",
-				"operationId": "CreateTeam",
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamCreate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Team"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/teams/{team_id}": {
-			"get": {
-				"tags": ["Teams"],
-				"summary": "GetTeam",
-				"operationId": "GetTeam",
-				"parameters": [
-					{
-						"name": "team_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Team ID",
-							"description": "The team to retrieve."
-						},
-						"description": "The team to retrieve.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Team"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"delete": {
-				"tags": ["Teams"],
-				"summary": "DeleteTeam",
-				"operationId": "DeleteTeam",
-				"parameters": [
-					{
-						"name": "team_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Team ID",
-							"description": "The team to delete."
-						},
-						"description": "The team to delete.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "Request fulfilled, nothing follows",
-						"headers": {}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"patch": {
-				"tags": ["Teams"],
-				"summary": "UpdateTeam",
-				"operationId": "UpdateTeam",
-				"parameters": [
-					{
-						"name": "team_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Team ID",
-							"description": "The team to update."
-						},
-						"description": "The team to update.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamUpdate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Team"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/users/roles": {
-			"post": {
-				"tags": ["User Account Roles"],
-				"summary": "AssignRole",
-				"operationId": "AssignUserRole",
-				"parameters": [
-					{
-						"name": "role_slug",
-						"in": "query",
-						"schema": {
-							"type": "string",
-							"title": "Role Slug",
-							"description": "The role to grant."
-						},
-						"description": "The role to grant.",
-						"required": true,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRoleAdd"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Message"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"delete": {
-				"tags": ["User Account Roles"],
-				"summary": "RevokeRole",
-				"operationId": "RevokeUserRole",
-				"parameters": [
-					{
-						"name": "role_slug",
-						"in": "query",
-						"schema": {
-							"type": "string",
-							"title": "Role Slug",
-							"description": "The role to revoke."
-						},
-						"description": "The role to revoke.",
-						"required": true,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRoleRevoke"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"202": {
-						"description": "Request accepted, processing continues off-line",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Message"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/teams/{team_id}/members": {
-			"post": {
-				"tags": ["Team Members"],
-				"summary": "AddMemberToTeam",
-				"operationId": "AddMemberToTeam",
-				"parameters": [
-					{
-						"name": "team_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Team ID",
-							"description": "The team to update."
-						},
-						"description": "The team to update.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamMemberModify"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Team"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"delete": {
-				"tags": ["Team Members"],
-				"summary": "RemoveMemberFromTeam",
-				"operationId": "RemoveMemberFromTeam",
-				"parameters": [
-					{
-						"name": "team_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Team ID",
-							"description": "The team to delete."
-						},
-						"description": "The team to delete.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamMemberModify"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"202": {
-						"description": "Request accepted, processing continues off-line",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Team"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/tags/{tag_id}": {
-			"get": {
-				"tags": ["Tags"],
-				"summary": "GetTag",
-				"operationId": "GetTag",
-				"parameters": [
-					{
-						"name": "tag_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Tag ID",
-							"description": "The tag to retrieve."
-						},
-						"description": "The tag to retrieve.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Tag"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"post": {
-				"tags": ["Tags"],
-				"summary": "CreateTag",
-				"operationId": "CreateTag",
-				"parameters": [
-					{
-						"name": "tag_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid"
-						},
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TagCreate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"201": {
-						"description": "Document created, URL follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Tag"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"delete": {
-				"tags": ["Tags"],
-				"summary": "DeleteTag",
-				"operationId": "DeleteTag",
-				"parameters": [
-					{
-						"name": "tag_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Tag ID",
-							"description": "The tag to delete."
-						},
-						"description": "The tag to delete.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "Request fulfilled, nothing follows",
-						"headers": {}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			},
-			"patch": {
-				"tags": ["Tags"],
-				"summary": "UpdateTag",
-				"operationId": "UpdateTag",
-				"parameters": [
-					{
-						"name": "tag_id",
-						"in": "path",
-						"schema": {
-							"type": "string",
-							"format": "uuid",
-							"title": "Tag ID",
-							"description": "The tag to update."
-						},
-						"description": "The tag to update.",
-						"required": true,
-						"deprecated": false
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TagUpdate"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Tag"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		},
-		"/api/tags": {
-			"get": {
-				"tags": ["Tags"],
-				"summary": "ListTags",
-				"operationId": "ListTags",
-				"parameters": [
-					{
-						"name": "ids",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "createdBefore",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "createdAfter",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "updatedBefore",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "updatedAfter",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"format": "date-time"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "searchString",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string"
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Field to search"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "searchIgnoreCase",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "boolean",
-									"default": false
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Search should be case sensitive",
-							"default": false
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "orderBy",
-						"in": "query",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"default": "name"
-								},
-								{
-									"type": "null"
-								}
-							],
-							"title": "Order by field",
-							"default": "name"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					},
-					{
-						"name": "sortOrder",
-						"in": "query",
-						"schema": {
-							"type": ["null", "string"],
-							"enum": ["asc", "desc", null],
-							"title": "Field to search",
-							"default": "desc"
-						},
-						"required": false,
-						"deprecated": false,
-						"allowEmptyValue": false,
-						"allowReserved": false
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Request fulfilled, document follows",
-						"headers": {},
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"items": {
-											"items": {
-												"$ref": "#/components/schemas/Tag"
-											},
-											"type": "array"
-										},
-										"limit": {
-											"type": "integer",
-											"description": "Maximal number of items to send."
-										},
-										"offset": {
-											"type": "integer",
-											"description": "Offset from the beginning of the query."
-										},
-										"total": {
-											"type": "integer",
-											"description": "Total number of items."
-										}
-									},
-									"type": "object"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad request syntax or unsupported method",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status_code": {
-											"type": "integer"
-										},
-										"detail": {
-											"type": "string"
-										},
-										"extra": {
-											"additionalProperties": {},
-											"type": ["null", "object", "array"]
-										}
-									},
-									"type": "object",
-									"required": ["detail", "status_code"],
-									"description": "Validation Exception",
-									"examples": [
-										{
-											"status_code": 400,
-											"detail": "Bad Request",
-											"extra": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"deprecated": false
-			}
-		}
-	},
-	"components": {
-		"schemas": {
-			"AccountLogin": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["password", "username"],
-				"title": "AccountLogin"
-			},
-			"AccountRegister": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"initialTeamName": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": ["email", "password"],
-				"title": "AccountRegister"
-			},
-			"Message": {
-				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["message"],
-				"title": "Message"
-			},
-			"OAuth2Login": {
-				"properties": {
-					"access_token": {
-						"type": "string"
-					},
-					"token_type": {
-						"type": "string"
-					},
-					"refresh_token": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"expires_in": {
-						"oneOf": [
-							{
-								"type": "integer"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": ["access_token", "token_type"],
-				"title": "OAuth2Login"
-			},
-			"OauthAccount": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"oauthName": {
-						"type": "string"
-					},
-					"accessToken": {
-						"type": "string"
-					},
-					"accountId": {
-						"type": "string"
-					},
-					"accountEmail": {
-						"type": "string"
-					},
-					"expiresAt": {
-						"oneOf": [
-							{
-								"type": "integer"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"refreshToken": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": [
-					"accessToken",
-					"accountEmail",
-					"accountId",
-					"id",
-					"oauthName"
-				],
-				"title": "OauthAccount"
-			},
-			"SystemHealth": {
-				"properties": {
-					"databaseStatus": {
-						"type": "string",
-						"enum": ["online", "offline"],
-						"default": "offline"
-					},
-					"app": {
-						"type": "string",
-						"default": "Litestar Fullstack Template"
-					},
-					"version": {
-						"type": "string",
-						"default": "0.2.0"
-					}
-				},
-				"type": "object",
-				"required": [],
-				"title": "SystemHealth"
-			},
-			"Tag": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["id", "name", "slug"],
-				"title": "Tag"
-			},
-			"TagCreate": {
-				"properties": {
-					"name": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["name"],
-				"title": "TagCreate"
-			},
-			"TagUpdate": {
-				"properties": {
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": [],
-				"title": "TagUpdate"
-			},
-			"Team": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"name": {
-						"type": "string"
-					},
-					"description": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/TeamMember"
-						},
-						"type": "array"
-					},
-					"tags": {
-						"items": {
-							"$ref": "#/components/schemas/TeamTag"
-						},
-						"type": "array"
-					}
-				},
-				"type": "object",
-				"required": ["id", "name"],
-				"title": "Team"
-			},
-			"TeamCreate": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"description": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"tags": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"type": "object",
-				"required": ["name"],
-				"title": "TeamCreate"
-			},
-			"TeamMember": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"userId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"email": {
-						"type": "string"
-					},
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"role": {
-						"oneOf": [
-							{
-								"$ref": "#/components/schemas/TeamRoles"
-							},
-							{
-								"type": "null"
-							}
-						],
-						"default": "MEMBER"
-					},
-					"isOwner": {
-						"oneOf": [
-							{
-								"type": "boolean",
-								"default": false
-							},
-							{
-								"type": "null"
-							}
-						],
-						"default": false
-					}
-				},
-				"type": "object",
-				"required": ["email", "id", "userId"],
-				"title": "TeamMember"
-			},
-			"TeamMemberModify": {
-				"properties": {
-					"userName": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["userName"],
-				"title": "TeamMemberModify"
-			},
-			"TeamRoles": {
-				"type": "string",
-				"enum": ["ADMIN", "MEMBER"],
-				"title": "TeamRoles",
-				"description": "Valid Values for Team Roles."
-			},
-			"TeamTag": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["id", "name", "slug"],
-				"title": "TeamTag"
-			},
-			"TeamUpdate": {
-				"properties": {
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"description": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"tags": {
-						"oneOf": [
-							{
-								"items": {
-									"type": "string"
-								},
-								"type": "array"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": [],
-				"title": "TeamUpdate"
-			},
-			"User": {
-				"properties": {
-					"id": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"email": {
-						"type": "string"
-					},
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"isSuperuser": {
-						"type": "boolean",
-						"default": false
-					},
-					"isActive": {
-						"type": "boolean",
-						"default": false
-					},
-					"isVerified": {
-						"type": "boolean",
-						"default": false
-					},
-					"hasPassword": {
-						"type": "boolean",
-						"default": false
-					},
-					"teams": {
-						"items": {
-							"$ref": "#/components/schemas/UserTeam"
-						},
-						"type": "array"
-					},
-					"roles": {
-						"items": {
-							"$ref": "#/components/schemas/UserRole"
-						},
-						"type": "array"
-					},
-					"oauthAccounts": {
-						"items": {
-							"$ref": "#/components/schemas/OauthAccount"
-						},
-						"type": "array"
-					},
-					"avatarUrl": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": ["email", "id"],
-				"title": "User"
-			},
-			"UserCreate": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"isSuperuser": {
-						"type": "boolean",
-						"default": false
-					},
-					"isActive": {
-						"type": "boolean",
-						"default": true
-					},
-					"isVerified": {
-						"type": "boolean",
-						"default": false
-					}
-				},
-				"type": "object",
-				"required": ["email", "password"],
-				"title": "UserCreate"
-			},
-			"UserRole": {
-				"properties": {
-					"roleId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"roleSlug": {
-						"type": "string"
-					},
-					"roleName": {
-						"type": "string"
-					},
-					"assignedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"required": ["assignedAt", "roleId", "roleName", "roleSlug"],
-				"title": "UserRole"
-			},
-			"UserRoleAdd": {
-				"properties": {
-					"userName": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["userName"],
-				"title": "UserRoleAdd"
-			},
-			"UserRoleRevoke": {
-				"properties": {
-					"userName": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"required": ["userName"],
-				"title": "UserRoleRevoke"
-			},
-			"UserTeam": {
-				"properties": {
-					"teamId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"teamName": {
-						"type": "string"
-					},
-					"isOwner": {
-						"type": "boolean",
-						"default": false
-					},
-					"role": {
-						"$ref": "#/components/schemas/TeamRoles"
-					}
-				},
-				"type": "object",
-				"required": ["teamId", "teamName"],
-				"title": "UserTeam"
-			},
-			"UserUpdate": {
-				"properties": {
-					"email": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"password": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"name": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"isSuperuser": {
-						"oneOf": [
-							{
-								"type": "boolean"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"isActive": {
-						"oneOf": [
-							{
-								"type": "boolean"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"isVerified": {
-						"oneOf": [
-							{
-								"type": "boolean"
-							},
-							{
-								"type": "null"
-							}
-						]
-					}
-				},
-				"type": "object",
-				"required": [],
-				"title": "UserUpdate"
-			}
-		},
-		"securitySchemes": {
-			"BearerToken": {
-				"type": "oauth2",
-				"description": "OAUTH2 password bearer authentication and authorization.",
-				"name": "Authorization",
-				"in": "header",
-				"scheme": "Bearer",
-				"bearerFormat": "JWT",
-				"flows": {
-					"password": {
-						"tokenUrl": "/api/access/login"
-					}
-				}
-			}
-		}
-	},
-	"security": [
-		{
-			"BearerToken": []
-		},
-		{
-			"BearerToken": []
-		}
-	]
+  "info": {
+    "title": "Litestar Fullstack Template",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health Check",
+        "operationId": "SystemHealth",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemHealth"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/access/login": {
+      "post": {
+        "tags": ["Access"],
+        "summary": "Login",
+        "operationId": "AccountLogin",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2Login"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/access/logout": {
+      "post": {
+        "tags": ["Access"],
+        "summary": "Logout",
+        "operationId": "AccountLogout",
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/me": {
+      "get": {
+        "tags": ["Access"],
+        "summary": "Profile",
+        "operationId": "AccountProfile",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/access/signup": {
+      "post": {
+        "tags": ["Access"],
+        "summary": "Signup",
+        "operationId": "AccountRegister",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["User Accounts"],
+        "summary": "ListUsers",
+        "operationId": "ListUsers",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "createdBefore",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "createdAfter",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "updatedBefore",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "updatedAfter",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Field to search"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "searchIgnoreCase",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "default": false
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search should be case sensitive",
+              "default": false
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1.0,
+              "default": 1
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1.0,
+              "default": 20
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "default": "name"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order by field",
+              "default": "name"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": ["null", "string"],
+              "enum": ["asc", "desc", null],
+              "title": "Field to search",
+              "default": "asc"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "description": "Maximal number of items to send."
+                    },
+                    "offset": {
+                      "type": "integer",
+                      "description": "Offset from the beginning of the query."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of items."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": ["User Accounts"],
+        "summary": "CreateUser",
+        "operationId": "CreateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "tags": ["User Accounts"],
+        "summary": "GetUser",
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User ID",
+              "description": "The user to retrieve."
+            },
+            "description": "The user to retrieve.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": ["User Accounts"],
+        "summary": "DeleteUser",
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User ID",
+              "description": "The user to delete."
+            },
+            "description": "The user to delete.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Request fulfilled, nothing follows",
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": ["User Accounts"],
+        "summary": "UpdateUser",
+        "operationId": "UpdateUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User ID",
+              "description": "The user to update."
+            },
+            "description": "The user to update.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/teams": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "ListTeams",
+        "operationId": "ListTeams",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/Team"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "description": "Maximal number of items to send."
+                    },
+                    "offset": {
+                      "type": "integer",
+                      "description": "Offset from the beginning of the query."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of items."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": ["Teams"],
+        "summary": "CreateTeam",
+        "operationId": "CreateTeam",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/teams/{team_id}": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "GetTeam",
+        "operationId": "GetTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Team ID",
+              "description": "The team to retrieve."
+            },
+            "description": "The team to retrieve.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": ["Teams"],
+        "summary": "DeleteTeam",
+        "operationId": "DeleteTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Team ID",
+              "description": "The team to delete."
+            },
+            "description": "The team to delete.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Request fulfilled, nothing follows",
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": ["Teams"],
+        "summary": "UpdateTeam",
+        "operationId": "UpdateTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Team ID",
+              "description": "The team to update."
+            },
+            "description": "The team to update.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/users/roles": {
+      "post": {
+        "tags": ["User Account Roles"],
+        "summary": "AssignRole",
+        "operationId": "AssignUserRole",
+        "parameters": [
+          {
+            "name": "role_slug",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "title": "Role Slug",
+              "description": "The role to grant."
+            },
+            "description": "The role to grant.",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleAdd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": ["User Account Roles"],
+        "summary": "RevokeRole",
+        "operationId": "RevokeUserRole",
+        "parameters": [
+          {
+            "name": "role_slug",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "title": "Role Slug",
+              "description": "The role to revoke."
+            },
+            "description": "The role to revoke.",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleRevoke"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Request accepted, processing continues off-line",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/teams/{team_id}/members": {
+      "post": {
+        "tags": ["Team Members"],
+        "summary": "AddMemberToTeam",
+        "operationId": "AddMemberToTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Team ID",
+              "description": "The team to update."
+            },
+            "description": "The team to update.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamMemberModify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": ["Team Members"],
+        "summary": "RemoveMemberFromTeam",
+        "operationId": "RemoveMemberFromTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Team ID",
+              "description": "The team to delete."
+            },
+            "description": "The team to delete.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamMemberModify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Request accepted, processing continues off-line",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/tags/{tag_id}": {
+      "get": {
+        "tags": ["Tags"],
+        "summary": "GetTag",
+        "operationId": "GetTag",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Tag ID",
+              "description": "The tag to retrieve."
+            },
+            "description": "The tag to retrieve.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": ["Tags"],
+        "summary": "CreateTag",
+        "operationId": "CreateTag",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": ["Tags"],
+        "summary": "DeleteTag",
+        "operationId": "DeleteTag",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Tag ID",
+              "description": "The tag to delete."
+            },
+            "description": "The tag to delete.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Request fulfilled, nothing follows",
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": ["Tags"],
+        "summary": "UpdateTag",
+        "operationId": "UpdateTag",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Tag ID",
+              "description": "The tag to update."
+            },
+            "description": "The tag to update.",
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/tags": {
+      "get": {
+        "tags": ["Tags"],
+        "summary": "ListTags",
+        "operationId": "ListTags",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "createdBefore",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "createdAfter",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "updatedBefore",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "updatedAfter",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Field to search"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "searchIgnoreCase",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "default": false
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search should be case sensitive",
+              "default": false
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "default": "name"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order by field",
+              "default": "name"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": ["null", "string"],
+              "enum": ["asc", "desc", null],
+              "title": "Field to search",
+              "default": "desc"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/Tag"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "description": "Maximal number of items to send."
+                    },
+                    "offset": {
+                      "type": "integer",
+                      "description": "Offset from the beginning of the query."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of items."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountLogin": {
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["password", "username"],
+        "title": "AccountLogin"
+      },
+      "AccountRegister": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "initialTeamName": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["email", "password"],
+        "title": "AccountRegister"
+      },
+      "Message": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "Message"
+      },
+      "OAuth2Login": {
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expires_in": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["access_token", "token_type"],
+        "title": "OAuth2Login"
+      },
+      "OauthAccount": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "oauthName": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "accountEmail": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "refreshToken": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["accessToken", "accountEmail", "accountId", "id", "oauthName"],
+        "title": "OauthAccount"
+      },
+      "SystemHealth": {
+        "properties": {
+          "databaseStatus": {
+            "type": "string",
+            "enum": ["online", "offline"],
+            "default": "offline"
+          },
+          "app": {
+            "type": "string",
+            "default": "Litestar Fullstack Template"
+          },
+          "version": {
+            "type": "string",
+            "default": "0.2.0"
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "SystemHealth"
+      },
+      "Tag": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "slug"],
+        "title": "Tag"
+      },
+      "TagCreate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "TagCreate"
+      },
+      "TagUpdate": {
+        "properties": {
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "TagUpdate"
+      },
+      "Team": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/TeamMember"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/TeamTag"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"],
+        "title": "Team"
+      },
+      "TeamCreate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "TeamCreate"
+      },
+      "TeamMember": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "role": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TeamRoles"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "MEMBER"
+          },
+          "isOwner": {
+            "oneOf": [
+              {
+                "type": "boolean",
+                "default": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["email", "id", "userId"],
+        "title": "TeamMember"
+      },
+      "TeamMemberModify": {
+        "properties": {
+          "userName": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["userName"],
+        "title": "TeamMemberModify"
+      },
+      "TeamRoles": {
+        "type": "string",
+        "enum": ["ADMIN", "MEMBER"],
+        "title": "TeamRoles",
+        "description": "Valid Values for Team Roles."
+      },
+      "TeamTag": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "slug"],
+        "title": "TeamTag"
+      },
+      "TeamUpdate": {
+        "properties": {
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tags": {
+            "oneOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "TeamUpdate"
+      },
+      "User": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isSuperuser": {
+            "type": "boolean",
+            "default": false
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": false
+          },
+          "isVerified": {
+            "type": "boolean",
+            "default": false
+          },
+          "hasPassword": {
+            "type": "boolean",
+            "default": false
+          },
+          "teams": {
+            "items": {
+              "$ref": "#/components/schemas/UserTeam"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/UserRole"
+            },
+            "type": "array"
+          },
+          "oauthAccounts": {
+            "items": {
+              "$ref": "#/components/schemas/OauthAccount"
+            },
+            "type": "array"
+          },
+          "avatarUrl": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["email", "id"],
+        "title": "User"
+      },
+      "UserCreate": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isSuperuser": {
+            "type": "boolean",
+            "default": false
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "isVerified": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["email", "password"],
+        "title": "UserCreate"
+      },
+      "UserRole": {
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleSlug": {
+            "type": "string"
+          },
+          "roleName": {
+            "type": "string"
+          },
+          "assignedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "type": "object",
+        "required": ["assignedAt", "roleId", "roleName", "roleSlug"],
+        "title": "UserRole"
+      },
+      "UserRoleAdd": {
+        "properties": {
+          "userName": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["userName"],
+        "title": "UserRoleAdd"
+      },
+      "UserRoleRevoke": {
+        "properties": {
+          "userName": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["userName"],
+        "title": "UserRoleRevoke"
+      },
+      "UserTeam": {
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamName": {
+            "type": "string"
+          },
+          "isOwner": {
+            "type": "boolean",
+            "default": false
+          },
+          "role": {
+            "$ref": "#/components/schemas/TeamRoles"
+          }
+        },
+        "type": "object",
+        "required": ["teamId", "teamName"],
+        "title": "UserTeam"
+      },
+      "UserUpdate": {
+        "properties": {
+          "email": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "password": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isSuperuser": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isActive": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isVerified": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "UserUpdate"
+      }
+    },
+    "securitySchemes": {
+      "BearerToken": {
+        "type": "oauth2",
+        "description": "OAUTH2 password bearer authentication and authorization.",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT",
+        "flows": {
+          "password": {
+            "tokenUrl": "/api/access/login"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerToken": []
+    },
+    {
+      "BearerToken": []
+    }
+  ]
 }
