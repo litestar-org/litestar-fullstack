@@ -17,7 +17,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.11.7"
+    rev: "v0.11.8"
     hooks:
       # Run the linter.
     - id: ruff
