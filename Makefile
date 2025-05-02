@@ -125,6 +125,7 @@ slotscheck:                                        ## Run slotscheck
 fix:                                               ## Run formatting scripts
 	@echo "${INFO} Running code formatters... 🔧"
 	@uv run ruff check --fix --unsafe-fixes
+	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm run lint
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint

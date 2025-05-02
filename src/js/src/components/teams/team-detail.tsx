@@ -5,36 +5,34 @@ import { useParams } from "@tanstack/react-router";
 import { TeamManagement } from "./team-management";
 
 export function TeamDetail() {
-	const { teamId } = useParams({ from: "/_app/teams/$teamId" as const });
+  const { teamId } = useParams({ from: "/_app/teams/$teamId" as const });
 
-	const { data: team, isLoading } = useQuery({
-		queryKey: ["team", teamId],
-		queryFn: async () => {
-			const response = await getTeam({ path: { team_id: teamId } });
-			return response.data;
-		},
-	});
+  const { data: team, isLoading } = useQuery({
+    queryKey: ["team", teamId],
+    queryFn: async () => {
+      const response = await getTeam({ path: { team_id: teamId } });
+      return response.data;
+    },
+  });
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-	if (!team) {
-		return <div>Team not found</div>;
-	}
+  if (!team) {
+    return <div>Team not found</div>;
+  }
 
-	return (
-		<div className="space-y-6">
-			<Card>
-				<CardHeader>
-					<CardTitle>{team.name}</CardTitle>
-				</CardHeader>
-				<CardContent>
-					{team.description && <p>{team.description}</p>}
-				</CardContent>
-			</Card>
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{team.name}</CardTitle>
+        </CardHeader>
+        <CardContent>{team.description && <p>{team.description}</p>}</CardContent>
+      </Card>
 
-			<TeamManagement />
-		</div>
-	);
+      <TeamManagement />
+    </div>
+  );
 }
