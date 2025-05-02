@@ -30,38 +30,38 @@
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "editor.formatOnSave": true,
   "files.watcherExclude": {
-		"**/routeTree.gen.ts": true
-	},
-	"search.exclude": {
-		"**/routeTree.gen.ts": true
-	},
-	"files.readonlyInclude": {
-		"**/routeTree.gen.ts": true
-	},
-	"[javascript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[javascriptreact]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescriptreact]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[json]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[jsonc]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[html]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[css]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "notebook.formatOnSave.enabled": true,
   "evenBetterToml.formatter.reorderKeys": true,
   "evenBetterToml.formatter.trailingNewline": true,
@@ -94,10 +94,7 @@
       "source.organizeImports": "explicit"
     }
   },
-  "python.analysis.fixAll": [
-    "source.unusedImports",
-    "source.convertImportFormat"
-  ],
+  "python.analysis.fixAll": ["source.unusedImports", "source.convertImportFormat"],
   "python.testing.unittestEnabled": false,
   "python.analysis.supportDocstringTemplate": true,
   "python.analysis.supportRestructuredText": true,
@@ -119,5 +116,5 @@
   "ruff.configurationPreference": "filesystemFirst",
   "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
   "python.testing.pytestEnabled": true,
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true
 }
