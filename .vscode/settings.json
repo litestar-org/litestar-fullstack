@@ -97,8 +97,7 @@
   "python.analysis.fixAll": [
     "source.unusedImports",
     "source.convertImportFormat"
-  ],
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  ], 
   "python.testing.unittestEnabled": false,
   "python.analysis.supportDocstringTemplate": true,
   "python.analysis.supportRestructuredText": true,
@@ -117,9 +116,8 @@
   "ruff.lineLength": 120,
   "ruff.lint.extendSelect": ["ALL"],
   "ruff.lint.select": ["ALL"],
-  "ruff.configurationPreference": "filesystemFirst",
-  "python.testing.pytestArgs": [
-    "src/py/tests",
-  ],
-  "python.testing.pytestEnabled": true
+  "ruff.configurationPreference": "filesystemFirst", 
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+  "python.testing.pytestEnabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
 }

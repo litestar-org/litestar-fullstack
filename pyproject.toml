@@ -149,7 +149,7 @@ show_missing = true
 [tool.coverage.run]
 branch = true
 concurrency = ["multiprocessing"]
-omit = ["src/py/tests/*", "**/*/migrations/**/*.py", "tools/*"]
+omit = ["**/*/tests/*", "**/*/migrations/**/*.py", "tools/*"]
 parallel = true
 relative_files = true
 
@@ -168,7 +168,7 @@ filterwarnings = [
   "ignore::DeprecationWarning:httpx._client",
 ]
 markers = ["unit: Execute unit tests", "integration: Execute integration tests"]
-testpaths = ["tests"]
+testpaths = ["tests", "src/py/tests"]
 
 [tool.ruff]
 exclude = [
@@ -197,7 +197,7 @@ exclude = [
 ]
 fix = true
 line-length = 120
-src = ["src", "tests/"]
+src = ["src/py", "src/py/tests"]
 target-version = "py311"
 
 [tool.ruff.lint]
