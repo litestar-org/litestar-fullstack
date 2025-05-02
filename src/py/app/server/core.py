@@ -58,8 +58,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from app.db import models as m
         from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
         from app.lib.settings import get_settings
-        from app.server import plugins, security, signals
-        from app.server.api import controllers as api_controllers
+        from app.server import api as api_controllers
+        from app.server import events, plugins, security
         from app.server.web import controllers as web_controllers
         from app.services import (
             RoleService,
@@ -144,6 +144,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(
-            [signals.user.user_created_event_handler, signals.team.team_created_event_handler],
+            [events.user.user_created_event_handler, events.team.team_created_event_handler],
         )
         return app_config

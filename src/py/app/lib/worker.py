@@ -56,19 +56,19 @@ async def after_process(ctx: Context) -> None:
         log_ctx = {k: getattr(job, k) for k in LOGGED_JOB_FIELDS}
         # add duration measures
         log_ctx["pickup_time_ms"] = job.started - job.queued
-        log_ctx["completed_time_ms"] = job.completed - job.started
+        log_ctx["total_runtime_ms"] = job.completed - job.started
         log_ctx["total_time_ms"] = job.completed - job.queued
-        total_time_seconds = seconds(log_ctx["total_time_ms"])
+        total_runtime_ms = seconds(log_ctx["total_runtime_ms"])
         if job.status == Status.FAILED:
-            msg = f"job {job.function} with id '{job.id}' failed after {total_time_seconds} seconds."
+            msg = f"job {job.function} with id '{job.id}' failed after {total_runtime_ms} seconds."
             await logger.aerror(msg, **log_ctx)
         elif job.status == Status.COMPLETE:
-            msg = f"job {job.function} with id '{job.id}' completed after {total_time_seconds} seconds."
+            msg = f"job {job.function} with id '{job.id}' completed after {total_runtime_ms} seconds."
             await logger.ainfo(msg, **log_ctx)
         elif job.status == Status.ABORTED:
-            msg = f"job {job.function} with id '{job.id}' was aborted after {total_time_seconds} seconds"
+            msg = f"job {job.function} with id '{job.id}' was aborted after {total_runtime_ms} seconds"
             await logger.awarning(msg, **log_ctx)
         else:
-            msg = f"job {job.function} with id '{job.id}' {job.status} after {total_time_seconds} seconds."
+            msg = f"job {job.function} with id '{job.id}' {job.status} after {total_runtime_ms} seconds."
             await logger.ainfo(msg, **log_ctx)
     structlog.contextvars.clear_contextvars()

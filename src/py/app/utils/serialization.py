@@ -1,4 +1,5 @@
 import datetime
+import json
 from typing import Any
 from uuid import UUID
 
@@ -8,7 +9,7 @@ from pydantic import BaseModel
 
 def _default(value: Any) -> str:
     if isinstance(value, BaseModel):
-        return str(value.model_dump(by_alias=True))
+        return json.dumps(value.model_dump(by_alias=True))
     if isinstance(value, UUID):
         return str(value)
     if isinstance(value, datetime.datetime):
@@ -54,7 +55,9 @@ def convert_datetime_to_gmt_iso(dt: datetime.datetime) -> str:
     """
     if not dt.tzinfo:
         dt = dt.replace(tzinfo=datetime.UTC)
-    return dt.isoformat().replace("+00:00", "Z")
+    else:
+        dt = dt.astimezone(datetime.UTC)
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def convert_date_to_iso(dt: datetime.date) -> str:

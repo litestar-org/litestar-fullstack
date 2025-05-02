@@ -1,3 +1,3 @@
-from app.server.web import controllers
+from app.server.web.controllers import WebController
 
-__all__ = ("controllers",)
+__all__ = ("WebController",)

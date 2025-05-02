@@ -95,7 +95,7 @@ def get_config_val(key: str, default: None, type_hint: UnsetType = _UNSET) -> No
 def get_config_val(key: str, default: ParseTypes | None, type_hint: type[T]) -> T: ...
 
 
-def get_config_val(  # noqa: C901, PLR0912, PLR0911
+def get_config_val(  # noqa: C901, PLR0911
     key: str, default: ParseTypes | None, type_hint: type[T] | UnsetType = _UNSET
 ) -> ParseTypes | T | None:
     """Parse environment variables.
@@ -117,51 +117,59 @@ def get_config_val(  # noqa: C901, PLR0912, PLR0911
             return cast("T", default)
         return default
     value: str = str_value
+
+    # Handle type hints first
+    if type_hint != _UNSET and isinstance(type_hint, type):
+        if type_hint is str:
+            return cast("T", value)
+        if type_hint is int:
+            return cast("T", int(value))
+        if type_hint is bool:
+            return cast("T", value in TRUE_VALUES)
+        if type_hint is Path:
+            return cast("T", Path(value))
+        if type_hint is list[str]:
+            if value.startswith("[") and value.endswith("]"):
+                try:
+                    return cast("T", json.loads(value))
+                except (json.JSONDecodeError, ValueError) as e:
+                    msg = f"{key} is not a valid list representation."
+                    raise ValueError(msg) from e
+            return cast("T", [x.strip() for x in value.split(",")])
+        if type_hint is list[Path]:
+            if value.startswith("[") and value.endswith("]"):
+                try:
+                    paths = [Path(s) for s in json.loads(value)]
+                    return cast("T", paths)
+                except (json.JSONDecodeError, ValueError) as e:
+                    msg = f"{key} is not a valid list representation."
+                    raise ValueError(msg) from e
+            return cast("T", [Path(x.strip()) for x in value.split(",")])
+        try:
+            return cast("T", type_hint(value))
+        except (TypeError, ValueError) as e:
+            msg = f"Could not convert value to {type_hint}"
+            raise ValueError(msg) from e
+
+    # Handle based on default type
     if type(default) is bool:
-        bool_value = value in TRUE_VALUES
-        if type_hint != _UNSET:
-            return cast("T", bool_value)
-        return bool_value
+        return value in TRUE_VALUES
     if type(default) is int:
-        int_value = int(value)
-        if type_hint != _UNSET:
-            return cast("T", int_value)
-        return int_value
+        return int(value)
     if type(default) is Path:
-        path_value = Path(value)
-        if type_hint != _UNSET:
-            return cast("T", path_value)
-        return path_value
-    if type(default) is list[Path]:
+        return Path(value)
+    if type(default) is list:
         if value.startswith("[") and value.endswith("]"):
             try:
-                path_list = [Path(s) for s in json.loads(value)]
-                if type_hint != _UNSET:
-                    return cast("T", path_list)
-            except (SyntaxError, ValueError) as e:
+                parsed = json.loads(value)
+                if type(default) is list[Path]:
+                    return [Path(s) for s in parsed]
+                return parsed
+            except (json.JSONDecodeError, ValueError) as e:
                 msg = f"{key} is not a valid list representation."
                 raise ValueError(msg) from e
-            else:
-                return value
-        path_list = [Path(host.strip()) for host in value.split(",")]
-        if type_hint != _UNSET:
-            return cast("T", path_list)
-        return path_list
-    if type(default) is list[str]:
-        if value.startswith("[") and value.endswith("]"):
-            try:
-                str_list = cast("list[str]", json.loads(value))
-                if type_hint != _UNSET:
-                    return cast("T", str_list)
-            except (SyntaxError, ValueError) as e:
-                msg = f"{key} is not a valid list representation."
-                raise ValueError(msg) from e
-            else:
-                return value
-        str_list = [host.strip() for host in value.split(",")]
-        if type_hint != _UNSET:
-            return cast("T", str_list)
-        return str_list
-    if type_hint != _UNSET:
-        return cast("T", value)
+        items = [x.strip() for x in value.split(",")]
+        if type(default) is list[Path]:
+            return [Path(x) for x in items]
+        return items
     return value

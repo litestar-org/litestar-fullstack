@@ -13,7 +13,7 @@ from app import schemas as s
 from app.db import models as m
 from app.lib.deps import create_service_dependencies
 from app.server import security
-from app.services.teams import TeamService
+from app.services._teams import TeamService
 
 if TYPE_CHECKING:
     from advanced_alchemy.service.pagination import OffsetPagination
