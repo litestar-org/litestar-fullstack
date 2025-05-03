@@ -5,7 +5,7 @@ x-development-volumes: &development-volumes
     - ./src:/workspace/app/src/
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
-    - ./uv.lock:/workspace/app/uv.lock 
+    - ./uv.lock:/workspace/app/uv.lock
     - ./.env.docker.example:/workspace/app/.env
 
 services:

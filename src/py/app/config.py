@@ -70,6 +70,7 @@ saq = SAQConfig(
     use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
     queue_configs=[
         QueueConfig(
+            name="background-tasks",
             dsn=settings.db.URL.replace("postgresql+psycopg", "postgresql"),
             broker_options={
                 "stats_table": "task_queue_stats",

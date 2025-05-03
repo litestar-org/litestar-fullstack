@@ -29,7 +29,7 @@ export function Sidebar() {
         <div className="border-b p-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-accent">
+              <button type="button" className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-accent">
                 <Avatar>
                   <AvatarImage src={user.avatarUrl || undefined} alt={user.email} />
                   <AvatarFallback>
