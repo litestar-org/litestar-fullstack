@@ -146,7 +146,7 @@ def get_config_val(  # noqa: C901, PLR0911
                     raise ValueError(msg) from e
             return cast("T", [Path(x.strip()) for x in value.split(",")])
         try:
-            return cast("T", type_hint(value))
+            return cast("T", type_hint(value))  # type: ignore[call-arg,redundant-cast]
         except (TypeError, ValueError) as e:
             msg = f"Could not convert value to {type_hint}"
             raise ValueError(msg) from e

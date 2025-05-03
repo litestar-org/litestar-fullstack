@@ -195,34 +195,34 @@ docs-linkcheck-full:                               ## Run the full link check on
 .PHONY: start-infra
 start-infra:                                        ## Start local containers
 	@echo "${INFO} Starting local infrastructure... 🚀"
-	@docker compose -f tools/deploy/docker-compose.infra.yml up -d --force-recreate
+	@docker compose -f tools/deploy/docker/docker-compose.infra.yml up -d --force-recreate
 	@echo "${OK} Infrastructure is ready"
 
 .PHONY: stop-infra
 stop-infra:                                         ## Stop local containers
 	@echo "${INFO} Stopping infrastructure... 🛑"
-	@docker compose -f tools/deploy/docker-compose.infra.yml down
+	@docker compose -f tools/deploy/docker/docker-compose.infra.yml down
 	@echo "${OK} Infrastructure stopped"
 
 .PHONY: wipe-infra
 wipe-infra:                                           ## Remove local container info
 	@echo "${INFO} Wiping infrastructure... 🧹"
-	@docker compose -f tools/deploy/docker-compose.infra.yml down -v --remove-orphans
+	@docker compose -f tools/deploy/docker/docker-compose.infra.yml down -v --remove-orphans
 	@echo "${OK} Infrastructure wiped clean"
 
 .PHONY: infra-logs
 infra-logs:                                           ## Tail development infrastructure logs
 	@echo "${INFO} Tailing infrastructure logs... 📋"
-	@docker compose -f tools/deploy/docker-compose.infra.yml logs -f
+	@docker compose -f tools/deploy/docker/docker-compose.infra.yml logs -f
 
 .PHONY: start-all
 start-all:                                        ## Start local containers
 	@echo "${INFO} Starting local infrastructure... 🚀"
-	@docker compose -f tools/deploy/docker-compose.yml -f tools/deploy/docker-compose.override.yml up -d --force-recreate
+	@docker compose -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker-compose.override.yml up -d --force-recreate
 	@echo "${OK} Infrastructure is ready"
 
 .PHONY: stop-all
 stop-all:                                         ## Stop local containers
 	@echo "${INFO} Stopping infrastructure... 🛑"
-	@docker compose -f tools/deploy/docker-compose.yml -f tools/deploy/docker-compose.override.yml down -v --remove-orphans
+	@docker compose -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker/docker-compose.override.yml down -v --remove-orphans
 	@echo "${OK} Infrastructure stopped"
