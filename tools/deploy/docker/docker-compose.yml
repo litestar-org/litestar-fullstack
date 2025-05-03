@@ -1,4 +1,31 @@
 services:
+  object-storage:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - object-storage-data:/data
+    ports:
+      - 19000:9000
+      - 19001:9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  object-storage-initializer:
+    image: minio/mc:latest
+    depends_on:
+      object-storage:
+        condition: service_healthy
+    environment:
+      MINIO_SERVER_URL: http://object-storage:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - ./minio-config.sh:/scripts/minio-config.sh
   cache:
     image: valkey/valkey:latest
     ports:
@@ -50,7 +77,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: deploy/docker/run/Dockerfile
+      dockerfile: docker/run/Dockerfile
     restart: always
     depends_on:
       db:
@@ -67,7 +94,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: deploy/docker/run/Dockerfile
+      dockerfile: docker/run/Dockerfile
     command: litestar workers run
     restart: always
     depends_on:
@@ -80,7 +107,7 @@ services:
   migrator:
     build:
       context: .
-      dockerfile: deploy/docker/run/Dockerfile
+      dockerfile: docker/run/Dockerfile
     restart: "no"
     command: litestar database upgrade --no-prompt
     env_file:
@@ -93,3 +120,4 @@ services:
 volumes:
   db-data: {}
   cache-data: {}
+  object-storage-data: {}
