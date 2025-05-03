@@ -21,8 +21,8 @@ async def test_get_task_queue() -> None:
     # Note: The patch target string depends on where 'plugins' is accessed from.
     # If 'get_task_queue' imports it directly as 'from app.server import plugins',
     # the target should be 'app.lib.deps.plugins'.
-    with patch("app.lib.deps.plugins") as mock_plugins:
-        mock_plugins.saq = mock_saq_plugin
+    with patch("app.server") as mock_server:
+        mock_server.plugins.saq = mock_saq_plugin
 
         # Call the function under test
         returned_queue = await deps.get_task_queue()

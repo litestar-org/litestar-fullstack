@@ -25,8 +25,8 @@ from app.utils import env
         # List types - Env var set
         ("TEST_LIST_STR_COMMA", "a, b, c", [], ["a", "b", "c"], env._UNSET),
         ("TEST_LIST_STR_JSON", '["x", "y", "z"]', [], ["x", "y", "z"], env._UNSET),
-        ("TEST_LIST_PATH_COMMA", "/a, /b, /c", [], [Path("/a"), Path("/b"), Path("/c")], env._UNSET),
-        ("TEST_LIST_PATH_JSON", '["/x", "/y", "/z"]', [], [Path("/x"), Path("/y"), Path("/z")], env._UNSET),
+        ("TEST_LIST_PATH_COMMA", "/a, /b, /c", [], [Path("/a"), Path("/b"), Path("/c")], list[Path]),
+        ("TEST_LIST_PATH_JSON", '["/x", "/y", "/z"]', [], [Path("/x"), Path("/y"), Path("/z")], list[Path]),
         # Basic types - Env var not set (use default)
         ("TEST_STR_DEFAULT", None, "default_val", "default_val", env._UNSET),
         ("TEST_INT_DEFAULT", None, 999, 999, env._UNSET),

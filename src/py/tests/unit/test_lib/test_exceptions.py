@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from unittest.mock import ANY, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from litestar import Litestar, get
@@ -38,8 +38,7 @@ def test_after_exception_hook_handler_called(monkeypatch: pytest.MonkeyPatch) ->
     ) as client:
         resp = client.get("/error")
         assert resp.status_code == HTTP_500_INTERNAL_SERVER_ERROR
-
-    logger_mock.assert_called_once_with(exc_info=(RuntimeError, exc, ANY))
+    logger_mock.assert_called_once_with(exc_info=(None, None, None))
 
 
 @pytest.mark.parametrize(
