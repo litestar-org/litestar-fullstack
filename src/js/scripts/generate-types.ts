@@ -1,9 +1,9 @@
-import { createClient } from "@hey-api/openapi-ts";
-import type { UserConfig } from "@hey-api/openapi-ts";
-import config from "../openapi-api.config";
+import { createClient } from "@hey-api/openapi-ts"
+import type { UserConfig } from "@hey-api/openapi-ts"
+import config from "../openapi.config"
 
 async function main() {
-  await createClient(config as UserConfig);
+  await createClient(config as UserConfig)
 }
 
-main().catch(console.error);
+main().catch(console.error)
