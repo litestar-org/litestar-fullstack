@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: {{ namespace }}
+data:
+  # General App Settings
+  APP_NAME: "Litestar Fullstack SPA"
+  LOG_LEVEL: "{{ log_level }}"
+
+  # API Settings
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  API_WORKERS: "{{ api_workers | string }}"
+
+  # Worker Settings
+  SAQ_CONCURRENCY: "{{ saq_concurrency | string }}"
+
+  # Database Settings
+  DB_HOST: "postgres-service" # Service name for the DB within the cluster
+  DB_PORT: "5432"
+  DB_NAME: "appdb"
+  DB_USER: "appuser" # User defined in secrets
+
+  # CORS Settings
+  ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}' # Ensure this is properly quoted/formatted
+
+  # Add other non-sensitive config values here if needed
+  # Example:
+  # SOME_FEATURE_FLAG: "{{ 'true' if env == 'dev' else 'false' }}" 

@@ -1,0 +1,37 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: worker-hpa
+  namespace: {{ namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: worker
+  minReplicas: {{ worker_min_replicas }}
+  maxReplicas: {{ worker_max_replicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ hpa_cpu_target }}
+{% if hpa_mem_target %}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ hpa_mem_target }}
+{% endif %}
+    # TODO: Add external metrics for queue length if needed
+    # Example:
+    # - type: External
+    #   external:
+    #     metric:
+    #       name: your_queue_metric_name # e.g., rabbitmq_queue_messages_ready
+    #       selector: queue={{ namespace }}_tasks # Example selector
+    #     target:
+    #       type: AverageValue
+    #       averageValue: 10 # Target messages per worker 
