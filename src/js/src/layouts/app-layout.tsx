@@ -1,10 +1,10 @@
-import { AppNav } from "@/components/app-nav";
-import { Sidebar } from "@/components/sidebar";
-import { useAuthStore } from "@/lib/auth";
+import { AppNav } from "@/components/app-nav"
+import { Sidebar } from "@/components/sidebar"
+import { useAuthStore } from "@/lib/auth"
 
-import { Outlet } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { Toaster } from "sonner";
+import { Outlet } from "@tanstack/react-router"
+import { useEffect } from "react"
+import { Toaster } from "sonner"
 
 export function AppLayout() {
   const checkAuth = useAuthStore((state) => state.checkAuth)
@@ -24,5 +24,5 @@ export function AppLayout() {
       </div>
       <Toaster richColors position="top-right" />
     </div>
-  );
+  )
 }

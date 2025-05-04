@@ -1,15 +1,15 @@
-import { useTheme } from "@/lib/theme-context";
-import { useRouter } from "@tanstack/react-router";
+import { useTheme } from "@/lib/theme-context"
+import { useRouter } from "@tanstack/react-router"
 
-import { UserLoginForm } from "./login";
-import { UserSignupForm } from "./signup";
+import { UserLoginForm } from "./login"
+import { UserSignupForm } from "./signup"
 
 export function AuthForm() {
-  const { theme } = useTheme();
-  const router = useRouter();
-  const pathname = router.state.location.pathname;
+  const { theme } = useTheme()
+  const router = useRouter()
+  const pathname = router.state.location.pathname
 
-  const isLogin = pathname === "/login";
+  const isLogin = pathname === "/login"
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full">
@@ -35,5 +35,5 @@ export function AuthForm() {
         <div className="h-full w-full mx-auto flex flex-col justify-center space-y-6">{isLogin ? <UserLoginForm /> : <UserSignupForm />}</div>
       </div>
     </div>
-  );
+  )
 }

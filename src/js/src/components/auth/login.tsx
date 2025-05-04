@@ -1,22 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/lib/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useAuthStore } from "@/lib/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-});
+})
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<typeof loginSchema>
 
 export function UserLoginForm() {
-  const navigate = useNavigate();
-  const { login, isLoading } = useAuthStore();
+  const navigate = useNavigate()
+  const { login, isLoading } = useAuthStore()
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -26,24 +26,24 @@ export function UserLoginForm() {
     },
     mode: "onBlur",
     reValidateMode: "onBlur",
-  });
+  })
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       // TODO: Fix/verify login
-      await login(data.email, data.password);
+      await login(data.email, data.password)
       // navigate({ to: "/home" });
     } catch (error) {
       form.setError("root", {
         message: "Invalid credentials",
-      });
+      })
     }
-  };
+  }
 
   const onOAuthLogin = async () => {
     // TODO: Implement OAuth login
-    console.log("OAuth login");
-  };
+    console.log("OAuth login")
+  }
 
   return (
     <div className="relative flex flex-col h-full justify-center items-center">
@@ -124,5 +124,5 @@ export function UserLoginForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }

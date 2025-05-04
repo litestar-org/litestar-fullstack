@@ -1,7 +1,7 @@
 """initial
 
 Revision ID: 0b6fd6502dbe
-Revises: 
+Revises:
 Create Date: 2025-05-04 19:51:06.680620
 
 """
@@ -14,7 +14,7 @@ from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSO
 from sqlalchemy import Text  # pyright: ignore  # noqa: F401
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence  # pyright: ignore 
+    from collections.abc import Sequence  # pyright: ignore
 
 __all__ = ("downgrade", "upgrade", "schema_upgrades", "schema_downgrades", "data_upgrades", "data_downgrades")
 
