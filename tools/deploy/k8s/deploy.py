@@ -273,16 +273,9 @@ HELP_TEXT = """
 
 
 @click.group()
-@click.option(
-    "--help", "show_help", is_flag=True, is_eager=True, expose_value=False, help="Show this message and exit."
-)
-def cli(show_help: bool) -> None:
-    """Manages Kubernetes deployments for the Litestar Fullstack SPA.
-
-    Args:
-        show_help: Whether to show the help message.
-    """
-    if show_help or len(sys.argv) == 1:
+def cli() -> None:
+    """Manages Kubernetes deployments for the Litestar Fullstack SPA."""
+    if len(sys.argv) == 1:
         console.print(Panel(HELP_TEXT, expand=False, border_style="blue"))
         sys.exit(0)
 
