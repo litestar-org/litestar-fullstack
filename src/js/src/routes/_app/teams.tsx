@@ -1,35 +1,35 @@
-import { Button } from "@/components/ui/button";
-import type { Team } from "@/lib/api";
-import { listTeams } from "@/lib/api/sdk.gen";
-import { useAuthStore } from "@/lib/auth";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button"
+import type { Team } from "@/lib/api"
+import { listTeams } from "@/lib/api/sdk.gen"
+import { useAuthStore } from "@/lib/auth"
+import { useQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/teams")({
   component: Teams,
-});
+})
 
 function Teams() {
-  const { currentTeam, setCurrentTeam, teams, setTeams } = useAuthStore();
+  const { currentTeam, setCurrentTeam, teams, setTeams } = useAuthStore()
 
   const { data: teamsData = [], isLoading } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
-      const response = await listTeams();
-      return response.data?.items ?? [];
+      const response = await listTeams()
+      return response.data?.items ?? []
     },
-  });
+  })
 
   if (teamsData.length > 0 && teams.length === 0) {
-    setTeams(teamsData);
+    setTeams(teamsData)
     if (!currentTeam) {
-      setCurrentTeam(teamsData[0]);
+      setCurrentTeam(teamsData[0])
     }
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -56,7 +56,7 @@ function Teams() {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default Teams;
+export default Teams

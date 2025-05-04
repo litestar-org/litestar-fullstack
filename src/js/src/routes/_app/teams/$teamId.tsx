@@ -1,42 +1,42 @@
 // import { useAuthStore } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import type { TeamMember } from "@/lib/api";
-import { addMemberToTeam, getTeam, listTeams, removeMemberFromTeam } from "@/lib/api/sdk.gen";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button"
+import type { TeamMember } from "@/lib/api"
+import { addMemberToTeam, getTeam, listTeams, removeMemberFromTeam } from "@/lib/api/sdk.gen"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, useParams } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/teams/$teamId")({
   component: TeamDetail,
-});
+})
 
 function TeamDetail() {
-  const { teamId } = useParams({ from: "/_app/teams/$teamId" as const });
+  const { teamId } = useParams({ from: "/_app/teams/$teamId" as const })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const { currentTeam } = useAuthStore();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { data: team, isLoading: isTeamLoading } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
-      const response = await getTeam({ path: { team_id: teamId } });
-      return response.data;
+      const response = await getTeam({ path: { team_id: teamId } })
+      return response.data
     },
-  });
+  })
 
   const { data: members = [], isLoading: isMembersLoading } = useQuery({
     queryKey: ["team-members", teamId],
     queryFn: async () => {
-      const response = await listTeams({ query: { ids: [teamId] } });
-      return response.data?.items?.[0]?.members ?? [];
+      const response = await listTeams({ query: { ids: [teamId] } })
+      return response.data?.items?.[0]?.members ?? []
     },
-  });
+  })
 
   const addMemberMutation = useMutation({
     mutationFn: (email: string) => addMemberToTeam({ path: { team_id: teamId }, body: { userName: email } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] });
+      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] })
     },
-  });
+  })
 
   const removeMemberMutation = useMutation({
     mutationFn: (memberId: string) =>
@@ -45,19 +45,19 @@ function TeamDetail() {
         body: { userName: memberId },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] });
+      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] })
     },
-  });
+  })
 
   if (isTeamLoading || isMembersLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   if (!team) {
-    return <div>Team not found</div>;
+    return <div>Team not found</div>
   }
 
-  const canManageMembers = members.some((member) => member.role === "ADMIN");
+  const canManageMembers = members.some((member) => member.role === "ADMIN")
 
   return (
     <div className="container mx-auto py-8">
@@ -82,7 +82,7 @@ function TeamDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default TeamDetail;
+export default TeamDetail

@@ -7,11 +7,11 @@ import { useEffect } from "react";
 import { Toaster } from "sonner";
 
 export function AppLayout() {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const checkAuth = useAuthStore((state) => state.checkAuth)
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    checkAuth()
+  }, [checkAuth])
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-200">

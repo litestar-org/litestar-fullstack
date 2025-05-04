@@ -26,5 +26,5 @@ export function PublicLayout() {
         <Outlet />
       </main>
     </div>
-  );
+  )
 }

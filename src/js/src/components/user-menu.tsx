@@ -1,12 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/hooks/use-auth";
-import { User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/hooks/use-auth"
+import { User } from "lucide-react"
 
 export function UserMenu() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth()
 
-  if (!user) return null;
+  if (!user) return null
 
   return (
     <DropdownMenu>
@@ -29,5 +29,5 @@ export function UserMenu() {
         <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

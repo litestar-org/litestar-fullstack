@@ -1,6 +1,6 @@
-import { AdminTags } from "@/components/admin/admin-tags";
-import { AdminUsers } from "@/components/admin/admin-users";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminTags } from "@/components/admin/admin-tags"
+import { AdminUsers } from "@/components/admin/admin-users"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function AdminDashboard() {
   return (
@@ -18,5 +18,5 @@ export function AdminDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

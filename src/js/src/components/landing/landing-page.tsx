@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { ArrowRight, Lock, type LucideIcon, Rocket, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Link } from "@tanstack/react-router"
+import { motion } from "framer-motion"
+import { ArrowRight, Lock, type LucideIcon, Rocket, Users } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface Feature {
-  icon: LucideIcon;
-  title: string;
-  description: string;
+  icon: LucideIcon
+  title: string
+  description: string
 }
 
 const features: Feature[] = [
@@ -27,14 +27,14 @@ const features: Feature[] = [
     title: "Team Collaboration",
     description: "Seamless collaboration tools to keep your team in sync.",
   },
-];
+]
 
 export function LandingPage() {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   // Animation variants
   const container = {
@@ -45,12 +45,12 @@ export function LandingPage() {
         staggerChildren: 0.1,
       },
     },
-  };
+  }
 
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 },
-  };
+  }
 
   return (
     <div className="h-full w-full bg-gradient-to-br from-background via-background to-primary/5">
@@ -93,7 +93,7 @@ export function LandingPage() {
           <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid md:grid-cols-3 gap-8 my-24">
             {features.map((feature) => (
               <motion.div key={feature.title} variants={item}>
-                <Card className="p-6 border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-accent-foreground/10 backdrop-blur-sm h-full">
+                <Card className="h-full border-none bg-accent-foreground/10 p-6 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
                   <CardContent className="p-0 flex flex-col">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 flex-shrink-0">
                       <feature.icon className="h-6 w-6 text-primary" />
@@ -146,5 +146,5 @@ export function LandingPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

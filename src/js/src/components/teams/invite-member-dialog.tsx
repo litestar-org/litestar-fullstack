@@ -1,52 +1,52 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { addMemberToTeam } from "@/lib/api/sdk.gen";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { addMemberToTeam } from "@/lib/api/sdk.gen"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
 const inviteSchema = z.object({
   email: z.string().email(),
   role: z.enum(["member", "admin"]),
-});
+})
 
-type InviteFormData = z.infer<typeof inviteSchema>;
+type InviteFormData = z.infer<typeof inviteSchema>
 
 interface InviteMemberDialogProps {
-  teamId: string;
+  teamId: string
 }
 
 export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
-  const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false)
+  const queryClient = useQueryClient()
 
   const form = useForm<InviteFormData>({
     resolver: zodResolver(inviteSchema),
     defaultValues: {
       role: "member",
     },
-  });
+  })
 
   const onSubmit = async (data: InviteFormData) => {
     try {
       await addMemberToTeam({
         path: { team_id: teamId },
         body: { userName: data.email },
-      });
+      })
       await queryClient.invalidateQueries({
         queryKey: ["team-members", teamId],
-      });
-      setOpen(false);
-      form.reset();
+      })
+      setOpen(false)
+      form.reset()
     } catch (error) {
-      console.error("Failed to invite member:", error);
+      console.error("Failed to invite member:", error)
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -100,5 +100,5 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

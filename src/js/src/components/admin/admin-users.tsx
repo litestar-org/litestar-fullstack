@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { User } from "@/lib/api";
-import { assignUserRole, listUsers, revokeUserRole } from "@/lib/api/sdk.gen";
-import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import type { User } from "@/lib/api"
+import { assignUserRole, listUsers, revokeUserRole } from "@/lib/api/sdk.gen"
+import { useQuery } from "@tanstack/react-query"
 
 export function AdminUsers() {
   const {
@@ -13,34 +13,34 @@ export function AdminUsers() {
   } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const response = await listUsers();
-      return response.data?.items ?? [];
+      const response = await listUsers()
+      return response.data?.items ?? []
     },
-  });
+  })
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   const handleToggleSuperuser = async (user: User) => {
     try {
-      const isSuperuser = user.roles?.some((role) => role.roleSlug === "superuser");
+      const isSuperuser = user.roles?.some((role) => role.roleSlug === "superuser")
       if (isSuperuser) {
         await revokeUserRole({
           body: { userName: user.name || user.email },
           query: { role_slug: "superuser" },
-        });
+        })
       } else {
         await assignUserRole({
           body: { userName: user.name || user.email },
           query: { role_slug: "superuser" },
-        });
+        })
       }
-      refetch();
+      refetch()
     } catch (error) {
-      console.error("Failed to toggle superuser status:", error);
+      console.error("Failed to toggle superuser status:", error)
     }
-  };
+  }
 
   return (
     <Card>
@@ -74,5 +74,5 @@ export function AdminUsers() {
         </Table>
       </CardContent>
     </Card>
-  );
+  )
 }
