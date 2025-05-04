@@ -1,5 +1,5 @@
-import { SignupForm } from "@/components/auth/signup-form"
-import { createFileRoute } from "@tanstack/react-router"
+import { AuthForm } from "@/components/auth/auth-form";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_public/signup")({
   component: SignupPage,
@@ -7,8 +7,8 @@ export const Route = createFileRoute("/_public/signup")({
 
 function SignupPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <SignupForm />
+    <div className="flex-1">
+      <AuthForm />
     </div>
   )
 }

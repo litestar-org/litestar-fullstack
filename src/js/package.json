@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "biome check --write .",
+    "format": "biome format --write .",
     "preview": "vite preview",
     "export-schema": "cd ../.. && uv run app schema openapi --output src/js/src/openapi.json",
     "generate-types": "tsx scripts/generate-types.ts"
