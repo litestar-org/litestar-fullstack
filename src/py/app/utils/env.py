@@ -12,7 +12,7 @@ BASE_DIR: Final[Path] = Path(__file__).parent.parent
 TRUE_VALUES: Final[frozenset[str]] = frozenset({"True", "true", "1", "yes", "YES", "Y", "y", "T", "t"})
 
 T = TypeVar("T")
-ParseTypes = bool | int | str | list[str] | Path | list[Path]
+ParseTypes = bool | int | str | list[str] | Path | list[Path] | dict[str, Any]
 
 
 class UnsetType:
@@ -57,6 +57,10 @@ def get_env(key: str, default: None, type_hint: UnsetType = _UNSET) -> Callable[
 def get_env(key: str, default: ParseTypes | None, type_hint: type[T]) -> Callable[[], T]: ...
 
 
+@overload
+def get_env(key: str, default: dict[str, Any], type_hint: UnsetType = _UNSET) -> Callable[[], dict[str, Any]]: ...
+
+
 def get_env(
     key: str, default: ParseTypes | None, type_hint: type[T] | UnsetType = _UNSET
 ) -> Callable[[], ParseTypes | T | None]:
@@ -95,10 +99,15 @@ def get_config_val(key: str, default: None, type_hint: UnsetType = _UNSET) -> No
 def get_config_val(key: str, default: ParseTypes | None, type_hint: type[T]) -> T: ...
 
 
+@overload
+def get_config_val(key: str, default: dict[str, Any], type_hint: UnsetType = _UNSET) -> dict[str, Any]: ...
+
+
 def get_config_val(  # noqa: C901, PLR0911, PLR0915
     key: str, default: ParseTypes | None, type_hint: type[T] | UnsetType = _UNSET
 ) -> ParseTypes | T | None:
     """Parse environment variables, prioritizing explicit type hint over default's type.
+    Now supports dict and TypedDict with both JSON and comma-separated formats.
 
     Args:
         key: Environment variable key
@@ -124,17 +133,19 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
     final_type: type | None = None
     item_constructor: Callable[[str], Any] | None = None
     parse_as_list = False
+    parse_as_dict = False
 
     if type_hint != _UNSET and isinstance(type_hint, type):
         final_type = type_hint
         origin = get_origin(type_hint)
         args = get_args(type_hint)
-
-        # Direct check using string representation - more reliable than typing introspection
-        if "list[" in str(type_hint) and "Path" in str(type_hint):
+        # Dict/TypedDict support
+        if origin is dict or is_typed_dict(type_hint):
+            parse_as_dict = True
+        # List support (existing)
+        elif "list[" in str(type_hint) and "Path" in str(type_hint):
             parse_as_list = True
-            item_constructor = Path  # Just use Path directly
-
+            item_constructor = Path
         elif origin is list and args:
             parse_as_list = True
             item_type_arg = args[0]
@@ -145,51 +156,47 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
             else:
                 msg = f"Unsupported item type '{item_type_arg}' in list type hint for key '{key}'"
                 raise ValueError(msg)
-    # If type_hint is list[Path] but not caught above, catch it here
     elif type_hint != _UNSET and str(type_hint) == "list[pathlib._local.Path]":
         parse_as_list = True
         item_constructor = Path
     elif default is not None:
         final_type = type(default)
         if isinstance(default, Path):
-            # If default is a Path, always return Path(value)
             return Path(value)
         if isinstance(default, list):
             parse_as_list = True
-            # If the default is a non-empty list and all elements are Path, use Path
             if default and all(isinstance(x, Path) for x in default):
                 item_constructor = Path
             elif default and all(isinstance(x, str) for x in default):
                 item_constructor = str
             else:
-                # If the default is an empty list, default to str
                 item_constructor = str
+        if isinstance(default, dict):
+            parse_as_dict = True
 
     if parse_as_list and not item_constructor:
         msg = f"Internal error: List parsing requested for key '{key}' but no item constructor determined."
         raise RuntimeError(msg)
 
-    try:
-        if parse_as_list and item_constructor:
-            if item_constructor is Path:
-                return _parse_list(key, value, item_constructor)
-            return cast("list[str]", _parse_list(key, value, item_constructor))
-        if final_type is str:
-            return value
-        if final_type is int:
-            return int(value)
-        if final_type is bool:
-            return value in TRUE_VALUES
-        if final_type is Path:
-            return Path(value)
-        if final_type is None or final_type is type(None):
-            return value
-        if type_hint != _UNSET and final_type is type_hint:
-            return cast("T", final_type(value))  # pyright: ignore
-    except (ValueError, TypeError, RuntimeError) as e:
-        type_name = final_type.__name__ if final_type else "unknown"
-        msg = f"Could not convert value '{value}' for key '{key}' to type {type_name}. Error: {e}"
-        raise ValueError(msg) from e
+    if parse_as_list and item_constructor:
+        if item_constructor is Path:
+            return _parse_list(key, value, item_constructor)
+        return cast("list[str]", _parse_list(key, value, item_constructor))
+    if parse_as_dict:
+        return _parse_dict(key, value)
+    if final_type is str:
+        return value
+    if final_type is int:
+        return int(value)
+    if final_type is bool:
+        return value in TRUE_VALUES
+    if final_type is Path:
+        return Path(value)
+    if final_type is None or final_type is type(None):
+        return value
+    if type_hint != _UNSET and final_type is type_hint:
+        return cast("T", final_type(value))  # pyright: ignore
+
     return value
 
 
@@ -205,12 +212,11 @@ def _parse_list(key: str, value: str, item_constructor: Callable[[str], T]) -> l
                 raise ValueError(msg)  # noqa: TRY004, TRY301
             constructed_list: list[T] = []
             for item in parsed_json:  # pyright: ignore
-                item_str: str = str(item)  # pyright: ignore
                 try:
-                    constructed_list.append(item_constructor(item_str))
+                    constructed_list.append(item_constructor(item))  # pyright: ignore
                 except (ValueError, TypeError) as item_e:
                     constructor_name = getattr(item_constructor, "__name__", repr(item_constructor))
-                    msg = f"Error converting item '{item_str}' (from JSON list) for key '{key}' using {constructor_name}: {item_e}"
+                    msg = f"Error converting item '{item}' (from JSON list) for key '{key}' using {constructor_name}: {item_e}"
                     raise ValueError(msg) from item_e
 
         except (json.JSONDecodeError, ValueError) as e:
@@ -227,3 +233,62 @@ def _parse_list(key: str, value: str, item_constructor: Callable[[str], T]) -> l
         msg = f"Error converting item in comma-separated list for key '{key}' using {constructor_name}: {item_e}"
         raise ValueError(msg) from item_e
     return constructed_list
+
+
+def _parse_dict(key: str, value: str) -> dict[str, Any]:
+    # Try JSON first
+    if value.strip().startswith("{"):
+        return _parse_dict_json(key, value)
+
+    return _parse_dict_comma(key, value)
+
+
+def _parse_dict_json(key: str, value: str, key_type: type = str) -> dict[str, Any]:
+    try:
+        parsed_json: dict[str, Any] | Any = json.loads(value)
+    except json.JSONDecodeError as e:
+        msg = f"{key} is not a valid dict representation."
+        raise TypeError(msg) from e
+    if not isinstance(parsed_json, dict):
+        msg = f"{key} is not a valid dict representation."
+        raise TypeError(msg)
+    result: dict[str, Any] = {}
+    for k, v in parsed_json.items():  # pyright: ignore
+        try:
+            # Treat all values as strings when parsing from env var
+            result[key_type(k)] = str(v)  # pyright: ignore
+        except Exception as e:
+            msg = f"Error converting value for key '{k}' in dict for env var '{key}': {e}"
+            raise TypeError(msg) from e
+    return result
+
+
+def _parse_dict_comma(
+    key: str, value: str, key_type: type = str
+) -> dict[str, Any]:  # Fallback: comma-separated key=val pairs
+    result: dict[str, Any] = {}
+
+    for item in value.split(","):
+        if not item.strip():
+            continue
+        if "=" not in item:
+            msg = f"{key} is not a valid dict representation (missing '=' in '{item}')."
+            raise TypeError(msg)
+        k, v = item.split("=", 1)
+        k_cast = key_type(k.strip())
+        try:
+            # Value is already a string here
+            result[k_cast] = v.strip()
+        except Exception as e:
+            msg = f"Error converting value for key '{k_cast}' in dict for env var '{key}': {e}"
+            raise TypeError(msg) from e
+    return result
+
+
+def is_typed_dict(tp: Any) -> bool:
+    try:
+        return (
+            isinstance(tp, type) and issubclass(tp, dict) and hasattr(tp, "__annotations__") and tp.__name__ != "dict"  # pyright: ignore
+        )
+    except Exception:  # noqa: BLE001
+        return False
