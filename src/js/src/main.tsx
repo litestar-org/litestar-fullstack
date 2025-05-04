@@ -1,9 +1,10 @@
-import { TeamProvider } from "@/lib/team-context"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
-import React from "react"
-import ReactDOM from "react-dom/client"
+import { TeamProvider } from "@/lib/team-context";
+import { ThemeProvider } from "@/lib/theme-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import React from "react";
+import ReactDOM from "react-dom/client";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen"
@@ -37,12 +38,14 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TeamProvider>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools />
-        </TeamProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <TeamProvider>
+            <RouterProvider router={router} />
+            <ReactQueryDevtools />
+          </TeamProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </React.StrictMode>,
   )
 }
