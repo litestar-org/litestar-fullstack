@@ -184,8 +184,8 @@ requires-dist = [
     { name = "advanced-alchemy", extras = ["uuid", "obstore"] },
     { name = "httpx-oauth" },
     { name = "litestar", extras = ["jinja", "jwt", "structlog"] },
-    { name = "litestar-granian", extras = ["uvloop"] },
-    { name = "litestar-saq" },
+    { name = "litestar-granian", extras = ["uvloop"], git = "https://github.com/cofin/litestar-granian.git?rev=main" },
+    { name = "litestar-saq", git = "https://github.com/cofin/litestar-saq.git?rev=main" },
     { name = "litestar-vite" },
     { name = "psycopg", extras = ["pool", "binary"] },
     { name = "pwdlib", extras = ["argon2"] },
@@ -990,17 +990,13 @@ structlog = [
 
 [[package]]
 name = "litestar-granian"
-version = "0.12.2"
-source = { registry = "https://pypi.org/simple" }
+version = "0.12.3"
+source = { git = "https://github.com/cofin/litestar-granian.git?rev=main#03fa18b252f0ff87536b7cd87059239e55e633e2" }
 dependencies = [
     { name = "granian", extra = ["pname", "reload"] },
     { name = "httptools" },
     { name = "litestar" },
     { name = "websockets" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/1e/8cf8ba7890d4ebe90384511edbd7bc9dac8bcf7a038fbffa4f8340cb0654/litestar_granian-0.12.2.tar.gz", hash = "sha256:5de0faa661ec7d73995f04773ebfeb47f4ca8adf663bbc5d6450fcd87b1cbcc1", size = 141501, upload-time = "2025-03-27T15:32:50.828Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/14/d491ed8eb69e36758370f4a9a26b847ccd4515d6c52cef78ac64ca879f62/litestar_granian-0.12.2-py3-none-any.whl", hash = "sha256:3157f906a8b8aba75930d8400a1b8b334de583d1c5abe72d4cee692db562d163", size = 13138, upload-time = "2025-03-27T15:32:49.09Z" },
 ]
 
 [package.optional-dependencies]
@@ -1019,15 +1015,11 @@ wheels = [
 
 [[package]]
 name = "litestar-saq"
-version = "0.5.2"
-source = { registry = "https://pypi.org/simple" }
+version = "0.5.3"
+source = { git = "https://github.com/cofin/litestar-saq.git?rev=main#0ed16d76e805d6a7774a9b554c0880b5cc094bf5" }
 dependencies = [
     { name = "litestar" },
     { name = "saq" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/85/79/19cc0e165264724c7a38ef49cd1306c99b93908a7d48f7af7eb683155759/litestar_saq-0.5.2.tar.gz", hash = "sha256:2708199e9dce6bc2a940ad1c2d74249b874ab095d62e9ae1260da3e4caa5761e", size = 140491, upload-time = "2025-04-13T02:06:58.246Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/ec/a201bf92737e201d565350c6e5d67f1cdeda3470511bd1d0ec9430aad039/litestar_saq-0.5.2-py3-none-any.whl", hash = "sha256:c6e6c367db16929177e4d185d955a077966252c852558e80f0221a5a9c903ed6", size = 15837, upload-time = "2025-04-13T02:06:56.298Z" },
 ]
 
 [[package]]

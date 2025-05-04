@@ -1,12 +1,14 @@
+/// <reference types="vite/client" />
 import type { Config } from "@hey-api/client-axios";
+import type { ClientOptions } from "./src/lib/api/types.gen";
 
-const config: Config = {
+// Hey API codegen config (default export)
+const config = {
   input: "src/openapi.json",
   output: "src/lib/api",
   plugins: [
     {
       name: "@hey-api/client-axios",
-      runtimeConfigPath: "./src/lib/api/core/config.ts",
     },
   ],
   exportCore: true,
@@ -33,3 +35,9 @@ const config: Config = {
 };
 
 export default config;
+
+// Runtime config for your app (named export)
+export const createClientConfig = <T extends ClientOptions>(override?: Config<T>): Config<Required<T>> => ({
+  baseURL: import.meta.env.API_URL,
+  ...override,
+});

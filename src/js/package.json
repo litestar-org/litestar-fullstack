@@ -38,6 +38,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.1.1",
+    "framer-motion": "^12.9.4",
     "lucide-react": "^0.331.0",
     "next-themes": "^0.4.6",
     "react": "^18.2.0",
