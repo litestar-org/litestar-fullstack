@@ -1,11 +1,13 @@
+# ruff: noqa: ARG001
 import asyncio
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 from advanced_alchemy.base import metadata_registry
 from alembic import context
 from alembic.autogenerate import rewriter
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_engine_from_config
+from sqlalchemy.sql.schema import SchemaItem
 
 if TYPE_CHECKING:
     from advanced_alchemy.alembic.commands import AlembicCommandConfig
@@ -18,6 +20,39 @@ __all__ = ("do_run_migrations", "run_migrations_offline", "run_migrations_online
 # access to the values within the .ini file in use.
 config: "AlembicCommandConfig" = context.config  # type: ignore
 writer = rewriter.Rewriter()
+
+
+def include_object(
+    obj: SchemaItem,
+    name: str | None,
+    type_: Literal[
+        "schema",
+        "table",
+        "column",
+        "index",
+        "unique_constraint",
+        "foreign_key_constraint",
+    ],
+    reflected: bool,
+    compare_to: SchemaItem | None,
+) -> bool:
+    """Excludes the SAQ tables, indexes, and other objects from being included in autogeneration
+
+    Args:
+        obj: The object to include.
+        name: The name of the object.
+        type_: The type of the object.
+        reflected: Whether the object is reflected.
+        compare_to: The object to compare to.
+
+    Returns:
+        Whether the object should be included.
+    """
+    return not (
+        (name is not None and name.startswith("saq_"))
+        or (type_ == "table" and name in {"task_queue", "task_queue_stats", "task_queue_ddl_version"})
+        or (name is not None and name == "task_queue_lock_key_seq")
+    )
 
 
 def run_migrations_offline() -> None:
@@ -42,6 +77,7 @@ def run_migrations_offline() -> None:
         user_module_prefix=config.user_module_prefix,
         render_as_batch=config.render_as_batch,
         process_revision_directives=writer,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -59,6 +95,7 @@ def do_run_migrations(connection: "Connection") -> None:
         user_module_prefix=config.user_module_prefix,
         render_as_batch=config.render_as_batch,
         process_revision_directives=writer,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
