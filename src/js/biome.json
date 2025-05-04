@@ -1,33 +1,54 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": false,
+    "defaultBranch": "main",
+    "root": "../.."
   },
   "files": {
-    "ignoreUnknown": false,
+    "ignoreUnknown": true,
     "ignore": ["src/routeTree.gen.ts", "src/lib/api/types.gen.ts"],
-    "include": ["src/*", ".vscode/*", "index.html", "vite.config.js"]
+    "include": ["src/**/*", "index.html", "*.ts", "*.js"]
   },
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
     "lineWidth": 180,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "formatWithErrors": false,
+    "lineEnding": "lf",
+    "ignore": ["node_modules/**/*", "dist/**/*", "public/**/*", "src/routeTree.gen.ts", "src/lib/api/types.gen.ts"]
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": true,
+    "ignore": ["node_modules/**/*", "dist/**/*", "public/**/*", "src/routeTree.gen.ts", "src/lib/api/types.gen.ts"]
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
-    }
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "warn"
+      }
+    },
+    "ignore": ["node_modules/**/*", "dist/**/*", "public/**/*", "src/routeTree.gen.ts", "src/lib/api/types.gen.ts"]
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded"
     }
   }
 }
