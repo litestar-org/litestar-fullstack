@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: {{ namespace }}
+data:
+  nginx.conf: |
+    worker_processes auto;
+    pid /run/nginx.pid;
+    include /etc/nginx/modules-enabled/*.conf;
+
+    events {
+        worker_connections 768;
+    }
+
+    http {
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        gzip on;
+        gzip_disable "msie6";
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_buffers 16 8k;
+        gzip_http_version 1.1;
+        gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
+
+        server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+
+            server_name _;
+
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+
+            location / {
+                try_files $uri $uri/ /index.html;
+            }
+
+            location = /healthz {
+                access_log off;
+                return 200 "healthy";
+                add_header Content-Type text/plain;
+            }
+        }
+    } 
