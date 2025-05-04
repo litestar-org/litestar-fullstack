@@ -1,23 +1,23 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/lib/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useAuthStore } from "@/lib/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const loginSchema = z.object({
   username: z.string().email(),
   password: z.string().min(8),
-});
+})
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginForm() {
-  const navigate = useNavigate();
-  const { login, isLoading } = useAuthStore();
+  const navigate = useNavigate()
+  const { login, isLoading } = useAuthStore()
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -26,19 +26,19 @@ export function LoginForm() {
     },
     mode: "onBlur",
     reValidateMode: "onBlur",
-  });
+  })
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.username, data.password);
+      await login(data.username, data.password)
       // Only navigate after successful login
-      navigate({ to: "/home" });
+      navigate({ to: "/home" })
     } catch (error) {
       form.setError("root", {
         message: "Invalid credentials",
-      });
+      })
     }
-  };
+  }
 
   return (
     <Card className="w-full max-w-md">
@@ -59,8 +59,8 @@ export function LoginForm() {
                       type="email"
                       {...field}
                       onBlur={() => {
-                        field.onBlur();
-                        form.trigger(field.name);
+                        field.onBlur()
+                        form.trigger(field.name)
                       }}
                     />
                   </FormControl>
@@ -79,8 +79,8 @@ export function LoginForm() {
                       type="password"
                       {...field}
                       onBlur={() => {
-                        field.onBlur();
-                        form.trigger(field.name);
+                        field.onBlur()
+                        form.trigger(field.name)
                       }}
                     />
                   </FormControl>
@@ -96,5 +96,5 @@ export function LoginForm() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }

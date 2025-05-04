@@ -1,5 +1,5 @@
-import { Outlet } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { Outlet } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 
 export function PublicLayout() {
   return (
@@ -23,5 +23,5 @@ export function PublicLayout() {
         <Outlet />
       </main>
     </div>
-  );
+  )
 }

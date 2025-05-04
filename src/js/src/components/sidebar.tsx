@@ -1,26 +1,26 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { accountProfile } from "@/lib/api/sdk.gen";
-import { useAuthStore } from "@/lib/auth";
-import { useTeam } from "@/lib/team-context";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { BarChart3, Building2, Home, LogOut, Settings, Shield, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { accountProfile } from "@/lib/api/sdk.gen"
+import { useAuthStore } from "@/lib/auth"
+import { useTeam } from "@/lib/team-context"
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
+import { BarChart3, Building2, Home, LogOut, Settings, Shield, User } from "lucide-react"
 
 export function Sidebar() {
-  const { user } = useAuthStore();
-  const { currentTeam, setCurrentTeam, teams } = useTeam();
+  const { user } = useAuthStore()
+  const { currentTeam, setCurrentTeam, teams } = useTeam()
 
   const { data: userProfile } = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
-      const response = await accountProfile();
-      return response.data;
+      const response = await accountProfile()
+      return response.data
     },
-  });
+  })
 
-  if (!user) return null;
+  if (!user) return null
 
   return (
     <aside className="w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -108,5 +108,5 @@ export function Sidebar() {
         </nav>
       </div>
     </aside>
-  );
+  )
 }

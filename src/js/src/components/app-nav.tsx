@@ -1,29 +1,29 @@
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { accountLogout, accountProfile } from "@/lib/api/sdk.gen";
-import { useTeam } from "@/lib/team-context";
-import { useTheme } from "@/lib/theme-context";
-import { useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "@tanstack/react-router";
-import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { accountLogout, accountProfile } from "@/lib/api/sdk.gen"
+import { useTeam } from "@/lib/team-context"
+import { useTheme } from "@/lib/theme-context"
+import { useQuery } from "@tanstack/react-query"
+import { Link, useRouter } from "@tanstack/react-router"
+import { Moon, Sun } from "lucide-react"
 
 export function AppNav() {
-  const router = useRouter();
-  const { currentTeam, setCurrentTeam, teams } = useTeam();
-  const { theme, toggleTheme } = useTheme();
+  const router = useRouter()
+  const { currentTeam, setCurrentTeam, teams } = useTeam()
+  const { theme, toggleTheme } = useTheme()
 
   const { data: user } = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
-      const response = await accountProfile();
-      return response.data;
+      const response = await accountProfile()
+      return response.data
     },
-  });
+  })
 
   const handleLogout = async () => {
-    await accountLogout();
-    router.invalidate();
-  };
+    await accountLogout()
+    router.invalidate()
+  }
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -70,5 +70,5 @@ export function AppNav() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

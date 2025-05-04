@@ -1,22 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { TeamMember } from "@/lib/api";
-import { getTeam, removeMemberFromTeam } from "@/lib/api/sdk.gen";
-import { useAuthStore } from "@/lib/auth";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import type { TeamMember } from "@/lib/api"
+import { getTeam, removeMemberFromTeam } from "@/lib/api/sdk.gen"
+import { useAuthStore } from "@/lib/auth"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 interface TeamMembersProps {
-  teamId: string;
+  teamId: string
 }
 
 export function TeamMembers({ teamId }: TeamMembersProps) {
-  const { user } = useAuthStore();
-  const queryClient = useQueryClient();
+  const { user } = useAuthStore()
+  const queryClient = useQueryClient()
 
   const { data: team } = useQuery({
     queryKey: ["team", teamId],
     queryFn: () => getTeam({ path: { team_id: teamId } }),
-  });
+  })
 
   const { mutate: removeMember } = useMutation({
     mutationFn: (userId: string) =>
@@ -25,16 +25,16 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         body: { userName: userId },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team", teamId] });
+      queryClient.invalidateQueries({ queryKey: ["team", teamId] })
     },
-  });
+  })
 
   if (!team?.data) {
-    return null;
+    return null
   }
 
-  const ownerId = team.data.members?.find((member) => member.isOwner)?.id;
-  const canManageMembers = ownerId === user?.id || user?.isSuperuser;
+  const ownerId = team.data.members?.find((member) => member.isOwner)?.id
+  const canManageMembers = ownerId === user?.id || user?.isSuperuser
 
   return (
     <div className="space-y-4">
@@ -69,5 +69,5 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

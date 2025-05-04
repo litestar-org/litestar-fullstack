@@ -1,17 +1,17 @@
-import { TeamProvider } from "@/lib/team-context";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { TeamProvider } from "@/lib/team-context"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { RouterProvider, createRouter } from "@tanstack/react-router"
+import React from "react"
+import ReactDOM from "react-dom/client"
 
 // Import the generated route tree
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "./routeTree.gen"
 
-import "./styles.css";
-import reportWebVitals from "./reportWebVitals.ts";
+import "./styles.css"
+import reportWebVitals from "./reportWebVitals.ts"
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 // Create the router using the generated route tree
 const router = createRouter({
@@ -23,18 +23,18 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-});
+})
 
 declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router;
+    router: typeof router
   }
 }
 
 // Render the app
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById("root")
 if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
+  const root = ReactDOM.createRoot(rootElement)
   root.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -44,10 +44,10 @@ if (rootElement && !rootElement.innerHTML) {
         </TeamProvider>
       </QueryClientProvider>
     </React.StrictMode>,
-  );
+  )
 }
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals()
