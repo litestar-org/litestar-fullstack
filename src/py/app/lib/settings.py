@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
-STATIC_DIR = Path(BASE_DIR / "server" / "web" / "public")
+STATIC_DIR = Path(BASE_DIR / "server" / "web" / "static")
 
 
 @dataclass
@@ -262,6 +262,24 @@ class SaqSettings:
 
 
 @dataclass
+class StorageSettings:
+    """Storage configurations."""
+
+    PUBLIC_STORAGE_KEY: str = field(default_factory=get_env("PUBLIC_STORAGE_KEY", "public"))
+    """The key to the public storage directory."""
+    PUBLIC_STORAGE_URI: str = field(default_factory=get_env("PUBLIC_STORAGE_PATH_URI", f"{BASE_DIR}/storage/public"))
+    """The path to the public storage directory."""
+    PUBLIC_STORAGE_OPTIONS: dict[str, Any] = field(default_factory=get_env("PUBLIC_STORAGE_OPTIONS", {}))
+    """The options to use for the public storage directory."""
+    PRIVATE_STORAGE_KEY: str = field(default_factory=get_env("PRIVATE_STORAGE_KEY", "private"))
+    """The key to the private storage directory."""
+    PRIVATE_STORAGE_URI: str = field(default_factory=get_env("PRIVATE_STORAGE_PATH_URI", f"{BASE_DIR}/storage/private"))
+    """The path to the private storage directory."""
+    PRIVATE_STORAGE_OPTIONS: dict[str, Any] = field(default_factory=get_env("PRIVATE_STORAGE_OPTIONS", {}))
+    """The options to use for the private storage directory."""
+
+
+@dataclass
 class AppSettings:
     """Application configuration"""
 
@@ -395,6 +413,7 @@ class Settings:
     server: ServerSettings = field(default_factory=ServerSettings)
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
+    storage: StorageSettings = field(default_factory=StorageSettings)
 
     @classmethod
     @lru_cache(maxsize=1, typed=True)
@@ -417,10 +436,11 @@ class Settings:
             vite: ViteSettings = ViteSettings()
             app: AppSettings = AppSettings()
             log: LogSettings = LogSettings()
+            storage: StorageSettings = StorageSettings()
         except Exception as e:  # noqa: BLE001
             logger.fatal("Could not load settings. %s", e)
             sys.exit(1)
-        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log)
+        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log, storage=storage)
 
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:
