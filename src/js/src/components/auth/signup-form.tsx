@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { accountRegister } from "@/lib/api/sdk.gen";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { accountRegister } from "@/lib/api/sdk.gen"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const signupSchema = z
   .object({
@@ -18,26 +18,26 @@ const signupSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  });
+  })
 
-type SignupFormData = z.infer<typeof signupSchema>;
+type SignupFormData = z.infer<typeof signupSchema>
 
 export function SignupForm() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-  });
+  })
 
   const onSubmit = async (data: SignupFormData) => {
     try {
       await accountRegister({
         body: { email: data.email, password: data.password, name: data.name },
-      });
-      navigate({ to: "/login" as const });
+      })
+      navigate({ to: "/login" as const })
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("Signup failed:", error)
     }
-  };
+  }
 
   return (
     <Card className="w-full max-w-md">
@@ -106,5 +106,5 @@ export function SignupForm() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }

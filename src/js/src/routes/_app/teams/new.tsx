@@ -1,9 +1,9 @@
-import { CreateTeamForm } from "@/components/teams/create-team-form";
-import { createFileRoute } from "@tanstack/react-router";
+import { CreateTeamForm } from "@/components/teams/create-team-form"
+import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/teams/new")({
   component: NewTeamPage,
-});
+})
 
 function NewTeamPage() {
   return (
@@ -11,5 +11,5 @@ function NewTeamPage() {
       <h1 className="text-3xl font-bold mb-8">Create New Team</h1>
       <CreateTeamForm />
     </div>
-  );
+  )
 }

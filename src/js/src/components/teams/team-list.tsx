@@ -1,24 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Team } from "@/lib/api";
-import { listTeams } from "@/lib/api/sdk.gen";
-import { useTeam } from "@/lib/team-context";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Team } from "@/lib/api"
+import { listTeams } from "@/lib/api/sdk.gen"
+import { useTeam } from "@/lib/team-context"
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 
 export function TeamList() {
-  const { currentTeam, setCurrentTeam } = useTeam();
+  const { currentTeam, setCurrentTeam } = useTeam()
 
   const { data: teams = [], isLoading } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
-      const response = await listTeams();
-      return response.data?.items ?? [];
+      const response = await listTeams()
+      return response.data?.items ?? []
     },
-  });
+  })
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   if (teams.length === 0) {
@@ -34,7 +34,7 @@ export function TeamList() {
           </Button>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -69,5 +69,5 @@ export function TeamList() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

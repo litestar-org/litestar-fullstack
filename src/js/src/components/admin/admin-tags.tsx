@@ -1,81 +1,81 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { Tag } from "@/lib/api";
-import { createTag, deleteTag, listTags, updateTag } from "@/lib/api/sdk.gen";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import type { Tag } from "@/lib/api"
+import { createTag, deleteTag, listTags, updateTag } from "@/lib/api/sdk.gen"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 
 export function AdminTags() {
-  const queryClient = useQueryClient();
-  const [newTagName, setNewTagName] = useState("");
-  const [editingTag, setEditingTag] = useState<Tag | null>(null);
-  const [editTagName, setEditTagName] = useState("");
+  const queryClient = useQueryClient()
+  const [newTagName, setNewTagName] = useState("")
+  const [editingTag, setEditingTag] = useState<Tag | null>(null)
+  const [editTagName, setEditTagName] = useState("")
 
   const { data: tags = [], isLoading } = useQuery({
     queryKey: ["admin-tags"],
     queryFn: async () => {
-      const response = await listTags();
-      return response.data?.items ?? [];
+      const response = await listTags()
+      return response.data?.items ?? []
     },
-  });
+  })
 
   const createTagMutation = useMutation({
     mutationFn: async (name: string) => {
       await createTag({
         body: { name },
         path: { tag_id: crypto.randomUUID() },
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tags"] });
-      setNewTagName("");
+      queryClient.invalidateQueries({ queryKey: ["admin-tags"] })
+      setNewTagName("")
     },
-  });
+  })
 
   const updateTagMutation = useMutation({
     mutationFn: async ({ tag, name }: { tag: Tag; name: string }) => {
       await updateTag({
         body: { name },
         path: { tag_id: tag.id },
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tags"] });
-      setEditingTag(null);
-      setEditTagName("");
+      queryClient.invalidateQueries({ queryKey: ["admin-tags"] })
+      setEditingTag(null)
+      setEditTagName("")
     },
-  });
+  })
 
   const deleteTagMutation = useMutation({
     mutationFn: async (tag: Tag) => {
       await deleteTag({
         path: { tag_id: tag.id },
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tags"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tags"] })
     },
-  });
+  })
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   const handleCreateTag = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (newTagName.trim()) {
-      createTagMutation.mutate(newTagName.trim());
+      createTagMutation.mutate(newTagName.trim())
     }
-  };
+  }
 
   const handleUpdateTag = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (editingTag && editTagName.trim()) {
-      updateTagMutation.mutate({ tag: editingTag, name: editTagName.trim() });
+      updateTagMutation.mutate({ tag: editingTag, name: editTagName.trim() })
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -115,8 +115,8 @@ export function AdminTags() {
                         <Button
                           variant="outline"
                           onClick={() => {
-                            setEditingTag(null);
-                            setEditTagName("");
+                            setEditingTag(null)
+                            setEditTagName("")
                           }}
                         >
                           Cancel
@@ -133,8 +133,8 @@ export function AdminTags() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setEditingTag(tag);
-                          setEditTagName(tag.name);
+                          setEditingTag(tag)
+                          setEditTagName(tag.name)
                         }}
                       >
                         Edit
@@ -151,5 +151,5 @@ export function AdminTags() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

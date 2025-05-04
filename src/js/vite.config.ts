@@ -1,12 +1,12 @@
-import path from "node:path";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import path from "node:path"
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
 
-const APP_URL = process.env.APP_URL || "http://localhost:8080";
-const API_URL = APP_URL;
-const ASSET_URL = process.env.ASSET_URL || "/";
-const VITE_PORT = process.env.VITE_PORT || "5173";
+const APP_URL = process.env.APP_URL || "http://localhost:8080"
+const API_URL = APP_URL
+const ASSET_URL = process.env.ASSET_URL || "/"
+const VITE_PORT = process.env.VITE_PORT || "5173"
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), TanStackRouterVite()],
@@ -30,4 +30,4 @@ export default defineConfig({
     outDir: "../py/app/server/web/static",
     emptyOutDir: true,
   },
-});
+})
