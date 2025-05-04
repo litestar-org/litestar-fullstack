@@ -53,7 +53,7 @@ export function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="h-full w-full bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-4 relative flex flex-col min-h-[calc(100vh-theme(spacing.16))]">
         {/* Decorative elements */}
         <div className="absolute top-20 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
@@ -130,7 +130,7 @@ export function LandingPage() {
         </motion.div>
 
         {/* Footer Links */}
-        <div className="pt-8 border-t border-border">
+        <div className="pt-4 border-t border-border">
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="text-2xl font-bold bg-clip-text">Litestar</div>
             <div className="flex flex-wrap gap-8">
