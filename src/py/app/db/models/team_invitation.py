@@ -27,5 +27,7 @@ class TeamInvitation(UUIDAuditBase):
     # -----------
     # ORM Relationships
     # ------------
-    team: Mapped[Team] = relationship(foreign_keys="TeamInvitation.team_id", lazy="noload")
-    invited_by: Mapped[User] = relationship(foreign_keys="TeamInvitation.invited_by_id", lazy="noload", uselist=False)
+    team: Mapped[Team] = relationship(foreign_keys="TeamInvitation.team_id", innerjoin=True, viewonly=True)
+    invited_by: Mapped[User | None] = relationship(
+        foreign_keys="TeamInvitation.invited_by_id", uselist=False, viewonly=True
+    )

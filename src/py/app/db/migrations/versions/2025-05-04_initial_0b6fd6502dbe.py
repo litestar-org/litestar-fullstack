@@ -1,29 +1,33 @@
-"""Initial
+"""initial
 
-Revision ID: 474045c6b307
-Revises:
-Create Date: 2025-05-04 17:18:35.540797
+Revision ID: 0b6fd6502dbe
+Revises: 
+Create Date: 2025-05-04 19:51:06.680620
 
 """
-
 import warnings
+from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
 from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC, StoredObject, PasswordHash
+from sqlalchemy import Text  # pyright: ignore  # noqa: F401
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence  # pyright: ignore 
 
 __all__ = ("downgrade", "upgrade", "schema_upgrades", "schema_downgrades", "data_upgrades", "data_downgrades")
 
 sa.GUID = GUID # pyright: ignore
-sa.DateTimeUTC = DateTimeUTC # pyright: ignore
-sa.ORA_JSONB = ORA_JSONB # pyright: ignore
-sa.EncryptedString = EncryptedString # pyright: ignore
-sa.EncryptedText = EncryptedText # pyright: ignore
-sa.StoredObject = StoredObject # pyright: ignore
-sa.PasswordHash = PasswordHash # pyright: ignore
+sa.DateTimeUTC = DateTimeUTC  # pyright: ignore
+sa.ORA_JSONB = ORA_JSONB  # pyright: ignore
+sa.EncryptedString = EncryptedString  # pyright: ignore
+sa.EncryptedText = EncryptedText  # pyright: ignore
+sa.StoredObject = StoredObject  # pyright: ignore
+sa.PasswordHash = PasswordHash  # pyright: ignore
 
 # revision identifiers, used by Alembic.
-revision = '474045c6b307'
+revision = '0b6fd6502dbe'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -112,17 +116,18 @@ def schema_upgrades() -> None:
     with op.batch_alter_table('user_account', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_user_account_email'), ['email'], unique=True)
 
-    op.create_table('team_files',
+    op.create_table('team_file',
     sa.Column('team_id', sa.GUID(length=16), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.Column('file', sa.StoredObject(), nullable=False),
     sa.Column('uploaded_by_id', sa.GUID(length=16), nullable=True),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_files_team_id_team'), ondelete='cascade'),
-    sa.ForeignKeyConstraint(['uploaded_by_id'], ['user_account.id'], name=op.f('fk_team_files_uploaded_by_id_user_account'), ondelete='set null'),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team_files'))
+    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_file_team_id_team'), ondelete='cascade'),
+    sa.ForeignKeyConstraint(['uploaded_by_id'], ['user_account.id'], name=op.f('fk_team_file_uploaded_by_id_user_account'), ondelete='set null'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_team_file'))
     )
     op.create_table('team_invitation',
     sa.Column('team_id', sa.GUID(length=16), nullable=False),
@@ -219,7 +224,7 @@ def schema_downgrades() -> None:
         batch_op.drop_index(batch_op.f('ix_team_invitation_email'))
 
     op.drop_table('team_invitation')
-    op.drop_table('team_files')
+    op.drop_table('team_file')
     with op.batch_alter_table('user_account', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_user_account_email'))
 

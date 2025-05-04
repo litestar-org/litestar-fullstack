@@ -1,6 +1,8 @@
+from datetime import datetime
 from uuid import UUID
 
 import msgspec
+from litestar.datastructures import UploadFile
 
 from app.db import models as m
 from app.schemas.base import CamelizedBaseStruct
@@ -45,3 +47,24 @@ class TeamMemberModify(CamelizedBaseStruct):
     """Team Member Modify."""
 
     user_name: str
+
+
+class TeamFileUpload(CamelizedBaseStruct):
+    """Attributes required to post to the collection upload endpoint."""
+
+    files: list[UploadFile]
+
+    def __post_init__(self) -> None:
+        if isinstance(self.files, UploadFile):
+            self.files = [self.files]
+        if not isinstance(self.files, list):  # pyright: ignore
+            msg = "Unable to parse attached files"  # type: ignore[unreachable]
+            raise TypeError(msg)
+
+
+class TeamFile(CamelizedBaseStruct):
+    id: UUID
+    name: str
+    url: str
+    created_at: datetime
+    updated_at: datetime

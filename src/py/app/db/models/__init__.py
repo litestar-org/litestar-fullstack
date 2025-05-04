@@ -2,7 +2,7 @@ from app.db.models.oauth_account import UserOauthAccount
 from app.db.models.role import Role
 from app.db.models.tag import Tag
 from app.db.models.team import Team
-from app.db.models.team_files import TeamFiles
+from app.db.models.team_file import TeamFile
 from app.db.models.team_invitation import TeamInvitation
 from app.db.models.team_member import TeamMember
 from app.db.models.team_roles import TeamRoles
@@ -14,7 +14,7 @@ __all__ = (
     "Role",
     "Tag",
     "Team",
-    "TeamFiles",
+    "TeamFile",
     "TeamInvitation",
     "TeamMember",
     "TeamRoles",

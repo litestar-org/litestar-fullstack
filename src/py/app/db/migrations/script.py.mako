@@ -5,27 +5,26 @@ Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
 
 """
-
 import warnings
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
 from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC, StoredObject, PasswordHash
-from sqlalchemy import Text  # noqa: F401
+from sqlalchemy import Text  # pyright: ignore  # noqa: F401
 ${imports if imports else ""}
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Sequence  # pyright: ignore
 
 __all__ = ("downgrade", "upgrade", "schema_upgrades", "schema_downgrades", "data_upgrades", "data_downgrades")
 
 sa.GUID = GUID # pyright: ignore
-sa.DateTimeUTC = DateTimeUTC # pyright: ignore
-sa.ORA_JSONB = ORA_JSONB # pyright: ignore
-sa.EncryptedString = EncryptedString # pyright: ignore
-sa.EncryptedText = EncryptedText # pyright: ignore
-sa.StoredObject = StoredObject # pyright: ignore
-sa.PasswordHash = PasswordHash # pyright: ignore
+sa.DateTimeUTC = DateTimeUTC  # pyright: ignore
+sa.ORA_JSONB = ORA_JSONB  # pyright: ignore
+sa.EncryptedString = EncryptedString  # pyright: ignore
+sa.EncryptedText = EncryptedText  # pyright: ignore
+sa.StoredObject = StoredObject  # pyright: ignore
+sa.PasswordHash = PasswordHash  # pyright: ignore
 
 # revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}
