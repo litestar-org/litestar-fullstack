@@ -370,7 +370,7 @@ export type DeleteUserResponses = {
   /**
    * Request fulfilled, nothing follows
    */
-  204: undefined;
+  204: void;
 };
 
 export type DeleteUserResponse = DeleteUserResponses[keyof DeleteUserResponses];
@@ -546,7 +546,7 @@ export type DeleteTeamResponses = {
   /**
    * Request fulfilled, nothing follows
    */
-  204: undefined;
+  204: void;
 };
 
 export type DeleteTeamResponse = DeleteTeamResponses[keyof DeleteTeamResponses];
@@ -784,7 +784,7 @@ export type DeleteTagResponses = {
   /**
    * Request fulfilled, nothing follows
    */
-  204: undefined;
+  204: void;
 };
 
 export type DeleteTagResponse = DeleteTagResponses[keyof DeleteTagResponses];

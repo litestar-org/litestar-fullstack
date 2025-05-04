@@ -1,11 +1,11 @@
 import { AppNav } from "@/components/app-nav";
+import { Sidebar } from "@/components/sidebar";
 import { useAuthStore } from "@/lib/auth";
 import { TeamProvider } from "@/lib/team-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { Outlet } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
-import { Sidebar } from "../components/sidebar";
 
 export function AppLayout() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
