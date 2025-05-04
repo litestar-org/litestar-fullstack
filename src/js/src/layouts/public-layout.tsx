@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/lib/theme-context";
-import { Outlet } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
-import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { useTheme } from "@/lib/theme-context"
+import { Outlet } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
+import { Moon, Sun } from "lucide-react"
 
 export function PublicLayout() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <div className="flex flex-col min-h-screen">

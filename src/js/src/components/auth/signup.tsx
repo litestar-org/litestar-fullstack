@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { accountRegister } from "@/lib/api/sdk.gen";
-import { useAuthStore } from "@/lib/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { accountRegister } from "@/lib/api/sdk.gen"
+import { useAuthStore } from "@/lib/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const signupSchema = z
   .object({
@@ -18,13 +18,13 @@ const signupSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  });
+  })
 
-type SignupFormData = z.infer<typeof signupSchema>;
+type SignupFormData = z.infer<typeof signupSchema>
 
 export function UserSignupForm() {
-  const navigate = useNavigate();
-  const { isLoading } = useAuthStore();
+  const navigate = useNavigate()
+  const { isLoading } = useAuthStore()
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -36,26 +36,26 @@ export function UserSignupForm() {
     },
     mode: "onBlur",
     reValidateMode: "onBlur",
-  });
+  })
 
   const onSubmit = async (data: SignupFormData) => {
     try {
       // TODO: verify registration
       await accountRegister({
         body: { email: data.email, password: data.password, name: data.name },
-      });
+      })
       // navigate({ to: "/login" });
     } catch (error) {
       form.setError("root", {
         message: "Signup failed",
-      });
+      })
     }
-  };
+  }
 
   const onOAuthSignup = async () => {
     // TODO: Implement OAuth login
-    console.log("OAuth signup");
-  };
+    console.log("OAuth signup")
+  }
 
   return (
     <div className="relative flex flex-col h-full justify-center items-center">
@@ -182,5 +182,5 @@ export function UserSignupForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }
