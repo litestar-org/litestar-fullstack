@@ -17,6 +17,8 @@ def setup_environment() -> None:
     settings = get_settings()
     os.environ.setdefault("LITESTAR_APP", "app.server.asgi:create_app")
     os.environ.setdefault("LITESTAR_APP_NAME", settings.app.NAME)
+    os.environ.setdefault("LITESTAR_GRANIAN_IN_SUBPROCESS", "false")
+    os.environ.setdefault("LITESTAR_GRANIAN_USE_LITESTAR_LOGGER", "true")
 
 
 def run_cli() -> NoReturn:
