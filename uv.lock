@@ -991,7 +991,7 @@ structlog = [
 [[package]]
 name = "litestar-granian"
 version = "0.12.3"
-source = { git = "https://github.com/cofin/litestar-granian.git?rev=main#03fa18b252f0ff87536b7cd87059239e55e633e2" }
+source = { git = "https://github.com/cofin/litestar-granian.git?rev=main#879677f1e5db70f9db08fb6b60bb8934e4bc78ed" }
 dependencies = [
     { name = "granian", extra = ["pname", "reload"] },
     { name = "httptools" },
@@ -1016,7 +1016,7 @@ wheels = [
 [[package]]
 name = "litestar-saq"
 version = "0.5.3"
-source = { git = "https://github.com/cofin/litestar-saq.git?rev=main#0ed16d76e805d6a7774a9b554c0880b5cc094bf5" }
+source = { git = "https://github.com/cofin/litestar-saq.git?rev=main#329934de25c5a3f7f3459fd8e8d2ca7013d6fe50" }
 dependencies = [
     { name = "litestar" },
     { name = "saq" },
@@ -1024,14 +1024,14 @@ dependencies = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.13.1"
+version = "0.13.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "litestar", extra = ["jinja"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/15/4dce835cae15d38dc28e2c7c5c035dca4a05d43a6da444875bc4f163d359/litestar_vite-0.13.1.tar.gz", hash = "sha256:b094247b66fe390aadb120ddadc021bddcd4d0d940f94b2f41ac53f4449a7171", size = 60434, upload-time = "2025-03-27T03:09:54.441Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/6f/450287a0c9c47d72938fcb7bf003021a662b373d2d0aba51f7fa9be2604b/litestar_vite-0.13.2.tar.gz", hash = "sha256:b7bf6b861955580f22a584a10e1cbf048b3a15989cc172908ee76ba934bc4540", size = 61137, upload-time = "2025-05-05T13:39:47.317Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/e1/1cecd546a9e9bf3499c3f3f551fa8694fd3a5ef6838b6f780c00e32a8254/litestar_vite-0.13.1-py3-none-any.whl", hash = "sha256:80277989aa14791799a89cea074e95021fa51037e56d2174dbdc9a7be75bff7c", size = 34903, upload-time = "2025-03-27T03:09:53.139Z" },
+    { url = "https://files.pythonhosted.org/packages/51/17/bcc7b1c1d79c3bc61a30cf6db9323955b52e6045d14b78897efb81eb81ef/litestar_vite-0.13.2-py3-none-any.whl", hash = "sha256:726aa191ad8851c848d80902f7ca25e5c8db08369d8c5b6c20a4e4a1abd0abbe", size = 34875, upload-time = "2025-05-05T13:39:45.4Z" },
 ]
 
 [[package]]
