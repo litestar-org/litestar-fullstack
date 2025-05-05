@@ -68,3 +68,16 @@ class TeamFile(CamelizedBaseStruct):
     url: str
     created_at: datetime
     updated_at: datetime
+
+
+class TeamInvitationCreate(CamelizedBaseStruct):
+    email: str
+    role: m.TeamRoles
+
+
+class TeamInvitation(CamelizedBaseStruct):
+    id: UUID
+    email: str
+    role: m.TeamRoles
+    created_at: datetime
+    updated_at: datetime
