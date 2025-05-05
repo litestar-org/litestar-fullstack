@@ -119,7 +119,7 @@ def schema_upgrades() -> None:
     op.create_table('team_file',
     sa.Column('team_id', sa.GUID(length=16), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('file', sa.StoredObject(), nullable=False),
+    sa.Column('file', sa.StoredObject(backend='private'), nullable=False),
     sa.Column('uploaded_by_id', sa.GUID(length=16), nullable=True),
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
