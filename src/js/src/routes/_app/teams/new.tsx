@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_app/teams/new")({
 function NewTeamPage() {
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Create New Team</h1>
+      <h1 className="mb-8 font-bold text-3xl">Create New Team</h1>
       <CreateTeamForm />
     </div>
   )

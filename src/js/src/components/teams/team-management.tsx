@@ -39,7 +39,7 @@ export function TeamManagement() {
           <CardTitle>Team Members</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-end mb-4">{canManageMembers && <InviteMemberDialog teamId={teamId} />}</div>
+          <div className="mb-4 flex justify-end">{canManageMembers && <InviteMemberDialog teamId={teamId} />}</div>
           <Table>
             <TableHeader>
               <TableRow>

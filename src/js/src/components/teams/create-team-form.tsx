@@ -73,7 +73,7 @@ export function CreateTeamForm() {
                 </FormItem>
               )}
             />
-            {form.formState.errors.root && <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>}
+            {form.formState.errors.root && <p className="text-destructive text-sm">{form.formState.errors.root.message}</p>}
             <Button type="submit" className="w-full">
               Create Team
             </Button>
