@@ -15,9 +15,7 @@ logger = structlog.get_logger()
 
 
 @listener("user_created")
-async def user_created_event_handler(
-    user_id: UUID,
-) -> None:
+async def user_created_event_handler(user_id: UUID) -> None:
     """Executes when a new user is created.
 
     Args:
