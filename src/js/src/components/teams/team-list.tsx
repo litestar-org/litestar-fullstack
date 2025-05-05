@@ -28,7 +28,7 @@ export function TeamList() {
           <CardTitle>No Teams</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">You don&apos;t have any teams yet. Create your first team to get started.</p>
+          <p className="mb-4 text-muted-foreground">You don&apos;t have any teams yet. Create your first team to get started.</p>
           <Button asChild>
             <Link to="/teams/new">Create Team</Link>
           </Button>

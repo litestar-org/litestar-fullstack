@@ -53,7 +53,7 @@ function Admin() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <h1 className="mb-4 font-bold text-2xl">Admin Dashboard</h1>
       <table className="min-w-full">
         <thead>
           <tr>

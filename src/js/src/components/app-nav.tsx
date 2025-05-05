@@ -27,10 +27,13 @@ export function AppNav() {
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <div className="flex items-center gap-4">
-          <Link to="/" className="font-bold text-lg">
-            App
+          <Link to="/" className="font-bold text-xl">
+            <div className="flex items-center font-medium text-lg">
+              <img src={theme === "dark" ? "images/logo-light.svg" : "images/logo-dark.svg"} alt="Litestar Logo" className="mr-3 h-8" />
+              Litestar App
+            </div>
           </Link>
 
           {currentTeam && (

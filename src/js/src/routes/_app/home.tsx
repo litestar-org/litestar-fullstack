@@ -9,15 +9,15 @@ export const Route = createFileRoute("/_app/home")({
 
 function HomePage() {
   useEffect(() => {
-    toast("Welcome back!", {
+    toast.message("Welcome back!", {
       description: "We're glad to see you again.",
     })
   }, [])
 
   return (
-    <div className="space-y-8">
+    <div className="flex-1 p-8">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Welcome to Team Manager</h1>
+        <h1 className="font-bold text-4xl">Welcome to Team Manager</h1>
         <p className="text-muted-foreground">Your central hub for managing teams and projects</p>
       </div>
 
@@ -29,8 +29,8 @@ function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p className="text-2xl font-bold">3</p>
-              <p className="text-sm text-muted-foreground">Active Teams</p>
+              <p className="font-bold text-2xl">3</p>
+              <p className="text-muted-foreground text-sm">Active Teams</p>
             </div>
           </CardContent>
         </Card>
