@@ -32,7 +32,7 @@ export function UserLoginForm() {
     try {
       // TODO: Fix/verify login
       await login(data.email, data.password)
-      // navigate({ to: "/home" });
+      navigate({ to: "/home" })
     } catch (error) {
       form.setError("root", {
         message: "Invalid credentials",

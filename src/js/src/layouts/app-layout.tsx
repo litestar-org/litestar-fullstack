@@ -1,5 +1,3 @@
-// import { AppNav } from "@/components/app-nav"
-
 import { AppSidebar } from "@/components/app-sidebar"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
@@ -21,7 +19,6 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Toaster richColors theme={theme} position="top-right" />
-      {/* <AppNav /> */}
       <main className="flex flex-1">
         <SidebarProvider>
           <AppSidebar />
