@@ -32,16 +32,16 @@ def manage_resources(setup_kwargs: Any) -> Any:
         nodeenv_command = f"{DEFAULT_VENV_PATH}/bin/{NODEENV}" if found_in_local_venv else NODEENV
         install_dir = DEFAULT_VENV_PATH if found_in_local_venv else os.environ.get("VIRTUAL_ENV", sys.prefix)
         logger.info("Installing Node environment to %s:", install_dir)
-        subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], **kwargs)  # noqa: PLW1510
+        subprocess.run([nodeenv_command, install_dir, "--force", "--quiet"], **kwargs, cwd=PROJECT_ROOT / "src/js")  # noqa: PLW1510
 
     if platform.system() == "Windows":
         kwargs["shell"] = True
     if install_packages is not None:
         logger.info("Installing NPM packages.")
-        subprocess.run(["npm", "install"], **kwargs)  # noqa: S607, PLW1510
+        subprocess.run(["npm", "install"], **kwargs, cwd=PROJECT_ROOT / "src/js")  # noqa: S607, PLW1510
     if build_assets is not None:
         logger.info("Building NPM static assets.")
-        subprocess.run(["npm", "run", "build"], **kwargs)  # noqa: S607, PLW1510
+        subprocess.run(["npm", "run", "build"], **kwargs, cwd=PROJECT_ROOT / "src/js")  # noqa: S607, PLW1510
     return setup_kwargs
 
 

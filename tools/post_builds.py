@@ -24,7 +24,7 @@ def package_standalone_app(options: argparse.Namespace) -> None:
         ["/usr/bin/env", "uv", "export", "--no-hashes", "--no-dev", "--output-file", "dist/requirements.txt"],
         check=False,
     )
-    with Path(PROJECT_ROOT / "dist/requirements.txt").open("+a") as f:
+    with Path(PROJECT_ROOT / "dist/requirements.txt").open("+a", encoding="utf-8") as f:
         f.writelines([str(os.fspath(Path(options.wheel_file).absolute()))])
     logger.info("PYAPP_PROJECT_PATH is set to %s", os.fspath(Path(options.wheel_file).absolute()))
     pyapp_configuration = {

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: {{ namespace }}
+spec:
+  replicas: {{ api_replicas }} # Initial replicas, HPA takes over
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: {{ image_repo }}:{{ image_tag }}
+          imagePullPolicy: Always # Use Always for prod/dev with rolling tags
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+          # env:
+          # - name: OTEL_SERVICE_NAME # Example for OpenTelemetry
+          #   value: "api-{{ env }}"
+          resources:
+            requests:
+              memory: "{{ api_mem_request }}"
+              cpu: "{{ api_cpu_request }}"
+            limits:
+              memory: "{{ api_mem_limit }}"
+              cpu: "{{ api_cpu_limit }}"
+          {% if APP_SCRATCH_PATH %}
+          volumeMounts:
+            - name: scratch-volume
+              mountPath: {{ APP_SCRATCH_PATH }}
+          {% endif %}
+          livenessProbe:
+            httpGet:
+              path: /health # Assuming /health exists
+              port: 8000
+            initialDelaySeconds: 20 # Give more time for potential migrations/setup
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          terminationGracePeriodSeconds: 60 # Give time for graceful shutdown
+      {% if APP_SCRATCH_PATH %}
+      volumes:
+        - name: scratch-volume
+          emptyDir: {} # Uses default node storage medium
+      {% endif %}
+      # Optional: Add securityContext, nodeSelector, tolerations, affinity, etc.
+
+# ... existing code ...
+
+# ... existing code ...

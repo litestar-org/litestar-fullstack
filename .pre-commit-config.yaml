@@ -2,10 +2,17 @@ default_language_version:
   python: "3"
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.0.0
+    rev: v4.2.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
+  - repo: local
+    hooks:
+      - id: local-biome-check
+        name: biome check
+        entry: npx @biomejs/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched --config-path src/js/biome.json
+        language: system
+        types: [text]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -17,15 +24,15 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.9.10"
+    rev: "v0.11.8"
     hooks:
       # Run the linter.
-    - id: ruff
-      types_or: [ python, pyi ]
-      args: [ --fix ]
-    # Run the formatter.
-    - id: ruff-format
-      types_or: [ python, pyi ]
+      - id: ruff
+        types_or: [python, pyi]
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [python, pyi]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:

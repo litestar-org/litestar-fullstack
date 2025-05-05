@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: {{ namespace }}
+spec:
+  replicas: {{ web_replicas }}
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      # Optional: Add an initContainer if web assets need to be copied from the app image
+      # initContainers:
+      # - name: copy-web-assets
+      #   image: {{ image_repo }}:{{ image_tag }}
+      #   command: ['sh', '-c', 'cp -r /app/src/js/dist/* /web-assets'] # Adjust source path
+      #   volumeMounts:
+      #   - name: web-files
+      #     mountPath: /web-assets
+      containers:
+        - name: web
+          image: nginx:1.25-alpine # Or your custom web image
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: web-files
+              mountPath: /usr/share/nginx/html # Default nginx root
+              readOnly: true # Assets should be read-only
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: / # Nginx root
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: web-files
+          emptyDir: {}
+          # If using initContainer, emptyDir shares between init and main container.
+          # If assets are baked into the nginx image, this might not be strictly needed,
+          # but explicit emptyDir is clear.
