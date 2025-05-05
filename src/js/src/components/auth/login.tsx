@@ -46,15 +46,15 @@ export function UserLoginForm() {
   }
 
   return (
-    <div className="relative flex flex-col h-full justify-center items-center">
+    <div className="relative flex h-full flex-col items-center justify-center">
       <Button variant="link" className="absolute top-0 right-0 p-4 hover:cursor-pointer" onClick={() => navigate({ to: "/signup" })}>
         Need an account?
       </Button>
 
       <div className="w-full max-w-md px-8">
-        <div className="flex flex-col mb-4 text-center">
-          <h1 className="flex mx-auto text-2xl font-semibold tracking-tight">Login to Continue</h1>
-          <p className="text-sm text-muted-foreground">Enter your credentials to get started!</p>
+        <div className="mb-4 flex flex-col text-center">
+          <h1 className="mx-auto flex font-semibold text-2xl tracking-tight">Login to Continue</h1>
+          <p className="text-muted-foreground text-sm">Enter your credentials to get started!</p>
         </div>
         <div className="grid gap-6">
           <Form {...form}>
@@ -75,7 +75,7 @@ export function UserLoginForm() {
                     )}
                   />
                 </div>
-                <div className="grid gap-1  ">
+                <div className="grid gap-1 ">
                   <FormField
                     control={form.control}
                     name="password"
@@ -100,7 +100,7 @@ export function UserLoginForm() {
                 </div>
                 <Button disabled={isLoading} className="hover:cursor-pointer">
                   Sign In
-                  {isLoading && <div className="ml-2 h-4 w-4 animate-spin rounded-full border-b-2 border-current" />}
+                  {isLoading && <div className="ml-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />}
                 </Button>
               </div>
             </form>
@@ -115,9 +115,9 @@ export function UserLoginForm() {
           </div>
           <Button variant="outline" disabled={isLoading} className="hover:cursor-pointer" onClick={onOAuthLogin}>
             {isLoading ? (
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-current" />
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />
             ) : (
-              <img src={"images/google.svg"} alt="Litestar Logo" className="h-5 mr-2" />
+              <img src={"images/google.svg"} alt="Litestar Logo" className="mr-2 h-5" />
             )}
             Sign in with Google
           </Button>

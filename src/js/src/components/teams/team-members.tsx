@@ -39,7 +39,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Team Members</h2>
+        <h2 className="font-bold text-2xl">Team Members</h2>
         {canManageMembers && <Button>Add Member</Button>}
       </div>
       <Table>

@@ -34,17 +34,17 @@ function Teams() {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Teams</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-bold text-2xl">Teams</h1>
         <Button asChild>
           <Link to="/teams/new">Create Team</Link>
         </Button>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {teamsData.map((team: Team) => (
-          <div key={team.id} className="border rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-2">{team.name}</h2>
-            <p className="text-gray-600 mb-4">{team.description}</p>
+          <div key={team.id} className="rounded-lg border p-4">
+            <h2 className="mb-2 font-semibold text-xl">{team.name}</h2>
+            <p className="mb-4 text-gray-600">{team.description}</p>
             <div className="flex gap-2">
               <Button asChild>
                 <Link to={"/teams/$teamId" as const} params={{ teamId: team.id }}>

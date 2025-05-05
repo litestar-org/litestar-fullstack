@@ -61,7 +61,7 @@ function TeamDetail() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">{team.name}</h1>
+      <h1 className="mb-4 font-bold text-2xl">{team.name}</h1>
       <p className="text-gray-600">{team.description}</p>
       <div className="space-y-6">
         <div className="flex justify-end">{canManageMembers && <Button onClick={() => addMemberMutation.mutate("")}>Add Member</Button>}</div>
@@ -70,7 +70,7 @@ function TeamDetail() {
             <div key={member.id} className="flex items-center justify-between">
               <div>
                 <p className="font-medium">{member.name}</p>
-                <p className="text-sm text-muted-foreground">{member.email}</p>
+                <p className="text-muted-foreground text-sm">{member.email}</p>
               </div>
               {canManageMembers && (
                 <Button variant="destructive" onClick={() => removeMemberMutation.mutate(member.id)}>
