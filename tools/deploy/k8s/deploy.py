@@ -365,16 +365,18 @@ def deploy(
     if not skip_db_wait:
         console.print(f"\n[cyan]Waiting for database pod in namespace '{namespace}'...[/cyan]")
         try:
-            run_kubectl([
-                "wait",
-                "--for=condition=ready",
-                "pod",
-                "-l",
-                "app=postgres",
-                "-n",
-                namespace,
-                "--timeout=300s",
-            ])
+            run_kubectl(
+                [
+                    "wait",
+                    "--for=condition=ready",
+                    "pod",
+                    "-l",
+                    "app=postgres",
+                    "-n",
+                    namespace,
+                    "--timeout=300s",
+                ]
+            )
             console.print("[green]Database pod is ready.[/green]")
         except subprocess.CalledProcessError:
             console.print(
