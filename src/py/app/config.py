@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import cast
 
 import structlog
-from advanced_alchemy.exceptions import RepositoryError
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -102,9 +101,10 @@ log = StructlogConfig(
         log_exceptions="always",
         processors=log_conf.structlog_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
         logger_factory=default_logger_factory(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
+        disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
         standard_lib_logging_config=LoggingConfig(
             log_exceptions="always",
-            disable_stack_trace={404, 401, 403, RepositoryError, NotAuthorizedException, PermissionDeniedException},
+            disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
             root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
             formatters={
                 "standard": {
