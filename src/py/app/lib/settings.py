@@ -17,11 +17,7 @@ from typing import TYPE_CHECKING, Any, Final, cast
 
 from advanced_alchemy.utils.text import slugify
 from litestar.data_extractors import RequestExtractorField
-from litestar.serialization import decode_json, encode_json
 from litestar.utils.module_loader import module_to_os_path
-from sqlalchemy import event
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
-from sqlalchemy.pool import NullPool
 
 from app.__metadata__ import __version__ as current_version
 from app.utils.env import get_env
@@ -30,6 +26,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from litestar.data_extractors import ResponseExtractorField
+    from sqlalchemy.ext.asyncio import AsyncEngine
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
@@ -78,117 +75,9 @@ class DatabaseSettings:
     def get_engine(self) -> AsyncEngine:
         if self._engine_instance is not None:
             return self._engine_instance
-        url = self.URL.replace("postgresql://", "postgresql+psycopg://")
-        if url.startswith("postgresql+asyncpg"):
-            engine = create_async_engine(
-                url=url,
-                future=True,
-                json_serializer=encode_json,
-                json_deserializer=decode_json,
-                echo=self.ECHO,
-                echo_pool=self.ECHO_POOL,
-                max_overflow=self.POOL_MAX_OVERFLOW,
-                pool_size=self.POOL_SIZE,
-                pool_timeout=self.POOL_TIMEOUT,
-                pool_recycle=self.POOL_RECYCLE,
-                pool_pre_ping=self.POOL_PRE_PING,
-                pool_use_lifo=True,  # use lifo to reduce the number of idle connections
-                poolclass=NullPool if self.POOL_DISABLED else None,
-            )
-            """Database session factory.
+        from app.utils.engine_factory import create_sqlalchemy_engine
 
-            See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
-            """
-
-            @event.listens_for(engine.sync_engine, "connect")
-            def _sqla_on_connect(  # pragma: no cover # pyright: ignore[reportUnusedFunction]
-                dbapi_connection: Any,
-                _: Any,
-            ) -> Any:  # pragma: no cover # pyright: ignore[reportUnusedFunction]
-                """Using msgspec for serialization of the json column values means that the
-                output is binary, not `str` like `json.dumps` would output.
-                SQLAlchemy expects that the json serializer returns `str` and calls `.encode()` on the value to
-                turn it to bytes before writing to the JSONB column. I'd need to either wrap `serialization.to_json` to
-                return a `str` so that SQLAlchemy could then convert it to binary, or do the following, which
-                changes the behaviour of the dialect to expect a binary value from the serializer.
-                See Also https://github.com/sqlalchemy/sqlalchemy/blob/14bfbadfdf9260a1c40f63b31641b27fe9de12a0/lib/sqlalchemy/dialects/postgresql/asyncpg.py#L934  pylint: disable=line-too-long
-                """
-
-                def encoder(bin_value: bytes) -> bytes:
-                    return b"\x01" + encode_json(bin_value)
-
-                def decoder(bin_value: bytes) -> Any:
-                    # the byte is the \x01 prefix for jsonb used by PostgreSQL.
-                    # asyncpg returns it when format='binary'
-                    return decode_json(bin_value[1:])
-
-                dbapi_connection.await_(
-                    dbapi_connection.driver_connection.set_type_codec(
-                        "jsonb",
-                        encoder=encoder,
-                        decoder=decoder,
-                        schema="pg_catalog",
-                        format="binary",
-                    ),
-                )
-                dbapi_connection.await_(
-                    dbapi_connection.driver_connection.set_type_codec(
-                        "json",
-                        encoder=encoder,
-                        decoder=decoder,
-                        schema="pg_catalog",
-                        format="binary",
-                    ),
-                )
-
-        elif url.startswith("sqlite+aiosqlite"):
-            engine = create_async_engine(
-                url=url,
-                future=True,
-                json_serializer=encode_json,
-                json_deserializer=decode_json,
-                echo=self.ECHO,
-                echo_pool=self.ECHO_POOL,
-                pool_recycle=self.POOL_RECYCLE,
-                pool_pre_ping=self.POOL_PRE_PING,
-            )
-            """Database session factory.
-
-            See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
-            """
-
-            @event.listens_for(engine.sync_engine, "connect")
-            def _sqla_on_connect(  # pragma: no cover # pyright: ignore[reportUnusedFunction]
-                dbapi_connection: Any,
-                _: Any,
-            ) -> Any:
-                """Override the default begin statement.  The disables the built in begin execution."""
-                dbapi_connection.isolation_level = None
-
-            @event.listens_for(engine.sync_engine, "begin")
-            def _sqla_on_begin(  # pragma: no cover # pyright: ignore[reportUnusedFunction]
-                dbapi_connection: Any,
-            ) -> Any:
-                """Emits a custom begin"""
-                dbapi_connection.exec_driver_sql("BEGIN")
-
-        else:
-            engine = create_async_engine(
-                url=url,
-                future=True,
-                json_serializer=encode_json,
-                json_deserializer=decode_json,
-                echo=self.ECHO,
-                echo_pool=self.ECHO_POOL,
-                max_overflow=self.POOL_MAX_OVERFLOW,
-                pool_size=self.POOL_SIZE,
-                pool_timeout=self.POOL_TIMEOUT,
-                pool_recycle=self.POOL_RECYCLE,
-                pool_pre_ping=self.POOL_PRE_PING,
-                pool_use_lifo=True,  # use lifo to reduce the number of idle connections
-                poolclass=NullPool if self.POOL_DISABLED else None,
-            )
-        self._engine_instance = engine
+        self._engine_instance = create_sqlalchemy_engine(self)
         return self._engine_instance
 
 
