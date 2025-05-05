@@ -3,10 +3,15 @@ from pathlib import Path
 from typing import cast
 
 import structlog
+from advanced_alchemy.exceptions import RepositoryError
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
+from litestar.exceptions import (
+    NotAuthorizedException,
+    PermissionDeniedException,
+)
 from litestar.logging.config import (
     LoggingConfig,
     StructLoggingConfig,
@@ -89,53 +94,6 @@ saq = SAQConfig(
 )
 templates = TemplateConfig(engine=JinjaTemplateEngine(directory=settings.vite.TEMPLATE_DIR))
 problem_details = ProblemDetailsConfig(enable_for_all_http_exceptions=True)
-stdlib_log = LoggingConfig(
-    log_exceptions="always",
-    root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
-    formatters={
-        "standard": {
-            "()": structlog.stdlib.ProcessorFormatter,
-            "processors": log_conf.stdlib_logger_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
-        },
-    },
-    loggers={
-        "saq": {
-            "propagate": False,
-            "level": settings.log.SAQ_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-        "sqlalchemy.engine": {
-            "propagate": False,
-            "level": settings.log.SQLALCHEMY_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-        "sqlalchemy.pool": {
-            "propagate": False,
-            "level": settings.log.SQLALCHEMY_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-        "opentelemetry.sdk.metrics._internal": {
-            "propagate": False,
-            "level": 40,
-            "handlers": ["queue_listener"],
-        },
-        "_granian": {
-            "propagate": False,
-            "level": settings.log.ASGI_ERROR_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-        "granian.server": {
-            "propagate": False,
-            "level": settings.log.ASGI_ERROR_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-        "granian.access": {
-            "propagate": False,
-            "level": settings.log.ASGI_ACCESS_LEVEL,
-            "handlers": ["queue_listener"],
-        },
-    },
-)
 
 
 log = StructlogConfig(
@@ -144,7 +102,54 @@ log = StructlogConfig(
         log_exceptions="always",
         processors=log_conf.structlog_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
         logger_factory=default_logger_factory(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
-        standard_lib_logging_config=stdlib_log,
+        standard_lib_logging_config=LoggingConfig(
+            log_exceptions="always",
+            disable_stack_trace={404, 401, 403, RepositoryError, NotAuthorizedException, PermissionDeniedException},
+            root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
+            formatters={
+                "standard": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": log_conf.stdlib_logger_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
+                },
+            },
+            loggers={
+                "saq": {
+                    "propagate": False,
+                    "level": settings.log.SAQ_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "sqlalchemy.engine": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "sqlalchemy.pool": {
+                    "propagate": False,
+                    "level": settings.log.SQLALCHEMY_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "opentelemetry.sdk.metrics._internal": {
+                    "propagate": False,
+                    "level": 40,
+                    "handlers": ["queue_listener"],
+                },
+                "_granian": {
+                    "propagate": False,
+                    "level": settings.log.ASGI_ERROR_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "granian.server": {
+                    "propagate": False,
+                    "level": settings.log.ASGI_ERROR_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+                "granian.access": {
+                    "propagate": False,
+                    "level": settings.log.ASGI_ACCESS_LEVEL,
+                    "handlers": ["queue_listener"],
+                },
+            },
+        ),
     ),
     middleware_logging_config=LoggingMiddlewareConfig(
         request_log_fields=settings.log.REQUEST_FIELDS,
@@ -160,7 +165,9 @@ def setup_logging() -> None:
         args: positional arguments to pass to the bound logger instance
         kwargs: keyword arguments to pass to the bound logger instance
     """
-    stdlib_log.configure()
+    if log.structlog_logging_config.standard_lib_logging_config:
+        log.structlog_logging_config.standard_lib_logging_config.configure()
+    log.structlog_logging_config.configure()
     structlog.configure(
         cache_logger_on_first_use=True,
         logger_factory=log.structlog_logging_config.logger_factory,
