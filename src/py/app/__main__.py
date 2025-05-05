@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-from typing import NoReturn
 
 
 def setup_environment() -> None:
@@ -21,7 +20,7 @@ def setup_environment() -> None:
     os.environ.setdefault("LITESTAR_GRANIAN_USE_LITESTAR_LOGGER", "true")
 
 
-def run_cli() -> NoReturn:
+def run_cli() -> None:
     """Application Entrypoint.
 
     This function sets up the environment and runs the Litestar CLI.
@@ -32,7 +31,7 @@ def run_cli() -> NoReturn:
     try:
         from litestar.cli.main import litestar_group
 
-        sys.exit(litestar_group())  # pyright: ignore
+        litestar_group()
     except ImportError as exc:
         print(  # noqa: T201
             "Could not load required libraries. ",

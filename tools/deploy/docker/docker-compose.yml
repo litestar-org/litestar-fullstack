@@ -26,6 +26,8 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
     volumes:
       - ./minio-config.sh:/scripts/minio-config.sh
+    entrypoint: ["/bin/sh", "-c", "/scripts/minio-config.sh"]
+    restart: "no"
   cache:
     image: valkey/valkey:latest
     ports:
