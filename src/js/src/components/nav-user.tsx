@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
+import { useAuthStore } from "@/lib/auth"
+import { useNavigate } from "@tanstack/react-router"
 
 export function NavUser({
   user,
@@ -23,7 +25,14 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const navigate = useNavigate()
+  const { logout } = useAuthStore()
   const { isMobile } = useSidebar()
+
+  const onLogout = async () => {
+    await logout()
+    navigate({ to: "/" })
+  }
 
   return (
     <SidebarMenu>
@@ -78,7 +87,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
