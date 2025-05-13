@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
-import type { Team } from "@/lib/api"
+// import type { Team } from "@/lib/api"
 import { listTeams } from "@/lib/api/sdk.gen"
 import { useAuthStore } from "@/lib/auth"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { Outlet, createFileRoute } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/teams")({
@@ -33,14 +33,18 @@ function Teams() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-bold text-2xl">Teams</h1>
+    <div className="flex h-full w-full flex-col">
+      <div className="m-4 flex items-center justify-between">
+        <h1 className="font-bold text-2xl">Teams Home Page</h1>
         <Button asChild>
           <Link to="/teams/new">Create Team</Link>
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="m-4 flex flex-1">
+        <Outlet />
+      </div>
+      {/* NOTE: enable when needed */}
+      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {teamsData.map((team: Team) => (
           <div key={team.id} className="rounded-lg border p-4">
             <h2 className="mb-2 font-semibold text-xl">{team.name}</h2>
@@ -54,7 +58,7 @@ function Teams() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }

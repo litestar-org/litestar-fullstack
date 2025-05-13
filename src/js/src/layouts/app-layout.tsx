@@ -7,6 +7,7 @@ import { useTheme } from "@/lib/theme-context"
 import { Outlet } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { Toaster } from "sonner"
+import { toast } from "sonner"
 
 export function AppLayout() {
   const checkAuth = useAuthStore((state) => state.checkAuth)
@@ -14,11 +15,15 @@ export function AppLayout() {
 
   useEffect(() => {
     checkAuth()
+
+    toast.message("Welcome back!", {
+      description: "We're glad to see you again.",
+    })
   }, [checkAuth])
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Toaster richColors theme={theme} position="top-right" />
+      <Toaster richColors theme={theme} />
       <main className="flex flex-1">
         <SidebarProvider>
           <AppSidebar />
