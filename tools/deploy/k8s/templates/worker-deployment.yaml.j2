@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: {{ namespace }}
+spec:
+  replicas: {{ worker_replicas }} # Initial replicas, HPA takes over
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: {{ image_repo }}:{{ image_tag }}
+          imagePullPolicy: Always
+          # Adjust command if needed, or make it configurable
+          command: ["python", "manage.py", "run-worker"]
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+          # env:
+          # - name: OTEL_SERVICE_NAME
+          #   value: "worker-{{ env }}"
+          resources:
+            requests:
+              memory: "{{ worker_mem_request }}"
+              cpu: "{{ worker_cpu_request }}"
+            limits:
+              memory: "{{ worker_mem_limit }}"
+              cpu: "{{ worker_cpu_limit }}"
+          {% if APP_SCRATCH_PATH %}
+          volumeMounts:
+            - name: scratch-volume
+              mountPath: {{ APP_SCRATCH_PATH }}
+          {% endif %}
+          # Optional: Add liveness/readiness probes if your worker has them
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60 # Give time for graceful shutdown
+      {% if APP_SCRATCH_PATH %}
+      volumes:
+        - name: scratch-volume
+          emptyDir: {}
+      {% endif %}
+      # Optional: Add securityContext, nodeSelector, tolerations, affinity, etc.

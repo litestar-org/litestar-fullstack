@@ -1,0 +1,39 @@
+{% if ingress_enabled %}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: {{ namespace }}
+  annotations:
+    # Use nginx ingress controller (adjust if different)
+    kubernetes.io/ingress.class: nginx
+    # Enable TLS termination using cert-manager
+    cert-manager.io/cluster-issuer: {{ cert_issuer | default('letsencrypt-prod') }}
+    # Redirect HTTP to HTTPS
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # Optional: Add other annotations like proxy body size, timeouts etc.
+    # nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  tls:
+    - hosts:
+        - {{ ingress_host }}
+      secretName: {{ ingress_tls_secret }}
+  rules:
+    - host: {{ ingress_host }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+{% endif %}

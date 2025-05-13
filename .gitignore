@@ -104,6 +104,7 @@ celerybeat.pid
 .env*
 !.env.*.example
 !.env.testing
+!tools/deploy/docker/.env.docker
 .venv
 env/
 venv/
@@ -167,15 +168,17 @@ tmp/
 temp/
 
 # built files from the web UI
-src/app/domain/web/public
-src/app/domain/web/public/hot
+src/py/app/server/web/public/*
+src/py/app/server/web/static/*
+src/py/app/server/public/*
 .vite
-src/app/domain/web/static
 public/hot
 public/bundle
-pdm-pythn
 
+pdm-python
 db.duckdb
 local.duckdb
 
 requirements.txt
+dist-ssr
+*.local
