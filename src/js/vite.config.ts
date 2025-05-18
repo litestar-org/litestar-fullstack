@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../py/app/server/web/static",
+    outDir: "../py/app/server/public",
     emptyOutDir: true,
   },
 })

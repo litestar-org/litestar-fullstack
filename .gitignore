@@ -170,6 +170,7 @@ temp/
 # built files from the web UI
 src/py/app/server/web/public/*
 src/py/app/server/web/static/*
+src/py/app/server/public/*
 .vite
 public/hot
 public/bundle

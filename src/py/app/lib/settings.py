@@ -30,7 +30,8 @@ if TYPE_CHECKING:
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
-STATIC_DIR = Path(BASE_DIR / "server" / "web" / "static")
+STATIC_DIR = Path(BASE_DIR / "server" / "public")
+TEMPLATE_DIR = Path(BASE_DIR / "server" / "templates")
 
 
 @dataclass
@@ -97,11 +98,11 @@ class ViteSettings:
     """Start `vite` with HMR enabled."""
     ENABLE_REACT_HELPERS: bool = field(default_factory=get_env("VITE_ENABLE_REACT_HELPERS", False))
     """Enable React support in HMR."""
-    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", Path(f"{BASE_DIR}/server/web/static")))
+    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", STATIC_DIR))
     """Bundle directory"""
     RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("src/js/src")))
     """Resource directory"""
-    TEMPLATE_DIR: Path = field(default_factory=get_env("VITE_TEMPLATE_DIR", Path(f"{BASE_DIR}/server/web/templates")))
+    TEMPLATE_DIR: Path = field(default_factory=get_env("VITE_TEMPLATE_DIR", TEMPLATE_DIR))
     """Template directory."""
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/"))
     """Base URL for assets"""

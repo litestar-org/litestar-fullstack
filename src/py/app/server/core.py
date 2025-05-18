@@ -58,9 +58,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from app.db import models as m
         from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
         from app.lib.settings import get_settings
-        from app.server import api as api_controllers
-        from app.server import events, plugins, security
-        from app.server.web import controllers as web_controllers
+        from app.server import events, plugins, routes, security
         from app.services import (
             RoleService,
             TagService,
@@ -104,14 +102,14 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         # routes
         app_config.route_handlers.extend(
             [
-                api_controllers.SystemController,
-                api_controllers.AccessController,
-                api_controllers.UserController,
-                api_controllers.TeamController,
-                api_controllers.UserRoleController,
-                api_controllers.TeamMemberController,
-                api_controllers.TagController,
-                web_controllers.WebController,
+                routes.SystemController,
+                routes.AccessController,
+                routes.UserController,
+                routes.TeamController,
+                routes.UserRoleController,
+                routes.TeamMemberController,
+                routes.TagController,
+                routes.WebController,
             ],
         )
         # signatures
