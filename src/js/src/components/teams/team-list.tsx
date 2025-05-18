@@ -40,11 +40,11 @@ export function TeamList() {
   }
 
   return (
-    <div className="flex h-full w-full gap-4 rounded-lg bg-accent p-4">
+    <div className="flex h-fit flex-wrap gap-4 rounded-lg bg-accent p-4">
       {teams.map((team: Team) => (
         <div
           key={team.id}
-          className={`h-fit w-full rounded-xl border border-transparent ${currentTeam?.id === team.id ? "animate-gradient bg-gradient-to-r from-orange-700 via-blue-500 to-green-400" : ""}`}
+          className={`rounded-xl border border-transparent ${currentTeam?.id === team.id ? "animate-gradient bg-gradient-to-r from-orange-700 via-blue-500 to-green-400" : ""}`}
         >
           <Card className="overflow-auto">
             <CardHeader>

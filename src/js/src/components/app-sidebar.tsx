@@ -1,4 +1,4 @@
-import { AudioWaveform, Command, Frame, GalleryVerticalEnd, PieChart } from "lucide-react"
+import { AudioWaveform, Command, GalleryVerticalEnd, House, Tag, UsersRound } from "lucide-react"
 import type * as React from "react"
 
 // import { NavMain } from "@/components/nav-main"
@@ -77,17 +77,17 @@ const data = {
     {
       name: "Home",
       url: "/home",
-      icon: Frame,
+      icon: House,
     },
     {
       name: "Team Manager",
       url: "/teams",
-      icon: Frame,
+      icon: UsersRound,
     },
     {
       name: "Tag Manager",
       url: "#",
-      icon: PieChart,
+      icon: Tag,
     },
   ],
 }
