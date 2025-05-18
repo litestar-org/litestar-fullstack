@@ -1,19 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { createFileRoute } from "@tanstack/react-router"
-import { useEffect } from "react"
-import { toast } from "sonner"
 
 export const Route = createFileRoute("/_app/home")({
   component: HomePage,
 })
 
 function HomePage() {
-  useEffect(() => {
-    toast.message("Welcome back!", {
-      description: "We're glad to see you again.",
-    })
-  }, [])
-
   return (
     <div className="flex-1 p-8">
       <div className="space-y-2">
