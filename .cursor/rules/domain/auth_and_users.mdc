@@ -1,0 +1,34 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Authentication, Authorization, and User Management
+
+## Objective
+To define consistent and secure practices for handling users, authentication (AuthN), and authorization (AuthZ).
+
+## Context
+- Litestar JWT for session/token management, `httpx-oauth` for OAuth providers.
+- Advanced Alchemy models for User, Team, Role.
+- Litestar guards for authorization.
+
+## Rules
+
+### User Model
+- User model (`app.db.models.user.User`) should include all necessary fields (hashed password, email, active status, roles/teams relations).
+
+### Authentication
+- Secure password hashing (e.g., Argon2 via `pwdlib`).
+- Proper JWT handling (expiry, secure storage if applicable on frontend).
+
+### Authorization
+- Use Litestar guards for protecting routes based on user roles or permissions.
+- Define clear roles and permissions.
+
+### Services
+- User service for user CRUD, team service for team management.
+- Auth service for login, registration, token generation.
+
+## Exceptions
+- Publicly accessible informational endpoints.

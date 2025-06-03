@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Any
 
 from advanced_alchemy.utils.text import slugify
-from litestar import Controller, Request, Response, get, post
+from litestar import Controller, Request, Response, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
@@ -90,16 +90,3 @@ class AccessController(Controller):
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
         return users_service.to_schema(user, schema_type=s.User)
-
-    @get(operation_id="AccountProfile", path="/api/me", guards=[security.requires_active_user])
-    async def profile(self, current_user: m.User, users_service: UserService) -> s.User:
-        """User Profile.
-
-        Args:
-            current_user: Current User
-            users_service: User Service
-
-        Returns:
-            User
-        """
-        return users_service.to_schema(current_user, schema_type=s.User)

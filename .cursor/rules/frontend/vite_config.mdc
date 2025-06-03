@@ -1,0 +1,30 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Vite Configuration Conventions
+
+## Objective
+To maintain an optimal and understandable Vite configuration for the frontend build process.
+
+## Context
+- Vite is used for frontend development and bundling.
+- Configuration in `src/js/vite.config.ts`.
+
+## Rules
+
+### Plugins
+- Clearly list and configure Vite plugins (e.g., React plugin, other necessary build tools).
+
+### Paths and Aliases
+- Define path aliases in `resolve.alias` for cleaner imports (e.g., `@/*` for `src/js/src/*`).
+
+### Build Options
+- Configure build options (`build.outDir`, `build.sourcemap`, etc.) appropriately for development and production.
+
+### Server Options
+- Configure development server options (`server.port`, `server.proxy`) as needed.
+
+## Exceptions
+- Environment-specific overrides if managed carefully.

@@ -1,0 +1,30 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Service Layer Conventions
+
+## Objective
+To define conventions for the service layer, ensuring clear separation of business logic from data access and API layers.
+
+## Context
+- Services interact with Advanced Alchemy repositories.
+- Services are injected into Litestar controllers/handlers.
+
+## Rules
+
+### Service Responsibilities
+- Contain business logic, orchestrate calls to repositories.
+- Handle DTO transformations if not done by controllers or repositories.
+- Should not directly access `db_session` but use repository methods.
+
+### Structure
+- Typically one service class per major domain model or functional area.
+- Constructor receives repositories or `db_session` (to create repositories) via DI.
+
+### Error Handling
+- Raise domain-specific or HTTP exceptions for business rule violations or not-found conditions.
+
+## Exceptions
+- Very simple CRUD operations might bypass a dedicated service if the controller logic is trivial, but this should be rare.

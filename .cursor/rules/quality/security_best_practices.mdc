@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Security Best Practices
+
+## Objective
+To ensure the application is developed with security in mind, protecting against common vulnerabilities.
+
+## Context
+- Web application with Python backend (Litestar) and JavaScript/TypeScript frontend.
+- Data storage via SQLAlchemy, user authentication, external API integrations.
+
+## Rules
+
+### Input Validation
+- Validate all incoming data (API requests, user inputs) using Pydantic DTOs on the backend and form validation on the frontend.
+- Sanitize outputs to prevent XSS (though modern frontend frameworks often handle this).
+
+### Authentication & Authorization
+- Implement strong password policies, secure session/token management (JWT).
+- Enforce proper authorization using guards (backend) and conditional UI rendering (frontend).
+- See also: `.cursor/rules/domain/auth_and_users.mdc`
+
+### Dependency Management
+- Regularly update dependencies to patch known vulnerabilities (`uv lock --upgrade`, `npm upgrade`).
+- Use tools to scan for vulnerable dependencies (e.g., `pip-audit`, `npm audit`).
+
+### Data Handling
+- Protect sensitive data (encryption at rest/transit where appropriate).
+- Avoid logging sensitive information.
+
+### API Security
+- Use HTTPS for all communication.
+- Implement rate limiting and protection against common API attacks (e.g., via API gateway or middleware).
+
+### Docker & Deployment
+- Use minimal base images for Docker.
+- Do not hardcode secrets in Dockerfiles or source code; use environment variables or secret management tools.
+
+## Exceptions
+- Local development environments might have relaxed security for ease of debugging, but production configurations must be strict.
