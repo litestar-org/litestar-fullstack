@@ -1,0 +1,29 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Data Validation (DTOs/Schemas)
+
+## Objective
+To ensure all incoming and outgoing data is validated correctly using Pydantic schemas (DTOs).
+
+## Context
+- Pydantic is used for data validation and serialization in Litestar.
+- Schemas defined in `src/py/app/schemas/`.
+
+## Rules
+
+### Schema Definition
+- Define clear Pydantic models for all API request and response bodies.
+- Use specific Pydantic field types and validators (e.g., `EmailStr`, `HttpUrl`, custom validators).
+- Distinguish between schemas for creation, update, and reading (e.g., `UserCreateDTO`, `UserUpdateDTO`, `UserReadDTO`).
+
+### Usage in Litestar
+- Use schemas in Litestar route handlers for automatic request validation and response serialization.
+
+### Naming
+- Suffix schema names with `DTO`, `Schema`, or similar clear identifiers.
+
+## Exceptions
+- Simple query parameters might use basic type hints directly in handler signatures if a full DTO is overkill.

@@ -1,0 +1,88 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Python Style and Formatting
+
+## Objective
+Ensure consistent, readable, and maintainable Python code across the project, adhering to PEP 8 and project-specific conventions enforced by Ruff and Black.
+
+## Context
+- **Technologies**: Python 3.13 (as per .python-version, though pyproject.toml mentions 3.11 target for ruff)
+- **Tools**: Ruff (for linting and formatting, configured in `pyproject.toml`), Pre-commit (for enforcement).
+- **Conventions**: PEP 8, Google Style Python Docstrings (as per `tool.ruff.lint.pydocstyle` in `pyproject.toml`).
+
+## Rules
+
+### Formatting
+- **Adhere to Ruff/Black**: All Python code MUST be formatted using Ruff's formatter (which is Black-compatible), enforced via pre-commit.
+    - ✅ `uv run ruff format .` or rely on pre-commit.
+    - ❌ Manually formatting code that deviates significantly from Black's output.
+- **Line Length**: Maximum line length is 120 characters, as configured in `tool.ruff.line-length`.
+
+### Imports
+- **Organization**: Imports should be grouped in the following order: standard library, third-party, first-party (application-specific: `app`, `tests`). This is managed by `ruff.lint.isort`.
+    - ✅
+      ```python
+      import asyncio
+      from pathlib import Path
+
+      import litestar
+      from sqlalchemy.ext.asyncio import AsyncSession
+
+      from app.lib import constants
+      from app.services import UserService
+      ```
+    - ❌
+      ```python
+      from app.lib import constants
+      import litestar
+      import asyncio
+      from sqlalchemy.ext.asyncio import AsyncSession
+      from app.services import UserService
+      from pathlib import Path
+      ```
+- **Relative Imports**: Disallow all relative imports. Use absolute imports from the `src/py` root. (`tool.ruff.lint.flake8-tidy-imports.ban-relative-imports = "all"`)
+    - ✅ `from app.services.my_service import MyService`
+    - ❌ `from ..services.my_service import MyService` (within the app)
+- **Wildcard Imports**: Avoid wildcard imports (`from module import *`).
+    - ✅ `from os import path`
+    - ❌ `from os import *`
+
+### Typing
+- **Type Hinting**: All function signatures (arguments and return types) and variable declarations SHOULD be type-hinted. This is checked by MyPy and Pyright.
+    - ✅ `def get_user(user_id: UUID) -> User | None:`
+    - ❌ `def get_user(user_id):`
+- **`TYPE_CHECKING`**: Use `if TYPE_CHECKING:` for imports needed only for type hinting to avoid circular dependencies at runtime.
+    - ✅
+      ```python
+      from typing import TYPE_CHECKING, List
+
+      if TYPE_CHECKING:
+          from app.models import User # Expensive import or potential circular import
+      
+      def get_users() -> List["User"]: ...
+      ```
+
+### Naming Conventions
+- **General**: Follow PEP 8 naming conventions.
+    - Modules: `lower_case_with_underscores`
+    - Packages: `lower_case_with_underscores`
+    - Classes: `CapWords`
+    - Functions: `lower_case_with_underscores`
+    - Methods: `lower_case_with_underscores`
+    - Constants: `UPPER_CASE_WITH_UNDERSCORES`
+    - Variables: `lower_case_with_underscores`
+- **Private Members**: Use a single leading underscore for internal/protected members (e.g., `_internal_method`). Use double leading underscores (`__`) for name mangling if strictly necessary (rarely needed).
+
+### Error Handling
+- **Specific Exceptions**: Catch specific exceptions rather than generic `Exception` or `BaseException`.
+    - ✅ `try: ... except ValueError: ...`
+    - ❌ `try: ... except Exception: ...`
+- **Custom Exceptions**: Define custom exceptions in `app.lib.exceptions` (or similar, e.g. `app.shared.exceptions`) for application-specific error conditions.
+
+## Exceptions
+- Generated code (e.g., in `migrations/versions/`) might not fully adhere to all style guides, but should be kept as clean as possible. Ruff ignores are configured for these.
+- Test files might have slightly different naming conventions for test functions (e.g., `test_something_happens`).
+- `manage.py` and top-level scripts might have slight deviations if necessary for their specific function.

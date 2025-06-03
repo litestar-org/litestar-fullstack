@@ -1,0 +1,114 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Advanced Alchemy Integration
+
+## Objective
+To ensure robust, maintainable, and efficient database interactions by consistently applying Advanced Alchemy patterns for SQLAlchemy models, repositories, and services within the Litestar application. All Litestar components involving SQLAlchemy (schemas, services with repositories) MUST use constructs found in Advanced Alchemy.
+
+## Context
+- **Technologies**: Advanced Alchemy, SQLAlchemy 2.0, Litestar.
+- **Advanced Alchemy Docs**: [https://docs.advanced-alchemy.litestar.dev/latest/](https://docs.advanced-alchemy.litestar.dev/latest/)
+- **Key Concepts**: Declarative Base Models (e.g., `UUIDBase`, `BigIntBase`, `IdentityAuditBase`, `CommonTableAttributes`), Repository Pattern (`SQLAlchemyAsyncRepository`), Service Layer Pattern integration.
+- **Project Files**: Model definitions (`src/py/app/db/models/`), base model setup (e.g., `src/py/app/lib/db/base.py`), service implementations (`src/py/app/services/`), repository implementations (`src/py/app/lib/repositories/` or similar), Litestar DB plugin configuration.
+
+## Rules
+
+### SQLAlchemy Models (`src/py/app/db/models/`)
+- **Base Models**: All SQLAlchemy declarative models MUST inherit from an appropriate Advanced Alchemy base model (e.g., `UUIDBase`, `UUIDAuditBase`, `BigIntPrimaryKey`, `IdentityBase`). Choose the base model that fits the primary key strategy (UUID, BigInt, Identity) and auditing requirements (`AuditColumns`).
+    - The project primarily uses UUIDs, so `UUIDBase` or `UUIDAuditBase` (which includes `AuditColumns` and `Timestamps`) are common choices.
+    - ✅
+      ```python
+      # src/py/app/lib/db/base.py (or a similar central location)
+      from advanced_alchemy.base import UUIDAuditBase # Recommended for UUID PKs with audit fields
+      from sqlalchemy.orm import DeclarativeBase
+
+      class Base(DeclarativeBase, UUIDAuditBase): # Order might matter; AA bases often inherit from AsyncAttrs, etc.
+          pass
+      # Or, if Advanced Alchemy base already includes DeclarativeBase features:
+      # class Base(UUIDAuditBase): 
+      #     pass 
+
+      # src/py/app/db/models/user.py
+      from app.lib.db.base import Base # Your project's Base
+      from sqlalchemy.orm import Mapped, mapped_column
+      from sqlalchemy import String
+      # from advanced_alchemy.types import EncryptedString, GUID # Example AA types
+
+      class User(Base):
+          __tablename__ = "user_account"
+          username: Mapped[str] = mapped_column(String(100), unique=True)
+          email: Mapped[str] = mapped_column(String(255), unique=True) # Example
+          # Other fields as needed
+      ```
+    - ❌ Defining models directly from `sqlalchemy.orm.DeclarativeBase` without incorporating Advanced Alchemy base classes or mixins for PKs, audit trails, etc.
+- **Mixins**: Utilize Advanced Alchemy mixins like `AuditColumns`, `SlugKey`, `Timestamps` explicitly if not already included in the chosen base model and if that functionality is desired.
+    - Most comprehensive AA bases like `UUIDAuditBase` already include `AuditColumns` and `Timestamps`.
+- **Typing**: Use `sqlalchemy.orm.Mapped` and `mapped_column` for all model attributes for proper type hinting and SQLAlchemy 2.0 compatibility.
+- **Advanced Alchemy Types**: Consider using custom column types from `advanced_alchemy.types` (e.g., `EncryptedString`, `GUID`, `JSONB`) where appropriate.
+
+### Repository Pattern (`src/py/app/lib/repositories/` or similar)
+- **`SQLAlchemyAsyncRepository`**: All repository classes MUST inherit from `advanced_alchemy.repository.SQLAlchemyAsyncRepository` (for async operations, which is standard in this project).
+    - ✅
+      ```python
+      from advanced_alchemy.repository import SQLAlchemyAsyncRepository
+      from sqlalchemy.ext.asyncio import AsyncSession
+      from app.db.models import User # Your SQLAlchemy model
+
+      class UserRepository(SQLAlchemyAsyncRepository[User]):
+          model_type = User
+
+          # Constructor is usually not needed if only session is passed by DI
+          # def __init__(self, session: AsyncSession, **kwargs) -> None:
+          #     super().__init__(session=session, **kwargs)
+      ```
+    - ❌ Implementing custom repository methods for basic CRUD operations (add, get, list, update, delete) already provided by `SQLAlchemyAsyncRepository` unless specific pre/post processing is needed for those basic operations.
+- **Custom Repository Methods**: Add custom query methods to the repository layer for complex data retrieval logic beyond the standard CRUD. These methods should use `self.session` and SQLAlchemy query constructs.
+- **Dependency Injection for Session**: Repositories will receive the `AsyncSession` via dependency injection, managed by Litestar and the Advanced Alchemy plugin.
+
+### Service Layer (`src/py/app/services/`)
+- **Purpose**: Business logic, orchestrating calls to one or more repositories, handling DTO transformations.
+- **Repository Usage**: Services MUST use repositories (derived from `SQLAlchemyAsyncRepository`) for all data access.
+    - ✅
+      ```python
+      from sqlalchemy.ext.asyncio import AsyncSession
+      from litestar.exceptions import NotFoundException # Or your custom exceptions
+      from uuid import UUID
+
+      from app.lib.repositories import UserRepository # Your repository
+      from app.db.models import User
+      from app.schemas import UserCreateDTO, UserReadDTO # Your Pydantic DTOs
+
+      class UserService:
+          def __init__(self, db_session: AsyncSession): # Session injected by Litestar
+              self._repository = UserRepository(session=db_session)
+
+          async def create_user(self, data: UserCreateDTO) -> User: # Return model or DTO as per convention
+              # Business logic before creating, if any
+              user = User(**data.model_dump(exclude_unset=True)) # Or a more sophisticated mapping
+              created_user = await self._repository.add(user)
+              # Business logic after creating, if any (e.g., sending email)
+              return created_user # Or map to UserReadDTO
+
+          async def get_user(self, user_id: UUID) -> User:
+              user = await self._repository.get_one_or_none(id=user_id)
+              if not user:
+                  raise NotFoundException(f"User with ID {user_id} not found.")
+              return user
+          # ... other service methods (update, delete, custom logic)
+      ```
+    - ❌ Services directly using `AsyncSession` to execute queries instead of going through a repository layer.
+- **DTOs**: Services should operate with DTOs for input from controllers and can return DTOs or domain models based on the internal convention. Controllers are then responsible for the final response model mapping if needed.
+
+### Litestar Integration & Schemas
+- **SQLAlchemyPlugin**: The `SQLAlchemyPlugin` from `advanced_alchemy.extensions.litestar` MUST be correctly configured in the Litestar application setup.
+    - This plugin provides the `AsyncSession` for dependency injection and manages transaction lifecycles (e.g., `before_send_handler="autocommit"`).
+- **Schemas (`src/py/app/schemas/`)**: Pydantic schemas (DTOs) used for API request/response validation and serialization should align with the SQLAlchemy models.
+    - Advanced Alchemy doesn't directly generate Pydantic schemas from models, but Litestar's DTO capabilities or manual Pydantic model definition should be used.
+    - When using Litestar DTOs with `DTOConfig(exclude=...)`, ensure all fields related to Advanced Alchemy base models (like `id`, `created_at`, `updated_at`) are handled correctly (included or excluded as intended).
+
+## Exceptions
+- Direct use of `AsyncSession` for highly complex or performance-critical queries that are difficult to express via the repository pattern might be permissible in rare, well-justified cases, but this should be an exception, not the rule, and ideally still encapsulated within a repository method.
+- Database seeding scripts (e.g., in `app.cli.commands.seed`) can directly use repositories and sessions for bulk operations, following Advanced Alchemy examples if applicable.
