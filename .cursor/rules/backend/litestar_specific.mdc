@@ -3,89 +3,85 @@ description:
 globs:
 alwaysApply: false
 ---
-# Litestar Framework Conventions
+# Litestar Framework Conventions (with msgspec)
 
 ## Objective
-To ensure consistent and effective use of Litestar features, promoting maintainability, performance, and adherence to Litestar best practices.
+To ensure consistent and effective use of Litestar features, promoting maintainability, performance, and adherence to Litestar best practices, with **`msgspec.Struct` as the mandatory data structure for API DTOs**.
 
 ## Context
-- **Technologies**: Litestar, Python 3.13+
-- **Key Concepts**: Controllers, Routers, DTOs, Dependency Injection, Guards, Middleware, Event Handlers, Lifespan Hooks, Plugins.
-- **Project Files**: `src/py/app/server/`, `src/py/app/lib/` (for dependencies, exceptions, plugins), `src/py/app/schemas/` (for DTOs), `src/py/app/asgi.py` (app factory).
+- **Technologies**: Litestar, Python 3.13+, `msgspec`.
+- **Key Concepts**: Controllers, Routers, `msgspec.Struct` for DTOs, Dependency Injection, Guards, Middleware, Event Handlers, Lifespan Hooks, Plugins (especially for Advanced Alchemy).
+- **Project Files**: `src/py/app/server/`, `src/py/app/lib/` (for dependencies, exceptions, plugins), `src/py/app/schemas/` (for `msgspec.Struct` definitions), `src/py/app/asgi.py` (app factory).
 
 ## Rules
 
 ### Application Structure
-- **App Factory Pattern**: Utilize the app factory pattern (e.g., `create_app()` in `src/py/app/asgi.py`) for application instantiation, allowing for easier configuration and testing.
-- **Plugin Usage**: Leverage Litestar plugins for integrating extensions like SQLAlchemy (via Advanced Alchemy), SAQ, Vite, etc. Configure plugins centrally during app creation.
-    - ✅ `SQLAlchemyPlugin` from `advanced_alchemy.extensions.litestar` should be used for database integration.
+- **App Factory Pattern**: Utilize the app factory pattern (e.g., `create_app()` in `src/py/app/asgi.py`) for application instantiation.
+- **Plugin Usage**: Leverage Litestar plugins for integrating extensions like SQLAlchemy (via Advanced Alchemy `SQLAlchemyPlugin`), SAQ, Vite, etc. Configure plugins centrally.
 
 ### Controllers and Routes
-- **Organization**: Group related endpoints into `Controller` classes. Controllers should be organized by domain/resource within `src/py/app/server/api/`.
-    - ✅ `src/py/app/server/api/v1/users.py` containing `UserController`
+- **Organization**: Group related endpoints into `Controller` classes within `src/py/app/server/api/`.
 - **Path Naming**: Use `kebab-case` for URL paths.
-    - ✅ `/users/{user_id:uuid}/team-invitations`
-    - ❌ `/users/<user_id>/team_invitations`
-- **DTOs for IO**: Use Data Transfer Objects (DTOs) for request bodies and response data. DTOs should be defined in `app.schemas` using Pydantic models or Litestar's `DTOData` for specific cases.
+- **DTOs with `msgspec.Struct`**: **Mandatory**: Use `msgspec.Struct` for all request bodies and response data DTOs. Define these in `src/py/app/schemas/`.
+    - Litestar provides automatic validation of incoming `msgspec.Struct` data and serialization of outgoing `msgspec.Struct` data.
     - ✅
       ```python
-      from litestar import post
+      from litestar import post, get
       from litestar.controller import Controller
-      from app.schemas import UserCreateDTO, UserReadDTO # Pydantic models
+      from app.schemas import UserCreate, UserRead # msgspec.Struct definitions
+      from app.services import UserService
       from uuid import UUID
 
       class UserController(Controller):
           path = "/users"
           tags = ["Users"]
+          # Ensure UserService is injected, e.g. via __init__ or Provide in dependencies
+          # def __init__(self, user_service: UserService) -> None:
+          #     self.user_service = user_service
 
           @post()
-          async def create_user(self, data: UserCreateDTO) -> UserReadDTO:
-              # ... logic using self.user_service ...
-              # return UserReadDTO.model_validate(created_user)
-              return ... # Ensure return type matches UserReadDTO
-      ```
-- **Async Endpoints**: Prefer `async def` for route handlers to leverage Litestar's asynchronous capabilities, especially for I/O-bound operations.
+          async def create_user(self, data: UserCreate, user_service: UserService) -> UserRead:
+              # 'data' is an auto-validated instance of UserCreate (msgspec.Struct)
+              created_db_user = await user_service.create(data) # Service handles mapping to DB model
+              # Map DB model back to UserRead msgspec.Struct for response
+              return UserRead(
+                  id=created_db_user.id,
+                  email=created_db_user.email,
+                  name=created_db_user.name,
+                  is_active=created_db_user.is_active,
+                  created_at=created_db_user.created_at,
+                  updated_at=created_db_user.updated_at,
+              )
 
-### Dependency Injection
-- **Explicit Dependencies**: Use Litestar's dependency injection system (`Dependency`) for accessing resources like database sessions, services, or configurations.
-    - Define common provider functions in `src/py/app/lib/dependencies.py`.
-    - ✅
-      ```python
-      # src/py/app/lib/dependencies.py
-      from sqlalchemy.ext.asyncio import AsyncSession
-      from litestar.params import Dependency
-
-      async def provide_db_session(transaction: AsyncSession = Dependency()) -> AsyncSession:
-          return transaction
+          @get("/{user_id:uuid}")
+          async def get_user_by_id(self, user_id: UUID, user_service: UserService) -> UserRead:
+              db_user = await user_service.get(user_id)
+              return UserRead(
+                  id=db_user.id,
+                  email=db_user.email,
+                  # ... other fields
+              )
       ```
-- **Service Layer Injection**: Inject service classes into controllers rather than implementing business logic directly in route handlers.
-    - ✅
-      ```python
-      # In UserController
-      # from app.services import UserService # Defined in __init__ or as a direct dependency
-      # from litestar.di import Provide
+- **Async Endpoints**: Prefer `async def` for route handlers.
 
-      # dependencies={"user_service": Provide(UserServiceClass, sync_to_thread=False)}
-      # async def get_user_details(self, user_id: UUID, user_service: UserServiceDep) -> UserReadDTO:
-      #    return await user_service.get_one(user_id)
-      ```
-      (Note: Actual injection might be via `__init__` with a DI framework or explicit `Provide`)
+### Dependency Injection (`Dependency`)
+- **Explicit Dependencies**: Use Litestar's DI for resources like DB sessions, services, configs.
+- **Service Layer Injection**: Inject service classes (e.g., `UserService`) into controllers.
+    - Services themselves will obtain the `AsyncSession` via DI to initialize repositories (see `advanced_alchemy_integration.mdc`).
 
 ### Error Handling
-- **Litestar Exceptions**: Utilize Litestar's built-in exceptions (e.g., `HTTPException`, `NotFoundException`, `ValidationException`) for standard HTTP errors.
-- **Custom Exception Handlers**: Implement custom exception handlers for application-specific exceptions to ensure consistent error responses. Configure these via the `exception_handlers` argument in the `Litestar` app instance or a `Router`.
+- **Litestar Exceptions**: Utilize Litestar's built-in exceptions (`HTTPException`, `NotFoundException`, `ValidationException`).
+- **Custom Exception Handlers**: Implement for application-specific errors.
 
 ### Guards and Middleware
-- **Guards for Authorization**: Use Guards for route-level or controller-level authorization.
-    - ✅ Define guards in `src/py/app/server/guards.py` and apply them using the `guards` parameter.
-- **Middleware for Cross-Cutting Concerns**: Use Middleware for functionalities like request logging, CORS, or custom header processing.
-    - ✅ Configure middleware during app instantiation via the `middleware` parameter.
+- **Guards**: For route/controller authorization.
+- **Middleware**: For cross-cutting concerns (logging, CORS).
 
 ### OpenAPI Schema
-- **Docstrings and Summaries**: Provide clear docstrings for controllers and route handlers. The first line is used as the summary, and the rest as the description in the OpenAPI schema.
-- **Tags**: Use `tags` on Controllers or Routers to group related endpoints in the OpenAPI documentation.
-- **`include_in_schema=False`**: Use for health checks or internal routes not meant for public documentation.
+- **Docstrings**: Provide clear docstrings for controllers/handlers for OpenAPI generation.
+- **Tags**: Use `tags` for grouping.
+- `msgspec.Struct` definitions will be automatically used by Litestar to generate the OpenAPI schema components.
 
 ## Exceptions
-- Websocket handlers have different patterns for data handling than standard HTTP DTOs.
-- CLI command definitions (`src/py/app/cli/`) are outside the Litestar request-response cycle.
+- Websocket handlers have different data handling patterns.
+- CLI commands are outside the Litestar request-response cycle.

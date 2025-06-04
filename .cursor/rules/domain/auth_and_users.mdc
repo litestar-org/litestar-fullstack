@@ -3,32 +3,46 @@ description:
 globs:
 alwaysApply: false
 ---
-# Authentication, Authorization, and User Management
+# Authentication, Authorization, and User Management (with msgspec)
 
 ## Objective
-To define consistent and secure practices for handling users, authentication (AuthN), and authorization (AuthZ).
+To define consistent and secure practices for handling users, authentication (AuthN), and authorization (AuthZ), using `msgspec.Struct` for all related DTOs.
 
 ## Context
 - Litestar JWT for session/token management, `httpx-oauth` for OAuth providers.
-- Advanced Alchemy models for User, Team, Role.
+- Advanced Alchemy models for User, Team, Role (as per `.cursor/rules/backend/advanced_alchemy_integration.mdc`).
+- Services follow the project's established pattern (see `.cursor/rules/backend/services_layer.mdc`).
 - Litestar guards for authorization.
+- **DTOs**: All DTOs (e.g., for login requests, token responses, user creation/update) MUST be `msgspec.Struct` instances, defined in `src/py/app/schemas/`.
 
 ## Rules
 
-### User Model
-- User model (`app.db.models.user.User`) should include all necessary fields (hashed password, email, active status, roles/teams relations).
+### User Model (`app.db.models.user.User`)
+- User model should include all necessary fields: `email` (unique), `hashed_password`, `is_active`, `is_superuser`, `is_verified`, relationships to roles and teams.
+- Follows patterns in `advanced_alchemy_integration.mdc`.
 
 ### Authentication
-- Secure password hashing (e.g., Argon2 via `pwdlib`).
-- Proper JWT handling (expiry, secure storage if applicable on frontend).
+- **Password Hashing**: Secure password hashing (e.g., Argon2 via `app.lib.crypt`) MUST be used.
+- **Login DTOs**: Login requests (e.g., email/password) MUST use a `msgspec.Struct` (e.g., `LoginRequestStruct`).
+- **Token DTOs**: Token responses MUST use a `msgspec.Struct` (e.g., `TokenResponseStruct` containing access token, refresh token, type).
+- **JWT Handling**: Proper JWT handling (expiry, secure practices for refresh tokens if used).
+- `UserService.authenticate()` method is the pattern for password verification.
 
 ### Authorization
-- Use Litestar guards for protecting routes based on user roles or permissions.
-- Define clear roles and permissions.
+- **Guards**: Use Litestar guards for protecting routes based on user roles or specific permissions.
+    - Guards should operate on the authenticated `User` model instance.
+- **Roles & Permissions**: Define clear roles (e.g., `Admin`, `Editor`, `Viewer`) and associate permissions with them. `User.roles` relationship is key.
+- `UserService.is_superuser()` and `UserService.has_role()` are patterns for checking user status/roles.
 
-### Services
-- User service for user CRUD, team service for team management.
-- Auth service for login, registration, token generation.
+### User Management Services (`UserService`, `TeamService`)
+- **Service Pattern**: Adhere to the project's standard service pattern (inner `Repo`, `SQLAlchemyAsyncRepositoryService` base).
+- **User Creation/Update DTOs**: User creation and update operations MUST use `msgspec.Struct` (e.g., `UserCreateStruct`, `UserUpdateStruct`). Services will handle mapping these to the `User` model.
+- **Password Update**: Password updates should require current password verification, as seen in `UserService.update_password()`.
+
+### API Endpoints
+- Auth endpoints (`/auth/login`, `/auth/register`, `/auth/refresh-token`, etc.) MUST use `msgspec.Structs` for request and response bodies.
+- User management endpoints (`/users/...`) MUST use `msgspec.Structs`.
 
 ## Exceptions
-- Publicly accessible informational endpoints.
+- Publicly accessible informational endpoints that do not involve user data or actions.
+- OAuth flows might involve redirects and specific payload structures dictated by the OAuth provider, but token exchange and internal user representation should align with `msgspec` where possible.

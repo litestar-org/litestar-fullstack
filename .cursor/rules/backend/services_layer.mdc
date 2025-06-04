@@ -3,28 +3,69 @@ description:
 globs:
 alwaysApply: false
 ---
-# Service Layer Conventions
+# Service Layer Conventions (Project Specific)
 
 ## Objective
-To define conventions for the service layer, ensuring clear separation of business logic from data access and API layers.
+To enforce the project's established conventions for the service layer, ensuring clear separation of business logic, use of the specified base service and inner repository pattern, and interaction with `msgspec.Struct` DTOs.
 
 ## Context
-- Services interact with Advanced Alchemy repositories.
-- Services are injected into Litestar controllers/handlers.
+- **Project Standard**: Services MUST follow the pattern exemplified by `UserService` and `TeamService`.
+- **Base Service**: `litestar.plugins.sqlalchemy.service.SQLAlchemyAsyncRepositoryService[ModelType]`.
+- **Inner Repository**: Services define an inner `Repo` class (subclass of `litestar.plugins.sqlalchemy.repository.SQLAlchemyAsyncRepository` or `...SlugRepository`).
+- **Data I/O**: `msgspec.Struct` instances are used for data input from controllers and for output from services (or models that controllers then map to `msgspec.Structs`).
+- Interacts with Advanced Alchemy models and repositories (via its inner `Repo`).
 
 ## Rules
 
-### Service Responsibilities
-- Contain business logic, orchestrate calls to repositories.
-- Handle DTO transformations if not done by controllers or repositories.
-- Should not directly access `db_session` but use repository methods.
+### Core Service Structure (Mandatory Pattern)
+- **Inheritance**: Services MUST inherit from `litestar.plugins.sqlalchemy.service.SQLAlchemyAsyncRepositoryService[ModelType]`.
+- **Inner `Repo` Class**: Each service MUST define an inner class `Repo` that inherits from `litestar.plugins.sqlalchemy.repository.SQLAlchemyAsyncRepository[ModelType]` (or `...SQLAlchemyAsyncSlugRepository` for slug-based models).
+    - The `Repo.model_type` attribute MUST be set to the SQLAlchemy model.
+    - The service's `repository_type` attribute MUST be set to this inner `Repo`.
+    - ✅ See `UserService` or `TeamService` for exact implementation examples.
 
-### Structure
-- Typically one service class per major domain model or functional area.
-- Constructor receives repositories or `db_session` (to create repositories) via DI.
+### Responsibilities
+- **Business Logic**: Encapsulate all business logic related to a domain entity or use case.
+- **Orchestration**: Coordinate calls to its inner repository and potentially other services.
+- **Data Transformation/Preparation**: Utilize service hooks (`to_model_on_create`, `to_model_on_update`, `to_model_on_upsert`) for preparing data before repository actions. This includes:
+    - Processing input `msgspec.Struct` data.
+    - Populating fields (e.g., hashing passwords, generating slugs via `self.repository.get_available_slug()`).
+    - Handling complex relationships or M2M data (e.g., using `Model.as_unique_async()` for tags, as seen in `TeamService`).
+- **DTO Handling**: Expect `msgspec.Struct` instances from controllers for CUD operations. Return SQLAlchemy model instances or `msgspec.Struct` instances as appropriate for the operation. Controllers are typically responsible for the final mapping to response `msgspec.Structs` if the service returns a model.
+
+### Interaction with Repository
+- All database operations MUST go through the `self.repository` instance (the inner `Repo`).
+- Services should not bypass the repository to interact directly with an `AsyncSession` for standard CRUD or even most custom queries.
 
 ### Error Handling
-- Raise domain-specific or HTTP exceptions for business rule violations or not-found conditions.
+- Raise appropriate Litestar HTTP exceptions (e.g., `NotFoundException`, `PermissionDeniedException`) or custom domain-specific exceptions when business rules are violated or data is not found.
+
+### Example Snippet (Conceptual based on `UserService`)
+```python
+from litestar.plugins.sqlalchemy import repository, service
+from app.db import models as m
+from app.schemas import UserCreate # msgspec.Struct
+
+class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
+    class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
+        model_type = m.User
+    repository_type = Repo
+
+    async def to_model_on_create(self, data: UserCreate) -> m.User: # data is msgspec.Struct
+        # Example: Convert msgspec.Struct to dict for model creation if needed by base service/repo
+        # or handle field by field. The base service might handle Structs directly.
+        data_dict = msgspec.to_builtins(data) # if a dict is strictly needed by underlying layers
+        if "password" in data_dict:
+             data_dict["hashed_password"] = await self._hash_password(data_dict.pop("password"))
+        # ... other population logic ...
+        return await super().to_model_on_create(data_dict) # or data directly if supported
+
+    async def _hash_password(self, password: str) -> str: ...
+    # ... other business logic methods ...
+```
+
+## Further Details
+- Refer to `.cursor/rules/backend/advanced_alchemy_integration.mdc` for comprehensive rules on how services, repositories, and models integrate with Advanced Alchemy and `msgspec`.
 
 ## Exceptions
-- Very simple CRUD operations might bypass a dedicated service if the controller logic is trivial, but this should be rare.
+- Purely utility services not tied to a SQLAlchemy model might follow a different base class or structure, but this is not the primary pattern for data-centric services.

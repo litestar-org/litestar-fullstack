@@ -3,112 +3,106 @@ description:
 globs:
 alwaysApply: false
 ---
-# Advanced Alchemy Integration
+# Advanced Alchemy and Litestar Service/Repository/Model Patterns (with msgspec)
 
 ## Objective
-To ensure robust, maintainable, and efficient database interactions by consistently applying Advanced Alchemy patterns for SQLAlchemy models, repositories, and services within the Litestar application. All Litestar components involving SQLAlchemy (schemas, services with repositories) MUST use constructs found in Advanced Alchemy.
+To ensure robust, maintainable, and efficient database interactions by consistently applying the project's established Advanced Alchemy patterns for SQLAlchemy models, Litestar services (with inner repositories), and mandatory `msgspec.Struct` DTOs. **The patterns found in `UserService`, `TeamService`, and the `User`, `Team`, `Tag` models are the de-facto standard.**
 
 ## Context
-- **Technologies**: Advanced Alchemy, SQLAlchemy 2.0, Litestar.
-- **Advanced Alchemy Docs**: [https://docs.advanced-alchemy.litestar.dev/latest/](https://docs.advanced-alchemy.litestar.dev/latest/)
-- **Key Concepts**: Declarative Base Models (e.g., `UUIDBase`, `BigIntBase`, `IdentityAuditBase`, `CommonTableAttributes`), Repository Pattern (`SQLAlchemyAsyncRepository`), Service Layer Pattern integration.
-- **Project Files**: Model definitions (`src/py/app/db/models/`), base model setup (e.g., `src/py/app/lib/db/base.py`), service implementations (`src/py/app/services/`), repository implementations (`src/py/app/lib/repositories/` or similar), Litestar DB plugin configuration.
+- **Technologies**: Advanced Alchemy, SQLAlchemy 2.0, Litestar, `msgspec`.
+- **Advanced Alchemy Docs**: [https://docs.advanced-alchemy.litestar.dev/latest/](mdc:https:/docs.advanced-alchemy.litestar.dev/latest)
+- **Key Project Patterns**:
+    - Services inherit `litestar.plugins.sqlalchemy.service.SQLAlchemyAsyncRepositoryService`.
+    - Services define an inner `Repo` class inheriting `litestar.plugins.sqlalchemy.repository.SQLAlchemyAsyncRepository` (or `...SlugRepository`).
+    - Models use Advanced Alchemy base classes (e.g., `UUIDAuditBase`) and mixins (e.g., `SlugKey`, `UniqueMixin`).
+    - `msgspec.Struct` is **mandatory** for API DTOs.
+- **Project Files**: Model definitions (`src/py/app/db/models/`), service implementations (`src/py/app/services/`), `msgspec.Struct` definitions (`src/py/app/schemas/`).
 
 ## Rules
 
 ### SQLAlchemy Models (`src/py/app/db/models/`)
-- **Base Models**: All SQLAlchemy declarative models MUST inherit from an appropriate Advanced Alchemy base model (e.g., `UUIDBase`, `UUIDAuditBase`, `BigIntPrimaryKey`, `IdentityBase`). Choose the base model that fits the primary key strategy (UUID, BigInt, Identity) and auditing requirements (`AuditColumns`).
-    - The project primarily uses UUIDs, so `UUIDBase` or `UUIDAuditBase` (which includes `AuditColumns` and `Timestamps`) are common choices.
+- **Base Models**: All SQLAlchemy declarative models MUST inherit from an appropriate Advanced Alchemy base model (e.g., `UUIDAuditBase` as seen in `User` and `Team`).
+    - ✅ `class User(UUIDAuditBase): ...`
+    - ✅ `class Team(UUIDAuditBase, SlugKey): ...`
+- **Mixins**: Utilize Advanced Alchemy mixins like `SlugKey` (as in `Team`, `Tag`) and `UniqueMixin` (as in `Tag`) when their functionality is required.
+    - `UniqueMixin` is crucial for "get-or-create" M2M scenarios (e.g., tags). It requires implementing `unique_hash` and `unique_filter` methods on the model.
     - ✅
       ```python
-      # src/py/app/lib/db/base.py (or a similar central location)
-      from advanced_alchemy.base import UUIDAuditBase # Recommended for UUID PKs with audit fields
-      from sqlalchemy.orm import DeclarativeBase
+      # In models/tag.py
+      from advanced_alchemy.mixins import UniqueMixin, SlugKey
+      from advanced_alchemy.base import UUIDAuditBase
+      from advanced_alchemy.utils.text import slugify
+      from sqlalchemy import ColumnElement # type: ignore[attr-defined]
+      from collections.abc import Hashable
 
-      class Base(DeclarativeBase, UUIDAuditBase): # Order might matter; AA bases often inherit from AsyncAttrs, etc.
-          pass
-      # Or, if Advanced Alchemy base already includes DeclarativeBase features:
-      # class Base(UUIDAuditBase): 
-      #     pass 
+      class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
+          # ... other attributes ...
+          @classmethod
+          def unique_hash(cls, name: str, slug: str | None = None, **kwargs: object) -> Hashable: # Added **kwargs
+              return slugify(name) # Example hash based on slugified name
 
-      # src/py/app/db/models/user.py
-      from app.lib.db.base import Base # Your project's Base
-      from sqlalchemy.orm import Mapped, mapped_column
-      from sqlalchemy import String
-      # from advanced_alchemy.types import EncryptedString, GUID # Example AA types
+          @classmethod
+          def unique_filter(cls, name: str | None = None, slug: str | None = None, **kwargs: object) -> ColumnElement[bool]: # Added **kwargs and made params optional
+              if name is not None: # Ensure at least one is provided for filter
+                return cls.slug == slugify(name) # Filter by slug
+              if slug is not None:
+                return cls.slug == slug
+              raise ValueError("Either name or slug must be provided for unique_filter")
 
-      class User(Base):
-          __tablename__ = "user_account"
-          username: Mapped[str] = mapped_column(String(100), unique=True)
-          email: Mapped[str] = mapped_column(String(255), unique=True) # Example
-          # Other fields as needed
       ```
-    - ❌ Defining models directly from `sqlalchemy.orm.DeclarativeBase` without incorporating Advanced Alchemy base classes or mixins for PKs, audit trails, etc.
-- **Mixins**: Utilize Advanced Alchemy mixins like `AuditColumns`, `SlugKey`, `Timestamps` explicitly if not already included in the chosen base model and if that functionality is desired.
-    - Most comprehensive AA bases like `UUIDAuditBase` already include `AuditColumns` and `Timestamps`.
-- **Typing**: Use `sqlalchemy.orm.Mapped` and `mapped_column` for all model attributes for proper type hinting and SQLAlchemy 2.0 compatibility.
-- **Advanced Alchemy Types**: Consider using custom column types from `advanced_alchemy.types` (e.g., `EncryptedString`, `GUID`, `JSONB`) where appropriate.
-
-### Repository Pattern (`src/py/app/lib/repositories/` or similar)
-- **`SQLAlchemyAsyncRepository`**: All repository classes MUST inherit from `advanced_alchemy.repository.SQLAlchemyAsyncRepository` (for async operations, which is standard in this project).
-    - ✅
-      ```python
-      from advanced_alchemy.repository import SQLAlchemyAsyncRepository
-      from sqlalchemy.ext.asyncio import AsyncSession
-      from app.db.models import User # Your SQLAlchemy model
-
-      class UserRepository(SQLAlchemyAsyncRepository[User]):
-          model_type = User
-
-          # Constructor is usually not needed if only session is passed by DI
-          # def __init__(self, session: AsyncSession, **kwargs) -> None:
-          #     super().__init__(session=session, **kwargs)
-      ```
-    - ❌ Implementing custom repository methods for basic CRUD operations (add, get, list, update, delete) already provided by `SQLAlchemyAsyncRepository` unless specific pre/post processing is needed for those basic operations.
-- **Custom Repository Methods**: Add custom query methods to the repository layer for complex data retrieval logic beyond the standard CRUD. These methods should use `self.session` and SQLAlchemy query constructs.
-- **Dependency Injection for Session**: Repositories will receive the `AsyncSession` via dependency injection, managed by Litestar and the Advanced Alchemy plugin.
+- **Typing**: Use `sqlalchemy.orm.Mapped` and `mapped_column` for all model attributes.
+- **Relationships**: Define relationships using `sqlalchemy.orm.relationship`. Prefer `lazy="selectin"` for frequently accessed relationships to avoid N+1 queries, as seen in `User.roles` and `User.teams`.
 
 ### Service Layer (`src/py/app/services/`)
-- **Purpose**: Business logic, orchestrating calls to one or more repositories, handling DTO transformations.
-- **Repository Usage**: Services MUST use repositories (derived from `SQLAlchemyAsyncRepository`) for all data access.
+- **Base Service Class**: All services MUST inherit from `litestar.plugins.sqlalchemy.service.SQLAlchemyAsyncRepositoryService[ModelType]` (e.g., `UserService(service.SQLAlchemyAsyncRepositoryService[m.User])`).
+- **Inner Repository Class**: Each service MUST define an inner class named `Repo` that inherits from `litestar.plugins.sqlalchemy.repository.SQLAlchemyAsyncRepository[ModelType]` (e.g., `UserService.Repo`) or `SQLAlchemyAsyncSlugRepository[ModelType]` if slug functionality is needed (e.g., `TeamService.Repo`).
+    - The service's `repository_type` attribute MUST be set to this inner `Repo` class.
     - ✅
       ```python
-      from sqlalchemy.ext.asyncio import AsyncSession
-      from litestar.exceptions import NotFoundException # Or your custom exceptions
-      from uuid import UUID
+      # In services/_users.py
+      from litestar.plugins.sqlalchemy import repository, service
+      from app.db import models as m
 
-      from app.lib.repositories import UserRepository # Your repository
-      from app.db.models import User
-      from app.schemas import UserCreateDTO, UserReadDTO # Your Pydantic DTOs
-
-      class UserService:
-          def __init__(self, db_session: AsyncSession): # Session injected by Litestar
-              self._repository = UserRepository(session=db_session)
-
-          async def create_user(self, data: UserCreateDTO) -> User: # Return model or DTO as per convention
-              # Business logic before creating, if any
-              user = User(**data.model_dump(exclude_unset=True)) # Or a more sophisticated mapping
-              created_user = await self._repository.add(user)
-              # Business logic after creating, if any (e.g., sending email)
-              return created_user # Or map to UserReadDTO
-
-          async def get_user(self, user_id: UUID) -> User:
-              user = await self._repository.get_one_or_none(id=user_id)
-              if not user:
-                  raise NotFoundException(f"User with ID {user_id} not found.")
-              return user
-          # ... other service methods (update, delete, custom logic)
+      class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
+          class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
+              model_type = m.User
+          repository_type = Repo
+          # ... rest of the service ...
       ```
-    - ❌ Services directly using `AsyncSession` to execute queries instead of going through a repository layer.
-- **DTOs**: Services should operate with DTOs for input from controllers and can return DTOs or domain models based on the internal convention. Controllers are then responsible for the final response model mapping if needed.
+    - ✅
+      ```python
+      # In services/_teams.py
+      from litestar.plugins.sqlalchemy import repository, service
+      from app.db import models as m
 
-### Litestar Integration & Schemas
-- **SQLAlchemyPlugin**: The `SQLAlchemyPlugin` from `advanced_alchemy.extensions.litestar` MUST be correctly configured in the Litestar application setup.
-    - This plugin provides the `AsyncSession` for dependency injection and manages transaction lifecycles (e.g., `before_send_handler="autocommit"`).
-- **Schemas (`src/py/app/schemas/`)**: Pydantic schemas (DTOs) used for API request/response validation and serialization should align with the SQLAlchemy models.
-    - Advanced Alchemy doesn't directly generate Pydantic schemas from models, but Litestar's DTO capabilities or manual Pydantic model definition should be used.
-    - When using Litestar DTOs with `DTOConfig(exclude=...)`, ensure all fields related to Advanced Alchemy base models (like `id`, `created_at`, `updated_at`) are handled correctly (included or excluded as intended).
+      class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
+          class Repo(repository.SQLAlchemyAsyncSlugRepository[m.Team]): # Note SlugRepository
+              model_type = m.Team
+          repository_type = Repo
+          # ... rest of the service ...
+      ```
+- **Data Transformation Hooks**: Utilize `to_model_on_create`, `to_model_on_update`, and `to_model_on_upsert` service hooks for data manipulation and preparation *before* data is passed to the repository. This is where `msgspec.Struct` data from controllers is processed or mapped to model-compatible dictionaries if needed.
+    - These hooks often call internal `_populate_*` helper methods within the service (e.g., `_populate_slug`, `_populate_with_hashed_password`).
+    - **Mapping `msgspec.Struct` to Model**: Within these hooks, or before calling repository methods, convert incoming `msgspec.Struct` data to a dictionary suitable for model instantiation or repository operations if the service base class doesn't handle `msgspec.Struct` directly. `msgspec.to_builtins(struct_instance)` can be used, or direct field access.
+      ```python
+      # Example within a to_model_on_create hook or service method
+      # data: UserCreateStruct (msgspec.Struct)
+      # model_data_dict = msgspec.to_builtins(data) # Converts to dict
+      # # Now model_data_dict can be used to create a SQLAlchemy model instance
+      # # or passed to repository methods that expect dicts.
+      # # The SQLAlchemyAsyncRepositoryService might also directly handle attribute access
+      # # from msgspec.Struct if field names align.
+      ```
+- **Business Logic**: Implement specific business logic methods within the service (e.g., `authenticate`, `update_password` in `UserService`; handling M2M tag logic using `Tag.as_unique_async` in `TeamService`).
+- **`msgspec.Struct` for I/O**: Services should expect `msgspec.Struct` instances as input for create/update operations (coming from Litestar controllers) and are responsible for mapping SQLAlchemy model instances to `msgspec.Struct` instances for output if the controller doesn't handle this explicitly.
+
+### Litestar Integration (SQLAlchemyPlugin)
+- The `SQLAlchemyPlugin` from `advanced_alchemy.extensions.litestar` MUST be correctly configured in the Litestar application setup (e.g., in `src/py/app/plugins/db.py` or `asgi.py`).
+    - This plugin provides the `AsyncSession` for dependency injection into services, which then pass it to their repositories (typically via `self.repository.session`).
+
+## Mandatory `msgspec` Usage
+- All Data Transfer Objects (DTOs) used at the API boundary (controller request/response types) MUST be `msgspec.Struct` instances. See `.cursor/rules/domain/data_validation.mdc` for `msgspec.Struct` definition guidelines.
 
 ## Exceptions
-- Direct use of `AsyncSession` for highly complex or performance-critical queries that are difficult to express via the repository pattern might be permissible in rare, well-justified cases, but this should be an exception, not the rule, and ideally still encapsulated within a repository method.
-- Database seeding scripts (e.g., in `app.cli.commands.seed`) can directly use repositories and sessions for bulk operations, following Advanced Alchemy examples if applicable.
+- Alembic migration scripts operate directly with SQLAlchemy Core/ORM and do not involve services or `msgspec` DTOs.
+- CLI commands might interact directly with services, but their input parsing is distinct from API DTO validation.
