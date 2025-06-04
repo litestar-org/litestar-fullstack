@@ -226,3 +226,9 @@ stop-all:                                         ## Stop local containers
 	@echo "${INFO} Stopping infrastructure... 🛑"
 	@docker compose -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker/docker-compose.override.yml down -v --remove-orphans
 	@echo "${OK} Infrastructure stopped"
+
+.PHONY: types
+types:  ## Export OpenAPI schema and generate TypeScript types/client
+	@echo "${INFO} Exporting OpenAPI schema and generating TypeScript types..."
+	@cd src/js && npm run export-schema && npm run generate-types
+	@echo "${OK} TypeScript types and client generated from OpenAPI schema."

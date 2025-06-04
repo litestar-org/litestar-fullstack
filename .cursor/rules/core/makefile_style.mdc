@@ -1,0 +1,110 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Makefile Style and Conventions
+
+## Objective
+To establish clear, consistent, and maintainable conventions for `Makefile`s within the project, ensuring they are easy to understand, use, and extend.
+
+## Context
+- This style guide is based on the main project `Makefile`.
+- Makefiles are primarily used for automating common development, build, test, and deployment tasks.
+
+## Rules
+
+### General Setup
+- **Shell Specification**: The Makefile SHOULD start by specifying the shell:
+  ```makefile
+  SHELL := /bin/bash
+  ```
+- **Default Goal**: A default goal, typically `help`, SHOULD be defined:
+  ```makefile
+  .DEFAULT_GOAL:=help
+  ```
+- **Single Shell for Commands**: `.ONESHELL:` SHOULD be used to ensure all lines in a recipe are passed to a single invocation of the shell. This is useful for setting variables or changing directories within a recipe.
+- **Export Variables**: `.EXPORT_ALL_VARIABLES:` MAY be used if global variable export is desired for sub-makes or shell commands.
+- **Output Verbosity**:
+    - `MAKEFLAGS += --no-print-directory` SHOULD be used to prevent `make` from printing directory enter/leave messages.
+    - Individual commands within recipes SHOULD be prefixed with `@` to suppress echoing of the command itself, unless the command's output is the primary purpose (e.g., `ls`).
+
+### Variable Definitions
+- **Grouping**: Variables SHOULD be grouped logically (e.g., color definitions, paths, tool commands).
+- **Assignment**: Use `:=` for immediate evaluation of simple variable assignments.
+  ```makefile
+  BLUE := $(shell printf "\033[1;34m")
+  NC := $(shell printf "\033[0m")
+  INFO := $(shell printf "$(BLUE)ℹ$(NC)")
+  ```
+- **Naming Convention**: Variables SHOULD be named using `UPPER_CASE_WITH_UNDERSCORES`.
+- **Color/Formatting Variables**: Predefined variables for console output colors and symbols (e.g., `BLUE`, `GREEN`, `INFO`, `OK`) SHOULD be used for consistent messaging.
+
+### Targets
+- **Phony Targets**: All targets that do not represent actual files MUST be declared using `.PHONY`:
+  ```makefile
+  .PHONY: help install clean
+  ```
+- **Help Target**:
+    - A `help` target MUST be present.
+    - It SHOULD use a script (e.g., `awk`) to parse specially formatted comments from the Makefile to generate a dynamic help message.
+    - Comments for help text MUST follow the format: `target_name:.*## Help message for the target`.
+      ```makefile
+      install: ## Install the project dependencies
+          @echo "Installing..."
+      ```
+    - Section headers in the help output SHOULD be generated from comments formatted as: `##@ Section Title`.
+- **Target Naming**: Target names SHOULD be `lower-case-with-hyphens` or `lower_case_with_underscores`. Consistency is key. (The project `Makefile` uses `lower-case-with-hyphens`).
+- **Recipe Structure**:
+    - Commands SHOULD be prefixed with `@` to suppress default echoing.
+    - User feedback SHOULD be provided using `echo` with the predefined color/formatting variables.
+      ```makefile
+      my-task: ## Does a cool task
+          @echo "${INFO} Starting my-task..."
+          @# ... commands ...
+          @echo "${OK} My-task completed."
+      ```
+    - Output from non-critical or verbose commands SHOULD be suppressed using `>/dev/null 2>&1` if it's not useful to the user.
+
+### Makefile Organization
+- **Sections**: The Makefile SHOULD be organized into logical sections using commented headers for better readability.
+  ```makefile
+  # =============================================================================
+  # Developer Utils
+  # =============================================================================
+  ```
+- **Common Sections**: Typical sections include:
+    - Variable definitions
+    - Default/Help targets
+    - Installation/Setup targets (`install`, `upgrade`)
+    - Cleaning targets (`clean`, `destroy`)
+    - Linting and Formatting (`lint`, `fix`)
+    - Testing and Coverage (`test`, `coverage`)
+    - Documentation (`docs`, `docs-serve`)
+    - Build/Release (`build`, `release`)
+    - Local Infrastructure (`start-infra`, `stop-infra`)
+
+### Comments
+- Standard `#` character SHOULD be used for comments that are not part of the help system.
+
+### Readability
+- Maintain consistent indentation (tabs are standard in Makefiles).
+- Group related commands and targets.
+- Use blank lines to separate logical blocks within a recipe or between targets.
+
+## Exceptions
+- Complex conditional logic or advanced Makefile features might require deviations but should be well-commented.
+
+## Always-On Rules
+
+- **Always run `make lint` after code changes**: After making any code changes, always execute `make lint` from the project root. This will run ruff, mypy, pyright, and pre-commit checks to ensure code quality and consistency.
+
+- **Always update TypeScript types and client on OpenAPI schema changes**: Whenever the OpenAPI schema changes, you must:
+  1. Export the updated OpenAPI schema.
+  2. Generate the new TypeScript types and client.
+  3. Use the `make types` target (see below) to automate this process.
+  4. **Triggers for this process include:**
+     - Any change to files in `src/py/app/schemas/` (schemas)
+     - Any change to files in `src/py/app/server/routes/` (routes/controllers)
+     - Any change to OpenAPI-related configuration or plugins (e.g., `OpenAPIConfig`, plugin registration)
+     - Any other change that could affect the OpenAPI schema

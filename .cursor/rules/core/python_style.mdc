@@ -61,7 +61,7 @@ Ensure consistent, readable, and maintainable Python code across the project, ad
 
       if TYPE_CHECKING:
           from app.models import User # Expensive import or potential circular import
-      
+
       def get_users() -> List["User"]: ...
       ```
 
