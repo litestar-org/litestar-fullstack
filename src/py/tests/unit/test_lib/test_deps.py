@@ -13,17 +13,12 @@ async def test_get_task_queue() -> None:
     mock_queue = AsyncMock()
     mock_queue.connect = AsyncMock()  # Mock the connect method
 
-    # Mock the saq plugin object within app.server.plugins
+    # Mock the saq plugin object
     mock_saq_plugin = MagicMock()
     mock_saq_plugin.get_queue = MagicMock(return_value=mock_queue)
 
-    # Patch the app.server.plugins module to contain our mock saq plugin
-    # Note: The patch target string depends on where 'plugins' is accessed from.
-    # If 'get_task_queue' imports it directly as 'from app.server import plugins',
-    # the target should be 'app.lib.deps.plugins'.
-    with patch("app.server") as mock_server:
-        mock_server.plugins.saq = mock_saq_plugin
-
+    # Patch the saq plugin directly in the plugins module
+    with patch("app.server.plugins.saq", mock_saq_plugin):
         # Call the function under test
         returned_queue = await deps.get_task_queue()
 

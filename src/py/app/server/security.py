@@ -181,6 +181,42 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     return user if user and user.is_active else None
 
 
+def create_access_token(
+    user_id: str,
+    email: str,
+    is_superuser: bool = False,
+    is_verified: bool = False,
+    auth_method: str = "password",
+) -> str:
+    """Create a JWT access token.
+
+    Args:
+        user_id: User ID
+        email: User email
+        is_superuser: Whether user is superuser
+        is_verified: Whether user email is verified
+        auth_method: Authentication method used
+
+    Returns:
+        JWT token string
+    """
+    from datetime import UTC, datetime, timedelta
+
+    from litestar.security.jwt import Token
+
+    token = Token(
+        sub=email,
+        exp=datetime.now(UTC) + timedelta(hours=1),  # 1 hour expiration
+        extras={
+            "user_id": user_id,
+            "is_superuser": is_superuser,
+            "is_verified": is_verified,
+            "auth_method": auth_method,
+        },
+    )
+    return token.encode(secret=settings.app.SECRET_KEY, algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM)
+
+
 auth = OAuth2PasswordBearerAuth[m.User](
     retrieve_user_handler=current_user_from_token,
     token_secret=settings.app.SECRET_KEY,
@@ -189,6 +225,10 @@ auth = OAuth2PasswordBearerAuth[m.User](
         "/api/health",
         "/api/access/login",
         "/api/access/signup",
+        "/api/access/forgot-password",
+        "/api/access/reset-password",
+        "/api/email-verification/*",
+        "/api/auth/oauth/*",
         "^/schema",
         "^/public/",
     ],

@@ -9,7 +9,31 @@ export type AccountRegister = {
     email: string;
     password: string;
     name?: string | null;
+    username?: string | null;
     initialTeamName?: string | null;
+};
+
+export type AppSettings = {
+    NAME?: string;
+    VERSION?: string;
+    CONTACT_NAME?: string;
+    CONTACT_EMAIL?: string;
+    URL?: string;
+    DEBUG?: boolean;
+    SECRET_KEY?: string;
+    JWT_ENCRYPTION_ALGORITHM?: string;
+    ALLOWED_CORS_ORIGINS?: Array<string> | string;
+    CSRF_COOKIE_NAME?: string;
+    CSRF_HEADER_NAME?: string;
+    CSRF_COOKIE_SECURE?: boolean;
+    STATIC_DIR?: string;
+    STATIC_URL?: string;
+    BASE_URL?: string | null;
+    DEV_MODE?: boolean;
+    ENABLE_INSTRUMENTATION?: boolean;
+    GOOGLE_OAUTH2_CLIENT_ID?: string;
+    GOOGLE_OAUTH2_CLIENT_SECRET?: string;
+    ENV_SECRETS?: string;
 };
 
 export type EmailVerificationConfirm = {
@@ -18,6 +42,15 @@ export type EmailVerificationConfirm = {
 
 export type EmailVerificationRequest = {
     email: string;
+};
+
+export type ForgotPasswordRequest = {
+    email: string;
+};
+
+export type ForgotPasswordResponse = {
+    message: string;
+    expires_in_minutes?: number;
 };
 
 export type Message = {
@@ -31,6 +64,25 @@ export type OAuth2Login = {
     expires_in?: number | null;
 };
 
+export type OAuthAccountInfo = {
+    provider: string;
+    oauth_id: string;
+    email: string;
+    linked_at: string;
+    name?: string | null;
+    avatar_url?: string | null;
+    last_login_at?: string | null;
+};
+
+export type OAuthAuthorizationResponse = {
+    authorization_url: string;
+    state?: string | null;
+};
+
+export type OAuthLinkRequest = {
+    provider: 'google';
+};
+
 export type OauthAccount = {
     id: string;
     oauthName: string;
@@ -39,6 +91,44 @@ export type OauthAccount = {
     accountEmail: string;
     expiresAt?: number | null;
     refreshToken?: string | null;
+};
+
+export type PasswordUpdate = {
+    currentPassword: string;
+    newPassword: string;
+};
+
+export type ProfileUpdate = {
+    name?: string | null;
+    username?: string | null;
+    phone?: string | null;
+};
+
+export type ResetPasswordRequest = {
+    token: string;
+    password: string;
+    password_confirm: string;
+};
+
+export type ResetPasswordResponse = {
+    message: string;
+    user_id: string;
+};
+
+export type Role = {
+    id: string;
+    slug: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type RoleCreate = {
+    name: string;
+};
+
+export type RoleUpdate = {
+    name?: string | null;
 };
 
 export type SystemHealth = {
@@ -75,6 +165,19 @@ export type TeamCreate = {
     tags?: Array<string>;
 };
 
+export type TeamInvitation = {
+    id: string;
+    email: string;
+    role: TeamRoles;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type TeamInvitationCreate = {
+    email: string;
+    role: TeamRoles;
+};
+
 export type TeamMember = {
     id: string;
     userId: string;
@@ -109,6 +212,8 @@ export type User = {
     id: string;
     email: string;
     name?: string | null;
+    username?: string | null;
+    phone?: string | null;
     isSuperuser?: boolean;
     isActive?: boolean;
     isVerified?: boolean;
@@ -123,6 +228,8 @@ export type UserCreate = {
     email: string;
     password: string;
     name?: string | null;
+    username?: string | null;
+    phone?: string | null;
     isSuperuser?: boolean;
     isActive?: boolean;
     isVerified?: boolean;
@@ -154,9 +261,17 @@ export type UserUpdate = {
     email?: string | null;
     password?: string | null;
     name?: string | null;
+    username?: string | null;
+    phone?: string | null;
     isSuperuser?: boolean | null;
     isActive?: boolean | null;
     isVerified?: boolean | null;
+};
+
+export type ValidateResetTokenResponse = {
+    valid: boolean;
+    user_id?: string | null;
+    expires_at?: string | null;
 };
 
 export type SystemHealthData = {
@@ -174,6 +289,35 @@ export type SystemHealthResponses = {
 };
 
 export type SystemHealthResponse = SystemHealthResponses[keyof SystemHealthResponses];
+
+export type ForgotPasswordData = {
+    body: ForgotPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/access/forgot-password';
+};
+
+export type ForgotPasswordErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ForgotPasswordError = ForgotPasswordErrors[keyof ForgotPasswordErrors];
+
+export type ForgotPasswordResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: ForgotPasswordResponse;
+};
+
+export type ForgotPasswordResponse2 = ForgotPasswordResponses[keyof ForgotPasswordResponses];
 
 export type AccountLoginData = {
     body: AccountLogin;
@@ -219,6 +363,66 @@ export type AccountLogoutResponses = {
 };
 
 export type AccountLogoutResponse = AccountLogoutResponses[keyof AccountLogoutResponses];
+
+export type ValidateResetTokenData = {
+    body?: never;
+    path?: never;
+    query: {
+        token: string;
+    };
+    url: '/api/access/reset-password';
+};
+
+export type ValidateResetTokenErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ValidateResetTokenError = ValidateResetTokenErrors[keyof ValidateResetTokenErrors];
+
+export type ValidateResetTokenResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: ValidateResetTokenResponse;
+};
+
+export type ValidateResetTokenResponse2 = ValidateResetTokenResponses[keyof ValidateResetTokenResponses];
+
+export type ResetPasswordData = {
+    body: ResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/access/reset-password';
+};
+
+export type ResetPasswordErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ResetPasswordError = ResetPasswordErrors[keyof ResetPasswordErrors];
+
+export type ResetPasswordResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: ResetPasswordResponse;
+};
+
+export type ResetPasswordResponse2 = ResetPasswordResponses[keyof ResetPasswordResponses];
 
 export type AccountRegisterData = {
     body: AccountRegister;
@@ -341,6 +545,445 @@ export type ApiEmailVerificationVerifyVerifyEmailResponses = {
 };
 
 export type ApiEmailVerificationVerifyVerifyEmailResponse = ApiEmailVerificationVerifyVerifyEmailResponses[keyof ApiEmailVerificationVerifyVerifyEmailResponses];
+
+export type ApiAuthOauthAccountsGetOauthAccountsData = {
+    body?: never;
+    path?: never;
+    query: {
+        oauth_account_service: unknown;
+    };
+    url: '/api/auth/oauth/accounts';
+};
+
+export type ApiAuthOauthAccountsGetOauthAccountsErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ApiAuthOauthAccountsGetOauthAccountsError = ApiAuthOauthAccountsGetOauthAccountsErrors[keyof ApiAuthOauthAccountsGetOauthAccountsErrors];
+
+export type ApiAuthOauthAccountsGetOauthAccountsResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: Array<OAuthAccountInfo>;
+};
+
+export type ApiAuthOauthAccountsGetOauthAccountsResponse = ApiAuthOauthAccountsGetOauthAccountsResponses[keyof ApiAuthOauthAccountsGetOauthAccountsResponses];
+
+export type ApiAuthOauthGoogleGoogleAuthorizeData = {
+    body?: never;
+    path?: never;
+    query: {
+        settings: AppSettings;
+        redirect_url?: string | null;
+    };
+    url: '/api/auth/oauth/google';
+};
+
+export type ApiAuthOauthGoogleGoogleAuthorizeErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ApiAuthOauthGoogleGoogleAuthorizeError = ApiAuthOauthGoogleGoogleAuthorizeErrors[keyof ApiAuthOauthGoogleGoogleAuthorizeErrors];
+
+export type ApiAuthOauthGoogleGoogleAuthorizeResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: OAuthAuthorizationResponse;
+};
+
+export type ApiAuthOauthGoogleGoogleAuthorizeResponse = ApiAuthOauthGoogleGoogleAuthorizeResponses[keyof ApiAuthOauthGoogleGoogleAuthorizeResponses];
+
+export type ApiAuthOauthGoogleCallbackGoogleCallbackData = {
+    body?: never;
+    path?: never;
+    query: {
+        session: unknown;
+        settings: AppSettings;
+        user_service: unknown;
+        oauth_account_service: unknown;
+        code: string;
+        state?: string | null;
+        error?: string | null;
+    };
+    url: '/api/auth/oauth/google/callback';
+};
+
+export type ApiAuthOauthGoogleCallbackGoogleCallbackErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ApiAuthOauthGoogleCallbackGoogleCallbackError = ApiAuthOauthGoogleCallbackGoogleCallbackErrors[keyof ApiAuthOauthGoogleCallbackGoogleCallbackErrors];
+
+export type ApiAuthOauthGoogleCallbackGoogleCallbackResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type ApiAuthOauthGoogleCallbackGoogleCallbackResponse = ApiAuthOauthGoogleCallbackGoogleCallbackResponses[keyof ApiAuthOauthGoogleCallbackGoogleCallbackResponses];
+
+export type ApiAuthOauthLinkLinkOauthAccountData = {
+    body: OAuthLinkRequest;
+    path?: never;
+    query: {
+        settings: AppSettings;
+        oauth_account_service: unknown;
+    };
+    url: '/api/auth/oauth/link';
+};
+
+export type ApiAuthOauthLinkLinkOauthAccountErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ApiAuthOauthLinkLinkOauthAccountError = ApiAuthOauthLinkLinkOauthAccountErrors[keyof ApiAuthOauthLinkLinkOauthAccountErrors];
+
+export type ApiAuthOauthLinkLinkOauthAccountResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: OAuthAccountInfo;
+};
+
+export type ApiAuthOauthLinkLinkOauthAccountResponse = ApiAuthOauthLinkLinkOauthAccountResponses[keyof ApiAuthOauthLinkLinkOauthAccountResponses];
+
+export type ApiAuthOauthUnlinkUnlinkOauthAccountData = {
+    body: OAuthLinkRequest;
+    path?: never;
+    query: {
+        oauth_account_service: unknown;
+    };
+    url: '/api/auth/oauth/unlink';
+};
+
+export type ApiAuthOauthUnlinkUnlinkOauthAccountErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ApiAuthOauthUnlinkUnlinkOauthAccountError = ApiAuthOauthUnlinkUnlinkOauthAccountErrors[keyof ApiAuthOauthUnlinkUnlinkOauthAccountErrors];
+
+export type ApiAuthOauthUnlinkUnlinkOauthAccountResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: {
+        [key: string]: unknown;
+    };
+};
+
+export type ApiAuthOauthUnlinkUnlinkOauthAccountResponse = ApiAuthOauthUnlinkUnlinkOauthAccountResponses[keyof ApiAuthOauthUnlinkUnlinkOauthAccountResponses];
+
+export type AccountProfileData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me';
+};
+
+export type AccountProfileResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: User;
+};
+
+export type AccountProfileResponse = AccountProfileResponses[keyof AccountProfileResponses];
+
+export type AccountProfileUpdateData = {
+    body: ProfileUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/me';
+};
+
+export type AccountProfileUpdateErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type AccountProfileUpdateError = AccountProfileUpdateErrors[keyof AccountProfileUpdateErrors];
+
+export type AccountProfileUpdateResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: User;
+};
+
+export type AccountProfileUpdateResponse = AccountProfileUpdateResponses[keyof AccountProfileUpdateResponses];
+
+export type AccountDeleteData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/profile';
+};
+
+export type AccountDeleteResponses = {
+    /**
+     * Request fulfilled, nothing follows
+     */
+    204: void;
+};
+
+export type AccountDeleteResponse = AccountDeleteResponses[keyof AccountDeleteResponses];
+
+export type AccountPasswordUpdateData = {
+    body: PasswordUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/me/password';
+};
+
+export type AccountPasswordUpdateErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type AccountPasswordUpdateError = AccountPasswordUpdateErrors[keyof AccountPasswordUpdateErrors];
+
+export type AccountPasswordUpdateResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: Message;
+};
+
+export type AccountPasswordUpdateResponse = AccountPasswordUpdateResponses[keyof AccountPasswordUpdateResponses];
+
+export type DeleteRoleData = {
+    body?: never;
+    path: {
+        /**
+         * The role to delete.
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/roles/{role_id}';
+};
+
+export type DeleteRoleErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type DeleteRoleError = DeleteRoleErrors[keyof DeleteRoleErrors];
+
+export type DeleteRoleResponses = {
+    /**
+     * Request fulfilled, nothing follows
+     */
+    204: void;
+};
+
+export type DeleteRoleResponse = DeleteRoleResponses[keyof DeleteRoleResponses];
+
+export type GetRoleData = {
+    body?: never;
+    path: {
+        /**
+         * The role to retrieve.
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/roles/{role_id}';
+};
+
+export type GetRoleErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type GetRoleError = GetRoleErrors[keyof GetRoleErrors];
+
+export type GetRoleResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: Role;
+};
+
+export type GetRoleResponse = GetRoleResponses[keyof GetRoleResponses];
+
+export type UpdateRoleData = {
+    body: RoleUpdate;
+    path: {
+        /**
+         * The role to update.
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/roles/{role_id}';
+};
+
+export type UpdateRoleErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type UpdateRoleError = UpdateRoleErrors[keyof UpdateRoleErrors];
+
+export type UpdateRoleResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: Role;
+};
+
+export type UpdateRoleResponse = UpdateRoleResponses[keyof UpdateRoleResponses];
+
+export type CreateRoleData = {
+    body: RoleCreate;
+    path: {
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/roles/{role_id}';
+};
+
+export type CreateRoleErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type CreateRoleError = CreateRoleErrors[keyof CreateRoleErrors];
+
+export type CreateRoleResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: Role;
+};
+
+export type CreateRoleResponse = CreateRoleResponses[keyof CreateRoleResponses];
+
+export type ListRolesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ids?: Array<string> | null;
+        searchString?: string | null;
+        searchIgnoreCase?: boolean | null;
+        orderBy?: string | null;
+        sortOrder?: 'asc' | 'desc' | null;
+    };
+    url: '/api/roles';
+};
+
+export type ListRolesErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ListRolesError = ListRolesErrors[keyof ListRolesErrors];
+
+export type ListRolesResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: {
+        items?: Array<Role>;
+        /**
+         * Maximal number of items to send.
+         */
+        limit?: number;
+        /**
+         * Offset from the beginning of the query.
+         */
+        offset?: number;
+        /**
+         * Total number of items.
+         */
+        total?: number;
+    };
+};
+
+export type ListRolesResponse = ListRolesResponses[keyof ListRolesResponses];
 
 export type ListUsersData = {
     body?: never;
@@ -703,6 +1346,146 @@ export type UpdateTeamResponses = {
 };
 
 export type UpdateTeamResponse = UpdateTeamResponses[keyof UpdateTeamResponses];
+
+export type DeleteTeamInvitationData = {
+    body?: never;
+    path: {
+        team_id: string;
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/{team_id}/{invitation_id}';
+};
+
+export type DeleteTeamInvitationErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type DeleteTeamInvitationError = DeleteTeamInvitationErrors[keyof DeleteTeamInvitationErrors];
+
+export type DeleteTeamInvitationResponses = {
+    /**
+     * Request fulfilled, nothing follows
+     */
+    204: void;
+};
+
+export type DeleteTeamInvitationResponse = DeleteTeamInvitationResponses[keyof DeleteTeamInvitationResponses];
+
+export type AcceptTeamInvitationData = {
+    body?: never;
+    path: {
+        team_id: string;
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/{team_id}/{invitation_id}';
+};
+
+export type AcceptTeamInvitationErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type AcceptTeamInvitationError = AcceptTeamInvitationErrors[keyof AcceptTeamInvitationErrors];
+
+export type AcceptTeamInvitationResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: Message;
+};
+
+export type AcceptTeamInvitationResponse = AcceptTeamInvitationResponses[keyof AcceptTeamInvitationResponses];
+
+export type ListTeamInvitationsData = {
+    body?: never;
+    path: {
+        team_id: string;
+    };
+    query?: never;
+    url: '/{team_id}';
+};
+
+export type ListTeamInvitationsErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type ListTeamInvitationsError = ListTeamInvitationsErrors[keyof ListTeamInvitationsErrors];
+
+export type ListTeamInvitationsResponses = {
+    /**
+     * Request fulfilled, document follows
+     */
+    200: {
+        items?: Array<TeamInvitation>;
+        /**
+         * Maximal number of items to send.
+         */
+        limit?: number;
+        /**
+         * Offset from the beginning of the query.
+         */
+        offset?: number;
+        /**
+         * Total number of items.
+         */
+        total?: number;
+    };
+};
+
+export type ListTeamInvitationsResponse = ListTeamInvitationsResponses[keyof ListTeamInvitationsResponses];
+
+export type CreateTeamInvitationData = {
+    body: TeamInvitationCreate;
+    path: {
+        team_id: string;
+    };
+    query?: never;
+    url: '/{team_id}';
+};
+
+export type CreateTeamInvitationErrors = {
+    /**
+     * Validation Exception
+     */
+    400: {
+        status_code: number;
+        detail: string;
+        extra?: null | Array<unknown> | Array<unknown>;
+    };
+};
+
+export type CreateTeamInvitationError = CreateTeamInvitationErrors[keyof CreateTeamInvitationErrors];
+
+export type CreateTeamInvitationResponses = {
+    /**
+     * Document created, URL follows
+     */
+    201: TeamInvitation;
+};
+
+export type CreateTeamInvitationResponse = CreateTeamInvitationResponses[keyof CreateTeamInvitationResponses];
 
 export type RevokeUserRoleData = {
     body: UserRoleRevoke;
