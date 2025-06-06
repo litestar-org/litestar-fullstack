@@ -25,7 +25,8 @@
     "scratch": true,
     ".static": true,
     "dist": false,
-    ".dmypy.json": true
+    ".dmypy.json": true,
+    ".claude": true,
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "editor.formatOnSave": true,
@@ -123,5 +124,5 @@
     "${workspaceFolder}/src/py"
   ],
   "biome.rename": true,
-  "biome.lspBin": "src/js/node_modules/@biomejs/biome/bin/biome"
+  "biome.lsp.bin": "src/js/node_modules/@biomejs/biome/bin/biome"
 }

@@ -8,14 +8,21 @@ import type {
   AccountLoginResponse,
   AccountLogoutData,
   AccountLogoutResponse,
-  AccountProfileData,
-  AccountProfileResponse,
   AccountRegisterData,
   AccountRegisterError,
   AccountRegisterResponse,
   AddMemberToTeamData,
   AddMemberToTeamError,
   AddMemberToTeamResponse,
+  ApiEmailVerificationRequestRequestVerificationData,
+  ApiEmailVerificationRequestRequestVerificationError,
+  ApiEmailVerificationRequestRequestVerificationResponse,
+  ApiEmailVerificationStatusUserIdGetVerificationStatusData,
+  ApiEmailVerificationStatusUserIdGetVerificationStatusError,
+  ApiEmailVerificationStatusUserIdGetVerificationStatusResponse,
+  ApiEmailVerificationVerifyVerifyEmailData,
+  ApiEmailVerificationVerifyVerifyEmailError,
+  ApiEmailVerificationVerifyVerifyEmailResponse,
   AssignUserRoleData,
   AssignUserRoleError,
   AssignUserRoleResponse,
@@ -154,26 +161,6 @@ export const accountLogout = <ThrowOnError extends boolean = false>(options?: Op
 }
 
 /**
- * Profile
- */
-export const accountProfile = <ThrowOnError extends boolean = false>(options?: Options<AccountProfileData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<AccountProfileResponse, unknown, ThrowOnError>({
-    security: [
-      {
-        scheme: "bearer",
-        type: "http",
-      },
-      {
-        scheme: "bearer",
-        type: "http",
-      },
-    ],
-    url: "/api/me",
-    ...options,
-  })
-}
-
-/**
  * Signup
  */
 export const accountRegister = <ThrowOnError extends boolean = false>(options: Options<AccountRegisterData, ThrowOnError>) => {
@@ -189,6 +176,82 @@ export const accountRegister = <ThrowOnError extends boolean = false>(options: O
       },
     ],
     url: "/api/access/signup",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * GetVerificationStatus
+ */
+export const apiEmailVerificationStatusUserIdGetVerificationStatus = <ThrowOnError extends boolean = false>(
+  options: Options<ApiEmailVerificationStatusUserIdGetVerificationStatusData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ApiEmailVerificationStatusUserIdGetVerificationStatusResponse,
+    ApiEmailVerificationStatusUserIdGetVerificationStatusError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/email-verification/status/{user_id}",
+    ...options,
+  })
+}
+
+/**
+ * RequestVerification
+ */
+export const apiEmailVerificationRequestRequestVerification = <ThrowOnError extends boolean = false>(
+  options: Options<ApiEmailVerificationRequestRequestVerificationData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<ApiEmailVerificationRequestRequestVerificationResponse, ApiEmailVerificationRequestRequestVerificationError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/email-verification/request",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * VerifyEmail
+ */
+export const apiEmailVerificationVerifyVerifyEmail = <ThrowOnError extends boolean = false>(options: Options<ApiEmailVerificationVerifyVerifyEmailData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<ApiEmailVerificationVerifyVerifyEmailResponse, ApiEmailVerificationVerifyVerifyEmailError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/email-verification/verify",
     ...options,
     headers: {
       "Content-Type": "application/json",
