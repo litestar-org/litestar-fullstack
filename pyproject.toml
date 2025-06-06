@@ -193,7 +193,6 @@ exclude = [
   "venv",
   '__pycache__',
   "src/py/app/db/migrations/versions/*.py",
-
 ]
 fix = true
 line-length = 120

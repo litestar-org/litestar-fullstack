@@ -114,27 +114,6 @@
         "deprecated": false
       }
     },
-    "/api/me": {
-      "get": {
-        "tags": ["Access"],
-        "summary": "Profile",
-        "operationId": "AccountProfile",
-        "responses": {
-          "200": {
-            "description": "Request fulfilled, document follows",
-            "headers": {},
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false
-      }
-    },
     "/api/access/signup": {
       "post": {
         "tags": ["Access"],
@@ -153,6 +132,196 @@
         "responses": {
           "201": {
             "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/email-verification/status/{user_id}": {
+      "get": {
+        "summary": "GetVerificationStatus",
+        "operationId": "ApiEmailVerificationStatusUserIdGetVerificationStatus",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "deprecated": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/email-verification/request": {
+      "post": {
+        "summary": "RequestVerification",
+        "operationId": "ApiEmailVerificationRequestRequestVerification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document created, URL follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": ["null", "object", "array"]
+                    }
+                  },
+                  "type": "object",
+                  "required": ["detail", "status_code"],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/email-verification/verify": {
+      "post": {
+        "summary": "VerifyEmail",
+        "operationId": "ApiEmailVerificationVerifyVerifyEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerificationConfirm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
             "headers": {},
             "content": {
               "application/json": {
@@ -1956,6 +2125,26 @@
         "type": "object",
         "required": ["email", "password"],
         "title": "AccountRegister"
+      },
+      "EmailVerificationConfirm": {
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["token"],
+        "title": "EmailVerificationConfirm"
+      },
+      "EmailVerificationRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": ["email"],
+        "title": "EmailVerificationRequest"
       },
       "Message": {
         "properties": {
