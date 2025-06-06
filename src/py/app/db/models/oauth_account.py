@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from uuid import UUID  # noqa: TC003
+from datetime import datetime
+from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from advanced_alchemy.base import UUIDAuditBase
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,19 +17,27 @@ class UserOauthAccount(UUIDAuditBase):
     """User Oauth Account"""
 
     __tablename__ = "user_account_oauth"
-    __table_args__ = {"comment": "Registered OAUTH2 Accounts for Users"}
-    __pii_columns__ = {"oauth_name", "account_email", "account_id"}
+    __table_args__ = (
+        Index("ix_oauth_provider_oauth_id", "oauth_name", "account_id"),
+        Index("ix_oauth_user_provider", "user_id", "oauth_name"),
+        {"comment": "Registered OAUTH2 Accounts for Users"},
+    )
+    __pii_columns__ = {"oauth_name", "account_email", "account_id", "access_token", "refresh_token"}
 
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("user_account.id", ondelete="cascade"),
         nullable=False,
     )
     oauth_name: Mapped[str] = mapped_column(String(length=100), index=True, nullable=False)
-    access_token: Mapped[str] = mapped_column(String(length=1024), nullable=False)
+    access_token: Mapped[str] = mapped_column(Text, nullable=False)
     expires_at: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    refresh_token: Mapped[str | None] = mapped_column(String(length=1024), nullable=True)
+    refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     account_id: Mapped[str] = mapped_column(String(length=320), index=True, nullable=False)
     account_email: Mapped[str] = mapped_column(String(length=320), nullable=False)
+    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    scope: Mapped[str | None] = mapped_column(Text, nullable=True)
+    provider_user_data: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     # -----------
     # ORM Relationships

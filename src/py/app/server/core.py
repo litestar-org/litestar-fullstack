@@ -48,6 +48,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from uuid import UUID
 
         from advanced_alchemy.exceptions import RepositoryError
+        from httpx_oauth.oauth2 import OAuth2Token
         from litestar.enums import RequestEncodingType
         from litestar.params import Body
         from litestar.security.jwt import Token
@@ -69,6 +70,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             UserRoleService,
             UserService,
         )
+        from app.services._email_verification import EmailVerificationTokenService
+        from app.services._password_reset import PasswordResetService
 
         settings = get_settings()
         self.app_slug = settings.app.slug
@@ -96,6 +99,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 plugins.vite,
                 plugins.saq,
                 plugins.problem_details,
+                plugins.oauth2_provider,
             ],
         )
 
@@ -104,8 +108,13 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             [
                 routes.SystemController,
                 routes.AccessController,
+                routes.EmailVerificationController,
+                routes.OAuthController,
+                routes.ProfileController,
+                routes.RoleController,
                 routes.UserController,
                 routes.TeamController,
+                routes.TeamInvitationController,
                 routes.UserRoleController,
                 routes.TeamMemberController,
                 routes.TagController,
@@ -122,7 +131,10 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "m": m,
                 "s": s,
                 "UUID": UUID,
+                "OAuth2Token": OAuth2Token,
                 "UserService": UserService,
+                "EmailVerificationTokenService": EmailVerificationTokenService,
+                "PasswordResetService": PasswordResetService,
                 "RoleService": RoleService,
                 "TeamService": TeamService,
                 "TeamInvitationService": TeamInvitationService,

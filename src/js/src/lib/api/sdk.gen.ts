@@ -3,17 +3,45 @@
 import { type Client, type Options as ClientOptions, type TDataShape, urlSearchParamsBodySerializer } from "@hey-api/client-axios"
 import { client as _heyApiClient } from "./client.gen"
 import type {
+  AcceptTeamInvitationData,
+  AcceptTeamInvitationError,
+  AcceptTeamInvitationResponse,
+  AccountDeleteData,
+  AccountDeleteResponse,
   AccountLoginData,
   AccountLoginError,
   AccountLoginResponse,
   AccountLogoutData,
   AccountLogoutResponse,
+  AccountPasswordUpdateData,
+  AccountPasswordUpdateError,
+  AccountPasswordUpdateResponse,
+  AccountProfileData,
+  AccountProfileResponse,
+  AccountProfileUpdateData,
+  AccountProfileUpdateError,
+  AccountProfileUpdateResponse,
   AccountRegisterData,
   AccountRegisterError,
   AccountRegisterResponse,
   AddMemberToTeamData,
   AddMemberToTeamError,
   AddMemberToTeamResponse,
+  ApiAuthOauthAccountsGetOauthAccountsData,
+  ApiAuthOauthAccountsGetOauthAccountsError,
+  ApiAuthOauthAccountsGetOauthAccountsResponse,
+  ApiAuthOauthGoogleCallbackGoogleCallbackData,
+  ApiAuthOauthGoogleCallbackGoogleCallbackError,
+  ApiAuthOauthGoogleCallbackGoogleCallbackResponse,
+  ApiAuthOauthGoogleGoogleAuthorizeData,
+  ApiAuthOauthGoogleGoogleAuthorizeError,
+  ApiAuthOauthGoogleGoogleAuthorizeResponse,
+  ApiAuthOauthLinkLinkOauthAccountData,
+  ApiAuthOauthLinkLinkOauthAccountError,
+  ApiAuthOauthLinkLinkOauthAccountResponse,
+  ApiAuthOauthUnlinkUnlinkOauthAccountData,
+  ApiAuthOauthUnlinkUnlinkOauthAccountError,
+  ApiAuthOauthUnlinkUnlinkOauthAccountResponse,
   ApiEmailVerificationRequestRequestVerificationData,
   ApiEmailVerificationRequestRequestVerificationError,
   ApiEmailVerificationRequestRequestVerificationResponse,
@@ -26,24 +54,42 @@ import type {
   AssignUserRoleData,
   AssignUserRoleError,
   AssignUserRoleResponse,
+  CreateRoleData,
+  CreateRoleError,
+  CreateRoleResponse,
   CreateTagData,
   CreateTagError,
   CreateTagResponse,
   CreateTeamData,
   CreateTeamError,
+  CreateTeamInvitationData,
+  CreateTeamInvitationError,
+  CreateTeamInvitationResponse,
   CreateTeamResponse,
   CreateUserData,
   CreateUserError,
   CreateUserResponse,
+  DeleteRoleData,
+  DeleteRoleError,
+  DeleteRoleResponse,
   DeleteTagData,
   DeleteTagError,
   DeleteTagResponse,
   DeleteTeamData,
   DeleteTeamError,
+  DeleteTeamInvitationData,
+  DeleteTeamInvitationError,
+  DeleteTeamInvitationResponse,
   DeleteTeamResponse,
   DeleteUserData,
   DeleteUserError,
   DeleteUserResponse,
+  ForgotPasswordData,
+  ForgotPasswordError,
+  ForgotPasswordResponse2,
+  GetRoleData,
+  GetRoleError,
+  GetRoleResponse,
   GetTagData,
   GetTagError,
   GetTagResponse,
@@ -53,9 +99,15 @@ import type {
   GetUserData,
   GetUserError,
   GetUserResponse,
+  ListRolesData,
+  ListRolesError,
+  ListRolesResponse,
   ListTagsData,
   ListTagsError,
   ListTagsResponse,
+  ListTeamInvitationsData,
+  ListTeamInvitationsError,
+  ListTeamInvitationsResponse,
   ListTeamsData,
   ListTeamsError,
   ListTeamsResponse,
@@ -65,11 +117,17 @@ import type {
   RemoveMemberFromTeamData,
   RemoveMemberFromTeamError,
   RemoveMemberFromTeamResponse,
+  ResetPasswordData,
+  ResetPasswordError,
+  ResetPasswordResponse2,
   RevokeUserRoleData,
   RevokeUserRoleError,
   RevokeUserRoleResponse,
   SystemHealthData,
   SystemHealthResponse,
+  UpdateRoleData,
+  UpdateRoleError,
+  UpdateRoleResponse,
   UpdateTagData,
   UpdateTagError,
   UpdateTagResponse,
@@ -79,6 +137,9 @@ import type {
   UpdateUserData,
   UpdateUserError,
   UpdateUserResponse,
+  ValidateResetTokenData,
+  ValidateResetTokenError,
+  ValidateResetTokenResponse2,
 } from "./types.gen"
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = ClientOptions<TData, ThrowOnError> & {
@@ -112,6 +173,30 @@ export const systemHealth = <ThrowOnError extends boolean = false>(options?: Opt
     ],
     url: "/health",
     ...options,
+  })
+}
+
+/**
+ * ForgotPassword
+ */
+export const forgotPassword = <ThrowOnError extends boolean = false>(options: Options<ForgotPasswordData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<ForgotPasswordResponse2, ForgotPasswordError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/access/forgot-password",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
   })
 }
 
@@ -157,6 +242,50 @@ export const accountLogout = <ThrowOnError extends boolean = false>(options?: Op
     ],
     url: "/api/access/logout",
     ...options,
+  })
+}
+
+/**
+ * ValidateResetToken
+ */
+export const validateResetToken = <ThrowOnError extends boolean = false>(options: Options<ValidateResetTokenData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<ValidateResetTokenResponse2, ValidateResetTokenError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/access/reset-password",
+    ...options,
+  })
+}
+
+/**
+ * ResetPasswordWithToken
+ */
+export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<ResetPasswordResponse2, ResetPasswordError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/access/reset-password",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
   })
 }
 
@@ -257,6 +386,311 @@ export const apiEmailVerificationVerifyVerifyEmail = <ThrowOnError extends boole
       "Content-Type": "application/json",
       ...options?.headers,
     },
+  })
+}
+
+/**
+ * GetOauthAccounts
+ */
+export const apiAuthOauthAccountsGetOauthAccounts = <ThrowOnError extends boolean = false>(options: Options<ApiAuthOauthAccountsGetOauthAccountsData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<ApiAuthOauthAccountsGetOauthAccountsResponse, ApiAuthOauthAccountsGetOauthAccountsError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/auth/oauth/accounts",
+    ...options,
+  })
+}
+
+/**
+ * GoogleAuthorize
+ */
+export const apiAuthOauthGoogleGoogleAuthorize = <ThrowOnError extends boolean = false>(options: Options<ApiAuthOauthGoogleGoogleAuthorizeData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<ApiAuthOauthGoogleGoogleAuthorizeResponse, ApiAuthOauthGoogleGoogleAuthorizeError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/auth/oauth/google",
+    ...options,
+  })
+}
+
+/**
+ * GoogleCallback
+ */
+export const apiAuthOauthGoogleCallbackGoogleCallback = <ThrowOnError extends boolean = false>(options: Options<ApiAuthOauthGoogleCallbackGoogleCallbackData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<ApiAuthOauthGoogleCallbackGoogleCallbackResponse, ApiAuthOauthGoogleCallbackGoogleCallbackError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/auth/oauth/google/callback",
+    ...options,
+  })
+}
+
+/**
+ * LinkOauthAccount
+ */
+export const apiAuthOauthLinkLinkOauthAccount = <ThrowOnError extends boolean = false>(options: Options<ApiAuthOauthLinkLinkOauthAccountData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<ApiAuthOauthLinkLinkOauthAccountResponse, ApiAuthOauthLinkLinkOauthAccountError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/auth/oauth/link",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * UnlinkOauthAccount
+ */
+export const apiAuthOauthUnlinkUnlinkOauthAccount = <ThrowOnError extends boolean = false>(options: Options<ApiAuthOauthUnlinkUnlinkOauthAccountData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<ApiAuthOauthUnlinkUnlinkOauthAccountResponse, ApiAuthOauthUnlinkUnlinkOauthAccountError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/auth/oauth/unlink",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * User Profile
+ * User profile information.
+ */
+export const accountProfile = <ThrowOnError extends boolean = false>(options?: Options<AccountProfileData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).get<AccountProfileResponse, unknown, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/me",
+    ...options,
+  })
+}
+
+/**
+ * UpdateProfile
+ */
+export const accountProfileUpdate = <ThrowOnError extends boolean = false>(options: Options<AccountProfileUpdateData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).patch<AccountProfileUpdateResponse, AccountProfileUpdateError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/me",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * RemoveAccount
+ */
+export const accountDelete = <ThrowOnError extends boolean = false>(options?: Options<AccountDeleteData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).delete<AccountDeleteResponse, unknown, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/profile",
+    ...options,
+  })
+}
+
+/**
+ * UpdatePassword
+ */
+export const accountPasswordUpdate = <ThrowOnError extends boolean = false>(options: Options<AccountPasswordUpdateData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).patch<AccountPasswordUpdateResponse, AccountPasswordUpdateError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/me/password",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * DeleteRole
+ */
+export const deleteRole = <ThrowOnError extends boolean = false>(options: Options<DeleteRoleData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).delete<DeleteRoleResponse, DeleteRoleError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/roles/{role_id}",
+    ...options,
+  })
+}
+
+/**
+ * GetRole
+ */
+export const getRole = <ThrowOnError extends boolean = false>(options: Options<GetRoleData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<GetRoleResponse, GetRoleError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/roles/{role_id}",
+    ...options,
+  })
+}
+
+/**
+ * UpdateRole
+ */
+export const updateRole = <ThrowOnError extends boolean = false>(options: Options<UpdateRoleData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).patch<UpdateRoleResponse, UpdateRoleError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/roles/{role_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * CreateRole
+ */
+export const createRole = <ThrowOnError extends boolean = false>(options: Options<CreateRoleData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<CreateRoleResponse, CreateRoleError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/roles/{role_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * ListRoles
+ */
+export const listRoles = <ThrowOnError extends boolean = false>(options?: Options<ListRolesData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).get<ListRolesResponse, ListRolesError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/roles",
+    ...options,
   })
 }
 
@@ -468,6 +902,90 @@ export const updateTeam = <ThrowOnError extends boolean = false>(options: Option
       },
     ],
     url: "/api/teams/{team_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+}
+
+/**
+ * DeleteTeamInvitation
+ */
+export const deleteTeamInvitation = <ThrowOnError extends boolean = false>(options: Options<DeleteTeamInvitationData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).delete<DeleteTeamInvitationResponse, DeleteTeamInvitationError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/{team_id}/{invitation_id}",
+    ...options,
+  })
+}
+
+/**
+ * AcceptTeamInvitation
+ */
+export const acceptTeamInvitation = <ThrowOnError extends boolean = false>(options: Options<AcceptTeamInvitationData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<AcceptTeamInvitationResponse, AcceptTeamInvitationError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/{team_id}/{invitation_id}",
+    ...options,
+  })
+}
+
+/**
+ * ListTeamInvitations
+ */
+export const listTeamInvitations = <ThrowOnError extends boolean = false>(options: Options<ListTeamInvitationsData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<ListTeamInvitationsResponse, ListTeamInvitationsError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/{team_id}",
+    ...options,
+  })
+}
+
+/**
+ * CreateTeamInvitation
+ */
+export const createTeamInvitation = <ThrowOnError extends boolean = false>(options: Options<CreateTeamInvitationData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<CreateTeamInvitationResponse, CreateTeamInvitationError, ThrowOnError>({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/{team_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",

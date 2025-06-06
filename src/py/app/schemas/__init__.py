@@ -11,6 +11,21 @@ from app.schemas.accounts import (
     UserUpdate,
 )
 from app.schemas.base import BaseSchema, BaseStruct, CamelizedBaseSchema, CamelizedBaseStruct, Message
+from app.schemas.oauth import (
+    OAuthAccountInfo,
+    OAuthAuthorizationRequest,
+    OAuthAuthorizationResponse,
+    OAuthCallbackRequest,
+    OAuthLinkRequest,
+)
+from app.schemas.password_reset import (
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
+    ResetPasswordRequest,
+    ResetPasswordResponse,
+    ValidateResetTokenRequest,
+    ValidateResetTokenResponse,
+)
 from app.schemas.roles import Role, RoleCreate, RoleUpdate
 from app.schemas.system import SystemHealth
 from app.schemas.tags import Tag, TagCreate, TagUpdate
@@ -32,10 +47,19 @@ __all__ = (
     "BaseStruct",
     "CamelizedBaseSchema",
     "CamelizedBaseStruct",
+    "ForgotPasswordRequest",
+    "ForgotPasswordResponse",
     "Message",
+    "OAuthAccountInfo",
+    "OAuthAuthorizationRequest",
+    "OAuthAuthorizationResponse",
+    "OAuthCallbackRequest",
+    "OAuthLinkRequest",
     "PasswordUpdate",
     "PasswordVerify",
     "ProfileUpdate",
+    "ResetPasswordRequest",
+    "ResetPasswordResponse",
     "Role",
     "RoleCreate",
     "RoleUpdate",
@@ -56,4 +80,6 @@ __all__ = (
     "UserRoleAdd",
     "UserRoleRevoke",
     "UserUpdate",
+    "ValidateResetTokenRequest",
+    "ValidateResetTokenResponse",
 )
