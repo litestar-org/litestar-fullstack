@@ -36,6 +36,9 @@ It contains most of the boilerplate required for a production web API with featu
 
 Take what you need and adapt it to your own projects
 
+## Clone Litestar Fullstack
+![Clone_litestar_fullstack](https://github.com/user-attachments/assets/3a718c63-214c-429f-b34a-e7314d645f74)
+
 ## Quick Start
 
 To quickly get a development environment running, run the following:
