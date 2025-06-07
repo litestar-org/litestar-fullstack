@@ -65,6 +65,18 @@ If you want to run the entire development environment containerized, you can run
 docker compose up
 ```
 
+## Accessing from a Cloud Server
+
+If you're running this application on a cloud VM, follow these additional steps to make it accessible from your local machine:
+
+### Bind Litestar to All Interfaces
+
+By default, Litestar runs on `localhost` only. Use the `--host` flag to allow external access:
+
+```bash
+uv run app run --host 0.0.0.0 --port 8000
+```
+
 ### Details
 
 We have documented the process to help you get the repository up and running.
