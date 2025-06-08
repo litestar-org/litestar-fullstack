@@ -21,7 +21,7 @@ from app.utils import env
         ("TEST_BOOL_FALSE1", "False", True, False, env._UNSET),
         ("TEST_BOOL_FALSE2", "no", True, False, env._UNSET),
         ("TEST_BOOL_FALSE3", "0", True, False, env._UNSET),
-        ("TEST_PATH", "/tmp/test", Path("/default"), Path("/tmp/test"), env._UNSET),  # noqa: S108
+        ("TEST_PATH", "/tmp/test", Path("/default"), Path("/tmp/test"), env._UNSET),
         # List types - Env var set
         ("TEST_LIST_STR_COMMA", "a, b, c", [], ["a", "b", "c"], env._UNSET),
         ("TEST_LIST_STR_JSON", '["x", "y", "z"]', [], ["x", "y", "z"], env._UNSET),

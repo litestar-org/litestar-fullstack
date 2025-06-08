@@ -44,7 +44,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       GOOGLE_CLIENT_SECRET: str = ""
       GOOGLE_REDIRECT_URI: str = ""
       OAUTH_ENABLED: bool = False
-      
+
   # Add to main Settings class
   oauth: OAuthSettings = field(default_factory=OAuthSettings)
   ```
@@ -64,7 +64,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   # Update: src/py/app/db/models/oauth_account.py
   class UserOauthAccount(UUIDAuditBase):
       __tablename__ = "user_oauth_accounts"
-      
+
       # Existing fields...
       access_token: Mapped[str | None] = mapped_column(Text, nullable=True)
       refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -72,7 +72,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       scope: Mapped[str | None] = mapped_column(Text, nullable=True)
       provider_user_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
       last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-      
+
       # Add indexes for performance
       __table_args__ = (
           Index('ix_oauth_provider_oauth_id', 'provider', 'oauth_id'),
@@ -85,7 +85,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   # File: src/py/app/db/models/oauth_state.py
   class OAuthState(UUIDAuditBase):
       __tablename__ = "oauth_states"
-      
+
       state: Mapped[str] = mapped_column(String(255), unique=True, index=True)
       provider: Mapped[str] = mapped_column(String(50))
       redirect_url: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -99,7 +99,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   ```python
   # File: src/py/app/services/_oauth_google.py
   from httpx_oauth.clients.google import GoogleOAuth2
-  
+
   class GoogleOAuthService:
       def __init__(self, settings: OAuthSettings):
           self.client = GoogleOAuth2(
@@ -107,24 +107,24 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
               client_secret=settings.GOOGLE_CLIENT_SECRET
           )
           self.settings = settings
-      
+
       async def get_authorization_url(
-          self, 
-          state: str, 
+          self,
+          state: str,
           redirect_uri: str
       ) -> str:
           """Generate OAuth authorization URL"""
-          
+
       async def exchange_code_for_token(
-          self, 
-          code: str, 
+          self,
+          code: str,
           redirect_uri: str
       ) -> OAuth2Token:
           """Exchange authorization code for access token"""
-          
+
       async def get_user_info(self, access_token: str) -> dict:
           """Get user information from Google API"""
-          
+
       async def refresh_access_token(self, refresh_token: str) -> OAuth2Token:
           """Refresh expired access token"""
   ```
@@ -134,7 +134,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   # Update: src/py/app/services/_user_oauth_accounts.py
   class UserOAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOauthAccount]):
       # Existing implementation...
-      
+
       async def create_or_update_oauth_account(
           self,
           user_id: UUID,
@@ -143,14 +143,14 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           token_data: OAuth2Token
       ) -> m.UserOauthAccount:
           """Create or update OAuth account with token data"""
-          
+
       async def find_user_by_oauth_account(
           self,
           provider: str,
           oauth_id: str
       ) -> m.User | None:
           """Find user by OAuth provider and ID"""
-          
+
       async def link_oauth_account(
           self,
           user_id: UUID,
@@ -159,7 +159,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           token_data: OAuth2Token
       ) -> m.UserOauthAccount:
           """Link OAuth account to existing user"""
-          
+
       async def unlink_oauth_account(
           self,
           user_id: UUID,
@@ -176,7 +176,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       class Repo(repository.SQLAlchemyAsyncRepository[m.OAuthState]):
           model_type = m.OAuthState
       repository_type = Repo
-      
+
       async def create_state(
           self,
           provider: str,
@@ -185,14 +185,14 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           ip_address: str | None = None
       ) -> str:
           """Create and store OAuth state parameter"""
-          
+
       async def validate_and_consume_state(
           self,
           state: str,
           provider: str
       ) -> m.OAuthState | None:
           """Validate state and mark as used"""
-          
+
       async def cleanup_expired_states(self) -> int:
           """Remove expired OAuth states"""
   ```
@@ -205,22 +205,22 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   class OAuthAuthorizationRequest(msgspec.Struct):
       provider: str = msgspec.field(pattern=r'^(google|github)$')
       redirect_url: str | None = None
-  
+
   @dataclass
   class OAuthAuthorizationResponse(msgspec.Struct):
       authorization_url: str
       state: str
-  
+
   @dataclass
   class OAuthCallbackRequest(msgspec.Struct):
       code: str
       state: str
       provider: str = msgspec.field(pattern=r'^(google|github)$')
-  
+
   @dataclass
   class OAuthLinkRequest(msgspec.Struct):
       provider: str = msgspec.field(pattern=r'^(google|github)$')
-  
+
   @dataclass
   class OAuthAccountInfo(msgspec.Struct):
       provider: str
@@ -238,11 +238,11 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   # File: src/py/app/server/routes/oauth.py
   from litestar import Controller, get, post
   from litestar.params import Parameter
-  
+
   class OAuthController(Controller):
       path = "/api/auth"
       tags = ["OAuth Authentication"]
-      
+
       @get("/google")
       async def google_authorize(
           self,
@@ -252,7 +252,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           redirect_url: str | None = Parameter(query="redirect_url", required=False)
       ) -> OAuthAuthorizationResponse:
           """Initiate Google OAuth flow"""
-          
+
       @get("/google/callback")
       async def google_callback(
           self,
@@ -266,7 +266,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           oauth_account_service: UserOAuthAccountService
       ) -> Response:
           """Handle Google OAuth callback"""
-          
+
       @post("/link")
       async def link_oauth_account(
           self,
@@ -275,7 +275,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
           oauth_account_service: UserOAuthAccountService
       ) -> OAuthAccountInfo:
           """Link OAuth account to current user"""
-          
+
       @post("/unlink")
       async def unlink_oauth_account(
           self,
@@ -306,7 +306,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       settings: Settings = Depends(provide_settings)
   ) -> GoogleOAuthService:
       return GoogleOAuthService(settings.oauth)
-  
+
   async def provide_oauth_state_service(
       session: AsyncSession = Depends(provide_session)
   ) -> OAuthStateService:
@@ -328,7 +328,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       # Generate unique username if needed
       # Set email as verified (from OAuth provider)
       # Create associated OAuth account record
-      
+
   async def authenticate_or_create_oauth_user(
       self,
       provider: str,
@@ -345,7 +345,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   # File: src/py/app/server/jobs/oauth.py
   async def cleanup_expired_oauth_states(ctx: dict) -> None:
       """Remove expired OAuth state records"""
-      
+
   async def refresh_expired_oauth_tokens(ctx: dict) -> None:
       """Refresh expired OAuth access tokens"""
   ```
@@ -362,12 +362,12 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
     onError?: (error: string) => void;
     redirectUrl?: string;
   }
-  
-  export function GoogleSignInButton({ 
-    variant = 'signin', 
-    onSuccess, 
+
+  export function GoogleSignInButton({
+    variant = 'signin',
+    onSuccess,
     onError,
-    redirectUrl 
+    redirectUrl
   }: GoogleSignInButtonProps) {
     // Google branding compliance
     // Loading states
@@ -399,7 +399,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
     linkedAt: string;
     lastLoginAt?: string;
   }
-  
+
   export function OAuthAccountsSection() {
     // Display linked OAuth accounts
     // Add new OAuth account linking
@@ -440,7 +440,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
     onRetry: () => void;
     onCancel: () => void;
   }
-  
+
   export function OAuthError({ error, onRetry, onCancel }: OAuthErrorProps) {
     // Display user-friendly error messages
     // Provide retry options where appropriate
@@ -478,7 +478,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
   // File: src/js/src/lib/api/oauth.ts
   export const useGoogleAuth = () => {
     return useMutation({
-      mutationFn: (redirectUrl?: string) => 
+      mutationFn: (redirectUrl?: string) =>
         client.auth.googleAuthorize({ redirect_url: redirectUrl }),
       onSuccess: (data) => {
         // Redirect to Google OAuth
@@ -486,7 +486,7 @@ Implement complete Google OAuth2 integration allowing users to sign up and log i
       }
     });
   };
-  
+
   export const useLinkOAuthAccount = () => useMutation(...)
   export const useUnlinkOAuthAccount = () => useMutation(...)
   export const useOAuthAccounts = () => useQuery(...)

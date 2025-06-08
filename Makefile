@@ -215,6 +215,37 @@ infra-logs:                                           ## Tail development infras
 	@echo "${INFO} Tailing infrastructure logs... 📋"
 	@docker compose -f tools/deploy/docker/docker-compose.infra.yml logs -f
 
+.PHONY: mailhog
+mailhog:                                              ## Open MailHog web interface
+	@echo "${INFO} Opening MailHog web interface... 📧"
+	@echo "${INFO} MailHog UI: http://localhost:18025"
+	@echo "${INFO} SMTP Server: localhost:11025"
+	@if command -v open >/dev/null 2>&1; then \
+		open http://localhost:18025; \
+	elif command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open http://localhost:18025; \
+	else \
+		echo "${WARN} Please open http://localhost:18025 in your browser"; \
+	fi
+
+.PHONY: keycloak
+keycloak:                                             ## Open Keycloak admin console
+	@echo "${INFO} Opening Keycloak admin console... 🔐"
+	@echo "${INFO} Keycloak Admin: http://localhost:18080"
+	@echo "${INFO} Username: admin | Password: admin"
+	@if command -v open >/dev/null 2>&1; then \
+		open http://localhost:18080; \
+	elif command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open http://localhost:18080; \
+	else \
+		echo "${WARN} Please open http://localhost:18080 in your browser"; \
+	fi
+
+.PHONY: keycloak-setup
+keycloak-setup:                                       ## Setup Keycloak with development OAuth client
+	@echo "${INFO} Setting up Keycloak for development... 🔧"
+	@bash tools/deploy/docker/keycloak-setup.sh
+
 .PHONY: start-all
 start-all:                                        ## Start local containers
 	@echo "${INFO} Starting local infrastructure... 🚀"

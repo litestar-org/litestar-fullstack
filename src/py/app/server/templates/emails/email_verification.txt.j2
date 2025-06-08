@@ -1,0 +1,19 @@
+Welcome to {{ app_name }}!
+
+Hi{{ ' ' + user.name if user.name else ' there' }},
+
+Thanks for signing up for {{ app_name }}. To complete your registration, please verify your email address by visiting the link below:
+
+{{ verification_url }}
+
+This link will expire in {{ expires_in_hours }} hours.
+
+If you didn't create an account with {{ app_name }}, please ignore this email.
+
+Need help? Contact our support team if you have any questions.
+
+Best regards,
+{{ app_name }} Team
+
+--
+This is an automated email. Please do not reply to this message.

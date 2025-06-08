@@ -25,10 +25,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
     match_fields = ["token"]
 
     async def create_reset_token(
-        self,
-        user_id: UUID,
-        ip_address: str | None = None,
-        user_agent: str | None = None
+        self, user_id: UUID, ip_address: str | None = None, user_agent: str | None = None
     ) -> m.PasswordResetToken:
         """Create a new password reset token for a user.
 
@@ -52,7 +49,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             token=token,
             expires_at=m.PasswordResetToken.create_expires_at(hours=1),
             ip_address=ip_address,
-            user_agent=user_agent
+            user_agent=user_agent,
         )
 
         return await self.repository.add(reset_token)
@@ -113,8 +110,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         """
         # Find all active tokens for this user
         tokens = await self.repository.list(
-            m.PasswordResetToken.user_id == user_id,
-            m.PasswordResetToken.used_at.is_(None)
+            m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.used_at.is_(None)
         )
 
         # Mark them as used (invalidated)
@@ -133,9 +129,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             Number of tokens removed
         """
         current_time = datetime.now(UTC)
-        expired_tokens = await self.repository.list(
-            m.PasswordResetToken.expires_at < current_time
-        )
+        expired_tokens = await self.repository.list(m.PasswordResetToken.expires_at < current_time)
 
         if not expired_tokens:
             return 0
@@ -156,8 +150,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         cutoff_time = datetime.now(UTC).replace(hour=datetime.now(UTC).hour - hours)
 
         recent_tokens = await self.repository.list(
-            m.PasswordResetToken.user_id == user_id,
-            m.PasswordResetToken.created_at >= cutoff_time
+            m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.created_at >= cutoff_time
         )
 
         # Allow maximum of 3 reset requests per hour

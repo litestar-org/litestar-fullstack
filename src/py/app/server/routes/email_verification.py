@@ -45,17 +45,14 @@ class EmailVerificationController(Controller):
             return {"message": "Email is already verified"}
 
         # Create verification token
-        token = await verification_service.create_verification_token(
-            user_id=user.id,
-            email=user.email
-        )
+        token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
 
         # Send verification email
         await email_service.send_verification_email(user, token)
 
         return {
             "message": "Verification email sent",
-            "token": token.token  # Remove this in production - only for testing
+            "token": token.token,  # Remove this in production - only for testing
         }
 
     @post("/verify", status_code=HTTP_200_OK)
@@ -70,10 +67,7 @@ class EmailVerificationController(Controller):
         verification_token = await verification_service.verify_token(data.token)
 
         # Mark user's email as verified
-        user = await users_service.verify_email(
-            user_id=verification_token.user_id,
-            email=verification_token.email
-        )
+        user = await users_service.verify_email(user_id=verification_token.user_id, email=verification_token.email)
 
         return users_service.to_schema(user, schema_type=User)
 

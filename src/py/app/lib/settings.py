@@ -52,7 +52,9 @@ class DatabaseSettings:
     """Amount of time to wait before recycling connections."""
     POOL_PRE_PING: bool = field(default_factory=get_env("DATABASE_PRE_POOL_PING", False))
     """Optionally ping database before fetching a session from the connection pool."""
-    URL: str = field(default_factory=get_env("DATABASE_URL", "postgres://app:app@localhost:15432/app"))
+    URL: str = field(
+        default_factory=get_env("DATABASE_URL", "postgres://app:app@localhost:15432/app")
+    )  # todo: let's default to None and raise a better overall error message if not set
     """SQLAlchemy Database URL."""
     MIGRATION_CONFIG: str = field(
         default_factory=get_env("DATABASE_MIGRATION_CONFIG", f"{BASE_DIR}/db/migrations/alembic.ini")
@@ -167,6 +169,32 @@ class StorageSettings:
     """The path to the private storage directory."""
     PRIVATE_STORAGE_OPTIONS: dict[str, Any] = field(default_factory=get_env("PRIVATE_STORAGE_OPTIONS", {}))
     """The options to use for the private storage directory."""
+
+
+@dataclass
+class EmailSettings:
+    """Email configuration"""
+
+    ENABLED: bool = field(default_factory=get_env("EMAIL_ENABLED", False))
+    """Whether email sending is enabled."""
+    SMTP_HOST: str = field(default_factory=get_env("EMAIL_SMTP_HOST", "localhost"))
+    """SMTP server hostname."""
+    SMTP_PORT: int = field(default_factory=get_env("EMAIL_SMTP_PORT", 587, int))
+    """SMTP server port."""
+    SMTP_USER: str = field(default_factory=get_env("EMAIL_SMTP_USER", ""))
+    """SMTP username."""
+    SMTP_PASSWORD: str = field(default_factory=get_env("EMAIL_SMTP_PASSWORD", ""))
+    """SMTP password."""
+    USE_TLS: bool = field(default_factory=get_env("EMAIL_USE_TLS", True))
+    """Use TLS for SMTP connection."""
+    USE_SSL: bool = field(default_factory=get_env("EMAIL_USE_SSL", False))
+    """Use SSL for SMTP connection."""
+    FROM_EMAIL: str = field(default_factory=get_env("EMAIL_FROM_ADDRESS", "noreply@localhost"))
+    """Default from email address."""
+    FROM_NAME: str = field(default_factory=get_env("EMAIL_FROM_NAME", "Litestar App"))
+    """Default from name."""
+    TIMEOUT: int = field(default_factory=get_env("EMAIL_TIMEOUT", 30, int))
+    """SMTP connection timeout in seconds."""
 
 
 @dataclass
@@ -304,6 +332,7 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
     storage: StorageSettings = field(default_factory=StorageSettings)
+    email: EmailSettings = field(default_factory=EmailSettings)
 
     @classmethod
     @lru_cache(maxsize=1, typed=True)

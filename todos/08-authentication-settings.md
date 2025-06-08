@@ -15,7 +15,7 @@ class RegistrationSettings:
     ALLOW_REGISTRATION: bool = True
     REQUIRE_EMAIL_VERIFICATION: bool = True
     EMAIL_VERIFICATION_TIMEOUT_HOURS: int = 24
-    
+
     # Password policy
     MIN_PASSWORD_LENGTH: int = 12
     REQUIRE_UPPERCASE: bool = True
@@ -23,7 +23,7 @@ class RegistrationSettings:
     REQUIRE_DIGITS: bool = True
     REQUIRE_SPECIAL_CHARS: bool = True
     PASSWORD_HISTORY_COUNT: int = 5  # Prevent reuse of last N passwords
-    
+
     # Username policy
     ALLOW_EMAIL_AS_USERNAME: bool = True
     MIN_USERNAME_LENGTH: int = 3
@@ -40,17 +40,17 @@ class LoginSecuritySettings:
     MAX_LOGIN_ATTEMPTS: int = 5
     LOGIN_LOCKOUT_MINUTES: int = 30
     LOCKOUT_ESCALATION: bool = True  # Double lockout time on repeated failures
-    
+
     # Session management
     SESSION_TIMEOUT_MINUTES: int = 60
     ABSOLUTE_TIMEOUT_HOURS: int = 24
     CONCURRENT_SESSIONS_ALLOWED: int = 3
-    
+
     # Device tracking
     TRACK_DEVICES: bool = True
     DEVICE_TRUST_DAYS: int = 30
     REQUIRE_DEVICE_APPROVAL: bool = False
-    
+
     # Geolocation
     CHECK_GEOLOCATION: bool = True
     ALERT_ON_NEW_LOCATION: bool = True
@@ -66,19 +66,19 @@ class TwoFactorSettings:
     ENFORCE_2FA_FOR_ROLES: list[str] = field(default_factory=lambda: ["ADMIN", "SUPERUSER"])
     OPTIONAL_2FA_FOR_USERS: bool = True
     GRACE_PERIOD_DAYS: int = 7  # Days before 2FA becomes mandatory
-    
+
     # TOTP configuration
     TOTP_ISSUER: str = "Litestar App"
     TOTP_ALGORITHM: str = "SHA1"  # SHA1, SHA256, SHA512
     TOTP_DIGITS: int = 6
     TOTP_INTERVAL: int = 30
     TOTP_VALID_WINDOW: int = 1  # Accept codes ±1 interval
-    
+
     # Backup codes
     BACKUP_CODES_COUNT: int = 10
     BACKUP_CODE_LENGTH: int = 8
     WARN_LOW_BACKUP_CODES: int = 3
-    
+
     # Recovery options
     ALLOW_SMS_RECOVERY: bool = False
     ALLOW_EMAIL_RECOVERY: bool = True
@@ -94,18 +94,18 @@ class AdvancedSecuritySettings:
     ENABLE_ANOMALY_DETECTION: bool = True
     SUSPICIOUS_IP_THRESHOLD: int = 10  # Failed attempts from same IP
     SUSPICIOUS_USER_THRESHOLD: int = 5  # Failed attempts for same user
-    
+
     # Re-authentication
     REQUIRE_FRESH_LOGIN_FOR: list[str] = field(
         default_factory=lambda: ["password_change", "2fa_disable", "email_change"]
     )
     FRESH_LOGIN_TIMEOUT_MINUTES: int = 15
-    
+
     # Security headers
     ENABLE_CSRF_PROTECTION: bool = True
     ENABLE_CORS: bool = True
     CORS_ALLOWED_ORIGINS: list[str] = field(default_factory=lambda: ["http://localhost:3000"])
-    
+
     # API security
     ENABLE_API_RATE_LIMITING: bool = True
     API_RATE_LIMIT_PER_MINUTE: int = 60
@@ -137,38 +137,38 @@ AUTH_MAX_LOGIN_ATTEMPTS=5
 ```python
 class AuthenticationService:
     """Service handling all authentication logic."""
-    
+
     def __init__(self, settings: AuthenticationSettings):
         self.settings = settings
-    
+
     async def validate_registration(self, data: UserCreate) -> None:
         """Validate registration against current settings."""
         if not self.settings.registration.ALLOW_REGISTRATION:
             raise ClientException("Registration is currently disabled")
-        
+
         # Validate password policy
         if len(data.password) < self.settings.registration.MIN_PASSWORD_LENGTH:
             raise ClientException(
                 f"Password must be at least {self.settings.registration.MIN_PASSWORD_LENGTH} characters"
             )
-        
+
         # Additional validations...
-    
+
     async def check_login_requirements(self, user: User) -> LoginRequirements:
         """Check what's required for login."""
         requirements = LoginRequirements()
-        
+
         # Email verification
         if self.settings.registration.REQUIRE_EMAIL_VERIFICATION and not user.is_verified:
             requirements.email_verification_required = True
-        
+
         # 2FA check
         if self.settings.two_factor.ENABLE_2FA:
             if user.role in self.settings.two_factor.ENFORCE_2FA_FOR_ROLES:
                 requirements.two_factor_required = True
             elif user.has_2fa_enabled:
                 requirements.two_factor_required = True
-        
+
         return requirements
 ```
 
@@ -215,7 +215,7 @@ const { data: authSettings } = useQuery({
 // Dynamic UI based on settings
 function LoginForm() {
   const settings = useAuthSettings();
-  
+
   return (
     <form>
       {/* Password input */}

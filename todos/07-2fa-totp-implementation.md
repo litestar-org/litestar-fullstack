@@ -27,23 +27,23 @@ Implement a comprehensive 2FA system using Time-based One-Time Passwords (TOTP) 
        # Email verification
        REQUIRE_EMAIL_VERIFICATION: bool = True
        EMAIL_VERIFICATION_TIMEOUT_HOURS: int = 24
-       
+
        # 2FA settings
        ENABLE_2FA: bool = True
        REQUIRE_2FA_FOR_ADMIN: bool = True
        OPTIONAL_2FA_FOR_USERS: bool = True
-       
+
        # TOTP settings
        TOTP_ISSUER: str = "Litestar App"
        TOTP_ALGORITHM: str = "SHA1"
        TOTP_DIGITS: int = 6
        TOTP_INTERVAL: int = 30
-       
+
        # Security settings
        MAX_LOGIN_ATTEMPTS: int = 5
        LOGIN_LOCKOUT_MINUTES: int = 30
        BACKUP_CODES_COUNT: int = 10
-       
+
        # Session settings
        REQUIRE_FRESH_LOGIN_FOR_SENSITIVE: bool = True
        FRESH_LOGIN_TIMEOUT_MINUTES: int = 15
@@ -115,24 +115,24 @@ class TOTPService:
     async def generate_secret(self) -> str:
         """Generate a new TOTP secret."""
         return pyotp.random_base32()
-    
+
     async def generate_qr_code(self, user: User, secret: str) -> str:
         """Generate QR code for authenticator apps."""
         totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
             name=user.email,
             issuer_name=self.settings.TOTP_ISSUER
         )
-        
+
         qr = qrcode.QRCode(version=1, box_size=10, border=5)
         qr.add_data(totp_uri)
         qr.make(fit=True)
-        
+
         img = qr.make_image(fill_color="black", back_color="white")
         buffer = BytesIO()
         img.save(buffer, format="PNG")
-        
+
         return base64.b64encode(buffer.getvalue()).decode()
-    
+
     async def verify_code(self, secret: str, code: str) -> bool:
         """Verify a TOTP code."""
         totp = pyotp.TOTP(secret)
@@ -146,11 +146,11 @@ class TOTPService:
 async def login(self, username: str, password: str) -> LoginResponse:
     # 1. Verify password
     user = await self.authenticate(username, password)
-    
+
     # 2. Check if email verification required
     if self.settings.REQUIRE_EMAIL_VERIFICATION and not user.is_verified:
         raise PermissionDeniedException("Email verification required")
-    
+
     # 3. Check if 2FA required
     if await self.requires_2fa(user):
         # Return partial token that only allows 2FA verification
@@ -160,7 +160,7 @@ async def login(self, username: str, password: str) -> LoginResponse:
             temp_token=temp_token,
             message="Please provide your 2FA code"
         )
-    
+
     # 4. Generate full access token
     access_token = await self.generate_access_token(user)
     return LoginResponse(

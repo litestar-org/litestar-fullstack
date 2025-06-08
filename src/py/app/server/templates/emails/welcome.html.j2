@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to {{ app_name }}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .button:hover {
+            background-color: #218838;
+        }
+        .feature-list {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .feature-list ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin: 8px 0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to {{ app_name }}! 🎉</h1>
+        </div>
+        <div class="content">
+            <h2>Hi{{ ' ' + user.name if user.name else '' }}!</h2>
+            <p>Congratulations! Your email has been verified and your account is now fully activated.</p>
+            
+            <p>You're all set to start using {{ app_name }}. Here's what you can do next:</p>
+            
+            <div class="feature-list">
+                <ul>
+                    <li>Complete your profile to personalize your experience</li>
+                    <li>Explore our features and settings</li>
+                    <li>Connect with your team members</li>
+                    <li>Start creating and collaborating</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ login_url }}" class="button">Log In to Your Account</a>
+            </div>
+            
+            <p>If you have any questions or need assistance, our support team is here to help!</p>
+            
+            <p>Thanks for joining us,<br>
+            The {{ app_name }} Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ app_name }}. All rights reserved.</p>
+            <p>You're receiving this email because you recently created an account.</p>
+        </div>
+    </div>
+</body>
+</html>

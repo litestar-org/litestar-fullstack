@@ -86,7 +86,7 @@ from advanced_alchemy.base import UUIDAuditBase
 class User(UUIDAuditBase):
     """User account model."""
     __tablename__ = "user_account"
-    
+
     email: Mapped[str] = mapped_column(String(255), unique=True)
     is_verified: Mapped[bool] = mapped_column(default=False)
 ```
@@ -116,10 +116,10 @@ from litestar.plugins.sqlalchemy import service, repository
 
 class UserService(service.SQLAlchemyAsyncRepositoryService[User]):
     """Handles user operations."""
-    
+
     class Repo(repository.SQLAlchemyAsyncRepository[User]):
         model_type = User
-    
+
     repository_type = Repo
 ```
 
@@ -189,7 +189,7 @@ export function TeamList() {
     queryKey: ["teams"],
     queryFn: () => api.teams.listTeams()
   });
-  
+
   return (
     <div className="grid gap-4">
       {teams?.map(team => (
@@ -289,7 +289,7 @@ services:
       POSTGRES_PASSWORD: app
     ports:
       - "5432:5432"
-  
+
   redis:
     image: redis:7-alpine
     ports:

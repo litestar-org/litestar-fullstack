@@ -7,9 +7,12 @@ This file provides essential guidance for Claude Code when working with the Lite
 ```bash
 # Setup
 make install                    # Fresh installation
-cp .env.local.example .env      # Setup environment  
-make start-infra                # Start PostgreSQL + Redis
+cp .env.local.example .env      # Setup environment
+make start-infra                # Start PostgreSQL + Redis + MailHog + Keycloak
+make keycloak-setup             # Configure Keycloak OAuth client
 uv run app run                  # Start all services
+make mailhog                    # Open MailHog web UI (email testing)
+make keycloak                   # Open Keycloak admin (OAuth testing)
 
 # Development
 make types                      # Generate TypeScript types (ALWAYS after schema changes!)
@@ -70,13 +73,13 @@ from app.db import models as m
 
 class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Service for user operations."""
-    
+
     class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
         """User repository."""
         model_type = m.User
-    
+
     repository_type = Repo
-    
+
     # Custom service methods here
 ```
 
@@ -141,10 +144,32 @@ make test-all
    - `make test`
    - `make check-all`
 
+## 📧 Email Development with MailHog
+
+MailHog is configured for development email testing:
+
+- **Web UI**: <http://localhost:18025> (view all emails)
+- **SMTP Server**: localhost:11025 (app sends emails here)
+- **Access**: `make mailhog` to open web interface
+- **Configuration**: Already set in `.env.local.example`
+
+All emails sent during development are caught by MailHog instead of being delivered.
+
+## 🔐 OAuth Development with Keycloak
+
+Keycloak provides a local OAuth server for development:
+
+- **Admin Console**: <http://localhost:18080> (admin/admin)
+- **Auto Setup**: `make keycloak-setup` to configure OAuth client
+- **Access**: `make keycloak` to open admin interface
+- **Test User**: testuser / testpass123 (created automatically)
+- **Configuration**: Client credentials provided by setup script
+
 ## 📊 Current Work Context
 
 - Email verification: ✅ Implemented
-- Password reset: ✅ Implemented  
+- Password reset: ✅ Implemented
+- Email service: ✅ SMTP with MailHog for dev
 - 2FA/TOTP: ✅ Implemented (configurable)
 - OAuth: Backend ✅ | Frontend ❌ | Tests ❌
 - Production validation: Backend 70% ✅ | Frontend ❌ | Tests ❌
