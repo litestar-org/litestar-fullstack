@@ -87,7 +87,7 @@ react-qrcode = "^latest"
 class TOTPService(service.SQLAlchemyAsyncRepositoryService[m.UserTOTPDevice]):
     class Repo(repository.SQLAlchemyAsyncRepository[m.UserTOTPDevice]):
         model_type = m.UserTOTPDevice
-    
+
     repository_type = Repo
 ```
 

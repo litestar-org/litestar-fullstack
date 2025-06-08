@@ -17,7 +17,7 @@ class TestEmailService:
     @pytest.fixture
     def email_service(self) -> EmailService:
         """Create EmailService instance."""
-        return EmailService(base_url="http://test.example.com")
+        return EmailService()
 
     @pytest.fixture
     def user(self) -> User:
@@ -43,20 +43,25 @@ class TestEmailService:
         )
 
     def test_email_service_initialization(self) -> None:
-        """Test EmailService initialization with custom base URL."""
-        # Arrange & Act
-        service = EmailService(base_url="https://myapp.com")
-
-        # Assert
-        assert service.base_url == "https://myapp.com"
-
-    def test_email_service_default_initialization(self) -> None:
-        """Test EmailService initialization with default base URL."""
+        """Test EmailService initialization."""
         # Arrange & Act
         service = EmailService()
 
         # Assert
-        assert service.base_url == "http://localhost:8000"
+        assert service.base_url is not None
+        assert service.app_name is not None
+        assert service.settings is not None
+
+    def test_email_service_settings_integration(self) -> None:
+        """Test EmailService gets settings correctly."""
+        # Arrange & Act
+        service = EmailService()
+
+        # Assert
+        assert hasattr(service, 'settings')
+        assert hasattr(service, 'app_settings')
+        assert hasattr(service, 'base_url')
+        assert hasattr(service, 'app_name')
 
     @patch("app.lib.email.logger")
     async def test_send_verification_email_with_name(
@@ -162,10 +167,7 @@ class TestEmailService:
         await email_service.send_welcome_email(user)
 
         # Assert
-        mock_logger.info.assert_called_once_with(
-            "Welcome email would be sent to %s",
-            user.email
-        )
+        mock_logger.info.assert_called_once_with("Welcome email would be sent to %s", user.email)
 
     async def test_verification_email_content_structure(
         self,

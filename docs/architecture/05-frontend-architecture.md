@@ -75,9 +75,9 @@ export function TeamCard({ team, onEdit, isOwner = false }: TeamCardProps) {
       <CardContent>
         <p className="text-muted-foreground">{team.description}</p>
         {onEdit && (
-          <Button 
-            onClick={() => onEdit(team)} 
-            variant="outline" 
+          <Button
+            onClick={() => onEdit(team)}
+            variant="outline"
             size="sm"
             className="mt-4"
           >
@@ -215,8 +215,8 @@ export const Route = createFileRoute("/_app/teams/$teamId")({
     stringify: (params) => params,
   },
   loader: async ({ params, context }) => {
-    const team = await context.api.teams.getTeam({ 
-      teamId: params.teamId 
+    const team = await context.api.teams.getTeam({
+      teamId: params.teamId
     });
     return { team };
   },
@@ -226,7 +226,7 @@ export const Route = createFileRoute("/_app/teams/$teamId")({
 function TeamDetailPage() {
   const { team } = Route.useLoaderData();
   const { teamId } = Route.useParams();
-  
+
   return <TeamDetail team={team} />;
 }
 ```
@@ -251,10 +251,10 @@ export function useTeams() {
 
 export function useCreateTeam() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (data: TeamCreate) => api.teams.createTeam({ 
-      requestBody: data 
+    mutationFn: (data: TeamCreate) => api.teams.createTeam({
+      requestBody: data
     }),
     onSuccess: () => {
       // Invalidate and refetch teams
@@ -279,43 +279,43 @@ Immediate UI updates with rollback on error:
 ```typescript
 export function useUpdateTeam(teamId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (data: TeamUpdate) => 
+    mutationFn: (data: TeamUpdate) =>
       api.teams.updateTeam({ teamId, requestBody: data }),
-    
+
     onMutate: async (newData) => {
       // Cancel in-flight queries
-      await queryClient.cancelQueries({ 
-        queryKey: ["teams", teamId] 
+      await queryClient.cancelQueries({
+        queryKey: ["teams", teamId]
       });
-      
+
       // Snapshot previous value
       const previousTeam = queryClient.getQueryData(["teams", teamId]);
-      
+
       // Optimistically update
       queryClient.setQueryData(["teams", teamId], (old) => ({
         ...old,
         ...newData,
       }));
-      
+
       return { previousTeam };
     },
-    
+
     onError: (err, newData, context) => {
       // Rollback on error
       if (context?.previousTeam) {
         queryClient.setQueryData(
-          ["teams", teamId], 
+          ["teams", teamId],
           context.previousTeam
         );
       }
     },
-    
+
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ 
-        queryKey: ["teams", teamId] 
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId]
       });
     },
   });
@@ -406,13 +406,13 @@ export const useAuth = create<AuthState>()(
       token: null,
       user: null,
       isAuthenticated: false,
-      
+
       login: (token, user) => set({
         token,
         user,
         isAuthenticated: true,
       }),
-      
+
       logout: () => {
         set({
           token: null,
@@ -424,7 +424,7 @@ export const useAuth = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      partialize: (state) => ({ 
+      partialize: (state) => ({
         token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
@@ -443,9 +443,9 @@ export function LoginForm() {
   const [tempToken, setTempToken] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
-  
+
   const loginMutation = useMutation({
-    mutationFn: (data: LoginCredentials) => 
+    mutationFn: (data: LoginCredentials) =>
       api.auth.login({ requestBody: data }),
     onSuccess: (response) => {
       if (response.requires2fa) {
@@ -457,18 +457,18 @@ export function LoginForm() {
       }
     },
   });
-  
+
   const verify2FAMutation = useMutation({
-    mutationFn: (code: string) => 
-      api.twoFactor.verify({ 
-        requestBody: { tempToken: tempToken!, code } 
+    mutationFn: (code: string) =>
+      api.twoFactor.verify({
+        requestBody: { tempToken: tempToken!, code }
       }),
     onSuccess: (response) => {
       login(response.accessToken!, response.user!);
       navigate({ to: "/home" });
     },
   });
-  
+
   if (requires2FA) {
     return (
       <TwoFactorVerification
@@ -478,7 +478,7 @@ export function LoginForm() {
       />
     );
   }
-  
+
   return (
     <Form onSubmit={loginMutation.mutate}>
       {/* Login form fields */}
@@ -512,7 +512,7 @@ type CreateTeamData = z.infer<typeof createTeamSchema>;
 
 export function CreateTeamForm() {
   const createTeam = useCreateTeam();
-  
+
   const form = useForm<CreateTeamData>({
     resolver: zodResolver(createTeamSchema),
     defaultValues: {
@@ -520,7 +520,7 @@ export function CreateTeamForm() {
       description: "",
     },
   });
-  
+
   const onSubmit = async (data: CreateTeamData) => {
     try {
       await createTeam.mutateAsync(data);
@@ -536,7 +536,7 @@ export function CreateTeamForm() {
       });
     }
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -553,7 +553,7 @@ export function CreateTeamForm() {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="description"
@@ -561,7 +561,7 @@ export function CreateTeamForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
+                <Textarea
                   placeholder="What's this team about?"
                   {...field}
                 />
@@ -570,9 +570,9 @@ export function CreateTeamForm() {
             </FormItem>
           )}
         />
-        
-        <Button 
-          type="submit" 
+
+        <Button
+          type="submit"
           disabled={createTeam.isPending}
           className="w-full"
         >
@@ -608,7 +608,7 @@ const TeamContext = createContext<TeamContextValue | undefined>(undefined);
 export function TeamProvider({ children }: { children: ReactNode }) {
   const [currentTeam, setCurrentTeam] = useState<TeamRead | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Load initial team
   useEffect(() => {
     const loadTeam = async () => {
@@ -623,10 +623,10 @@ export function TeamProvider({ children }: { children: ReactNode }) {
       }
       setIsLoading(false);
     };
-    
+
     loadTeam();
   }, []);
-  
+
   const handleSetCurrentTeam = (team: TeamRead | null) => {
     setCurrentTeam(team);
     if (team) {
@@ -635,9 +635,9 @@ export function TeamProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("currentTeamId");
     }
   };
-  
+
   return (
-    <TeamContext.Provider 
+    <TeamContext.Provider
       value={{
         currentTeam,
         setCurrentTeam: handleSetCurrentTeam,
@@ -668,7 +668,7 @@ Lazy load routes for better performance:
 // routes/_app/admin.tsx
 import { lazy } from "react";
 
-const AdminDashboard = lazy(() => 
+const AdminDashboard = lazy(() =>
   import("@/components/admin/admin-dashboard")
     .then(m => ({ default: m.AdminDashboard }))
 );
@@ -698,9 +698,9 @@ const prefetchTeams = async () => {
 const useInfiniteTeams = () => {
   return useInfiniteQuery({
     queryKey: ["teams", "infinite"],
-    queryFn: ({ pageParam = 1 }) => 
+    queryFn: ({ pageParam = 1 }) =>
       api.teams.listTeams({ page: pageParam, pageSize: 20 }),
-    getNextPageParam: (lastPage, pages) => 
+    getNextPageParam: (lastPage, pages) =>
       lastPage.hasMore ? pages.length + 1 : undefined,
   });
 };
@@ -726,28 +726,28 @@ describe("TeamCard", () => {
     createdAt: "2024-01-01",
     updatedAt: "2024-01-01",
   };
-  
+
   it("renders team information", () => {
     render(<TeamCard team={mockTeam} />);
-    
+
     expect(screen.getByText("Test Team")).toBeInTheDocument();
     expect(screen.getByText("A test team")).toBeInTheDocument();
   });
-  
+
   it("shows owner badge when isOwner is true", () => {
     render(<TeamCard team={mockTeam} isOwner />);
-    
+
     expect(screen.getByText("Owner")).toBeInTheDocument();
   });
-  
+
   it("calls onEdit when edit button is clicked", async () => {
     const onEdit = vi.fn();
     const user = userEvent.setup();
-    
+
     render(<TeamCard team={mockTeam} onEdit={onEdit} />);
-    
+
     await user.click(screen.getByText("Edit Team"));
-    
+
     expect(onEdit).toHaveBeenCalledWith(mockTeam);
   });
 });

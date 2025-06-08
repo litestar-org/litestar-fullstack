@@ -20,9 +20,9 @@ dependencies = [
   "psycopg[pool,binary]",
   "python-dotenv",
   "pwdlib[argon2]",
-  "litestar-saq @ git+https://github.com/cofin/litestar-saq.git@main",
+  "litestar-saq",
   "litestar-vite",
-  "litestar-granian[uvloop] @ git+https://github.com/cofin/litestar-granian.git@main",
+  "litestar-granian[uvloop]",
   "httpx-oauth",
 ]
 description = "Reference application for building a fullstack application with Litestar."
@@ -75,6 +75,7 @@ test = [
   "coverage[toml]",
   "pytest-sugar",
   "pytest-databases[postgres]>=0.1.0",
+  "polyfactory",
 ]
 
 
@@ -154,7 +155,18 @@ parallel = true
 relative_files = true
 
 [tool.pytest.ini_options]
-addopts = ["-q", "-ra"]
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+  "--cov=src/py/app",
+  "--cov-report=term-missing",
+  "--cov-report=html:htmlcov",
+  "--cov-report=xml",
+  "--cov-fail-under=90",
+  "--tb=short",
+  "-v",
+  "-ra",
+]
 asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
 filterwarnings = [
@@ -167,8 +179,23 @@ filterwarnings = [
   "ignore::DeprecationWarning:litestar.cli.*",
   "ignore::DeprecationWarning:httpx._client",
 ]
-markers = ["unit: Execute unit tests", "integration: Execute integration tests"]
-testpaths = ["tests", "src/py/tests"]
+markers = [
+  "unit: marks tests as unit tests (fast, isolated)",
+  "integration: marks tests as integration tests (slower, database)",
+  "slow: marks tests as slow running tests",
+  "auth: marks tests related to authentication",
+  "email: marks tests that send emails",
+  "external: marks tests that call external services",
+  "oauth: marks tests related to OAuth functionality",
+  "services: marks tests for service layer",
+  "models: marks tests for database models",
+  "endpoints: marks tests for API endpoints",
+  "security: marks tests for security features",
+]
+python_classes = ["Test*"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+testpaths = ["src/py/tests"]
 
 [tool.ruff]
 exclude = [
@@ -253,7 +280,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "src/py/app/db/models/*.py" = ["PLW0108"]
-"src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC"]
+"src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
 

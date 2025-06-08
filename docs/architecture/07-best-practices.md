@@ -56,13 +56,13 @@ async def get_user_data(self, user_id: UUID) -> dict:
 # ✅ Good - Proper service structure
 class ProductService(service.SQLAlchemyAsyncRepositoryService[m.Product]):
     """Service for product operations."""
-    
+
     class Repo(repository.SQLAlchemyAsyncRepository[m.Product]):
         """Product repository."""
         model_type = m.Product
-    
+
     repository_type = Repo
-    
+
     async def get_by_category(self, category_id: UUID) -> list[m.Product]:
         """Get products by category."""
         return await self.repository.list(
@@ -74,7 +74,7 @@ class ProductService(service.SQLAlchemyAsyncRepositoryService[m.Product]):
 class ProductService:
     def __init__(self, session: AsyncSession):
         self.session = session
-    
+
     async def get_products(self):
         result = await self.session.execute(select(Product))
         return result.scalars().all()
@@ -175,15 +175,15 @@ Add indexes for frequently queried columns:
 ```python
 class User(UUIDAuditBase):
     """User model with proper indexing."""
-    
+
     email: Mapped[str] = mapped_column(
-        String(255), 
-        unique=True, 
+        String(255),
+        unique=True,
         index=True  # Single column index
     )
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
-    
+
     # Composite indexes for common queries
     __table_args__ = (
         Index("ix_user_active_created", "is_active", "created_at"),
@@ -206,14 +206,14 @@ async def list_products(
     """List products with pagination."""
     # Count total
     total = await self.repository.count(**filters)
-    
+
     # Get page
     items = await self.repository.list(
         **filters,
         limit=page_size,
         offset=(page - 1) * page_size,
     )
-    
+
     return PaginatedResponse(
         items=items,
         total=total,
@@ -253,12 +253,12 @@ export function TeamMembersList({ members }: { members: TeamMember[] }) {
     () => members.sort((a, b) => a.joinedAt.localeCompare(b.joinedAt)),
     [members]
   );
-  
+
   const membersByRole = useMemo(
     () => groupBy(sortedMembers, "role"),
     [sortedMembers]
   );
-  
+
   return (
     <div>
       {Object.entries(membersByRole).map(([role, roleMembers]) => (
@@ -304,14 +304,14 @@ const queryClient = new QueryClient({
 // Prefetch critical data
 export function usePrefetchUserData(userId: string) {
   const queryClient = useQueryClient();
-  
+
   useEffect(() => {
     // Prefetch user data
     queryClient.prefetchQuery({
       queryKey: ["user", userId],
       queryFn: () => api.users.getUser({ userId }),
     });
-    
+
     // Prefetch user's teams
     queryClient.prefetchQuery({
       queryKey: ["user", userId, "teams"],
@@ -391,17 +391,17 @@ const form = useForm<CreateUserData>({
 // ✅ Good - Secure token storage
 class AuthStore {
   private token: string | null = null;
-  
+
   setToken(token: string) {
     this.token = token;
     // Store in memory only, not localStorage
     // Or use httpOnly cookies
   }
-  
+
   getToken(): string | null {
     return this.token;
   }
-  
+
   clearToken() {
     this.token = null;
   }
@@ -522,7 +522,7 @@ async def test_user_can_join_team(
         user_id=test_user.id,
         role="MEMBER",
     )
-    
+
     assert member.user_id == test_user.id
     assert member.team_id == test_team.id
     assert member.role == "MEMBER"
@@ -543,34 +543,34 @@ describe("TeamCard", () => {
     createdAt: "2024-01-01",
     updatedAt: "2024-01-01",
   };
-  
+
   it("renders team information correctly", () => {
     render(<TeamCard team={mockTeam} />);
-    
+
     expect(screen.getByText("Engineering")).toBeInTheDocument();
     expect(screen.getByText("Engineering team")).toBeInTheDocument();
   });
-  
+
   it("shows owner badge when user is owner", () => {
     render(<TeamCard team={mockTeam} isOwner />);
-    
+
     expect(screen.getByText("Owner")).toBeInTheDocument();
   });
-  
+
   it("calls onEdit when edit button clicked", async () => {
     const onEdit = vi.fn();
     const user = userEvent.setup();
-    
+
     render(<TeamCard team={mockTeam} onEdit={onEdit} />);
-    
+
     await user.click(screen.getByRole("button", { name: /edit/i }));
-    
+
     expect(onEdit).toHaveBeenCalledWith(mockTeam);
   });
-  
+
   it("is accessible", async () => {
     const { container } = render(<TeamCard team={mockTeam} />);
-    
+
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -599,7 +599,7 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
             raise ResourceNotFoundException(
                 detail=f"Team {team_id} not found"
             )
-        
+
         # Check user not already member
         existing = await self.members_repo.get_one_or_none(
             team_id=team_id,
@@ -610,7 +610,7 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
                 detail="User is already a team member",
                 status_code=409,  # Conflict
             )
-        
+
         # Check team not full
         member_count = await self.members_repo.count(team_id=team_id)
         if member_count >= team.max_members:
@@ -618,7 +618,7 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
                 detail=f"Team has reached maximum of {team.max_members} members",
                 status_code=400,
             )
-        
+
         # Add member
         try:
             return await self.members_repo.add(
@@ -645,7 +645,7 @@ Provide meaningful error messages to users:
 export function CreateTeamForm() {
   const createTeam = useCreateTeam();
   const { toast } = useToast();
-  
+
   const handleSubmit = async (data: CreateTeamData) => {
     try {
       const team = await createTeam.mutateAsync(data);
@@ -679,7 +679,7 @@ export function CreateTeamForm() {
       }
     }
   };
-  
+
   return (
     <Form onSubmit={handleSubmit}>
       {/* Form fields */}
@@ -698,16 +698,16 @@ Document complex logic and public APIs:
 # ✅ Good - Well documented
 class EmailService:
     """Service for sending transactional emails.
-    
+
     This service handles all email operations including:
     - User verification emails
     - Password reset emails
     - Team invitations
     - Activity notifications
-    
+
     Configuration is handled via environment variables.
     See `EmailSettings` for available options.
-    
+
     Example:
         email_service = EmailService(
             base_url="https://app.example.com",
@@ -715,21 +715,21 @@ class EmailService:
         )
         await email_service.send_verification_email(user, token)
     """
-    
+
     async def send_verification_email(
         self,
         user: User,
         token: EmailVerificationToken,
     ) -> None:
         """Send email verification link to user.
-        
+
         Args:
             user: User to send email to
             token: Verification token object
-            
+
         Raises:
             EmailDeliveryError: If email fails to send
-            
+
         Note:
             The token expires after 24 hours.
             Users can request a new token if needed.
@@ -748,7 +748,7 @@ Use OpenAPI annotations:
     summary="Add member to team",
     description="""
     Add a user to a team with a specific role.
-    
+
     Requires team owner or admin role.
     The user will receive an email notification.
     """,
@@ -796,23 +796,23 @@ async def process_payment(
         amount=float(amount),
         currency=currency,
     )
-    
+
     try:
         payment = await self.payment_provider.charge(
             user_id=user_id,
             amount=amount,
             currency=currency,
         )
-        
+
         logger.info(
             "Payment successful",
             user_id=str(user_id),
             payment_id=payment.id,
             amount=float(amount),
         )
-        
+
         return payment
-        
+
     except PaymentError as e:
         logger.error(
             "Payment failed",

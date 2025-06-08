@@ -42,13 +42,11 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
 
         # Create token with 24-hour expiration
         verification_token = m.EmailVerificationToken(
-            user_id=user_id,
-            token=token,
-            email=email,
-            expires_at=m.EmailVerificationToken.create_expires_at(hours=24)
+            user_id=user_id, token=token, email=email, expires_at=m.EmailVerificationToken.create_expires_at(hours=24)
         )
 
-        return await self.repository.add(verification_token)
+        obj = await self.create(verification_token)
+        return self.to_schema(obj)
 
     async def verify_token(self, token: str) -> m.EmailVerificationToken:
         """Verify a token and mark it as used.
@@ -75,9 +73,9 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
 
         # Mark token as used
         verification_token.used_at = datetime.now(UTC)
-        await self.repository.update(verification_token)
+        obj = await self.update(verification_token)
 
-        return verification_token
+        return self.to_schema(obj)
 
     async def invalidate_user_tokens(self, user_id: UUID, email: str | None = None) -> None:
         """Invalidate all tokens for a user, optionally filtered by email.
@@ -109,9 +107,7 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             Number of tokens removed
         """
         current_time = datetime.now(UTC)
-        expired_tokens = await self.repository.list(
-            m.EmailVerificationToken.expires_at < current_time
-        )
+        expired_tokens = await self.repository.list(m.EmailVerificationToken.expires_at < current_time)
 
         if expired_tokens:
             await self.repository.delete_many(expired_tokens)

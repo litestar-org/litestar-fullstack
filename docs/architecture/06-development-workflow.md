@@ -250,7 +250,7 @@ class ProductRead(msgspec.Struct):
 class ProductService(service.SQLAlchemyAsyncRepositoryService[m.Product]):
     class Repo(repository.SQLAlchemyAsyncRepository[m.Product]):
         model_type = m.Product
-    
+
     repository_type = Repo
 ```
 
@@ -326,9 +326,9 @@ export function ProductList() {
     queryKey: ["products"],
     queryFn: () => api.products.listProducts(),
   });
-  
+
   if (isLoading) return <LoadingSpinner />;
-  
+
   return (
     <div className="grid gap-4">
       {data?.items.map(product => (
@@ -426,9 +426,9 @@ async def test_create_product(products_service: ProductService):
         "price": 99.99,
         "description": "A test product"
     }
-    
+
     product = await products_service.create(data)
-    
+
     assert product.name == "Test Product"
     assert product.price == 99.99
 ```
@@ -445,9 +445,9 @@ test("renders product information", () => {
     name: "Test Product",
     price: 99.99,
   };
-  
+
   render(<ProductCard product={product} />);
-  
+
   expect(screen.getByText("Test Product")).toBeInTheDocument();
   expect(screen.getByText("$99.99")).toBeInTheDocument();
 });

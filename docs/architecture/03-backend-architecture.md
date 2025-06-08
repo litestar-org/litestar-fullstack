@@ -43,27 +43,27 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         model_type = m.User
 
     repository_type = Repo
-    
+
     # Custom service attributes
     default_role = "USER"
     match_fields = ["email"]  # Fields for get_or_create operations
 
     async def to_model_on_create(
-        self, 
+        self,
         data: service.ModelDictT[m.User]
     ) -> service.ModelDictT[m.User]:
         """Transform data before creating model."""
         return await self._populate_model(data)
 
     async def to_model_on_update(
-        self, 
+        self,
         data: service.ModelDictT[m.User]
     ) -> service.ModelDictT[m.User]:
         """Transform data before updating model."""
         return await self._populate_model(data)
 
     async def _populate_model(
-        self, 
+        self,
         data: service.ModelDictT[m.User]
     ) -> service.ModelDictT[m.User]:
         """Handle special field processing like password hashing."""
@@ -104,11 +104,11 @@ Add business logic methods specific to your domain:
 async def verify_email(self, user_id: UUID, token: str) -> m.User:
     """Verify user's email address."""
     # Custom business logic here
-    
+
 async def assign_team_role(
-    self, 
-    user_id: UUID, 
-    team_id: UUID, 
+    self,
+    user_id: UUID,
+    team_id: UUID,
     role: str
 ) -> m.TeamMember:
     """Assign user to team with role."""
@@ -130,35 +130,35 @@ from advanced_alchemy.base import UUIDAuditBase
 
 class User(UUIDAuditBase):
     """User account model with audit fields."""
-    
+
     __tablename__ = "user_account"
-    
+
     # Required fields with type annotations
     email: Mapped[str] = mapped_column(
-        String(255), 
-        unique=True, 
+        String(255),
+        unique=True,
         index=True
     )
     hashed_password: Mapped[str | None] = mapped_column(
-        String(255), 
+        String(255),
         nullable=True
     )
-    
+
     # Profile fields
     name: Mapped[str | None] = mapped_column(String(100))
     avatar_url: Mapped[str | None] = mapped_column(String(500))
-    
+
     # Status flags with defaults
     is_active: Mapped[bool] = mapped_column(default=True)
     is_superuser: Mapped[bool] = mapped_column(default=False)
     is_verified: Mapped[bool] = mapped_column(default=False)
-    
+
     # Timestamps
     verified_at: Mapped[datetime | None] = mapped_column(nullable=True)
     joined_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(UTC)
     )
-    
+
     # Relationships with loading strategies
     teams: Mapped[list["TeamMember"]] = relationship(
         lazy="selectin",
@@ -168,7 +168,7 @@ class User(UUIDAuditBase):
         lazy="selectin",
         back_populates="user"
     )
-    
+
     # Composite indexes for performance
     __table_args__ = (
         Index("ix_user_email_active", "email", "is_active"),
@@ -188,14 +188,14 @@ class User(UUIDAuditBase):
 ```python
 class Team(UUIDAuditBase):
     """Team model with relationships."""
-    
+
     # One-to-many
     members: Mapped[list["TeamMember"]] = relationship(
         lazy="selectin",
         back_populates="team",
         cascade="all, delete-orphan"
     )
-    
+
     # Many-to-many through association
     tags: Mapped[list["Tag"]] = relationship(
         secondary="team_tag",
@@ -244,7 +244,7 @@ class UserRead(BaseStruct):
     is_active: bool = True
     is_verified: bool = False
     created_at: datetime
-    
+
 class UserList(BaseStruct):
     """Paginated user list."""
     items: list[UserRead]
@@ -283,7 +283,7 @@ from app.server.deps import provide_users_service
 )
 class UserController:
     """User management endpoints."""
-    
+
     @get(
         "/{user_id:uuid}",
         operation_id="GetUser",
@@ -297,7 +297,7 @@ class UserController:
         """Get user details."""
         db_obj = await users_service.get(user_id)
         return UserRead.from_orm(db_obj)
-    
+
     @post(
         "/",
         operation_id="CreateUser",
@@ -311,7 +311,7 @@ class UserController:
         """Create new user."""
         db_obj = await users_service.create(data.model_dump())
         return UserRead.from_orm(db_obj)
-    
+
     @put(
         "/{user_id:uuid}",
         operation_id="UpdateUser",
@@ -327,7 +327,7 @@ class UserController:
         # Authorization check
         if user_id != current_user.id and not current_user.is_superuser:
             raise PermissionDeniedException()
-        
+
         db_obj = await users_service.update(
             item_id=user_id,
             data=data.model_dump(exclude_unset=True)
@@ -381,7 +381,7 @@ provide_users_service = create_service_provider(
 )
 class TeamMemberController:
     """Team member management."""
-    
+
     @post("/teams/{team_id:uuid}/members")
     async def add_member(
         self,
@@ -407,7 +407,7 @@ async def get_user_dashboard(self, user_id: UUID) -> DashboardData:
         self.teams_service.list(user_id=user_id),
         self.notifications_service.count_unread(user_id),
     )
-    
+
     return DashboardData(
         user=user,
         teams=teams,
@@ -457,8 +457,8 @@ class ResourceNotFoundException(ApplicationException):
 
 ```python
 async def get_team_member(
-    self, 
-    team_id: UUID, 
+    self,
+    team_id: UUID,
     user_id: UUID
 ) -> TeamMember:
     """Get team member with proper error handling."""
@@ -466,12 +466,12 @@ async def get_team_member(
         team_id=team_id,
         user_id=user_id,
     )
-    
+
     if member is None:
         raise ResourceNotFoundException(
             detail=f"Member {user_id} not found in team {team_id}"
         )
-    
+
     return member
 ```
 
@@ -503,18 +503,18 @@ from app.lib.cache import cache
 async def get_user_permissions(self, user_id: UUID) -> list[str]:
     """Get user permissions with caching."""
     cache_key = f"permissions:{user_id}"
-    
+
     # Try cache first
     cached = await cache.get(cache_key)
     if cached:
         return cached
-    
+
     # Compute permissions
     permissions = await self._compute_permissions(user_id)
-    
+
     # Cache for 5 minutes
     await cache.set(cache_key, permissions, ttl=300)
-    
+
     return permissions
 ```
 
@@ -554,8 +554,8 @@ async def create_team(
 
 ```python
 async def transfer_ownership(
-    self, 
-    team_id: UUID, 
+    self,
+    team_id: UUID,
     new_owner_id: UUID
 ) -> None:
     """Transfer team ownership in transaction."""
@@ -576,12 +576,12 @@ async def create_user(self, data: dict) -> User:
     # Validate email format
     if not self._is_valid_email(data["email"]):
         raise ClientException("Invalid email format")
-    
+
     # Check uniqueness
     existing = await self.get_one_or_none(email=data["email"])
     if existing:
         raise ClientException("Email already registered")
-    
+
     # Create user
     return await self.repository.add(User(**data))
 ```

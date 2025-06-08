@@ -8,31 +8,18 @@ from urllib.parse import urlparse
 
 import msgspec
 
-# Try to import optional dependencies gracefully
-try:
-    from email_validator import EmailNotValidError
-    from email_validator import validate_email as _validate_email
-except ImportError:
-    _validate_email = None
-    EmailNotValidError = Exception
-
-try:
-    import phonenumbers
-    from phonenumbers import NumberParseException
-except ImportError:
-    phonenumbers = None
-    NumberParseException = Exception
-
+from app.lib.exceptions import ApplicationClientError
 
 # Compiled regex patterns for performance
 # Email patterns
-EMAIL_BASIC_PATTERN = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+EMAIL_BASIC_PATTERN = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]\.[a-zA-Z]{2,}$")
+EMAIL_DOUBLE_DOT_PATTERN = re.compile(r"\.\.+")
 EMAIL_BLOCKED_PATTERNS = [
     re.compile(r".*\+.*test.*@.*"),  # +test emails
     re.compile(r".*\+.*spam.*@.*"),  # +spam emails
-    re.compile(r"^test.*@.*"),       # emails starting with test
-    re.compile(r"^noreply@.*"),      # noreply addresses
-    re.compile(r"^no-reply@.*"),     # no-reply addresses
+    re.compile(r"^test.*@.*"),  # emails starting with test
+    re.compile(r"^noreply@.*"),  # noreply addresses
+    re.compile(r"^no-reply@.*"),  # no-reply addresses
 ]
 
 # Password patterns
@@ -60,23 +47,66 @@ USERNAME_REPEATED_PATTERN = re.compile(r"(.)\1{3,}")  # 4+ repeated characters
 SLUG_VALID_PATTERN = re.compile(r"^[a-z0-9-]+$")
 
 # Phone patterns
-PHONE_BASIC_PATTERN = re.compile(r"^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$")
+PHONE_BASIC_PATTERN = re.compile(r"^[\+]?[0-9\s\-\(\)\.]+$")
 PHONE_DIGITS_PATTERN = re.compile(r"[^\d]")
 
 # Email domain/pattern constants
 EMAIL_BLOCKED_DOMAINS = {
-    "10minutemail.com", "tempmail.org", "guerrillamail.com",
-    "mailinator.com", "throwaway.email", "temp-mail.org",
-    "yopmail.com", "maildrop.cc", "dispostable.com",
-    "trashmail.com", "fake-mail.cf", "tempmail.net"
+    "10minutemail.com",
+    "tempmail.org",
+    "guerrillamail.com",
+    "mailinator.com",
+    "throwaway.email",
+    "temp-mail.org",
+    "yopmail.com",
+    "maildrop.cc",
+    "dispostable.com",
+    "trashmail.com",
+    "fake-mail.cf",
+    "tempmail.net",
 }
 
 # Common passwords (first 1000 most common)
 COMMON_PASSWORDS = {
-    "password", "password123", "123456789", "qwertyuiop",
-    "administrator", "welcome123", "password1234",
-    "letmein123", "admin123456", "password12345"
+    "password",
+    "password123",
+    "123456789",
+    "qwertyuiop",
+    "administrator",
+    "welcome123",
+    "password1234",
+    "letmein123",
+    "admin123456",
+    "password12345",
 }
+
+# Password length constants
+PASSWORD_MIN_LENGTH = 12
+PASSWORD_MAX_LENGTH = 128
+PASSWORD_STRONG_LENGTH = 16
+PASSWORD_VERY_STRONG_LENGTH = 20
+
+# Password strength score thresholds
+PASSWORD_SCORE_STRONG = 7
+PASSWORD_SCORE_MEDIUM = 5
+
+# Phone number length constants
+PHONE_MIN_DIGITS = 7
+PHONE_MAX_DIGITS = 15
+
+# Email length constants
+EMAIL_MAX_LENGTH = 254  # RFC 5321 limit
+EMAIL_MIN_LENGTH = 3
+EMAIL_LOCAL_PART_MAX_LENGTH = 64  # RFC 5321 limit
+
+# Name and username length constants
+NAME_MAX_LENGTH = 100
+USERNAME_MIN_LENGTH = 3
+USERNAME_MAX_LENGTH = 30
+
+# URL and slug length constants
+URL_MAX_LENGTH = 2048
+SLUG_MAX_LENGTH = 100
 
 # Common passwords hash set (SHA256 hashes of most common passwords)
 COMMON_PASSWORDS_HASHES = {
@@ -95,19 +125,46 @@ COMMON_PASSWORDS_HASHES = {
 
 # Reserved usernames constant
 RESERVED_USERNAMES = {
-    "admin", "root", "api", "www", "mail", "ftp", "support",
-    "help", "security", "privacy", "terms", "about", "contact",
-    "blog", "news", "app", "application", "system", "test",
-    "user", "guest", "demo", "null", "undefined", "none"
+    "admin",
+    "root",
+    "api",
+    "www",
+    "mail",
+    "ftp",
+    "support",
+    "help",
+    "security",
+    "privacy",
+    "terms",
+    "about",
+    "contact",
+    "blog",
+    "news",
+    "app",
+    "application",
+    "system",
+    "test",
+    "user",
+    "guest",
+    "demo",
+    "null",
+    "undefined",
+    "none",
 }
 
 # URL validation constants
 ALLOWED_URL_SCHEMES = {"http", "https"}
-BLOCKED_URL_DOMAINS = {"localhost", "127.0.0.1", "0.0.0.0", "::1", "[::1]"}
+BLOCKED_URL_DOMAINS = {
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",  # noqa: S104
+    "::1",
+    "[::1]",
+}
 SUSPICIOUS_URL_PATTERNS = ["javascript:", "data:", "vbscript:", "file:"]
 
 
-class ValidationError(ValueError):
+class ValidationError(ApplicationClientError):
     """Custom validation error for all field validations."""
 
 
@@ -117,26 +174,38 @@ class PasswordValidationError(ValidationError):
 
 # Core Validation Framework
 def validate_not_empty(value: str) -> str:
-    """Ensure string is not empty after stripping."""
     cleaned = value.strip()
     if not cleaned:
-        raise ValidationError("Value cannot be empty")
+        msg = "Value cannot be empty"
+        raise ValidationError(msg)
     return cleaned
 
 
 def validate_length(value: str, min_length: int = 0, max_length: int | None = None) -> str:
-    """Validate string length."""
     if len(value) < min_length:
-        raise ValidationError(f"Must be at least {min_length} characters")
+        msg = f"Must be at least {min_length} characters"
+        raise ValidationError(msg)
     if max_length and len(value) > max_length:
-        raise ValidationError(f"Must not exceed {max_length} characters")
+        msg = f"Must not exceed {max_length} characters"
+        raise ValidationError(msg)
     return value
 
 
 def validate_no_control_chars(value: str) -> str:
-    """Remove/reject control characters."""
+    """Remove/reject control characters.
+
+    Args:
+        value: The string to validate
+
+    Raises:
+        ValidationError: If control characters are found
+
+    Returns:
+        The cleansed string without control characters
+    """
     if any(unicodedata.category(char) == "Cc" for char in value if char not in "\n\r\t"):
-        raise ValidationError("Contains invalid control characters")
+        msg = "Contains invalid control characters"
+        raise ValidationError(msg)
     return value
 
 
@@ -149,32 +218,40 @@ def validate_password_strength(password: str) -> None:
     Raises:
         PasswordValidationError: If password doesn't meet requirements
     """
-    if not isinstance(password, str):
-        raise PasswordValidationError("Password must be a string")
+    if not isinstance(password, str):  # pyright: ignore
+        msg = "Password must be a string"  # type: ignore[unreachable]
+        raise PasswordValidationError(msg)
 
     # Length requirements
-    if len(password) < 12:
-        raise PasswordValidationError("Password must be at least 12 characters long")
+    if len(password) < PASSWORD_MIN_LENGTH:
+        msg = f"Password must be at least {PASSWORD_MIN_LENGTH} characters long"
+        raise PasswordValidationError(msg)
 
-    if len(password) > 128:
-        raise PasswordValidationError("Password must not exceed 128 characters")
+    if len(password) > PASSWORD_MAX_LENGTH:
+        msg = f"Password must not exceed {PASSWORD_MAX_LENGTH} characters"
+        raise PasswordValidationError(msg)
 
     # Character type requirements
     if not PASSWORD_UPPERCASE_PATTERN.search(password):
-        raise PasswordValidationError("Password must contain at least one uppercase letter")
+        msg = "Password must contain at least one uppercase letter"
+        raise PasswordValidationError(msg)
 
     if not PASSWORD_LOWERCASE_PATTERN.search(password):
-        raise PasswordValidationError("Password must contain at least one lowercase letter")
+        msg = "Password must contain at least one lowercase letter"
+        raise PasswordValidationError(msg)
 
     if not PASSWORD_DIGIT_PATTERN.search(password):
-        raise PasswordValidationError("Password must contain at least one digit")
+        msg = "Password must contain at least one digit"
+        raise PasswordValidationError(msg)
 
     if not PASSWORD_SPECIAL_PATTERN.search(password):
-        raise PasswordValidationError("Password must contain at least one special character")
+        msg = "Password must contain at least one special character"
+        raise PasswordValidationError(msg)
 
     # Check against common patterns
     if _is_common_password(password):
-        raise PasswordValidationError("Password is too common - please choose a more unique password")
+        msg = "Password is too common - please choose a more unique password"
+        raise PasswordValidationError(msg)
 
 
 def _is_common_password(password: str) -> bool:
@@ -199,10 +276,7 @@ def _is_common_password(password: str) -> bool:
     if PASSWORD_SEQUENTIAL_PATTERN.match(password_lower):
         return True
 
-    if PASSWORD_KEYBOARD_PATTERN.match(password_lower):  # Keyboard patterns
-        return True
-
-    return False
+    return bool(PASSWORD_KEYBOARD_PATTERN.match(password_lower))
 
 
 def get_password_strength(password: str) -> dict[str, Any]:
@@ -218,14 +292,14 @@ def get_password_strength(password: str) -> dict[str, Any]:
         "score": 0,
         "strength": "weak",
         "requirements": {
-            "length": len(password) >= 12,
+            "length": len(password) >= PASSWORD_MIN_LENGTH,
             "uppercase": bool(PASSWORD_UPPERCASE_PATTERN.search(password)),
             "lowercase": bool(PASSWORD_LOWERCASE_PATTERN.search(password)),
             "digits": bool(PASSWORD_DIGIT_PATTERN.search(password)),
             "special_chars": bool(PASSWORD_SPECIAL_PATTERN.search(password)),
-            "not_common": not _is_common_password(password)
+            "not_common": not _is_common_password(password),
         },
-        "feedback": []
+        "feedback": [],
     }
 
     # Calculate score
@@ -260,15 +334,15 @@ def get_password_strength(password: str) -> dict[str, Any]:
         analysis["feedback"].append("Avoid common passwords")
 
     # Bonus points for length
-    if len(password) >= 16:
+    if len(password) >= PASSWORD_STRONG_LENGTH:
         analysis["score"] += 1
-    if len(password) >= 20:
+    if len(password) >= PASSWORD_VERY_STRONG_LENGTH:
         analysis["score"] += 1
 
     # Determine strength level
-    if analysis["score"] >= 7:
+    if analysis["score"] >= PASSWORD_SCORE_STRONG:
         analysis["strength"] = "strong"
-    elif analysis["score"] >= 5:
+    elif analysis["score"] >= PASSWORD_SCORE_MEDIUM:
         analysis["strength"] = "medium"
     else:
         analysis["strength"] = "weak"
@@ -279,48 +353,49 @@ def get_password_strength(password: str) -> dict[str, Any]:
 # Email Validation
 def validate_email(v: str) -> str:
     """Production-ready email validation with comprehensive checks."""
-    if not isinstance(v, str):
-        raise ValidationError("Email must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Email must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     # Basic cleanup
     email = v.strip().lower()
 
     # Length check
-    if len(email) > 254:  # RFC 5321 limit
-        raise ValidationError("Email address too long")
+    if len(email) > EMAIL_MAX_LENGTH:
+        msg = "Email address too long"
+        raise ValidationError(msg)
 
-    if len(email) < 3:
-        raise ValidationError("Email address too short")
+    if len(email) < EMAIL_MIN_LENGTH:
+        msg = "Email address too short"
+        raise ValidationError(msg)
 
-    # Use email-validator library for comprehensive validation if available
-    if _validate_email:
-        try:
-            validated_email = _validate_email(
-                email,
-                check_deliverability=True,  # DNS MX record check
-            )
-            email = validated_email.email
-        except EmailNotValidError as e:
-            raise ValidationError(f"Invalid email address: {e!s}")
-    else:
-        # Fallback to basic regex validation
-        if not EMAIL_BASIC_PATTERN.match(email):
-            raise ValidationError("Invalid email format")
+    # Basic regex validation
+    if not EMAIL_BASIC_PATTERN.match(email):
+        msg = "Invalid email format"
+        raise ValidationError(msg)
+
+    # Check for double dots
+    if EMAIL_DOUBLE_DOT_PATTERN.search(email):
+        msg = "Invalid email format"
+        raise ValidationError(msg)
 
     # Check against blocked domains
     domain = email.split("@")[1] if "@" in email else ""
     if domain in EMAIL_BLOCKED_DOMAINS:
-        raise ValidationError("Email domain not allowed")
+        msg = "Email domain not allowed"
+        raise ValidationError(msg)
 
     # Check against blocked patterns
     for pattern in EMAIL_BLOCKED_PATTERNS:
         if pattern.match(email):
-            raise ValidationError("Email format not allowed")
+            msg = "Email format not allowed"
+            raise ValidationError(msg)
 
     # Additional security checks
     local_part = email.split("@")[0]
-    if len(local_part) > 64:  # RFC 5321 limit
-        raise ValidationError("Email local part too long")
+    if len(local_part) > EMAIL_LOCAL_PART_MAX_LENGTH:
+        msg = "Email local part too long"
+        raise ValidationError(msg)
 
     return email
 
@@ -332,8 +407,9 @@ Email = Annotated[str, msgspec.Meta(description="Valid email address")]
 # Password Validation
 def validate_password(v: str) -> str:
     """Production-ready password validation with security checks."""
-    if not isinstance(v, str):
-        raise ValidationError("Password must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Password must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     # Use existing validation function
     validate_password_strength(v)
@@ -341,7 +417,8 @@ def validate_password(v: str) -> str:
     # Check against common passwords
     password_hash = hashlib.sha256(v.encode()).hexdigest()
     if password_hash in COMMON_PASSWORDS_HASHES:
-        raise ValidationError("Password is too common, please choose a different one")
+        msg = "Password is too common, please choose a different one"
+        raise ValidationError(msg)
 
     return v
 
@@ -353,8 +430,9 @@ Password = Annotated[str, msgspec.Meta(description="Strong password (12+ chars, 
 # Name and Text Validation
 def validate_name(v: str) -> str:
     """Human name validation with proper handling of international names."""
-    if not isinstance(v, str):
-        raise ValidationError("Name must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Name must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     # Clean and normalize
     name = v.strip()
@@ -362,51 +440,62 @@ def validate_name(v: str) -> str:
 
     # Length validation
     if len(name) < 1:
-        raise ValidationError("Name cannot be empty")
-    if len(name) > 100:
-        raise ValidationError("Name must not exceed 100 characters")
+        msg = "Name cannot be empty"
+        raise ValidationError(msg)
+    if len(name) > NAME_MAX_LENGTH:
+        msg = f"Name must not exceed {NAME_MAX_LENGTH} characters"
+        raise ValidationError(msg)
 
     # Character validation - allow letters, spaces, hyphens, apostrophes, periods
     # Allow extended Unicode for international names
     if not NAME_VALID_PATTERN.match(name):
-        raise ValidationError("Name contains invalid characters")
+        msg = "Name contains invalid characters"
+        raise ValidationError(msg)
 
     # Prevent abuse patterns
     if NAME_REPEATED_PATTERN.search(name):  # 5+ repeated characters
-        raise ValidationError("Name contains suspicious patterns")
+        msg = "Name contains suspicious patterns"
+        raise ValidationError(msg)
 
     return name
 
 
 def validate_username(v: str) -> str:
     """Username validation with uniqueness and character restrictions."""
-    if not isinstance(v, str):
-        raise ValidationError("Username must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Username must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     # Clean and normalize
     username = v.strip().lower()
 
     # Length validation
-    if len(username) < 3:
-        raise ValidationError("Username must be at least 3 characters")
-    if len(username) > 30:
-        raise ValidationError("Username must not exceed 30 characters")
+    if len(username) < USERNAME_MIN_LENGTH:
+        msg = f"Username must be at least {USERNAME_MIN_LENGTH} characters"
+        raise ValidationError(msg)
+    if len(username) > USERNAME_MAX_LENGTH:
+        msg = f"Username must not exceed {USERNAME_MAX_LENGTH} characters"
+        raise ValidationError(msg)
 
     # Character validation - alphanumeric, hyphens, underscores only
     if not USERNAME_VALID_PATTERN.match(username):
-        raise ValidationError("Username can only contain letters, numbers, hyphens, and underscores")
+        msg = "Username can only contain letters, numbers, hyphens, and underscores"
+        raise ValidationError(msg)
 
     # Must start with letter or number
     if not USERNAME_START_PATTERN.match(username):
-        raise ValidationError("Username must start with a letter or number")
+        msg = "Username must start with a letter or number"
+        raise ValidationError(msg)
 
     # Check reserved usernames
     if username in RESERVED_USERNAMES:
-        raise ValidationError("Username is reserved and cannot be used")
+        msg = "Username is reserved and cannot be used"
+        raise ValidationError(msg)
 
     # Prevent abuse patterns
     if USERNAME_REPEATED_PATTERN.search(username):  # 4+ repeated characters
-        raise ValidationError("Username contains too many repeated characters")
+        msg = "Username contains too many repeated characters"
+        raise ValidationError(msg)
 
     return username
 
@@ -416,70 +505,82 @@ Name = Annotated[str, msgspec.Meta(description="Human name (1-100 characters)")]
 Username = Annotated[str, msgspec.Meta(description="Username (3-30 characters, alphanumeric/hyphens/underscores)")]
 
 
-
-
 def validate_url(v: str) -> str:
     """URL validation with security checks."""
-    if not isinstance(v, str):
-        raise ValidationError("URL must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "URL must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     url = v.strip()
 
     # Length check
-    if len(url) > 2048:
-        raise ValidationError("URL too long")
+    if len(url) > URL_MAX_LENGTH:
+        msg = "URL too long"
+        raise ValidationError(msg)
 
     try:
         parsed = urlparse(url)
-    except Exception:
-        raise ValidationError("Invalid URL format")
+    except Exception as e:
+        msg = "Invalid URL format"
+        raise ValidationError(msg) from e
 
     # Scheme validation
     if not parsed.scheme:
-        raise ValidationError("URL must include a scheme (http:// or https://)")
+        msg = "URL must include a scheme (http:// or https://)"
+        raise ValidationError(msg)
 
     if parsed.scheme not in ALLOWED_URL_SCHEMES:
-        raise ValidationError(f"URL scheme must be one of: {', '.join(ALLOWED_URL_SCHEMES)}")
+        msg = f"URL scheme must be one of: {', '.join(ALLOWED_URL_SCHEMES)}"
+        raise ValidationError(msg)
 
     # Domain validation
     if not parsed.hostname:
-        raise ValidationError("URL must include a hostname")
+        msg = "URL must include a hostname"
+        raise ValidationError(msg)
 
     if parsed.hostname in BLOCKED_URL_DOMAINS:
-        raise ValidationError("URL domain not allowed")
+        msg = "URL domain not allowed"
+        raise ValidationError(msg)
 
     # Prevent common attacks
     url_lower = url.lower()
     if any(suspicious in url_lower for suspicious in SUSPICIOUS_URL_PATTERNS):
-        raise ValidationError("URL contains suspicious content")
+        msg = "URL contains suspicious content"
+        raise ValidationError(msg)
 
     return url
 
 
 def validate_slug(v: str) -> str:
     """Slug validation for URL-safe identifiers."""
-    if not isinstance(v, str):
-        raise ValidationError("Slug must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Slug must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     slug = v.strip().lower()
 
     # Length validation
     if len(slug) < 1:
-        raise ValidationError("Slug cannot be empty")
-    if len(slug) > 100:
-        raise ValidationError("Slug must not exceed 100 characters")
+        msg = "Slug cannot be empty"
+        raise ValidationError(msg)
+    if len(slug) > SLUG_MAX_LENGTH:
+        msg = f"Slug must not exceed {SLUG_MAX_LENGTH} characters"
+        raise ValidationError(msg)
 
     # Character validation - lowercase, numbers, hyphens only
     if not SLUG_VALID_PATTERN.match(slug):
-        raise ValidationError("Slug can only contain lowercase letters, numbers, and hyphens")
+        msg = "Slug can only contain lowercase letters, numbers, and hyphens"
+        raise ValidationError(msg)
 
     # Cannot start or end with hyphen
     if slug.startswith("-") or slug.endswith("-"):
-        raise ValidationError("Slug cannot start or end with a hyphen")
+        msg = "Slug cannot start or end with a hyphen"
+        raise ValidationError(msg)
 
     # Cannot have consecutive hyphens
     if "--" in slug:
-        raise ValidationError("Slug cannot contain consecutive hyphens")
+        msg = "Slug cannot contain consecutive hyphens"
+        raise ValidationError(msg)
 
     return slug
 
@@ -492,46 +593,29 @@ Slug = Annotated[str, msgspec.Meta(description="URL-safe slug (lowercase, alphan
 # Phone Number Validation
 def validate_phone(v: str) -> str:
     """International phone number validation."""
-    if not isinstance(v, str):
-        raise ValidationError("Phone number must be a string")
+    if not isinstance(v, str):  # pyright: ignore
+        msg = "Phone number must be a string"  # type: ignore[unreachable]
+        raise ValidationError(msg)
 
     phone = v.strip()
 
     if not phone:
-        raise ValidationError("Phone number cannot be empty")
+        msg = "Phone number cannot be empty"
+        raise ValidationError(msg)
 
-    # If phonenumbers library is available, use it for proper validation
-    if phonenumbers:
-        try:
-            # Try to parse with international format first
-            if phone.startswith("+"):
-                parsed_number = phonenumbers.parse(phone, None)
-            else:
-                # For numbers without country code, you might want to set a default region
-                # For now, we'll require international format
-                raise ValidationError("Phone number must include country code (e.g., +1 for US)")
+    # Basic validation
+    # Allow only digits, spaces, hyphens, parentheses, and plus sign
+    if not PHONE_BASIC_PATTERN.match(phone):
+        msg = "Invalid phone number format"
+        raise ValidationError(msg)
 
-            if not phonenumbers.is_valid_number(parsed_number):
-                raise ValidationError("Invalid phone number")
+    # Basic length check
+    digits_only = PHONE_DIGITS_PATTERN.sub("", phone)
+    if len(digits_only) < PHONE_MIN_DIGITS or len(digits_only) > PHONE_MAX_DIGITS:
+        msg = f"Phone number must be between {PHONE_MIN_DIGITS} and {PHONE_MAX_DIGITS} digits"
+        raise ValidationError(msg)
 
-            # Format to international format
-            formatted = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
-            return formatted
-
-        except NumberParseException:
-            raise ValidationError("Invalid phone number format")
-    else:
-        # Fallback to basic validation
-        # Allow only digits, spaces, hyphens, parentheses, and plus sign
-        if not PHONE_BASIC_PATTERN.match(phone):
-            raise ValidationError("Invalid phone number format")
-
-        # Basic length check
-        digits_only = PHONE_DIGITS_PATTERN.sub("", phone)
-        if len(digits_only) < 7 or len(digits_only) > 15:
-            raise ValidationError("Phone number must be between 7 and 15 digits")
-
-        return phone
+    return phone
 
 
 # Type annotation

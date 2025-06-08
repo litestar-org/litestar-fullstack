@@ -32,7 +32,7 @@ async def test_get_encryption_key(secret_key: str, expected_value: str) -> None:
 
 async def test_get_password_hash() -> None:
     """Test that the encryption key is formatted correctly."""
-    secret_str = "This is a password!"  # noqa: S105
+    secret_str = "This is a password!"
     secret_bytes = b"This is a password too!"
     secret_str_hash = await crypt.get_password_hash(secret_str)
     secret_bytes_hash = await crypt.get_password_hash(secret_bytes)
