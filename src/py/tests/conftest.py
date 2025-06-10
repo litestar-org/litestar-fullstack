@@ -128,7 +128,7 @@ async def client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
 
 
 @pytest.fixture
-async def user_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def user_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[UserService, None]:
     """Create UserService instance."""
     from app.services import UserService
 
@@ -137,7 +137,7 @@ async def user_service(sessionmaker: async_sessionmaker[AsyncSession]):
 
 
 @pytest.fixture
-async def team_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def team_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[TeamService, None]:
     """Create TeamService instance."""
     from app.services import TeamService
 
@@ -146,7 +146,7 @@ async def team_service(sessionmaker: async_sessionmaker[AsyncSession]):
 
 
 @pytest.fixture
-async def test_user(session: AsyncSession):
+async def test_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create a test user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
@@ -166,7 +166,7 @@ async def test_user(session: AsyncSession):
 
 
 @pytest.fixture
-async def admin_user(session: AsyncSession):
+async def admin_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create an admin user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
@@ -187,7 +187,7 @@ async def admin_user(session: AsyncSession):
 
 
 @pytest.fixture
-async def test_team(session: AsyncSession, test_user):
+async def test_team(session: AsyncSession, test_user) -> AsyncGenerator[m.Team, None]:
     """Create a test team with owner."""
     from app.db import models as m
     from app.db.models.team_member import TeamMember
