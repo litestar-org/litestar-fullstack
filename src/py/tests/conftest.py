@@ -1,6 +1,12 @@
 from __future__ import annotations
 
 import os
+from datetime import UTC, datetime, timedelta
+
+from app import services
+from app.db import models as m
+from app.lib.crypt import get_password_hash
+from app.lib.email import EmailService
 
 # Set test environment before any other imports
 os.environ.update(
@@ -109,9 +115,8 @@ async def session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenera
 
 
 @pytest.fixture
-def app():
+def app() -> Litestar:
     """Create Litestar app for testing."""
-    import os
 
     os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
@@ -128,28 +133,24 @@ async def client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
 
 
 @pytest.fixture
-async def user_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[UserService, None]:
+async def user_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[services.UserService, None]:
     """Create UserService instance."""
-    from app.services import UserService
 
-    async with UserService.new(sessionmaker()) as service:
+    async with services.UserService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def team_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[TeamService, None]:
+async def team_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[services.TeamService, None]:
     """Create TeamService instance."""
-    from app.services import TeamService
 
-    async with TeamService.new(sessionmaker()) as service:
+    async with services.TeamService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
 async def test_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create a test user."""
-    from app.db import models as m
-    from app.lib.crypt import get_password_hash
 
     user = m.User(
         id=uuid4(),
@@ -162,14 +163,12 @@ async def test_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     session.add(user)
     await session.commit()
     await session.refresh(user)
-    return user
+    yield user
 
 
 @pytest.fixture
 async def admin_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create an admin user."""
-    from app.db import models as m
-    from app.lib.crypt import get_password_hash
 
     user = m.User(
         id=uuid4(),
@@ -183,16 +182,12 @@ async def admin_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     session.add(user)
     await session.commit()
     await session.refresh(user)
-    return user
+    yield user
 
 
 @pytest.fixture
-async def test_team(session: AsyncSession, test_user) -> AsyncGenerator[m.Team, None]:
+async def test_team(session: AsyncSession, test_user: m.User) -> AsyncGenerator[m.Team, None]:
     """Create a test team with owner."""
-    from app.db import models as m
-    from app.db.models.team_member import TeamMember
-    from app.db.models.team_roles import TeamRoles
-
     team = m.Team(
         id=uuid4(),
         name="Test Team",
@@ -205,20 +200,20 @@ async def test_team(session: AsyncSession, test_user) -> AsyncGenerator[m.Team, 
     await session.refresh(team)
 
     # Add owner membership
-    membership = TeamMember(
+    membership = m.TeamMember(
         team_id=team.id,
         user_id=test_user.id,
-        role=TeamRoles.ADMIN,
+        role=m.TeamRoles.ADMIN,
         is_owner=True,
     )
     session.add(membership)
     await session.commit()
 
-    return team
+    yield team
 
 
 @pytest.fixture
-async def authenticated_client(client: AsyncTestClient, test_user) -> AsyncTestClient:
+async def authenticated_client(client: AsyncTestClient, test_user: m.User) -> AsyncTestClient:
     """Create authenticated test client."""
     # Login and set auth headers
     login_response = await client.post(
@@ -233,7 +228,7 @@ async def authenticated_client(client: AsyncTestClient, test_user) -> AsyncTestC
 
 
 @pytest.fixture
-async def admin_client(client: AsyncTestClient, admin_user) -> AsyncTestClient:
+async def admin_client(client: AsyncTestClient, admin_user: m.User) -> AsyncTestClient:
     """Create authenticated admin test client."""
     # Login as admin and set auth headers
     login_response = await client.post(
@@ -249,91 +244,89 @@ async def admin_client(client: AsyncTestClient, admin_user) -> AsyncTestClient:
 
 # Service fixtures
 @pytest.fixture
-async def email_verification_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def email_verification_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.EmailVerificationTokenService, None]:
     """Create EmailVerificationTokenService instance."""
-    from app.services import EmailVerificationTokenService
-
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with services.EmailVerificationTokenService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def password_reset_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def password_reset_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.PasswordResetService, None]:
     """Create PasswordResetService instance."""
-    from app.services import PasswordResetService
-
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with services.PasswordResetService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def role_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def role_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[services.RoleService, None]:
     """Create RoleService instance."""
-    from app.services import RoleService
 
-    async with RoleService.new(sessionmaker()) as service:
+    async with services.RoleService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[services.TagService, None]:
     """Create TagService instance."""
-    from app.services import TagService
-
-    async with TagService.new(sessionmaker()) as service:
+    async with services.TagService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def team_member_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def team_member_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.TeamMemberService, None]:
     """Create TeamMemberService instance."""
-    from app.services import TeamMemberService
 
-    async with TeamMemberService.new(sessionmaker()) as service:
+    async with services.TeamMemberService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def team_invitation_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def team_invitation_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.TeamInvitationService, None]:
     """Create TeamInvitationService instance."""
-    from app.services import TeamInvitationService
 
-    async with TeamInvitationService.new(sessionmaker()) as service:
+    async with services.TeamInvitationService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def user_role_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def user_role_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.UserRoleService, None]:
     """Create UserRoleService instance."""
-    from app.services import UserRoleService
 
-    async with UserRoleService.new(sessionmaker()) as service:
+    async with services.UserRoleService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-async def user_oauth_service(sessionmaker: async_sessionmaker[AsyncSession]):
+async def user_oauth_service(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[services.UserOAuthAccountService, None]:
     """Create UserOAuthAccountService instance."""
-    from app.services import UserOAuthAccountService
 
-    async with UserOAuthAccountService.new(sessionmaker()) as service:
+    async with services.UserOAuthAccountService.new(sessionmaker()) as service:
         yield service
 
 
 @pytest.fixture
-def email_service():
+def email_service() -> EmailService:
     """Create EmailService instance for testing."""
-    from app.lib.email import EmailService
 
     return EmailService()
 
 
 # Test data fixtures
 @pytest.fixture
-async def unverified_user(session: AsyncSession):
+async def unverified_user(session: AsyncSession) -> m.User:
     """Create an unverified user."""
-    from app.db import models as m
-    from app.lib.crypt import get_password_hash
 
     user = m.User(
         id=uuid4(),
@@ -350,10 +343,8 @@ async def unverified_user(session: AsyncSession):
 
 
 @pytest.fixture
-async def inactive_user(session: AsyncSession):
+async def inactive_user(session: AsyncSession) -> m.User:
     """Create an inactive user."""
-    from app.db import models as m
-    from app.lib.crypt import get_password_hash
 
     user = m.User(
         id=uuid4(),
@@ -370,10 +361,8 @@ async def inactive_user(session: AsyncSession):
 
 
 @pytest.fixture
-async def test_role(session: AsyncSession):
+async def test_role(session: AsyncSession) -> m.Role:
     """Create a test role."""
-    from app.db import models as m
-
     role = m.Role(
         id=uuid4(),
         name="test_role",
@@ -387,10 +376,8 @@ async def test_role(session: AsyncSession):
 
 
 @pytest.fixture
-async def test_tag(session: AsyncSession):
+async def test_tag(session: AsyncSession) -> m.Tag:
     """Create a test tag."""
-    from app.db import models as m
-
     tag = m.Tag(
         id=uuid4(),
         name="test_tag",
@@ -404,12 +391,8 @@ async def test_tag(session: AsyncSession):
 
 
 @pytest.fixture
-async def test_verification_token(session: AsyncSession, unverified_user):
+async def test_verification_token(session: AsyncSession, unverified_user: m.User) -> m.EmailVerificationToken:
     """Create a test email verification token."""
-    from datetime import UTC, datetime, timedelta
-
-    from app.db import models as m
-
     token = m.EmailVerificationToken(
         id=uuid4(),
         user_id=unverified_user.id,
@@ -423,11 +406,8 @@ async def test_verification_token(session: AsyncSession, unverified_user):
 
 
 @pytest.fixture
-async def test_password_reset_token(session: AsyncSession, test_user):
+async def test_password_reset_token(session: AsyncSession, test_user: m.User) -> m.PasswordResetToken:
     """Create a test password reset token."""
-    from datetime import UTC, datetime, timedelta
-
-    from app.db import models as m
 
     token = m.PasswordResetToken(
         id=uuid4(),
@@ -444,11 +424,8 @@ async def test_password_reset_token(session: AsyncSession, test_user):
 
 
 @pytest.fixture
-async def test_oauth_account(session: AsyncSession, test_user):
+async def test_oauth_account(session: AsyncSession, test_user: m.User) -> m.UserOauthAccount:
     """Create a test OAuth account."""
-    from datetime import UTC, datetime, timedelta
-
-    from app.db import models as m
 
     oauth_account = m.UserOauthAccount(
         id=uuid4(),
@@ -473,12 +450,8 @@ async def test_oauth_account(session: AsyncSession, test_user):
 
 
 @pytest.fixture
-async def test_team_invitation(session: AsyncSession, test_team, test_user):
+async def test_team_invitation(session: AsyncSession, test_team: m.Team, test_user: m.User) -> m.TeamInvitation:
     """Create a test team invitation."""
-    from datetime import UTC, datetime, timedelta
-
-    from app.db import models as m
-
     invitation = m.TeamInvitation(
         id=uuid4(),
         team_id=test_team.id,
