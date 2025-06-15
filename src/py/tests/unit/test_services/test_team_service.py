@@ -3,16 +3,14 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
 
-from app.db import models as m
 from app.db.models.team_roles import TeamRoles
 from app.lib import constants
 from app.services._teams import TeamService
-from tests.factories import TeamFactory, UserFactory, TeamMemberFactory, TagFactory
+from tests.factories import TagFactory, TeamFactory, TeamMemberFactory, UserFactory
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,10 +25,7 @@ class TestTeamServiceCRUD:
     @pytest.mark.asyncio
     async def test_create_team_basic(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test basic team creation."""
-        team_data = {
-            "name": "Test Team",
-            "description": "A test team"
-        }
+        team_data = {"name": "Test Team", "description": "A test team"}
 
         team = await team_service.create(data=team_data)
 
@@ -49,17 +44,13 @@ class TestTeamServiceCRUD:
         await session.commit()
         await session.refresh(owner)
 
-        team_data = {
-            "name": "Owner Team",
-            "description": "Team with owner",
-            "owner_id": owner.id
-        }
+        team_data = {"name": "Owner Team", "description": "Team with owner", "owner_id": owner.id}
 
         team = await team_service.create(data=team_data)
 
         assert team.name == "Owner Team"
         assert len(team.members) == 1
-        
+
         owner_member = team.members[0]
         assert owner_member.user_id == owner.id
         assert owner_member.role == TeamRoles.ADMIN
@@ -68,17 +59,13 @@ class TestTeamServiceCRUD:
     @pytest.mark.asyncio
     async def test_create_team_with_tags(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test team creation with tags."""
-        team_data = {
-            "name": "Tagged Team",
-            "description": "Team with tags",
-            "tags": ["development", "backend", "api"]
-        }
+        team_data = {"name": "Tagged Team", "description": "Team with tags", "tags": ["development", "backend", "api"]}
 
         team = await team_service.create(data=team_data)
 
         assert team.name == "Tagged Team"
         assert len(team.tags) == 3
-        
+
         tag_names = [tag.name for tag in team.tags]
         assert "development" in tag_names
         assert "backend" in tag_names
@@ -87,10 +74,7 @@ class TestTeamServiceCRUD:
     @pytest.mark.asyncio
     async def test_create_team_slug_generation(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test automatic slug generation."""
-        team_data = {
-            "name": "Team With Spaces And CAPS",
-            "description": "Testing slug generation"
-        }
+        team_data = {"name": "Team With Spaces And CAPS", "description": "Testing slug generation"}
 
         team = await team_service.create(data=team_data)
 
@@ -99,7 +83,9 @@ class TestTeamServiceCRUD:
         assert team.slug.islower()
 
     @pytest.mark.asyncio
-    async def test_create_team_duplicate_name_different_slugs(self, session: AsyncSession, team_service: TeamService) -> None:
+    async def test_create_team_duplicate_name_different_slugs(
+        self, session: AsyncSession, team_service: TeamService
+    ) -> None:
         """Test that duplicate team names get different slugs."""
         team_data1 = {"name": "Test Team", "description": "First team"}
         team_data2 = {"name": "Test Team", "description": "Second team"}
@@ -142,10 +128,7 @@ class TestTeamServiceCRUD:
         session.add(team)
         await session.commit()
 
-        update_data = {
-            "name": "Updated Name",
-            "description": "Updated description"
-        }
+        update_data = {"name": "Updated Name", "description": "Updated description"}
 
         updated_team = await team_service.update(item_id=team.id, data=update_data)
 
@@ -157,12 +140,9 @@ class TestTeamServiceCRUD:
     async def test_update_team_with_new_tags(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test updating team with new tags."""
         # Create team with initial tags
-        team_data = {
-            "name": "Team to Update",
-            "tags": ["tag1", "tag2"]
-        }
+        team_data = {"name": "Team to Update", "tags": ["tag1", "tag2"]}
         team = await team_service.create(data=team_data)
-        
+
         # Update with new tags
         update_data = {
             "tags": ["tag2", "tag3", "tag4"]  # Remove tag1, keep tag2, add tag3 and tag4
@@ -172,9 +152,9 @@ class TestTeamServiceCRUD:
 
         tag_names = [tag.name for tag in updated_team.tags]
         assert "tag1" not in tag_names  # Removed
-        assert "tag2" in tag_names      # Kept
-        assert "tag3" in tag_names      # Added
-        assert "tag4" in tag_names      # Added
+        assert "tag2" in tag_names  # Kept
+        assert "tag3" in tag_names  # Added
+        assert "tag4" in tag_names  # Added
         assert len(updated_team.tags) == 3
 
     @pytest.mark.asyncio
@@ -213,10 +193,7 @@ class TestTeamServiceOwnershipAndMembers:
         await session.commit()
         await session.refresh(owner)
 
-        team_data = {
-            "name": "Owner Team",
-            "owner": owner
-        }
+        team_data = {"name": "Owner Team", "owner": owner}
 
         team = await team_service.create(data=team_data)
 
@@ -235,18 +212,12 @@ class TestTeamServiceOwnershipAndMembers:
         session.add_all([original_owner, new_owner])
         await session.commit()
 
-        team_data = {
-            "name": "Ownership Test Team",
-            "owner_id": original_owner.id
-        }
+        team_data = {"name": "Ownership Test Team", "owner_id": original_owner.id}
         team = await team_service.create(data=team_data)
 
         # Add new owner as member first
         new_member = TeamMemberFactory.build(
-            team_id=team.id,
-            user_id=new_owner.id,
-            role=TeamRoles.MEMBER,
-            is_owner=False
+            team_id=team.id, user_id=new_owner.id, role=TeamRoles.MEMBER, is_owner=False
         )
         session.add(new_member)
         await session.commit()
@@ -256,10 +227,7 @@ class TestTeamServiceOwnershipAndMembers:
         updated_team = await team_service.update(item_id=team.id, data=update_data)
 
         # Check that new owner has correct role and ownership
-        new_owner_member = next(
-            (m for m in updated_team.members if m.user_id == new_owner.id),
-            None
-        )
+        new_owner_member = next((m for m in updated_team.members if m.user_id == new_owner.id), None)
         assert new_owner_member is not None
         assert new_owner_member.is_owner is True
         assert new_owner_member.role == TeamRoles.ADMIN
@@ -279,10 +247,10 @@ class TestTeamServicePermissions:
     def test_can_view_all_superuser_role(self) -> None:
         """Test can_view_all with superuser role."""
         user = UserFactory.build(is_superuser=False)
-        
+
         # Mock role with superuser access
-        mock_role = type('MockRole', (), {'name': constants.SUPERUSER_ACCESS_ROLE})()
-        mock_user_role = type('MockUserRole', (), {'role': mock_role})()
+        mock_role = type("MockRole", (), {"name": constants.SUPERUSER_ACCESS_ROLE})()
+        mock_user_role = type("MockUserRole", (), {"role": mock_role})()
         user.roles = [mock_user_role]
 
         result = TeamService.can_view_all(user)
@@ -291,10 +259,10 @@ class TestTeamServicePermissions:
     def test_can_view_all_regular_user(self) -> None:
         """Test can_view_all with regular user."""
         user = UserFactory.build(is_superuser=False)
-        
+
         # Mock role without superuser access
-        mock_role = type('MockRole', (), {'name': 'regular_user'})()
-        mock_user_role = type('MockUserRole', (), {'role': mock_role})()
+        mock_role = type("MockRole", (), {"name": "regular_user"})()
+        mock_user_role = type("MockUserRole", (), {"role": mock_role})()
         user.roles = [mock_user_role]
 
         result = TeamService.can_view_all(user)
@@ -326,10 +294,7 @@ class TestTeamServiceSlugHandling:
     @pytest.mark.asyncio
     async def test_populate_slug_when_provided(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test slug is preserved when provided."""
-        team_data = {
-            "name": "Team With Slug",
-            "slug": "custom-slug"
-        }
+        team_data = {"name": "Team With Slug", "slug": "custom-slug"}
 
         result = await team_service._populate_slug(team_data)
 
@@ -352,16 +317,12 @@ class TestTeamServiceTagManagement:
     @pytest.mark.asyncio
     async def test_populate_with_new_tags(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test adding new tags to team."""
-        team_data = {
-            "id": uuid4(),
-            "name": "Tag Test Team",
-            "tags": ["new-tag-1", "new-tag-2"]
-        }
+        team_data = {"id": uuid4(), "name": "Tag Test Team", "tags": ["new-tag-1", "new-tag-2"]}
 
         # Convert to model to test tag population
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
 
-        assert hasattr(result, 'tags')
+        assert hasattr(result, "tags")
         assert len(result.tags) == 2
 
     @pytest.mark.asyncio
@@ -372,15 +333,11 @@ class TestTeamServiceTagManagement:
         session.add(existing_tag)
         await session.commit()
 
-        team_data = {
-            "id": uuid4(),
-            "name": "Existing Tag Team",
-            "tags": ["existing-tag", "new-tag"]
-        }
+        team_data = {"id": uuid4(), "name": "Existing Tag Team", "tags": ["existing-tag", "new-tag"]}
 
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
 
-        assert hasattr(result, 'tags')
+        assert hasattr(result, "tags")
         tag_names = [tag.name for tag in result.tags]
         assert "existing-tag" in tag_names
         assert "new-tag" in tag_names
@@ -389,10 +346,7 @@ class TestTeamServiceTagManagement:
     async def test_remove_tags_from_team(self, session: AsyncSession, team_service: TeamService) -> None:
         """Test removing tags from existing team."""
         # Create team with initial tags
-        team_data = {
-            "name": "Tag Removal Test",
-            "tags": ["tag1", "tag2", "tag3"]
-        }
+        team_data = {"name": "Tag Removal Test", "tags": ["tag1", "tag2", "tag3"]}
         team = await team_service.create(data=team_data)
 
         # Update to remove some tags
@@ -450,7 +404,7 @@ class TestTeamServiceErrorHandling:
         """Test creating team with non-existent owner ID."""
         team_data = {
             "name": "Invalid Owner Team",
-            "owner_id": uuid4()  # Non-existent user ID
+            "owner_id": uuid4(),  # Non-existent user ID
         }
 
         # Should handle gracefully - either create without owner or raise error
@@ -479,7 +433,7 @@ class TestTeamServiceIntegration:
             "name": "Lifecycle Test Team",
             "description": "Testing full lifecycle",
             "owner_id": owner.id,
-            "tags": ["lifecycle", "test"]
+            "tags": ["lifecycle", "test"],
         }
         team = await team_service.create(data=team_data)
 
@@ -492,7 +446,7 @@ class TestTeamServiceIntegration:
         # Update team
         update_data = {
             "description": "Updated description",
-            "tags": ["lifecycle", "updated"]  # Change tags
+            "tags": ["lifecycle", "updated"],  # Change tags
         }
         updated_team = await team_service.update(item_id=team.id, data=update_data)
 
@@ -524,21 +478,13 @@ class TestTeamServiceIntegration:
             "name": "Complex Team",
             "description": "Team with multiple relationships",
             "owner_id": owner.id,
-            "tags": ["complex", "relationships", "testing"]
+            "tags": ["complex", "relationships", "testing"],
         }
         team = await team_service.create(data=team_data)
 
         # Add additional members manually (simulating team invitation acceptance)
-        member1_membership = TeamMemberFactory.build(
-            team_id=team.id,
-            user_id=member1.id,
-            role=TeamRoles.MEMBER
-        )
-        member2_membership = TeamMemberFactory.build(
-            team_id=team.id,
-            user_id=member2.id,
-            role=TeamRoles.MEMBER
-        )
+        member1_membership = TeamMemberFactory.build(team_id=team.id, user_id=member1.id, role=TeamRoles.MEMBER)
+        member2_membership = TeamMemberFactory.build(team_id=team.id, user_id=member2.id, role=TeamRoles.MEMBER)
         session.add_all([member1_membership, member2_membership])
         await session.commit()
 
@@ -548,7 +494,7 @@ class TestTeamServiceIntegration:
         # Verify complex relationships
         assert len(team.members) == 3  # Owner + 2 members
         assert len(team.tags) == 3
-        
+
         # Verify owner has correct permissions
         owner_member = next((m for m in team.members if m.user_id == owner.id), None)
         assert owner_member is not None

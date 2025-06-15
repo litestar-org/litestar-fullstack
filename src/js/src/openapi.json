@@ -1524,7 +1524,7 @@
             "name": "sortOrder",
             "in": "query",
             "schema": {
-              "type": ["string", "null"],
+              "type": ["null", "string"],
               "enum": ["asc", "desc", null],
               "title": "Field to search",
               "default": "desc"
@@ -1796,7 +1796,7 @@
             "name": "sortOrder",
             "in": "query",
             "schema": {
-              "type": ["string", "null"],
+              "type": ["null", "string"],
               "enum": ["asc", "desc", null],
               "title": "Field to search",
               "default": "asc"
@@ -3530,7 +3530,7 @@
             "name": "sortOrder",
             "in": "query",
             "schema": {
-              "type": ["string", "null"],
+              "type": ["null", "string"],
               "enum": ["asc", "desc", null],
               "title": "Field to search",
               "default": "desc"

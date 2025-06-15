@@ -35,11 +35,7 @@ class TestPasswordResetTokenCreation:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            token = await service.create_reset_token(
-                user.id,
-                ip_address="127.0.0.1",
-                user_agent="Test Browser"
-            )
+            token = await service.create_reset_token(user.id, ip_address="127.0.0.1", user_agent="Test Browser")
 
             assert token.user_id == user.id
             assert token.token is not None
@@ -192,7 +188,7 @@ class TestPasswordResetTokenValidation:
         # Create expired token manually
         expired_token = PasswordResetTokenFactory.build(
             user_id=user.id,
-            expires_at=datetime.now(UTC) - timedelta(hours=1)  # Expired 1 hour ago
+            expires_at=datetime.now(UTC) - timedelta(hours=1),  # Expired 1 hour ago
         )
         session.add(expired_token)
         await session.commit()
@@ -216,10 +212,7 @@ class TestPasswordResetTokenValidation:
         await session.commit()
 
         # Create used token manually
-        used_token = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            used_at=datetime.now(UTC)
-        )
+        used_token = PasswordResetTokenFactory.build(user_id=user.id, used_at=datetime.now(UTC))
         session.add(used_token)
         await session.commit()
 
@@ -283,8 +276,7 @@ class TestPasswordResetTokenUsage:
         await session.commit()
 
         expired_token = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            expires_at=datetime.now(UTC) - timedelta(hours=1)
+            user_id=user.id, expires_at=datetime.now(UTC) - timedelta(hours=1)
         )
         session.add(expired_token)
         await session.commit()
@@ -418,18 +410,15 @@ class TestPasswordResetTokenCleanup:
 
         # Create expired tokens
         expired_token1 = PasswordResetTokenFactory.build(
-            user_id=user1.id,
-            expires_at=datetime.now(UTC) - timedelta(hours=1)
+            user_id=user1.id, expires_at=datetime.now(UTC) - timedelta(hours=1)
         )
         expired_token2 = PasswordResetTokenFactory.build(
-            user_id=user2.id,
-            expires_at=datetime.now(UTC) - timedelta(hours=2)
+            user_id=user2.id, expires_at=datetime.now(UTC) - timedelta(hours=2)
         )
 
         # Create valid token
         valid_token = PasswordResetTokenFactory.build(
-            user_id=user1.id,
-            expires_at=datetime.now(UTC) + timedelta(hours=1)
+            user_id=user1.id, expires_at=datetime.now(UTC) + timedelta(hours=1)
         )
 
         session.add_all([expired_token1, expired_token2, valid_token])
@@ -462,12 +451,10 @@ class TestPasswordResetTokenCleanup:
 
         # Create only valid tokens
         valid_token1 = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            expires_at=datetime.now(UTC) + timedelta(hours=1)
+            user_id=user.id, expires_at=datetime.now(UTC) + timedelta(hours=1)
         )
         valid_token2 = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            expires_at=datetime.now(UTC) + timedelta(hours=2)
+            user_id=user.id, expires_at=datetime.now(UTC) + timedelta(hours=2)
         )
 
         session.add_all([valid_token1, valid_token2])
@@ -550,14 +537,8 @@ class TestPasswordResetRateLimiting:
         await session.commit()
 
         # Create old tokens (outside the 1-hour window)
-        old_token1 = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            created_at=datetime.now(UTC) - timedelta(hours=2)
-        )
-        old_token2 = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            created_at=datetime.now(UTC) - timedelta(hours=3)
-        )
+        old_token1 = PasswordResetTokenFactory.build(user_id=user.id, created_at=datetime.now(UTC) - timedelta(hours=2))
+        old_token2 = PasswordResetTokenFactory.build(user_id=user.id, created_at=datetime.now(UTC) - timedelta(hours=3))
         session.add_all([old_token1, old_token2])
         await session.commit()
 
@@ -581,10 +562,7 @@ class TestPasswordResetRateLimiting:
         await session.commit()
 
         # Create token 30 minutes ago
-        token = PasswordResetTokenFactory.build(
-            user_id=user.id,
-            created_at=datetime.now(UTC) - timedelta(minutes=30)
-        )
+        token = PasswordResetTokenFactory.build(user_id=user.id, created_at=datetime.now(UTC) - timedelta(minutes=30))
         session.add(token)
         await session.commit()
 
@@ -615,53 +593,38 @@ class TestPasswordResetTokenModel:
 
     def test_is_expired_property_true(self) -> None:
         """Test is_expired property when token is expired."""
-        token = PasswordResetTokenFactory.build(
-            expires_at=datetime.now(UTC) - timedelta(hours=1)
-        )
+        token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1))
         assert token.is_expired is True
 
     def test_is_expired_property_false(self) -> None:
         """Test is_expired property when token is not expired."""
-        token = PasswordResetTokenFactory.build(
-            expires_at=datetime.now(UTC) + timedelta(hours=1)
-        )
+        token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1))
         assert token.is_expired is False
 
     def test_is_used_property_true(self) -> None:
         """Test is_used property when token is used."""
-        token = PasswordResetTokenFactory.build(
-            used_at=datetime.now(UTC)
-        )
+        token = PasswordResetTokenFactory.build(used_at=datetime.now(UTC))
         assert token.is_used is True
 
     def test_is_used_property_false(self) -> None:
         """Test is_used property when token is not used."""
-        token = PasswordResetTokenFactory.build(
-            used_at=None
-        )
+        token = PasswordResetTokenFactory.build(used_at=None)
         assert token.is_used is False
 
     def test_is_valid_property_true(self) -> None:
         """Test is_valid property when token is valid."""
-        token = PasswordResetTokenFactory.build(
-            expires_at=datetime.now(UTC) + timedelta(hours=1),
-            used_at=None
-        )
+        token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=None)
         assert token.is_valid is True
 
     def test_is_valid_property_false_expired(self) -> None:
         """Test is_valid property when token is expired."""
-        token = PasswordResetTokenFactory.build(
-            expires_at=datetime.now(UTC) - timedelta(hours=1),
-            used_at=None
-        )
+        token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1), used_at=None)
         assert token.is_valid is False
 
     def test_is_valid_property_false_used(self) -> None:
         """Test is_valid property when token is used."""
         token = PasswordResetTokenFactory.build(
-            expires_at=datetime.now(UTC) + timedelta(hours=1),
-            used_at=datetime.now(UTC)
+            expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=datetime.now(UTC)
         )
         assert token.is_valid is False
 
@@ -775,6 +738,7 @@ class TestPasswordResetIntegration:
                 assert len(token_str) >= 32
                 # Should be URL-safe (base64 characters only)
                 import string
+
                 allowed_chars = string.ascii_letters + string.digits + "-_"
                 assert all(c in allowed_chars for c in token_str)
 

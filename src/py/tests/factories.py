@@ -425,9 +425,7 @@ class UsedPasswordResetTokenFactory(PasswordResetTokenFactory):
 
 # Enhanced convenience functions for email verification scenarios
 def create_user_with_verification_token(
-    session: Any,
-    token_state: str = "valid",
-    **user_kwargs: Any
+    session: Any, token_state: str = "valid", **user_kwargs: Any
 ) -> tuple[m.User, m.EmailVerificationToken]:
     """Create a user with an email verification token in specified state.
 
@@ -463,10 +461,7 @@ def create_user_with_verification_token(
 
 
 def create_user_with_password_reset_token(
-    session: Any,
-    token_state: str = "valid",
-    ip_address: str = "127.0.0.1",
-    **user_kwargs: Any
+    session: Any, token_state: str = "valid", ip_address: str = "127.0.0.1", **user_kwargs: Any
 ) -> tuple[m.User, m.PasswordResetToken]:
     """Create a user with a password reset token in specified state.
 
@@ -500,9 +495,7 @@ def create_user_with_password_reset_token(
 
 
 def create_email_verification_scenario(
-    session: Any,
-    scenario: str = "pending_verification",
-    **kwargs: Any
+    session: Any, scenario: str = "pending_verification", **kwargs: Any
 ) -> dict[str, Any]:
     """Create a complete email verification test scenario.
 
