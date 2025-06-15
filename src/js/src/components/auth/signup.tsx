@@ -6,6 +6,7 @@ import { useAuthStore } from "@/lib/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
+// import { toast } from "sonner"
 import { z } from "zod"
 
 const signupSchema = z
@@ -40,15 +41,19 @@ export function UserSignupForm() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // TODO: verify registration
-      await accountRegister({
+      const response = await accountRegister({
         body: { email: data.email, password: data.password, name: data.name },
       })
-      // navigate({ to: "/login" });
+
+      if (response.status === 201) {
+        navigate({ to: "/login" })
+        return
+      }
+
+      // Getting status 500 for BE for validation errors. Not showing toast for now.
+      // toast.error(response.error?.title || "Signup failed")
     } catch (error) {
-      form.setError("root", {
-        message: "Signup failed",
-      })
+      console.error("[DEBUG] Signup error:", error)
     }
   }
 
