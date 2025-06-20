@@ -58,10 +58,10 @@ class TestEmailService:
         service = EmailService()
 
         # Assert
-        assert hasattr(service, 'settings')
-        assert hasattr(service, 'app_settings')
-        assert hasattr(service, 'base_url')
-        assert hasattr(service, 'app_name')
+        assert hasattr(service, "settings")
+        assert hasattr(service, "app_settings")
+        assert hasattr(service, "base_url")
+        assert hasattr(service, "app_name")
 
     @patch("app.lib.email.logger")
     async def test_send_verification_email_with_name(

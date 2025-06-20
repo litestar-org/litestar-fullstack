@@ -73,18 +73,18 @@
         <div class="content">
             <h2>Welcome{{ ' ' + user.name if user.name else '' }}!</h2>
             <p>Thanks for signing up for {{ app_name }}. To complete your registration, please verify your email address by clicking the button below:</p>
-            
+
             <div style="text-align: center;">
                 <a href="{{ verification_url }}" class="button">Verify Email Address</a>
             </div>
-            
+
             <p>Or copy and paste this URL into your browser:</p>
             <div class="url-box">{{ verification_url }}</div>
-            
+
             <p><strong>This link will expire in {{ expires_in_hours }} hours.</strong></p>
-            
+
             <p>If you didn't create an account with {{ app_name }}, please ignore this email.</p>
-            
+
             <p>Need help? Contact our support team if you have any questions.</p>
         </div>
         <div class="footer">

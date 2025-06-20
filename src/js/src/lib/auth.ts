@@ -1,5 +1,6 @@
 import { accountLogin, accountLogout, accountProfile } from "@/lib/api/sdk.gen"
 import type { Team, User } from "@/lib/api/types.gen"
+import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
@@ -27,18 +28,27 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
-          // First make the login request
-          await accountLogin({ body: { username: email, password } })
+          // Login request
+          const response = await accountLogin({ body: { username: email, password } })
 
-          // Add a small delay to ensure the cookie is set
-          await new Promise((resolve) => setTimeout(resolve, 100))
+          if (response.status === 201) {
+            // Add a small delay to ensure the cookie is set
+            await new Promise((resolve) => setTimeout(resolve, 100))
 
-          // Then verify the authentication by getting the profile
-          const { data: user } = await accountProfile()
-          set({ user, isAuthenticated: true })
+            // Verify the authentication by getting the profile
+            const { data: user } = await accountProfile()
+            // TODO: Maybe add a check for user here?
+            set({ user, isAuthenticated: true })
+            return
+          }
+
+          set({ user: null, currentTeam: null, isAuthenticated: false })
+          toast.error(response.error?.title || "Login failed")
         } catch (error) {
           set({ user: null, currentTeam: null, isAuthenticated: false })
-          throw error
+          toast.error("An error occurred", {
+            description: error instanceof Error ? error.message : "Unknown error",
+          })
         } finally {
           set({ isLoading: false })
         }

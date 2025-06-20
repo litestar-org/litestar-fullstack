@@ -63,9 +63,9 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_get_user_teams(
-        self, 
-        authenticated_client: AsyncTestClient, 
-        test_user: m.User, 
+        self,
+        authenticated_client: AsyncTestClient,
+        test_user: m.User,
         test_team: m.Team,
     ) -> None:
         """Test getting user's teams."""
@@ -86,8 +86,8 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_get_team_details(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
     ) -> None:
         """Test getting team details."""
@@ -101,15 +101,16 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_get_team_details_not_member(
-        self, 
-        client: AsyncTestClient, 
+        self,
+        client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test getting team details when not a member."""
         # Create a different user
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         other_user = m.User(
             id=uuid4(),
@@ -124,16 +125,15 @@ class TestTeamEndpoints:
 
         # Login as the other user
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             response = await client.get(f"/api/teams/{test_team.id}", headers=headers)
-            
+
             # Should either be forbidden or not found depending on implementation
             assert response.status_code in [403, 404]
 
@@ -148,8 +148,8 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_update_team(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
     ) -> None:
         """Test updating team information."""
@@ -167,15 +167,16 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_update_team_not_authorized(
-        self, 
-        client: AsyncTestClient, 
+        self,
+        client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test updating team when not authorized."""
         # Create a different user who is not a team member
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         other_user = m.User(
             id=uuid4(),
@@ -190,24 +191,23 @@ class TestTeamEndpoints:
 
         # Login as the unauthorized user
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             update_data = {"name": "Unauthorized Update"}
-            
+
             response = await client.patch(f"/api/teams/{test_team.id}", json=update_data, headers=headers)
-            
+
             assert response.status_code in [403, 404]
 
     @pytest.mark.asyncio
     async def test_delete_team(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
     ) -> None:
         """Test deleting a team."""
@@ -217,15 +217,16 @@ class TestTeamEndpoints:
 
     @pytest.mark.asyncio
     async def test_delete_team_not_owner(
-        self, 
-        client: AsyncTestClient, 
+        self,
+        client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test deleting team when not owner."""
         # Create a different user
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         member_user = m.User(
             id=uuid4(),
@@ -253,16 +254,15 @@ class TestTeamEndpoints:
 
         # Login as the member
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": member_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": member_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             response = await client.delete(f"/api/teams/{test_team.id}", headers=headers)
-            
+
             assert response.status_code == 403
 
 
@@ -271,8 +271,8 @@ class TestTeamMemberEndpoints:
 
     @pytest.mark.asyncio
     async def test_get_team_members(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
     ) -> None:
         """Test getting team members."""
@@ -288,15 +288,16 @@ class TestTeamMemberEndpoints:
 
     @pytest.mark.asyncio
     async def test_get_team_members_not_member(
-        self, 
-        client: AsyncTestClient, 
+        self,
+        client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test getting team members when not a member."""
         # Create a different user
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         other_user = m.User(
             id=uuid4(),
@@ -311,29 +312,29 @@ class TestTeamMemberEndpoints:
 
         # Login as the outsider
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             response = await client.get(f"/api/teams/{test_team.id}/members", headers=headers)
-            
+
             assert response.status_code in [403, 404]
 
     @pytest.mark.asyncio
     async def test_add_team_member(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test adding a team member."""
         # Create a user to add
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         new_member = m.User(
             id=uuid4(),
@@ -361,15 +362,16 @@ class TestTeamMemberEndpoints:
 
     @pytest.mark.asyncio
     async def test_add_team_member_not_admin(
-        self, 
-        client: AsyncTestClient, 
+        self,
+        client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test adding team member when not admin."""
         # Create two users
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         member_user = m.User(
             id=uuid4(),
@@ -379,7 +381,7 @@ class TestTeamMemberEndpoints:
             is_active=True,
             is_verified=True,
         )
-        
+
         target_user = m.User(
             id=uuid4(),
             email="target@example.com",
@@ -388,7 +390,7 @@ class TestTeamMemberEndpoints:
             is_active=True,
             is_verified=True,
         )
-        
+
         session.add_all([member_user, target_user])
         await session.commit()
 
@@ -407,34 +409,34 @@ class TestTeamMemberEndpoints:
 
         # Login as the regular member
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": member_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": member_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             member_data = {
                 "user_id": str(target_user.id),
                 "role": "member",
             }
-            
+
             response = await client.post(f"/api/teams/{test_team.id}/members", json=member_data, headers=headers)
-            
+
             assert response.status_code == 403
 
     @pytest.mark.asyncio
     async def test_remove_team_member(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test removing a team member."""
         # Create a member to remove
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         member_to_remove = m.User(
             id=uuid4(),
@@ -467,15 +469,16 @@ class TestTeamMemberEndpoints:
 
     @pytest.mark.asyncio
     async def test_update_member_role(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
         session: AsyncSession,
     ) -> None:
         """Test updating a team member's role."""
         # Create a member
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         member_user = m.User(
             id=uuid4(),
@@ -505,8 +508,7 @@ class TestTeamMemberEndpoints:
         update_data = {"role": "admin"}
 
         response = await authenticated_client.patch(
-            f"/api/teams/{test_team.id}/members/{member_user.id}", 
-            json=update_data
+            f"/api/teams/{test_team.id}/members/{member_user.id}", json=update_data
         )
 
         assert response.status_code == 200
@@ -519,8 +521,8 @@ class TestTeamInvitationEndpoints:
 
     @pytest.mark.asyncio
     async def test_invite_team_member(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
     ) -> None:
         """Test inviting a team member."""
@@ -532,10 +534,7 @@ class TestTeamInvitationEndpoints:
                 "role": "member",
             }
 
-            response = await authenticated_client.post(
-                f"/api/teams/{test_team.id}/invitations",
-                json=invitation_data
-            )
+            response = await authenticated_client.post(f"/api/teams/{test_team.id}/invitations", json=invitation_data)
 
             assert response.status_code == 201
             invitation = response.json()
@@ -548,8 +547,8 @@ class TestTeamInvitationEndpoints:
 
     @pytest.mark.asyncio
     async def test_invite_existing_member(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
         test_user: m.User,
     ) -> None:
@@ -559,17 +558,14 @@ class TestTeamInvitationEndpoints:
             "role": "member",
         }
 
-        response = await authenticated_client.post(
-            f"/api/teams/{test_team.id}/invitations",
-            json=invitation_data
-        )
+        response = await authenticated_client.post(f"/api/teams/{test_team.id}/invitations", json=invitation_data)
 
         assert response.status_code == 400
 
     @pytest.mark.asyncio
     async def test_get_team_invitations(
-        self, 
-        authenticated_client: AsyncTestClient, 
+        self,
+        authenticated_client: AsyncTestClient,
         test_team: m.Team,
         test_team_invitation: m.TeamInvitation,
     ) -> None:
@@ -584,15 +580,16 @@ class TestTeamInvitationEndpoints:
 
     @pytest.mark.asyncio
     async def test_accept_team_invitation(
-        self, 
+        self,
         client: AsyncTestClient,
         test_team_invitation: m.TeamInvitation,
         session: AsyncSession,
     ) -> None:
         """Test accepting a team invitation."""
         # Create a user with the invitation email
-        from app.lib.crypt import get_password_hash
         from uuid import uuid4
+
+        from app.lib.crypt import get_password_hash
 
         invited_user = m.User(
             id=uuid4(),
@@ -607,25 +604,24 @@ class TestTeamInvitationEndpoints:
 
         # Login as the invited user
         login_response = await client.post(
-            "/api/access/login", 
-            json={"username": invited_user.email, "password": "TestPassword123!"}
+            "/api/access/login", json={"username": invited_user.email, "password": "TestPassword123!"}
         )
-        
+
         if login_response.status_code == 200:
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
-            
+
             accept_data = {"token": test_team_invitation.token}
-            
+
             response = await client.post("/api/teams/invitations/accept", json=accept_data, headers=headers)
-            
+
             assert response.status_code == 200
             result = response.json()
             assert "accepted" in result["message"].lower() or "joined" in result["message"].lower()
 
     @pytest.mark.asyncio
     async def test_reject_team_invitation(
-        self, 
+        self,
         client: AsyncTestClient,
         test_team_invitation: m.TeamInvitation,
     ) -> None:
@@ -640,7 +636,7 @@ class TestTeamInvitationEndpoints:
 
     @pytest.mark.asyncio
     async def test_cancel_team_invitation(
-        self, 
+        self,
         authenticated_client: AsyncTestClient,
         test_team_invitation: m.TeamInvitation,
     ) -> None:

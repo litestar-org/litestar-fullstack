@@ -3,24 +3,26 @@ from __future__ import annotations
 import os
 
 # Set test environment before any other imports
-os.environ.update({
-    "SECRET_KEY": "secret-key",
-    "DATABASE_URL": "sqlite+aiosqlite:///:memory:",
-    "DATABASE_ECHO": "false",
-    "DATABASE_ECHO_POOL": "false",
-    "VALKEY_PORT": "6308",
-    "REDIS_URL": "redis://localhost:6308/0",
-    "SAQ_USE_SERVER_LIFESPAN": "False",
-    "SAQ_WEB_ENABLED": "True",
-    "SAQ_BACKGROUND_WORKERS": "1",
-    "SAQ_CONCURRENCY": "1",
-    "VITE_HOST": "localhost",
-    "VITE_PORT": "3006",
-    "VITE_HOT_RELOAD": "True",
-    "VITE_DEV_MODE": "True",
-    "VITE_USE_SERVER_LIFESPAN": "False",
-    "EMAIL_ENABLED": "false",
-})
+os.environ.update(
+    {
+        "SECRET_KEY": "secret-key",
+        "DATABASE_URL": "sqlite+aiosqlite:///:memory:",
+        "DATABASE_ECHO": "false",
+        "DATABASE_ECHO_POOL": "false",
+        "VALKEY_PORT": "6308",
+        "REDIS_URL": "redis://localhost:6308/0",
+        "SAQ_USE_SERVER_LIFESPAN": "False",
+        "SAQ_WEB_ENABLED": "True",
+        "SAQ_BACKGROUND_WORKERS": "1",
+        "SAQ_CONCURRENCY": "1",
+        "VITE_HOST": "localhost",
+        "VITE_PORT": "3006",
+        "VITE_HOT_RELOAD": "True",
+        "VITE_DEV_MODE": "True",
+        "VITE_USE_SERVER_LIFESPAN": "False",
+        "EMAIL_ENABLED": "false",
+    }
+)
 
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -57,7 +59,6 @@ def anyio_backend() -> str:
 @pytest.fixture(autouse=True)
 def _patch_settings(monkeypatch: MonkeyPatch) -> None:
     """Patch the settings - environment already set at module level."""
-    pass
 
 
 @pytest.fixture(name="engine")
@@ -111,9 +112,11 @@ async def session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenera
 def app():
     """Create Litestar app for testing."""
     import os
+
     os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-    
+
     from app.server.asgi import create_app
+
     return create_app()
 
 
@@ -128,6 +131,7 @@ async def client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
 async def user_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create UserService instance."""
     from app.services import UserService
+
     async with UserService.new(sessionmaker()) as service:
         yield service
 
@@ -136,6 +140,7 @@ async def user_service(sessionmaker: async_sessionmaker[AsyncSession]):
 async def team_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create TeamService instance."""
     from app.services import TeamService
+
     async with TeamService.new(sessionmaker()) as service:
         yield service
 
@@ -145,7 +150,7 @@ async def test_user(session: AsyncSession):
     """Create a test user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
-    
+
     user = m.User(
         id=uuid4(),
         email="test@example.com",
@@ -165,7 +170,7 @@ async def admin_user(session: AsyncSession):
     """Create an admin user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
-    
+
     user = m.User(
         id=uuid4(),
         email="admin@example.com",
@@ -187,7 +192,7 @@ async def test_team(session: AsyncSession, test_user):
     from app.db import models as m
     from app.db.models.team_member import TeamMember
     from app.db.models.team_roles import TeamRoles
-    
+
     team = m.Team(
         id=uuid4(),
         name="Test Team",
@@ -247,6 +252,7 @@ async def admin_client(client: AsyncTestClient, admin_user) -> AsyncTestClient:
 async def email_verification_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create EmailVerificationTokenService instance."""
     from app.services import EmailVerificationTokenService
+
     async with EmailVerificationTokenService.new(sessionmaker()) as service:
         yield service
 
@@ -255,6 +261,7 @@ async def email_verification_service(sessionmaker: async_sessionmaker[AsyncSessi
 async def password_reset_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create PasswordResetService instance."""
     from app.services import PasswordResetService
+
     async with PasswordResetService.new(sessionmaker()) as service:
         yield service
 
@@ -263,6 +270,7 @@ async def password_reset_service(sessionmaker: async_sessionmaker[AsyncSession])
 async def role_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create RoleService instance."""
     from app.services import RoleService
+
     async with RoleService.new(sessionmaker()) as service:
         yield service
 
@@ -271,6 +279,7 @@ async def role_service(sessionmaker: async_sessionmaker[AsyncSession]):
 async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create TagService instance."""
     from app.services import TagService
+
     async with TagService.new(sessionmaker()) as service:
         yield service
 
@@ -279,6 +288,7 @@ async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]):
 async def team_member_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create TeamMemberService instance."""
     from app.services import TeamMemberService
+
     async with TeamMemberService.new(sessionmaker()) as service:
         yield service
 
@@ -287,6 +297,7 @@ async def team_member_service(sessionmaker: async_sessionmaker[AsyncSession]):
 async def team_invitation_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create TeamInvitationService instance."""
     from app.services import TeamInvitationService
+
     async with TeamInvitationService.new(sessionmaker()) as service:
         yield service
 
@@ -295,6 +306,7 @@ async def team_invitation_service(sessionmaker: async_sessionmaker[AsyncSession]
 async def user_role_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create UserRoleService instance."""
     from app.services import UserRoleService
+
     async with UserRoleService.new(sessionmaker()) as service:
         yield service
 
@@ -303,6 +315,7 @@ async def user_role_service(sessionmaker: async_sessionmaker[AsyncSession]):
 async def user_oauth_service(sessionmaker: async_sessionmaker[AsyncSession]):
     """Create UserOAuthAccountService instance."""
     from app.services import UserOAuthAccountService
+
     async with UserOAuthAccountService.new(sessionmaker()) as service:
         yield service
 
@@ -311,6 +324,7 @@ async def user_oauth_service(sessionmaker: async_sessionmaker[AsyncSession]):
 def email_service():
     """Create EmailService instance for testing."""
     from app.lib.email import EmailService
+
     return EmailService()
 
 
@@ -320,7 +334,7 @@ async def unverified_user(session: AsyncSession):
     """Create an unverified user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
-    
+
     user = m.User(
         id=uuid4(),
         email="unverified@example.com",
@@ -340,7 +354,7 @@ async def inactive_user(session: AsyncSession):
     """Create an inactive user."""
     from app.db import models as m
     from app.lib.crypt import get_password_hash
-    
+
     user = m.User(
         id=uuid4(),
         email="inactive@example.com",
@@ -359,7 +373,7 @@ async def inactive_user(session: AsyncSession):
 async def test_role(session: AsyncSession):
     """Create a test role."""
     from app.db import models as m
-    
+
     role = m.Role(
         id=uuid4(),
         name="test_role",
@@ -376,7 +390,7 @@ async def test_role(session: AsyncSession):
 async def test_tag(session: AsyncSession):
     """Create a test tag."""
     from app.db import models as m
-    
+
     tag = m.Tag(
         id=uuid4(),
         name="test_tag",
@@ -393,6 +407,7 @@ async def test_tag(session: AsyncSession):
 async def test_verification_token(session: AsyncSession, unverified_user):
     """Create a test email verification token."""
     from datetime import UTC, datetime, timedelta
+
     from app.db import models as m
 
     token = m.EmailVerificationToken(
@@ -411,6 +426,7 @@ async def test_verification_token(session: AsyncSession, unverified_user):
 async def test_password_reset_token(session: AsyncSession, test_user):
     """Create a test password reset token."""
     from datetime import UTC, datetime, timedelta
+
     from app.db import models as m
 
     token = m.PasswordResetToken(
@@ -431,6 +447,7 @@ async def test_password_reset_token(session: AsyncSession, test_user):
 async def test_oauth_account(session: AsyncSession, test_user):
     """Create a test OAuth account."""
     from datetime import UTC, datetime, timedelta
+
     from app.db import models as m
 
     oauth_account = m.UserOauthAccount(
@@ -459,6 +476,7 @@ async def test_oauth_account(session: AsyncSession, test_user):
 async def test_team_invitation(session: AsyncSession, test_team, test_user):
     """Create a test team invitation."""
     from datetime import UTC, datetime, timedelta
+
     from app.db import models as m
 
     invitation = m.TeamInvitation(

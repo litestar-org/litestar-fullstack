@@ -30,13 +30,10 @@ export function UserLoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // TODO: Fix/verify login
       await login(data.email, data.password)
       navigate({ to: "/home" })
     } catch (error) {
-      form.setError("root", {
-        message: "Invalid credentials",
-      })
+      console.error("[DEBUG] Login error:", error)
     }
   }
 
