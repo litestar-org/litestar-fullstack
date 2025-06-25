@@ -126,6 +126,12 @@ make test-coverage
 make test-all
 ```
 
+## 🧪 Testing Practices
+
+- Please only use functions for your pytest test unless instructed otherwise.
+- Do not immediately create classes with test functions. 
+- Always attempt to group and parameterize pytest test cases for efficiency and readability.
+
 ## 🔄 Workflow Reminders
 
 1. **New Feature Flow:**
