@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import binascii
 import json
 import os
@@ -108,7 +109,7 @@ class DatabaseSettings:
                 def decoder(bin_value: bytes) -> Any:
                     # the byte is the \x01 prefix for jsonb used by PostgreSQL.
                     # asyncpg returns it when format='binary'
-                    return decode_json(bin_value[1:])
+                    return decode_json(base64.b64decode(bin_value[1:]))
 
                 dbapi_connection.await_(
                     dbapi_connection.driver_connection.set_type_codec(
