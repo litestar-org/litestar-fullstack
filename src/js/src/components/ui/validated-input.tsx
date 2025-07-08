@@ -2,16 +2,16 @@
  * Validated input component with real-time validation feedback
  */
 
-import { Input, type InputProps } from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import PasswordStrength from "@/components/ui/password-strength"
+import { PasswordStrength } from "@/components/ui/password-strength"
 import type { ValidationRule } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
+import { Eye, EyeOff } from "lucide-react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 
-export interface ValidatedInputProps extends Omit<InputProps, "onChange"> {
+export interface ValidatedInputProps extends Omit<React.ComponentProps<"input">, "onChange"> {
   label: string
   error?: string
   validationRule?: ValidationRule
@@ -43,7 +43,7 @@ export function ValidatedInput({
   const [internalError, setInternalError] = useState<string>("")
   const [showPassword, setShowPassword] = useState(false)
   const [hasBeenBlurred, setHasBeenBlurred] = useState(false)
-  const debounceRef = useRef<NodeJS.Timeout>()
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
 
   // Use external error if provided, otherwise use internal error
   const displayError = externalError || internalError
@@ -176,7 +176,7 @@ export function ValidatedInput({
             onClick={() => setShowPassword(!showPassword)}
             tabIndex={-1}
           >
-            {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         )}
       </div>

@@ -4,8 +4,7 @@
 
 import { type PasswordStrength, getPasswordStrength } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline"
-import React from "react"
+import { Check, X } from "lucide-react"
 
 export interface PasswordStrengthProps {
   password: string
@@ -68,7 +67,7 @@ export function PasswordStrength({ password, showRequirements = true, className 
         <div className="space-y-1">
           {strength.feedback.map((message, index) => (
             <div key={index} className="flex items-center space-x-2 text-sm text-gray-600">
-              <XMarkIcon className="h-4 w-4 text-red-400 flex-shrink-0" />
+              <X className="h-4 w-4 text-red-400 flex-shrink-0" />
               <span>{message}</span>
             </div>
           ))}
@@ -86,7 +85,7 @@ interface RequirementItemProps {
 function RequirementItem({ met, text }: RequirementItemProps) {
   return (
     <div className={cn("flex items-center space-x-2 text-sm transition-colors", met ? "text-green-600" : "text-gray-500")}>
-      {met ? <CheckIcon className="h-4 w-4 text-green-600 flex-shrink-0" /> : <div className="h-4 w-4 rounded-full border border-gray-300 flex-shrink-0" />}
+      {met ? <Check className="h-4 w-4 text-green-600 flex-shrink-0" /> : <div className="h-4 w-4 rounded-full border border-gray-300 flex-shrink-0" />}
       <span>{text}</span>
     </div>
   )

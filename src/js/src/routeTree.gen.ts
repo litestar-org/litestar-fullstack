@@ -8,228 +8,309 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicTermsRouteImport } from './routes/_public/terms'
+import { Route as PublicSignupRouteImport } from './routes/_public/signup'
+import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as PublicLandingRouteImport } from './routes/_public/landing'
+import { Route as AppTeamsRouteImport } from './routes/_app/teams'
+import { Route as AppHomeRouteImport } from './routes/_app/home'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as AppTeamsIndexRouteImport } from './routes/_app/teams/index'
+import { Route as AppTeamsNewRouteImport } from './routes/_app/teams/new'
+import { Route as AppTeamsTeamIdRouteImport } from './routes/_app/teams/$teamId'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicImport } from './routes/_public'
-import { Route as AppImport } from './routes/_app'
-import { Route as SplatImport } from './routes/$'
-import { Route as IndexImport } from './routes/index'
-import { Route as PublicTermsImport } from './routes/_public/terms'
-import { Route as PublicSignupImport } from './routes/_public/signup'
-import { Route as PublicPrivacyImport } from './routes/_public/privacy'
-import { Route as PublicLoginImport } from './routes/_public/login'
-import { Route as PublicLandingImport } from './routes/_public/landing'
-import { Route as AppTeamsImport } from './routes/_app/teams'
-import { Route as AppHomeImport } from './routes/_app/home'
-import { Route as AppAdminImport } from './routes/_app/admin'
-import { Route as AppTeamsIndexImport } from './routes/_app/teams/index'
-import { Route as AppTeamsNewImport } from './routes/_app/teams/new'
-import { Route as AppTeamsTeamIdImport } from './routes/_app/teams/$teamId'
-
-// Create/Update Routes
-
-const PublicRoute = PublicImport.update({
+const PublicRoute = PublicRouteImport.update({
   id: '/_public',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AppRoute = AppImport.update({
+const AppRoute = AppRouteImport.update({
   id: '/_app',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const SplatRoute = SplatImport.update({
+const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PublicTermsRoute = PublicTermsImport.update({
+const PublicTermsRoute = PublicTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
   getParentRoute: () => PublicRoute,
 } as any)
-
-const PublicSignupRoute = PublicSignupImport.update({
+const PublicSignupRoute = PublicSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => PublicRoute,
 } as any)
-
-const PublicPrivacyRoute = PublicPrivacyImport.update({
+const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
   getParentRoute: () => PublicRoute,
 } as any)
-
-const PublicLoginRoute = PublicLoginImport.update({
+const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any)
-
-const PublicLandingRoute = PublicLandingImport.update({
+const PublicLandingRoute = PublicLandingRouteImport.update({
   id: '/landing',
   path: '/landing',
   getParentRoute: () => PublicRoute,
 } as any)
-
-const AppTeamsRoute = AppTeamsImport.update({
+const AppTeamsRoute = AppTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppHomeRoute = AppHomeImport.update({
+const AppHomeRoute = AppHomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppAdminRoute = AppAdminImport.update({
+const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppTeamsIndexRoute = AppTeamsIndexImport.update({
+const AppTeamsIndexRoute = AppTeamsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppTeamsRoute,
 } as any)
-
-const AppTeamsNewRoute = AppTeamsNewImport.update({
+const AppTeamsNewRoute = AppTeamsNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AppTeamsRoute,
 } as any)
-
-const AppTeamsTeamIdRoute = AppTeamsTeamIdImport.update({
+const AppTeamsTeamIdRoute = AppTeamsTeamIdRouteImport.update({
   id: '/$teamId',
   path: '/$teamId',
   getParentRoute: () => AppTeamsRoute,
 } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/admin': typeof AppAdminRoute
+  '/home': typeof AppHomeRoute
+  '/teams': typeof AppTeamsRouteWithChildren
+  '/landing': typeof PublicLandingRoute
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
+  '/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/teams/new': typeof AppTeamsNewRoute
+  '/teams/': typeof AppTeamsIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/admin': typeof AppAdminRoute
+  '/home': typeof AppHomeRoute
+  '/landing': typeof PublicLandingRoute
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
+  '/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/teams/new': typeof AppTeamsNewRoute
+  '/teams': typeof AppTeamsIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/_app/admin': typeof AppAdminRoute
+  '/_app/home': typeof AppHomeRoute
+  '/_app/teams': typeof AppTeamsRouteWithChildren
+  '/_public/landing': typeof PublicLandingRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/signup': typeof PublicSignupRoute
+  '/_public/terms': typeof PublicTermsRoute
+  '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
+  '/_app/teams/new': typeof AppTeamsNewRoute
+  '/_app/teams/': typeof AppTeamsIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/admin'
+    | '/home'
+    | '/teams'
+    | '/landing'
+    | '/login'
+    | '/privacy'
+    | '/signup'
+    | '/terms'
+    | '/teams/$teamId'
+    | '/teams/new'
+    | '/teams/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/$'
+    | '/admin'
+    | '/home'
+    | '/landing'
+    | '/login'
+    | '/privacy'
+    | '/signup'
+    | '/terms'
+    | '/teams/$teamId'
+    | '/teams/new'
+    | '/teams'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/_app'
+    | '/_public'
+    | '/_app/admin'
+    | '/_app/home'
+    | '/_app/teams'
+    | '/_public/landing'
+    | '/_public/login'
+    | '/_public/privacy'
+    | '/_public/signup'
+    | '/_public/terms'
+    | '/_app/teams/$teamId'
+    | '/_app/teams/new'
+    | '/_app/teams/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  AppRoute: typeof AppRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof SplatImport
-      parentRoute: typeof rootRoute
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app': {
       id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PublicImport
-      parentRoute: typeof rootRoute
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_app/admin': {
-      id: '/_app/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AppAdminImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/home': {
-      id: '/_app/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AppHomeImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/teams': {
-      id: '/_app/teams'
-      path: '/teams'
-      fullPath: '/teams'
-      preLoaderRoute: typeof AppTeamsImport
-      parentRoute: typeof AppImport
-    }
-    '/_public/landing': {
-      id: '/_public/landing'
-      path: '/landing'
-      fullPath: '/landing'
-      preLoaderRoute: typeof PublicLandingImport
-      parentRoute: typeof PublicImport
-    }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginImport
-      parentRoute: typeof PublicImport
-    }
-    '/_public/privacy': {
-      id: '/_public/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PublicPrivacyImport
-      parentRoute: typeof PublicImport
-    }
-    '/_public/signup': {
-      id: '/_public/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof PublicSignupImport
-      parentRoute: typeof PublicImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_public/terms': {
       id: '/_public/terms'
       path: '/terms'
       fullPath: '/terms'
-      preLoaderRoute: typeof PublicTermsImport
-      parentRoute: typeof PublicImport
+      preLoaderRoute: typeof PublicTermsRouteImport
+      parentRoute: typeof PublicRoute
     }
-    '/_app/teams/$teamId': {
-      id: '/_app/teams/$teamId'
-      path: '/$teamId'
-      fullPath: '/teams/$teamId'
-      preLoaderRoute: typeof AppTeamsTeamIdImport
-      parentRoute: typeof AppTeamsImport
+    '/_public/signup': {
+      id: '/_public/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof PublicSignupRouteImport
+      parentRoute: typeof PublicRoute
     }
-    '/_app/teams/new': {
-      id: '/_app/teams/new'
-      path: '/new'
-      fullPath: '/teams/new'
-      preLoaderRoute: typeof AppTeamsNewImport
-      parentRoute: typeof AppTeamsImport
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PublicPrivacyRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/landing': {
+      id: '/_public/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof PublicLandingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_app/teams': {
+      id: '/_app/teams'
+      path: '/teams'
+      fullPath: '/teams'
+      preLoaderRoute: typeof AppTeamsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/home': {
+      id: '/_app/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AppHomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/teams/': {
       id: '/_app/teams/'
       path: '/'
       fullPath: '/teams/'
-      preLoaderRoute: typeof AppTeamsIndexImport
-      parentRoute: typeof AppTeamsImport
+      preLoaderRoute: typeof AppTeamsIndexRouteImport
+      parentRoute: typeof AppTeamsRoute
+    }
+    '/_app/teams/new': {
+      id: '/_app/teams/new'
+      path: '/new'
+      fullPath: '/teams/new'
+      preLoaderRoute: typeof AppTeamsNewRouteImport
+      parentRoute: typeof AppTeamsRoute
+    }
+    '/_app/teams/$teamId': {
+      id: '/_app/teams/$teamId'
+      path: '/$teamId'
+      fullPath: '/teams/$teamId'
+      preLoaderRoute: typeof AppTeamsTeamIdRouteImport
+      parentRoute: typeof AppTeamsRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface AppTeamsRouteChildren {
   AppTeamsTeamIdRoute: typeof AppTeamsTeamIdRoute
@@ -280,213 +361,12 @@ const PublicRouteChildren: PublicRouteChildren = {
 const PublicRouteWithChildren =
   PublicRoute._addFileChildren(PublicRouteChildren)
 
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '': typeof PublicRouteWithChildren
-  '/admin': typeof AppAdminRoute
-  '/home': typeof AppHomeRoute
-  '/teams': typeof AppTeamsRouteWithChildren
-  '/landing': typeof PublicLandingRoute
-  '/login': typeof PublicLoginRoute
-  '/privacy': typeof PublicPrivacyRoute
-  '/signup': typeof PublicSignupRoute
-  '/terms': typeof PublicTermsRoute
-  '/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/teams/new': typeof AppTeamsNewRoute
-  '/teams/': typeof AppTeamsIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '': typeof PublicRouteWithChildren
-  '/admin': typeof AppAdminRoute
-  '/home': typeof AppHomeRoute
-  '/landing': typeof PublicLandingRoute
-  '/login': typeof PublicLoginRoute
-  '/privacy': typeof PublicPrivacyRoute
-  '/signup': typeof PublicSignupRoute
-  '/terms': typeof PublicTermsRoute
-  '/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/teams/new': typeof AppTeamsNewRoute
-  '/teams': typeof AppTeamsIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/_app': typeof AppRouteWithChildren
-  '/_public': typeof PublicRouteWithChildren
-  '/_app/admin': typeof AppAdminRoute
-  '/_app/home': typeof AppHomeRoute
-  '/_app/teams': typeof AppTeamsRouteWithChildren
-  '/_public/landing': typeof PublicLandingRoute
-  '/_public/login': typeof PublicLoginRoute
-  '/_public/privacy': typeof PublicPrivacyRoute
-  '/_public/signup': typeof PublicSignupRoute
-  '/_public/terms': typeof PublicTermsRoute
-  '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/_app/teams/new': typeof AppTeamsNewRoute
-  '/_app/teams/': typeof AppTeamsIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/$'
-    | ''
-    | '/admin'
-    | '/home'
-    | '/teams'
-    | '/landing'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
-    | '/teams/$teamId'
-    | '/teams/new'
-    | '/teams/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/$'
-    | ''
-    | '/admin'
-    | '/home'
-    | '/landing'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
-    | '/teams/$teamId'
-    | '/teams/new'
-    | '/teams'
-  id:
-    | '__root__'
-    | '/'
-    | '/$'
-    | '/_app'
-    | '/_public'
-    | '/_app/admin'
-    | '/_app/home'
-    | '/_app/teams'
-    | '/_public/landing'
-    | '/_public/login'
-    | '/_public/privacy'
-    | '/_public/signup'
-    | '/_public/terms'
-    | '/_app/teams/$teamId'
-    | '/_app/teams/new'
-    | '/_app/teams/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SplatRoute: typeof SplatRoute
-  AppRoute: typeof AppRouteWithChildren
-  PublicRoute: typeof PublicRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AppRoute: AppRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/$",
-        "/_app",
-        "/_public"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/$": {
-      "filePath": "$.tsx"
-    },
-    "/_app": {
-      "filePath": "_app.tsx",
-      "children": [
-        "/_app/admin",
-        "/_app/home",
-        "/_app/teams"
-      ]
-    },
-    "/_public": {
-      "filePath": "_public.tsx",
-      "children": [
-        "/_public/landing",
-        "/_public/login",
-        "/_public/privacy",
-        "/_public/signup",
-        "/_public/terms"
-      ]
-    },
-    "/_app/admin": {
-      "filePath": "_app/admin.tsx",
-      "parent": "/_app"
-    },
-    "/_app/home": {
-      "filePath": "_app/home.tsx",
-      "parent": "/_app"
-    },
-    "/_app/teams": {
-      "filePath": "_app/teams.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/teams/$teamId",
-        "/_app/teams/new",
-        "/_app/teams/"
-      ]
-    },
-    "/_public/landing": {
-      "filePath": "_public/landing.tsx",
-      "parent": "/_public"
-    },
-    "/_public/login": {
-      "filePath": "_public/login.tsx",
-      "parent": "/_public"
-    },
-    "/_public/privacy": {
-      "filePath": "_public/privacy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/signup": {
-      "filePath": "_public/signup.tsx",
-      "parent": "/_public"
-    },
-    "/_public/terms": {
-      "filePath": "_public/terms.tsx",
-      "parent": "/_public"
-    },
-    "/_app/teams/$teamId": {
-      "filePath": "_app/teams/$teamId.tsx",
-      "parent": "/_app/teams"
-    },
-    "/_app/teams/new": {
-      "filePath": "_app/teams/new.tsx",
-      "parent": "/_app/teams"
-    },
-    "/_app/teams/": {
-      "filePath": "_app/teams/index.tsx",
-      "parent": "/_app/teams"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

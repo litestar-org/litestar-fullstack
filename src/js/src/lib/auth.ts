@@ -43,7 +43,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           set({ user: null, currentTeam: null, isAuthenticated: false })
-          toast.error(response.error?.title || "Login failed")
+          toast.error(response.error?.detail || "Login failed")
         } catch (error) {
           set({ user: null, currentTeam: null, isAuthenticated: false })
           toast.error("An error occurred", {
