@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -33,14 +34,10 @@ export function UserLoginForm() {
       await login(data.email, data.password)
       navigate({ to: "/home" })
     } catch (error) {
-      console.error("[DEBUG] Login error:", error)
+      // Error is handled by useAuthStore
     }
   }
 
-  const onOAuthLogin = async () => {
-    // TODO: Implement OAuth login
-    console.log("OAuth login")
-  }
 
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
@@ -95,6 +92,11 @@ export function UserLoginForm() {
                     )}
                   />
                 </div>
+                <div className="flex items-center justify-between">
+                  <a href="/forgot-password" className="text-sm text-muted-foreground hover:text-primary">
+                    Forgot password?
+                  </a>
+                </div>
                 <Button disabled={isLoading} className="hover:cursor-pointer">
                   Sign In
                   {isLoading && <div className="ml-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />}
@@ -110,14 +112,11 @@ export function UserLoginForm() {
               <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-          <Button variant="outline" disabled={isLoading} className="hover:cursor-pointer" onClick={onOAuthLogin}>
-            {isLoading ? (
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />
-            ) : (
-              <img src={"images/google.svg"} alt="Litestar Logo" className="mr-2 h-5" />
-            )}
-            Sign in with Google
-          </Button>
+          <GoogleSignInButton 
+            variant="signin" 
+            className="w-full"
+            onSuccess={() => navigate({ to: "/home" })}
+          />
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ interface User {
   id: string
   email: string
   avatar_url: string | null
+  is_verified?: boolean
+  email_verified_at?: string | null
 }
 
 interface AuthState {
@@ -14,6 +16,7 @@ interface AuthState {
   setUser: (user: User | null) => void
   setError: (error: string | null) => void
   logout: () => Promise<void>
+  refetch: () => Promise<void>
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -28,6 +31,22 @@ export const useAuth = create<AuthState>((set) => ({
       set({ user: null, isLoading: false, error: null })
     } catch (error) {
       set({ error: "Failed to logout", isLoading: false })
+    }
+  },
+  refetch: async () => {
+    // Fetch current user data
+    try {
+      const response = await fetch("/api/me", {
+        credentials: "include",
+      })
+      if (response.ok) {
+        const user = await response.json()
+        set({ user, isLoading: false })
+      } else {
+        set({ user: null, isLoading: false })
+      }
+    } catch (error) {
+      set({ user: null, isLoading: false })
     }
   },
 }))

@@ -217,7 +217,7 @@ class AccessController(Controller):
             raise ClientException(detail="Passwords do not match", status_code=400)
 
         # Validate password strength
-        # TODO: Implement with a proper Litestar exception handler
+        # Password validation errors are converted to ClientExceptions for consistent API responses
         try:
             validate_password_strength(data.password)
         except PasswordValidationError as e:

@@ -1,0 +1,163 @@
+import { useState } from "react"
+import { Link } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { z } from "zod"
+import { toast } from "sonner"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ArrowLeft, CheckCircle2, Mail } from "lucide-react"
+import { client } from "@/lib/api/client"
+
+export const Route = createFileRoute("/_public/forgot-password")({
+  component: ForgotPasswordPage,
+})
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+})
+
+type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>
+
+function ForgotPasswordPage() {
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [submittedEmail, setSubmittedEmail] = useState("")
+
+  const form = useForm<ForgotPasswordForm>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  })
+
+  const { mutate: requestReset, isPending } = useMutation({
+    mutationFn: async (data: ForgotPasswordForm) => {
+      const response = await client.POST("/api/access/forgot-password", {
+        body: { email: data.email },
+      })
+      
+      if (response.error) {
+        throw new Error(response.error.detail || "Failed to send reset email")
+      }
+      
+      return response.data
+    },
+    onSuccess: (_, variables) => {
+      setSubmittedEmail(variables.email)
+      setIsSuccess(true)
+      toast.success("Password reset email sent!")
+    },
+    onError: (error: Error) => {
+      // Don't reveal if email exists or not for security
+      if (error.message.includes("not found")) {
+        setSubmittedEmail(form.getValues("email"))
+        setIsSuccess(true)
+        toast.success("If an account exists, a reset email has been sent")
+      } else {
+        toast.error(error.message || "Failed to send reset email")
+      }
+    },
+  })
+
+  const onSubmit = (data: ForgotPasswordForm) => {
+    requestReset(data)
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="container flex h-screen w-screen flex-col items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+              <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+            </div>
+            <CardTitle>Check your email</CardTitle>
+            <CardDescription className="mt-2">
+              We've sent a password reset link to <strong>{submittedEmail}</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert>
+              <Mail className="h-4 w-4" />
+              <AlertDescription>
+                The reset link will expire in 1 hour. If you don't see the email, 
+                check your spam folder or try requesting another reset.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-2">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setIsSuccess(false)
+                form.reset()
+              }}
+            >
+              Send another email
+            </Button>
+            <Link to="/login" className="w-full">
+              <Button variant="ghost" className="w-full">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to login
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle>Forgot your password?</CardTitle>
+          <CardDescription>
+            Enter your email address and we'll send you a link to reset your password.
+          </CardDescription>
+        </CardHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-2">
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Sending..." : "Send reset email"}
+              </Button>
+              <Link to="/login" className="w-full">
+                <Button type="button" variant="ghost" className="w-full">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to login
+                </Button>
+              </Link>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
+    </div>
+  )
+}

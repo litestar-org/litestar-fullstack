@@ -191,6 +191,7 @@ markers = [
   "models: marks tests for database models",
   "endpoints: marks tests for API endpoints",
   "security: marks tests for security features",
+  "teams: marks tests related to team functionality",
 ]
 python_classes = ["Test*"]
 python_files = ["test_*.py", "*_test.py"]

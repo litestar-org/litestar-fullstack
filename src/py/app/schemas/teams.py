@@ -26,7 +26,9 @@ class TeamMember(CamelizedBaseStruct):
 class Team(CamelizedBaseStruct):
     id: UUID
     name: str
+    slug: str
     description: str | None = None
+    is_active: bool = True
     members: list[TeamMember] = []
     tags: list[TeamTag] = []
 

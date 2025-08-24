@@ -1,71 +1,42 @@
-# CLAUDE.md - Development Quick Reference
+# CLAUDE.md
 
-This file provides essential guidance for Claude Code when working with the Litestar Fullstack SPA project. For comprehensive architecture documentation, see `docs/architecture/`.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🚀 Quick Commands
+## Essential Commands
+
+### Development Setup
 
 ```bash
-# Setup
-make install                    # Fresh installation
+make install                    # Fresh installation (Python + Node)
 cp .env.local.example .env      # Setup environment
 make start-infra                # Start PostgreSQL + Redis + MailHog + Keycloak
-make keycloak-setup             # Configure Keycloak OAuth client
-uv run app run                  # Start all services
-make mailhog                    # Open MailHog web UI (email testing)
-make keycloak                   # Open Keycloak admin (OAuth testing)
+make keycloak-setup             # Configure OAuth client
+uv run app run                  # Start all services (SAQ, Vite, Litestar)
+```
 
-# Development
-make types                      # Generate TypeScript types (ALWAYS after schema changes!)
-make lint                       # Run all linting
-make check-all                  # Run all checks before commit
+### Critical Development Commands
+
+```bash
+make types                      # ALWAYS run after backend schema changes
+make lint                       # Run all linting (Python + JS)
 make test                       # Run Python tests
+make check-all                  # Run ALL checks before commit
+
+# Testing
+uv run pytest src/py/tests/integration/test_email_verification.py -xvs  # Single test
+make test-coverage              # With coverage
+make test-all                   # All tests including integration
 
 # Database
-app database upgrade            # Run migrations
+app database upgrade            # Apply migrations
 app database make-migrations    # Create new migration
 ```
 
-## 🎯 Critical Development Rules
+## Architecture Overview
 
-### ALWAYS
+### Backend (Litestar + SQLAlchemy)
 
-- Run `make types` after ANY backend schema changes
-- Run `make lint` after code changes
-- Run `make check-all` before committing
-- Use msgspec.Struct for ALL API DTOs (NEVER raw dicts or Pydantic)
-- Use the inner `Repo` pattern for services
-- Use Advanced Alchemy base classes (UUIDAuditBase)
-- Type all function signatures properly
-- Handle async operations correctly
-
-### NEVER
-
-- Create files unless absolutely necessary
-- Create documentation files unless explicitly requested
-- Use raw dicts for API responses
-- Access database sessions directly (use services)
-- Commit without running tests
-- Add comments unless requested
-- Use emojis unless requested
-
-## 📁 Quick Structure Reference
-
-```
-src/py/app/
-├── db/models/          # SQLAlchemy models (use Mapped[])
-├── schemas/            # msgspec.Struct DTOs (API contracts)
-├── services/           # Business logic (inner Repo pattern)
-├── server/routes/      # Litestar controllers
-└── lib/                # Core utilities
-
-src/js/src/
-├── components/         # React components
-├── routes/             # TanStack Router pages
-├── lib/api/            # Auto-generated client
-└── hooks/              # React hooks
-```
-
-## 🔥 Service Pattern (Copy This!)
+**Service Pattern with Inner Repository** - Always use this pattern:
 
 ```python
 from litestar.plugins.sqlalchemy import repository, service
@@ -73,27 +44,17 @@ from app.db import models as m
 
 class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Service for user operations."""
-
+    
     class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
         """User repository."""
         model_type = m.User
-
+    
     repository_type = Repo
-
+    
     # Custom service methods here
 ```
 
-## 🔐 Current Authentication Features
-
-- JWT-based authentication
-- Email verification (with tokens)
-- Password reset flow (with security tracking)
-- 2FA/TOTP support (configurable)
-- OAuth Google Integration (backend complete, frontend pending)
-- Rate limiting on sensitive operations
-- Configurable security requirements
-
-## 📝 Schema Pattern (Copy This!)
+**msgspec Schema Pattern** - NEVER use dicts or Pydantic:
 
 ```python
 import msgspec
@@ -105,80 +66,99 @@ class UserCreate(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
     name: str | None = None
 ```
 
-## 🚨 Common Pitfalls to Avoid
+**Key Architectural Decisions:**
 
-1. **Forgetting `make types`** - Frontend will have type errors
-2. **Using dict instead of msgspec.Struct** - Performance and validation issues
-3. **Direct DB access** - Always use service repositories
-4. **Blocking operations in async** - Use async/await properly
-5. **Not running tests** - Breaks in CI/CD
+- **msgspec.Struct** for ALL API DTOs (performance + validation)
+- **Service/Repository pattern** for ALL database operations
+- **Advanced Alchemy base classes** (UUIDAuditBase) for models
+- **JWT authentication** with email verification, password reset, 2FA/TOTP
+- **OAuth integration** via Keycloak (backend complete, frontend pending)
+- **SAQ** for background tasks with Redis
+- **Granian** as ASGI server with uvloop
 
-## 🧪 Testing Commands
+### Frontend (React + Vite + TanStack)
 
-```bash
-# Run specific test
-uv run pytest src/py/tests/integration/test_email_verification.py -xvs
+- **React 19** with TypeScript
+- **TanStack Router** for routing
+- **TanStack Query** for data fetching
+- **TanStack Form** with Zod validation
+- **Tailwind CSS v4** with Radix UI components
+- **Auto-generated API client** from OpenAPI schema
 
-# Run with coverage
-make test-coverage
+### Project Structure
 
-# Run integration tests
-make test-all
+```
+src/py/app/
+├── db/models/          # SQLAlchemy models (use Mapped[] typing)
+├── schemas/            # msgspec.Struct DTOs
+├── services/           # Business logic (inner Repo pattern)
+├── server/routes/      # Litestar controllers
+└── lib/                # Core utilities
+
+src/js/src/
+├── components/         # React components
+├── routes/             # TanStack Router pages
+├── lib/api/            # Auto-generated from OpenAPI
+└── hooks/              # React hooks
 ```
 
-## 🧪 Testing Practices
+## Development Workflow
 
-- Please only use functions for your pytest test unless instructed otherwise.
-- Do not immediately create classes with test functions. 
-- Always attempt to group and parameterize pytest test cases for efficiency and readability.
+### Adding New Features
 
-## 🔄 Workflow Reminders
+1. Create/update SQLAlchemy models in `db/models/`
+2. Run `app database make-migrations`
+3. Create msgspec schemas in `schemas/`
+4. Implement service with inner Repo pattern in `services/`
+5. Add controller routes in `server/routes/`
+6. Register routes in `routes/__init__.py`
+7. Update `signature_namespace` if adding new schemas
+8. **Run `make types`** to generate TypeScript client
+9. Implement frontend in React
 
-1. **New Feature Flow:**
-   - Create/update models
-   - Run `app database make-migrations`
-   - Create msgspec schemas
-   - Implement service with inner Repo
-   - Add controller routes
-   - Register in `routes/__init__.py`
-   - Update `signature_namespace` if needed
-   - Run `make types`
-   - Implement frontend
+### Before Every Commit
 
-2. **Before Every Commit:**
-   - `make lint`
-   - `make test`
-   - `make check-all`
+1. `make lint` - Fix all linting issues
+2. `make test` - Ensure tests pass
+3. `make check-all` - Final validation
 
-## 📧 Email Development with MailHog
+## Testing Guidelines
 
-MailHog is configured for development email testing:
+- Use pytest functions (not classes) unless instructed otherwise
+- Group and parameterize test cases for efficiency
+- Integration tests in `src/py/tests/integration/`
+- Unit tests in `src/py/tests/unit/`
 
-- **Web UI**: <http://localhost:18025> (view all emails)
-- **SMTP Server**: localhost:11025 (app sends emails here)
-- **Access**: `make mailhog` to open web interface
-- **Configuration**: Already set in `.env.local.example`
+## Development Infrastructure
 
-All emails sent during development are caught by MailHog instead of being delivered.
+### MailHog (Email Testing)
 
-## 🔐 OAuth Development with Keycloak
+- Web UI: <http://localhost:18025>
+- SMTP: localhost:11025
+- Access: `make mailhog`
+- All dev emails are caught here
 
-Keycloak provides a local OAuth server for development:
+### Keycloak (OAuth Provider)
 
-- **Admin Console**: <http://localhost:18080> (admin/admin)
-- **Auto Setup**: `make keycloak-setup` to configure OAuth client
-- **Access**: `make keycloak` to open admin interface
-- **Test User**: testuser / testpass123 (created automatically)
-- **Configuration**: Client credentials provided by setup script
+- Admin: <http://localhost:18080> (admin/admin)
+- Setup: `make keycloak-setup`
+- Test user: testuser/testpass123
 
-## 📊 Current Work Context
+## Critical Rules
 
-- Email verification: ✅ Implemented
-- Password reset: ✅ Implemented
-- Email service: ✅ SMTP with MailHog for dev
-- 2FA/TOTP: ✅ Implemented (configurable)
-- OAuth: Backend ✅ | Frontend ❌ | Tests ❌
-- Production validation: Backend 70% ✅ | Frontend ❌ | Tests ❌
-- Rate limiting: ✅ Basic implementation
+**ALWAYS:**
 
-For detailed patterns and examples, see `docs/architecture/`.
+- Run `make types` after schema changes
+- Use msgspec.Struct for DTOs
+- Use service/repository pattern
+- Type all function signatures
+- Handle async operations correctly
+
+**NEVER:**
+
+- Use raw dicts for API responses
+- Access DB sessions directly
+- Skip running tests
+- Commit without `make check-all`
+- Create files unless necessary
+- Add comments/emojis unless requested

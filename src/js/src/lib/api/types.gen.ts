@@ -154,7 +154,9 @@ export type TagUpdate = {
 export type Team = {
     id: string;
     name: string;
+    slug: string;
     description?: string | null;
+    isActive?: boolean;
     members?: Array<TeamMember>;
     tags?: Array<TeamTag>;
 };

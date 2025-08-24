@@ -13,17 +13,21 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicVerifyEmailRouteImport } from './routes/_public/verify-email'
 import { Route as PublicTermsRouteImport } from './routes/_public/terms'
 import { Route as PublicSignupRouteImport } from './routes/_public/signup'
+import { Route as PublicResetPasswordRouteImport } from './routes/_public/reset-password'
 import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PublicLandingRouteImport } from './routes/_public/landing'
+import { Route as PublicForgotPasswordRouteImport } from './routes/_public/forgot-password'
 import { Route as AppTeamsRouteImport } from './routes/_app/teams'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppTeamsIndexRouteImport } from './routes/_app/teams/index'
 import { Route as AppTeamsNewRouteImport } from './routes/_app/teams/new'
 import { Route as AppTeamsTeamIdRouteImport } from './routes/_app/teams/$teamId'
+import { Route as PublicAuthGoogleCallbackRouteImport } from './routes/_public/auth/google/callback'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -43,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicVerifyEmailRoute = PublicVerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicTermsRoute = PublicTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -51,6 +60,11 @@ const PublicTermsRoute = PublicTermsRouteImport.update({
 const PublicSignupRoute = PublicSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicResetPasswordRoute = PublicResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
@@ -66,6 +80,11 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
 const PublicLandingRoute = PublicLandingRouteImport.update({
   id: '/landing',
   path: '/landing',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicForgotPasswordRoute = PublicForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => PublicRoute,
 } as any)
 const AppTeamsRoute = AppTeamsRouteImport.update({
@@ -98,6 +117,12 @@ const AppTeamsTeamIdRoute = AppTeamsTeamIdRouteImport.update({
   path: '/$teamId',
   getParentRoute: () => AppTeamsRoute,
 } as any)
+const PublicAuthGoogleCallbackRoute =
+  PublicAuthGoogleCallbackRouteImport.update({
+    id: '/auth/google/callback',
+    path: '/auth/google/callback',
+    getParentRoute: () => PublicRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -105,28 +130,36 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
   '/teams': typeof AppTeamsRouteWithChildren
+  '/forgot-password': typeof PublicForgotPasswordRoute
   '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/reset-password': typeof PublicResetPasswordRoute
   '/signup': typeof PublicSignupRoute
   '/terms': typeof PublicTermsRoute
+  '/verify-email': typeof PublicVerifyEmailRoute
   '/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/teams/new': typeof AppTeamsNewRoute
   '/teams/': typeof AppTeamsIndexRoute
+  '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
+  '/forgot-password': typeof PublicForgotPasswordRoute
   '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
   '/privacy': typeof PublicPrivacyRoute
+  '/reset-password': typeof PublicResetPasswordRoute
   '/signup': typeof PublicSignupRoute
   '/terms': typeof PublicTermsRoute
+  '/verify-email': typeof PublicVerifyEmailRoute
   '/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/teams/new': typeof AppTeamsNewRoute
   '/teams': typeof AppTeamsIndexRoute
+  '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -137,14 +170,18 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/teams': typeof AppTeamsRouteWithChildren
+  '/_public/forgot-password': typeof PublicForgotPasswordRoute
   '/_public/landing': typeof PublicLandingRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/reset-password': typeof PublicResetPasswordRoute
   '/_public/signup': typeof PublicSignupRoute
   '/_public/terms': typeof PublicTermsRoute
+  '/_public/verify-email': typeof PublicVerifyEmailRoute
   '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/_app/teams/new': typeof AppTeamsNewRoute
   '/_app/teams/': typeof AppTeamsIndexRoute
+  '/_public/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -154,28 +191,36 @@ export interface FileRouteTypes {
     | '/admin'
     | '/home'
     | '/teams'
+    | '/forgot-password'
     | '/landing'
     | '/login'
     | '/privacy'
+    | '/reset-password'
     | '/signup'
     | '/terms'
+    | '/verify-email'
     | '/teams/$teamId'
     | '/teams/new'
     | '/teams/'
+    | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/admin'
     | '/home'
+    | '/forgot-password'
     | '/landing'
     | '/login'
     | '/privacy'
+    | '/reset-password'
     | '/signup'
     | '/terms'
+    | '/verify-email'
     | '/teams/$teamId'
     | '/teams/new'
     | '/teams'
+    | '/auth/google/callback'
   id:
     | '__root__'
     | '/'
@@ -185,14 +230,18 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/home'
     | '/_app/teams'
+    | '/_public/forgot-password'
     | '/_public/landing'
     | '/_public/login'
     | '/_public/privacy'
+    | '/_public/reset-password'
     | '/_public/signup'
     | '/_public/terms'
+    | '/_public/verify-email'
     | '/_app/teams/$teamId'
     | '/_app/teams/new'
     | '/_app/teams/'
+    | '/_public/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -232,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_public/verify-email': {
+      id: '/_public/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof PublicVerifyEmailRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/terms': {
       id: '/_public/terms'
       path: '/terms'
@@ -244,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof PublicSignupRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/reset-password': {
+      id: '/_public/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof PublicResetPasswordRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_public/privacy': {
@@ -265,6 +328,13 @@ declare module '@tanstack/react-router' {
       path: '/landing'
       fullPath: '/landing'
       preLoaderRoute: typeof PublicLandingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/forgot-password': {
+      id: '/_public/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof PublicForgotPasswordRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_app/teams': {
@@ -309,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTeamsTeamIdRouteImport
       parentRoute: typeof AppTeamsRoute
     }
+    '/_public/auth/google/callback': {
+      id: '/_public/auth/google/callback'
+      path: '/auth/google/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof PublicAuthGoogleCallbackRouteImport
+      parentRoute: typeof PublicRoute
+    }
   }
 }
 
@@ -343,19 +420,27 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface PublicRouteChildren {
+  PublicForgotPasswordRoute: typeof PublicForgotPasswordRoute
   PublicLandingRoute: typeof PublicLandingRoute
   PublicLoginRoute: typeof PublicLoginRoute
   PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicResetPasswordRoute: typeof PublicResetPasswordRoute
   PublicSignupRoute: typeof PublicSignupRoute
   PublicTermsRoute: typeof PublicTermsRoute
+  PublicVerifyEmailRoute: typeof PublicVerifyEmailRoute
+  PublicAuthGoogleCallbackRoute: typeof PublicAuthGoogleCallbackRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicForgotPasswordRoute: PublicForgotPasswordRoute,
   PublicLandingRoute: PublicLandingRoute,
   PublicLoginRoute: PublicLoginRoute,
   PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicResetPasswordRoute: PublicResetPasswordRoute,
   PublicSignupRoute: PublicSignupRoute,
   PublicTermsRoute: PublicTermsRoute,
+  PublicVerifyEmailRoute: PublicVerifyEmailRoute,
+  PublicAuthGoogleCallbackRoute: PublicAuthGoogleCallbackRoute,
 }
 
 const PublicRouteWithChildren =

@@ -35,7 +35,7 @@ class TestTeamEndpoints:
         assert team["name"] == "Test Team"
         assert team["description"] == "A test team for integration testing"
         assert team["slug"] is not None
-        assert team["is_active"] is True
+        assert team["isActive"] is True
 
     @pytest.mark.asyncio
     async def test_create_team_unauthenticated(self, client: AsyncTestClient) -> None:
@@ -72,7 +72,8 @@ class TestTeamEndpoints:
         response = await authenticated_client.get("/api/teams")
 
         assert response.status_code == 200
-        teams = response.json()
+        teams_response = response.json()
+        teams = teams_response["items"]
         assert len(teams) >= 1
         team_ids = [team["id"] for team in teams]
         assert str(test_team.id) in team_ids
@@ -116,7 +117,7 @@ class TestTeamEndpoints:
             id=uuid4(),
             email="other@example.com",
             name="Other User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -125,7 +126,7 @@ class TestTeamEndpoints:
 
         # Login as the other user
         login_response = await client.post(
-            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:
@@ -144,7 +145,8 @@ class TestTeamEndpoints:
 
         response = await authenticated_client.get(f"/api/teams/{uuid4()}")
 
-        assert response.status_code == 404
+        # Should return 403 (security by obscurity - don't reveal if team exists)
+        assert response.status_code == 403
 
     @pytest.mark.asyncio
     async def test_update_team(
@@ -182,7 +184,7 @@ class TestTeamEndpoints:
             id=uuid4(),
             email="unauthorized@example.com",
             name="Unauthorized User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -191,7 +193,7 @@ class TestTeamEndpoints:
 
         # Login as the unauthorized user
         login_response = await client.post(
-            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:
@@ -232,7 +234,7 @@ class TestTeamEndpoints:
             id=uuid4(),
             email="member@example.com",
             name="Member User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -254,7 +256,7 @@ class TestTeamEndpoints:
 
         # Login as the member
         login_response = await client.post(
-            "/api/access/login", json={"username": member_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": member_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:
@@ -303,7 +305,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="outsider@example.com",
             name="Outsider User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -312,7 +314,7 @@ class TestTeamMemberEndpoints:
 
         # Login as the outsider
         login_response = await client.post(
-            "/api/access/login", json={"username": other_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:
@@ -340,7 +342,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="newmember@example.com",
             name="New Member",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -377,7 +379,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="member@example.com",
             name="Member User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -386,7 +388,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="target@example.com",
             name="Target User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -409,7 +411,7 @@ class TestTeamMemberEndpoints:
 
         # Login as the regular member
         login_response = await client.post(
-            "/api/access/login", json={"username": member_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": member_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:
@@ -442,7 +444,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="removeme@example.com",
             name="Remove Me",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -484,7 +486,7 @@ class TestTeamMemberEndpoints:
             id=uuid4(),
             email="promoteme@example.com",
             name="Promote Me",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -595,7 +597,7 @@ class TestTeamInvitationEndpoints:
             id=uuid4(),
             email=test_team_invitation.email,
             name="Invited User",
-            hashed_password=get_password_hash("TestPassword123!"),
+            hashed_password=await get_password_hash("TestPassword123!"),
             is_active=True,
             is_verified=True,
         )
@@ -604,7 +606,7 @@ class TestTeamInvitationEndpoints:
 
         # Login as the invited user
         login_response = await client.post(
-            "/api/access/login", json={"username": invited_user.email, "password": "TestPassword123!"}
+            "/api/access/login", data={"username": invited_user.email, "password": "TestPassword123!"}
         )
 
         if login_response.status_code == 200:

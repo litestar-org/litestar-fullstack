@@ -151,12 +151,14 @@ async def team_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncG
 @pytest.fixture
 async def test_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create a test user."""
-
+    
+    # Use unique email per test to avoid conflicts
+    unique_id = str(uuid4())[:8]
     user = m.User(
         id=uuid4(),
-        email="test@example.com",
+        email=f"user{unique_id}@example.com",
         name="Test User",
-        hashed_password=get_password_hash("TestPassword123!"),
+        hashed_password=await get_password_hash("TestPassword123!"),
         is_active=True,
         is_verified=True,
     )
@@ -169,12 +171,14 @@ async def test_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
 @pytest.fixture
 async def admin_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
     """Create an admin user."""
-
+    
+    # Use unique email per test to avoid conflicts
+    unique_id = str(uuid4())[:8]
     user = m.User(
         id=uuid4(),
-        email="admin@example.com",
+        email=f"admin{unique_id}@example.com",
         name="Admin User",
-        hashed_password=get_password_hash("AdminPassword123!"),
+        hashed_password=await get_password_hash("AdminPassword123!"),
         is_active=True,
         is_verified=True,
         is_superuser=True,
@@ -188,10 +192,12 @@ async def admin_user(session: AsyncSession) -> AsyncGenerator[m.User, None]:
 @pytest.fixture
 async def test_team(session: AsyncSession, test_user: m.User) -> AsyncGenerator[m.Team, None]:
     """Create a test team with owner."""
+    # Use unique slug per test to avoid conflicts
+    unique_id = str(uuid4())[:8]
     team = m.Team(
         id=uuid4(),
         name="Test Team",
-        slug="test-team",
+        slug=f"test-team-{unique_id}",
         description="A test team for integration testing",
         is_active=True,
     )
@@ -217,7 +223,7 @@ async def authenticated_client(client: AsyncTestClient, test_user: m.User) -> As
     """Create authenticated test client."""
     # Login and set auth headers
     login_response = await client.post(
-        "/api/access/login", json={"username": test_user.email, "password": "TestPassword123!"}
+        "/api/access/login", data={"username": test_user.email, "password": "TestPassword123!"}
     )
 
     if login_response.status_code == 200:
@@ -232,7 +238,7 @@ async def admin_client(client: AsyncTestClient, admin_user: m.User) -> AsyncTest
     """Create authenticated admin test client."""
     # Login as admin and set auth headers
     login_response = await client.post(
-        "/api/access/login", json={"username": admin_user.email, "password": "AdminPassword123!"}
+        "/api/access/login", data={"username": admin_user.email, "password": "AdminPassword123!"}
     )
 
     if login_response.status_code == 200:
@@ -332,7 +338,7 @@ async def unverified_user(session: AsyncSession) -> m.User:
         id=uuid4(),
         email="unverified@example.com",
         name="Unverified User",
-        hashed_password=get_password_hash("TestPassword123!"),
+        hashed_password=await get_password_hash("TestPassword123!"),
         is_active=True,
         is_verified=False,
     )
@@ -350,7 +356,7 @@ async def inactive_user(session: AsyncSession) -> m.User:
         id=uuid4(),
         email="inactive@example.com",
         name="Inactive User",
-        hashed_password=get_password_hash("TestPassword123!"),
+        hashed_password=await get_password_hash("TestPassword123!"),
         is_active=False,
         is_verified=False,
     )

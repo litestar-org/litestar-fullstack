@@ -6,8 +6,9 @@ import { useAuthStore } from "@/lib/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
-// import { toast } from "sonner"
+import { toast } from "sonner"
 import { z } from "zod"
+import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 
 const signupSchema = z
   .object({
@@ -46,21 +47,17 @@ export function UserSignupForm() {
       })
 
       if (response.status === 201) {
+        toast.success("Account created! Please check your email to verify your account.")
         navigate({ to: "/login" })
         return
       }
 
-      // Getting status 500 for BE for validation errors. Not showing toast for now.
-      // toast.error(response.error?.title || "Signup failed")
+      toast.error(response.error?.detail || "Signup failed")
     } catch (error) {
-      console.error("[DEBUG] Signup error:", error)
+      toast.error("An error occurred during signup")
     }
   }
 
-  const onOAuthSignup = async () => {
-    // TODO: Implement OAuth login
-    console.log("OAuth signup")
-  }
 
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
@@ -176,14 +173,11 @@ export function UserSignupForm() {
               <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-          <Button variant="outline" disabled={isLoading} className="hover:cursor-pointer" onClick={onOAuthSignup}>
-            {isLoading ? (
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />
-            ) : (
-              <img src={"images/google.svg"} alt="Litestar Logo" className="mr-2 h-5" />
-            )}
-            Sign up with Google
-          </Button>
+          <GoogleSignInButton 
+            variant="signup" 
+            className="w-full"
+            onSuccess={() => navigate({ to: "/home" })}
+          />
         </div>
       </div>
     </div>

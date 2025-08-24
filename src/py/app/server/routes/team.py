@@ -113,7 +113,9 @@ class TeamController(Controller):
             item_id=team_id,
             data=data.to_dict(),
         )
-        return teams_service.to_schema(db_obj, schema_type=s.Team)
+        # Fetch the updated object fresh from the database to ensure all fields are loaded
+        fresh_obj = await teams_service.get_one(id=team_id)
+        return teams_service.to_schema(fresh_obj, schema_type=s.Team)
 
     @delete(operation_id="DeleteTeam", guards=[security.requires_team_admin], path="/api/teams/{team_id:uuid}")
     async def delete_team(
