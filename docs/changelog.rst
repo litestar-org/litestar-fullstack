@@ -147,8 +147,8 @@ Documentation
 FIX
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`5997f90 <https://github.com/litestar-org/litestar-fullstack/commit/5997f90314fb07f6d42e1bc756bcf32c413cf011>`_)  - Change 401 to 403 for insufficient privileges (#10) (Benjamin Pereto)
-* (`95f19b3 <https://github.com/litestar-org/litestar-fullstack/commit/95f19b3fb76da60d2d45b951ba7544288c22db30>`_)  - Fields for Before and After filters (#9) (Benjamin Pereto)
+* (`5997f90 <https://github.com/litestar-org/litestar-fullstack/commit/5997f90314fb07f6d42e1bc756bcf32c413cf011>`_)  - Change 401 to 403 for insufficient privileges (#10) (Bäm)
+* (`95f19b3 <https://github.com/litestar-org/litestar-fullstack/commit/95f19b3fb76da60d2d45b951ba7544288c22db30>`_)  - Fields for Before and After filters (#9) (Bäm)
 
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
