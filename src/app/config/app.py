@@ -75,6 +75,7 @@ saq = SAQConfig(
             dsn=settings.redis.URL,
             name="system-tasks",
             tasks=["app.domain.system.tasks.system_task", "app.domain.system.tasks.system_upkeep"],
+            concurrency=settings.saq.CONCURRENCY,
             scheduled_tasks=[
                 CronJob(
                     function="app.domain.system.tasks.system_upkeep",
@@ -88,6 +89,7 @@ saq = SAQConfig(
             dsn=settings.redis.URL,
             name="background-tasks",
             tasks=["app.domain.system.tasks.background_worker_task"],
+            concurrency=settings.saq.CONCURRENCY,
             scheduled_tasks=[
                 CronJob(
                     function="app.domain.system.tasks.background_worker_task",
