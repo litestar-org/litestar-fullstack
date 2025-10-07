@@ -117,7 +117,7 @@ jobs:
       security-events: write
     steps:
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: python
       - name: Checkout repository
@@ -135,4 +135,4 @@ jobs:
         run: uv sync --all-groups
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
