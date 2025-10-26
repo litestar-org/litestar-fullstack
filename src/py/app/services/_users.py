@@ -86,7 +86,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
 
         db_obj.is_verified = True
         db_obj.verified_at = datetime.now(UTC).date()
-        return await self.repository.update(db_obj)
+        return await self.update(data=db_obj)
 
     async def is_email_verified(self, user_id: UUID) -> bool:
         """Check if user's email is verified.
@@ -184,7 +184,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         db_obj.failed_reset_attempts = 0
         db_obj.reset_locked_until = None
 
-        return await self.repository.update(db_obj)
+        return await self.update(db_obj)
 
     async def is_reset_rate_limited(self, user_id: UUID) -> bool:
         """Check if user is rate limited for password resets.
