@@ -25,7 +25,7 @@ This is a reference application that you can use to get your next Litestar appli
 It contains most of the boilerplate required for a production web API with features like:
 
 - Latest Litestar configured with best practices
-- Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](<(https://www.structlog.org/en/stable/)](https://github.com/emmett-framework/granian)>)
+- Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](https://github.com/emmett-framework/granian)
 - Extends built-in Litestar click CLI
 - Frontend integrated with Vite and includes Jinja2 templates that integrate with Vite websocket/HMR support
 - Multi-stage Docker build using a minimal Python 3.13 runtime image.
