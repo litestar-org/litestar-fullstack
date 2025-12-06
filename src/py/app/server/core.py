@@ -88,8 +88,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config = security.auth.on_app_init(app_config)
         # security
         app_config.cors_config = config.cors
-        # templates
-        app_config.template_config = config.templates
         # plugins
         app_config.plugins.extend(
             [
@@ -118,7 +116,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 routes.UserRoleController,
                 routes.TeamMemberController,
                 routes.TagController,
-                routes.WebController,
             ],
         )
         # signatures

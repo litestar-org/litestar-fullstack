@@ -38,11 +38,11 @@ export function PasswordStrength({ password, showRequirements = true, className 
       {/* Strength meter */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Password strength</span>
-          <span className={cn("text-sm font-medium capitalize", strengthTextColors[strength.strength])}>{strength.strength}</span>
+          <span className="font-medium text-gray-700 text-sm">Password strength</span>
+          <span className={cn("font-medium text-sm capitalize", strengthTextColors[strength.strength])}>{strength.strength}</span>
         </div>
 
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="h-2 w-full rounded-full bg-gray-200">
           <div className={cn("h-2 rounded-full transition-all duration-300 ease-in-out", strengthColors[strength.strength])} style={{ width: `${progressWidth}%` }} />
         </div>
       </div>
@@ -50,7 +50,7 @@ export function PasswordStrength({ password, showRequirements = true, className 
       {/* Requirements checklist */}
       {showRequirements && (
         <div className="space-y-2">
-          <span className="text-sm font-medium text-gray-700">Requirements</span>
+          <span className="font-medium text-gray-700 text-sm">Requirements</span>
           <div className="grid grid-cols-1 gap-1">
             <RequirementItem met={strength.requirements.length} text="At least 12 characters" />
             <RequirementItem met={strength.requirements.uppercase} text="One uppercase letter" />
@@ -66,8 +66,8 @@ export function PasswordStrength({ password, showRequirements = true, className 
       {strength.feedback.length > 0 && (
         <div className="space-y-1">
           {strength.feedback.map((message, index) => (
-            <div key={index} className="flex items-center space-x-2 text-sm text-gray-600">
-              <X className="h-4 w-4 text-red-400 flex-shrink-0" />
+            <div key={index} className="flex items-center space-x-2 text-gray-600 text-sm">
+              <X className="h-4 w-4 flex-shrink-0 text-red-400" />
               <span>{message}</span>
             </div>
           ))}
@@ -85,7 +85,7 @@ interface RequirementItemProps {
 function RequirementItem({ met, text }: RequirementItemProps) {
   return (
     <div className={cn("flex items-center space-x-2 text-sm transition-colors", met ? "text-green-600" : "text-gray-500")}>
-      {met ? <Check className="h-4 w-4 text-green-600 flex-shrink-0" /> : <div className="h-4 w-4 rounded-full border border-gray-300 flex-shrink-0" />}
+      {met ? <Check className="h-4 w-4 flex-shrink-0 text-green-600" /> : <div className="h-4 w-4 flex-shrink-0 rounded-full border border-gray-300" />}
       <span>{text}</span>
     </div>
   )

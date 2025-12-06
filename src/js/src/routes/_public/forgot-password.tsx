@@ -1,18 +1,18 @@
-import { useState } from "react"
-import { Link } from "@tanstack/react-router"
-import { createFileRoute } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import { z } from "zod"
-import { toast } from "sonner"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { forgotPassword } from "@/lib/api"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { ArrowLeft, CheckCircle2, Mail } from "lucide-react"
-import { client } from "@/lib/api/client"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
 
 export const Route = createFileRoute("/_public/forgot-password")({
   component: ForgotPasswordPage,
@@ -37,14 +37,14 @@ function ForgotPasswordPage() {
 
   const { mutate: requestReset, isPending } = useMutation({
     mutationFn: async (data: ForgotPasswordForm) => {
-      const response = await client.POST("/api/access/forgot-password", {
+      const response = await forgotPassword({
         body: { email: data.email },
       })
-      
+
       if (response.error) {
-        throw new Error(response.error.detail || "Failed to send reset email")
+        throw new Error((response.error as any).detail || "Failed to send reset email")
       }
-      
+
       return response.data
     },
     onSuccess: (_, variables) => {
@@ -84,10 +84,7 @@ function ForgotPasswordPage() {
           <CardContent>
             <Alert>
               <Mail className="h-4 w-4" />
-              <AlertDescription>
-                The reset link will expire in 1 hour. If you don't see the email, 
-                check your spam folder or try requesting another reset.
-              </AlertDescription>
+              <AlertDescription>The reset link will expire in 1 hour. If you don't see the email, check your spam folder or try requesting another reset.</AlertDescription>
             </Alert>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
@@ -118,9 +115,7 @@ function ForgotPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Forgot your password?</CardTitle>
-          <CardDescription>
-            Enter your email address and we'll send you a link to reset your password.
-          </CardDescription>
+          <CardDescription>Enter your email address and we'll send you a link to reset your password.</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -132,12 +127,7 @@ function ForgotPasswordPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        {...field}
-                      />
+                      <Input type="email" placeholder="you@example.com" autoComplete="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

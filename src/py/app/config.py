@@ -1,12 +1,10 @@
 import logging
-from pathlib import Path
 from typing import cast
 
 import structlog
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
-from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.exceptions import (
     NotAuthorizedException,
     PermissionDeniedException,
@@ -24,12 +22,11 @@ from litestar.plugins.sqlalchemy import (
     SQLAlchemyAsyncConfig,
 )
 from litestar.plugins.structlog import StructlogConfig
-from litestar.template import TemplateConfig
 from litestar_saq import QueueConfig, SAQConfig
-from litestar_vite import ViteConfig
+from litestar_vite import PathConfig, ViteConfig
 
 from app.lib import log as log_conf
-from app.lib.settings import get_settings
+from app.lib.settings import BASE_DIR, get_settings
 from app.lib.worker import after_process as worker_after_process
 from app.lib.worker import before_process as worker_before_process
 from app.lib.worker import on_shutdown as worker_on_shutdown
@@ -58,15 +55,13 @@ alchemy = SQLAlchemyAsyncConfig(
     ),
 )
 vite = ViteConfig(
-    root_dir=Path(__file__).parent.parent.parent / "js",
-    bundle_dir=settings.vite.BUNDLE_DIR,
-    resource_dir=settings.vite.RESOURCE_DIR,
-    use_server_lifespan=settings.vite.USE_SERVER_LIFESPAN,
+    mode="spa",
     dev_mode=settings.vite.DEV_MODE,
-    hot_reload=settings.vite.HOT_RELOAD,
-    is_react=settings.vite.ENABLE_REACT_HELPERS,
-    port=settings.vite.PORT,
-    host=settings.vite.HOST,
+    paths=PathConfig(
+        root=BASE_DIR.parent.parent / "js",
+        bundle_dir=settings.vite.BUNDLE_DIR,
+        asset_url=settings.vite.ASSET_URL,
+    ),
 )
 saq = SAQConfig(
     web_enabled=settings.saq.WEB_ENABLED,
@@ -91,7 +86,6 @@ saq = SAQConfig(
         )
     ],
 )
-templates = TemplateConfig(engine=JinjaTemplateEngine(directory=settings.vite.TEMPLATE_DIR))
 problem_details = ProblemDetailsConfig(enable_for_all_http_exceptions=True)
 
 
@@ -133,6 +127,16 @@ log = StructlogConfig(
                     "level": 40,
                     "handlers": ["queue_listener"],
                 },
+                "httpx": {
+                    "propagate": False,
+                    "level": max(settings.log.LEVEL, logging.WARNING),
+                    "handlers": ["queue_listener"],
+                },
+                "httpcore": {
+                    "propagate": False,
+                    "level": max(settings.log.LEVEL, logging.WARNING),
+                    "handlers": ["queue_listener"],
+                },
                 "_granian": {
                     "propagate": False,
                     "level": settings.log.ASGI_ERROR_LEVEL,
@@ -159,12 +163,7 @@ log = StructlogConfig(
 
 
 def setup_logging() -> None:
-    """Return a configured logger for the given name.
-
-    Args:
-        args: positional arguments to pass to the bound logger instance
-        kwargs: keyword arguments to pass to the bound logger instance
-    """
+    """Return a configured logger for the given name."""
     if log.structlog_logging_config.standard_lib_logging_config:
         log.structlog_logging_config.standard_lib_logging_config.configure()
     log.structlog_logging_config.configure()

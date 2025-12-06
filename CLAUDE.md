@@ -9,8 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 make install                    # Fresh installation (Python + Node)
 cp .env.local.example .env      # Setup environment
-make start-infra                # Start PostgreSQL + Redis + MailHog + Keycloak
-make keycloak-setup             # Configure OAuth client
+make start-infra                # Start PostgreSQL + Redis + MailHog
 uv run app run                  # Start all services (SAQ, Vite, Litestar)
 ```
 
@@ -72,7 +71,7 @@ class UserCreate(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
 - **Service/Repository pattern** for ALL database operations
 - **Advanced Alchemy base classes** (UUIDAuditBase) for models
 - **JWT authentication** with email verification, password reset, 2FA/TOTP
-- **OAuth integration** via Keycloak (backend complete, frontend pending)
+- **OAuth integration** via Google OAuth (frontend pending)
 - **SAQ** for background tasks with Redis
 - **Granian** as ASGI server with uvloop
 
@@ -137,12 +136,6 @@ src/js/src/
 - SMTP: localhost:11025
 - Access: `make mailhog`
 - All dev emails are caught here
-
-### Keycloak (OAuth Provider)
-
-- Admin: <http://localhost:18080> (admin/admin)
-- Setup: `make keycloak-setup`
-- Test user: testuser/testpass123
 
 ## Critical Rules
 

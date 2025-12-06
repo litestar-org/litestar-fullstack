@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react"
-import { useNavigate, useSearch } from "@tanstack/react-router"
-import { useMutation } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
-import { toast } from "sonner"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Icons } from "@/components/icons"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
+import { useMutation } from "@tanstack/react-query"
+import { useNavigate, useSearch } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 export const Route = createFileRoute("/_public/auth/google/callback")({
   component: GoogleCallbackPage,
@@ -27,9 +27,7 @@ function GoogleCallbackPage() {
   const { mutate: handleCallback, isPending } = useMutation({
     mutationFn: async () => {
       if (errorParam) {
-        throw new Error(errorParam === "access_denied" 
-          ? "You denied access to your Google account" 
-          : `OAuth error: ${errorParam}`)
+        throw new Error(errorParam === "access_denied" ? "You denied access to your Google account" : `OAuth error: ${errorParam}`)
       }
 
       if (!code || !state) {
@@ -54,12 +52,12 @@ function GoogleCallbackPage() {
       if (data.access_token) {
         // Store the token if needed (usually handled by auth context)
         localStorage.setItem("access_token", data.access_token)
-        
+
         // Refetch user data
         await refetchUser()
-        
+
         toast.success("Successfully signed in with Google!")
-        
+
         // Redirect to dashboard or intended destination
         navigate({ to: "/home" })
       } else if (data.message) {
@@ -78,47 +76,39 @@ function GoogleCallbackPage() {
     if (code && state && !errorParam) {
       handleCallback()
     } else if (errorParam) {
-      setError(errorParam === "access_denied" 
-        ? "You denied access to your Google account" 
-        : `Authentication failed: ${errorParam}`)
+      setError(errorParam === "access_denied" ? "You denied access to your Google account" : `Authentication failed: ${errorParam}`)
     } else if (!code || !state) {
       setError("Invalid OAuth callback - missing required parameters")
     }
-  }, [code, state, errorParam])
+  }, [code, state, errorParam, handleCallback])
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center">
-            {isPending ? "Completing sign in..." : error ? "Authentication Failed" : "Processing..."}
-          </CardTitle>
+          <CardTitle className="text-center">{isPending ? "Completing sign in..." : error ? "Authentication Failed" : "Processing..."}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {isPending && (
             <div className="flex flex-col items-center space-y-4">
               <Icons.spinner className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">
-                Please wait while we complete your sign in with Google...
-              </p>
+              <p className="text-muted-foreground text-sm">Please wait while we complete your sign in with Google...</p>
             </div>
           )}
-          
+
           {error && (
             <>
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
               <div className="flex flex-col space-y-2">
-                <Button
-                  onClick={() => navigate({ to: "/login" })}
-                  variant="default"
-                  className="w-full"
-                >
+                <Button onClick={() => navigate({ to: "/login" })} variant="default" className="w-full">
                   Back to Login
                 </Button>
                 <Button
-                  onClick={() => window.location.href = "/api/auth/google"}
+                  onClick={() => {
+                    window.location.href = "/api/auth/google"
+                  }}
                   variant="outline"
                   className="w-full"
                 >

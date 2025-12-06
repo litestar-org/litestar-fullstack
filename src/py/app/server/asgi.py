@@ -12,7 +12,9 @@ def create_app() -> Litestar:
     Returns:
         The ASGI application.
     """
+    from litestar_saq.config import QueueConfig
 
+    QueueConfig._POOL_KWARGS = {"autocommit": True}  # type: ignore[attr-defined]  # noqa: SLF001
     from litestar import Litestar
 
     from app.server.core import ApplicationCore

@@ -21,12 +21,13 @@ dependencies = [
   "python-dotenv",
   "pwdlib[argon2]",
   "litestar-saq",
-  "litestar-vite",
+  "litestar-vite>=0.15.0a4",
   "litestar-granian[uvloop]",
   "httpx-oauth",
+  "sniffio",
 ]
 description = "Reference application for building a fullstack application with Litestar."
-keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
+keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vite", "spa"]
 license = { text = "MIT" }
 name = "app"
 readme = "README.md"

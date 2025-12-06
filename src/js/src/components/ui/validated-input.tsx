@@ -149,9 +149,9 @@ export function ValidatedInput({
   return (
     <div className="space-y-2">
       {/* Label */}
-      <Label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+      <Label htmlFor={inputId} className="font-medium text-gray-700 text-sm">
         {label}
-        {validationRule?.required && <span className="text-red-500 ml-1">*</span>}
+        {validationRule?.required && <span className="ml-1 text-red-500">*</span>}
       </Label>
 
       {/* Input wrapper */}
@@ -183,14 +183,14 @@ export function ValidatedInput({
 
       {/* Error message */}
       {displayError && (
-        <p id={`${inputId}-error`} className="text-sm text-red-600" role="alert">
+        <p id={`${inputId}-error`} className="text-red-600 text-sm" role="alert">
           {displayError}
         </p>
       )}
 
       {/* Helper text */}
       {!displayError && helperText && (
-        <p id={`${inputId}-helper`} className="text-sm text-gray-500">
+        <p id={`${inputId}-helper`} className="text-gray-500 text-sm">
           {helperText}
         </p>
       )}

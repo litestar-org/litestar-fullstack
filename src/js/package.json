@@ -31,6 +31,7 @@
     "@radix-ui/react-tabs": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.5",
     "@tailwindcss/postcss": "^4.1.5",
+    "@tailwindcss/vite": "^4.1.5",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-form": "^1.9.0",
     "@tanstack/react-query": "^5.75.2",
@@ -44,7 +45,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "framer-motion": "^12.9.7",
-    "litestar-vite-plugin": "^0.13.2",
+    "litestar-vite-plugin": "^0.15.0-alpha.4",
     "lucide-react": "^0.507.0",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
@@ -72,7 +73,7 @@
     "tsx": "^4.19.4",
     "tw-animate-css": "^1.2.9",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^7.0.0",
     "vitest": "^3.1.3",
     "web-vitals": "^4.2.4"
   }

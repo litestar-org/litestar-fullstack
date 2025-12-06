@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from app.lib.settings import get_settings
+from app.lib.settings import TEMPLATE_DIR, get_settings
 
 if TYPE_CHECKING:
     from app.db.models import EmailVerificationToken, PasswordResetToken, User
@@ -50,7 +50,7 @@ class EmailService:
         self.app_name = settings.app.NAME
 
         # Initialize Jinja2 template environment
-        self.template_dir = settings.vite.TEMPLATE_DIR
+        self.template_dir = TEMPLATE_DIR
         self.jinja_env = Environment(
             loader=FileSystemLoader(self.template_dir), autoescape=select_autoescape(["html", "xml"])
         )

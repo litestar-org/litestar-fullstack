@@ -11,7 +11,6 @@ from app.db.models.team_tag import team_tag
 
 if TYPE_CHECKING:
     from app.db.models.tag import Tag
-    from app.db.models.team_file import TeamFile
     from app.db.models.team_invitation import TeamInvitation
     from app.db.models.team_member import TeamMember
 
@@ -34,10 +33,6 @@ class Team(UUIDAuditBase, SlugKey):
         cascade="all, delete",
         passive_deletes=True,
         lazy="selectin",
-    )
-    files: Mapped[list[TeamFile]] = relationship(
-        back_populates="team",
-        cascade="all, delete",
     )
     invitations: Mapped[list[TeamInvitation]] = relationship(
         back_populates="team",

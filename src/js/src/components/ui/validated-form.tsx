@@ -233,8 +233,8 @@ export function ExampleRegistrationForm() {
   ]
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Create Account</h2>
+    <div className="mx-auto max-w-md p-6">
+      <h2 className="mb-6 font-bold text-2xl">Create Account</h2>
       <ValidatedForm fields={fields} onSubmit={handleSubmit} submitLabel="Create Account" />
     </div>
   )

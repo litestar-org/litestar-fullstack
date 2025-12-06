@@ -183,3 +183,8 @@ local.duckdb
 requirements.txt
 dist-ssr
 *.local
+src/js/.litestar-vite.json
+src/js/.litestar.json
+src/js/src/generated
+src/js/src/lib/api
+src/js/src/lib/generated

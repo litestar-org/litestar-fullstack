@@ -1,3 +1,4 @@
+import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -8,7 +9,6 @@ import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 
 const signupSchema = z
   .object({
@@ -58,126 +58,119 @@ export function UserSignupForm() {
     }
   }
 
-
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
-      <Button variant="link" className="absolute top-0 right-0 p-4 hover:cursor-pointer" onClick={() => navigate({ to: "/login" })}>
-        Have an account?
-      </Button>
-
       <div className="w-full max-w-md px-8">
-        <div className="mb-4 flex flex-col text-center">
-          <h1 className="mx-auto flex font-semibold text-2xl tracking-tight">Join Fullstack</h1>
-          <p className="text-muted-foreground text-sm">Enter your information below to create an account!</p>
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground leading-relaxed">Create your account with name, email, and password.</p>
         </div>
         <div className="grid gap-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid gap-2">
-                <div className="grid gap-1">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="sr-only">Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter your name." autoCapitalize="none" autoComplete="name" autoCorrect="off" {...field} disabled={isLoading} />
-                        </FormControl>{" "}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-1">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="sr-only">Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your email address."
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            autoCorrect="off"
-                            {...field}
-                            type="email"
-                            disabled={isLoading}
-                          />
-                        </FormControl>{" "}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-1">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="sr-only">Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Create a password."
-                            autoCapitalize="none"
-                            autoComplete="new-password"
-                            autoCorrect="off"
-                            {...field}
-                            type="password"
-                            disabled={isLoading}
-                          />
-                        </FormControl>{" "}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-1">
-                  <FormField
-                    control={form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="sr-only">Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Confirm your password."
-                            autoCapitalize="none"
-                            autoComplete="new-password"
-                            autoCorrect="off"
-                            {...field}
-                            type="password"
-                            disabled={isLoading}
-                          />
-                        </FormControl>{" "}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <Button disabled={isLoading} className="hover:cursor-pointer">
-                  Sign Up
-                  {isLoading && <div className="ml-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />}
-                </Button>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium text-foreground">Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your name" autoCapitalize="none" autoComplete="name" autoCorrect="off" {...field} disabled={isLoading} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium text-foreground">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your email address"
+                          autoCapitalize="none"
+                          autoComplete="email"
+                          autoCorrect="off"
+                          {...field}
+                          type="email"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium text-foreground">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Create a password"
+                          autoCapitalize="none"
+                          autoComplete="new-password"
+                          autoCorrect="off"
+                          {...field}
+                          type="password"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium text-foreground">Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Confirm your password"
+                          autoCapitalize="none"
+                          autoComplete="new-password"
+                          autoCorrect="off"
+                          {...field}
+                          type="password"
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
+
+              <Button
+                disabled={isLoading}
+                className="w-full h-11 text-base font-semibold shadow-md shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-primary/40 active:translate-y-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                Sign Up
+                {isLoading && <div className="ml-2 h-4 w-4 animate-spin rounded-full border-current border-b-2" />}
+              </Button>
             </form>
           </Form>
-          <div className="relative">
+          <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border/40" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            <div className="relative flex justify-center text-[11px] uppercase tracking-[0.16em]">
+              <span className="relative z-10 rounded-full bg-card px-4 py-1 text-muted-foreground shadow-sm shadow-black/10">
+                Or continue with
+              </span>
             </div>
           </div>
-          <GoogleSignInButton 
-            variant="signup" 
-            className="w-full"
-            onSuccess={() => navigate({ to: "/home" })}
-          />
+          <div className="flex flex-col gap-2">
+            <GoogleSignInButton variant="signup" className="w-full" onSuccess={() => navigate({ to: "/home" })} />
+          </div>
         </div>
       </div>
     </div>

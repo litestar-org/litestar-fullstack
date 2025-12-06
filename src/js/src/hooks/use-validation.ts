@@ -413,22 +413,21 @@ export function useValidation<T extends Record<string, any>>(data: T, rules: Val
           [field]: error || "",
         }))
         return !error
-      } else {
-        // Validate all fields
-        const newErrors: Record<string, string> = {}
-        let isValid = true
-
-        for (const fieldName of Object.keys(rules)) {
-          const error = validateField(fieldName, data[fieldName])
-          if (error) {
-            newErrors[fieldName] = error
-            isValid = false
-          }
-        }
-
-        setErrors(newErrors)
-        return isValid
       }
+      // Validate all fields
+      const newErrors: Record<string, string> = {}
+      let isValid = true
+
+      for (const fieldName of Object.keys(rules)) {
+        const error = validateField(fieldName, data[fieldName])
+        if (error) {
+          newErrors[fieldName] = error
+          isValid = false
+        }
+      }
+
+      setErrors(newErrors)
+      return isValid
     },
     [data, rules, validateField],
   )

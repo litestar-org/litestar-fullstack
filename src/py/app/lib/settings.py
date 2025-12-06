@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, cast
+from typing import TYPE_CHECKING, Final, cast
 
 from advanced_alchemy.utils.text import slugify
 from litestar.data_extractors import RequestExtractorField
@@ -86,33 +86,14 @@ class DatabaseSettings:
 
 @dataclass
 class ViteSettings:
-    """Server configurations."""
+    """Vite build tool configurations."""
 
     DEV_MODE: bool = field(default_factory=get_env("VITE_DEV_MODE", False))
     """Start `vite` development server."""
-    USE_SERVER_LIFESPAN: bool = field(default_factory=get_env("VITE_USE_SERVER_LIFESPAN", False))
-    """Auto start and stop `vite` processes when running in development mode.."""
-    HOST: str = field(default_factory=get_env("VITE_HOST", "0.0.0.0"))  # noqa: S104
-    """The host the `vite` process will listen on.  Defaults to `0.0.0.0`"""
-    PORT: int = field(default_factory=get_env("VITE_PORT", 5173))
-    """The port to start vite on.  Default to `5173`"""
-    HOT_RELOAD: bool = field(default_factory=get_env("VITE_HOT_RELOAD", False))
-    """Start `vite` with HMR enabled."""
-    ENABLE_REACT_HELPERS: bool = field(default_factory=get_env("VITE_ENABLE_REACT_HELPERS", False))
-    """Enable React support in HMR."""
     BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", STATIC_DIR))
-    """Bundle directory"""
-    RESOURCE_DIR: Path = field(default_factory=get_env("VITE_RESOURCE_DIR", Path("src/js/src")))
-    """Resource directory"""
-    TEMPLATE_DIR: Path = field(default_factory=get_env("VITE_TEMPLATE_DIR", TEMPLATE_DIR))
-    """Template directory."""
+    """Bundle directory for built assets."""
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/"))
-    """Base URL for assets"""
-
-    @property
-    def set_static_files(self) -> bool:
-        """Serve static assets."""
-        return self.ASSET_URL.startswith("/")
+    """Base URL for assets."""
 
 
 @dataclass
@@ -151,24 +132,6 @@ class SaqSettings:
     """If true, the worker admin UI is hosted on worker startup."""
     USE_SERVER_LIFESPAN: bool = field(default_factory=get_env("SAQ_USE_SERVER_LIFESPAN", True))
     """Auto start and stop `saq` processes when starting the Litestar application."""
-
-
-@dataclass
-class StorageSettings:
-    """Storage configurations."""
-
-    PUBLIC_STORAGE_KEY: str = field(default_factory=get_env("PUBLIC_STORAGE_KEY", "public"))
-    """The key to the public storage directory."""
-    PUBLIC_STORAGE_URI: str = field(default_factory=get_env("PUBLIC_STORAGE_PATH_URI", f"{BASE_DIR}/storage/public"))
-    """The path to the public storage directory."""
-    PUBLIC_STORAGE_OPTIONS: dict[str, Any] = field(default_factory=get_env("PUBLIC_STORAGE_OPTIONS", {}))
-    """The options to use for the public storage directory."""
-    PRIVATE_STORAGE_KEY: str = field(default_factory=get_env("PRIVATE_STORAGE_KEY", "private"))
-    """The key to the private storage directory."""
-    PRIVATE_STORAGE_URI: str = field(default_factory=get_env("PRIVATE_STORAGE_PATH_URI", f"{BASE_DIR}/storage/private"))
-    """The path to the private storage directory."""
-    PRIVATE_STORAGE_OPTIONS: dict[str, Any] = field(default_factory=get_env("PRIVATE_STORAGE_OPTIONS", {}))
-    """The options to use for the private storage directory."""
 
 
 @dataclass
@@ -241,8 +204,22 @@ class AppSettings:
     """Google Client ID"""
     GOOGLE_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GOOGLE_OAUTH2_CLIENT_SECRET", ""))
     """Google Client Secret"""
+    GITHUB_OAUTH2_CLIENT_ID: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_ID", ""))
+    """GitHub Client ID"""
+    GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_SECRET", ""))
+    """GitHub Client Secret"""
     ENV_SECRETS: str = field(default_factory=get_env("ENV_SECRETS", "runtime-secrets"))
     """Path to environment secrets."""
+
+    @property
+    def google_oauth_enabled(self) -> bool:
+        """Check if Google OAuth is configured."""
+        return bool(self.GOOGLE_OAUTH2_CLIENT_ID and self.GOOGLE_OAUTH2_CLIENT_SECRET)
+
+    @property
+    def github_oauth_enabled(self) -> bool:
+        """Check if GitHub OAuth is configured."""
+        return bool(self.GITHUB_OAUTH2_CLIENT_ID and self.GITHUB_OAUTH2_CLIENT_SECRET)
 
     @property
     def slug(self) -> str:
@@ -331,7 +308,6 @@ class Settings:
     server: ServerSettings = field(default_factory=ServerSettings)
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
-    storage: StorageSettings = field(default_factory=StorageSettings)
     email: EmailSettings = field(default_factory=EmailSettings)
 
     @classmethod
@@ -355,11 +331,10 @@ class Settings:
             vite: ViteSettings = ViteSettings()
             app: AppSettings = AppSettings()
             log: LogSettings = LogSettings()
-            storage: StorageSettings = StorageSettings()
         except Exception as e:  # noqa: BLE001
             logger.fatal("Could not load settings. %s", e)
             sys.exit(1)
-        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log, storage=storage)
+        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log)
 
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:

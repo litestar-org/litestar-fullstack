@@ -8,6 +8,7 @@ from litestar.response import Response
 from sqlalchemy import text
 
 from app import schemas as s
+from app.lib.settings import AppSettings
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -57,4 +58,24 @@ class SystemController(Controller):
             content=s.SystemHealth(database_status=db_status),
             status_code=200 if healthy else 500,
             media_type=MediaType.JSON,
+        )
+
+    @get(
+        operation_id="OAuthConfig",
+        name="system:oauth-config",
+        path="/api/config/oauth",
+        summary="Get OAuth Configuration",
+    )
+    async def get_oauth_config(self, settings: AppSettings) -> s.OAuthConfig:
+        """Get OAuth provider configuration for frontend.
+
+        Args:
+            settings: Application settings.
+
+        Returns:
+            OAuth configuration indicating which providers are enabled.
+        """
+        return s.OAuthConfig(
+            google_enabled=settings.google_oauth_enabled,
+            github_enabled=settings.github_oauth_enabled,
         )

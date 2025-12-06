@@ -116,19 +116,6 @@ def schema_upgrades() -> None:
     with op.batch_alter_table('user_account', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_user_account_email'), ['email'], unique=True)
 
-    op.create_table('team_file',
-    sa.Column('team_id', sa.GUID(length=16), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('file', sa.StoredObject(backend='private'), nullable=False),
-    sa.Column('uploaded_by_id', sa.GUID(length=16), nullable=True),
-    sa.Column('id', sa.GUID(length=16), nullable=False),
-    sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_file_team_id_team'), ondelete='cascade'),
-    sa.ForeignKeyConstraint(['uploaded_by_id'], ['user_account.id'], name=op.f('fk_team_file_uploaded_by_id_user_account'), ondelete='set null'),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team_file'))
-    )
     op.create_table('team_invitation',
     sa.Column('team_id', sa.GUID(length=16), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
@@ -224,7 +211,6 @@ def schema_downgrades() -> None:
         batch_op.drop_index(batch_op.f('ix_team_invitation_email'))
 
     op.drop_table('team_invitation')
-    op.drop_table('team_file')
     with op.batch_alter_table('user_account', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_user_account_email'))
 

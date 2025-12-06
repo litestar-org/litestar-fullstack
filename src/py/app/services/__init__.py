@@ -2,7 +2,6 @@ from app.services._email_verification import EmailVerificationTokenService
 from app.services._password_reset import PasswordResetService
 from app.services._roles import RoleService
 from app.services._tags import TagService
-from app.services._team_files import TeamFileService
 from app.services._team_invitations import TeamInvitationService
 from app.services._team_members import TeamMemberService
 from app.services._teams import TeamService
@@ -15,7 +14,6 @@ __all__ = (
     "PasswordResetService",
     "RoleService",
     "TagService",
-    "TeamFileService",
     "TeamInvitationService",
     "TeamMemberService",
     "TeamService",
