@@ -8,6 +8,12 @@ SHELL := /bin/bash
 .EXPORT_ALL_VARIABLES:
 MAKEFLAGS += --no-print-directory
 
+# Docker compose configuration
+COMPOSE_DIR := tools/deploy/docker
+COMPOSE_INFRA := $(COMPOSE_DIR)/docker-compose.infra.yml
+COMPOSE_APP := $(COMPOSE_DIR)/docker-compose.yml
+COMPOSE_DEV := $(COMPOSE_DIR)/docker-compose.dev.yml
+
 # Define colors and formatting
 BLUE := $(shell printf "\033[1;34m")
 GREEN := $(shell printf "\033[1;32m")
@@ -31,8 +37,13 @@ help:                                               ## Display this help text fo
 install-uv:                                         ## Install latest version of uv
 	@echo "${INFO} Installing uv..."
 	@curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
-	@uv tool install nodeenv >/dev/null 2>&1
 	@echo "${OK} UV installed successfully"
+
+.PHONY: install-bun
+install-bun:                                        ## Install latest version of bun
+	@echo "${INFO} Installing bun..."
+	@curl -fsSL https://bun.sh/install | bash >/dev/null 2>&1
+	@echo "${OK} Bun installed successfully"
 
 .PHONY: install
 install: destroy clean                              ## Install the project, dependencies, and pre-commit for local development
@@ -40,20 +51,19 @@ install: destroy clean                              ## Install the project, depe
 	@uv python pin 3.13 >/dev/null 2>&1
 	@uv venv >/dev/null 2>&1
 	@uv sync --all-extras --dev
-	@if ! command -v npm >/dev/null 2>&1; then \
-		echo "${INFO} Installing Node environment... 📦"; \
-		uvx nodeenv .venv --force --quiet; \
+	@if ! command -v bun >/dev/null 2>&1; then \
+		$(MAKE) install-bun; \
 	fi
-	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm install --no-fund
+	@cd src/js && bun install --frozen-lockfile >/dev/null 2>&1
 	@echo "${OK} Installation complete! 🎉"
 
 .PHONY: upgrade
 upgrade:                                            ## Upgrade all dependencies to the latest stable versions
 	@echo "${INFO} Updating all dependencies... 🔄"
 	@uv lock --upgrade
-	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm upgrade
+	@cd src/js && bun update
 	@echo "${OK} Dependencies updated 🔄"
-	@NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" uv run pre-commit autoupdate
+	@uv run pre-commit autoupdate
 	@echo "${OK} Updated Pre-commit hooks 🔄"
 
 .PHONY: clean
@@ -125,7 +135,7 @@ slotscheck:                                        ## Run slotscheck
 fix:                                               ## Run formatting scripts
 	@echo "${INFO} Running code formatters... 🔧"
 	@uv run ruff check --fix --unsafe-fixes
-	@cd src/js && NODE_OPTIONS="--no-deprecation --disable-warning=ExperimentalWarning" npm run lint
+	@cd src/js && bun run lint
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint
@@ -188,35 +198,53 @@ docs-linkcheck-full:                               ## Run the full link check on
 	@echo "${OK} Full link check complete"
 
 
-# -----------------------------------------------------------------------------
-# Local Infrastructure
-# -----------------------------------------------------------------------------
+# =============================================================================
+# Build
+# =============================================================================
+.PHONY: build
+build: build-assets build-wheel                    ## Build wheel with frontend assets
+
+.PHONY: build-assets
+build-assets:                                      ## Build frontend assets
+	@echo "${INFO} Building frontend assets... 🎨"
+	@uv run app assets build
+	@echo "${OK} Frontend assets built"
+
+.PHONY: build-wheel
+build-wheel:                                       ## Build Python wheel
+	@echo "${INFO} Building Python wheel... 📦"
+	@uv build --wheel >/dev/null 2>&1
+	@echo "${OK} Wheel built: dist/*.whl"
+
+
+# =============================================================================
+# Local Infrastructure (Database only - for normal development)
+# =============================================================================
 
 .PHONY: start-infra
-start-infra:                                        ## Start local containers
+start-infra:                                       ## Start local infrastructure (PostgreSQL)
 	@echo "${INFO} Starting local infrastructure... 🚀"
-	@docker compose -f tools/deploy/docker/docker-compose.infra.yml up -d --force-recreate
+	@docker compose -f $(COMPOSE_INFRA) up -d --force-recreate
 	@echo "${OK} Infrastructure is ready"
 
 .PHONY: stop-infra
-stop-infra:                                         ## Stop local containers
+stop-infra:                                        ## Stop local infrastructure
 	@echo "${INFO} Stopping infrastructure... 🛑"
-	@docker compose -f tools/deploy/docker/docker-compose.infra.yml down
+	@docker compose -f $(COMPOSE_INFRA) down
 	@echo "${OK} Infrastructure stopped"
 
 .PHONY: wipe-infra
-wipe-infra:                                           ## Remove local container info
+wipe-infra:                                        ## Remove local infrastructure and volumes
 	@echo "${INFO} Wiping infrastructure... 🧹"
-	@docker compose -f tools/deploy/docker/docker-compose.infra.yml down -v --remove-orphans
+	@docker compose -f $(COMPOSE_INFRA) down -v --remove-orphans
 	@echo "${OK} Infrastructure wiped clean"
 
 .PHONY: infra-logs
-infra-logs:                                           ## Tail development infrastructure logs
-	@echo "${INFO} Tailing infrastructure logs... 📋"
-	@docker compose -f tools/deploy/docker/docker-compose.infra.yml logs -f
+infra-logs:                                        ## Tail infrastructure logs
+	@docker compose -f $(COMPOSE_INFRA) logs -f
 
 .PHONY: mailhog
-mailhog:                                              ## Open MailHog web interface
+mailhog:                                           ## Open MailHog web interface
 	@echo "${INFO} Opening MailHog web interface... 📧"
 	@echo "${INFO} MailHog UI: http://localhost:18025"
 	@echo "${INFO} SMTP Server: localhost:11025"
@@ -228,20 +256,68 @@ mailhog:                                              ## Open MailHog web interf
 		echo "${WARN} Please open http://localhost:18025 in your browser"; \
 	fi
 
-.PHONY: start-all
-start-all:                                        ## Start local containers
-	@echo "${INFO} Starting local infrastructure... 🚀"
-	@docker compose -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker/docker-compose.override.yml up -d --force-recreate
-	@echo "${OK} Infrastructure is ready"
 
-.PHONY: stop-all
-stop-all:                                         ## Stop local containers
-	@echo "${INFO} Stopping infrastructure... 🛑"
-	@docker compose -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker/docker-compose.override.yml down -v --remove-orphans
-	@echo "${OK} Infrastructure stopped"
+# =============================================================================
+# Full Docker Stack - Production (Distroless)
+# =============================================================================
+.PHONY: start-all-docker
+start-all-docker:                                  ## Start production Docker stack (distroless + database)
+	@echo "${INFO} Building and starting production Docker stack... 🐳"
+	@docker compose -f $(COMPOSE_APP) up -d --build --force-recreate
+	@echo "${OK} Production Docker stack is running"
 
+.PHONY: stop-all-docker
+stop-all-docker:                                   ## Stop production Docker stack
+	@echo "${INFO} Stopping production Docker stack... 🛑"
+	@docker compose -f $(COMPOSE_APP) down
+	@echo "${OK} Production Docker stack stopped"
+
+.PHONY: wipe-all-docker
+wipe-all-docker:                                   ## Remove production Docker stack, images, and volumes
+	@echo "${INFO} Wiping production Docker stack... 🧹"
+	@docker compose -f $(COMPOSE_APP) down -v --remove-orphans --rmi local
+	@echo "${OK} Production Docker stack wiped clean"
+
+.PHONY: docker-logs
+docker-logs:                                       ## Tail production Docker stack logs
+	@docker compose -f $(COMPOSE_APP) logs -f
+
+
+# =============================================================================
+# Full Docker Stack - Development
+# =============================================================================
+.PHONY: start-all-docker-dev
+start-all-docker-dev:                              ## Start development Docker stack (with hot-reload)
+	@echo "${INFO} Building and starting development Docker stack... 🐳"
+	@docker compose -f $(COMPOSE_DEV) up -d --build --force-recreate
+	@echo "${OK} Development Docker stack is running"
+
+.PHONY: stop-all-docker-dev
+stop-all-docker-dev:                               ## Stop development Docker stack
+	@echo "${INFO} Stopping development Docker stack... 🛑"
+	@docker compose -f $(COMPOSE_DEV) down
+	@echo "${OK} Development Docker stack stopped"
+
+.PHONY: wipe-all-docker-dev
+wipe-all-docker-dev:                               ## Remove development Docker stack, images, and volumes
+	@echo "${INFO} Wiping development Docker stack... 🧹"
+	@docker compose -f $(COMPOSE_DEV) down -v --remove-orphans --rmi local
+	@echo "${OK} Development Docker stack wiped clean"
+
+.PHONY: docker-dev-logs
+docker-dev-logs:                                   ## Tail development Docker stack logs
+	@docker compose -f $(COMPOSE_DEV) logs -f
+
+.PHONY: docker-shell
+docker-shell:                                      ## Open a shell in the app container
+	@docker compose -f $(COMPOSE_DEV) exec app /bin/bash || docker compose -f $(COMPOSE_DEV) exec app /bin/sh
+
+
+# =============================================================================
+# Type Generation
+# =============================================================================
 .PHONY: types
-types:  ## Export OpenAPI schema and generate TypeScript types/client
+types:                                             ## Export OpenAPI schema and generate TypeScript types/client
 	@echo "${INFO} Exporting OpenAPI schema and generating TypeScript types..."
 	@uv run app assets generate-types
 	@echo "${OK} TypeScript types and client generated from OpenAPI schema."

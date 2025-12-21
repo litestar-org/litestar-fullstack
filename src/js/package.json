@@ -8,14 +8,12 @@
     "build": "tsc && vite build",
     "lint": "biome check --write .",
     "format": "biome format --write .",
-    "preview": "vite preview",
-    "export-schema": "cd ../.. && uv run app schema openapi --output src/js/src/lib/generated/openapi.json",
-    "generate-types": "openapi-ts --config openapi-ts.config.ts"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@faker-js/faker": "^9.7.0",
-    "@hey-api/client-axios": "^0.7.0",
     "@hookform/resolvers": "^5.0.1",
+    "axios": "^1.7.9",
     "@radix-ui/react-avatar": "^1.1.8",
     "@radix-ui/react-collapsible": "^1.1.9",
     "@radix-ui/react-dialog": "^1.1.12",
@@ -45,7 +43,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "framer-motion": "^12.9.7",
-    "litestar-vite-plugin": "^0.15.0-alpha.6",
+    "litestar-vite-plugin": "next",
     "lucide-react": "^0.507.0",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
@@ -59,7 +57,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@hey-api/openapi-ts": "^0.88.0",
     "@tanstack/router-plugin": "^1.119.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",

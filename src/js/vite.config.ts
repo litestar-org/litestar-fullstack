@@ -14,7 +14,7 @@ export default defineConfig({
     react(),
     litestar({
       input: ["src/main.tsx"],
-    }) ,
+    }),
   ],
   resolve: {
     alias: {

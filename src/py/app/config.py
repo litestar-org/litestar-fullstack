@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import cast
 
 import structlog
@@ -23,7 +24,7 @@ from litestar.plugins.sqlalchemy import (
 )
 from litestar.plugins.structlog import StructlogConfig
 from litestar_saq import QueueConfig, SAQConfig
-from litestar_vite import PathConfig, TypeGenConfig, ViteConfig
+from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
 from app.lib import log as log_conf
 from app.lib.settings import BASE_DIR, get_settings
@@ -57,9 +58,11 @@ alchemy = SQLAlchemyAsyncConfig(
 vite = ViteConfig(
     mode="spa",
     dev_mode=settings.vite.DEV_MODE,
+    runtime=RuntimeConfig(executor="bun"),
     paths=PathConfig(
         root=BASE_DIR.parent.parent / "js",
         bundle_dir=settings.vite.BUNDLE_DIR,
+        resource_dir=Path("src"),
         asset_url=settings.vite.ASSET_URL,
     ),
     types=TypeGenConfig(
