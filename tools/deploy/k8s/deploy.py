@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run python
-# ruff: noqa: S404, BLE001, FIX002
+# ruff: noqa: BLE001, FIX002
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [

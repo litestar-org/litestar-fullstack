@@ -8,9 +8,9 @@ from uuid import uuid4
 import pytest
 
 from app.db.models.team_roles import TeamRoles
+from app.domain.teams.services import TeamService
 from app.lib import constants
-from app.services._teams import TeamService
-from tests.factories import TagFactory, TeamFactory, TeamMemberFactory, UserFactory
+from tests.factories import RoleFactory, TagFactory, TeamFactory, TeamMemberFactory, UserFactory, UserRoleFactory
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -248,10 +248,11 @@ class TestTeamServicePermissions:
         """Test can_view_all with superuser role."""
         user = UserFactory.build(is_superuser=False)
 
-        # Mock role with superuser access
-        mock_role = type("MockRole", (), {"name": constants.SUPERUSER_ACCESS_ROLE})()
-        mock_user_role = type("MockUserRole", (), {"role": mock_role})()
-        user.roles = [mock_user_role]
+        # Create role with superuser access using factory
+        role = RoleFactory.build(name=constants.SUPERUSER_ACCESS_ROLE)
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = TeamService.can_view_all(user)
         assert result is True
@@ -260,10 +261,11 @@ class TestTeamServicePermissions:
         """Test can_view_all with regular user."""
         user = UserFactory.build(is_superuser=False)
 
-        # Mock role without superuser access
-        mock_role = type("MockRole", (), {"name": "regular_user"})()
-        mock_user_role = type("MockUserRole", (), {"role": mock_role})()
-        user.roles = [mock_user_role]
+        # Create role without superuser access using factory
+        role = RoleFactory.build(name="regular_user")
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = TeamService.can_view_all(user)
         assert result is False

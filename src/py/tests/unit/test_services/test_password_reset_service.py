@@ -9,7 +9,7 @@ import pytest
 from litestar.exceptions import ClientException
 
 from app.db import models as m
-from app.services._password_reset import PasswordResetService
+from app.domain.accounts.services import PasswordResetService
 from tests.factories import PasswordResetTokenFactory, UserFactory
 
 if TYPE_CHECKING:

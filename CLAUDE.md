@@ -43,13 +43,13 @@ from app.db import models as m
 
 class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Service for user operations."""
-    
+
     class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
         """User repository."""
         model_type = m.User
-    
+
     repository_type = Repo
-    
+
     # Custom service methods here
 ```
 

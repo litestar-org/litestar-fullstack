@@ -9,9 +9,10 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from litestar.exceptions import ClientException, PermissionDeniedException
 
+from app.domain.accounts.services import UserService
+from app.domain.accounts.services._user import MAX_FAILED_RESET_ATTEMPTS
 from app.lib.crypt import get_password_hash, verify_password
 from app.lib.validation import PasswordValidationError
-from app.services._users import MAX_FAILED_RESET_ATTEMPTS, UserService
 from tests.factories import UserFactory
 
 if TYPE_CHECKING:

@@ -1,86 +1,18 @@
-from app.schemas.accounts import (
-    AccountLogin,
-    AccountRegister,
-    PasswordUpdate,
-    PasswordVerify,
-    ProfileUpdate,
-    User,
-    UserCreate,
-    UserRoleAdd,
-    UserRoleRevoke,
-    UserUpdate,
-)
+"""Base schema utilities.
+
+Domain-specific schemas should be imported from their respective domain modules:
+- app.domain.accounts.schemas
+- app.domain.teams.schemas
+- app.domain.tags.schemas
+- app.domain.system.schemas
+"""
+
 from app.schemas.base import BaseSchema, BaseStruct, CamelizedBaseSchema, CamelizedBaseStruct, Message
-from app.schemas.oauth import (
-    OAuthAccountInfo,
-    OAuthAuthorizationRequest,
-    OAuthAuthorizationResponse,
-    OAuthCallbackRequest,
-    OAuthLinkRequest,
-)
-from app.schemas.password_reset import (
-    ForgotPasswordRequest,
-    ForgotPasswordResponse,
-    ResetPasswordRequest,
-    ResetPasswordResponse,
-    ValidateResetTokenRequest,
-    ValidateResetTokenResponse,
-)
-from app.schemas.roles import Role, RoleCreate, RoleUpdate
-from app.schemas.system import OAuthConfig, SystemHealth
-from app.schemas.tags import Tag, TagCreate, TagUpdate
-from app.schemas.teams import (
-    Team,
-    TeamCreate,
-    TeamInvitation,
-    TeamInvitationCreate,
-    TeamMember,
-    TeamMemberModify,
-    TeamTag,
-    TeamUpdate,
-)
 
 __all__ = (
-    "AccountLogin",
-    "AccountRegister",
     "BaseSchema",
     "BaseStruct",
     "CamelizedBaseSchema",
     "CamelizedBaseStruct",
-    "ForgotPasswordRequest",
-    "ForgotPasswordResponse",
     "Message",
-    "OAuthAccountInfo",
-    "OAuthAuthorizationRequest",
-    "OAuthAuthorizationResponse",
-    "OAuthCallbackRequest",
-    "OAuthLinkRequest",
-    "PasswordUpdate",
-    "PasswordVerify",
-    "ProfileUpdate",
-    "OAuthConfig",
-    "ResetPasswordRequest",
-    "ResetPasswordResponse",
-    "Role",
-    "RoleCreate",
-    "RoleUpdate",
-    "SystemHealth",
-    "Tag",
-    "TagCreate",
-    "TagUpdate",
-    "Team",
-    "TeamCreate",
-    "TeamInvitation",
-    "TeamInvitationCreate",
-    "TeamMember",
-    "TeamMemberModify",
-    "TeamTag",
-    "TeamUpdate",
-    "User",
-    "UserCreate",
-    "UserRoleAdd",
-    "UserRoleRevoke",
-    "UserUpdate",
-    "ValidateResetTokenRequest",
-    "ValidateResetTokenResponse",
 )

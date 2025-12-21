@@ -140,6 +140,8 @@ class EmailSettings:
 
     ENABLED: bool = field(default_factory=get_env("EMAIL_ENABLED", False))
     """Whether email sending is enabled."""
+    BACKEND: str = field(default_factory=get_env("EMAIL_BACKEND", "console"))
+    """Email backend to use: smtp, console, locmem."""
     SMTP_HOST: str = field(default_factory=get_env("EMAIL_SMTP_HOST", "localhost"))
     """SMTP server hostname."""
     SMTP_PORT: int = field(default_factory=get_env("EMAIL_SMTP_PORT", 587, int))

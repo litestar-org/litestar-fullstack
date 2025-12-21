@@ -67,7 +67,6 @@ class TeamFactory(SQLAlchemyFactory[m.Team]):
 
     # Ignore relationships
     members = Ignore()
-    files = Ignore()
     invitations = Ignore()
     pending_invitations = Ignore()
     tags = Ignore()
@@ -78,6 +77,7 @@ class TeamMemberFactory(SQLAlchemyFactory[m.TeamMember]):
 
     __model__ = m.TeamMember
     __set_relationships__ = True
+    __check_model__ = False  # Association proxies cause validation issues
 
     id = Use(uuid4)
     role = TeamRoles.MEMBER
@@ -133,17 +133,20 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
     user = Ignore()
 
 
-class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOauthAccount]):
+class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     """Factory for UserOauthAccount model."""
 
-    __model__ = m.UserOauthAccount
+    __model__ = m.UserOAuthAccount
     __set_relationships__ = True
+    __check_model__ = False  # Association proxies cause validation issues
 
     id = Use(uuid4)
-    provider = "google"
-    oauth_id = Use(lambda: f"oauth_{uuid4().hex}")
+    oauth_name = "google"
+    account_id = Use(lambda: f"oauth_{uuid4().hex}")
+    account_email = Use(lambda: f"oauth{uuid4().hex[:8]}@gmail.com")
     access_token = Use(lambda: f"access_token_{uuid4().hex}")
     refresh_token = Use(lambda: f"refresh_token_{uuid4().hex}")
+    expires_at = None
     token_expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
     scope = "openid email profile"
     provider_user_data = Use(
@@ -158,8 +161,10 @@ class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOauthAccount]):
     # These will be set by the caller
     user_id = None
 
-    # Ignore relationships
+    # Ignore relationships and association proxies
     user = Ignore()
+    user_name = Ignore()
+    user_email = Ignore()
 
 
 class TeamInvitationFactory(SQLAlchemyFactory[m.TeamInvitation]):
@@ -170,12 +175,10 @@ class TeamInvitationFactory(SQLAlchemyFactory[m.TeamInvitation]):
 
     id = Use(uuid4)
     email = Use(lambda: f"invite{uuid4().hex[:8]}@example.com")
-    role = "member"
-    token = Use(lambda: uuid4().hex)
-    expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
+    role = TeamRoles.MEMBER
     is_accepted = False
-    accepted_at = None
-    invited_by_user_id = None
+    invited_by_id = None
+    invited_by_email = Use(lambda: f"inviter{uuid4().hex[:8]}@example.com")
 
     # These will be set by the caller
     team_id = None
@@ -198,6 +201,29 @@ class RoleFactory(SQLAlchemyFactory[m.Role]):
 
     # Ignore relationships
     users = Ignore()
+
+
+class UserRoleFactory(SQLAlchemyFactory[m.UserRole]):
+    """Factory for UserRole model."""
+
+    __model__ = m.UserRole
+    __set_relationships__ = True
+    __check_model__ = False  # Association proxies cause validation issues
+
+    id = Use(uuid4)
+    assigned_at = Use(lambda: datetime.now(UTC))
+
+    # These will be set by the caller
+    user_id = None
+    role_id = None
+
+    # Ignore relationships and association proxies
+    user = Ignore()
+    role = Ignore()
+    user_name = Ignore()
+    user_email = Ignore()
+    role_name = Ignore()
+    role_slug = Ignore()
 
 
 class TagFactory(SQLAlchemyFactory[m.Tag]):
@@ -264,7 +290,7 @@ def create_team_with_members(session: Any, member_count: int = 3, **kwargs: Any)
 
 def create_user_with_oauth_account(
     session: Any, provider: str = "google", **kwargs: Any
-) -> tuple[m.User, m.UserOauthAccount]:
+) -> tuple[m.User, m.UserOAuthAccount]:
     """Create a user with an OAuth account."""
     user = UserFactory.build(**kwargs)
     session.add(user)

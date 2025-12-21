@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from app.db.models.email_verification_token import EmailVerificationToken
-    from app.db.models.oauth_account import UserOauthAccount
+    from app.db.models.oauth_account import UserOAuthAccount
     from app.db.models.password_reset_token import PasswordResetToken
     from app.db.models.team_member import TeamMember
     from app.db.models.user_role import UserRole
@@ -57,7 +57,7 @@ class User(UUIDAuditBase):
         cascade="all, delete",
         viewonly=True,
     )
-    oauth_accounts: Mapped[list[UserOauthAccount]] = relationship(
+    oauth_accounts: Mapped[list[UserOAuthAccount]] = relationship(
         back_populates="user",
         lazy="noload",
         cascade="all, delete",

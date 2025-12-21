@@ -25,6 +25,9 @@ dependencies = [
   "litestar-granian[uvloop]",
   "httpx-oauth",
   "sniffio",
+  "aiosmtplib>=3.0.0",
+  "pyotp>=2.9.0",
+  "qrcode[pil]>=7.4.0",
 ]
 description = "Reference application for building a fullstack application with Litestar."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vite", "spa"]
@@ -281,10 +284,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "docs/conf.py" = ["FIX002", "ARG001", "INP001"]
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
-"src/py/app/db/models/*.py" = ["PLW0108"]
+"src/py/app/db/models/*.py" = ["PLW0108", "TC003"]
 "src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
+
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

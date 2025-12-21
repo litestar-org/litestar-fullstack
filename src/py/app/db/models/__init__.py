@@ -1,5 +1,5 @@
 from app.db.models.email_verification_token import EmailVerificationToken
-from app.db.models.oauth_account import UserOauthAccount
+from app.db.models.oauth_account import UserOAuthAccount
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.role import Role
 from app.db.models.tag import Tag
@@ -21,7 +21,7 @@ __all__ = (
     "TeamMember",
     "TeamRoles",
     "User",
-    "UserOauthAccount",
+    "UserOAuthAccount",
     "UserRole",
     "team_tag",
 )

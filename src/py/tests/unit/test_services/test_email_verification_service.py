@@ -9,7 +9,7 @@ import pytest
 from litestar.exceptions import ClientException
 
 from app.db import models as m
-from app.services._email_verification import EmailVerificationTokenService
+from app.domain.accounts.services import EmailVerificationTokenService
 from tests.factories import EmailVerificationTokenFactory, UserFactory
 
 if TYPE_CHECKING:

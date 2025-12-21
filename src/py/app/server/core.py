@@ -54,24 +54,48 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from litestar.security.jwt import Token
 
         from app import config
-        from app import schemas as s
         from app.__metadata__ import __version__
         from app.db import models as m
-        from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
-        from app.lib.settings import get_settings
-        from app.server import events, plugins, routes, security
-        from app.services import (
+        from app.domain.accounts import schemas as account_schemas
+        from app.domain.accounts import signals as account_signals
+        from app.domain.accounts.controllers import (
+            AccessController,
+            EmailVerificationController,
+            OAuthController,
+            ProfileController,
+            RoleController,
+            UserController,
+            UserRoleController,
+        )
+        from app.domain.accounts.guards import auth, provide_user
+        from app.domain.accounts.services import (
+            EmailVerificationTokenService,
+            PasswordResetService,
             RoleService,
-            TagService,
-            TeamInvitationService,
-            TeamMemberService,
-            TeamService,
             UserOAuthAccountService,
             UserRoleService,
             UserService,
         )
-        from app.services._email_verification import EmailVerificationTokenService
-        from app.services._password_reset import PasswordResetService
+        from app.domain.system import schemas as system_schemas
+        from app.domain.system.controllers import SystemController
+        from app.domain.tags import schemas as tag_schemas
+        from app.domain.tags.controllers import TagController
+        from app.domain.tags.services import TagService
+        from app.domain.teams import schemas as team_schemas
+        from app.domain.teams import signals as team_signals
+        from app.domain.teams.controllers import (
+            TeamController,
+            TeamInvitationController,
+            TeamMemberController,
+        )
+        from app.domain.teams.services import (
+            TeamInvitationService,
+            TeamMemberService,
+            TeamService,
+        )
+        from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
+        from app.lib.settings import AppSettings, get_settings
+        from app.server import plugins
 
         settings = get_settings()
         self.app_slug = settings.app.slug
@@ -80,12 +104,12 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config.openapi_config = OpenAPIConfig(
             title=settings.app.NAME,
             version=__version__,
-            components=[security.auth.openapi_components],
-            security=[security.auth.security_requirement],
+            components=[auth.openapi_components],
+            security=[auth.security_requirement],
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
         # jwt auth (updates openapi config)
-        app_config = security.auth.on_app_init(app_config)
+        app_config = auth.on_app_init(app_config)
         # security
         app_config.cors_config = config.cors
         # plugins
@@ -104,18 +128,18 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         # routes
         app_config.route_handlers.extend(
             [
-                routes.SystemController,
-                routes.AccessController,
-                routes.EmailVerificationController,
-                routes.OAuthController,
-                routes.ProfileController,
-                routes.RoleController,
-                routes.UserController,
-                routes.TeamController,
-                routes.TeamInvitationController,
-                routes.UserRoleController,
-                routes.TeamMemberController,
-                routes.TagController,
+                SystemController,
+                AccessController,
+                EmailVerificationController,
+                OAuthController,
+                ProfileController,
+                RoleController,
+                UserController,
+                TeamController,
+                TeamInvitationController,
+                UserRoleController,
+                TeamMemberController,
+                TagController,
             ],
         )
         # signatures
@@ -126,9 +150,9 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "RequestEncodingType": RequestEncodingType,
                 "Body": Body,
                 "m": m,
-                "s": s,
                 "UUID": UUID,
                 "OAuth2Token": OAuth2Token,
+                # Services
                 "UserService": UserService,
                 "EmailVerificationTokenService": EmailVerificationTokenService,
                 "PasswordResetService": PasswordResetService,
@@ -139,6 +163,14 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "TagService": TagService,
                 "UserRoleService": UserRoleService,
                 "UserOAuthAccountService": UserOAuthAccountService,
+                # Settings and models
+                "AppSettings": AppSettings,
+                "User": m.User,
+                # Schemas by domain
+                **{k: getattr(account_schemas, k) for k in account_schemas.__all__},
+                **{k: getattr(team_schemas, k) for k in team_schemas.__all__},
+                **{k: getattr(tag_schemas, k) for k in tag_schemas.__all__},
+                **{k: getattr(system_schemas, k) for k in system_schemas.__all__},
             },
         )
         # exception handling
@@ -147,10 +179,10 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             RepositoryError: exception_to_http_response,
         }
         # dependencies
-        dependencies = {"current_user": Provide(security.provide_user, sync_to_thread=False)}
+        dependencies = {"current_user": Provide(provide_user, sync_to_thread=False)}
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(
-            [events.user.user_created_event_handler, events.team.team_created_event_handler],
+            [account_signals.user_created_event_handler, team_signals.team_created_event_handler],
         )
         return app_config
