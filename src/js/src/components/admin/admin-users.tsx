@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { User } from "@/lib/api"
-import { assignUserRole, listUsers, revokeUserRole } from "@/lib/api/sdk.gen"
+import type { User } from "@/lib/generated/api"
+import { assignUserRole, listUsers, revokeUserRole } from "@/lib/generated/api/sdk.gen"
 import { useQuery } from "@tanstack/react-query"
 
 export function AdminUsers() {

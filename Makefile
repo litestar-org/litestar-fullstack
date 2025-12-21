@@ -243,5 +243,5 @@ stop-all:                                         ## Stop local containers
 .PHONY: types
 types:  ## Export OpenAPI schema and generate TypeScript types/client
 	@echo "${INFO} Exporting OpenAPI schema and generating TypeScript types..."
-	@cd src/js && npm run export-schema && npm run generate-types
+	@uv run app assets generate-types
 	@echo "${OK} TypeScript types and client generated from OpenAPI schema."

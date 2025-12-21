@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { TeamMember } from "@/lib/api"
-import { getTeam, removeMemberFromTeam } from "@/lib/api/sdk.gen"
+import type { TeamMember } from "@/lib/generated/api"
+import { getTeam, removeMemberFromTeam } from "@/lib/generated/api/sdk.gen"
 import { useAuthStore } from "@/lib/auth"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 

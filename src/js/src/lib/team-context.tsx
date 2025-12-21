@@ -1,5 +1,5 @@
-import type { Team } from "@/lib/api"
-import { listTeams } from "@/lib/api/sdk.gen"
+import type { Team } from "@/lib/generated/api"
+import { listTeams } from "@/lib/generated/api/sdk.gen"
 import { useQuery } from "@tanstack/react-query"
 import { type ReactNode, createContext, useContext, useState } from "react"
 

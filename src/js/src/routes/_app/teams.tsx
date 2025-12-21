@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
-import type { Team } from "@/lib/api"
-import { listTeams } from "@/lib/api/sdk.gen"
+import type { Team } from "@/lib/generated/api"
+import { listTeams } from "@/lib/generated/api/sdk.gen"
 import { useAuthStore } from "@/lib/auth"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"

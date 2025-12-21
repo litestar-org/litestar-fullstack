@@ -1,5 +1,5 @@
-import { accountLogin, accountLogout, accountProfile } from "@/lib/api/sdk.gen"
-import type { Team, User } from "@/lib/api/types.gen"
+import { accountLogin, accountLogout, accountProfile } from "@/lib/generated/api/sdk.gen"
+import type { Team, User } from "@/lib/generated/api/types.gen"
 import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"

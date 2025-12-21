@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
-import { apiEmailVerificationRequestRequestVerification } from "@/lib/api"
+import { apiEmailVerificationRequestRequestVerification } from "@/lib/generated/api"
 import { useMutation } from "@tanstack/react-query"
 import { AlertCircle, CheckCircle2, X } from "lucide-react"
 import { useState } from "react"

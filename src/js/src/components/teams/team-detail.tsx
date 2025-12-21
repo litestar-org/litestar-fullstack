@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getTeam } from "@/lib/api/sdk.gen"
+import { getTeam } from "@/lib/generated/api/sdk.gen"
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { TeamManagement } from "./team-management"

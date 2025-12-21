@@ -12,14 +12,9 @@ export default defineConfig({
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     tailwindcss(),
     react(),
-    ...(litestar({
+    litestar({
       input: ["src/main.tsx"],
-      assetUrl: process.env.ASSET_URL || "/",
-      bundleDirectory: "../py/app/server/public",
-      resourceDirectory: "src",
-      // Disable built-in type generation - using custom @hey-api/openapi-ts config
-      types: false,
-    }) as PluginOption[]),
+    }) ,
   ],
   resolve: {
     alias: {

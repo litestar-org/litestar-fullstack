@@ -23,7 +23,7 @@ from litestar.plugins.sqlalchemy import (
 )
 from litestar.plugins.structlog import StructlogConfig
 from litestar_saq import QueueConfig, SAQConfig
-from litestar_vite import PathConfig, ViteConfig
+from litestar_vite import PathConfig, TypeGenConfig, ViteConfig
 
 from app.lib import log as log_conf
 from app.lib.settings import BASE_DIR, get_settings
@@ -61,6 +61,12 @@ vite = ViteConfig(
         root=BASE_DIR.parent.parent / "js",
         bundle_dir=settings.vite.BUNDLE_DIR,
         asset_url=settings.vite.ASSET_URL,
+    ),
+    types=TypeGenConfig(
+        output=BASE_DIR.parent.parent / "js" / "src" / "lib" / "generated",
+        generate_zod=True,
+        generate_sdk=True,
+        generate_routes=True,
     ),
 )
 saq = SAQConfig(

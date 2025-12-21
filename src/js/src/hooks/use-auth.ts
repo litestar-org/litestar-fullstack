@@ -1,4 +1,4 @@
-import { accountLogout } from "@/lib/api/sdk.gen"
+import { accountLogout } from "@/lib/generated/api/sdk.gen"
 import { create } from "zustand"
 
 interface User {
