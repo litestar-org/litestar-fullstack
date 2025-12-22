@@ -149,7 +149,7 @@ export function ValidatedInput({
   return (
     <div className="space-y-2">
       {/* Label */}
-      <Label htmlFor={inputId} className="font-medium text-gray-700 text-sm">
+      <Label htmlFor={inputId} className="font-medium text-foreground text-sm">
         {label}
         {validationRule?.required && <span className="ml-1 text-red-500">*</span>}
       </Label>
@@ -172,7 +172,7 @@ export function ValidatedInput({
         {isPassword && (
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
             onClick={() => setShowPassword(!showPassword)}
             tabIndex={-1}
           >
@@ -190,7 +190,7 @@ export function ValidatedInput({
 
       {/* Helper text */}
       {!displayError && helperText && (
-        <p id={`${inputId}-helper`} className="text-gray-500 text-sm">
+        <p id={`${inputId}-helper`} className="text-muted-foreground text-sm">
           {helperText}
         </p>
       )}

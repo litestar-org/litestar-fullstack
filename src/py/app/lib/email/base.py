@@ -9,6 +9,22 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
+def _list_str() -> list[str]:
+    return []
+
+
+def _dict_str_str() -> dict[str, str]:
+    return {}
+
+
+def _list_attachments() -> list[tuple[str, bytes, str]]:
+    return []
+
+
+def _list_alternatives() -> list[tuple[str, str]]:
+    return []
+
+
 @dataclass
 class EmailMessage:
     """Represents an email message.
@@ -41,13 +57,13 @@ class EmailMessage:
     subject: str
     body: str
     from_email: str | None = None
-    to: list[str] = field(default_factory=list)
-    cc: list[str] = field(default_factory=list)
-    bcc: list[str] = field(default_factory=list)
-    reply_to: list[str] = field(default_factory=list)
-    headers: dict[str, str] = field(default_factory=dict)
-    attachments: list[tuple[str, bytes, str]] = field(default_factory=list)
-    alternatives: list[tuple[str, str]] = field(default_factory=list)
+    to: list[str] = field(default_factory=_list_str)
+    cc: list[str] = field(default_factory=_list_str)
+    bcc: list[str] = field(default_factory=_list_str)
+    reply_to: list[str] = field(default_factory=_list_str)
+    headers: dict[str, str] = field(default_factory=_dict_str_str)
+    attachments: list[tuple[str, bytes, str]] = field(default_factory=_list_attachments)
+    alternatives: list[tuple[str, str]] = field(default_factory=_list_alternatives)
 
     def attach_alternative(self, content: str, mimetype: str) -> None:
         """Attach an alternative content representation.

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 import pytest
+from advanced_alchemy.exceptions import RepositoryError
+from sqlalchemy.exc import IntegrityError
 
+from app.db import models as m
 from app.db.models.team_roles import TeamRoles
 from app.domain.teams.services import TeamService
 from app.lib import constants
@@ -290,6 +293,7 @@ class TestTeamServiceSlugHandling:
         # Call the private method directly for testing
         result = await team_service._populate_slug(team_data)
 
+        assert isinstance(result, dict)
         assert "slug" in result
         assert result["slug"] is not None
 
@@ -300,6 +304,7 @@ class TestTeamServiceSlugHandling:
 
         result = await team_service._populate_slug(team_data)
 
+        assert isinstance(result, dict)
         assert result["slug"] == "custom-slug"
 
     @pytest.mark.asyncio
@@ -310,6 +315,7 @@ class TestTeamServiceSlugHandling:
         result = await team_service._populate_slug(team_data)
 
         # Should not add slug when name is missing
+        assert isinstance(result, dict)
         assert "slug" not in result
 
 
@@ -323,9 +329,10 @@ class TestTeamServiceTagManagement:
 
         # Convert to model to test tag population
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
+        team_obj = cast(m.Team, result)
 
-        assert hasattr(result, "tags")
-        assert len(result.tags) == 2
+        assert hasattr(team_obj, "tags")
+        assert len(team_obj.tags) == 2
 
     @pytest.mark.asyncio
     async def test_populate_with_existing_tags(self, session: AsyncSession, team_service: TeamService) -> None:
@@ -338,9 +345,10 @@ class TestTeamServiceTagManagement:
         team_data = {"id": uuid4(), "name": "Existing Tag Team", "tags": ["existing-tag", "new-tag"]}
 
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
+        team_obj = cast(m.Team, result)
 
-        assert hasattr(result, "tags")
-        tag_names = [tag.name for tag in result.tags]
+        assert hasattr(team_obj, "tags")
+        tag_names = [tag.name for tag in team_obj.tags]
         assert "existing-tag" in tag_names
         assert "new-tag" in tag_names
 
@@ -377,13 +385,13 @@ class TestTeamServiceErrorHandling:
     @pytest.mark.asyncio
     async def test_update_nonexistent_team(self, team_service: TeamService) -> None:
         """Test updating non-existent team raises error."""
-        with pytest.raises(Exception):  # Should raise RepositoryError or similar
+        with pytest.raises(RepositoryError):
             await team_service.update(item_id=uuid4(), data={"name": "Updated"})
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent_team(self, team_service: TeamService) -> None:
         """Test deleting non-existent team raises error."""
-        with pytest.raises(Exception):  # Should raise RepositoryError or similar
+        with pytest.raises(RepositoryError):
             await team_service.delete(item_id=uuid4())
 
     @pytest.mark.asyncio
@@ -395,11 +403,9 @@ class TestTeamServiceErrorHandling:
         # Depending on validation rules
         try:
             team = await team_service.create(data=team_data)
-            # If creation succeeds, verify behavior
-            assert team.name == ""
-        except Exception:
-            # If validation prevents empty names, that's also valid
-            pass
+        except (RepositoryError, IntegrityError, ValueError):
+            return
+        assert team.name == ""
 
     @pytest.mark.asyncio
     async def test_create_team_with_nonexistent_owner(self, session: AsyncSession, team_service: TeamService) -> None:
@@ -412,11 +418,9 @@ class TestTeamServiceErrorHandling:
         # Should handle gracefully - either create without owner or raise error
         try:
             team = await team_service.create(data=team_data)
-            # If succeeds, verify no members were added
-            assert len(team.members) == 0
-        except Exception:
-            # If validation prevents this, that's also valid
-            pass
+        except (RepositoryError, IntegrityError, ValueError):
+            return
+        assert len(team.members) == 0
 
 
 class TestTeamServiceIntegration:

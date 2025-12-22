@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Activity, AlertCircle, CheckCircle, Plus, Shield } from "lucide-react"
 import { createFileRoute } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -31,8 +32,10 @@ function HomePage() {
           <Button variant="outline" className="border-primary/40 text-primary" size="sm">
             <Shield className="mr-2 h-4 w-4" /> Security check
           </Button>
-          <Button size="sm">
-            <Plus className="mr-2 h-4 w-4" /> Create team
+          <Button size="sm" asChild>
+            <Link to="/teams/new">
+              <Plus className="mr-2 h-4 w-4" /> Create team
+            </Link>
           </Button>
         </div>
       </div>

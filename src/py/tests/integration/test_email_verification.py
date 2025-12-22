@@ -1,11 +1,14 @@
 """Integration tests for email verification API endpoints."""
 
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import msgspec
-from litestar.testing import AsyncTestClient
 
-from app.schemas.accounts import User
+from app.domain.accounts.schemas import User
+
+if TYPE_CHECKING:
+    from litestar.testing import AsyncTestClient
 
 
 class TestEmailVerificationIntegration:
@@ -59,9 +62,6 @@ class TestEmailVerificationIntegration:
         assert signup_response.status_code == 201
 
         # Get the verification token from signup and verify
-        signup_data = signup_response.json()
-        user = msgspec.json.decode(msgspec.json.encode(signup_data), type=User)
-
         # First get a verification token
         request_data = {"email": "verified@example.com"}
         request_response = await client.post("/api/email-verification/request", json=request_data)

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { useAuthStore } from "@/lib/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -93,9 +94,9 @@ export function UserLoginForm() {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <a href="/forgot-password" className="text-muted-foreground hover:text-primary">
+                <Link to="/forgot-password" className="text-muted-foreground hover:text-primary">
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               <Button

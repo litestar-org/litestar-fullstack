@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import pytest
-from litestar import Litestar
 from litestar.testing import AsyncTestClient
 from sqlalchemy import select
 
@@ -15,6 +14,7 @@ from app.lib.crypt import get_password_hash
 from tests.factories import UserFactory
 
 if TYPE_CHECKING:
+    from litestar import Litestar
     from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.integration, pytest.mark.security, pytest.mark.endpoints]
@@ -702,12 +702,11 @@ class TestAccessControl:
 
         async with AsyncTestClient(app=app) as client:
             for method, endpoint in protected_endpoints:
-                if method == "GET":
-                    response = await client.get(endpoint)
-                elif method == "POST":
-                    response = await client.post(endpoint, json={})
-                elif method == "PATCH":
-                    response = await client.patch(endpoint, json={})
+                payload = {} if method in {"POST", "PATCH"} else None
+                if payload is None:
+                    response = await client.request(method, endpoint)
+                else:
+                    response = await client.request(method, endpoint, json=payload)
 
                 assert response.status_code == 401, f"{method} {endpoint} should require authentication"
 

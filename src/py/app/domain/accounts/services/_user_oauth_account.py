@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
-from uuid import UUID
+from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy.repository import SQLAlchemyAsyncRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
@@ -12,6 +11,7 @@ from app.db import models as m
 
 if TYPE_CHECKING:
     from httpx_oauth.oauth2 import OAuth2Token
+    from uuid import UUID
 
 
 class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccount]):
@@ -76,7 +76,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
             )
         )
         result = await self.repository.session.execute(statement)
-        return result.scalar_one_or_none()
+        return cast(m.User | None, result.scalar_one_or_none())
 
     async def link_oauth_account(
         self,

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 
 from advanced_alchemy.exceptions import IntegrityError
-from litestar import Controller, delete, post
+from litestar import Controller, delete, patch, post
 from litestar.di import Provide
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_202_ACCEPTED
@@ -13,7 +13,7 @@ from litestar.status_codes import HTTP_202_ACCEPTED
 from app.db import models as m
 from app.domain.accounts.dependencies import provide_users_service
 from app.domain.teams.dependencies import provide_team_members_service, provide_teams_service
-from app.domain.teams.schemas import Team, TeamMemberModify
+from app.domain.teams.schemas import Team, TeamMember, TeamMemberModify, TeamMemberUpdate
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -101,3 +101,19 @@ class TeamMemberController(Controller):
             raise IntegrityError(msg)
         team_obj = await teams_service.get(team_id)
         return teams_service.to_schema(team_obj, schema_type=Team)
+
+    @patch(operation_id="UpdateTeamMember", path="/api/teams/{team_id:uuid}/members/{user_id:uuid}")
+    async def update_team_member(
+        self,
+        team_members_service: TeamMemberService,
+        team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
+        user_id: Annotated[UUID, Parameter(title="User ID", description="The user to update.")],
+        data: TeamMemberUpdate,
+    ) -> TeamMember:
+        """Update a team member's role."""
+        membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_id)
+        if membership is None:
+            msg = "User is not a member of this team."
+            raise IntegrityError(msg)
+        updated = await team_members_service.update(item_id=membership.id, data={"role": data.role})
+        return team_members_service.to_schema(updated, schema_type=TeamMember)

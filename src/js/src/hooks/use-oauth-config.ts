@@ -1,22 +1,19 @@
+import { oAuthConfig, type OAuthConfig } from "@/lib/generated/api"
 import { useQuery } from "@tanstack/react-query"
 
-interface OAuthConfig {
-  googleEnabled: boolean
-  githubEnabled: boolean
+const defaultConfig: OAuthConfig = {
+  googleEnabled: false,
+  githubEnabled: false,
 }
 
 async function fetchOAuthConfig(): Promise<OAuthConfig> {
-  const response = await fetch("/api/config/oauth", {
-    method: "GET",
-    credentials: "include",
-  })
+  const response = await oAuthConfig()
 
-  if (!response.ok) {
-    // If the endpoint doesn't exist or fails, assume OAuth is disabled
-    return { googleEnabled: false, githubEnabled: false }
+  if (response.error || !response.data) {
+    return defaultConfig
   }
 
-  return response.json()
+  return response.data
 }
 
 export function useOAuthConfig() {

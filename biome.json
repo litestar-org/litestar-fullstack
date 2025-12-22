@@ -8,8 +8,16 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["src/js/src/routeTree.gen.ts", "src/js/src/lib/api/types.gen.ts"],
-    "include": ["src/js/src/**/*", "src/js/index.html", "src/js/*.ts", "src/js/*.js"]
+    "includes": ["src/js/src/**/*", "src/js/index.html", "src/js/*.ts", "src/js/*.js"],
+    "experimentalScannerIgnores": [
+      "src/js/node_modules/**/*",
+      "dist/**/*",
+      ".venv/**/*",
+      "src/js/public/**/*",
+      "src/py/**/*",
+      "src/js/src/routeTree.gen.ts",
+      "src/js/src/lib/generated/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -17,12 +25,7 @@
     "lineWidth": 180,
     "indentStyle": "space",
     "formatWithErrors": false,
-    "lineEnding": "lf",
-    "ignore": ["src/js/node_modules/**/*", "dist/**/*", ".venv/**/*", "src/js/public/**/*", "src/py/**/*", "src/js/src/routeTree.gen.ts", "src/js/src/lib/api/types.gen.ts"]
-  },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["src/js/node_modules/**/*", "dist/**/*", ".venv/**/*", "src/js/public/**/*", "src/py/**/*", "src/js/src/routeTree.gen.ts", "src/js/src/lib/api/types.gen.ts"]
+    "lineEnding": "lf"
   },
   "linter": {
     "enabled": true,
@@ -40,8 +43,7 @@
       "nursery": {
         "useSortedClasses": "warn"
       }
-    },
-    "ignore": ["src/js/node_modules/**/*", "dist/**/*", ".venv/**/*", "src/js/public/**/*", "src/py/**/*", "src/js/src/routeTree.gen.ts", "src/js/src/lib/api/types.gen.ts"]
+    }
   },
   "javascript": {
     "formatter": {

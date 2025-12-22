@@ -1,7 +1,7 @@
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
+import { apiAuthOauthGoogleGoogleAuthorize } from "@/lib/generated/api"
 import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
 import { toast } from "sonner"
 
 interface GoogleSignInButtonProps {
@@ -13,31 +13,23 @@ interface GoogleSignInButtonProps {
 }
 
 export function GoogleSignInButton({ variant = "signin", onSuccess, onError, redirectUrl, className }: GoogleSignInButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const { mutate: initiateOAuth } = useMutation({
+  const { mutate: initiateOAuth, isPending } = useMutation({
     mutationFn: async () => {
-      // The backend OAuth endpoint expects a GET request to /api/auth/google
-      // We'll construct the URL with optional redirect parameter
-      const params = new URLSearchParams()
-      if (redirectUrl) {
-        params.append("redirect_url", redirectUrl)
-      }
-
-      const url = `/api/auth/google${params.toString() ? `?${params.toString()}` : ""}`
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
+      const targetUrl = redirectUrl ?? `${window.location.origin}/auth/google/callback`
+      const response = await apiAuthOauthGoogleGoogleAuthorize({
+        query: {
+          redirect_url: targetUrl,
+        },
       })
 
-      if (!response.ok) {
+      if (response.error) {
         throw new Error("Failed to initiate OAuth")
       }
 
-      return response.json()
+      return response.data
     },
     onSuccess: (data) => {
-      if (data.authorization_url) {
+      if (data?.authorization_url) {
         // Redirect to Google OAuth
         window.location.href = data.authorization_url
       } else {
@@ -47,7 +39,6 @@ export function GoogleSignInButton({ variant = "signin", onSuccess, onError, red
       onSuccess?.()
     },
     onError: (error: Error) => {
-      setIsLoading(false)
       const message = error.message || "Failed to sign in with Google"
       toast.error(message)
       onError?.(message)
@@ -55,7 +46,6 @@ export function GoogleSignInButton({ variant = "signin", onSuccess, onError, red
   })
 
   const handleClick = () => {
-    setIsLoading(true)
     initiateOAuth()
   }
 
@@ -71,8 +61,8 @@ export function GoogleSignInButton({ variant = "signin", onSuccess, onError, red
   }
 
   return (
-    <Button type="button" variant="outline" onClick={handleClick} disabled={isLoading} className={className}>
-      {isLoading ? (
+    <Button type="button" variant="outline" onClick={handleClick} disabled={isPending} className={className}>
+      {isPending ? (
         <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

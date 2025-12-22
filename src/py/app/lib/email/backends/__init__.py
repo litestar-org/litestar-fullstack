@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from importlib import import_module
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -97,7 +97,7 @@ def get_backend_class(backend_path: str) -> type[BaseEmailBackend]:
 
     module_path, class_name = backend_path.rsplit(".", 1)
     module = import_module(module_path)
-    return getattr(module, class_name)  # type: ignore[no-any-return]
+    return cast("type[BaseEmailBackend]", getattr(module, class_name))
 
 
 def list_backends() -> dict[str, type[BaseEmailBackend]]:
@@ -117,6 +117,7 @@ def _register_builtins() -> None:
     This is called lazily to avoid import cycles.
     """
     from app.lib.email.backends import console, locmem, smtp
+    _ = (console, locmem, smtp)
 
 
 def get_backend(fail_silently: bool = False, **kwargs: Any) -> BaseEmailBackend:

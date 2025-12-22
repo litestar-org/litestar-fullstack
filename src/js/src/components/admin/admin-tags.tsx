@@ -2,8 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { Tag } from "@/lib/generated/api"
-import { createTag, deleteTag, listTags, updateTag } from "@/lib/generated/api/sdk.gen"
+import { createTag, deleteTag, listTags, updateTag, type Tag } from "@/lib/generated/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 
@@ -13,7 +12,7 @@ export function AdminTags() {
   const [editingTag, setEditingTag] = useState<Tag | null>(null)
   const [editTagName, setEditTagName] = useState("")
 
-  const { data: tags = [], isLoading } = useQuery({
+  const { data: tags = [], isLoading, isError } = useQuery({
     queryKey: ["admin-tags"],
     queryFn: async () => {
       const response = await listTags()
@@ -60,7 +59,11 @@ export function AdminTags() {
   })
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div className="text-muted-foreground">Loading tags…</div>
+  }
+
+  if (isError) {
+    return <div className="text-muted-foreground">We couldn’t load tags yet. Try again shortly.</div>
   }
 
   const handleCreateTag = (e: React.FormEvent) => {
@@ -105,6 +108,13 @@ export function AdminTags() {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {tags.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center text-muted-foreground">
+                    No tags created yet.
+                  </TableCell>
+                </TableRow>
+              )}
               {tags.map((tag) => (
                 <TableRow key={tag.id}>
                   <TableCell>
@@ -126,7 +136,7 @@ export function AdminTags() {
                       tag.name
                     )}
                   </TableCell>
-                  <TableCell>{tag.slug}</TableCell>
+                  <TableCell className="text-muted-foreground">{tag.slug}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

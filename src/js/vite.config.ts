@@ -7,13 +7,18 @@ import { type PluginOption, defineConfig } from "vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  clearScreen: false,
+  publicDir: "public",
+  server: {
+    cors: true,
+  },
   plugins: [
     // TanStack Router plugin must come before React plugin
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     tailwindcss(),
     react(),
     litestar({
-      input: ["src/main.tsx"],
+      input: ["src/main.tsx", "src/styles.css"],
     }),
   ],
   resolve: {

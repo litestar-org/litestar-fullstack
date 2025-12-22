@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING
-from uuid import UUID
 
 import msgspec
 
+from app.db.models.team_roles import TeamRoles
 from app.schemas.base import CamelizedBaseStruct, Message
 
 if TYPE_CHECKING:
-    from app.db import models as m
+    from datetime import datetime
+    from uuid import UUID
 
 __all__ = (
     "Message",
@@ -21,6 +21,7 @@ __all__ = (
     "TeamInvitationCreate",
     "TeamMember",
     "TeamMemberModify",
+    "TeamMemberUpdate",
     "TeamTag",
     "TeamUpdate",
 )
@@ -37,15 +38,13 @@ class TeamMember(CamelizedBaseStruct):
     user_id: UUID
     email: str
     name: str | None = None
-    role: m.TeamRoles | None = None  # type: ignore[name-defined]
+    role: TeamRoles | None = None
     is_owner: bool | None = False
 
     def __post_init__(self) -> None:
         """Set default role if not provided."""
         if self.role is None:
-            from app.db import models as m
-
-            self.role = m.TeamRoles.MEMBER
+            self.role = TeamRoles.MEMBER
 
 
 class Team(CamelizedBaseStruct):
@@ -76,14 +75,21 @@ class TeamMemberModify(CamelizedBaseStruct):
     user_name: str
 
 
+class TeamMemberUpdate(CamelizedBaseStruct):
+    """Team Member Update."""
+
+    role: TeamRoles
+
+
 class TeamInvitationCreate(CamelizedBaseStruct):
     email: str
-    role: m.TeamRoles  # type: ignore[name-defined]
+    role: TeamRoles
 
 
 class TeamInvitation(CamelizedBaseStruct):
     id: UUID
     email: str
-    role: m.TeamRoles  # type: ignore[name-defined]
+    role: TeamRoles
     created_at: datetime
     updated_at: datetime
+    is_accepted: bool = False

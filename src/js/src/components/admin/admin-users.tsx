@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { User } from "@/lib/generated/api"
-import { assignUserRole, listUsers, revokeUserRole } from "@/lib/generated/api/sdk.gen"
+import { assignUserRole, listUsers, revokeUserRole, type User } from "@/lib/generated/api"
 import { useQuery } from "@tanstack/react-query"
 
 export function AdminUsers() {
   const {
     data: users = [],
     isLoading,
+    isError,
     refetch,
   } = useQuery({
     queryKey: ["admin-users"],
@@ -19,7 +19,11 @@ export function AdminUsers() {
   })
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div className="text-muted-foreground">Loading users…</div>
+  }
+
+  if (isError) {
+    return <div className="text-muted-foreground">We couldn’t load users yet. Try again shortly.</div>
   }
 
   const handleToggleSuperuser = async (user: User) => {
@@ -27,12 +31,12 @@ export function AdminUsers() {
       const isSuperuser = user.roles?.some((role) => role.roleSlug === "superuser")
       if (isSuperuser) {
         await revokeUserRole({
-          body: { userName: user.name || user.email },
+          body: { userName: user.email },
           query: { role_slug: "superuser" },
         })
       } else {
         await assignUserRole({
-          body: { userName: user.name || user.email },
+          body: { userName: user.email },
           query: { role_slug: "superuser" },
         })
       }
@@ -57,20 +61,27 @@ export function AdminUsers() {
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {users.map((user: User) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.roles?.map((role) => role.roleName).join(", ")}</TableCell>
-                <TableCell>
-                  <Button variant="destructive" size="sm" onClick={() => handleToggleSuperuser(user)}>
-                    Toggle Superuser
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+        <TableBody>
+          {users.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-muted-foreground">
+                No users available yet.
+              </TableCell>
+            </TableRow>
+          )}
+          {users.map((user: User) => (
+            <TableRow key={user.id}>
+              <TableCell>{user.name ?? user.email}</TableCell>
+              <TableCell className="text-muted-foreground">{user.email}</TableCell>
+              <TableCell>{user.roles?.map((role) => role.roleName).join(", ") || "Member"}</TableCell>
+              <TableCell>
+                <Button variant="outline" size="sm" onClick={() => handleToggleSuperuser(user)}>
+                  Toggle Superuser
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
         </Table>
       </CardContent>
     </Card>

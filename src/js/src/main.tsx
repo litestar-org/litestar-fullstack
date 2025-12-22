@@ -1,5 +1,5 @@
-import { TeamProvider } from "@/lib/team-context"
 import { ThemeProvider } from "@/lib/theme-context"
+import { client } from "@/lib/generated/api/client.gen"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
@@ -13,6 +13,14 @@ import "./styles.css"
 import reportWebVitals from "./reportWebVitals.ts"
 
 const queryClient = new QueryClient()
+
+const apiUrl = import.meta.env.VITE_API_URL ?? ""
+
+client.setConfig({
+  baseUrl: apiUrl,
+  credentials: "include",
+  auth: () => localStorage.getItem("access_token") ?? undefined,
+})
 
 // Create the router using the generated route tree
 const router = createRouter({
@@ -40,10 +48,8 @@ if (rootElement && !rootElement.innerHTML) {
     <React.StrictMode>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <TeamProvider>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools />
-          </TeamProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
         </QueryClientProvider>
       </ThemeProvider>
     </React.StrictMode>,

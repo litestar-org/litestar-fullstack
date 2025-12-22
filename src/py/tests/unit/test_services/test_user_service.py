@@ -3,19 +3,20 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from unittest.mock import AsyncMock, patch
 
 import pytest
 from litestar.exceptions import ClientException, PermissionDeniedException
 
-from app.domain.accounts.services import UserService
 from app.domain.accounts.services._user import MAX_FAILED_RESET_ATTEMPTS
 from app.lib.crypt import get_password_hash, verify_password
 from app.lib.validation import PasswordValidationError
-from tests.factories import UserFactory
+from tests.factories import RoleFactory, UserFactory, UserRoleFactory
 
 if TYPE_CHECKING:
+    from app.domain.accounts.services import UserService
+    from httpx_oauth.oauth2 import OAuth2Token
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -197,6 +198,7 @@ class TestUserServicePasswordManagement:
         )
 
         # Verify new password works
+        assert user.hashed_password is not None
         assert await verify_password(new_password, user.hashed_password) is True
         # Verify old password doesn't work
         assert await verify_password(current_password, user.hashed_password) is False
@@ -270,6 +272,7 @@ class TestUserServicePasswordReset:
         updated_user = await user_service.reset_password_with_token(user.id, new_password)
 
         # Verify password was updated
+        assert updated_user.hashed_password is not None
         assert await verify_password(new_password, updated_user.hashed_password) is True
         # Verify security fields were reset
         assert updated_user.password_reset_at is not None
@@ -409,9 +412,10 @@ class TestUserServiceRoles:
         role_id = uuid4()
         user = UserFactory.build()
 
-        # Mock the roles relationship
-        mock_role = type("MockRole", (), {"role_id": role_id})()
-        user.roles = [mock_role]
+        role = RoleFactory.build(id=role_id)
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = await user_service.has_role_id(user, role_id)
         assert result is True
@@ -425,9 +429,10 @@ class TestUserServiceRoles:
         different_role_id = uuid4()
         user = UserFactory.build()
 
-        # Mock the roles relationship
-        mock_role = type("MockRole", (), {"role_id": different_role_id})()
-        user.roles = [mock_role]
+        role = RoleFactory.build(id=different_role_id)
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = await user_service.has_role_id(user, role_id)
         assert result is False
@@ -437,9 +442,10 @@ class TestUserServiceRoles:
         """Test has_role when user has the role."""
         user = UserFactory.build()
 
-        # Mock the roles relationship
-        mock_role = type("MockRole", (), {"role_name": "admin", "role_id": "some_id"})()
-        user.roles = [mock_role]
+        role = RoleFactory.build(name="admin")
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = await user_service.has_role(user, "admin")
         assert result is True
@@ -449,9 +455,10 @@ class TestUserServiceRoles:
         """Test has_role when user doesn't have the role."""
         user = UserFactory.build()
 
-        # Mock the roles relationship
-        mock_role = type("MockRole", (), {"role_name": "user", "role_id": "some_id"})()
-        user.roles = [mock_role]
+        role = RoleFactory.build(name="user")
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = await user_service.has_role(user, "admin")
         assert result is False
@@ -470,9 +477,10 @@ class TestUserServiceRoles:
 
         user = UserFactory.build(is_superuser=False)
 
-        # Mock the roles relationship
-        mock_role = type("MockRole", (), {"role_name": constants.SUPERUSER_ACCESS_ROLE, "role_id": "some_id"})()
-        user.roles = [mock_role]
+        role = RoleFactory.build(name=constants.SUPERUSER_ACCESS_ROLE)
+        user_role = UserRoleFactory.build(user_id=user.id, role_id=role.id)
+        user_role.role = role
+        user.roles = [user_role]
 
         result = user_service.is_superuser(user)
         assert result is True
@@ -494,10 +502,18 @@ class TestUserServiceOAuth:
         """Test creating user from OAuth data."""
         oauth_data = {"email": "oauth@example.com", "name": "OAuth User", "id": "oauth_user_id"}
 
-        mock_token = type("MockToken", (), {"access_token": "access_token", "refresh_token": "refresh_token"})()
+        token_data = cast(
+            "OAuth2Token",
+            {
+                "access_token": "access_token",
+                "refresh_token": "refresh_token",
+                "token_type": "bearer",
+                "expires_at": None,
+            },
+        )
 
         user = await user_service.create_user_from_oauth(
-            oauth_data=oauth_data, provider="google", token_data=mock_token
+            oauth_data=oauth_data, provider="google", token_data=token_data
         )
 
         assert user.email == "oauth@example.com"
@@ -507,7 +523,7 @@ class TestUserServiceOAuth:
         assert user.is_active is True
 
     @pytest.mark.asyncio
-    @patch("app.services._users.UserOAuthAccountService")
+    @patch("app.domain.accounts.services._user_oauth_account.UserOAuthAccountService")
     async def test_authenticate_or_create_oauth_user_existing(
         self, mock_oauth_service_class: AsyncMock, session: AsyncSession, user_service: UserService
     ) -> None:
@@ -519,14 +535,22 @@ class TestUserServiceOAuth:
 
         oauth_data = {"email": "oauth@example.com", "name": "OAuth User"}
 
-        mock_token = type("MockToken", (), {"access_token": "access_token", "refresh_token": "refresh_token"})()
+        token_data = cast(
+            "OAuth2Token",
+            {
+                "access_token": "access_token",
+                "refresh_token": "refresh_token",
+                "token_type": "bearer",
+                "expires_at": None,
+            },
+        )
 
         # Mock the OAuth service
         mock_oauth_service = AsyncMock()
         mock_oauth_service_class.return_value = mock_oauth_service
 
         user, is_new = await user_service.authenticate_or_create_oauth_user(
-            provider="google", oauth_data=oauth_data, token_data=mock_token
+            provider="google", oauth_data=oauth_data, token_data=token_data
         )
 
         assert user.id == existing_user.id
@@ -534,21 +558,29 @@ class TestUserServiceOAuth:
         mock_oauth_service.create_or_update_oauth_account.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch("app.services._users.UserOAuthAccountService")
+    @patch("app.domain.accounts.services._user_oauth_account.UserOAuthAccountService")
     async def test_authenticate_or_create_oauth_user_new(
         self, mock_oauth_service_class: AsyncMock, session: AsyncSession, user_service: UserService
     ) -> None:
         """Test OAuth authentication with new user."""
         oauth_data = {"email": "newuser@example.com", "name": "New OAuth User"}
 
-        mock_token = type("MockToken", (), {"access_token": "access_token", "refresh_token": "refresh_token"})()
+        token_data = cast(
+            "OAuth2Token",
+            {
+                "access_token": "access_token",
+                "refresh_token": "refresh_token",
+                "token_type": "bearer",
+                "expires_at": None,
+            },
+        )
 
         # Mock the OAuth service
         mock_oauth_service = AsyncMock()
         mock_oauth_service_class.return_value = mock_oauth_service
 
         user, is_new = await user_service.authenticate_or_create_oauth_user(
-            provider="google", oauth_data=oauth_data, token_data=mock_token
+            provider="google", oauth_data=oauth_data, token_data=token_data
         )
 
         assert user.email == "newuser@example.com"

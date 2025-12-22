@@ -1,9 +1,10 @@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
+import { PasswordStrength } from "@/components/ui/password-strength"
+import { validatePassword } from "@/hooks/use-validation"
 import { resetPassword } from "@/lib/generated/api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -16,19 +17,24 @@ import { toast } from "sonner"
 import { z } from "zod"
 
 export const Route = createFileRoute("/_public/reset-password")({
+  validateSearch: (search) =>
+    z
+      .object({
+        token: z.string().optional(),
+      })
+      .parse(search),
   component: ResetPasswordPage,
 })
 
 const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
-    confirmPassword: z.string(),
+    password: z.string().min(1, "Password is required").superRefine((value, ctx) => {
+      const error = validatePassword(value)
+      if (error) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
+      }
+    }),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -40,7 +46,7 @@ type ResetPasswordForm = z.infer<typeof resetPasswordSchema>
 function ResetPasswordPage() {
   const navigate = useNavigate()
   const searchParams = useSearch({ from: "/_public/reset-password" })
-  const token = (searchParams as any).token as string | undefined
+  const token = searchParams.token
   const [isSuccess, setIsSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -54,7 +60,6 @@ function ResetPasswordPage() {
   })
 
   const password = form.watch("password")
-  const passwordStrength = calculatePasswordStrength(password)
 
   const { mutate: doResetPassword, isPending } = useMutation({
     mutationFn: async (data: ResetPasswordForm) => {
@@ -98,8 +103,8 @@ function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="container flex h-screen w-screen flex-col items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+        <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
           <CardHeader className="text-center">
             <CardTitle>Invalid Reset Link</CardTitle>
             <CardDescription>This password reset link is invalid or incomplete.</CardDescription>
@@ -111,13 +116,7 @@ function ResetPasswordPage() {
             </Alert>
           </CardContent>
           <CardFooter>
-            <Button
-              variant="default"
-              className="w-full"
-              onClick={() => {
-                window.location.href = "/forgot-password"
-              }}
-            >
+            <Button variant="default" className="w-full" onClick={() => navigate({ to: "/forgot-password" })}>
               Request new reset link
             </Button>
           </CardFooter>
@@ -128,8 +127,8 @@ function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="container flex h-screen w-screen flex-col items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+        <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
               <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -148,8 +147,8 @@ function ResetPasswordPage() {
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
         <CardHeader className="text-center">
           <CardTitle>Reset your password</CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
@@ -171,15 +170,7 @@ function ResetPasswordPage() {
                         </Button>
                       </div>
                     </FormControl>
-                    <FormDescription>
-                      <div className="mt-2 space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <span>Password strength</span>
-                          <span className={getStrengthColor(passwordStrength.score)}>{passwordStrength.label}</span>
-                        </div>
-                        <Progress value={passwordStrength.score * 25} className="h-2" />
-                      </div>
-                    </FormDescription>
+                    {password && <PasswordStrength password={password} className="pt-2" />}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -220,26 +211,4 @@ function ResetPasswordPage() {
       </Card>
     </div>
   )
-}
-
-function calculatePasswordStrength(password: string): { score: number; label: string } {
-  let score = 0
-
-  if (password.length >= 8) score++
-  if (password.length >= 12) score++
-  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++
-  if (/[0-9]/.test(password)) score++
-  if (/[^A-Za-z0-9]/.test(password)) score++
-
-  const labels = ["Very Weak", "Weak", "Fair", "Good", "Strong"]
-
-  return {
-    score: Math.min(score, 4),
-    label: labels[Math.min(score, 4)],
-  }
-}
-
-function getStrengthColor(score: number): string {
-  const colors = ["text-red-500", "text-orange-500", "text-yellow-500", "text-blue-500", "text-green-500"]
-  return colors[score]
 }

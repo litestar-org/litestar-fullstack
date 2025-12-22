@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import structlog
 from saq import Status
@@ -30,20 +30,21 @@ logger = structlog.get_logger()
 
 async def on_shutdown(ctx: Context) -> None:
     """Shutdown events for each worker.."""
-    worker = ctx["worker"]
+    worker = cast(Any, ctx["worker"])
     await logger.ainfo("Stopping background workers for queue", queue=worker.queue.name)
 
 
 async def on_startup(ctx: Context) -> None:
     """Startup events for each worker."""
-    worker = ctx["worker"]
+    worker = cast(Any, ctx["worker"])
     await logger.ainfo("🚀 Launching background workers for queue", queue=worker.queue.name)
 
 
 async def before_process(ctx: Context) -> None:
     """Clear the structlog contextvars for this task."""
     structlog.contextvars.clear_contextvars()
-    job: Job | None = ctx.get("job", None)
+    ctx_dict = cast("dict[str, Any]", ctx)
+    job = cast("Job | None", ctx_dict.get("job"))
     if job:
         await logger.ainfo(f"starting job {job.function} with id {job.id}", task=job.function)
 
@@ -51,7 +52,8 @@ async def before_process(ctx: Context) -> None:
 async def after_process(ctx: Context) -> None:
     """Parse log context and log it along with the contextvars context."""
     # parse log context from `ctx`
-    job: Job | None = ctx.get("job", None)
+    ctx_dict = cast("dict[str, Any]", ctx)
+    job = cast("Job | None", ctx_dict.get("job"))
     if job:
         log_ctx = {k: getattr(job, k) for k in LOGGED_JOB_FIELDS}
         # add duration measures

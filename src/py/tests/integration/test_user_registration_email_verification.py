@@ -1,9 +1,13 @@
 """Integration tests for user registration with email verification."""
 
-import msgspec
-from litestar.testing import AsyncTestClient
+from typing import TYPE_CHECKING
 
-from app.schemas.accounts import User
+import msgspec
+
+from app.domain.accounts.schemas import User
+
+if TYPE_CHECKING:
+    from litestar.testing import AsyncTestClient
 
 
 class TestUserRegistrationEmailVerification:

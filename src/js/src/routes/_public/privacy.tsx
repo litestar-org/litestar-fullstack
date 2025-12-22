@@ -8,14 +8,23 @@ function PrivacyPage() {
         <h1 className="font-['Space_Grotesk'] text-4xl font-semibold">Privacy Policy</h1>
         <p className="text-muted-foreground">How we collect, store, and use data inside the Litestar reference app.</p>
       </div>
-      <div className="prose prose-invert prose-headings:text-foreground prose-p:text-muted-foreground">
-        <p>Replace this placeholder with your production-ready policy. Be explicit about metrics, logs, and PII handling.</p>
-        <h3>Data collected</h3>
-        <p>List account data (email, name), authentication events, queue/job metadata, and diagnostic logs.</p>
-        <h3>Retention</h3>
-        <p>Clarify how long data is retained and how users can request removal.</p>
-        <h3>Third parties</h3>
-        <p>Note any external services (email providers, object storage, analytics) and what is shared.</p>
+      <div className="space-y-6 text-muted-foreground">
+        <p>
+          We collect only the information required to operate this reference application, including account details and security events needed to
+          keep the platform reliable.
+        </p>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">Data collected</h3>
+          <p>Account profile data, authentication events, team membership metadata, and operational diagnostics for queues and background jobs.</p>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">Retention</h3>
+          <p>Logs and operational data are retained for a limited period and deleted automatically unless required for security investigations.</p>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">Third parties</h3>
+          <p>We rely on infrastructure providers for hosting, email delivery, and monitoring. Data is shared only as necessary to provide service.</p>
+        </div>
       </div>
     </div>
   )

@@ -1,12 +1,11 @@
 from collections.abc import AsyncGenerator, AsyncIterator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from advanced_alchemy.base import UUIDAuditBase
 from advanced_alchemy.utils.fixtures import open_fixture_async
 from httpx import AsyncClient
-from litestar import Litestar
 from litestar.testing import AsyncTestClient
 from pytest_databases.docker.postgres import PostgresService
 from sqlalchemy.engine import URL
@@ -15,9 +14,13 @@ from sqlalchemy.pool import NullPool
 
 from app import config
 from app.db.models import Team, User
+from app.domain.accounts.guards import create_access_token
+from app.domain.accounts.services import RoleService, UserService
+from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
-from app.server import security
-from app.services import RoleService, TeamService, UserService
+
+if TYPE_CHECKING:
+    from litestar import Litestar
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
@@ -115,10 +118,24 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
 @pytest.fixture(name="superuser_token_headers")
 def fx_superuser_token_headers() -> dict[str, str]:
     """Valid superuser token."""
-    return {"Authorization": f"Bearer {security.auth.create_token(identifier='superuser@example.com')}"}
+    token = create_access_token(
+        user_id="superuser",
+        email="superuser@example.com",
+        is_superuser=True,
+        is_verified=True,
+        auth_method="password",
+    )
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture(name="user_token_headers")
 def fx_user_token_headers() -> dict[str, str]:
     """Valid user token."""
-    return {"Authorization": f"Bearer {security.auth.create_token(identifier='user@example.com')}"}
+    token = create_access_token(
+        user_id="user",
+        email="user@example.com",
+        is_superuser=False,
+        is_verified=True,
+        auth_method="password",
+    )
+    return {"Authorization": f"Bearer {token}"}

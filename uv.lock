@@ -129,7 +129,6 @@ dependencies = [
     { name = "pyotp" },
     { name = "python-dotenv" },
     { name = "qrcode", extra = ["pil"] },
-    { name = "sniffio" },
 ]
 
 [package.dev-dependencies]
@@ -202,13 +201,12 @@ requires-dist = [
     { name = "litestar", extras = ["jinja", "jwt", "structlog"] },
     { name = "litestar-granian", extras = ["uvloop"] },
     { name = "litestar-saq" },
-    { name = "litestar-vite", specifier = ">=0.15.0a5" },
+    { name = "litestar-vite", specifier = ">=0.15.0b4" },
     { name = "psycopg", extras = ["pool", "binary"] },
     { name = "pwdlib", extras = ["argon2"] },
     { name = "pyotp", specifier = ">=2.9.0" },
     { name = "python-dotenv" },
     { name = "qrcode", extras = ["pil"], specifier = ">=7.4.0" },
-    { name = "sniffio" },
 ]
 
 [package.metadata.requires-dev]

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import secrets
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any, cast
 
 from httpx_oauth.clients.google import GoogleOAuth2
 from httpx_oauth.exceptions import GetIdEmailError
-from httpx_oauth.oauth2 import GetAccessTokenError
-from litestar import Controller, Response, get, post
+from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Token
+from litestar import Controller, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
@@ -18,6 +18,7 @@ from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST, HTTP_404
 
 from app.domain.accounts.dependencies import provide_user_oauth_service, provide_users_service
 from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorizationResponse, OAuthLinkRequest
+from app.lib.settings import provide_app_settings
 from app.utils.oauth import OAuth2AuthorizeCallback
 
 if TYPE_CHECKING:
@@ -37,6 +38,7 @@ class OAuthController(Controller):
     dependencies = {
         "user_service": Provide(provide_users_service),
         "oauth_account_service": Provide(provide_user_oauth_service),
+        "settings": Provide(provide_app_settings),
     }
 
     @get("/google", name="oauth:google:authorize")
@@ -102,7 +104,7 @@ class OAuthController(Controller):
         code: str = Parameter(query="code"),
         oauth_state: str | None = Parameter(query="state", required=False),
         error: str | None = Parameter(query="error", required=False),
-    ) -> Response:
+    ) -> Redirect:
         """Handle Google OAuth callback.
 
         Args:
@@ -141,7 +143,10 @@ class OAuthController(Controller):
 
         # Exchange code for token
         callback_url = str(request.url_for("oauth:google:callback"))
-        oauth2_callback = OAuth2AuthorizeCallback(client, redirect_url=callback_url)
+        oauth2_callback = OAuth2AuthorizeCallback(
+            cast(BaseOAuth2[OAuth2Token], client),
+            redirect_url=callback_url,
+        )
 
         try:
             token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)

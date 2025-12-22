@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from litestar.testing import AsyncTestClient
 
 from app.db import models as m
 
 if TYPE_CHECKING:
+    from litestar.testing import AsyncTestClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -507,7 +507,7 @@ class TestTeamMemberEndpoints:
         await session.commit()
 
         # Update their role
-        update_data = {"role": "admin"}
+        update_data = {"role": m.TeamRoles.ADMIN.value}
 
         response = await authenticated_client.patch(
             f"/api/teams/{test_team.id}/members/{member_user.id}", json=update_data
@@ -515,7 +515,7 @@ class TestTeamMemberEndpoints:
 
         assert response.status_code == 200
         membership = response.json()
-        assert membership["role"] == "admin"
+        assert membership["role"] == m.TeamRoles.ADMIN.value
 
 
 class TestTeamInvitationEndpoints:
@@ -533,16 +533,19 @@ class TestTeamInvitationEndpoints:
 
             invitation_data = {
                 "email": "newmember@example.com",
-                "role": "member",
+                "role": m.TeamRoles.MEMBER.value,
             }
 
-            response = await authenticated_client.post(f"/api/teams/{test_team.id}/invitations", json=invitation_data)
+            response = await authenticated_client.post(
+                f"/api/teams/{test_team.id}/invitations",
+                json=invitation_data,
+            )
 
             assert response.status_code == 201
             invitation = response.json()
             assert invitation["email"] == "newmember@example.com"
-            assert invitation["role"] == "member"
-            assert invitation["is_accepted"] is False
+            assert invitation["role"] == m.TeamRoles.MEMBER.value
+            assert invitation["isAccepted"] is False
 
             # Verify invitation email was sent
             mock_send.assert_called_once()
@@ -557,7 +560,7 @@ class TestTeamInvitationEndpoints:
         """Test inviting someone who is already a member."""
         invitation_data = {
             "email": test_user.email,  # User is already team owner
-            "role": "member",
+            "role": m.TeamRoles.MEMBER.value,
         }
 
         response = await authenticated_client.post(f"/api/teams/{test_team.id}/invitations", json=invitation_data)
@@ -575,7 +578,8 @@ class TestTeamInvitationEndpoints:
         response = await authenticated_client.get(f"/api/teams/{test_team.id}/invitations")
 
         assert response.status_code == 200
-        invitations = response.json()
+        response_data = response.json()
+        invitations = response_data["items"]
         assert len(invitations) >= 1
         invitation_emails = [inv["email"] for inv in invitations]
         assert test_team_invitation.email in invitation_emails
@@ -608,29 +612,54 @@ class TestTeamInvitationEndpoints:
         login_response = await client.post(
             "/api/access/login", data={"username": invited_user.email, "password": "TestPassword123!"}
         )
+        assert login_response.status_code == 200
+        token = login_response.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
 
-        if login_response.status_code == 200:
-            token = login_response.json()["access_token"]
-            headers = {"Authorization": f"Bearer {token}"}
+        response = await client.post(
+            f"/api/teams/{test_team_invitation.team_id}/invitations/{test_team_invitation.id}/accept",
+            headers=headers,
+        )
 
-            accept_data = {"token": test_team_invitation.token}
-
-            response = await client.post("/api/teams/invitations/accept", json=accept_data, headers=headers)
-
-            assert response.status_code == 200
-            result = response.json()
-            assert "accepted" in result["message"].lower() or "joined" in result["message"].lower()
+        assert response.status_code == 200
+        result = response.json()
+        assert "accepted" in result["message"].lower() or "joined" in result["message"].lower()
 
     @pytest.mark.asyncio
     async def test_reject_team_invitation(
         self,
         client: AsyncTestClient,
         test_team_invitation: m.TeamInvitation,
+        session: AsyncSession,
     ) -> None:
         """Test rejecting a team invitation."""
-        reject_data = {"token": test_team_invitation.token}
+        from uuid import uuid4
 
-        response = await client.post("/api/teams/invitations/reject", json=reject_data)
+        from app.lib.crypt import get_password_hash
+
+        invited_user = m.User(
+            id=uuid4(),
+            email=test_team_invitation.email,
+            name="Invited User",
+            hashed_password=await get_password_hash("TestPassword123!"),
+            is_active=True,
+            is_verified=True,
+        )
+        session.add(invited_user)
+        await session.commit()
+
+        login_response = await client.post(
+            "/api/access/login",
+            data={"username": invited_user.email, "password": "TestPassword123!"},
+        )
+        assert login_response.status_code == 200
+        token = login_response.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        response = await client.post(
+            f"/api/teams/{test_team_invitation.team_id}/invitations/{test_team_invitation.id}/reject",
+            headers=headers,
+        )
 
         assert response.status_code == 200
         result = response.json()
@@ -643,6 +672,8 @@ class TestTeamInvitationEndpoints:
         test_team_invitation: m.TeamInvitation,
     ) -> None:
         """Test canceling a team invitation."""
-        response = await authenticated_client.delete(f"/api/teams/invitations/{test_team_invitation.id}")
+        response = await authenticated_client.delete(
+            f"/api/teams/{test_team_invitation.team_id}/invitations/{test_team_invitation.id}"
+        )
 
         assert response.status_code in [200, 204]

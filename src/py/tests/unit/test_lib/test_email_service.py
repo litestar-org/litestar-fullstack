@@ -1,6 +1,7 @@
 """Unit tests for email service functionality."""
 
 from datetime import UTC, datetime, timedelta
+from typing import cast
 from uuid import uuid4
 
 import pytest
@@ -9,6 +10,7 @@ from app.db.models.email_verification_token import EmailVerificationToken
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.user import User
 from app.lib.email import EmailService
+from app.lib.email.service import UserProtocol
 from app.lib.email.backends.locmem import InMemoryBackend
 
 
@@ -107,7 +109,7 @@ class TestEmailService:
     ) -> None:
         """Test sending verification email to user with name."""
         # Act
-        result = await email_service.send_verification_email(user, verification_token)
+        result = await email_service.send_verification_email(cast(UserProtocol, user), verification_token)
 
         # Assert - email is disabled by default so returns False
         assert result is False
@@ -120,7 +122,7 @@ class TestEmailService:
     ) -> None:
         """Test sending verification email to user without name."""
         # Act
-        result = await email_service.send_verification_email(user_without_name, verification_token)
+        result = await email_service.send_verification_email(cast(UserProtocol, user_without_name), verification_token)
 
         # Assert
         assert result is False  # Email disabled by default
@@ -151,7 +153,7 @@ class TestEmailService:
     ) -> None:
         """Test sending welcome email."""
         # Act
-        result = await email_service.send_welcome_email(user)
+        result = await email_service.send_welcome_email(cast(UserProtocol, user))
 
         # Assert
         assert result is False  # Email disabled by default
@@ -165,7 +167,7 @@ class TestEmailService:
         """Test sending password reset email."""
         # Act
         result = await email_service.send_password_reset_email(
-            user,
+            cast(UserProtocol, user),
             password_reset_token,
             expires_in_minutes=60,
             ip_address="192.168.1.1",
@@ -181,7 +183,7 @@ class TestEmailService:
     ) -> None:
         """Test sending password reset confirmation email."""
         # Act
-        result = await email_service.send_password_reset_confirmation_email(user)
+        result = await email_service.send_password_reset_confirmation_email(cast(UserProtocol, user))
 
         # Assert
         assert result is False  # Email disabled by default

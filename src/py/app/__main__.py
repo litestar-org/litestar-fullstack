@@ -24,7 +24,7 @@ def setup_environment() -> None:
     os.environ.setdefault("LITESTAR_APP_NAME", settings.app.NAME)
     os.environ.setdefault("LITESTAR_GRANIAN_IN_SUBPROCESS", "false")
     os.environ.setdefault("LITESTAR_GRANIAN_USE_LITESTAR_LOGGER", "true")
-    original_format_help = LitestarExtensionGroup.format_help  # pyright: ignore
+    original_format_help = LitestarExtensionGroup.format_help
 
     def fixed_format_help(self: Any, ctx: Any, formatter: Any) -> None:
         """Ensure plugins are loaded before formatting help.
@@ -38,10 +38,10 @@ def setup_environment() -> None:
             None
         """
         self._prepare(ctx)  # Force plugin loading
-        return original_format_help(self, ctx, formatter)  # pyright: ignore
+        return original_format_help(self, ctx, formatter)
 
     # Type ignore needed for monkey-patching
-    LitestarExtensionGroup.format_help = fixed_format_help  # type: ignore[method-assign]
+    setattr(LitestarExtensionGroup, "format_help", fixed_format_help)
 
 
 def run_cli() -> None:

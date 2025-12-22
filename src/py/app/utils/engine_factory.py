@@ -35,7 +35,7 @@ def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
         def _sqla_on_connect(  # pragma: no cover # pyright: ignore[reportUnusedFunction]
             dbapi_connection: Any,
             _: Any,
-        ) -> Any:  # pragma: no cover # pyright: ignore[reportUnusedFunction]
+        ) -> Any:  # pragma: no cover
             """Using msgspec for serialization of the json column values means that the
             output is binary, not `str` like `json.dumps` would output.
             SQLAlchemy expects that the json serializer returns `str` and calls `.encode()` on the value to

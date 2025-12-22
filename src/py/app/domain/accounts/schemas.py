@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING, Literal
-from uuid import UUID
 
 import msgspec
 
@@ -12,8 +10,10 @@ from app.lib.validation import validate_email, validate_name, validate_password,
 from app.schemas.base import CamelizedBaseStruct, Message
 
 if TYPE_CHECKING:
-    from app.db.models.team_roles import TeamRoles
+    from datetime import datetime
+    from uuid import UUID
 
+    from app.db.models.team_roles import TeamRoles
 __all__ = (  # noqa: RUF022 - Intentionally organized by category
     # Common
     "Message",
@@ -67,7 +67,7 @@ class UserTeam(CamelizedBaseStruct):
     team_id: UUID
     team_name: str
     is_owner: bool = False
-    role: TeamRoles = None  # type: ignore[assignment]
+    role: TeamRoles | None = None
 
     def __post_init__(self) -> None:
         """Set default role if not provided."""
@@ -176,15 +176,15 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
             raise ValueError(msg)
 
         # Validate fields if provided
-        if self.email not in (msgspec.UNSET, None):
+        if isinstance(self.email, str):
             self.email = validate_email(self.email)
-        if self.password not in (msgspec.UNSET, None):
+        if isinstance(self.password, str):
             self.password = validate_password(self.password)
-        if self.name not in (msgspec.UNSET, None):
+        if isinstance(self.name, str):
             self.name = validate_name(self.name)
-        if self.username not in (msgspec.UNSET, None):
+        if isinstance(self.username, str):
             self.username = validate_username(self.username)
-        if self.phone not in (msgspec.UNSET, None):
+        if isinstance(self.phone, str):
             self.phone = validate_phone(self.phone)
 
 
@@ -217,11 +217,11 @@ class ProfileUpdate(CamelizedBaseStruct, omit_defaults=True):
 
     def __post_init__(self) -> None:
         """Validate fields if provided."""
-        if self.name not in (msgspec.UNSET, None) and isinstance(self.name, str):
+        if isinstance(self.name, str):
             self.name = validate_name(self.name)
-        if self.username not in (msgspec.UNSET, None) and isinstance(self.username, str):
+        if isinstance(self.username, str):
             self.username = validate_username(self.username)
-        if self.phone not in (msgspec.UNSET, None) and isinstance(self.phone, str):
+        if isinstance(self.phone, str):
             self.phone = validate_phone(self.phone)
 
 

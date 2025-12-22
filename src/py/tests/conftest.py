@@ -18,24 +18,26 @@ from app.lib.crypt import get_password_hash
 from app.lib.email import EmailService
 
 # Set test environment before any other imports
-os.environ.update({
-    "SECRET_KEY": "secret-key",
-    "DATABASE_URL": "sqlite+aiosqlite:///:memory:",
-    "DATABASE_ECHO": "false",
-    "DATABASE_ECHO_POOL": "false",
-    "VALKEY_PORT": "6308",
-    "REDIS_URL": "redis://localhost:6308/0",
-    "SAQ_USE_SERVER_LIFESPAN": "False",
-    "SAQ_WEB_ENABLED": "True",
-    "SAQ_BACKGROUND_WORKERS": "1",
-    "SAQ_CONCURRENCY": "1",
-    "VITE_HOST": "localhost",
-    "VITE_PORT": "3006",
-    "VITE_HOT_RELOAD": "True",
-    "VITE_DEV_MODE": "True",
-    "VITE_USE_SERVER_LIFESPAN": "False",
-    "EMAIL_ENABLED": "false",
-})
+os.environ.update(
+    {
+        "SECRET_KEY": "secret-key",
+        "DATABASE_URL": "sqlite+aiosqlite:///:memory:",
+        "DATABASE_ECHO": "false",
+        "DATABASE_ECHO_POOL": "false",
+        "VALKEY_PORT": "6308",
+        "REDIS_URL": "redis://localhost:6308/0",
+        "SAQ_USE_SERVER_LIFESPAN": "False",
+        "SAQ_WEB_ENABLED": "True",
+        "SAQ_BACKGROUND_WORKERS": "1",
+        "SAQ_CONCURRENCY": "1",
+        "VITE_HOST": "localhost",
+        "VITE_PORT": "3006",
+        "VITE_HOT_RELOAD": "True",
+        "VITE_DEV_MODE": "True",
+        "VITE_USE_SERVER_LIFESPAN": "False",
+        "EMAIL_ENABLED": "false",
+    }
+)
 
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -469,10 +471,10 @@ async def test_team_invitation(session: AsyncSession, test_team: m.Team, test_us
         id=uuid4(),
         team_id=test_team.id,
         email="invite@example.com",
-        role="member",
-        token=uuid4().hex,
-        expires_at=datetime.now(UTC) + timedelta(days=7),
-        invited_by_user_id=test_user.id,
+        role=m.TeamRoles.MEMBER,
+        is_accepted=False,
+        invited_by_id=test_user.id,
+        invited_by_email=test_user.email,
     )
     session.add(invitation)
     await session.commit()

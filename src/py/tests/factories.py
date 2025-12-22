@@ -242,15 +242,15 @@ class TagFactory(SQLAlchemyFactory[m.Tag]):
 
 
 # Convenience functions for creating complex test scenarios
-def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:
+async def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:
     """Create a user with an associated team."""
     user = UserFactory.build(**kwargs)
     session.add(user)
-    session.flush()  # Get the user ID
+    await session.flush()  # Get the user ID
 
     team = TeamFactory.build()
     session.add(team)
-    session.flush()  # Get the team ID
+    await session.flush()  # Get the team ID
 
     # Create team membership
     membership = TeamMemberFactory.build(team_id=team.id, user_id=user.id, role=TeamRoles.ADMIN, is_owner=True)
@@ -259,16 +259,16 @@ def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:
     return user, team
 
 
-def create_team_with_members(session: Any, member_count: int = 3, **kwargs: Any) -> tuple[m.Team, list[m.User]]:
+async def create_team_with_members(session: Any, member_count: int = 3, **kwargs: Any) -> tuple[m.Team, list[m.User]]:
     """Create a team with multiple members."""
     # Create team owner
     owner = UserFactory.build()
     session.add(owner)
-    session.flush()
+    await session.flush()
 
     team = TeamFactory.build(**kwargs)
     session.add(team)
-    session.flush()
+    await session.flush()
 
     # Create owner membership
     owner_membership = TeamMemberFactory.build(team_id=team.id, user_id=owner.id, role=TeamRoles.ADMIN, is_owner=True)
@@ -279,7 +279,7 @@ def create_team_with_members(session: Any, member_count: int = 3, **kwargs: Any)
     for _ in range(member_count - 1):
         member = UserFactory.build()
         session.add(member)
-        session.flush()
+        await session.flush()
 
         membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER)
         session.add(membership)

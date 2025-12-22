@@ -24,7 +24,7 @@ async def load_database_fixtures() -> None:
     from app.config import alchemy
     from app.db.models import Role
     from app.lib.settings import get_settings
-    from app.services import RoleService
+    from app.domain.accounts.services import RoleService
 
     settings = get_settings()
     logger = get_logger()
@@ -83,8 +83,8 @@ def create_user(
     from rich import get_console
 
     from app.config import alchemy
-    from app.schemas import UserCreate
-    from app.server.deps import provide_users_service
+    from app.domain.accounts.dependencies import provide_users_service
+    from app.domain.accounts.schemas import UserCreate
 
     console = get_console()
 
@@ -132,8 +132,8 @@ def promote_to_superuser(email: str) -> None:
     from rich import get_console
 
     from app.config import alchemy
-    from app.schemas import UserUpdate
-    from app.services import UserService
+    from app.domain.accounts.schemas import UserUpdate
+    from app.domain.accounts.services import UserService
 
     console = get_console()
 
@@ -173,8 +173,8 @@ def create_default_roles() -> None:
     from app.config import alchemy
     from app.db.models import UserRole
     from app.lib.deps import create_service_provider
-    from app.server.deps import provide_users_service
-    from app.services import RoleService
+    from app.domain.accounts.dependencies import provide_users_service
+    from app.domain.accounts.services import RoleService
 
     provide_roles_service = create_service_provider(RoleService)
     console = get_console()

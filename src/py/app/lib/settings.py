@@ -25,7 +25,15 @@ from app.utils.env import get_env
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from litestar.config.compression import CompressionConfig
+    from litestar.config.cors import CORSConfig
+    from litestar.config.csrf import CSRFConfig
     from litestar.data_extractors import ResponseExtractorField
+    from litestar.plugins.problem_details import ProblemDetailsConfig
+    from litestar.plugins.sqlalchemy import SQLAlchemyAsyncConfig
+    from litestar.plugins.structlog import StructlogConfig
+    from litestar_saq import SAQConfig
+    from litestar_vite import ViteConfig
     from sqlalchemy.ext.asyncio import AsyncEngine
 
 DEFAULT_MODULE_NAME = "app"
@@ -54,7 +62,7 @@ class DatabaseSettings:
     """Optionally ping database before fetching a session from the connection pool."""
     URL: str = field(
         default_factory=get_env("DATABASE_URL", "postgres://app:app@localhost:15432/app")
-    )  # todo: let's default to None and raise a better overall error message if not set
+    )
     """SQLAlchemy Database URL."""
     MIGRATION_CONFIG: str = field(
         default_factory=get_env("DATABASE_MIGRATION_CONFIG", f"{BASE_DIR}/db/migrations/alembic.ini")
@@ -83,6 +91,20 @@ class DatabaseSettings:
         self._engine_instance = create_sqlalchemy_engine(self)
         return self._engine_instance
 
+    def get_config(self) -> SQLAlchemyAsyncConfig:
+        from litestar.plugins.sqlalchemy import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
+
+        return SQLAlchemyAsyncConfig(
+            engine_instance=self.get_engine(),
+            before_send_handler="autocommit",
+            session_config=AsyncSessionConfig(expire_on_commit=False),
+            alembic_config=AlembicAsyncConfig(
+                version_table_name=self.MIGRATION_DDL_VERSION_TABLE,
+                script_config=self.MIGRATION_CONFIG,
+                script_location=self.MIGRATION_PATH,
+            ),
+        )
+
 
 @dataclass
 class ViteSettings:
@@ -94,6 +116,32 @@ class ViteSettings:
     """Bundle directory for built assets."""
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/"))
     """Base URL for assets."""
+
+    def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
+        from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
+
+        return ViteConfig(
+            mode="spa",
+            dev_mode=self.DEV_MODE,
+            runtime=RuntimeConfig(executor="bun"),
+            paths=PathConfig(
+                root=base_dir / "js",
+                bundle_dir=self.BUNDLE_DIR,
+                asset_url=self.ASSET_URL,
+            ),
+            types=TypeGenConfig(
+                output=base_dir / "js" / "src" / "lib" / "generated",
+                openapi_path=base_dir / "js" / "src" / "lib" / "generated" / "openapi.json",
+                routes_path=base_dir / "js" / "src" / "lib" / "generated" / "routes.json",
+                routes_ts_path=base_dir / "js" / "src" / "lib" / "generated" / "routes.ts",
+                page_props_path=base_dir / "js" / "src" / "lib" / "generated" / "inertia-pages.json",
+                generate_zod=True,
+                generate_sdk=True,
+                generate_routes=True,
+                generate_page_props=True,
+                global_route=False,
+            ),
+        )
 
 
 @dataclass
@@ -132,6 +180,35 @@ class SaqSettings:
     """If true, the worker admin UI is hosted on worker startup."""
     USE_SERVER_LIFESPAN: bool = field(default_factory=get_env("SAQ_USE_SERVER_LIFESPAN", True))
     """Auto start and stop `saq` processes when starting the Litestar application."""
+
+    def get_config(self, db: DatabaseSettings) -> SAQConfig:
+        from litestar_saq import QueueConfig, SAQConfig
+
+        from app.lib.worker import after_process, before_process, on_shutdown, on_startup
+
+        return SAQConfig(
+            web_enabled=self.WEB_ENABLED,
+            worker_processes=self.PROCESSES,
+            use_server_lifespan=self.USE_SERVER_LIFESPAN,
+            queue_configs=[
+                QueueConfig(
+                    name="background-tasks",
+                    dsn=db.URL.replace("postgresql+psycopg", "postgresql"),
+                    broker_options={
+                        "stats_table": "task_queue_stats",
+                        "jobs_table": "task_queue",
+                        "versions_table": "task_queue_ddl_version",
+                    },
+                    tasks=[],
+                    scheduled_tasks=[],
+                    concurrency=20,
+                    startup=on_startup,
+                    shutdown=on_shutdown,
+                    before_process=before_process,
+                    after_process=after_process,
+                )
+            ],
+        )
 
 
 @dataclass
@@ -232,6 +309,31 @@ class AppSettings:
         """
         return slugify(self.NAME)
 
+    def get_compression_config(self) -> CompressionConfig:
+        from litestar.config.compression import CompressionConfig
+
+        return CompressionConfig(backend="gzip")
+
+    def get_csrf_config(self) -> CSRFConfig:
+        from litestar.config.csrf import CSRFConfig
+
+        return CSRFConfig(
+            secret=self.SECRET_KEY,
+            cookie_secure=self.CSRF_COOKIE_SECURE,
+            cookie_name=self.CSRF_COOKIE_NAME,
+            header_name=self.CSRF_HEADER_NAME,
+        )
+
+    def get_cors_config(self) -> CORSConfig:
+        from litestar.config.cors import CORSConfig
+
+        return CORSConfig(allow_origins=cast("list[str]", self.ALLOWED_CORS_ORIGINS))
+
+    def get_problem_details_config(self) -> ProblemDetailsConfig:
+        from litestar.plugins.problem_details import ProblemDetailsConfig
+
+        return ProblemDetailsConfig(enable_for_all_http_exceptions=True)
+
     def __post_init__(self) -> None:
         # Check if the ALLOWED_CORS_ORIGINS is a string.
         if isinstance(self.ALLOWED_CORS_ORIGINS, str):
@@ -301,6 +403,89 @@ class LogSettings:
     ASGI_ERROR_LEVEL: int = field(default_factory=get_env("ASGI_ERROR_LOG_LEVEL", 30))
     """Level to log uvicorn error logs."""
 
+    def get_structlog_config(self) -> StructlogConfig:
+        import logging
+
+        import structlog
+        from litestar.exceptions import NotAuthorizedException, PermissionDeniedException
+        from litestar.logging.config import LoggingConfig, StructLoggingConfig, default_logger_factory
+        from litestar.middleware.logging import LoggingMiddlewareConfig
+        from litestar.plugins.structlog import StructlogConfig
+
+        from app.lib import log as log_conf
+
+        return StructlogConfig(
+            enable_middleware_logging=False,
+            structlog_logging_config=StructLoggingConfig(
+                log_exceptions="always",
+                processors=log_conf.structlog_processors(as_json=not log_conf.is_tty()),
+                logger_factory=default_logger_factory(as_json=not log_conf.is_tty()),
+                disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
+                standard_lib_logging_config=LoggingConfig(
+                    log_exceptions="always",
+                    disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
+                    root={"level": logging.getLevelName(self.LEVEL), "handlers": ["queue_listener"]},
+                    formatters={
+                        "standard": {
+                            "()": structlog.stdlib.ProcessorFormatter,
+                            "processors": log_conf.stdlib_logger_processors(as_json=not log_conf.is_tty()),
+                        },
+                    },
+                    loggers={
+                        "saq": {
+                            "propagate": False,
+                            "level": self.SAQ_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                        "sqlalchemy.engine": {
+                            "propagate": False,
+                            "level": self.SQLALCHEMY_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                        "sqlalchemy.pool": {
+                            "propagate": False,
+                            "level": self.SQLALCHEMY_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                        "opentelemetry.sdk.metrics._internal": {
+                            "propagate": False,
+                            "level": 40,
+                            "handlers": ["queue_listener"],
+                        },
+                        "httpx": {
+                            "propagate": False,
+                            "level": max(self.LEVEL, logging.WARNING),
+                            "handlers": ["queue_listener"],
+                        },
+                        "httpcore": {
+                            "propagate": False,
+                            "level": max(self.LEVEL, logging.WARNING),
+                            "handlers": ["queue_listener"],
+                        },
+                        "_granian": {
+                            "propagate": False,
+                            "level": self.ASGI_ERROR_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                        "granian.server": {
+                            "propagate": False,
+                            "level": self.ASGI_ERROR_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                        "granian.access": {
+                            "propagate": False,
+                            "level": self.ASGI_ACCESS_LEVEL,
+                            "handlers": ["queue_listener"],
+                        },
+                    },
+                ),
+            ),
+            middleware_logging_config=LoggingMiddlewareConfig(
+                request_log_fields=self.REQUEST_FIELDS,
+                response_log_fields=self.RESPONSE_FIELDS,
+            ),
+        )
+
 
 @dataclass
 class Settings:
@@ -317,7 +502,7 @@ class Settings:
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
         import structlog
         from dotenv import load_dotenv
-        from litestar.cli._utils import console  # pyright: ignore[reportPrivateImportUsage]
+        from litestar.cli._utils import console
 
         logger = structlog.get_logger()
         _secret_id = os.environ.get("ENV_SECRETS", None)  # use this to load secrets in a container
@@ -341,3 +526,8 @@ class Settings:
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:
     return Settings.from_env(dotenv_filename)
+
+
+def provide_app_settings() -> AppSettings:
+    """Return application settings for dependency injection."""
+    return get_settings().app

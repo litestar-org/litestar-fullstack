@@ -10,8 +10,15 @@ import { createFileRoute } from "@tanstack/react-router"
 import { CheckCircle2, Mail, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { z } from "zod"
 
 export const Route = createFileRoute("/_public/verify-email")({
+  validateSearch: (search) =>
+    z
+      .object({
+        token: z.string().optional(),
+      })
+      .parse(search),
   component: VerifyEmailPage,
 })
 
@@ -23,9 +30,9 @@ function VerifyEmailPage() {
   const [errorMessage, setErrorMessage] = useState<string>("")
 
   // Extract token from URL
-  const token = (searchParams as any).token as string | undefined
+  const token = searchParams.token
 
-  const { mutate: verifyEmail } = useMutation({
+  const { mutate: verifyEmail, isPending: isVerifying } = useMutation({
     mutationFn: async (verificationToken: string) => {
       const response = await apiEmailVerificationVerifyVerifyEmail({
         body: { token: verificationToken },
@@ -66,8 +73,8 @@ function VerifyEmailPage() {
   }, [token, verifyEmail])
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
         <CardHeader>
           <CardTitle className="text-center">
             {status === "verifying" && "Verifying your email..."}
@@ -119,9 +126,11 @@ function VerifyEmailPage() {
                     <Button onClick={() => navigate({ to: "/login" })} variant="default" className="w-full">
                       Back to Login
                     </Button>
-                    <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
-                      Try Again
-                    </Button>
+                    {token && (
+                      <Button onClick={() => verifyEmail(token)} variant="outline" className="w-full" disabled={isVerifying}>
+                        Try Again
+                      </Button>
+                    )}
                   </>
                 )}
               </div>
@@ -160,8 +169,8 @@ export function ResendVerificationPage() {
 
   if (hasSent) {
     return (
-      <div className="container flex h-screen w-screen flex-col items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+        <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
               <Mail className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -182,8 +191,8 @@ export function ResendVerificationPage() {
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
         <CardHeader className="text-center">
           <CardTitle>Verify Your Email</CardTitle>
         </CardHeader>

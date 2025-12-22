@@ -2,8 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { addMemberToTeam } from "@/lib/generated/api/sdk.gen"
+import { addMemberToTeam } from "@/lib/generated/api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
@@ -12,7 +11,6 @@ import * as z from "zod"
 
 const inviteSchema = z.object({
   email: z.string().email(),
-  role: z.enum(["member", "admin"]),
 })
 
 type InviteFormData = z.infer<typeof inviteSchema>
@@ -27,9 +25,6 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
 
   const form = useForm<InviteFormData>({
     resolver: zodResolver(inviteSchema),
-    defaultValues: {
-      role: "member",
-    },
   })
 
   const onSubmit = async (data: InviteFormData) => {
@@ -39,7 +34,7 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
         body: { userName: data.email },
       })
       await queryClient.invalidateQueries({
-        queryKey: ["team-members", teamId],
+        queryKey: ["team", teamId],
       })
       setOpen(false)
       form.reset()
@@ -68,27 +63,6 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
                   <FormControl>
                     <Input {...field} type="email" placeholder="Email address" />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="member">Member</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

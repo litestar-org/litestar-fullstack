@@ -1,16 +1,16 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Team } from "@/lib/generated/api"
-import { listTeams } from "@/lib/generated/api/sdk.gen"
-import { useTeam } from "@/lib/team-context"
+import { listTeams, type Team } from "@/lib/generated/api"
+import { useAuthStore } from "@/lib/auth"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+import { useEffect } from "react"
 
 export function TeamList() {
-  const { currentTeam, setCurrentTeam } = useTeam()
+  const { currentTeam, setCurrentTeam, setTeams } = useAuthStore()
 
-  const { data: teams = [], isLoading } = useQuery({
+  const { data: teamsData = [], isLoading, isError } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       const response = await listTeams()
@@ -18,11 +18,21 @@ export function TeamList() {
     },
   })
 
+  useEffect(() => {
+    if (!isLoading && !isError) {
+      setTeams(teamsData)
+    }
+  }, [isError, isLoading, setTeams, teamsData])
+
   if (isLoading) {
     return <div className="text-muted-foreground">Loading teams…</div>
   }
 
-  if (teams.length === 0) {
+  if (isError) {
+    return <div className="text-muted-foreground">We couldn’t load teams yet. Try refreshing.</div>
+  }
+
+  if (teamsData.length === 0) {
     return (
       <Card className="border-border/60 bg-card/80 shadow-lg shadow-primary/10">
         <CardHeader>
@@ -53,7 +63,7 @@ export function TeamList() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {teams.map((team: Team) => {
+        {teamsData.map((team: Team) => {
           const active = currentTeam?.id === team.id
           return (
             <Card key={team.id} className={`border-border/60 bg-card/80 shadow-md ${active ? "border-primary/60 shadow-primary/15" : ""}`}>

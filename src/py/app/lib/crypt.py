@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import importlib
 import secrets
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import pyotp
-import qrcode
+qrcode: Any = importlib.import_module("qrcode")
 from pwdlib import PasswordHash
 from pwdlib.hashers.argon2 import Argon2Hasher
 
@@ -115,7 +116,7 @@ def generate_totp_qr_code(secret: str, email: str, issuer: str = "Litestar App")
         PNG image data as bytes.
     """
     uri = get_totp_provisioning_uri(secret, email, issuer)
-    img: Image = qrcode.make(uri)  # type: ignore[assignment]
+    img = cast("Image", qrcode.make(uri))
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     buffer.seek(0)

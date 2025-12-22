@@ -1,14 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Manrope", "Space Grotesk", "IBM Plex Sans", sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  color-scheme: dark;
+  color-scheme: light;
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
   font-synthesis: none;
@@ -18,39 +18,37 @@
 
   --radius: 0.625rem;
 
-  /* Litestar brand palette */
-  /* Litestar brand-inspired palette */
-  --background: 232 42% 8%;
-  --foreground: 220 20% 96%;
-  --card: 233 34% 11%;
-  --card-foreground: 220 20% 96%;
-  --popover: 233 34% 11%;
-  --popover-foreground: 220 20% 96%;
-  --primary: 234 24% 32%; /* deep indigo from brand label */
-  --primary-foreground: 220 30% 98%;
-  --secondary: 41 83% 59%; /* litestar amber */
-  --secondary-foreground: 234 25% 12%;
-  --muted: 222 10% 32%;
-  --muted-foreground: 215 12% 72%;
-  --accent: 210 12% 42%;
-  --accent-foreground: 220 20% 96%;
-  --destructive: 0 72% 56%;
-  --border: 230 18% 20%;
-  --input: 230 20% 22%;
-  --ring: 234 40% 45%;
-  --chart-1: 41 83% 59%;
-  --chart-2: 234 24% 32%;
-  --chart-3: 210 12% 42%;
-  --chart-4: 0 72% 56%;
-  --chart-5: 161 43% 52%;
-  --sidebar: 233 34% 11%;
-  --sidebar-foreground: 220 20% 96%;
-  --sidebar-primary: 234 24% 32%;
-  --sidebar-primary-foreground: 220 30% 98%;
-  --sidebar-accent: 41 83% 59%;
-  --sidebar-accent-foreground: 234 25% 12%;
-  --sidebar-border: 230 18% 20%;
-  --sidebar-ring: 234 40% 45%;
+  --background: 30 20% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 202 88% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 24 30% 94%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 20% 94%;
+  --muted-foreground: 215 15% 45%;
+  --accent: 176 52% 38%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 75% 54%;
+  --border: 214 20% 90%;
+  --input: 214 20% 92%;
+  --ring: 202 88% 42%;
+  --chart-1: 202 88% 42%;
+  --chart-2: 176 52% 38%;
+  --chart-3: 25 85% 55%;
+  --chart-4: 140 55% 45%;
+  --chart-5: 340 70% 55%;
+  --sidebar: 24 24% 96%;
+  --sidebar-foreground: 222 47% 12%;
+  --sidebar-primary: 202 88% 42%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 20% 92%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-border: 210 20% 90%;
+  --sidebar-ring: 202 88% 42%;
 }
 
 @theme inline {
@@ -92,37 +90,38 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: 230 28% 8%;
   --foreground: 220 25% 96%;
   --card: 232 28% 12%;
   --card-foreground: 220 25% 96%;
   --popover: 232 28% 12%;
   --popover-foreground: 220 25% 96%;
-  --primary: 204 79% 45%;
-  --primary-foreground: 220 30% 98%;
-  --secondary: 46 63% 70%;
-  --secondary-foreground: 232 35% 10%;
+  --primary: 198 84% 55%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 220 16% 18%;
+  --secondary-foreground: 220 25% 96%;
   --muted: 215 8% 32%;
   --muted-foreground: 215 10% 72%;
-  --accent: 208 6% 50%;
+  --accent: 176 42% 46%;
   --accent-foreground: 220 25% 96%;
   --destructive: 0 70% 60%;
   --border: 231 20% 20%;
   --input: 231 22% 22%;
-  --ring: 204 79% 50%;
-  --chart-1: 46 63% 70%;
-  --chart-2: 204 79% 45%;
-  --chart-3: 208 6% 50%;
-  --chart-4: 0 70% 60%;
-  --chart-5: 161 43% 52%;
+  --ring: 198 84% 55%;
+  --chart-1: 198 84% 55%;
+  --chart-2: 176 42% 46%;
+  --chart-3: 25 85% 55%;
+  --chart-4: 140 55% 45%;
+  --chart-5: 340 70% 55%;
   --sidebar: 232 28% 12%;
   --sidebar-foreground: 220 25% 96%;
-  --sidebar-primary: 204 79% 45%;
-  --sidebar-primary-foreground: 220 30% 98%;
-  --sidebar-accent: 46 63% 70%;
-  --sidebar-accent-foreground: 232 35% 10%;
+  --sidebar-primary: 198 84% 55%;
+  --sidebar-primary-foreground: 222 47% 11%;
+  --sidebar-accent: 220 16% 18%;
+  --sidebar-accent-foreground: 220 25% 96%;
   --sidebar-border: 231 20% 20%;
-  --sidebar-ring: 204 79% 50%;
+  --sidebar-ring: 198 84% 55%;
 }
 
 @layer base {
@@ -134,6 +133,9 @@
     @apply bg-background text-foreground antialiased;
     margin: 0;
     min-height: 100vh;
+    background-image: radial-gradient(1200px 800px at 8% -12%, hsl(var(--primary) / 0.12), transparent 60%),
+      radial-gradient(900px 700px at 92% -18%, hsl(var(--accent) / 0.12), transparent 55%);
+    background-attachment: fixed;
   }
 
   html {

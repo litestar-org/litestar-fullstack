@@ -1,174 +1,17 @@
-import logging
-from pathlib import Path
-from typing import cast
-
 import structlog
-from litestar.config.compression import CompressionConfig
-from litestar.config.cors import CORSConfig
-from litestar.config.csrf import CSRFConfig
-from litestar.exceptions import (
-    NotAuthorizedException,
-    PermissionDeniedException,
-)
-from litestar.logging.config import (
-    LoggingConfig,
-    StructLoggingConfig,
-    default_logger_factory,
-)
-from litestar.middleware.logging import LoggingMiddlewareConfig
-from litestar.plugins.problem_details import ProblemDetailsConfig
-from litestar.plugins.sqlalchemy import (
-    AlembicAsyncConfig,
-    AsyncSessionConfig,
-    SQLAlchemyAsyncConfig,
-)
-from litestar.plugins.structlog import StructlogConfig
-from litestar_saq import QueueConfig, SAQConfig
-from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
-from app.lib import log as log_conf
-from app.lib.settings import BASE_DIR, get_settings
-from app.lib.worker import after_process as worker_after_process
-from app.lib.worker import before_process as worker_before_process
-from app.lib.worker import on_shutdown as worker_on_shutdown
-from app.lib.worker import on_startup as worker_on_startup
+from app.lib.settings import get_settings
 
-settings = get_settings()
+_settings = get_settings()
 
-
-compression = CompressionConfig(backend="gzip")
-csrf = CSRFConfig(
-    secret=settings.app.SECRET_KEY,
-    cookie_secure=settings.app.CSRF_COOKIE_SECURE,
-    cookie_name=settings.app.CSRF_COOKIE_NAME,
-    header_name=settings.app.CSRF_HEADER_NAME,
-)
-cors = CORSConfig(allow_origins=cast("list[str]", settings.app.ALLOWED_CORS_ORIGINS))
-
-alchemy = SQLAlchemyAsyncConfig(
-    engine_instance=settings.db.get_engine(),
-    before_send_handler="autocommit",
-    session_config=AsyncSessionConfig(expire_on_commit=False),
-    alembic_config=AlembicAsyncConfig(
-        version_table_name=settings.db.MIGRATION_DDL_VERSION_TABLE,
-        script_config=settings.db.MIGRATION_CONFIG,
-        script_location=settings.db.MIGRATION_PATH,
-    ),
-)
-vite = ViteConfig(
-    mode="spa",
-    dev_mode=settings.vite.DEV_MODE,
-    runtime=RuntimeConfig(executor="bun"),
-    paths=PathConfig(
-        root=BASE_DIR.parent.parent / "js",
-        bundle_dir=settings.vite.BUNDLE_DIR,
-        resource_dir=Path("src"),
-        asset_url=settings.vite.ASSET_URL,
-    ),
-    types=TypeGenConfig(
-        output=BASE_DIR.parent.parent / "js" / "src" / "lib" / "generated",
-        generate_zod=True,
-        generate_sdk=True,
-        generate_routes=True,
-    ),
-)
-saq = SAQConfig(
-    web_enabled=settings.saq.WEB_ENABLED,
-    worker_processes=settings.saq.PROCESSES,
-    use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,
-    queue_configs=[
-        QueueConfig(
-            name="background-tasks",
-            dsn=settings.db.URL.replace("postgresql+psycopg", "postgresql"),
-            broker_options={
-                "stats_table": "task_queue_stats",
-                "jobs_table": "task_queue",
-                "versions_table": "task_queue_ddl_version",
-            },
-            tasks=[],
-            scheduled_tasks=[],
-            concurrency=20,
-            startup=worker_on_startup,
-            shutdown=worker_on_shutdown,
-            before_process=worker_before_process,
-            after_process=worker_after_process,
-        )
-    ],
-)
-problem_details = ProblemDetailsConfig(enable_for_all_http_exceptions=True)
-
-
-log = StructlogConfig(
-    enable_middleware_logging=False,
-    structlog_logging_config=StructLoggingConfig(
-        log_exceptions="always",
-        processors=log_conf.structlog_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
-        logger_factory=default_logger_factory(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
-        disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
-        standard_lib_logging_config=LoggingConfig(
-            log_exceptions="always",
-            disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
-            root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
-            formatters={
-                "standard": {
-                    "()": structlog.stdlib.ProcessorFormatter,
-                    "processors": log_conf.stdlib_logger_processors(as_json=not log_conf.is_tty()),  # type: ignore[has-type,unused-ignore]
-                },
-            },
-            loggers={
-                "saq": {
-                    "propagate": False,
-                    "level": settings.log.SAQ_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "sqlalchemy.engine": {
-                    "propagate": False,
-                    "level": settings.log.SQLALCHEMY_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "sqlalchemy.pool": {
-                    "propagate": False,
-                    "level": settings.log.SQLALCHEMY_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "opentelemetry.sdk.metrics._internal": {
-                    "propagate": False,
-                    "level": 40,
-                    "handlers": ["queue_listener"],
-                },
-                "httpx": {
-                    "propagate": False,
-                    "level": max(settings.log.LEVEL, logging.WARNING),
-                    "handlers": ["queue_listener"],
-                },
-                "httpcore": {
-                    "propagate": False,
-                    "level": max(settings.log.LEVEL, logging.WARNING),
-                    "handlers": ["queue_listener"],
-                },
-                "_granian": {
-                    "propagate": False,
-                    "level": settings.log.ASGI_ERROR_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "granian.server": {
-                    "propagate": False,
-                    "level": settings.log.ASGI_ERROR_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "granian.access": {
-                    "propagate": False,
-                    "level": settings.log.ASGI_ACCESS_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-            },
-        ),
-    ),
-    middleware_logging_config=LoggingMiddlewareConfig(
-        request_log_fields=settings.log.REQUEST_FIELDS,
-        response_log_fields=settings.log.RESPONSE_FIELDS,
-    ),
-)
+compression = _settings.app.get_compression_config()
+csrf = _settings.app.get_csrf_config()
+cors = _settings.app.get_cors_config()
+alchemy = _settings.db.get_config()
+vite = _settings.vite.get_config()
+saq = _settings.saq.get_config(_settings.db)
+problem_details = _settings.app.get_problem_details_config()
+log = _settings.log.get_structlog_config()
 
 
 def setup_logging() -> None:
@@ -180,5 +23,5 @@ def setup_logging() -> None:
         cache_logger_on_first_use=True,
         logger_factory=log.structlog_logging_config.logger_factory,
         processors=log.structlog_logging_config.processors,
-        wrapper_class=structlog.make_filtering_bound_logger(settings.log.LEVEL),
+        wrapper_class=structlog.make_filtering_bound_logger(_settings.log.LEVEL),
     )

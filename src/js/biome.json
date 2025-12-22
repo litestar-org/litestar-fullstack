@@ -8,8 +8,16 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["src/routeTree.gen.ts", "src/lib/generated/**"],
-    "include": ["src/**/*", "index.html", "*.ts", "*.js"]
+    "includes": ["src/**/*", "index.html", "*.ts", "*.js"],
+    "experimentalScannerIgnores": [
+      "node_modules/**/*",
+      "dist/**/*",
+      ".venv/**/*",
+      "public/**/*",
+      "src/py/**/*",
+      "src/routeTree.gen.ts",
+      "src/lib/generated/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -17,12 +25,7 @@
     "lineWidth": 180,
     "indentStyle": "space",
     "formatWithErrors": false,
-    "lineEnding": "lf",
-    "ignore": ["node_modules/**/*", "dist/**/*", ".venv/**/*", "public/**/*", "src/py/**/*", "src/routeTree.gen.ts", "src/lib/generated/**"]
-  },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["node_modules/**/*", "dist/**/*", ".venv/**/*", "public/**/*", "src/py/**/*", "src/routeTree.gen.ts", "src/lib/generated/**"]
+    "lineEnding": "lf"
   },
   "linter": {
     "enabled": true,
@@ -40,8 +43,7 @@
       "nursery": {
         "useSortedClasses": "warn"
       }
-    },
-    "ignore": ["node_modules/**/*", "dist/**/*", ".venv/**/*", "public/**/*", "src/py/**/*", "src/routeTree.gen.ts", "src/lib/generated/**"]
+    }
   },
   "javascript": {
     "formatter": {

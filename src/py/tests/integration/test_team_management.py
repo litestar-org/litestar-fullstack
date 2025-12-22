@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
-from litestar import Litestar
 from litestar.testing import AsyncTestClient
 from sqlalchemy import select
 
@@ -15,6 +14,7 @@ from app.lib.crypt import get_password_hash
 from tests.factories import TeamFactory, TeamMemberFactory, UserFactory, create_team_with_members, create_user_with_team
 
 if TYPE_CHECKING:
+    from litestar import Litestar
     from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.integration, pytest.mark.endpoints, pytest.mark.auth]
@@ -72,7 +72,13 @@ class TestTeamCRUD:
         result = await session.execute(select(m.Team).where(m.Team.name == "Test Team"))
         team = result.scalar_one_or_none()
         assert team is not None
-        assert team.owner_id == user.id
+        membership_result = await session.execute(
+            select(m.TeamMember).where(m.TeamMember.team_id == team.id, m.TeamMember.user_id == user.id)
+        )
+        membership = membership_result.scalar_one_or_none()
+        assert membership is not None
+        assert membership.is_owner is True
+        assert membership.role == TeamRoles.ADMIN
 
     @pytest.mark.asyncio
     async def test_create_team_unauthenticated(
@@ -95,13 +101,13 @@ class TestTeamCRUD:
     ) -> None:
         """Test listing teams where user is a member."""
         # Create user and teams
-        user, team1 = create_user_with_team(session)
+        user, team1 = await create_user_with_team(session)
 
         # Create another team where user is not a member
         other_user = UserFactory.build()
         other_team = TeamFactory.build()
         session.add_all([other_user, other_team])
-        session.flush()
+        await session.flush()
 
         other_membership = TeamMemberFactory.build(
             team_id=other_team.id, user_id=other_user.id, role=TeamRoles.ADMIN, is_owner=True
@@ -132,7 +138,7 @@ class TestTeamCRUD:
         session: AsyncSession,
     ) -> None:
         """Test getting team details as a member."""
-        user, team = create_user_with_team(session)
+        user, team = await create_user_with_team(session)
         user.hashed_password = await get_password_hash("testPassword123!")
         await session.commit()
 
@@ -159,7 +165,7 @@ class TestTeamCRUD:
         )
 
         # Create team with different owner
-        other_user, team = create_user_with_team(session)
+        _other_user, team = await create_user_with_team(session)
         session.add(user)
         await session.commit()
 
@@ -177,7 +183,7 @@ class TestTeamCRUD:
         session: AsyncSession,
     ) -> None:
         """Test updating team as admin."""
-        user, team = create_user_with_team(session)
+        user, team = await create_user_with_team(session)
         user.hashed_password = await get_password_hash("testPassword123!")
         await session.commit()
 
@@ -208,14 +214,14 @@ class TestTeamCRUD:
     ) -> None:
         """Test updating team as regular member (should fail)."""
         # Create team with owner
-        owner, team = create_user_with_team(session)
+        _owner, team = await create_user_with_team(session)
 
         # Create regular member
         member = UserFactory.build(
             hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
         )
         session.add(member)
-        session.flush()
+        await session.flush()
 
         # Add member to team with MEMBER role
         membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
@@ -240,7 +246,7 @@ class TestTeamCRUD:
         session: AsyncSession,
     ) -> None:
         """Test deleting team as admin."""
-        user, team = create_user_with_team(session)
+        user, team = await create_user_with_team(session)
         user.hashed_password = await get_password_hash("testPassword123!")
         team_id = team.id
         await session.commit()
@@ -265,14 +271,14 @@ class TestTeamCRUD:
     ) -> None:
         """Test deleting team as regular member (should fail)."""
         # Create team with owner
-        owner, team = create_user_with_team(session)
+        _owner, team = await create_user_with_team(session)
 
         # Create regular member
         member = UserFactory.build(
             hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
         )
         session.add(member)
-        session.flush()
+        await session.flush()
 
         membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
         session.add(membership)
@@ -307,7 +313,7 @@ class TestTeamMemberManagement:
     ) -> None:
         """Test successfully adding a member to a team."""
         # Create team owner
-        owner, team = create_user_with_team(session)
+        owner, team = await create_user_with_team(session)
         owner.hashed_password = await get_password_hash("testPassword123!")
 
         # Create user to be added
@@ -347,7 +353,7 @@ class TestTeamMemberManagement:
     ) -> None:
         """Test adding a member who is already in the team."""
         # Create team with existing members
-        team, members = create_team_with_members(session, member_count=2)
+        team, members = await create_team_with_members(session, member_count=2)
         owner = members[0]
         existing_member = members[1]
 
@@ -372,7 +378,7 @@ class TestTeamMemberManagement:
         session: AsyncSession,
     ) -> None:
         """Test adding a non-existent user to a team."""
-        owner, team = create_user_with_team(session)
+        owner, team = await create_user_with_team(session)
         owner.hashed_password = await get_password_hash("testPassword123!")
         await session.commit()
 
@@ -395,7 +401,7 @@ class TestTeamMemberManagement:
     ) -> None:
         """Test successfully removing a member from a team."""
         # Create team with multiple members
-        team, members = create_team_with_members(session, member_count=3)
+        team, members = await create_team_with_members(session, member_count=3)
         owner = members[0]
         member_to_remove = members[1]
 
@@ -405,7 +411,8 @@ class TestTeamMemberManagement:
         async with AsyncTestClient(app=app) as client:
             token = await self._login_user(client, owner)
 
-            response = await client.delete(
+            response = await client.request(
+                "DELETE",
                 f"/api/teams/{team.id}/members",
                 json={"userName": member_to_remove.email},
                 headers={"Authorization": f"Bearer {token}"},
@@ -432,7 +439,7 @@ class TestTeamMemberManagement:
         session: AsyncSession,
     ) -> None:
         """Test removing a user who is not in the team."""
-        owner, team = create_user_with_team(session)
+        owner, team = await create_user_with_team(session)
         owner.hashed_password = await get_password_hash("testPassword123!")
 
         # Create user not in the team
@@ -443,7 +450,8 @@ class TestTeamMemberManagement:
         async with AsyncTestClient(app=app) as client:
             token = await self._login_user(client, owner)
 
-            response = await client.delete(
+            response = await client.request(
+                "DELETE",
                 f"/api/teams/{team.id}/members",
                 json={"userName": "notmember@example.com"},
                 headers={"Authorization": f"Bearer {token}"},
@@ -472,7 +480,7 @@ class TestTeamPermissions:
         session: AsyncSession,
     ) -> None:
         """Test that team owners have all permissions."""
-        owner, team = create_user_with_team(session)
+        owner, team = await create_user_with_team(session)
         owner.hashed_password = await get_password_hash("testPassword123!")
         await session.commit()
 
@@ -501,14 +509,14 @@ class TestTeamPermissions:
     ) -> None:
         """Test that team admins have appropriate permissions."""
         # Create team with owner
-        owner, team = create_user_with_team(session)
+        _owner, team = await create_user_with_team(session)
 
         # Create admin member
         admin = UserFactory.build(
             hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
         )
         session.add(admin)
-        session.flush()
+        await session.flush()
 
         admin_membership = TeamMemberFactory.build(
             team_id=team.id, user_id=admin.id, role=TeamRoles.ADMIN, is_owner=False
@@ -541,14 +549,14 @@ class TestTeamPermissions:
     ) -> None:
         """Test that team members have limited permissions."""
         # Create team with owner
-        owner, team = create_user_with_team(session)
+        _owner, team = await create_user_with_team(session)
 
         # Create regular member
         member = UserFactory.build(
             hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
         )
         session.add(member)
-        session.flush()
+        await session.flush()
 
         member_membership = TeamMemberFactory.build(
             team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False
@@ -583,7 +591,7 @@ class TestTeamPermissions:
     ) -> None:
         """Test that non-members have no access to team."""
         # Create team
-        owner, team = create_user_with_team(session)
+        _owner, team = await create_user_with_team(session)
 
         # Create non-member user
         non_member = UserFactory.build(
@@ -687,7 +695,8 @@ class TestTeamIntegration:
             assert response.status_code == 200
 
             # 5. Remove a member
-            response = await client.delete(
+            response = await client.request(
+                "DELETE",
                 f"/api/teams/{team_id}/members",
                 json={"userName": "member2@example.com"},
                 headers={"Authorization": f"Bearer {token}"},
@@ -718,8 +727,8 @@ class TestTeamIntegration:
     ) -> None:
         """Test that team data is properly isolated between teams."""
         # Create two separate teams with different owners
-        owner1, team1 = create_user_with_team(session)
-        owner2, team2 = create_user_with_team(session)
+        owner1, team1 = await create_user_with_team(session)
+        owner2, team2 = await create_user_with_team(session)
 
         owner1.hashed_password = await get_password_hash("testPassword123!")
         owner2.hashed_password = await get_password_hash("testPassword123!")
@@ -761,7 +770,7 @@ class TestTeamIntegration:
     ) -> None:
         """Test member role transitions and permission changes."""
         # Create team with owner
-        owner, team = create_user_with_team(session)
+        owner, team = await create_user_with_team(session)
         owner.hashed_password = await get_password_hash("testPassword123!")
 
         # Create member
@@ -772,7 +781,7 @@ class TestTeamIntegration:
             is_verified=True,
         )
         session.add(member)
-        session.flush()
+        await session.flush()
 
         # Add as regular member
         membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
@@ -780,7 +789,7 @@ class TestTeamIntegration:
         await session.commit()
 
         async with AsyncTestClient(app=app) as client:
-            owner_token = await self._login_user(client, owner)
+            _owner_token = await self._login_user(client, owner)
             member_token = await self._login_user(client, member)
 
             # Member should not be able to update team initially

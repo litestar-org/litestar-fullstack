@@ -6,10 +6,12 @@ from typing import TYPE_CHECKING, Literal, TypeVar
 
 import structlog
 from litestar import Controller, MediaType, get
+from litestar.di import Provide
 from litestar.response import Response
 from sqlalchemy import text
 
 from app.domain.system import schemas as s
+from app.lib.settings import provide_app_settings
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -24,6 +26,9 @@ class SystemController(Controller):
     """System health and configuration."""
 
     tags = ["System"]
+    dependencies = {
+        "settings": Provide(provide_app_settings),
+    }
 
     @get(
         operation_id="SystemHealth",

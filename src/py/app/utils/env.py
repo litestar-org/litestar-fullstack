@@ -195,7 +195,7 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
     if final_type is None or final_type is type(None):
         return value
     if type_hint != _UNSET and final_type is type_hint:
-        return cast("T", final_type(value))  # pyright: ignore
+        return cast("T", final_type(value))
 
     return value
 

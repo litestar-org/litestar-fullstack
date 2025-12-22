@@ -2,7 +2,9 @@ import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { accountRegister } from "@/lib/generated/api/sdk.gen"
+import { PasswordStrength } from "@/components/ui/password-strength"
+import { validatePassword } from "@/hooks/use-validation"
+import { accountRegister } from "@/lib/generated/api"
 import { useAuthStore } from "@/lib/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
@@ -13,9 +15,14 @@ import { z } from "zod"
 const signupSchema = z
   .object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(1, "Password is required").superRefine((value, ctx) => {
+      const error = validatePassword(value)
+      if (error) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
+      }
+    }),
     name: z.string().min(1, "Name is required"),
-    confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -39,6 +46,7 @@ export function UserSignupForm() {
     mode: "onBlur",
     reValidateMode: "onBlur",
   })
+  const passwordValue = form.watch("password")
 
   const onSubmit = async (data: SignupFormData) => {
     try {
@@ -121,6 +129,7 @@ export function UserSignupForm() {
                           disabled={isLoading}
                         />
                       </FormControl>
+                      <PasswordStrength password={passwordValue} />
                       <FormMessage />
                     </FormItem>
                   )}

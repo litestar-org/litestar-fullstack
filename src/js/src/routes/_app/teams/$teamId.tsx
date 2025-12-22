@@ -1,13 +1,14 @@
-// import { useAuthStore } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import type { TeamMember } from "@/lib/generated/api"
-import { addMemberToTeam, getTeam, listTeams, removeMemberFromTeam } from "@/lib/generated/api/sdk.gen"
+import { InviteMemberDialog } from "@/components/teams/invite-member-dialog"
+import { getTeam, removeMemberFromTeam, type TeamMember } from "@/lib/generated/api"
+import { useAuthStore } from "@/lib/auth"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useParams } from "@tanstack/react-router"
+import { useEffect } from "react"
 
 export const Route = createFileRoute("/_app/teams/$teamId")({
   component: TeamDetail,
@@ -15,11 +16,10 @@ export const Route = createFileRoute("/_app/teams/$teamId")({
 
 function TeamDetail() {
   const { teamId } = useParams({ from: "/_app/teams/$teamId" as const })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const { currentTeam } = useAuthStore();
   const queryClient = useQueryClient()
+  const { user, currentTeam, setCurrentTeam } = useAuthStore()
 
-  const { data: team, isLoading: isTeamLoading } = useQuery({
+  const { data: team, isLoading: isTeamLoading, isError: isTeamError } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
       const response = await getTeam({ path: { team_id: teamId } })
@@ -27,41 +27,39 @@ function TeamDetail() {
     },
   })
 
-  const { data: members = [], isLoading: isMembersLoading } = useQuery({
-    queryKey: ["team-members", teamId],
-    queryFn: async () => {
-      const response = await listTeams({ query: { ids: [teamId] } })
-      return response.data?.items?.[0]?.members ?? []
-    },
-  })
-
-  const addMemberMutation = useMutation({
-    mutationFn: (email: string) => addMemberToTeam({ path: { team_id: teamId }, body: { userName: email } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] })
-    },
-  })
+  useEffect(() => {
+    if (team && team.id !== currentTeam?.id) {
+      setCurrentTeam(team)
+    }
+  }, [currentTeam?.id, setCurrentTeam, team])
 
   const removeMemberMutation = useMutation({
-    mutationFn: (memberId: string) =>
+    mutationFn: (memberEmail: string) =>
       removeMemberFromTeam({
         path: { team_id: teamId },
-        body: { userName: memberId },
+        body: { userName: memberEmail },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-members", teamId] })
+      queryClient.invalidateQueries({ queryKey: ["team", teamId] })
     },
   })
 
-  if (isTeamLoading || isMembersLoading) {
+  if (isTeamLoading) {
     return <div className="text-muted-foreground">Loading team…</div>
+  }
+
+  if (isTeamError) {
+    return <div className="text-muted-foreground">We couldn’t load this team yet. Try refreshing.</div>
   }
 
   if (!team) {
     return <div className="text-muted-foreground">Team not found</div>
   }
 
-  const canManageMembers = members.some((member) => member.role === "ADMIN")
+  const members = team.members ?? []
+  const ownerId = members.find((member) => member.isOwner)?.userId
+  const canManageMembers =
+    ownerId === user?.id || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
   const initials = team.name
     .split(" ")
     .map((n) => n[0])
@@ -81,9 +79,7 @@ function TeamDetail() {
           </div>
         </div>
         {canManageMembers && (
-          <Button onClick={() => addMemberMutation.mutate("")} className="w-full md:w-auto">
-            Add member
-          </Button>
+          <InviteMemberDialog teamId={teamId} />
         )}
       </div>
 
@@ -96,7 +92,7 @@ function TeamDetail() {
             {members.map((member: TeamMember) => (
               <div key={member.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-background/60 p-3">
                 <div className="flex flex-col">
-                  <p className="font-medium text-foreground">{member.name}</p>
+                  <p className="font-medium text-foreground">{member.name ?? member.email}</p>
                   <p className="text-muted-foreground text-sm">{member.email}</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -104,7 +100,7 @@ function TeamDetail() {
                     {member.role ?? "MEMBER"}
                   </Badge>
                   {canManageMembers && (
-                    <Button variant="outline" size="sm" onClick={() => removeMemberMutation.mutate(member.id)}>
+                    <Button variant="outline" size="sm" onClick={() => removeMemberMutation.mutate(member.email)}>
                       Remove
                     </Button>
                   )}

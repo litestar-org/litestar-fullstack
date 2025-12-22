@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import secrets
-from datetime import UTC, datetime
-from typing import TYPE_CHECKING
+from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING, cast
 
 from litestar.exceptions import ClientException
 from litestar.plugins.sqlalchemy import repository, service
@@ -52,21 +52,21 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             user_agent=user_agent,
         )
 
-        return await self.repository.add(reset_token)
+        return cast(m.PasswordResetToken, await self.repository.add(reset_token))
 
-    async def validate_reset_token(self, token: str) -> m.PasswordResetToken | None:
+    async def validate_reset_token(self, token: str) -> m.PasswordResetToken:
         """Validate a token without consuming it.
 
         Args:
             token: The reset token string
 
         Returns:
-            The PasswordResetToken instance if valid, None otherwise
+            The PasswordResetToken instance if valid.
 
         Raises:
             ClientException: If token is invalid, expired, or already used
         """
-        reset_token = await self.repository.get_one_or_none(token=token)
+        reset_token = cast(m.PasswordResetToken | None, await self.repository.get_one_or_none(token=token))
 
         if reset_token is None:
             raise ClientException(detail="Invalid reset token", status_code=400)
@@ -92,9 +92,6 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             ClientException: If token is invalid, expired, or already used
         """
         reset_token = await self.validate_reset_token(token)
-
-        if reset_token is None:
-            raise ClientException(detail="Invalid reset token", status_code=400)
 
         # Mark token as used
         reset_token.used_at = datetime.now(UTC)
@@ -137,7 +134,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         await self.repository.delete_many(expired_tokens)
         return len(expired_tokens)
 
-    async def check_rate_limit(self, user_id: UUID, hours: int = 1) -> bool:
+    async def check_rate_limit(self, user_id: UUID, hours: float = 1) -> bool:
         """Check if user has exceeded reset token creation rate limit.
 
         Args:
@@ -147,7 +144,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         Returns:
             True if rate limit exceeded, False otherwise
         """
-        cutoff_time = datetime.now(UTC).replace(hour=datetime.now(UTC).hour - hours)
+        cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
 
         recent_tokens = await self.repository.list(
             m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.created_at >= cutoff_time

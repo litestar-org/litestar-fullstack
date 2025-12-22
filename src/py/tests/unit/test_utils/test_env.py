@@ -88,7 +88,7 @@ def test_get_env(key: str, env_value: str | None, default: Any, expected_value: 
     with patch.dict(os.environ, env_vars, clear=True):
         config_callable = env.get_env(key, default=default, type_hint=type_hint)
         assert callable(config_callable)
-        result = config_callable()  # type: ignore[no-untyped-call]
+        result = config_callable()
         assert result == expected_value
         if expected_value is not None:
             assert type(result) is type(expected_value)
@@ -214,7 +214,7 @@ def test_get_env_dicts(
     with patch.dict(os.environ, env_vars, clear=True):
         config_callable = env.get_env(key, default=default, type_hint=type_hint)
         assert callable(config_callable)
-        result = config_callable()  # type: ignore[no-untyped-call]
+        result = config_callable()
         assert result == expected_value
         assert type(result) is dict or isinstance(result, dict)
         for k, v in expected_value.items():

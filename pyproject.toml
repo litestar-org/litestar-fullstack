@@ -21,10 +21,9 @@ dependencies = [
   "python-dotenv",
   "pwdlib[argon2]",
   "litestar-saq",
-  "litestar-vite>=0.15.0a5",
+  "litestar-vite>=0.15.0b4",
   "litestar-granian[uvloop]",
   "httpx-oauth",
-  "sniffio",
   "aiosmtplib>=3.0.0",
   "pyotp>=2.9.0",
   "qrcode[pil]>=7.4.0",
@@ -316,7 +315,7 @@ strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog,selectin,selectinload"
-skip = 'uv.lock, package-lock.json'
+skip = 'uv.lock, package-lock.json, src/js/bun.lock'
 
 [tool.mypy]
 disallow_any_generics = false
@@ -376,7 +375,7 @@ pythonVersion = "3.11"
 reportMissingTypeStubs = false
 reportPrivateImportUsage = false
 reportUnknownMemberType = false
-reportUnnecessaryTypeIgnoreComments = true
+reportUnnecessaryTypeIgnoreComment = true
 reportUnusedFunction = false
 strict = ["src/py/app/**/*"]
 venv = ".venv"

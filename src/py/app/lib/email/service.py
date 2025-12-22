@@ -64,6 +64,11 @@ class EmailService:
         """Get base URL from settings."""
         return self._settings.app.URL
 
+    def _resolve_user_details(self, user: UserProtocol) -> tuple[str, str]:
+        """Normalize user details for templating and delivery."""
+        user_name = user.name or "there"
+        return user.email, user_name
+
     async def send_email(
         self,
         to_email: str | list[str],
@@ -128,14 +133,15 @@ class EmailService:
             True if email was sent successfully.
         """
         verification_url = f"{self.base_url}/verify-email?token={verification_token.token}"
+        user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_verification_html(
-            user_name=user.name or "there",
+            user_name=user_name,
             verification_url=verification_url,
         )
 
         return await self.send_email(
-            to_email=user.email,
+            to_email=user_email,
             subject=f"Verify your email address for {self.app_name}",
             html_content=html_content,
         )
@@ -150,14 +156,15 @@ class EmailService:
             True if email was sent successfully.
         """
         login_url = f"{self.base_url}/login"
+        user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_welcome_html(
-            user_name=user.name or "there",
+            user_name=user_name,
             login_url=login_url,
         )
 
         return await self.send_email(
-            to_email=user.email,
+            to_email=user_email,
             subject=f"Welcome to {self.app_name}!",
             html_content=html_content,
         )
@@ -181,16 +188,17 @@ class EmailService:
             True if email was sent successfully.
         """
         reset_url = f"{self.base_url}/reset-password?token={reset_token.token}"
+        user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_password_reset_html(
-            user_name=user.name or "there",
+            user_name=user_name,
             reset_url=reset_url,
             expires_in_minutes=expires_in_minutes,
             ip_address=ip_address,
         )
 
         return await self.send_email(
-            to_email=user.email,
+            to_email=user_email,
             subject=f"Reset your password for {self.app_name}",
             html_content=html_content,
         )
@@ -205,14 +213,15 @@ class EmailService:
             True if email was sent successfully.
         """
         login_url = f"{self.base_url}/login"
+        user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_password_reset_confirmation_html(
-            user_name=user.name or "there",
+            user_name=user_name,
             login_url=login_url,
         )
 
         return await self.send_email(
-            to_email=user.email,
+            to_email=user_email,
             subject=f"Your password has been reset for {self.app_name}",
             html_content=html_content,
         )

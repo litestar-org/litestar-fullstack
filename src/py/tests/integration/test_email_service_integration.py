@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, patch
 
-from litestar.testing import AsyncTestClient
+if TYPE_CHECKING:
+    from litestar.testing import AsyncTestClient
 
 
 class TestEmailServiceIntegration:
@@ -93,7 +95,7 @@ class TestEmailServiceIntegration:
             if response.status_code == 400:
                 # This might be due to validation, let's check the error
                 error_data = response.json()
-                print(f"Password reset failed with: {error_data}")
+                assert "detail" in error_data or "message" in error_data
             else:
                 assert response.status_code == 200
                 data = response.json()
