@@ -1,5 +1,5 @@
-import { CreateTeamForm } from "@/components/teams/create-team-form"
 import { createFileRoute } from "@tanstack/react-router"
+import { CreateTeamForm } from "@/components/teams/create-team-form"
 
 export const Route = createFileRoute("/_app/teams/new")({
   component: NewTeamPage,

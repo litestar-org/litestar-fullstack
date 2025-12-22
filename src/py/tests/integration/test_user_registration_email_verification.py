@@ -1,5 +1,7 @@
 """Integration tests for user registration with email verification."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import msgspec

@@ -1,12 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { createTeam } from "@/lib/generated/api"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 const createTeamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
@@ -32,7 +32,7 @@ export function CreateTeamForm() {
       })
       router.invalidate()
       router.navigate({ to: "/" })
-    } catch (error) {
+    } catch (_error) {
       form.setError("root", {
         message: "Failed to create team",
       })

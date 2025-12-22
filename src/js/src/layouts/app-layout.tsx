@@ -1,11 +1,11 @@
+import { Outlet, useRouterState } from "@tanstack/react-router"
+import { useEffect, useMemo } from "react"
+import { Toaster } from "sonner"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/auth"
 import { useTheme } from "@/lib/theme-context"
-import { Outlet, useRouterState } from "@tanstack/react-router"
-import { useEffect, useMemo } from "react"
-import { Toaster } from "sonner"
 
 export function AppLayout() {
   const checkAuth = useAuthStore((state) => state.checkAuth)

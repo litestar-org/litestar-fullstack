@@ -1,5 +1,5 @@
-import { oAuthConfig, type OAuthConfig } from "@/lib/generated/api"
 import { useQuery } from "@tanstack/react-query"
+import { type OAuthConfig, oAuthConfig } from "@/lib/generated/api"
 
 const defaultConfig: OAuthConfig = {
   googleEnabled: false,

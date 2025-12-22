@@ -11,12 +11,12 @@ from litestar.status_codes import HTTP_200_OK, HTTP_201_CREATED
 from app.domain.accounts.dependencies import provide_email_verification_service, provide_users_service
 from app.domain.accounts.schemas import EmailVerificationConfirm, EmailVerificationRequest, User
 from app.lib.email import email_service
-from app.lib.email.service import UserProtocol
 
 if TYPE_CHECKING:
     from uuid import UUID
 
     from app.domain.accounts.services import EmailVerificationTokenService, UserService
+    from app.lib.email.service import UserProtocol
 
 
 class EmailVerificationController(Controller):
@@ -50,7 +50,7 @@ class EmailVerificationController(Controller):
         token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
 
         # Send verification email
-        await email_service.send_verification_email(cast(UserProtocol, user), token)
+        await email_service.send_verification_email(cast("UserProtocol", user), token)
 
         return {
             "message": "Verification email sent",

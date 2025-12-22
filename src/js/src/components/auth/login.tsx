@@ -1,13 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useAuthStore } from "@/lib/auth"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "@tanstack/react-router"
-import { Link } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -34,7 +33,7 @@ export function UserLoginForm() {
     try {
       await login(data.email, data.password)
       navigate({ to: "/home" })
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by useAuthStore
     }
   }
@@ -56,14 +55,7 @@ export function UserLoginForm() {
                     <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium text-foreground">Email</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your email"
-                          autoCapitalize="none"
-                          autoComplete="email"
-                          autoCorrect="off"
-                          {...field}
-                          disabled={isLoading}
-                        />
+                        <Input placeholder="Enter your email" autoCapitalize="none" autoComplete="email" autoCorrect="off" {...field} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -113,9 +105,7 @@ export function UserLoginForm() {
               <span className="w-full border-t border-border/40" />
             </div>
             <div className="relative flex justify-center text-[11px] uppercase tracking-[0.16em]">
-              <span className="relative z-10 rounded-full bg-card px-4 py-1 text-muted-foreground shadow-sm shadow-black/10">
-                Or continue with
-              </span>
+              <span className="relative z-10 rounded-full bg-card px-4 py-1 text-muted-foreground shadow-sm shadow-black/10">Or continue with</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">

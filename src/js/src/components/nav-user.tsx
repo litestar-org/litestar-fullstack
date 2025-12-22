@@ -1,19 +1,11 @@
 "use client"
 
+import { useNavigate } from "@tanstack/react-router"
 import { ChevronsUpDown, LogOut } from "lucide-react"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/auth"
-import { useNavigate } from "@tanstack/react-router"
 
 export function NavUser() {
   const navigate = useNavigate()

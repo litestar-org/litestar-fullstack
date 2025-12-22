@@ -15,9 +15,10 @@ from app.lib.validation import PasswordValidationError
 from tests.factories import RoleFactory, UserFactory, UserRoleFactory
 
 if TYPE_CHECKING:
-    from app.domain.accounts.services import UserService
     from httpx_oauth.oauth2 import OAuth2Token
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.domain.accounts.services import UserService
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.services]

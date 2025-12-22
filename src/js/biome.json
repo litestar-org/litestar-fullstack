@@ -1,23 +1,10 @@
 {
-  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "vcs": {
-    "enabled": false,
+    "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": false,
+    "useIgnoreFile": true,
     "defaultBranch": "main"
-  },
-  "files": {
-    "ignoreUnknown": true,
-    "includes": ["src/**/*", "index.html", "*.ts", "*.js"],
-    "experimentalScannerIgnores": [
-      "node_modules/**/*",
-      "dist/**/*",
-      ".venv/**/*",
-      "public/**/*",
-      "src/py/**/*",
-      "src/routeTree.gen.ts",
-      "src/lib/generated/**"
-    ]
   },
   "formatter": {
     "enabled": true,
@@ -40,8 +27,15 @@
       "a11y": {
         "noSvgWithoutTitle": "off"
       },
-      "nursery": {
-        "useSortedClasses": "warn"
+      "nursery": {}
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on"
+        }
       }
     }
   },
@@ -51,5 +45,19 @@
       "jsxQuoteStyle": "double",
       "semicolons": "asNeeded"
     }
+  },
+  "files": {
+    "includes": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "index.html",
+      "*.ts",
+      "*.js",
+      "*.json",
+      "!src/lib/generated",
+      "!src/routeTree.gen.ts"
+    ]
   }
 }

@@ -1,13 +1,12 @@
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+import { z } from "zod"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
-import { useNavigate, useSearch } from "@tanstack/react-router"
-import { createFileRoute } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { z } from "zod"
 
 export const Route = createFileRoute("/_public/auth/google/callback")({
   validateSearch: (search) =>

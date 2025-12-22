@@ -37,7 +37,7 @@ const PASSWORD_MAX_LENGTH = 128
 const PASSWORD_UPPERCASE_REGEX = /[A-Z]/
 const PASSWORD_LOWERCASE_REGEX = /[a-z]/
 const PASSWORD_DIGIT_REGEX = /\d/
-const PASSWORD_SPECIAL_REGEX = /[!@#$%^&*(),.?":{}|<>_+=\-\[\]\\\/~`]/
+const PASSWORD_SPECIAL_REGEX = /[!@#$%^&*(),.?":{}|<>_+=\-[\]\\/~`]/
 const PASSWORD_COMMON_PATTERNS = [/password/i, /123456/, /qwerty/i, /admin/i]
 const PASSWORD_REPEATED_REGEX = /(.)\1{4,}/
 const PASSWORD_SEQUENTIAL_REGEX = /^(012|123|234|345|456|567|678|789|890|abc|bcd|cde)/i
@@ -78,7 +78,7 @@ const RESERVED_USERNAMES = [
 ]
 
 // Phone validation constants (matching backend)
-const PHONE_BASIC_REGEX = /^[\+]?[0-9\s\-\(\)\.]+$/
+const PHONE_BASIC_REGEX = /^[+]?[0-9\s\-().]+$/
 const PHONE_MIN_DIGITS = 7
 const PHONE_MAX_DIGITS = 15
 
@@ -323,7 +323,7 @@ export const validateName = (name: string): string | null => {
   if (cleanName.length > 100) return "Name must not exceed 100 characters"
 
   // Character validation - allow letters, spaces, hyphens, apostrophes, periods
-  const nameRegex = /^[a-zA-ZÀ-ÿĀ-žА-я\u4e00-\u9fff\u0600-\u06ff\u3040-\u309f\u30a0-\u30ff\s'\-\.]+$/
+  const nameRegex = /^[a-zA-ZÀ-ÿĀ-žА-я\u4e00-\u9fff\u0600-\u06ff\u3040-\u309f\u30a0-\u30ff\s'\-.]+$/
   if (!nameRegex.test(cleanName)) {
     return "Name contains invalid characters"
   }

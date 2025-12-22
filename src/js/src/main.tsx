@@ -1,10 +1,10 @@
-import { ThemeProvider } from "@/lib/theme-context"
-import { client } from "@/lib/generated/api/client.gen"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
+import { createRouter, RouterProvider } from "@tanstack/react-router"
 import React from "react"
 import ReactDOM from "react-dom/client"
+import { client } from "@/lib/generated/api/client.gen"
+import { ThemeProvider } from "@/lib/theme-context"
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen"

@@ -1,11 +1,11 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { apiEmailVerificationRequestRequestVerification } from "@/lib/generated/api"
 import { useMutation } from "@tanstack/react-query"
 import { AlertCircle, CheckCircle2, X } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/use-auth"
+import { apiEmailVerificationRequestRequestVerification } from "@/lib/generated/api"
 
 interface EmailVerificationBannerProps {
   dismissible?: boolean
@@ -16,11 +16,6 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
   const { user } = useAuth()
   const [isDismissed, setIsDismissed] = useState(false)
   const [lastSentAt, setLastSentAt] = useState<Date | null>(null)
-
-  // Don't show if user is verified or banner is dismissed
-  if (!user || user.is_verified || isDismissed) {
-    return null
-  }
 
   const { mutate: resendVerification, isPending } = useMutation({
     mutationFn: async () => {
@@ -42,7 +37,12 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
     },
   })
 
-  const canResend = !lastSentAt || new Date().getTime() - lastSentAt.getTime() > 60000 // 1 minute cooldown
+  const shouldHide = !user || user.is_verified || isDismissed
+  if (shouldHide) {
+    return null
+  }
+
+  const canResend = !lastSentAt || Date.now() - lastSentAt.getTime() > 60000 // 1 minute cooldown
 
   return (
     <Alert className={className} variant="warning">

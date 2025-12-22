@@ -1,6 +1,6 @@
+import { Link, useRouter } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/lib/theme-context"
-import { Link, useRouter } from "@tanstack/react-router"
 
 import { UserLoginForm } from "./login"
 import { UserSignupForm } from "./signup"
@@ -24,9 +24,7 @@ export function AuthForm() {
           <span>Litestar fullstack</span>
         </div>
         <div className="relative z-10 space-y-6 text-foreground">
-          <h2 className="font-['Space_Grotesk'] text-3xl font-semibold leading-tight">
-            Typed APIs. Modern SPA. Ready-to-run jobs.
-          </h2>
+          <h2 className="font-['Space_Grotesk'] text-3xl font-semibold leading-tight">Typed APIs. Modern SPA. Ready-to-run jobs.</h2>
           <p className="text-muted-foreground">
             This reference app shows how Litestar, SAQ, and Vite fit together—JWT auth, OAuth, background workers, and a polished UI you can lift straight into production.
           </p>
@@ -57,11 +55,7 @@ export function AuthForm() {
               <h1 className="font-['Space_Grotesk'] text-2xl font-semibold text-foreground">{isLogin ? "Sign in to continue" : "Join the Litestar workspace"}</h1>
             </div>
             <Link to="/">
-              <img
-                src={theme === "dark" ? "/images/logo-light.svg" : "/images/logo-dark.svg"}
-                alt="Litestar Logo"
-                className="h-10 drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
-              />
+              <img src={theme === "dark" ? "/images/logo-light.svg" : "/images/logo-dark.svg"} alt="Litestar Logo" className="h-10 drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]" />
             </Link>
           </div>
 

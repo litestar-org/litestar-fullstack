@@ -9,7 +9,6 @@ import pytest
 from advanced_alchemy.exceptions import RepositoryError
 from sqlalchemy.exc import IntegrityError
 
-from app.db import models as m
 from app.db.models.team_roles import TeamRoles
 from app.domain.teams.services import TeamService
 from app.lib import constants
@@ -17,6 +16,8 @@ from tests.factories import RoleFactory, TagFactory, TeamFactory, TeamMemberFact
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.db import models as m
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.services]
@@ -329,7 +330,7 @@ class TestTeamServiceTagManagement:
 
         # Convert to model to test tag population
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
-        team_obj = cast(m.Team, result)
+        team_obj = cast("m.Team", result)
 
         assert hasattr(team_obj, "tags")
         assert len(team_obj.tags) == 2
@@ -345,7 +346,7 @@ class TestTeamServiceTagManagement:
         team_data = {"id": uuid4(), "name": "Existing Tag Team", "tags": ["existing-tag", "new-tag"]}
 
         result = await team_service._populate_with_owner_and_tags(team_data, "create")
-        team_obj = cast(m.Team, result)
+        team_obj = cast("m.Team", result)
 
         assert hasattr(team_obj, "tags")
         tag_names = [tag.name for tag in team_obj.tags]

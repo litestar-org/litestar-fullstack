@@ -30,13 +30,13 @@ logger = structlog.get_logger()
 
 async def on_shutdown(ctx: Context) -> None:
     """Shutdown events for each worker.."""
-    worker = cast(Any, ctx["worker"])
+    worker = cast("Any", ctx["worker"])
     await logger.ainfo("Stopping background workers for queue", queue=worker.queue.name)
 
 
 async def on_startup(ctx: Context) -> None:
     """Startup events for each worker."""
-    worker = cast(Any, ctx["worker"])
+    worker = cast("Any", ctx["worker"])
     await logger.ainfo("🚀 Launching background workers for queue", queue=worker.queue.name)
 
 

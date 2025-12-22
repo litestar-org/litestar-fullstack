@@ -2,11 +2,11 @@
  * Validated form component with real-time validation
  */
 
+import React, { useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import ValidatedInput from "@/components/ui/validated-input"
-import useValidation, { type ValidationRule, type ValidationRules, validateEmail, validatePassword, validateUsername, validatePhone, validateName } from "@/hooks/use-validation"
+import useValidation, { type ValidationRule, type ValidationRules, validateEmail, validateName, validatePassword, validatePhone, validateUsername } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
-import React, { useCallback, useEffect } from "react"
 
 export interface FormField {
   name: string

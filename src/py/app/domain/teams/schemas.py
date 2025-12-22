@@ -1,17 +1,12 @@
 """Teams domain schemas."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from datetime import datetime
+from uuid import UUID
 
 import msgspec
 
 from app.db.models.team_roles import TeamRoles
 from app.schemas.base import CamelizedBaseStruct, Message
-
-if TYPE_CHECKING:
-    from datetime import datetime
-    from uuid import UUID
 
 __all__ = (
     "Message",

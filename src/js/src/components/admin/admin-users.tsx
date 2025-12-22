@@ -1,8 +1,8 @@
+import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { assignUserRole, listUsers, revokeUserRole, type User } from "@/lib/generated/api"
-import { useQuery } from "@tanstack/react-query"
 
 export function AdminUsers() {
   const {
@@ -61,27 +61,27 @@ export function AdminUsers() {
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
-        <TableBody>
-          {users.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground">
-                No users available yet.
-              </TableCell>
-            </TableRow>
-          )}
-          {users.map((user: User) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.name ?? user.email}</TableCell>
-              <TableCell className="text-muted-foreground">{user.email}</TableCell>
-              <TableCell>{user.roles?.map((role) => role.roleName).join(", ") || "Member"}</TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm" onClick={() => handleToggleSuperuser(user)}>
-                  Toggle Superuser
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+          <TableBody>
+            {users.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                  No users available yet.
+                </TableCell>
+              </TableRow>
+            )}
+            {users.map((user: User) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.name ?? user.email}</TableCell>
+                <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                <TableCell>{user.roles?.map((role) => role.roleName).join(", ") || "Member"}</TableCell>
+                <TableCell>
+                  <Button variant="outline" size="sm" onClick={() => handleToggleSuperuser(user)}>
+                    Toggle Superuser
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>

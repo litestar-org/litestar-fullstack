@@ -2,9 +2,9 @@
  * Password strength indicator component with visual feedback
  */
 
-import { type PasswordStrength, getPasswordStrength } from "@/hooks/use-validation"
-import { cn } from "@/lib/utils"
 import { Check, X } from "lucide-react"
+import { getPasswordStrength } from "@/hooks/use-validation"
+import { cn } from "@/lib/utils"
 
 export interface PasswordStrengthProps {
   password: string
@@ -65,8 +65,8 @@ export function PasswordStrength({ password, showRequirements = true, className 
       {/* Feedback messages */}
       {strength.feedback.length > 0 && (
         <div className="space-y-1">
-          {strength.feedback.map((message, index) => (
-            <div key={index} className="flex items-center space-x-2 text-muted-foreground text-sm">
+          {strength.feedback.map((message) => (
+            <div key={message} className="flex items-center space-x-2 text-muted-foreground text-sm">
               <X className="h-4 w-4 flex-shrink-0 text-red-400" />
               <span>{message}</span>
             </div>

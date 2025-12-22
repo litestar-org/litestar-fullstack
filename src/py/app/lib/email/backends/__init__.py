@@ -117,6 +117,7 @@ def _register_builtins() -> None:
     This is called lazily to avoid import cycles.
     """
     from app.lib.email.backends import console, locmem, smtp
+
     _ = (console, locmem, smtp)
 
 

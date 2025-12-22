@@ -2,14 +2,14 @@
  * Validated input component with real-time validation feedback
  */
 
+import { Eye, EyeOff } from "lucide-react"
+import type React from "react"
+import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import type { ValidationRule } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
-import { Eye, EyeOff } from "lucide-react"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
 
 export interface ValidatedInputProps extends Omit<React.ComponentProps<"input">, "onChange"> {
   label: string

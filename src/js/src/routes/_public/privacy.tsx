@@ -9,10 +9,7 @@ function PrivacyPage() {
         <p className="text-muted-foreground">How we collect, store, and use data inside the Litestar reference app.</p>
       </div>
       <div className="space-y-6 text-muted-foreground">
-        <p>
-          We collect only the information required to operate this reference application, including account details and security events needed to
-          keep the platform reliable.
-        </p>
+        <p>We collect only the information required to operate this reference application, including account details and security events needed to keep the platform reliable.</p>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Data collected</h3>
           <p>Account profile data, authentication events, team membership metadata, and operational diagnostics for queues and background jobs.</p>

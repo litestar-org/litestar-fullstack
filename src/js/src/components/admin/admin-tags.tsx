@@ -1,10 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { createTag, deleteTag, listTags, updateTag, type Tag } from "@/lib/generated/api"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
+import { createTag, deleteTag, listTags, type Tag, updateTag } from "@/lib/generated/api"
 
 export function AdminTags() {
   const queryClient = useQueryClient()
@@ -12,7 +12,11 @@ export function AdminTags() {
   const [editingTag, setEditingTag] = useState<Tag | null>(null)
   const [editTagName, setEditTagName] = useState("")
 
-  const { data: tags = [], isLoading, isError } = useQuery({
+  const {
+    data: tags = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["admin-tags"],
     queryFn: async () => {
       const response = await listTags()

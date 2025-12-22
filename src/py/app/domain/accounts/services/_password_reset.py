@@ -52,7 +52,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             user_agent=user_agent,
         )
 
-        return cast(m.PasswordResetToken, await self.repository.add(reset_token))
+        return cast("m.PasswordResetToken", await self.repository.add(reset_token))
 
     async def validate_reset_token(self, token: str) -> m.PasswordResetToken:
         """Validate a token without consuming it.
@@ -66,7 +66,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         Raises:
             ClientException: If token is invalid, expired, or already used
         """
-        reset_token = cast(m.PasswordResetToken | None, await self.repository.get_one_or_none(token=token))
+        reset_token = cast("m.PasswordResetToken | None", await self.repository.get_one_or_none(token=token))
 
         if reset_token is None:
             raise ClientException(detail="Invalid reset token", status_code=400)

@@ -8,7 +8,11 @@ from litestar import Controller, delete, get, post
 from litestar.di import Provide
 from litestar.exceptions import HTTPException
 
-from app.domain.teams.dependencies import provide_team_invitations_service, provide_team_members_service, provide_teams_service
+from app.domain.teams.dependencies import (
+    provide_team_invitations_service,
+    provide_team_members_service,
+    provide_teams_service,
+)
 from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
 from app.lib.email import email_service
 from app.lib.settings import get_settings
@@ -46,6 +50,7 @@ class TeamInvitationController(Controller):
         """Create a team invitation.
 
         Args:
+            current_user: The current user sending the invitation.
             data: The data to create the team invitation with.
             team_invitations_service: The team invitation service.
             teams_service: The teams service.
@@ -122,6 +127,7 @@ class TeamInvitationController(Controller):
             team_id: The ID of the team to accept the invitation for.
             invitation_id: The ID of the invitation to accept.
             team_invitations_service: The team invitation service.
+            team_members_service: The team member service.
             current_user: The current user.
 
         Raises:

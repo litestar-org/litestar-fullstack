@@ -23,8 +23,8 @@ async def load_database_fixtures() -> None:
 
     from app.config import alchemy
     from app.db.models import Role
-    from app.lib.settings import get_settings
     from app.domain.accounts.services import RoleService
+    from app.lib.settings import get_settings
 
     settings = get_settings()
     logger = get_logger()
@@ -172,9 +172,9 @@ def create_default_roles() -> None:
 
     from app.config import alchemy
     from app.db.models import UserRole
-    from app.lib.deps import create_service_provider
     from app.domain.accounts.dependencies import provide_users_service
     from app.domain.accounts.services import RoleService
+    from app.lib.deps import create_service_provider
 
     provide_roles_service = create_service_provider(RoleService)
     console = get_console()

@@ -1,20 +1,23 @@
+import { useQuery } from "@tanstack/react-query"
 import { Home, ShieldCheck, Users } from "lucide-react"
 import type * as React from "react"
 import { useEffect, useMemo } from "react"
-
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
-import { listTeams, type Team } from "@/lib/generated/api"
 import { useAuthStore } from "@/lib/auth"
-import { useQuery } from "@tanstack/react-query"
+import { listTeams, type Team } from "@/lib/generated/api"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { teams, currentTeam, setTeams, setCurrentTeam, user, isAuthenticated } = useAuthStore()
 
-  const { data: teamsData = [], isLoading, isError } = useQuery({
+  const {
+    data: teamsData = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       const response = await listTeams()

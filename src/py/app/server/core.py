@@ -45,6 +45,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             The configured app config.
         """
 
+        from datetime import datetime
         from uuid import UUID
 
         from advanced_alchemy.exceptions import RepositoryError
@@ -151,6 +152,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "Body": Body,
                 "m": m,
                 "UUID": UUID,
+                "datetime": datetime,
                 "OAuth2Token": OAuth2Token,
                 # Services
                 "UserService": UserService,

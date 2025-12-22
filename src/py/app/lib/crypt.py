@@ -8,9 +8,10 @@ from io import BytesIO
 from typing import TYPE_CHECKING, Any, cast
 
 import pyotp
-qrcode: Any = importlib.import_module("qrcode")
 from pwdlib import PasswordHash
 from pwdlib.hashers.argon2 import Argon2Hasher
+
+qrcode: Any = importlib.import_module("qrcode")
 
 if TYPE_CHECKING:
     from PIL.Image import Image

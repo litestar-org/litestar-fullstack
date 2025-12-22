@@ -14,8 +14,8 @@ function TermsPage() {
       </div>
       <div className="space-y-6 text-muted-foreground">
         <p>
-          By accessing the Litestar reference application you agree to use the service responsibly, follow applicable laws, and avoid any
-          activity that could disrupt platform reliability or security.
+          By accessing the Litestar reference application you agree to use the service responsibly, follow applicable laws, and avoid any activity that could disrupt platform
+          reliability or security.
         </p>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Usage</h3>

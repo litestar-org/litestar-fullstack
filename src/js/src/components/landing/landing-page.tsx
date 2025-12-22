@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Link } from "@tanstack/react-router"
 import { motion } from "framer-motion"
 import { ArrowRight, Clock, Code2, Lock, Rocket, Sparkles, Workflow } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 const featureCards = [
   {
@@ -46,9 +46,7 @@ export function LandingPage() {
           {/* Hero */}
           <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_0.9fr] xl:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-8 max-w-3xl">
-              <Badge className="bg-secondary text-secondary-foreground shadow-md shadow-secondary/30">
-                Litestar Fullstack Reference
-              </Badge>
+              <Badge className="bg-secondary text-secondary-foreground shadow-md shadow-secondary/30">Litestar Fullstack Reference</Badge>
               <div className="space-y-4">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
@@ -103,7 +101,7 @@ export function LandingPage() {
                     <Sparkles className="h-4 w-4 text-secondary" /> Live preview
                   </div>
                   <pre className="rounded-2xl bg-gradient-to-br from-[#0f152a] via-[#0d1324] to-[#0b101f] p-4 md:p-5 text-xs sm:text-sm text-foreground overflow-x-auto">
-{`from litestar import Litestar, get
+                    {`from litestar import Litestar, get
 from litestar.middleware.session import SessionMiddlewareConfig
 from litestar_vite import VitePlugin, ViteConfig, PathConfig
 

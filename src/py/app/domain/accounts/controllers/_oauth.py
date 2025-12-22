@@ -144,7 +144,7 @@ class OAuthController(Controller):
         # Exchange code for token
         callback_url = str(request.url_for("oauth:google:callback"))
         oauth2_callback = OAuth2AuthorizeCallback(
-            cast(BaseOAuth2[OAuth2Token], client),
+            cast("BaseOAuth2[OAuth2Token]", client),
             redirect_url=callback_url,
         )
 

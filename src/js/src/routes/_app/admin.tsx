@@ -1,7 +1,6 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { AdminDashboard } from "@/components/admin/admin-dashboard"
 import { useAuthStore } from "@/lib/auth"
-import { createFileRoute } from "@tanstack/react-router"
-import { useNavigate } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/admin")({
   component: Admin,

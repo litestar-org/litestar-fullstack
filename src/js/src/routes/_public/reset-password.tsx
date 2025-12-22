@@ -1,3 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
+import { AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,15 +14,6 @@ import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { validatePassword } from "@/hooks/use-validation"
 import { resetPassword } from "@/lib/generated/api"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import { useNavigate, useSearch } from "@tanstack/react-router"
-import { createFileRoute } from "@tanstack/react-router"
-import { AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
 
 export const Route = createFileRoute("/_public/reset-password")({
   validateSearch: (search) =>
@@ -28,12 +27,15 @@ export const Route = createFileRoute("/_public/reset-password")({
 
 const resetPasswordSchema = z
   .object({
-    password: z.string().min(1, "Password is required").superRefine((value, ctx) => {
-      const error = validatePassword(value)
-      if (error) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
-      }
-    }),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .superRefine((value, ctx) => {
+        const error = validatePassword(value)
+        if (error) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
+        }
+      }),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {

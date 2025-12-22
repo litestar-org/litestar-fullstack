@@ -1,26 +1,29 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { validatePassword } from "@/hooks/use-validation"
-import { accountRegister } from "@/lib/generated/api"
 import { useAuthStore } from "@/lib/auth"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
+import { accountRegister } from "@/lib/generated/api"
 
 const signupSchema = z
   .object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(1, "Password is required").superRefine((value, ctx) => {
-      const error = validatePassword(value)
-      if (error) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
-      }
-    }),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .superRefine((value, ctx) => {
+        const error = validatePassword(value)
+        if (error) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
+        }
+      }),
     name: z.string().min(1, "Name is required"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
@@ -61,7 +64,7 @@ export function UserSignupForm() {
       }
 
       toast.error(response.error?.detail || "Signup failed")
-    } catch (error) {
+    } catch (_error) {
       toast.error("An error occurred during signup")
     }
   }
@@ -97,15 +100,7 @@ export function UserSignupForm() {
                     <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium text-foreground">Email</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your email address"
-                          autoCapitalize="none"
-                          autoComplete="email"
-                          autoCorrect="off"
-                          {...field}
-                          type="email"
-                          disabled={isLoading}
-                        />
+                        <Input placeholder="Enter your email address" autoCapitalize="none" autoComplete="email" autoCorrect="off" {...field} type="email" disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -172,9 +167,7 @@ export function UserSignupForm() {
               <span className="w-full border-t border-border/40" />
             </div>
             <div className="relative flex justify-center text-[11px] uppercase tracking-[0.16em]">
-              <span className="relative z-10 rounded-full bg-card px-4 py-1 text-muted-foreground shadow-sm shadow-black/10">
-                Or continue with
-              </span>
+              <span className="relative z-10 rounded-full bg-card px-4 py-1 text-muted-foreground shadow-sm shadow-black/10">Or continue with</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">

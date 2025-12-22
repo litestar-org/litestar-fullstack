@@ -1,8 +1,8 @@
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { apiAuthOauthGoogleGoogleAuthorize } from "@/lib/generated/api"
-import { useMutation } from "@tanstack/react-query"
-import { toast } from "sonner"
 
 interface GoogleSignInButtonProps {
   variant?: "signin" | "signup" | "link"

@@ -1,13 +1,12 @@
-from collections.abc import AsyncGenerator, AsyncIterator
+from __future__ import annotations
+
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
 from advanced_alchemy.base import UUIDAuditBase
 from advanced_alchemy.utils.fixtures import open_fixture_async
-from httpx import AsyncClient
 from litestar.testing import AsyncTestClient
-from pytest_databases.docker.postgres import PostgresService
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
@@ -20,7 +19,11 @@ from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
 
 if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, AsyncIterator
+
+    from httpx import AsyncClient
     from litestar import Litestar
+    from pytest_databases.docker.postgres import PostgresService
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
@@ -99,7 +102,7 @@ async def _seed_db(
 
 @pytest.fixture(autouse=True)
 def _patch_db(
-    app: "Litestar",
+    app: Litestar,
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,

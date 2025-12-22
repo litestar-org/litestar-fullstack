@@ -10,8 +10,9 @@ from sqlalchemy import select
 from app.db import models as m
 
 if TYPE_CHECKING:
-    from httpx_oauth.oauth2 import OAuth2Token
     from uuid import UUID
+
+    from httpx_oauth.oauth2 import OAuth2Token
 
 
 class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccount]):
@@ -76,7 +77,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
             )
         )
         result = await self.repository.session.execute(statement)
-        return cast(m.User | None, result.scalar_one_or_none())
+        return cast("m.User | None", result.scalar_one_or_none())
 
     async def link_oauth_account(
         self,

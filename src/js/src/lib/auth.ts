@@ -1,8 +1,8 @@
-import { accountLogin, accountLogout, accountProfile } from "@/lib/generated/api"
-import type { Team, User } from "@/lib/generated/api"
 import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import type { Team, User } from "@/lib/generated/api"
+import { accountLogin, accountLogout, accountProfile } from "@/lib/generated/api"
 
 const ACCESS_TOKEN_KEY = "access_token"
 
@@ -94,7 +94,7 @@ export const useAuthStore = create<AuthState>()(
       setCurrentTeam: (team: Team) => set({ currentTeam: team }),
       setTeams: (teams: Team[]) =>
         set((state) => {
-          const nextCurrent = state.currentTeam && teams.some((team) => team.id === state.currentTeam?.id) ? state.currentTeam : teams[0] ?? null
+          const nextCurrent = state.currentTeam && teams.some((team) => team.id === state.currentTeam?.id) ? state.currentTeam : (teams[0] ?? null)
           return { teams, currentTeam: nextCurrent }
         }),
     }),

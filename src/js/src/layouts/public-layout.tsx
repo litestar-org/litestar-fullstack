@@ -1,6 +1,6 @@
-import { useTheme } from "@/lib/theme-context"
 import { Outlet } from "@tanstack/react-router"
 import { Toaster } from "sonner"
+import { useTheme } from "@/lib/theme-context"
 
 export function PublicLayout() {
   const { theme } = useTheme()

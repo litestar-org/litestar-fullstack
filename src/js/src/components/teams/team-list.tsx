@@ -1,16 +1,20 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { listTeams, type Team } from "@/lib/generated/api"
-import { useAuthStore } from "@/lib/auth"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { useEffect } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuthStore } from "@/lib/auth"
+import { listTeams, type Team } from "@/lib/generated/api"
 
 export function TeamList() {
   const { currentTeam, setCurrentTeam, setTeams } = useAuthStore()
 
-  const { data: teamsData = [], isLoading, isError } = useQuery({
+  const {
+    data: teamsData = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       const response = await listTeams()
@@ -39,9 +43,7 @@ export function TeamList() {
           <CardTitle className="text-2xl">Create your first team</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-muted-foreground">
-            Organize members, roles, and invitations in one place. Teams drive access control across the app.
-          </p>
+          <p className="text-muted-foreground">Organize members, roles, and invitations in one place. Teams drive access control across the app.</p>
           <Button asChild>
             <Link to="/teams/new">Create team</Link>
           </Button>

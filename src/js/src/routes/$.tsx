@@ -1,5 +1,5 @@
-import { useAuthStore } from "@/lib/auth"
 import { createFileRoute, redirect } from "@tanstack/react-router"
+import { useAuthStore } from "@/lib/auth"
 
 export const Route = createFileRoute("/$")({
   component: NotFoundPage,

@@ -1,5 +1,7 @@
 """Integration tests for email verification API endpoints."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 from uuid import uuid4
 

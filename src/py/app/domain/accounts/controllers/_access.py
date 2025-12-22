@@ -29,7 +29,6 @@ from app.domain.accounts.schemas import (
     ValidateResetTokenResponse,
 )
 from app.lib.email import email_service
-from app.lib.email.service import UserProtocol
 from app.lib.validation import PasswordValidationError, validate_password_strength
 from app.schemas.base import Message
 
@@ -43,6 +42,7 @@ if TYPE_CHECKING:
         RoleService,
         UserService,
     )
+    from app.lib.email.service import UserProtocol
 
 
 logger = logging.getLogger(__name__)
@@ -131,7 +131,7 @@ class AccessController(Controller):
 
         # Send verification email
         verification_token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
-        await email_service.send_verification_email(cast(UserProtocol, user), verification_token)
+        await email_service.send_verification_email(cast("UserProtocol", user), verification_token)
 
         return users_service.to_schema(user, schema_type=User)
 
@@ -180,7 +180,7 @@ class AccessController(Controller):
 
         # Send reset email
         await email_service.send_password_reset_email(
-            user=cast(UserProtocol, user),
+            user=cast("UserProtocol", user),
             reset_token=reset_token,
             expires_in_minutes=60,
             ip_address=ip_address,
@@ -255,6 +255,6 @@ class AccessController(Controller):
         user = await users_service.reset_password_with_token(user_id=reset_token.user_id, new_password=data.password)
 
         # Send confirmation email
-        await email_service.send_password_reset_confirmation_email(cast(UserProtocol, user))
+        await email_service.send_password_reset_confirmation_email(cast("UserProtocol", user))
 
         return ResetPasswordResponse(message="Password has been successfully reset", user_id=user.id)

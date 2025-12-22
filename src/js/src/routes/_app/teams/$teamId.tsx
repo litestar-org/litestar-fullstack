@@ -1,14 +1,14 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { InviteMemberDialog } from "@/components/teams/invite-member-dialog"
-import { getTeam, removeMemberFromTeam, type TeamMember } from "@/lib/generated/api"
-import { useAuthStore } from "@/lib/auth"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useParams } from "@tanstack/react-router"
 import { useEffect } from "react"
+import { InviteMemberDialog } from "@/components/teams/invite-member-dialog"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { useAuthStore } from "@/lib/auth"
+import { getTeam, removeMemberFromTeam, type TeamMember } from "@/lib/generated/api"
 
 export const Route = createFileRoute("/_app/teams/$teamId")({
   component: TeamDetail,
@@ -19,7 +19,11 @@ function TeamDetail() {
   const queryClient = useQueryClient()
   const { user, currentTeam, setCurrentTeam } = useAuthStore()
 
-  const { data: team, isLoading: isTeamLoading, isError: isTeamError } = useQuery({
+  const {
+    data: team,
+    isLoading: isTeamLoading,
+    isError: isTeamError,
+  } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
       const response = await getTeam({ path: { team_id: teamId } })
@@ -58,8 +62,7 @@ function TeamDetail() {
 
   const members = team.members ?? []
   const ownerId = members.find((member) => member.isOwner)?.userId
-  const canManageMembers =
-    ownerId === user?.id || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
+  const canManageMembers = ownerId === user?.id || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
   const initials = team.name
     .split(" ")
     .map((n) => n[0])
@@ -78,9 +81,7 @@ function TeamDetail() {
             <p className="text-muted-foreground">{team.description || "No description provided."}</p>
           </div>
         </div>
-        {canManageMembers && (
-          <InviteMemberDialog teamId={teamId} />
-        )}
+        {canManageMembers && <InviteMemberDialog teamId={teamId} />}
       </div>
 
       <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">

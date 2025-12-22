@@ -1,19 +1,15 @@
 """Account domain schemas for users, auth, OAuth, roles, and password reset."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Literal
+from datetime import datetime
+from typing import Literal
+from uuid import UUID
 
 import msgspec
 
+from app.db.models.team_roles import TeamRoles
 from app.lib.validation import validate_email, validate_name, validate_password, validate_phone, validate_username
 from app.schemas.base import CamelizedBaseStruct, Message
 
-if TYPE_CHECKING:
-    from datetime import datetime
-    from uuid import UUID
-
-    from app.db.models.team_roles import TeamRoles
 __all__ = (  # noqa: RUF022 - Intentionally organized by category
     # Common
     "Message",
