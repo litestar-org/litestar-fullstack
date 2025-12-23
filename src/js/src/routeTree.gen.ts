@@ -29,6 +29,7 @@ import { Route as AppTeamsIndexRouteImport } from './routes/_app/teams/index'
 import { Route as AppTeamsNewRouteImport } from './routes/_app/teams/new'
 import { Route as AppTeamsTeamIdRouteImport } from './routes/_app/teams/$teamId'
 import { Route as PublicAuthGoogleCallbackRouteImport } from './routes/_public/auth/google/callback'
+import { Route as PublicAuthGithubCallbackRouteImport } from './routes/_public/auth/github/callback'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -129,6 +130,12 @@ const PublicAuthGoogleCallbackRoute =
     path: '/auth/google/callback',
     getParentRoute: () => PublicRoute,
   } as any)
+const PublicAuthGithubCallbackRoute =
+  PublicAuthGithubCallbackRouteImport.update({
+    id: '/auth/github/callback',
+    path: '/auth/github/callback',
+    getParentRoute: () => PublicRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/teams/new': typeof AppTeamsNewRoute
   '/teams/': typeof AppTeamsIndexRoute
+  '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
   '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -167,6 +175,7 @@ export interface FileRoutesByTo {
   '/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/teams/new': typeof AppTeamsNewRoute
   '/teams': typeof AppTeamsIndexRoute
+  '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
   '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
@@ -190,6 +199,7 @@ export interface FileRoutesById {
   '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
   '/_app/teams/new': typeof AppTeamsNewRoute
   '/_app/teams/': typeof AppTeamsIndexRoute
+  '/_public/auth/github/callback': typeof PublicAuthGithubCallbackRoute
   '/_public/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/teams/'
+    | '/auth/github/callback'
     | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/teams'
+    | '/auth/github/callback'
     | '/auth/google/callback'
   id:
     | '__root__'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/_app/teams/$teamId'
     | '/_app/teams/new'
     | '/_app/teams/'
+    | '/_public/auth/github/callback'
     | '/_public/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
@@ -405,6 +418,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicAuthGoogleCallbackRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/auth/github/callback': {
+      id: '/_public/auth/github/callback'
+      path: '/auth/github/callback'
+      fullPath: '/auth/github/callback'
+      preLoaderRoute: typeof PublicAuthGithubCallbackRouteImport
+      parentRoute: typeof PublicRoute
+    }
   }
 }
 
@@ -448,6 +468,7 @@ interface PublicRouteChildren {
   PublicSignupRoute: typeof PublicSignupRoute
   PublicTermsRoute: typeof PublicTermsRoute
   PublicVerifyEmailRoute: typeof PublicVerifyEmailRoute
+  PublicAuthGithubCallbackRoute: typeof PublicAuthGithubCallbackRoute
   PublicAuthGoogleCallbackRoute: typeof PublicAuthGoogleCallbackRoute
 }
 
@@ -461,6 +482,7 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicSignupRoute: PublicSignupRoute,
   PublicTermsRoute: PublicTermsRoute,
   PublicVerifyEmailRoute: PublicVerifyEmailRoute,
+  PublicAuthGithubCallbackRoute: PublicAuthGithubCallbackRoute,
   PublicAuthGoogleCallbackRoute: PublicAuthGoogleCallbackRoute,
 }
 
