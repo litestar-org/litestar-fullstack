@@ -188,3 +188,4 @@ src/js/.litestar.json
 src/js/src/generated
 src/js/src/lib/api
 src/js/src/lib/generated
+src/js/public/hot

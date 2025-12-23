@@ -2,6 +2,7 @@
  * Password strength indicator component with visual feedback
  */
 
+import { motion } from "framer-motion"
 import { Check, X } from "lucide-react"
 import { getPasswordStrength } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
@@ -13,15 +14,15 @@ export interface PasswordStrengthProps {
 }
 
 const strengthColors = {
-  weak: "bg-red-500",
-  medium: "bg-yellow-500",
-  strong: "bg-green-500",
+  weak: "bg-destructive",
+  medium: "bg-warning",
+  strong: "bg-success",
 } as const
 
 const strengthTextColors = {
-  weak: "text-red-600",
-  medium: "text-yellow-600",
-  strong: "text-green-600",
+  weak: "text-destructive",
+  medium: "text-warning",
+  strong: "text-success",
 } as const
 
 export function PasswordStrength({ password, showRequirements = true, className }: PasswordStrengthProps) {
@@ -42,8 +43,13 @@ export function PasswordStrength({ password, showRequirements = true, className 
           <span className={cn("font-medium text-sm capitalize", strengthTextColors[strength.strength])}>{strength.strength}</span>
         </div>
 
-        <div className="h-2 w-full rounded-full bg-muted">
-          <div className={cn("h-2 rounded-full transition-all duration-300 ease-in-out", strengthColors[strength.strength])} style={{ width: `${progressWidth}%` }} />
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <motion.div
+            className={cn("h-2 rounded-full", strengthColors[strength.strength])}
+            initial={{ width: 0 }}
+            animate={{ width: `${progressWidth}%` }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+          />
         </div>
       </div>
 
@@ -67,7 +73,7 @@ export function PasswordStrength({ password, showRequirements = true, className 
         <div className="space-y-1">
           {strength.feedback.map((message) => (
             <div key={message} className="flex items-center space-x-2 text-muted-foreground text-sm">
-              <X className="h-4 w-4 flex-shrink-0 text-red-400" />
+              <X className="h-4 w-4 shrink-0 text-destructive" />
               <span>{message}</span>
             </div>
           ))}
@@ -84,8 +90,8 @@ interface RequirementItemProps {
 
 function RequirementItem({ met, text }: RequirementItemProps) {
   return (
-    <div className={cn("flex items-center space-x-2 text-sm transition-colors", met ? "text-green-600" : "text-muted-foreground")}>
-      {met ? <Check className="h-4 w-4 flex-shrink-0 text-green-600" /> : <div className="h-4 w-4 flex-shrink-0 rounded-full border border-border" />}
+    <div className={cn("flex items-center space-x-2 text-sm transition-colors", met ? "text-success" : "text-muted-foreground")}>
+      {met ? <Check className="h-4 w-4 shrink-0 text-success" /> : <div className="h-4 w-4 shrink-0 rounded-full border border-border" />}
       <span>{text}</span>
     </div>
   )

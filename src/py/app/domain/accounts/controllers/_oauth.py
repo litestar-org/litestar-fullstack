@@ -38,7 +38,7 @@ class OAuthController(Controller):
     dependencies = {
         "user_service": Provide(provide_users_service),
         "oauth_account_service": Provide(provide_user_oauth_service),
-        "settings": Provide(provide_app_settings),
+        "settings": Provide(provide_app_settings, sync_to_thread=False),
     }
 
     @get("/google", name="oauth:google:authorize")
@@ -54,6 +54,9 @@ class OAuthController(Controller):
             request: The request object
             settings: Application settings
             redirect_url: Optional URL to redirect to after authentication
+
+        Raises:
+            HTTPException: If OAuth is not configured
 
         Returns:
             OAuthAuthorizationResponse with authorization URL and state

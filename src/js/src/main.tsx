@@ -17,9 +17,8 @@ const queryClient = new QueryClient()
 const apiUrl = import.meta.env.VITE_API_URL ?? ""
 
 client.setConfig({
-  baseUrl: apiUrl,
-  credentials: "include",
-  auth: () => localStorage.getItem("access_token") ?? undefined,
+  baseURL: apiUrl,
+  withCredentials: true,
 })
 
 // Create the router using the generated route tree

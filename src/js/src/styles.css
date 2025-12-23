@@ -18,14 +18,21 @@
 
   --radius: 0.625rem;
 
+  /* Litestar Brand Colors */
+  --brand-navy: 230 24% 17%;
+  --brand-gold: 43 81% 59%;
+  --brand-gold-light: 40 100% 75%;
+  --brand-gray: 220 12% 87%;
+
+  /* Core Colors */
   --background: 30 20% 98%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --primary: 202 88% 42%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 43 81% 59%;
+  --primary-foreground: 230 24% 17%;
   --secondary: 24 30% 94%;
   --secondary-foreground: 222 47% 11%;
   --muted: 210 20% 94%;
@@ -33,22 +40,35 @@
   --accent: 176 52% 38%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 75% 54%;
+  --destructive-foreground: 0 0% 100%;
   --border: 214 20% 90%;
   --input: 214 20% 92%;
-  --ring: 202 88% 42%;
-  --chart-1: 202 88% 42%;
+  --ring: 43 81% 59%;
+
+  /* Semantic Colors */
+  --success: 142 71% 45%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 0%;
+  --info: 199 89% 48%;
+  --info-foreground: 0 0% 100%;
+
+  /* Chart Colors */
+  --chart-1: 43 81% 59%;
   --chart-2: 176 52% 38%;
   --chart-3: 25 85% 55%;
   --chart-4: 140 55% 45%;
   --chart-5: 340 70% 55%;
+
+  /* Sidebar */
   --sidebar: 24 24% 96%;
   --sidebar-foreground: 222 47% 12%;
-  --sidebar-primary: 202 88% 42%;
-  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-primary: 43 81% 59%;
+  --sidebar-primary-foreground: 230 24% 17%;
   --sidebar-accent: 210 20% 92%;
   --sidebar-accent-foreground: 222 47% 11%;
   --sidebar-border: 210 20% 90%;
-  --sidebar-ring: 202 88% 42%;
+  --sidebar-ring: 43 81% 59%;
 }
 
 @theme inline {
@@ -71,14 +91,29 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  /* Brand Colors */
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-light: var(--brand-gold-light);
+  --color-brand-gray: var(--brand-gray);
+  /* Semantic Colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  /* Chart Colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  /* Sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -91,37 +126,49 @@
 
 .dark {
   color-scheme: dark;
-  --background: 230 28% 8%;
+  /* Use Litestar Navy for dark backgrounds */
+  --background: 230 24% 8%;
   --foreground: 220 25% 96%;
-  --card: 232 28% 12%;
+  --card: 230 24% 12%;
   --card-foreground: 220 25% 96%;
-  --popover: 232 28% 12%;
+  --popover: 230 24% 12%;
   --popover-foreground: 220 25% 96%;
-  --primary: 198 84% 55%;
-  --primary-foreground: 222 47% 11%;
+  /* Primary stays brand gold */
+  --primary: 43 81% 59%;
+  --primary-foreground: 230 24% 10%;
   --secondary: 220 16% 18%;
   --secondary-foreground: 220 25% 96%;
-  --muted: 215 8% 32%;
+  --muted: 230 16% 22%;
   --muted-foreground: 215 10% 72%;
   --accent: 176 42% 46%;
   --accent-foreground: 220 25% 96%;
   --destructive: 0 70% 60%;
-  --border: 231 20% 20%;
-  --input: 231 22% 22%;
-  --ring: 198 84% 55%;
-  --chart-1: 198 84% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 230 20% 18%;
+  --input: 230 22% 20%;
+  --ring: 43 81% 59%;
+  /* Semantic Colors - Dark Mode */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 0%;
+  --info: 199 89% 48%;
+  --info-foreground: 0 0% 100%;
+  /* Chart Colors */
+  --chart-1: 43 81% 59%;
   --chart-2: 176 42% 46%;
   --chart-3: 25 85% 55%;
   --chart-4: 140 55% 45%;
   --chart-5: 340 70% 55%;
-  --sidebar: 232 28% 12%;
+  /* Sidebar */
+  --sidebar: 230 24% 10%;
   --sidebar-foreground: 220 25% 96%;
-  --sidebar-primary: 198 84% 55%;
-  --sidebar-primary-foreground: 222 47% 11%;
+  --sidebar-primary: 43 81% 59%;
+  --sidebar-primary-foreground: 230 24% 10%;
   --sidebar-accent: 220 16% 18%;
   --sidebar-accent-foreground: 220 25% 96%;
-  --sidebar-border: 231 20% 20%;
-  --sidebar-ring: 198 84% 55%;
+  --sidebar-border: 230 20% 18%;
+  --sidebar-ring: 43 81% 59%;
 }
 
 @layer base {
@@ -133,8 +180,8 @@
     @apply bg-background text-foreground antialiased;
     margin: 0;
     min-height: 100vh;
-    background-image: radial-gradient(1200px 800px at 8% -12%, hsl(var(--primary) / 0.12), transparent 60%),
-      radial-gradient(900px 700px at 92% -18%, hsl(var(--accent) / 0.12), transparent 55%);
+    background-image: radial-gradient(1200px 800px at 8% -12%, hsl(var(--brand-gold) / 0.08), transparent 60%),
+      radial-gradient(900px 700px at 92% -18%, hsl(var(--accent) / 0.10), transparent 55%);
     background-attachment: fixed;
   }
 

@@ -26,16 +26,9 @@ class SystemController(Controller):
     """System health and configuration."""
 
     tags = ["System"]
-    dependencies = {
-        "settings": Provide(provide_app_settings),
-    }
+    dependencies = {"settings": Provide(provide_app_settings, sync_to_thread=False)}
 
-    @get(
-        operation_id="SystemHealth",
-        name="system:health",
-        path="/health",
-        summary="Health Check",
-    )
+    @get(operation_id="SystemHealth", name="system:health", path="/health", summary="Health Check")
     async def check_system_health(self, db_session: AsyncSession) -> Response[s.SystemHealth]:
         """Check database available and returns app config info.
 
@@ -85,7 +78,4 @@ class SystemController(Controller):
         Returns:
             OAuth configuration indicating which providers are enabled.
         """
-        return s.OAuthConfig(
-            google_enabled=settings.google_oauth_enabled,
-            github_enabled=settings.github_oauth_enabled,
-        )
+        return s.OAuthConfig(google_enabled=settings.google_oauth_enabled, github_enabled=settings.github_oauth_enabled)

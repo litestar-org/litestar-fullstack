@@ -4,7 +4,7 @@
     "**/*.pyc": {
       "when": "$(basename).py"
     },
-    ".mypy_cache": true,
+    "**/.mypy_cache": true,
     "**/__pycache__": true,
     ".venv": true,
     ".idea": true,
@@ -27,6 +27,7 @@
     "dist": false,
     ".dmypy.json": true,
     ".claude": true,
+    "htmlcov": true
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "editor.formatOnSave": true,
@@ -79,7 +80,7 @@
     "pyproject.toml": "pyproject.toml,uv.lock,poetry.lock,poetry.toml,mkdocs.yaml,.gcloudignore,.gitignore,.editorconfig,.bumpversion.cfg,.pylintrc,.pre-commit-config.yaml,LICENSE,mkdocs.yml,service_account.json,nixpacks.toml,railway.json,sonar-project.properties,sonar-project.properties.example,sonar-project.properties.example.example,biome.json",
     ".env": ".env*,.*.env",
     "docker-compose.yml": "docker-compose.yml, docker-compose.*.yml, .dockerignore",
-    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.*.json, tsconfig.json, .stylelintrc.json,angular.json,proxy.conf.json,cypress.*.ts,extra-webpack*.cjs,.eslintrc.json, biome.json, components.json, vite.config.js, tsconfig.json, vite.config.js, .cta.json, postcss.config.js, tailwind.config.js, vite.config.ts, openapi-api.config.ts",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.*.json, tsconfig.json, .stylelintrc.json,angular.json,proxy.conf.json,cypress.*.ts,extra-webpack*.cjs,.eslintrc.json, biome.json, components.json, vite.config.js, tsconfig.json, vite.config.js, .cta.json, postcss.config.js, tailwind.config.js, vite.config.ts, openapi-api.config.ts, bun.lock",
     "README.md": "CONTRIBUTING.rst"
   },
   "terminal.integrated.allowChords": false,

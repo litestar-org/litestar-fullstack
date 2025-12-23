@@ -2,7 +2,8 @@
  * Validated input component with real-time validation feedback
  */
 
-import { Eye, EyeOff } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { Check, Eye, EyeOff } from "lucide-react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
@@ -151,7 +152,7 @@ export function ValidatedInput({
       {/* Label */}
       <Label htmlFor={inputId} className="font-medium text-foreground text-sm">
         {label}
-        {validationRule?.required && <span className="ml-1 text-red-500">*</span>}
+        {validationRule?.required && <span className="ml-1 text-destructive">*</span>}
       </Label>
 
       {/* Input wrapper */}
@@ -163,16 +164,35 @@ export function ValidatedInput({
           value={value}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={cn(displayError && "border-red-500 focus:border-red-500 focus:ring-red-500", isPassword && "pr-10", className)}
+          className={cn(
+            displayError && "border-destructive focus:border-destructive focus:ring-destructive/50",
+            isPassword ? "pr-10" : hasBeenBlurred && !displayError && value && "pr-10",
+            className,
+          )}
           aria-invalid={!!displayError}
           aria-describedby={displayError ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
         />
+
+        {/* Success checkmark */}
+        <AnimatePresence>
+          {!displayError && hasBeenBlurred && value && !isPassword && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-success"
+            >
+              <Check className="h-4 w-4" />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Password toggle */}
         {isPassword && (
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
             onClick={() => setShowPassword(!showPassword)}
             tabIndex={-1}
           >
@@ -181,12 +201,22 @@ export function ValidatedInput({
         )}
       </div>
 
-      {/* Error message */}
-      {displayError && (
-        <p id={`${inputId}-error`} className="text-red-600 text-sm" role="alert">
-          {displayError}
-        </p>
-      )}
+      {/* Error message with animation */}
+      <AnimatePresence mode="wait">
+        {displayError && (
+          <motion.p
+            initial={{ opacity: 0, y: -10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -10, height: 0 }}
+            transition={{ duration: 0.2 }}
+            id={`${inputId}-error`}
+            className="text-destructive text-sm"
+            role="alert"
+          >
+            {displayError}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       {/* Helper text */}
       {!displayError && helperText && (

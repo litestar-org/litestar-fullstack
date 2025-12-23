@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
 import litestar from "litestar-vite-plugin"
-import { type PluginOption, defineConfig } from "vite"
+import { defineConfig, type PluginOption } from "vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({

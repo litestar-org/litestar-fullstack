@@ -21,6 +21,7 @@ import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PublicLandingRouteImport } from './routes/_public/landing'
 import { Route as PublicForgotPasswordRouteImport } from './routes/_public/forgot-password'
+import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as AppTeamsRouteImport } from './routes/_app/teams'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
@@ -87,6 +88,11 @@ const PublicForgotPasswordRoute = PublicForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => PublicRoute,
+} as any)
 const AppTeamsRoute = AppTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
   '/teams': typeof AppTeamsRouteWithChildren
+  '/about': typeof PublicAboutRoute
   '/forgot-password': typeof PublicForgotPasswordRoute
   '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/admin': typeof AppAdminRoute
   '/home': typeof AppHomeRoute
+  '/about': typeof PublicAboutRoute
   '/forgot-password': typeof PublicForgotPasswordRoute
   '/landing': typeof PublicLandingRoute
   '/login': typeof PublicLoginRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/teams': typeof AppTeamsRouteWithChildren
+  '/_public/about': typeof PublicAboutRoute
   '/_public/forgot-password': typeof PublicForgotPasswordRoute
   '/_public/landing': typeof PublicLandingRoute
   '/_public/login': typeof PublicLoginRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/home'
     | '/teams'
+    | '/about'
     | '/forgot-password'
     | '/landing'
     | '/login'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/home'
+    | '/about'
     | '/forgot-password'
     | '/landing'
     | '/login'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/home'
     | '/_app/teams'
+    | '/_public/about'
     | '/_public/forgot-password'
     | '/_public/landing'
     | '/_public/login'
@@ -337,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicForgotPasswordRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_app/teams': {
       id: '/_app/teams'
       path: '/teams'
@@ -420,6 +439,7 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface PublicRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
   PublicForgotPasswordRoute: typeof PublicForgotPasswordRoute
   PublicLandingRoute: typeof PublicLandingRoute
   PublicLoginRoute: typeof PublicLoginRoute
@@ -432,6 +452,7 @@ interface PublicRouteChildren {
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
   PublicForgotPasswordRoute: PublicForgotPasswordRoute,
   PublicLandingRoute: PublicLandingRoute,
   PublicLoginRoute: PublicLoginRoute,
