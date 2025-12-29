@@ -62,6 +62,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from app.domain.accounts.controllers import (
             AccessController,
             EmailVerificationController,
+            MfaChallengeController,
+            MfaController,
             OAuthController,
             ProfileController,
             RoleController,
@@ -72,11 +74,20 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from app.domain.accounts.services import (
             EmailVerificationTokenService,
             PasswordResetService,
+            RefreshTokenService,
             RoleService,
             UserOAuthAccountService,
             UserRoleService,
             UserService,
         )
+        from app.domain.admin import schemas as admin_schemas
+        from app.domain.admin.controllers import (
+            AdminTeamsController,
+            AdminUsersController,
+            AuditController,
+            DashboardController,
+        )
+        from app.domain.admin.services import AuditLogService
         from app.domain.system import schemas as system_schemas
         from app.domain.system.controllers import SystemController
         from app.domain.tags import schemas as tag_schemas
@@ -113,6 +124,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config = auth.on_app_init(app_config)
         # security
         app_config.cors_config = config.cors
+        app_config.csrf_config = config.csrf
         # plugins
         app_config.plugins.extend(
             [
@@ -132,6 +144,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 SystemController,
                 AccessController,
                 EmailVerificationController,
+                MfaChallengeController,
+                MfaController,
                 OAuthController,
                 ProfileController,
                 RoleController,
@@ -141,6 +155,11 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 UserRoleController,
                 TeamMemberController,
                 TagController,
+                # Admin controllers
+                AdminTeamsController,
+                AdminUsersController,
+                AuditController,
+                DashboardController,
             ],
         )
         # signatures
@@ -158,6 +177,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "UserService": UserService,
                 "EmailVerificationTokenService": EmailVerificationTokenService,
                 "PasswordResetService": PasswordResetService,
+                "RefreshTokenService": RefreshTokenService,
                 "RoleService": RoleService,
                 "TeamService": TeamService,
                 "TeamInvitationService": TeamInvitationService,
@@ -165,6 +185,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "TagService": TagService,
                 "UserRoleService": UserRoleService,
                 "UserOAuthAccountService": UserOAuthAccountService,
+                "AuditLogService": AuditLogService,
                 # Settings and models
                 "AppSettings": AppSettings,
                 "User": m.User,
@@ -173,6 +194,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 **{k: getattr(team_schemas, k) for k in team_schemas.__all__},
                 **{k: getattr(tag_schemas, k) for k in tag_schemas.__all__},
                 **{k: getattr(system_schemas, k) for k in system_schemas.__all__},
+                **{k: getattr(admin_schemas, k) for k in admin_schemas.__all__},
             },
         )
         # exception handling

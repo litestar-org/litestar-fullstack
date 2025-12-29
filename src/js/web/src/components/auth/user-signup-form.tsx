@@ -67,7 +67,7 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
         body: { email: data.email, password: data.password, name: data.name },
       })
 
-      if (response.status === 201) {
+      if (response.data) {
         toast.success("Account created! Please check your email to verify your account.")
         navigate({ to: "/login" })
         return

@@ -94,11 +94,16 @@ src/py/app/
 ├── server/routes/      # Litestar controllers
 └── lib/                # Core utilities
 
-src/js/src/
+src/js/web/src/
 ├── components/         # React components
 ├── routes/             # TanStack Router pages
 ├── lib/api/            # Auto-generated from OpenAPI
 └── hooks/              # React hooks
+
+src/js/templates/
+├── src/components/     # Reusable email components
+├── src/emails/         # Email templates
+└── build-emails.ts     # Build script for email templates
 ```
 
 ## Development Workflow

@@ -86,11 +86,16 @@ WORKDIR /workspace/app
 
 # Copy dependency files first (better layer caching)
 COPY pyproject.toml uv.lock README.md ./
-COPY src/js/package.json src/js/bun.lock ./src/js/
-COPY src/js/biome.json src/js/vite.config.ts src/js/tsconfig.json ./src/js/
+COPY src/js/web/package.json src/js/web/bun.lock ./src/js/web/
+COPY src/js/web/biome.json src/js/web/vite.config.ts src/js/web/tsconfig.json ./src/js/web/
+COPY src/js/templates/package.json src/js/templates/bun.lock ./src/js/templates/
 
-# Install JavaScript dependencies
-WORKDIR /workspace/app/src/js
+# Install JavaScript dependencies for web app
+WORKDIR /workspace/app/src/js/web
+RUN bun install --frozen-lockfile
+
+# Install JavaScript dependencies for email templates
+WORKDIR /workspace/app/src/js/templates
 RUN bun install --frozen-lockfile
 WORKDIR /workspace/app
 
@@ -103,11 +108,15 @@ RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
 
 # Copy application source
 COPY tools ./tools/
-COPY src/js/ ./src/js/
+COPY src/js/web/ ./src/js/web/
+COPY src/js/templates/ ./src/js/templates/
 COPY src/py/ ./src/py/
 
-# Create public directory first (required for hatchling force-include before any uv sync)
-RUN mkdir -p src/py/app/server/public
+# Create required directories
+RUN mkdir -p src/py/app/server/public src/py/app/templates/email
+
+# Build email templates (must be before wheel build to include in package)
+RUN cd src/js/templates && bun run build
 
 # Build frontend assets and create wheel
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \

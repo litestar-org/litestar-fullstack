@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDAuditBase
 from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
     from app.db.models.email_verification_token import EmailVerificationToken
     from app.db.models.oauth_account import UserOAuthAccount
     from app.db.models.password_reset_token import PasswordResetToken
+    from app.db.models.refresh_token import RefreshToken
     from app.db.models.team_member import TeamMember
     from app.db.models.user_role import UserRole
 
@@ -40,6 +42,17 @@ class User(UUIDAuditBase):
     password_reset_at: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
     failed_reset_attempts: Mapped[int] = mapped_column(default=0, nullable=False)
     reset_locked_until: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
+
+    # MFA/TOTP fields
+    totp_secret: Mapped[str | None] = mapped_column(String(length=255), nullable=True, default=None)
+    """Encrypted TOTP secret for authenticator apps."""
+    is_two_factor_enabled: Mapped[bool] = mapped_column(default=False, nullable=False)
+    """Whether two-factor authentication is enabled for this user."""
+    two_factor_confirmed_at: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
+    """When MFA was confirmed/enabled."""
+    backup_codes: Mapped[list[str | None] | None] = mapped_column(JSONB, nullable=True, default=None)
+    """Hashed backup codes for MFA recovery."""
+
     # -----------
     # ORM Relationships
     # ------------
@@ -75,7 +88,17 @@ class User(UUIDAuditBase):
         cascade="all, delete",
         uselist=True,
     )
+    refresh_tokens: Mapped[list[RefreshToken]] = relationship(
+        back_populates="user",
+        lazy="noload",
+        cascade="all, delete-orphan",
+        uselist=True,
+    )
 
     @hybrid_property
     def has_password(self) -> bool:
         return self.hashed_password is not None
+
+    @hybrid_property
+    def has_mfa(self) -> bool:
+        return self.is_two_factor_enabled and self.totp_secret is not None

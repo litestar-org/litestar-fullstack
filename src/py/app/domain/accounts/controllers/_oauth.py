@@ -20,7 +20,7 @@ from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 from app.domain.accounts.dependencies import provide_user_oauth_service, provide_users_service
-from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorizationResponse, OAuthLinkRequest
+from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorization, OAuthLinkRequest
 from app.lib.settings import provide_app_settings
 from app.utils.oauth import OAuth2AuthorizeCallback
 
@@ -127,7 +127,7 @@ class OAuthController(Controller):
         request: Request[Any, Any, Any],
         settings: AppSettings,
         redirect_url: str | None = Parameter(query="redirect_url", required=False),
-    ) -> OAuthAuthorizationResponse:
+    ) -> OAuthAuthorization:
         """Initiate Google OAuth flow.
 
         Args:
@@ -139,7 +139,7 @@ class OAuthController(Controller):
             HTTPException: If OAuth is not configured
 
         Returns:
-            OAuthAuthorizationResponse with authorization URL and state
+            OAuthAuthorization with authorization URL and state
         """
         if not settings.GOOGLE_OAUTH2_CLIENT_ID or not settings.GOOGLE_OAUTH2_CLIENT_SECRET:
             raise HTTPException(
@@ -173,7 +173,7 @@ class OAuthController(Controller):
             scope=["openid", "email", "profile"],
         )
 
-        return OAuthAuthorizationResponse(
+        return OAuthAuthorization(
             authorization_url=authorization_url,
             state=state,
         )
@@ -306,7 +306,7 @@ class OAuthController(Controller):
         request: Request[Any, Any, Any],
         settings: AppSettings,
         redirect_url: str | None = Parameter(query="redirect_url", required=False),
-    ) -> OAuthAuthorizationResponse:
+    ) -> OAuthAuthorization:
         """Initiate GitHub OAuth flow.
 
         Args:
@@ -318,7 +318,7 @@ class OAuthController(Controller):
             HTTPException: If GitHub OAuth is not configured
 
         Returns:
-            OAuthAuthorizationResponse with authorization URL and state
+            OAuthAuthorization with authorization URL and state
         """
         if not settings.GITHUB_OAUTH2_CLIENT_ID or not settings.GITHUB_OAUTH2_CLIENT_SECRET:
             raise HTTPException(
@@ -352,7 +352,7 @@ class OAuthController(Controller):
             scope=["user:email", "read:user"],
         )
 
-        return OAuthAuthorizationResponse(
+        return OAuthAuthorization(
             authorization_url=authorization_url,
             state=state,
         )

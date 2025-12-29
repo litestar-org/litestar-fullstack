@@ -131,7 +131,7 @@ media/
 dmypy.json
 
 # Pyre type checker
-.pyre/ 
+.pyre/
 .cursor/
 # vscode
 # .vscode
@@ -182,9 +182,14 @@ local.duckdb
 requirements.txt
 dist-ssr
 *.local
-src/js/.litestar-vite.json
-src/js/.litestar.json
-src/js/src/generated
-src/js/src/lib/api
-src/js/src/lib/generated
-src/js/public/hot
+src/js/web/.litestar-vite.json
+src/js/web/.litestar.json
+src/js/web/src/generated
+src/js/web/src/lib/api
+src/js/web/src/lib/generated
+src/js/web/public/hot
+
+# Email template build output
+src/py/app/templates/email/
+src/js/templates/node_modules/
+src/js/templates/bun.lock

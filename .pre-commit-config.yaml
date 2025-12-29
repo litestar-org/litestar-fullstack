@@ -10,7 +10,7 @@ repos:
     hooks:
       - id: local-biome-check
         name: biome check
-        entry: npx @biomejs/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched --config-path src/js/biome.json
+        entry: npx @biomejs/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched --config-path src/js/web/biome.json
         language: system
         types: [text]
   - repo: https://github.com/pre-commit/pre-commit-hooks

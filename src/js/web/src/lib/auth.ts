@@ -44,9 +44,11 @@ export const useAuthStore = create<AuthState>()(
           // Login request
           const response = await accountLogin({ body: { username: email, password } })
 
-          if (response.status === 201) {
-            if (response.data?.access_token) {
-              setAccessToken(response.data.access_token)
+          if (response.data) {
+            // Successful login response
+            const loginData = response.data as { access_token?: string }
+            if (loginData.access_token) {
+              setAccessToken(loginData.access_token)
             }
             // Add a small delay to ensure the cookie is set
             await new Promise((resolve) => setTimeout(resolve, 100))

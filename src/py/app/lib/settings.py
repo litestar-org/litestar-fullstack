@@ -123,16 +123,16 @@ class ViteSettings:
             dev_mode=self.DEV_MODE,
             runtime=RuntimeConfig(executor="bun"),
             paths=PathConfig(
-                root=base_dir / "js",
+                root=base_dir / "js" / "web",
                 bundle_dir=self.BUNDLE_DIR,
                 asset_url=self.ASSET_URL,
             ),
             types=TypeGenConfig(
-                output=base_dir / "js" / "src" / "lib" / "generated",
-                openapi_path=base_dir / "js" / "src" / "lib" / "generated" / "openapi.json",
-                routes_path=base_dir / "js" / "src" / "lib" / "generated" / "routes.json",
-                routes_ts_path=base_dir / "js" / "src" / "lib" / "generated" / "routes.ts",
-                page_props_path=base_dir / "js" / "src" / "lib" / "generated" / "inertia-pages.json",
+                output=base_dir / "js" / "web" / "src" / "lib" / "generated",
+                openapi_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "openapi.json",
+                routes_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "routes.json",
+                routes_ts_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "routes.ts",
+                page_props_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "inertia-pages.json",
                 generate_zod=True,
                 generate_sdk=True,
                 generate_routes=True,
@@ -267,6 +267,8 @@ class AppSettings:
     """CSRF Header Name"""
     CSRF_COOKIE_SECURE: bool = field(default_factory=get_env("CSRF_COOKIE_SECURE", False))
     """CSRF Secure Cookie"""
+    CSRF_COOKIE_HTTPONLY: bool = field(default_factory=get_env("CSRF_COOKIE_HTTPONLY", True))
+    """CSRF HttpOnly Cookie - True because litestar-vite injects token into HTML as window.__LITESTAR_CSRF__"""
     STATIC_DIR: Path = field(default_factory=get_env("STATIC_DIR", STATIC_DIR))
     """Default URL where static assets are located."""
     STATIC_URL: str = field(default_factory=get_env("STATIC_URL", "/web/"))
@@ -318,8 +320,11 @@ class AppSettings:
         return CSRFConfig(
             secret=self.SECRET_KEY,
             cookie_secure=self.CSRF_COOKIE_SECURE,
+            cookie_httponly=self.CSRF_COOKIE_HTTPONLY,
             cookie_name=self.CSRF_COOKIE_NAME,
             header_name=self.CSRF_HEADER_NAME,
+            # Exclude OAuth callbacks since they're initiated externally
+            exclude=["/api/auth/oauth/*/callback"],
         )
 
     def get_cors_config(self) -> CORSConfig:

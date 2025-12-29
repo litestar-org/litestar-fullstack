@@ -8,6 +8,7 @@ from app.db import models as m
 from app.domain.accounts.services import (
     EmailVerificationTokenService,
     PasswordResetService,
+    RefreshTokenService,
     RoleService,
     UserOAuthAccountService,
     UserRoleService,
@@ -80,9 +81,19 @@ provide_user_oauth_service = create_service_provider(
     },
 )
 
+provide_refresh_token_service = create_service_provider(
+    RefreshTokenService,
+    load=[selectinload(m.RefreshToken.user)],
+    error_messages={
+        "duplicate_key": "Refresh token already exists.",
+        "integrity": "Refresh token operation failed.",
+    },
+)
+
 __all__ = (
     "provide_email_verification_service",
     "provide_password_reset_service",
+    "provide_refresh_token_service",
     "provide_roles_service",
     "provide_user_oauth_service",
     "provide_user_roles_service",

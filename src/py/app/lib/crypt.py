@@ -5,7 +5,7 @@ import base64
 import importlib
 import secrets
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Literal, cast, overload
 
 import pyotp
 from pwdlib import PasswordHash
@@ -148,17 +148,46 @@ async def hash_backup_codes(codes: list[str]) -> list[str]:
     return [await get_password_hash(code) for code in codes]
 
 
-async def verify_backup_code(code: str, hashed_codes: list[str]) -> int | None:
+@overload
+async def verify_backup_code(
+    code: str,
+    hashed_codes: list[str | None],
+    *,
+    raise_on_not_found: Literal[True],
+) -> int: ...
+
+
+@overload
+async def verify_backup_code(
+    code: str,
+    hashed_codes: list[str | None],
+    *,
+    raise_on_not_found: Literal[False] = ...,
+) -> int | None: ...
+
+
+async def verify_backup_code(
+    code: str,
+    hashed_codes: list[str | None],
+    *,
+    raise_on_not_found: bool = False,
+) -> int | None:
     """Verify a backup code against the stored hashes.
 
     Args:
         code: The plaintext backup code to verify.
-        hashed_codes: List of hashed backup codes.
+        hashed_codes: List of hashed backup codes (None entries are skipped).
+        raise_on_not_found: If True, raise ValueError when code is not found.
 
     Returns:
-        The index of the matching code if found, None otherwise.
+        The index of the matching code if found, None otherwise (unless raise_on_not_found is True).
+
+    Raises:
+        ValueError: If raise_on_not_found is True and the code is not found.
     """
     for i, hashed in enumerate(hashed_codes):
-        if await verify_password(code, hashed):
+        if hashed is not None and await verify_password(code, hashed):
             return i
+    if raise_on_not_found:
+        raise ValueError("Invalid backup code")
     return None

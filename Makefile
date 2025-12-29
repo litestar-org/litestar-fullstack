@@ -54,14 +54,14 @@ install: destroy clean                              ## Install the project, depe
 	@if ! command -v bun >/dev/null 2>&1; then \
 		$(MAKE) install-bun; \
 	fi
-	@cd src/js && bun install --frozen-lockfile >/dev/null 2>&1
+	@cd src/js/web && bun install --frozen-lockfile >/dev/null 2>&1
 	@echo "${OK} Installation complete! 🎉"
 
 .PHONY: upgrade
 upgrade:                                            ## Upgrade all dependencies to the latest stable versions
 	@echo "${INFO} Updating all dependencies... 🔄"
 	@uv lock --upgrade
-	@cd src/js && bun update
+	@cd src/js/web && bun update
 	@echo "${OK} Dependencies updated 🔄"
 	@uv run pre-commit autoupdate
 	@echo "${OK} Updated Pre-commit hooks 🔄"
@@ -69,7 +69,7 @@ upgrade:                                            ## Upgrade all dependencies 
 .PHONY: clean
 clean:                                              ## Cleanup temporary build artifacts
 	@echo "${INFO} Cleaning working directory..."
-	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache src/py/tests/.pytest_cache src/py/tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/node_modules >/dev/null 2>&1
+	@rm -rf pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache src/py/tests/.pytest_cache src/py/tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/web/node_modules src/js/templates/node_modules >/dev/null 2>&1
 	@find . -name '*.egg-info' -exec rm -rf {} + >/dev/null 2>&1
 	@find . -type f -name '*.egg' -exec rm -f {} + >/dev/null 2>&1
 	@find . -name '*.pyc' -exec rm -f {} + >/dev/null 2>&1
@@ -135,7 +135,7 @@ slotscheck:                                        ## Run slotscheck
 fix:                                               ## Run formatting scripts
 	@echo "${INFO} Running code formatters... 🔧"
 	@uv run ruff check --fix --unsafe-fixes
-	@cd src/js && bun run lint
+	@cd src/js/web && bun run lint
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint
@@ -215,6 +215,12 @@ build-wheel:                                       ## Build Python wheel
 	@echo "${INFO} Building Python wheel... 📦"
 	@uv build --wheel >/dev/null 2>&1
 	@echo "${OK} Wheel built: dist/*.whl"
+
+.PHONY: build-emails
+build-emails:                                      ## Build React email templates to HTML
+	@echo "${INFO} Building email templates... 📧"
+	@cd src/js/templates && (bun install --frozen-lockfile 2>/dev/null || bun install) && bun run build
+	@echo "${OK} Email templates built to src/py/app/templates/email/"
 
 
 # =============================================================================

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { GitHubSignInButton } from "@/components/auth/github-signin-button"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Icons } from "@/components/icons"
@@ -10,13 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { useAuthStore } from "@/lib/auth"
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
-
-type LoginFormData = z.infer<typeof loginSchema>
+import { loginFormSchema, type LoginFormData } from "@/lib/validation"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -30,9 +23,9 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const hasOAuthProviders = googleOAuthEnabled || githubOAuthEnabled
 
   const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
     mode: "onBlur",
@@ -41,7 +34,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.email, data.password)
+      await login(data.username, data.password)
       navigate({ to: "/home" })
     } catch (_error) {
       // Error is handled by useAuthStore
@@ -55,7 +48,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
             <FormField
               control={form.control}
-              name="email"
+              name="username"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>

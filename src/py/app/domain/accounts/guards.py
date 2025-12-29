@@ -151,7 +151,9 @@ auth = OAuth2PasswordBearerAuth[m.User](
     exclude=[
         "/api/health",
         "/api/access/login",
+        "/api/access/logout",
         "/api/access/signup",
+        "/api/access/refresh",
         "/api/access/forgot-password",
         "/api/access/reset-password",
         "/api/email-verification/*",
