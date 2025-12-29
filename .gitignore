@@ -131,8 +131,7 @@ media/
 dmypy.json
 
 # Pyre type checker
-.pyre/
-.claude/
+.pyre/ 
 .cursor/
 # vscode
 # .vscode
