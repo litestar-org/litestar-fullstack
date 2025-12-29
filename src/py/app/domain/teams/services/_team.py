@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from advanced_alchemy.exceptions import RepositoryError
 from advanced_alchemy.utils.text import slugify
 from litestar.plugins.sqlalchemy import repository, service
-from uuid_utils.compat import uuid4
 
 from app.db import models as m
 from app.lib import constants
@@ -62,31 +62,44 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
         data: ModelDictT[m.Team],
         operation: str | None,
     ) -> ModelDictT[m.Team]:
-        if service.is_dict(data):
-            owner_id: UUID | None = data.pop("owner_id", None)
-            owner: m.User | None = data.pop("owner", None)
-            input_tags: list[str] = data.pop("tags", [])
-            data["id"] = data.get("id", uuid4())
-            data = await super().to_model(data)
-            if input_tags:
-                existing_tags = [tag.name for tag in data.tags]
-                tags_to_remove = [tag for tag in data.tags if tag.name not in input_tags]
-                tags_to_add = [tag for tag in input_tags if tag not in existing_tags]
-                for tag_rm in tags_to_remove:
-                    data.tags.remove(tag_rm)
-                data.tags.extend(
-                    [
-                        await m.Tag.as_unique_async(self.repository.session, name=tag_text, slug=slugify(tag_text))
-                        for tag_text in tags_to_add
-                    ],
-                )
-            if owner or owner_id:
-                for member in data.members:
-                    if member.user_id == owner.id if owner is not None else owner_id and not member.is_owner:
-                        member.is_owner = True
-                        member.role = m.TeamRoles.ADMIN
-                        break
-                else:
-                    owner_data: dict[str, Any] = {"user": owner} if owner else {"user_id": owner_id}
-                    data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
+        if not service.is_dict(data):
+            return data
+
+        owner_id: UUID | None = data.pop("owner_id", None)
+        owner: m.User | None = data.pop("owner", None)
+        input_tags: list[str] | None = data.pop("tags", None)
+
+        if operation == "create" and owner_id is None and owner is None:
+            msg = "'owner_id' is required to create a team."
+            raise RepositoryError(msg)
+
+        data = await super().to_model(data)
+
+        if operation == "create" and (owner or owner_id):
+            owner_data: dict[str, Any] = {"user": owner} if owner else {"user_id": owner_id}
+            data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
+
+        if input_tags is not None:
+            existing_tags = [tag.name for tag in data.tags]
+            tags_to_remove = [tag for tag in data.tags if tag.name not in input_tags]
+            tags_to_add = [tag for tag in input_tags if tag not in existing_tags]
+            for tag_rm in tags_to_remove:
+                data.tags.remove(tag_rm)
+            data.tags.extend(
+                [
+                    await m.Tag.as_unique_async(self.repository.session, name=tag_text, slug=slugify(tag_text))
+                    for tag_text in tags_to_add
+                ],
+            )
+
+        if operation != "create" and (owner or owner_id):
+            for member in data.members:
+                if member.user_id == owner.id if owner is not None else owner_id and not member.is_owner:
+                    member.is_owner = True
+                    member.role = m.TeamRoles.ADMIN
+                    break
+            else:
+                owner_data = {"user": owner} if owner else {"user_id": owner_id}
+                data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
+
         return data

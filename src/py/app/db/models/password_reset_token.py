@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,14 +12,14 @@ if TYPE_CHECKING:
     from app.db.models.user import User
 
 
-class PasswordResetToken(UUIDAuditBase):
+class PasswordResetToken(UUIDv7AuditBase):
     """Password reset tokens for secure password recovery."""
 
     __tablename__ = "password_reset_token"
     __table_args__ = {"comment": "Password reset tokens for secure password recovery"}
 
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), nullable=False, index=True)
-    token: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    token_hash: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     expires_at: Mapped[datetime] = mapped_column(nullable=False)
     used_at: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
     ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)  # IPv6 support

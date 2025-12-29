@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.mixins import SlugKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from app.db.models.user_role import UserRole
 
 
-class Role(UUIDAuditBase, SlugKey):
+class Role(UUIDv7AuditBase, SlugKey):
     """Role."""
 
     __tablename__ = "role"

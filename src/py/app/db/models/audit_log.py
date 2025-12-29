@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from app.db.models.user import User
 
 
-class AuditLog(UUIDAuditBase):
+class AuditLog(UUIDv7AuditBase):
     """Audit log for tracking system events and admin actions.
 
     Records who did what, when, and to what entity.

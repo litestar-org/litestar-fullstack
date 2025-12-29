@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
+from advanced_alchemy.types import EncryptedString
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.lib.settings import get_settings
 
 if TYPE_CHECKING:
     from app.db.models.email_verification_token import EmailVerificationToken
@@ -18,10 +21,13 @@ if TYPE_CHECKING:
     from app.db.models.user_role import UserRole
 
 
-class User(UUIDAuditBase):
+settings = get_settings()
+
+
+class User(UUIDv7AuditBase):
     __tablename__ = "user_account"
     __table_args__ = {"comment": "User accounts for application access"}
-    __pii_columns__ = {"name", "email", "username", "phone", "avatar_url"}
+    __pii_columns__ = {"name", "email", "username", "phone", "avatar_url", "totp_secret"}
 
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     name: Mapped[str | None] = mapped_column(nullable=True, default=None)
@@ -29,13 +35,19 @@ class User(UUIDAuditBase):
         String(length=30), unique=True, index=True, nullable=True, default=None
     )
     phone: Mapped[str | None] = mapped_column(String(length=20), nullable=True, default=None)
-    hashed_password: Mapped[str | None] = mapped_column(String(length=255), nullable=True, default=None)
+    hashed_password: Mapped[str | None] = mapped_column(
+        String(length=255),
+        nullable=True,
+        default=None,
+        deferred=True,
+        deferred_group="security_sensitive",
+    )
     avatar_url: Mapped[str | None] = mapped_column(String(length=500), nullable=True, default=None)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     verified_at: Mapped[date] = mapped_column(nullable=True, default=None)
-    joined_at: Mapped[date] = mapped_column(default=datetime.now)
+    joined_at: Mapped[date] = mapped_column(default=lambda: datetime.now(UTC).date())
     login_count: Mapped[int] = mapped_column(default=0)
 
     # Password reset security fields
@@ -44,13 +56,25 @@ class User(UUIDAuditBase):
     reset_locked_until: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
 
     # MFA/TOTP fields
-    totp_secret: Mapped[str | None] = mapped_column(String(length=255), nullable=True, default=None)
+    totp_secret: Mapped[str | None] = mapped_column(
+        EncryptedString(key=settings.app.SECRET_KEY),
+        nullable=True,
+        default=None,
+        deferred=True,
+        deferred_group="security_sensitive",
+    )
     """Encrypted TOTP secret for authenticator apps."""
     is_two_factor_enabled: Mapped[bool] = mapped_column(default=False, nullable=False)
     """Whether two-factor authentication is enabled for this user."""
     two_factor_confirmed_at: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
     """When MFA was confirmed/enabled."""
-    backup_codes: Mapped[list[str | None] | None] = mapped_column(JSONB, nullable=True, default=None)
+    backup_codes: Mapped[list[str | None] | None] = mapped_column(
+        JSONB,
+        nullable=True,
+        default=None,
+        deferred=True,
+        deferred_group="security_sensitive",
+    )
     """Hashed backup codes for MFA recovery."""
 
     # -----------
@@ -101,4 +125,4 @@ class User(UUIDAuditBase):
 
     @hybrid_property
     def has_mfa(self) -> bool:
-        return self.is_two_factor_enabled and self.totp_secret is not None
+        return self.is_two_factor_enabled

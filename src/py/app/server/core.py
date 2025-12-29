@@ -106,7 +106,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             TeamService,
         )
         from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
-        from app.lib.settings import AppSettings, get_settings
+        from app.lib.settings import AppSettings, get_settings, provide_app_settings
         from app.server import plugins
 
         settings = get_settings()
@@ -203,7 +203,10 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             RepositoryError: exception_to_http_response,
         }
         # dependencies
-        dependencies = {"current_user": Provide(provide_user, sync_to_thread=False)}
+        dependencies = {
+            "current_user": Provide(provide_user, sync_to_thread=False),
+            "settings": Provide(provide_app_settings, sync_to_thread=False),
+        }
         app_config.dependencies.update(dependencies)
         # listeners
         app_config.listeners.extend(

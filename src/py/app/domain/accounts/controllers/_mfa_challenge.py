@@ -8,10 +8,11 @@ from typing import TYPE_CHECKING, Any
 from litestar import Controller, Response, post
 from litestar.di import Provide
 from litestar.exceptions import NotAuthorizedException
+from sqlalchemy.orm import undefer_group
 
 from app.domain.accounts.dependencies import provide_refresh_token_service, provide_users_service
 from app.lib.crypt import verify_backup_code, verify_totp_code
-from app.lib.settings import get_settings
+from app.lib.settings import AppSettings
 
 if TYPE_CHECKING:
     from litestar import Request
@@ -21,12 +22,8 @@ if TYPE_CHECKING:
     from app.domain.accounts.schemas import MfaChallenge
     from app.domain.accounts.services import RefreshTokenService, UserService
 
-settings = get_settings()
-
-# Refresh token cookie configuration (shared with _access.py)
-REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105 - This is a cookie name, not a password
-REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
-
+REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105
+REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +44,7 @@ class MfaChallengeController(Controller):
         request: Request[m.User, Token, Any],
         users_service: UserService,
         refresh_token_service: RefreshTokenService,
+        settings: AppSettings,
         data: MfaChallenge,
     ) -> Response[OAuth2Login]:
         """Verify MFA code during login flow.
@@ -71,12 +69,10 @@ class MfaChallengeController(Controller):
         """
         from app.domain.accounts.guards import auth
 
-        # Get the MFA challenge token from cookies
         mfa_token = request.cookies.get("mfa_challenge")
         if not mfa_token:
             raise NotAuthorizedException(detail="No MFA challenge in progress")
 
-        # Decode and validate the challenge token
         try:
             from litestar.security.jwt import Token as JWTToken
 
@@ -89,15 +85,13 @@ class MfaChallengeController(Controller):
             logger.warning("Failed to decode MFA challenge token: %s", e)
             raise NotAuthorizedException(detail="Invalid or expired challenge token") from e
 
-        # Verify this is an MFA challenge token
         if decoded.extras.get("type") != "mfa_challenge":
             raise NotAuthorizedException(detail="Invalid challenge token")
 
         user_email = decoded.sub
         user_id = decoded.extras.get("user_id")
 
-        # Get the user
-        user = await users_service.get_one_or_none(email=user_email)
+        user = await users_service.get_one_or_none(email=user_email, load=[undefer_group("security_sensitive")])
         if not user or str(user.id) != user_id:
             raise NotAuthorizedException(detail="Invalid challenge token")
 
@@ -108,13 +102,11 @@ class MfaChallengeController(Controller):
         used_backup_code = False
         remaining_backup_codes = None
 
-        # Verify TOTP code
         if data.code:
             verified = verify_totp_code(user.totp_secret, data.code)
             if not verified:
                 raise NotAuthorizedException(detail="Invalid verification code")
 
-        # Verify backup code
         elif data.recovery_code:
             if not user.backup_codes:
                 raise NotAuthorizedException(detail="No backup codes available")
@@ -126,9 +118,8 @@ class MfaChallengeController(Controller):
             verified = True
             used_backup_code = True
 
-            # Invalidate the used backup code
             updated_codes = user.backup_codes.copy()
-            updated_codes[code_index] = None  # Mark as used
+            updated_codes[code_index] = None
             await users_service.update({"backup_codes": updated_codes}, item_id=user.id)
 
             remaining_backup_codes = sum(1 for code in updated_codes if code)
@@ -145,19 +136,15 @@ class MfaChallengeController(Controller):
             used_backup_code,
         )
 
-        # Get device info from user agent
         device_info = request.headers.get("user-agent", "")[:255] if request.headers.get("user-agent") else None
 
-        # Create refresh token (new family for MFA-verified login)
         raw_refresh_token, _ = await refresh_token_service.create_refresh_token(
             user_id=user.id,
             device_info=device_info,
         )
 
-        # Issue full auth tokens
         response = auth.login(user.email)
 
-        # Add refresh token as HTTP-only cookie
         response.set_cookie(
             key=REFRESH_TOKEN_COOKIE_NAME,
             value=raw_refresh_token,
@@ -168,7 +155,6 @@ class MfaChallengeController(Controller):
             path="/api/access",
         )
 
-        # Clear the MFA challenge cookie
         response.delete_cookie("mfa_challenge", path="/api/mfa")
 
         return response

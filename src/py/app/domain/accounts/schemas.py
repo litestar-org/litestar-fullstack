@@ -10,13 +10,13 @@ from app.db.models.team_roles import TeamRoles
 from app.lib.validation import validate_email, validate_name, validate_password, validate_phone, validate_username
 from app.schemas.base import CamelizedBaseStruct, Message
 
-__all__ = (  # noqa: RUF022 - Intentionally organized by category
-    # Common
+__all__ = (  # noqa: RUF022
     "Message",
-    # User/Account schemas
     "AccountLogin",
     "AccountRegister",
     "EmailVerificationConfirm",
+    "EmailVerificationSent",
+    "EmailVerificationStatus",
     "EmailVerificationRequest",
     "OauthAccount",
     "PasswordUpdate",
@@ -29,28 +29,23 @@ __all__ = (  # noqa: RUF022 - Intentionally organized by category
     "UserRoleRevoke",
     "UserTeam",
     "UserUpdate",
-    # Role schemas
     "Role",
     "RoleCreate",
     "RoleUpdate",
-    # OAuth schemas
     "OAuthAccountInfo",
     "OAuthAuthorizationRequest",
     "OAuthAuthorization",
     "OAuthCallbackRequest",
     "OAuthLinkRequest",
-    # Password reset schemas
     "ForgotPasswordRequest",
     "PasswordResetSent",
     "ResetPasswordRequest",
     "PasswordResetComplete",
     "ValidateResetTokenRequest",
     "ResetTokenValidation",
-    # Session/Refresh token schemas
     "ActiveSession",
     "SessionList",
     "TokenRefresh",
-    # MFA schemas
     "MfaSetup",
     "MfaConfirm",
     "MfaBackupCodes",
@@ -60,11 +55,6 @@ __all__ = (  # noqa: RUF022 - Intentionally organized by category
     "MfaStatus",
     "LoginMfaChallenge",
 )
-
-
-# =============================================================================
-# User/Account Schemas
-# =============================================================================
 
 
 class UserTeam(CamelizedBaseStruct):
@@ -114,7 +104,7 @@ class User(CamelizedBaseStruct):
     """User properties to use for a response."""
 
     id: UUID
-    email: str  # Already validated in DB, so plain str for response
+    email: str
     name: str | None = None
     username: str | None = None
     phone: str | None = None
@@ -140,7 +130,7 @@ class UserCreate(CamelizedBaseStruct):
 
     def __post_init__(self) -> None:
         """Additional validation after field validation."""
-        # Validate fields
+
         self.email = validate_email(self.email)
         self.password = validate_password(self.password)
         if self.name is not None:
@@ -150,7 +140,6 @@ class UserCreate(CamelizedBaseStruct):
         if self.phone is not None:
             self.phone = validate_phone(self.phone)
 
-        # Custom cross-field validation
         if self.username and self.email:
             email_local = self.email.split("@")[0]
             if self.username == email_local:
@@ -184,7 +173,6 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
             msg = "At least one field must be provided for update"
             raise ValueError(msg)
 
-        # Validate fields if provided
         if isinstance(self.email, str):
             self.email = validate_email(self.email)
         if isinstance(self.password, str):
@@ -198,8 +186,8 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
 
 
 class AccountLogin(CamelizedBaseStruct):
-    username: str  # Use email for login
-    password: str  # Don't validate password strength on login
+    username: str
+    password: str
 
     def __post_init__(self) -> None:
         """Validate email format for username."""
@@ -207,8 +195,8 @@ class AccountLogin(CamelizedBaseStruct):
 
 
 class PasswordUpdate(CamelizedBaseStruct):
-    current_password: str  # Don't validate strength on current
-    new_password: str  # Validate new password strength
+    current_password: str
+    new_password: str
 
     def __post_init__(self) -> None:
         """Validate new password strength."""
@@ -279,9 +267,17 @@ class EmailVerificationConfirm(CamelizedBaseStruct):
     token: str
 
 
-# =============================================================================
-# Role Schemas
-# =============================================================================
+class EmailVerificationSent(CamelizedBaseStruct):
+    """Response for email verification request."""
+
+    message: str
+    token: str | None = None
+
+
+class EmailVerificationStatus(CamelizedBaseStruct):
+    """Verification status response."""
+
+    is_verified: bool
 
 
 class Role(CamelizedBaseStruct):
@@ -303,11 +299,6 @@ class RoleCreate(CamelizedBaseStruct):
 
 class RoleUpdate(CamelizedBaseStruct):
     name: str | msgspec.UnsetType | None = msgspec.UNSET
-
-
-# =============================================================================
-# OAuth Schemas
-# =============================================================================
 
 
 class OAuthAuthorizationRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
@@ -350,11 +341,6 @@ class OAuthAccountInfo(msgspec.Struct, gc=False, array_like=True, omit_defaults=
     last_login_at: datetime | None = None
 
 
-# =============================================================================
-# Password Reset Schemas
-# =============================================================================
-
-
 class ForgotPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
     """Request to initiate password reset flow."""
 
@@ -369,7 +355,7 @@ class PasswordResetSent(msgspec.Struct, gc=False, array_like=True, omit_defaults
     """Confirmation that password reset email was sent."""
 
     message: str
-    expires_in_minutes: int = 60  # 1 hour default
+    expires_in_minutes: int = 60
 
 
 class ValidateResetTokenRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
@@ -383,7 +369,7 @@ class ResetTokenValidation(msgspec.Struct, gc=False, array_like=True, omit_defau
 
     valid: bool
     user_id: UUID | None = None
-    expires_at: str | None = None  # ISO datetime string
+    expires_at: str | None = None
 
 
 class ResetPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
@@ -408,11 +394,6 @@ class PasswordResetComplete(msgspec.Struct, gc=False, array_like=True, omit_defa
     user_id: UUID
 
 
-# =============================================================================
-# Session/Refresh Token Schemas
-# =============================================================================
-
-
 class ActiveSession(msgspec.Struct, gc=False, array_like=True, omit_defaults=True, kw_only=True):
     """Information about an active session (refresh token)."""
 
@@ -434,11 +415,6 @@ class TokenRefresh(msgspec.Struct, gc=False, array_like=True, omit_defaults=True
     """Confirmation that token was refreshed."""
 
     message: str = "Token refreshed successfully"
-
-
-# =============================================================================
-# MFA Schemas
-# =============================================================================
 
 
 class MfaSetup(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):

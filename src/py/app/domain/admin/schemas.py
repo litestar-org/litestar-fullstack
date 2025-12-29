@@ -11,24 +11,15 @@ from app.schemas.base import CamelizedBaseStruct
 __all__ = (
     "ActivityLogEntry",
     "AdminTeamDetail",
-    "AdminTeamList",
     "AdminTeamSummary",
     "AdminTeamUpdate",
     "AdminUserDetail",
-    "AdminUserList",
     "AdminUserSummary",
     "AdminUserUpdate",
     "AuditLogEntry",
-    "AuditLogFilter",
-    "AuditLogList",
     "DashboardStats",
     "RecentActivity",
 )
-
-
-# =============================================================================
-# Dashboard Schemas
-# =============================================================================
 
 
 class DashboardStats(CamelizedBaseStruct):
@@ -61,11 +52,6 @@ class RecentActivity(CamelizedBaseStruct):
     total: int
 
 
-# =============================================================================
-# Audit Log Schemas
-# =============================================================================
-
-
 class AuditLogEntry(CamelizedBaseStruct, kw_only=True):
     """Detailed audit log entry."""
 
@@ -80,31 +66,6 @@ class AuditLogEntry(CamelizedBaseStruct, kw_only=True):
     details: dict[str, Any] | None = None
     ip_address: str | None = None
     user_agent: str | None = None
-
-
-class AuditLogList(CamelizedBaseStruct):
-    """Paginated audit log list."""
-
-    items: list[AuditLogEntry]
-    total: int
-    page: int
-    page_size: int
-
-
-class AuditLogFilter(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
-    """Filter options for audit log queries."""
-
-    action: str | None = None
-    actor_id: UUID | None = None
-    target_type: str | None = None
-    target_id: str | None = None
-    start_date: datetime | None = None
-    end_date: datetime | None = None
-
-
-# =============================================================================
-# Admin User Schemas
-# =============================================================================
 
 
 class AdminUserSummary(CamelizedBaseStruct, kw_only=True):
@@ -155,20 +116,6 @@ class AdminUserUpdate(msgspec.Struct, gc=False, array_like=True, omit_defaults=T
     is_verified: bool | msgspec.UnsetType = msgspec.UNSET
 
 
-class AdminUserList(CamelizedBaseStruct):
-    """Paginated user list for admin."""
-
-    items: list[AdminUserSummary]
-    total: int
-    page: int
-    page_size: int
-
-
-# =============================================================================
-# Admin Team Schemas
-# =============================================================================
-
-
 class AdminTeamSummary(CamelizedBaseStruct, kw_only=True):
     """Summary team info for admin lists."""
 
@@ -200,12 +147,3 @@ class AdminTeamUpdate(msgspec.Struct, gc=False, array_like=True, omit_defaults=T
     name: str | None | msgspec.UnsetType = msgspec.UNSET
     description: str | None | msgspec.UnsetType = msgspec.UNSET
     is_active: bool | msgspec.UnsetType = msgspec.UNSET
-
-
-class AdminTeamList(CamelizedBaseStruct):
-    """Paginated team list for admin."""
-
-    items: list[AdminTeamSummary]
-    total: int
-    page: int
-    page_size: int

@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from litestar.exceptions import NotAuthorizedException
@@ -64,23 +64,21 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
             Tuple of (raw_token, RefreshToken instance)
             The raw_token should be sent to the client, the model is stored in DB.
         """
-        # Generate a secure random token
         raw_token = secrets.token_urlsafe(32)
         token_hash = self.hash_token(raw_token)
 
-        # Use provided family_id or create new one for fresh login
         if family_id is None:
             family_id = uuid4()
 
-        refresh_token = m.RefreshToken(
-            user_id=user_id,
-            token_hash=token_hash,
-            family_id=family_id,
-            expires_at=m.RefreshToken.create_expires_at(days=expiration_days),
-            device_info=device_info,
+        created = await self.create(
+            {
+                "user_id": user_id,
+                "token_hash": token_hash,
+                "family_id": family_id,
+                "expires_at": m.RefreshToken.create_expires_at(days=expiration_days),
+                "device_info": device_info,
+            }
         )
-
-        created = cast("m.RefreshToken", await self.repository.add(refresh_token))
         return raw_token, created
 
     async def validate_refresh_token(self, raw_token: str) -> m.RefreshToken:
@@ -96,10 +94,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
             NotAuthorizedException: If token is invalid, expired, or revoked
         """
         token_hash = self.hash_token(raw_token)
-        refresh_token = cast(
-            "m.RefreshToken | None",
-            await self.repository.get_one_or_none(token_hash=token_hash),
-        )
+        refresh_token = await self.get_one_or_none(token_hash=token_hash)
 
         if refresh_token is None:
             raise NotAuthorizedException(detail="Invalid refresh token")
@@ -108,7 +103,6 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
             raise NotAuthorizedException(detail="Refresh token has expired")
 
         if refresh_token.is_revoked:
-            # SECURITY: Token reuse detected - revoke entire family
             await self.revoke_token_family(refresh_token.family_id)
             raise NotAuthorizedException(detail="Refresh token has been revoked")
 
@@ -134,14 +128,14 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         Raises:
             NotAuthorizedException: If token is invalid, expired, or revoked
         """
-        # Validate the current token
         old_token = await self.validate_refresh_token(raw_token)
 
-        # Revoke the old token
-        old_token.revoked_at = datetime.now(UTC)
-        await self.repository.update(old_token)
+        await self.update(
+            item_id=old_token.id,
+            data={"revoked_at": datetime.now(UTC)},
+            auto_commit=True,
+        )
 
-        # Create a new token in the same family
         return await self.create_refresh_token(
             user_id=old_token.user_id,
             family_id=old_token.family_id,
@@ -159,7 +153,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         Returns:
             Number of tokens revoked
         """
-        tokens = await self.repository.list(
+        tokens = await self.list(
             m.RefreshToken.family_id == family_id,
             m.RefreshToken.revoked_at.is_(None),
         )
@@ -171,7 +165,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         for token in tokens:
             token.revoked_at = current_time
 
-        await self.repository.update_many(tokens)
+        await self.update_many(tokens)
         return len(tokens)
 
     async def revoke_user_tokens(self, user_id: UUID) -> int:
@@ -185,7 +179,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         Returns:
             Number of tokens revoked
         """
-        tokens = await self.repository.list(
+        tokens = await self.list(
             m.RefreshToken.user_id == user_id,
             m.RefreshToken.revoked_at.is_(None),
         )
@@ -197,7 +191,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         for token in tokens:
             token.revoked_at = current_time
 
-        await self.repository.update_many(tokens)
+        await self.update_many(tokens)
         return len(tokens)
 
     async def get_active_sessions(self, user_id: UUID) -> list[m.RefreshToken]:
@@ -211,7 +205,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         Returns:
             List of active RefreshToken instances
         """
-        results = await self.repository.list(
+        results = await self.list(
             m.RefreshToken.user_id == user_id,
             m.RefreshToken.revoked_at.is_(None),
             m.RefreshToken.expires_at > datetime.now(UTC),
@@ -228,8 +222,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         """
         current_time = datetime.now(UTC)
 
-        # Get expired tokens and tokens revoked more than 24 hours ago
-        expired_tokens = await self.repository.list(
+        expired_tokens = await self.list(
             (m.RefreshToken.expires_at < current_time)
             | ((m.RefreshToken.revoked_at.is_not(None)) & (m.RefreshToken.revoked_at < current_time))
         )
@@ -237,5 +230,5 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         if not expired_tokens:
             return 0
 
-        await self.repository.delete_many(expired_tokens)
+        await self.delete_many(expired_tokens)
         return len(expired_tokens)

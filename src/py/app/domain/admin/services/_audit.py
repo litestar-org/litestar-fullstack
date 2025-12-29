@@ -55,7 +55,7 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         Returns:
             Created AuditLog instance
         """
-        # Extract from request if provided
+
         if request is not None:
             if ip_address is None:
                 ip_address = request.client.host if request.client else None
@@ -74,30 +74,6 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             user_agent=user_agent,
         )
         return await self.create(log_entry.to_dict())
-
-    async def get_user_activity(
-        self,
-        user_id: UUID,
-        limit: int = 50,
-        offset: int = 0,
-    ) -> list[m.AuditLog]:
-        """Get activity log for a specific user.
-
-        Args:
-            user_id: The user's ID
-            limit: Maximum number of entries to return
-            offset: Number of entries to skip
-
-        Returns:
-            List of audit log entries
-        """
-        results = await self.list(
-            m.AuditLog.actor_id == user_id,
-            order_by=[m.AuditLog.created_at.desc()],
-            limit=limit,
-            offset=offset,
-        )
-        return list(results)
 
     async def get_recent_activity(
         self,
@@ -128,30 +104,6 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         )
         return list(results)
 
-    async def get_target_history(
-        self,
-        target_type: str,
-        target_id: str,
-        limit: int = 50,
-    ) -> list[m.AuditLog]:
-        """Get audit history for a specific entity.
-
-        Args:
-            target_type: Type of entity (e.g., 'user', 'team')
-            target_id: ID of the entity
-            limit: Maximum number of entries to return
-
-        Returns:
-            List of audit log entries for the entity
-        """
-        results = await self.list(
-            m.AuditLog.target_type == target_type,
-            m.AuditLog.target_id == target_id,
-            order_by=[m.AuditLog.created_at.desc()],
-            limit=limit,
-        )
-        return list(results)
-
     async def get_stats(self, hours: int = 24) -> dict[str, Any]:
         """Get audit log statistics.
 
@@ -163,7 +115,6 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         """
         cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
 
-        # Get counts by action type
         recent_logs = await self.list(m.AuditLog.created_at >= cutoff_time)
 
         action_counts: dict[str, int] = {}
@@ -176,78 +127,3 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             "action_counts": action_counts,
             "period_hours": hours,
         }
-
-
-# Common audit action helpers
-
-
-async def log_user_action(
-    service: AuditLogService,
-    action: str,
-    actor: m.User | None,
-    target_user: m.User | None = None,
-    details: dict[str, Any] | None = None,
-    ip_address: str | None = None,
-    user_agent: str | None = None,
-) -> m.AuditLog:
-    """Log a user-related action.
-
-    Args:
-        service: Audit log service
-        action: Action name (e.g., 'user.created', 'user.updated')
-        actor: The user performing the action
-        target_user: The user being acted upon
-        details: Additional details
-        ip_address: Request IP
-        user_agent: Request user agent
-
-    Returns:
-        Created audit log entry
-    """
-    return await service.log_action(
-        action=action,
-        actor_id=actor.id if actor else None,
-        actor_email=actor.email if actor else None,
-        target_type="user" if target_user else None,
-        target_id=str(target_user.id) if target_user else None,
-        target_label=target_user.email if target_user else None,
-        details=details,
-        ip_address=ip_address,
-        user_agent=user_agent,
-    )
-
-
-async def log_auth_event(
-    service: AuditLogService,
-    action: str,
-    user: m.User | None,
-    success: bool = True,
-    details: dict[str, Any] | None = None,
-    ip_address: str | None = None,
-    user_agent: str | None = None,
-) -> m.AuditLog:
-    """Log an authentication event.
-
-    Args:
-        service: Audit log service
-        action: Action name (e.g., 'login.success', 'login.failed', 'logout')
-        user: The user involved
-        success: Whether the action was successful
-        details: Additional details
-        ip_address: Request IP
-        user_agent: Request user agent
-
-    Returns:
-        Created audit log entry
-    """
-    event_details = details or {}
-    event_details["success"] = success
-
-    return await service.log_action(
-        action=action,
-        actor_id=user.id if user else None,
-        actor_email=user.email if user else None,
-        details=event_details,
-        ip_address=ip_address,
-        user_agent=user_agent,
-    )

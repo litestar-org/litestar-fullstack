@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 from litestar import Controller, delete, get, post
 from litestar.di import Provide
 from litestar.exceptions import ClientException
+from sqlalchemy.orm import undefer_group
 
 from app.domain.accounts.dependencies import provide_users_service
 from app.domain.accounts.schemas import (
@@ -24,7 +25,6 @@ from app.lib.crypt import (
     generate_totp_qr_code,
     generate_totp_secret,
     get_totp_provisioning_uri,
-    hash_backup_codes,
     verify_password,
     verify_totp_code,
 )
@@ -36,7 +36,6 @@ if TYPE_CHECKING:
 
     from app.db import models as m
     from app.domain.accounts.services import UserService
-
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +53,7 @@ class MfaController(Controller):
     async def get_mfa_status(
         self,
         request: Request[m.User, Token, Any],
+        users_service: UserService,
     ) -> MfaStatus:
         """Get current MFA status for the authenticated user.
 
@@ -63,11 +63,10 @@ class MfaController(Controller):
         Returns:
             Current MFA status
         """
-        user = request.user
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
         backup_codes_remaining = None
 
         if user.backup_codes:
-            # Count non-null entries (unused codes)
             backup_codes_remaining = sum(1 for code in user.backup_codes if code)
 
         return MfaStatus(
@@ -96,22 +95,18 @@ class MfaController(Controller):
         Raises:
             ClientException: If MFA is already enabled
         """
-        user = request.user
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
 
         if user.is_two_factor_enabled:
             raise ClientException(detail="MFA is already enabled", status_code=400)
 
-        # Generate new TOTP secret
         secret = generate_totp_secret()
 
-        # Store the secret (not yet enabled)
         await users_service.update({"totp_secret": secret}, item_id=user.id)
 
-        # Generate QR code
         qr_code_bytes = generate_totp_qr_code(secret, user.email, issuer="Litestar App")
         qr_code_base64 = base64.b64encode(qr_code_bytes).decode("utf-8")
 
-        # Get provisioning URI for manual entry
         provisioning_uri = get_totp_provisioning_uri(secret, user.email, issuer="Litestar App")
 
         return MfaSetup(
@@ -142,7 +137,7 @@ class MfaController(Controller):
         Raises:
             ClientException: If code is invalid or no setup in progress
         """
-        user = request.user
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
 
         if user.is_two_factor_enabled:
             raise ClientException(detail="MFA is already enabled", status_code=400)
@@ -150,20 +145,16 @@ class MfaController(Controller):
         if not user.totp_secret:
             raise ClientException(detail="No MFA setup in progress. Call /enable first.", status_code=400)
 
-        # Verify the TOTP code
         if not verify_totp_code(user.totp_secret, data.code):
             raise ClientException(detail="Invalid verification code", status_code=400)
 
-        # Generate backup codes
         plaintext_codes = generate_backup_codes(count=8)
-        hashed_codes = await hash_backup_codes(plaintext_codes)
 
-        # Enable MFA
         await users_service.update(
             {
                 "is_two_factor_enabled": True,
                 "two_factor_confirmed_at": datetime.now(UTC),
-                "backup_codes": hashed_codes,
+                "backup_codes": plaintext_codes,
             },
             item_id=user.id,
         )
@@ -194,16 +185,14 @@ class MfaController(Controller):
         Raises:
             ClientException: If password is incorrect or MFA not enabled
         """
-        user = request.user
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
 
         if not user.is_two_factor_enabled:
             raise ClientException(detail="MFA is not enabled", status_code=400)
 
-        # Verify password
         if not user.hashed_password or not await verify_password(data.password, user.hashed_password):
             raise ClientException(detail="Invalid password", status_code=400)
 
-        # Disable MFA
         await users_service.update(
             {
                 "is_two_factor_enabled": False,
@@ -240,21 +229,17 @@ class MfaController(Controller):
         Raises:
             ClientException: If password is incorrect or MFA not enabled
         """
-        user = request.user
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
 
         if not user.is_two_factor_enabled:
             raise ClientException(detail="MFA is not enabled", status_code=400)
 
-        # Verify password
         if not user.hashed_password or not await verify_password(data.password, user.hashed_password):
             raise ClientException(detail="Invalid password", status_code=400)
 
-        # Generate new backup codes
         plaintext_codes = generate_backup_codes(count=8)
-        hashed_codes = await hash_backup_codes(plaintext_codes)
 
-        # Update backup codes
-        await users_service.update({"backup_codes": hashed_codes}, item_id=user.id)
+        await users_service.update({"backup_codes": plaintext_codes}, item_id=user.id)
 
         logger.info("Backup codes regenerated for user %s", user.email)
 

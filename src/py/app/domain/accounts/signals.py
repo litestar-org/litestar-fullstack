@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger()
 
-
 @listener("user_created")
 async def user_created_event_handler(user_id: UUID) -> None:
     """Executes when a new user is created.
@@ -31,6 +30,5 @@ async def user_created_event_handler(user_id: UUID) -> None:
             await logger.aerror("Could not locate the specified user", id=user_id)
         else:
             await logger.ainfo("Found user", **obj.to_dict(exclude={"hashed_password"}))
-
 
 __all__ = ("user_created_event_handler",)

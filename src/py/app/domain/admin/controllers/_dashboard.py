@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from litestar import Controller, get
 from litestar.di import Provide
 
+from app.db import models as m
 from app.domain.accounts.dependencies import provide_users_service
 from app.domain.accounts.guards import requires_superuser
 from app.domain.admin.dependencies import provide_audit_log_service
@@ -18,7 +19,6 @@ if TYPE_CHECKING:
     from litestar import Request
     from litestar.security.jwt import Token
 
-    from app.db import models as m
     from app.domain.accounts.services import UserService
     from app.domain.admin.services import AuditLogService
     from app.domain.teams.services import TeamService
@@ -59,19 +59,14 @@ class DashboardController(Controller):
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = today_start - timedelta(days=7)
 
-        # Get user counts
-        all_users = await users_service.list()
-        total_users = len(all_users)
-        active_users = sum(1 for u in all_users if u.is_active)
-        verified_users = sum(1 for u in all_users if u.is_verified)
-        new_users_today = sum(1 for u in all_users if u.created_at >= today_start)
-        new_users_week = sum(1 for u in all_users if u.created_at >= week_start)
+        total_users = await users_service.count()
+        active_users = await users_service.count(m.User.is_active.is_(True))
+        verified_users = await users_service.count(m.User.is_verified.is_(True))
+        new_users_today = await users_service.count(m.User.created_at >= today_start)
+        new_users_week = await users_service.count(m.User.created_at >= week_start)
 
-        # Get team count
-        all_teams = await teams_service.list()
-        total_teams = len(all_teams)
+        total_teams = await teams_service.count()
 
-        # Get today's events count
         audit_stats = await audit_service.get_stats(hours=24)
         events_today = audit_stats["total_events"]
 

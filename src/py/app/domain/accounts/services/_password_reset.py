@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from litestar.exceptions import ClientException
 from litestar.plugins.sqlalchemy import repository, service
@@ -22,11 +23,24 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         model_type = m.PasswordResetToken
 
     repository_type = Repo
-    match_fields = ["token"]
+    match_fields = ["token_hash"]
+
+    @staticmethod
+    def _hash_token(token: str) -> str:
+        return hashlib.sha256(token.encode()).hexdigest()
+
+    async def to_model_on_create(
+        self,
+        data: service.ModelDictT[m.PasswordResetToken],
+    ) -> service.ModelDictT[m.PasswordResetToken]:
+        data = service.schema_dump(data)
+        if service.is_dict_with_field(data, "token") and service.is_dict_without_field(data, "token_hash"):
+            data["token_hash"] = self._hash_token(data.pop("token"))
+        return data
 
     async def create_reset_token(
         self, user_id: UUID, ip_address: str | None = None, user_agent: str | None = None
-    ) -> m.PasswordResetToken:
+    ) -> tuple[m.PasswordResetToken, str]:
         """Create a new password reset token for a user.
 
         Args:
@@ -35,24 +49,20 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             user_agent: User agent string of the request
 
         Returns:
-            The created PasswordResetToken instance
+            Tuple of (PasswordResetToken, plain_token)
         """
-        # Invalidate any existing tokens for this user
         await self.invalidate_user_tokens(user_id)
 
-        # Generate a secure random token
         token = secrets.token_urlsafe(32)
 
-        # Create token with 1-hour expiration for security
-        reset_token = m.PasswordResetToken(
-            user_id=user_id,
-            token=token,
-            expires_at=m.PasswordResetToken.create_expires_at(hours=1),
-            ip_address=ip_address,
-            user_agent=user_agent,
-        )
-
-        return cast("m.PasswordResetToken", await self.repository.add(reset_token))
+        created = await self.create({
+            "user_id": user_id,
+            "token": token,
+            "expires_at": m.PasswordResetToken.create_expires_at(hours=1),
+            "ip_address": ip_address,
+            "user_agent": user_agent,
+        })
+        return created, token
 
     async def validate_reset_token(self, token: str) -> m.PasswordResetToken:
         """Validate a token without consuming it.
@@ -66,7 +76,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         Raises:
             ClientException: If token is invalid, expired, or already used
         """
-        reset_token = cast("m.PasswordResetToken | None", await self.repository.get_one_or_none(token=token))
+        reset_token = await self.get_one_or_none(token_hash=self._hash_token(token))
 
         if reset_token is None:
             raise ClientException(detail="Invalid reset token", status_code=400)
@@ -87,15 +97,10 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
 
         Returns:
             The PasswordResetToken instance
-
-        Raises:
-            ClientException: If token is invalid, expired, or already used
         """
         reset_token = await self.validate_reset_token(token)
-
-        # Mark token as used
         reset_token.used_at = datetime.now(UTC)
-        await self.repository.update(reset_token)
+        await self.update(reset_token)
 
         return reset_token
 
@@ -105,19 +110,16 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         Args:
             user_id: The user's UUID
         """
-        # Find all active tokens for this user
-        tokens = await self.repository.list(
-            m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.used_at.is_(None)
-        )
 
-        # Mark them as used (invalidated)
+        tokens = await self.list(m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.used_at.is_(None))
+
         current_time = datetime.now(UTC)
         for token in tokens:
             if not token.is_used:
                 token.used_at = current_time
 
         if tokens:
-            await self.repository.update_many(tokens)
+            await self.update_many(tokens)
 
     async def cleanup_expired_tokens(self) -> int:
         """Remove expired tokens from the database.
@@ -126,12 +128,12 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             Number of tokens removed
         """
         current_time = datetime.now(UTC)
-        expired_tokens = await self.repository.list(m.PasswordResetToken.expires_at < current_time)
+        expired_tokens = await self.list(m.PasswordResetToken.expires_at < current_time)
 
         if not expired_tokens:
             return 0
 
-        await self.repository.delete_many(expired_tokens)
+        await self.delete_many(list(expired_tokens))
         return len(expired_tokens)
 
     async def check_rate_limit(self, user_id: UUID, hours: float = 1) -> bool:
@@ -145,8 +147,7 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
             True if rate limit exceeded, False otherwise
         """
         cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
-
-        recent_tokens = await self.repository.list(
+        recent_tokens = await self.list(
             m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.created_at >= cutoff_time
         )
 

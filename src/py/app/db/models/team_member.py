@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from sqlalchemy import ForeignKey, String, UniqueConstraint
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from app.db.models.user import User
 
 
-class TeamMember(UUIDAuditBase):
+class TeamMember(UUIDv7AuditBase):
     """Team Membership."""
 
     __tablename__ = "team_member"

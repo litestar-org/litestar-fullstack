@@ -31,6 +31,8 @@ class RoleController(Controller):
         load=[m.Role.users],
         filters={
             "id_filter": UUID,
+            "pagination_type": "limit_offset",
+            "pagination_size": 50,
             "sort_field": "name",
             "search": "name,slug",
         },

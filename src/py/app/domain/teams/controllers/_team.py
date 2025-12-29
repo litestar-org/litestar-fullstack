@@ -27,7 +27,16 @@ class TeamController(Controller):
         TeamService,
         key="teams_service",
         load=[m.Team.tags, m.Team.members],
-        filters={"id_filter": UUID},
+        filters={
+            "id_filter": UUID,
+            "search": "name",
+            "pagination_type": "limit_offset",
+            "pagination_size": 20,
+            "created_at": True,
+            "updated_at": True,
+            "sort_field": "name",
+            "sort_order": "asc",
+        },
     )
 
     @get(component="team/list", operation_id="ListTeams", path="/api/teams")
@@ -110,7 +119,7 @@ class TeamController(Controller):
             item_id=team_id,
             data=data.to_dict(),
         )
-        # Fetch the updated object fresh from the database to ensure all fields are loaded
+
         fresh_obj = await teams_service.get_one(id=team_id)
         return teams_service.to_schema(fresh_obj, schema_type=Team)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.mixins import SlugKey, UniqueMixin
 from advanced_alchemy.utils.text import slugify
 from sqlalchemy import (
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from app.db.models.team import Team
 
 
-class Tag(UUIDAuditBase, SlugKey, UniqueMixin):
+class Tag(UUIDv7AuditBase, SlugKey, UniqueMixin):
     """Tag."""
 
     __tablename__ = "tag"

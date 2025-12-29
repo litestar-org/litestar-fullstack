@@ -18,10 +18,11 @@ from litestar.exceptions import HTTPException
 from litestar.params import Body, Parameter
 from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+from sqlalchemy.orm import undefer_group
 
 from app.domain.accounts.dependencies import provide_user_oauth_service, provide_users_service
 from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorization, OAuthLinkRequest
-from app.lib.settings import provide_app_settings
+from app.schemas.base import Message
 from app.utils.oauth import OAuth2AuthorizeCallback
 
 if TYPE_CHECKING:
@@ -32,7 +33,6 @@ if TYPE_CHECKING:
     from app.domain.accounts.services import UserOAuthAccountService, UserService
     from app.lib.settings import AppSettings
 
-# OAuth state token expiration (10 minutes)
 OAUTH_STATE_EXPIRY_SECONDS = 600
 
 
@@ -118,7 +118,6 @@ class OAuthController(Controller):
     dependencies = {
         "user_service": Provide(provide_users_service),
         "oauth_account_service": Provide(provide_user_oauth_service),
-        "settings": Provide(provide_app_settings, sync_to_thread=False),
     }
 
     @get("/google", name="oauth:google:authorize")
@@ -147,26 +146,21 @@ class OAuthController(Controller):
                 detail="Google OAuth is not configured",
             )
 
-        # Create OAuth client
         client = GoogleOAuth2(
             client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
             client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
         )
 
-        # Use provided redirect URL or default to frontend callback
         frontend_callback = redirect_url or f"{settings.URL}/auth/google/callback"
 
-        # Create signed state token (stateless - no session required)
         state = _create_oauth_state(
             provider="google",
             redirect_url=frontend_callback,
             secret_key=settings.SECRET_KEY,
         )
 
-        # Generate backend callback URL
         callback_url = str(request.url_for("oauth:google:callback"))
 
-        # Get authorization URL
         authorization_url = await client.get_authorization_url(
             redirect_uri=callback_url,
             state=state,
@@ -205,10 +199,9 @@ class OAuthController(Controller):
         Returns:
             Redirect response to frontend with authentication result
         """
-        # Default fallback URL
+
         default_callback = f"{settings.URL}/auth/google/callback"
 
-        # Verify state and extract redirect URL
         if not oauth_state:
             return Redirect(
                 path=_build_error_redirect(default_callback, "oauth_failed", "Missing state parameter"),
@@ -227,7 +220,6 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Check for errors from OAuth provider
         if error:
             return Redirect(
                 path=_build_error_redirect(frontend_callback, "oauth_failed", error),
@@ -240,13 +232,11 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Create OAuth client
         client = GoogleOAuth2(
             client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
             client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
         )
 
-        # Exchange code for token
         callback_url = str(request.url_for("oauth:google:callback"))
         oauth2_callback = OAuth2AuthorizeCallback(
             cast("BaseOAuth2[OAuth2Token]", client),
@@ -261,7 +251,6 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Get user info from Google
         try:
             user_id, user_email = await client.get_id_email(token_data["access_token"])
             user_data = {
@@ -274,14 +263,12 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Authenticate or create user
         user, is_new = await user_service.authenticate_or_create_oauth_user(
             provider="google",
             oauth_data=user_data,
             token_data=token_data,
         )
 
-        # Create JWT token for the user
         from app.domain.accounts.guards import create_access_token
 
         access_token = create_access_token(
@@ -292,7 +279,6 @@ class OAuthController(Controller):
             auth_method="oauth",
         )
 
-        # Redirect to frontend callback with token
         params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
         separator = "&" if "?" in frontend_callback else "?"
         return Redirect(
@@ -326,26 +312,21 @@ class OAuthController(Controller):
                 detail="GitHub OAuth is not configured",
             )
 
-        # Create OAuth client
         client = GitHubOAuth2(
             client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
             client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
         )
 
-        # Use provided redirect URL or default to frontend callback
         frontend_callback = redirect_url or f"{settings.URL}/auth/github/callback"
 
-        # Create signed state token (stateless - no session required)
         state = _create_oauth_state(
             provider="github",
             redirect_url=frontend_callback,
             secret_key=settings.SECRET_KEY,
         )
 
-        # Generate backend callback URL
         callback_url = str(request.url_for("oauth:github:callback"))
 
-        # Get authorization URL with appropriate scopes for user info
         authorization_url = await client.get_authorization_url(
             redirect_uri=callback_url,
             state=state,
@@ -386,10 +367,9 @@ class OAuthController(Controller):
         Returns:
             Redirect response to frontend with authentication result
         """
-        # Default fallback URL
+
         default_callback = f"{settings.URL}/auth/github/callback"
 
-        # Verify state and extract redirect URL
         if not oauth_state:
             return Redirect(
                 path=_build_error_redirect(default_callback, "oauth_failed", "Missing state parameter"),
@@ -408,7 +388,6 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Check for errors from OAuth provider
         if error:
             error_msg = error_description or error
             return Redirect(
@@ -422,13 +401,11 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Create OAuth client
         client = GitHubOAuth2(
             client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
             client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
         )
 
-        # Exchange code for token
         callback_url = str(request.url_for("oauth:github:callback"))
         oauth2_callback = OAuth2AuthorizeCallback(
             cast("BaseOAuth2[OAuth2Token]", client),
@@ -443,7 +420,6 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Get user info from GitHub
         try:
             user_id, user_email = await client.get_id_email(token_data["access_token"])
             user_data = {
@@ -456,14 +432,12 @@ class OAuthController(Controller):
                 status_code=HTTP_302_FOUND,
             )
 
-        # Authenticate or create user
         user, is_new = await user_service.authenticate_or_create_oauth_user(
             provider="github",
             oauth_data=user_data,
             token_data=token_data,
         )
 
-        # Create JWT token for the user
         from app.domain.accounts.guards import create_access_token
 
         access_token = create_access_token(
@@ -474,7 +448,6 @@ class OAuthController(Controller):
             auth_method="oauth",
         )
 
-        # Redirect to frontend callback with token
         params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
         separator = "&" if "?" in frontend_callback else "?"
         return Redirect(
@@ -498,12 +471,13 @@ class OAuthController(Controller):
             oauth_account_service: OAuth account service
             data: OAuth link request data
 
+        Raises:
+            HTTPException: If linking is attempted outside the authorization flow
+
         Returns:
             OAuth account information
         """
-        # For now, we only support linking from the authorization flow
-        # This endpoint would typically be called after the user has authenticated
-        # with OAuth and we have their OAuth data in a temporary storage
+
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail="OAuth account linking must be initiated from the authorization flow",
@@ -513,9 +487,10 @@ class OAuthController(Controller):
     async def unlink_oauth_account(
         self,
         current_user: User,
+        user_service: UserService,
         oauth_account_service: UserOAuthAccountService,
         data: Annotated[OAuthLinkRequest, Body(media_type=RequestEncodingType.JSON)],
-    ) -> dict[str, Any]:
+    ) -> Message:
         """Unlink OAuth account from current user.
 
         Args:
@@ -523,12 +498,16 @@ class OAuthController(Controller):
             oauth_account_service: OAuth account service
             data: OAuth unlink request data
 
+        Raises:
+            HTTPException: If this is the only auth method or the provider is not linked
+
         Returns:
             Success message
         """
-        # Check if user has a password before unlinking
-        if not current_user.hashed_password:
-            # Check if this is the only OAuth account
+
+        user_with_password = await user_service.get(current_user.id, load=[undefer_group("security_sensitive")])
+        if not user_with_password.hashed_password:
+
             oauth_accounts = await oauth_account_service.get_user_oauth_accounts(current_user.id)
             if len(oauth_accounts) <= 1:
                 raise HTTPException(
@@ -536,7 +515,6 @@ class OAuthController(Controller):
                     detail="Cannot unlink the only authentication method. Please set a password first.",
                 )
 
-        # Unlink the OAuth account
         success = await oauth_account_service.unlink_oauth_account(
             user_id=current_user.id,
             provider=data.provider,
@@ -548,7 +526,7 @@ class OAuthController(Controller):
                 detail=f"No {data.provider} account linked to your profile",
             )
 
-        return {"message": f"Successfully unlinked {data.provider} account"}
+        return Message(message=f"Successfully unlinked {data.provider} account")
 
     @get("/accounts", name="oauth:accounts")
     async def get_oauth_accounts(
@@ -572,8 +550,8 @@ class OAuthController(Controller):
                 provider=account.oauth_name,
                 oauth_id=account.account_id,
                 email=account.account_email,
-                name=None,  # We don't store name in OAuth account
-                avatar_url=None,  # We don't store avatar URL
+                name=None,
+                avatar_url=None,
                 linked_at=account.created_at,
                 last_login_at=account.last_login_at,
             )

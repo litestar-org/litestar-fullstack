@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger()
 
-
 @listener("team_created")
 async def team_created_event_handler(team_id: UUID) -> None:
     """Executes when a new team is created.
@@ -31,6 +30,5 @@ async def team_created_event_handler(team_id: UUID) -> None:
             await logger.aerror("Could not locate the specified team", id=team_id)
         else:
             await logger.ainfo("Found team", **obj.to_dict())
-
 
 __all__ = ("team_created_event_handler",)

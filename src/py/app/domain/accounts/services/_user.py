@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Any
 
 from litestar.exceptions import ClientException, PermissionDeniedException
 from litestar.plugins.sqlalchemy import repository, service
+from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
 from app.lib import constants, crypt
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
-# Security constants
 MAX_FAILED_RESET_ATTEMPTS = 5
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         Raises:
             PermissionDeniedException: If the user is not found, the password is invalid, or the account is inactive.
         """
-        db_obj = await self.get_one_or_none(email=username)
+        db_obj = await self.get_one_or_none(email=username, load=[undefer_group("security_sensitive")])
         if db_obj is None:
             msg = "User not found or password invalid"
             raise PermissionDeniedException(detail=msg)
@@ -119,6 +119,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         Raises:
             PermissionDeniedException: If the user is not found, the password is invalid, or the account is inactive.
         """
+        db_obj = await self.get(db_obj.id, load=[undefer_group("security_sensitive")])
         if db_obj.hashed_password is None:
             msg = "User not found or password invalid."
             raise PermissionDeniedException(detail=msg)
@@ -129,7 +130,11 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             msg = "User account is not active"
             raise PermissionDeniedException(detail=msg)
         db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
-        await self.repository.update(db_obj)
+        await self.update(
+            item_id=db_obj.id,
+            data={"hashed_password": db_obj.hashed_password},
+            auto_commit=True,
+        )
 
     @staticmethod
     async def has_role_id(db_obj: m.User, role_id: UUID) -> bool:
@@ -165,7 +170,6 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         Raises:
             ClientException: If user not found or password validation fails
         """
-        # Validate password strength
         try:
             validate_password_strength(new_password)
         except PasswordValidationError as e:
@@ -178,7 +182,6 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         if not db_obj.is_active:
             raise ClientException(detail="User account is inactive", status_code=403)
 
-        # Update password and reset security fields
         db_obj.hashed_password = await crypt.get_password_hash(new_password)
         db_obj.password_reset_at = datetime.now(UTC)
         db_obj.failed_reset_attempts = 0
@@ -199,7 +202,6 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         if db_obj is None:
             return False
 
-        # Check if user is locked due to failed attempts
         return bool(db_obj.reset_locked_until and db_obj.reset_locked_until > datetime.now(UTC))
 
     async def increment_failed_reset_attempt(self, user_id: UUID) -> None:
@@ -214,20 +216,43 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
 
         db_obj.failed_reset_attempts += 1
 
-        # Lock account after max failed attempts for 1 hour
         if db_obj.failed_reset_attempts >= MAX_FAILED_RESET_ATTEMPTS:
             db_obj.reset_locked_until = datetime.now(UTC).replace(hour=datetime.now(UTC).hour + 1)
 
-        await self.repository.update(db_obj)
+        await self.update(
+            item_id=db_obj.id,
+            data={
+                "failed_reset_attempts": db_obj.failed_reset_attempts,
+                "reset_locked_until": db_obj.reset_locked_until,
+            },
+            auto_commit=True,
+        )
 
     async def _populate_model(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         data = service.schema_dump(data)
         data = await self._populate_with_hashed_password(data)
+        data = await self._populate_with_backup_codes(data)
         return await self._populate_with_role(data)
 
     async def _populate_with_hashed_password(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         if service.is_dict(data) and (password := data.pop("password", None)) is not None:
             data["hashed_password"] = await crypt.get_password_hash(password)
+        return data
+
+    async def _populate_with_backup_codes(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+        if not service.is_dict(data):
+            return data
+        if "backup_codes" not in data:
+            return data
+        codes = data.get("backup_codes")
+        if codes is None or not isinstance(codes, list):
+            return data
+        non_null_codes = [code for code in codes if code is not None]
+        if not non_null_codes or all(code.startswith("$") for code in non_null_codes):
+            return data
+        data["backup_codes"] = [
+            None if code is None else await crypt.get_password_hash(code) for code in codes
+        ]
         return data
 
     async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
@@ -252,22 +277,18 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         Returns:
             The created user object
         """
-        # Extract user info from OAuth data
+
         email = oauth_data.get("email", "")
         name = oauth_data.get("name", "")
 
-        # Generate username from email if not provided
-
-        # Create user data
         user_data = {
             "email": email,
             "name": name,
-            "is_verified": True,  # Email is verified by OAuth provider
+            "is_verified": True,
             "verified_at": datetime.now(UTC).date(),
             "is_active": True,
         }
 
-        # Create the user
         return await self.create(data=user_data)
 
     async def authenticate_or_create_oauth_user(
@@ -288,12 +309,11 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         """
         from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
 
-        # Check if user exists by email
         email = oauth_data.get("email", "")
         existing_user = await self.get_one_or_none(email=email) if email else None
 
         if existing_user:
-            # User exists, update OAuth account
+
             oauth_service = UserOAuthAccountService(session=self.repository.session)
             await oauth_service.create_or_update_oauth_account(
                 user_id=existing_user.id,
@@ -303,14 +323,12 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             )
             return existing_user, False
 
-        # Create new user
         new_user = await self.create_user_from_oauth(
             oauth_data=oauth_data,
             provider=provider,
             token_data=token_data,
         )
 
-        # Create OAuth account for new user
         oauth_service = UserOAuthAccountService(session=self.repository.session)
         await oauth_service.create_or_update_oauth_account(
             user_id=new_user.id,

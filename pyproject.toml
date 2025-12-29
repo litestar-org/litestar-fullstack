@@ -16,10 +16,9 @@ classifiers = [
 ]
 dependencies = [
   "litestar[jinja,jwt,structlog]",
-  "advanced-alchemy[uuid,obstore]",
+  "advanced-alchemy[uuid,obstore,cryptography,pwdlib]",
   "psycopg[pool,binary]",
   "python-dotenv",
-  "pwdlib[argon2]",
   "litestar-saq",
   "litestar-vite>=0.15.0b4",
   "litestar-granian[uvloop]",

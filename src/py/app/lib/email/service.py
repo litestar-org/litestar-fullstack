@@ -9,14 +9,11 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import TYPE_CHECKING, Protocol
+from typing import Protocol
 
 from app.lib.email.backends import get_backend
 from app.lib.email.base import EmailMultiAlternatives
 from app.lib.settings import get_settings
-
-if TYPE_CHECKING:
-    from app.db.models import EmailVerificationToken, PasswordResetToken
 
 logger = logging.getLogger(__name__)
 
@@ -122,17 +119,17 @@ class EmailService:
         else:
             return num_sent > 0
 
-    async def send_verification_email(self, user: UserProtocol, verification_token: EmailVerificationToken) -> bool:
+    async def send_verification_email(self, user: UserProtocol, verification_token: str) -> bool:
         """Send email verification email to user.
 
         Args:
             user: The user to send the email to.
-            verification_token: The verification token object.
+            verification_token: The verification token string.
 
         Returns:
             True if email was sent successfully.
         """
-        verification_url = f"{self.base_url}/verify-email?token={verification_token.token}"
+        verification_url = f"{self.base_url}/verify-email?token={verification_token}"
         user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_verification_html(
@@ -172,7 +169,7 @@ class EmailService:
     async def send_password_reset_email(
         self,
         user: UserProtocol,
-        reset_token: PasswordResetToken,
+        reset_token: str,
         expires_in_minutes: int = 60,
         ip_address: str = "unknown",
     ) -> bool:
@@ -180,14 +177,14 @@ class EmailService:
 
         Args:
             user: The user to send the email to.
-            reset_token: The password reset token object.
+            reset_token: The password reset token string.
             expires_in_minutes: How long the token is valid for.
             ip_address: IP address where reset was requested.
 
         Returns:
             True if email was sent successfully.
         """
-        reset_url = f"{self.base_url}/reset-password?token={reset_token.token}"
+        reset_url = f"{self.base_url}/reset-password?token={reset_token}"
         user_email, user_name = self._resolve_user_details(user)
 
         html_content = self._generate_password_reset_html(

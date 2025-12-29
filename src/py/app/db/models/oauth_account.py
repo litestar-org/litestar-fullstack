@@ -4,16 +4,21 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
+from advanced_alchemy.types import EncryptedText
 from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.lib.settings import get_settings
 if TYPE_CHECKING:
     from app.db.models.user import User
 
 
-class UserOAuthAccount(UUIDAuditBase):
+settings = get_settings()
+
+
+class UserOAuthAccount(UUIDv7AuditBase):
     """User Oauth Account"""
 
     __tablename__ = "user_account_oauth"
@@ -29,9 +34,9 @@ class UserOAuthAccount(UUIDAuditBase):
         nullable=False,
     )
     oauth_name: Mapped[str] = mapped_column(String(length=100), index=True, nullable=False)
-    access_token: Mapped[str] = mapped_column(Text, nullable=False)
+    access_token: Mapped[str] = mapped_column(EncryptedText(key=settings.app.SECRET_KEY), nullable=False)
     expires_at: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
+    refresh_token: Mapped[str | None] = mapped_column(EncryptedText(key=settings.app.SECRET_KEY), nullable=True)
     account_id: Mapped[str] = mapped_column(String(length=320), index=True, nullable=False)
     account_email: Mapped[str] = mapped_column(String(length=320), nullable=False)
     token_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

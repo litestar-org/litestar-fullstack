@@ -5,11 +5,7 @@ from __future__ import annotations
 from sqlalchemy.orm import selectinload
 
 from app.db import models as m
-from app.domain.teams.services import (
-    TeamInvitationService,
-    TeamMemberService,
-    TeamService,
-)
+from app.domain.teams.services import TeamMemberService, TeamService
 from app.lib.deps import create_service_provider
 
 provide_teams_service = create_service_provider(
@@ -27,17 +23,7 @@ provide_team_members_service = create_service_provider(
     error_messages={"duplicate_key": "User is already a team member.", "integrity": "Team member operation failed."},
 )
 
-provide_team_invitations_service = create_service_provider(
-    TeamInvitationService,
-    load=[selectinload(m.TeamInvitation.team)],
-    error_messages={
-        "duplicate_key": "Invitation already exists.",
-        "integrity": "Team invitation operation failed.",
-    },
-)
-
 __all__ = (
-    "provide_team_invitations_service",
     "provide_team_members_service",
     "provide_teams_service",
 )

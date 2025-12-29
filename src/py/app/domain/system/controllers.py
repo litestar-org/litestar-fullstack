@@ -11,7 +11,6 @@ from litestar.response import Response
 from sqlalchemy import text
 
 from app.domain.system import schemas as s
-from app.lib.settings import provide_app_settings
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,10 +25,14 @@ class SystemController(Controller):
     """System health and configuration."""
 
     tags = ["System"]
-    dependencies = {"settings": Provide(provide_app_settings, sync_to_thread=False)}
+    dependencies = {}
 
     @get(operation_id="SystemHealth", name="system:health", path="/health", summary="Health Check")
-    async def check_system_health(self, db_session: AsyncSession) -> Response[s.SystemHealth]:
+    async def check_system_health(
+        self,
+        db_session: AsyncSession,
+        settings: AppSettings,
+    ) -> Response[s.SystemHealth]:
         """Check database available and returns app config info.
 
         Args:
@@ -58,7 +61,7 @@ class SystemController(Controller):
             )
 
         return Response(
-            content=s.SystemHealth(database_status=db_status),
+            content=s.SystemHealth(database_status=db_status, app=settings.NAME),
             status_code=200 if healthy else 500,
             media_type=MediaType.JSON,
         )

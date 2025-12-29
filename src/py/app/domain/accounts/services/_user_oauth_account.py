@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.repository import SQLAlchemyAsyncRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
-from sqlalchemy import select
 
 from app.db import models as m
 
@@ -33,7 +32,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         token_data: OAuth2Token,
     ) -> m.UserOAuthAccount:
         """Create or update OAuth account with token data."""
-        # Check if OAuth account already exists
+
         existing = await self.get_one_or_none(
             user_id=user_id,
             oauth_name=provider,
@@ -56,10 +55,9 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         }
 
         if existing:
-            # Update existing account
+
             return await self.update(item_id=existing.id, data=account_data)
 
-        # Create new account
         return await self.create(data=account_data)
 
     async def find_user_by_oauth_account(
@@ -68,16 +66,8 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         oauth_id: str,
     ) -> m.User | None:
         """Find user by OAuth provider and ID."""
-        statement = (
-            select(m.User)
-            .join(m.UserOAuthAccount)
-            .where(
-                m.UserOAuthAccount.oauth_name == provider,
-                m.UserOAuthAccount.account_id == oauth_id,
-            )
-        )
-        result = await self.repository.session.execute(statement)
-        return cast("m.User | None", result.scalar_one_or_none())
+        oauth_account = await self.get_one_or_none(oauth_name=provider, account_id=oauth_id)
+        return oauth_account.user if oauth_account else None
 
     async def link_oauth_account(
         self,
@@ -87,7 +77,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         token_data: OAuth2Token,
     ) -> m.UserOAuthAccount:
         """Link OAuth account to existing user."""
-        # Check if OAuth account is already linked to another user
+
         existing_user = await self.find_user_by_oauth_account(
             provider=provider,
             oauth_id=oauth_data.get("id", oauth_data.get("sub", "")),

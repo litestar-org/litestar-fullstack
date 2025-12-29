@@ -34,7 +34,7 @@ from app.domain.accounts.schemas import (
     User,
 )
 from app.lib.email import email_service
-from app.lib.settings import get_settings
+from app.lib.settings import AppSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
 from app.schemas.base import Message
 
@@ -53,13 +53,10 @@ if TYPE_CHECKING:
     )
     from app.lib.email.service import UserProtocol
 
-
 logger = logging.getLogger(__name__)
-settings = get_settings()
 
-# Refresh token cookie configuration
-REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105 - This is a cookie name, not a password
-REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
+REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105
+REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60
 
 
 class AccessController(Controller):
@@ -80,6 +77,7 @@ class AccessController(Controller):
         request: Request[m.User, Token, Any],
         users_service: UserService,
         refresh_token_service: RefreshTokenService,
+        settings: AppSettings,
         data: Annotated[AccountLogin, Body(title="OAuth2 Login", media_type=RequestEncodingType.URL_ENCODED)],
     ) -> Response[OAuth2Login] | Response[LoginMfaChallenge]:
         """Authenticate a user.
@@ -104,9 +102,8 @@ class AccessController(Controller):
 
         user = await users_service.authenticate(data.username, data.password)
 
-        # Check if MFA is enabled
         if user.is_two_factor_enabled and user.totp_secret:
-            # Create MFA challenge token (short-lived)
+
             mfa_challenge_token = JWTToken(
                 sub=user.email,
                 exp=datetime.now(UTC) + timedelta(minutes=5),
@@ -120,7 +117,6 @@ class AccessController(Controller):
                 algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM,
             )
 
-            # Return MFA required response with challenge token cookie
             response = Response(
                 LoginMfaChallenge(
                     mfa_required=True,
@@ -131,28 +127,23 @@ class AccessController(Controller):
             response.set_cookie(
                 key="mfa_challenge",
                 value=encoded_challenge,
-                max_age=300,  # 5 minutes
+                max_age=300,
                 httponly=True,
                 secure=settings.app.CSRF_COOKIE_SECURE,
                 samesite="lax",
-                path="/api/mfa",  # Restrict to MFA endpoints
+                path="/api/mfa",
             )
             return response
 
-        # No MFA - proceed with normal login
-        # Get device info from user agent
         device_info = request.headers.get("user-agent", "")[:255] if request.headers.get("user-agent") else None
 
-        # Create refresh token (new family for fresh login)
         raw_refresh_token, _ = await refresh_token_service.create_refresh_token(
             user_id=user.id,
             device_info=device_info,
         )
 
-        # Get the access token response
         response = auth.login(user.email)
 
-        # Add refresh token as HTTP-only cookie
         response.set_cookie(
             key=REFRESH_TOKEN_COOKIE_NAME,
             value=raw_refresh_token,
@@ -160,7 +151,7 @@ class AccessController(Controller):
             httponly=True,
             secure=settings.app.CSRF_COOKIE_SECURE,
             samesite="lax",
-            path="/api/access",  # Restrict to access endpoints
+            path="/api/access",
         )
 
         return response
@@ -184,16 +175,15 @@ class AccessController(Controller):
         """
         from app.domain.accounts.guards import auth
 
-        # Revoke refresh token family if present
         raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
         if raw_refresh_token:
             try:
                 token_hash = refresh_token_service.hash_token(raw_refresh_token)
-                refresh_token = await refresh_token_service.repository.get_one_or_none(token_hash=token_hash)
+                refresh_token = await refresh_token_service.get_one_or_none(token_hash=token_hash)
                 if refresh_token:
                     await refresh_token_service.revoke_token_family(refresh_token.family_id)
             except Exception:  # noqa: BLE001, S110
-                # Silently ignore errors during logout - user should still be logged out
+
                 pass
 
         request.cookies.pop(auth.key, None)
@@ -208,6 +198,7 @@ class AccessController(Controller):
         self,
         request: Request[m.User, Token, Any],
         refresh_token_service: RefreshTokenService,
+        settings: AppSettings,
     ) -> Response[TokenRefresh]:
         """Refresh access token using refresh token.
 
@@ -226,24 +217,19 @@ class AccessController(Controller):
         """
         from app.domain.accounts.guards import auth
 
-        # Get refresh token from cookie
         raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
         if not raw_refresh_token:
             raise NotAuthorizedException(detail="No refresh token provided")
 
-        # Get device info for new token
         device_info = request.headers.get("user-agent", "")[:255] if request.headers.get("user-agent") else None
 
-        # Rotate the token (validates, revokes old, creates new)
         new_raw_token, new_token_model = await refresh_token_service.rotate_refresh_token(
             raw_token=raw_refresh_token,
             device_info=device_info,
         )
 
-        # Create new access token
         response = auth.login(new_token_model.user.email)
 
-        # Set new refresh token cookie
         response.set_cookie(
             key=REFRESH_TOKEN_COOKIE_NAME,
             value=new_raw_token,
@@ -271,13 +257,12 @@ class AccessController(Controller):
         Returns:
             List of active sessions
         """
-        # Get current refresh token to identify current session
+
         current_token_hash = None
         raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
         if raw_refresh_token:
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
 
-        # Get all active sessions
         active_tokens = await refresh_token_service.get_active_sessions(request.user.id)
 
         sessions = [
@@ -313,12 +298,11 @@ class AccessController(Controller):
         Raises:
             ClientException: If session not found or doesn't belong to user
         """
-        # Get the token
+
         token = await refresh_token_service.get_one_or_none(id=session_id)
         if not token or token.user_id != request.user.id:
             raise ClientException(detail="Session not found", status_code=404)
 
-        # Revoke the entire family for this session
         await refresh_token_service.revoke_token_family(token.family_id)
 
         return Message(message="Session revoked successfully")
@@ -338,16 +322,14 @@ class AccessController(Controller):
         Returns:
             Success message
         """
-        # Get current token to preserve it
+
         current_token_hash = None
         raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
         if raw_refresh_token:
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
 
-        # Get all active sessions
         active_tokens = await refresh_token_service.get_active_sessions(request.user.id)
 
-        # Revoke all families except current
         revoked_count = 0
         for token in active_tokens:
             if token.token_hash != current_token_hash:
@@ -377,7 +359,7 @@ class AccessController(Controller):
             User
         """
         user_data = data.to_dict()
-        # Set is_verified to False for new registrations (require email verification)
+
         user_data["is_verified"] = False
 
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
@@ -387,8 +369,7 @@ class AccessController(Controller):
         user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id)
 
-        # Send verification email
-        verification_token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
+        _, verification_token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
         await email_service.send_verification_email(cast("UserProtocol", user), verification_token)
 
         return users_service.to_schema(user, schema_type=User)
@@ -412,31 +393,26 @@ class AccessController(Controller):
         Returns:
             Response indicating reset email status
         """
-        # Get client IP and user agent for security logging
+
         ip_address = request.client.host if request.client else "unknown"
         user_agent = request.headers.get("user-agent", "unknown")
 
-        # Find user by email
         user = await users_service.get_one_or_none(email=data.email)
 
-        # For security, always return success message (don't reveal if email exists)
         if user is None or not user.is_active:
             return PasswordResetSent(
                 message="If the email exists, a password reset link has been sent", expires_in_minutes=60
             )
 
-        # Check rate limiting
         if await password_reset_service.check_rate_limit(user.id):
             return PasswordResetSent(
                 message="Too many password reset requests. Please try again later", expires_in_minutes=60
             )
 
-        # Create reset token
-        reset_token = await password_reset_service.create_reset_token(
+        _, reset_token = await password_reset_service.create_reset_token(
             user_id=user.id, ip_address=ip_address, user_agent=user_agent
         )
 
-        # Send reset email
         await email_service.send_password_reset_email(
             user=cast("UserProtocol", user),
             reset_token=reset_token,
@@ -469,8 +445,8 @@ class AccessController(Controller):
                 return ResetTokenValidation(
                     valid=True, user_id=reset_token.user_id, expires_at=reset_token.expires_at.isoformat()
                 )
-        except Exception:  # noqa: BLE001 - Intentionally catching all exceptions to avoid leaking validation info
-            logger.warning("Failed to validate reset token: %s", token, exc_info=True)
+        except Exception:  # noqa: BLE001
+            logger.warning("Failed to validate reset token", exc_info=True)
 
         return ResetTokenValidation(valid=False)
 
@@ -495,24 +471,19 @@ class AccessController(Controller):
         Raises:
             ClientException: If token is invalid or passwords don't match
         """
-        # Validate passwords match
+
         if data.password != data.password_confirm:
             raise ClientException(detail="Passwords do not match", status_code=400)
 
-        # Validate password strength
-        # Password validation errors are converted to ClientExceptions for consistent API responses
         try:
             validate_password_strength(data.password)
         except PasswordValidationError as e:
             raise ClientException(detail=str(e), status_code=400) from e
 
-        # Use the reset token (validates and marks as used)
         reset_token = await password_reset_service.use_reset_token(data.token)
 
-        # Reset the user's password
         user = await users_service.reset_password_with_token(user_id=reset_token.user_id, new_password=data.password)
 
-        # Send confirmation email
         await email_service.send_password_reset_confirmation_email(cast("UserProtocol", user))
 
         return PasswordResetComplete(message="Password has been successfully reset", user_id=user.id)

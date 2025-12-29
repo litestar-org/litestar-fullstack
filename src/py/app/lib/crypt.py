@@ -136,18 +136,6 @@ def generate_backup_codes(count: int = 8) -> list[str]:
     return [secrets.token_hex(4).upper() for _ in range(count)]
 
 
-async def hash_backup_codes(codes: list[str]) -> list[str]:
-    """Hash backup codes for storage.
-
-    Args:
-        codes: List of plaintext backup codes.
-
-    Returns:
-        List of hashed backup codes.
-    """
-    return [await get_password_hash(code) for code in codes]
-
-
 @overload
 async def verify_backup_code(
     code: str,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.base import UUIDAuditBase
+from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.mixins import SlugKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from app.db.models.team_member import TeamMember
 
 
-class Team(UUIDAuditBase, SlugKey):
+class Team(UUIDv7AuditBase, SlugKey):
     """A group of users with common permissions.
     Users can create and invite users to a team.
     """

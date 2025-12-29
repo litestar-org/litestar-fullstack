@@ -3,21 +3,27 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from litestar import Controller, delete, get, patch
 from litestar.di import Provide
+from litestar.params import Dependency
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
 from app.domain.admin.dependencies import provide_audit_log_service
-from app.domain.admin.schemas import AdminTeamDetail, AdminTeamList, AdminTeamSummary, AdminTeamUpdate
-from app.domain.teams.dependencies import provide_teams_service
+from app.domain.admin.schemas import AdminTeamDetail, AdminTeamSummary, AdminTeamUpdate
+from app.domain.teams.services import TeamService
+from app.schemas.base import Message
+from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from litestar import Request
     from litestar.security.jwt import Token
+
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
 
     from app.domain.admin.services import AuditLogService
     from app.domain.teams.services import TeamService
@@ -29,8 +35,22 @@ class AdminTeamsController(Controller):
     tags = ["Admin"]
     path = "/api/admin/teams"
     guards = [requires_superuser]
-    dependencies = {
-        "teams_service": Provide(provide_teams_service),
+    dependencies = create_service_dependencies(
+        TeamService,
+        key="teams_service",
+        load=[selectinload(m.Team.members).options(joinedload(m.TeamMember.user, innerjoin=True))],
+        error_messages={"duplicate_key": "This team already exists.", "integrity": "Team operation failed."},
+        filters={
+            "id_filter": UUID,
+            "search": "name",
+            "pagination_type": "limit_offset",
+            "pagination_size": 25,
+            "created_at": True,
+            "updated_at": True,
+            "sort_field": "created_at",
+            "sort_order": "desc",
+        },
+    ) | {
         "audit_service": Provide(provide_audit_log_service),
     }
 
@@ -39,45 +59,35 @@ class AdminTeamsController(Controller):
         self,
         request: Request[m.User, Token, Any],
         teams_service: TeamService,
-        page: int = 1,
-        page_size: int = 20,
-    ) -> AdminTeamList:
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> OffsetPagination[AdminTeamSummary]:
         """List all teams with pagination.
 
         Args:
             request: Request with authenticated superuser
             teams_service: Team service
-            page: Page number (1-indexed)
-            page_size: Items per page
+            filters: Filter and pagination parameters
 
         Returns:
             Paginated team list
         """
-        all_teams = await teams_service.list()
-        total = len(all_teams)
-
-        # Manual pagination
-        start = (page - 1) * page_size
-        end = start + page_size
-        paginated_teams = all_teams[start:end]
-
+        results, total = await teams_service.list_and_count(*filters)
         items = [
-            AdminTeamSummary(
-                id=t.id,
-                name=t.name,
-                slug=t.slug,
-                member_count=len(t.members) if t.members else 0,
-                is_active=True,  # Add is_active to Team model if needed
-                created_at=t.created_at,
-            )
-            for t in paginated_teams
+            {
+                "id": t.id,
+                "name": t.name,
+                "slug": t.slug,
+                "member_count": len(t.members) if t.members else 0,
+                "is_active": t.is_active,
+                "created_at": t.created_at,
+            }
+            for t in results
         ]
-
-        return AdminTeamList(
-            items=items,
+        return teams_service.to_schema(
+            data=items,
             total=total,
-            page=page,
-            page_size=page_size,
+            filters=filters,
+            schema_type=AdminTeamSummary,
         )
 
     @get(operation_id="AdminGetTeam", path="/{team_id:uuid}")
@@ -99,7 +109,6 @@ class AdminTeamsController(Controller):
         """
         team = await teams_service.get(team_id)
 
-        # Find owner email
         owner_email = None
         if team.members:
             for member in team.members:
@@ -112,7 +121,7 @@ class AdminTeamsController(Controller):
             name=team.name,
             slug=team.slug,
             description=team.description,
-            is_active=True,  # Add is_active to Team model if needed
+            is_active=team.is_active,
             member_count=len(team.members) if team.members else 0,
             owner_email=owner_email,
             created_at=team.created_at,
@@ -142,7 +151,6 @@ class AdminTeamsController(Controller):
         """
         import msgspec
 
-        # Build update dict from non-UNSET values
         update_data: dict[str, Any] = {}
         for field in ("name", "description", "is_active"):
             value = getattr(data, field)
@@ -151,7 +159,6 @@ class AdminTeamsController(Controller):
 
         team = await teams_service.update(item_id=team_id, data=m.Team(**update_data), auto_commit=True)
 
-        # Log the action
         await audit_service.log_action(
             action="admin.team.update",
             actor_id=request.user.id,
@@ -163,7 +170,6 @@ class AdminTeamsController(Controller):
             request=request,
         )
 
-        # Find owner email
         owner_email = None
         if team.members:
             for member in team.members:
@@ -176,7 +182,7 @@ class AdminTeamsController(Controller):
             name=team.name,
             slug=team.slug,
             description=team.description,
-            is_active=True,
+            is_active=team.is_active,
             member_count=len(team.members) if team.members else 0,
             owner_email=owner_email,
             created_at=team.created_at,
@@ -190,7 +196,7 @@ class AdminTeamsController(Controller):
         teams_service: TeamService,
         audit_service: AuditLogService,
         team_id: UUID,
-    ) -> dict[str, str]:
+    ) -> Message:
         """Delete a team (admin only).
 
         Args:
@@ -207,7 +213,6 @@ class AdminTeamsController(Controller):
 
         await teams_service.delete(team_id)
 
-        # Log the action
         await audit_service.log_action(
             action="admin.team.delete",
             actor_id=request.user.id,
@@ -218,4 +223,4 @@ class AdminTeamsController(Controller):
             request=request,
         )
 
-        return {"message": f"Team {team_name} deleted successfully"}
+        return Message(message=f"Team {team_name} deleted successfully")

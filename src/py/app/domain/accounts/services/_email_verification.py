@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import secrets
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
@@ -22,9 +23,26 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
         model_type = m.EmailVerificationToken
 
     repository_type = Repo
-    match_fields = ["token"]
+    match_fields = ["token_hash"]
 
-    async def create_verification_token(self, user_id: UUID, email: str) -> m.EmailVerificationToken:
+    @staticmethod
+    def _hash_token(token: str) -> str:
+        return hashlib.sha256(token.encode()).hexdigest()
+
+    async def to_model_on_create(
+        self,
+        data: service.ModelDictT[m.EmailVerificationToken],
+    ) -> service.ModelDictT[m.EmailVerificationToken]:
+        data = service.schema_dump(data)
+        if service.is_dict_with_field(data, "token") and service.is_dict_without_field(data, "token_hash"):
+            data["token_hash"] = self._hash_token(data.pop("token"))
+        return data
+
+    async def create_verification_token(
+        self,
+        user_id: UUID,
+        email: str,
+    ) -> tuple[m.EmailVerificationToken, str]:
         """Create a new email verification token for a user.
 
         Args:
@@ -32,21 +50,22 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             email: The email address to verify
 
         Returns:
-            The created EmailVerificationToken instance
+            Tuple of (EmailVerificationToken, plain_token)
         """
-        # Invalidate any existing tokens for this user/email combination
+
         await self.invalidate_user_tokens(user_id, email)
 
-        # Generate a secure random token
         token = secrets.token_urlsafe(32)
 
-        # Create token with 24-hour expiration
-        verification_token = m.EmailVerificationToken(
-            user_id=user_id, token=token, email=email, expires_at=m.EmailVerificationToken.create_expires_at(hours=24)
-        )
+        verification_token = {
+            "user_id": user_id,
+            "token": token,
+            "email": email,
+            "expires_at": m.EmailVerificationToken.create_expires_at(hours=24),
+        }
 
         obj = await self.create(verification_token)
-        return self.to_schema(obj)
+        return obj, token
 
     async def verify_token(self, token: str) -> m.EmailVerificationToken:
         """Verify a token and mark it as used.
@@ -60,7 +79,7 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
         Raises:
             ClientException: If token is invalid, expired, or already used
         """
-        verification_token = await self.repository.get_one_or_none(token=token)
+        verification_token = await self.get_one_or_none(token_hash=self._hash_token(token))
 
         if verification_token is None:
             raise ClientException(detail="Invalid verification token", status_code=400)
@@ -71,11 +90,9 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
         if verification_token.is_used:
             raise ClientException(detail="Verification token has already been used", status_code=400)
 
-        # Mark token as used
         verification_token.used_at = datetime.now(UTC)
         obj = await self.update(verification_token)
-
-        return self.to_schema(obj)
+        return obj
 
     async def invalidate_user_tokens(self, user_id: UUID, email: str | None = None) -> None:
         """Invalidate all tokens for a user, optionally filtered by email.
@@ -88,17 +105,15 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
         if email:
             filters.append(m.EmailVerificationToken.email == email)
 
-        # Find all active tokens
-        tokens = await self.repository.list(*filters)
+        tokens = await self.list(*filters)
 
-        # Mark them as used (invalidated)
         current_time = datetime.now(UTC)
         for token in tokens:
             if not token.is_used:
                 token.used_at = current_time
 
         if tokens:
-            await self.repository.update_many(tokens)
+            await self.update_many(tokens)
 
     async def cleanup_expired_tokens(self) -> int:
         """Remove expired tokens from the database.
@@ -107,9 +122,9 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             Number of tokens removed
         """
         current_time = datetime.now(UTC)
-        expired_tokens = await self.repository.list(m.EmailVerificationToken.expires_at < current_time)
+        expired_tokens = await self.list(m.EmailVerificationToken.expires_at < current_time)
 
         if expired_tokens:
-            await self.repository.delete_many(expired_tokens)
+            await self.delete_many(list(expired_tokens))
 
         return len(expired_tokens)

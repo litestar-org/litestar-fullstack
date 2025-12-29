@@ -3,21 +3,27 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from litestar import Controller, delete, get, patch
 from litestar.di import Provide
+from litestar.params import Dependency
+from sqlalchemy.orm import joinedload, load_only, selectinload, undefer_group
 
 from app.db import models as m
-from app.domain.accounts.dependencies import provide_users_service
 from app.domain.accounts.guards import requires_superuser
+from app.domain.accounts.services import UserService
 from app.domain.admin.dependencies import provide_audit_log_service
-from app.domain.admin.schemas import AdminUserDetail, AdminUserList, AdminUserSummary, AdminUserUpdate
+from app.domain.admin.schemas import AdminUserDetail, AdminUserSummary, AdminUserUpdate
+from app.schemas.base import Message
+from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
-    from uuid import UUID
-
     from litestar import Request
     from litestar.security.jwt import Token
+
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
 
     from app.domain.accounts.services import UserService
     from app.domain.admin.services import AuditLogService
@@ -29,8 +35,29 @@ class AdminUsersController(Controller):
     tags = ["Admin"]
     path = "/api/admin/users"
     guards = [requires_superuser]
-    dependencies = {
-        "users_service": Provide(provide_users_service),
+    dependencies = create_service_dependencies(
+        UserService,
+        key="users_service",
+        load=[
+            selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
+            selectinload(m.User.oauth_accounts),
+            selectinload(m.User.teams).options(
+                joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
+            ),
+        ],
+        uniquify=True,
+        error_messages={"duplicate_key": "This user already exists.", "integrity": "User operation failed."},
+        filters={
+            "id_filter": UUID,
+            "search": "name,email",
+            "pagination_type": "limit_offset",
+            "pagination_size": 25,
+            "created_at": True,
+            "updated_at": True,
+            "sort_field": "created_at",
+            "sort_order": "desc",
+        },
+    ) | {
         "audit_service": Provide(provide_audit_log_service),
     }
 
@@ -39,48 +66,24 @@ class AdminUsersController(Controller):
         self,
         request: Request[m.User, Token, Any],
         users_service: UserService,
-        page: int = 1,
-        page_size: int = 20,
-    ) -> AdminUserList:
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> OffsetPagination[AdminUserSummary]:
         """List all users with pagination.
 
         Args:
             request: Request with authenticated superuser
             users_service: User service
-            page: Page number (1-indexed)
-            page_size: Items per page
+            filters: Filter and pagination parameters
 
         Returns:
             Paginated user list
         """
-        all_users = await users_service.list()
-        total = len(all_users)
-
-        # Manual pagination
-        start = (page - 1) * page_size
-        end = start + page_size
-        paginated_users = all_users[start:end]
-
-        items = [
-            AdminUserSummary(
-                id=u.id,
-                email=u.email,
-                name=u.name,
-                username=u.username,
-                is_active=u.is_active,
-                is_superuser=u.is_superuser,
-                is_verified=u.is_verified,
-                created_at=u.created_at,
-                login_count=u.login_count,
-            )
-            for u in paginated_users
-        ]
-
-        return AdminUserList(
-            items=items,
+        results, total = await users_service.list_and_count(*filters)
+        return users_service.to_schema(
+            data=results,
             total=total,
-            page=page,
-            page_size=page_size,
+            filters=filters,
+            schema_type=AdminUserSummary,
         )
 
     @get(operation_id="AdminGetUser", path="/{user_id:uuid}")
@@ -100,14 +103,14 @@ class AdminUsersController(Controller):
         Returns:
             Detailed user information
         """
-        user = await users_service.get(user_id)
+        user = await users_service.get(user_id, load=[undefer_group("security_sensitive")])
 
         return AdminUserDetail(
             id=user.id,
             email=user.email,
             name=user.name,
             username=user.username,
-            phone=None,  # Not in model yet
+            phone=user.phone,
             is_active=user.is_active,
             is_superuser=user.is_superuser,
             is_verified=user.is_verified,
@@ -146,7 +149,6 @@ class AdminUsersController(Controller):
         """
         import msgspec
 
-        # Build update dict from non-UNSET values
         update_data: dict[str, Any] = {}
         for field in ("name", "username", "phone", "is_active", "is_superuser", "is_verified"):
             value = getattr(data, field)
@@ -155,7 +157,6 @@ class AdminUsersController(Controller):
 
         user = await users_service.update(item_id=user_id, data=m.User(**update_data), auto_commit=True)
 
-        # Log the action
         await audit_service.log_action(
             action="admin.user.update",
             actor_id=request.user.id,
@@ -172,7 +173,7 @@ class AdminUsersController(Controller):
             email=user.email,
             name=user.name,
             username=user.username,
-            phone=None,
+            phone=user.phone,
             is_active=user.is_active,
             is_superuser=user.is_superuser,
             is_verified=user.is_verified,
@@ -195,7 +196,7 @@ class AdminUsersController(Controller):
         users_service: UserService,
         audit_service: AuditLogService,
         user_id: UUID,
-    ) -> dict[str, str]:
+    ) -> Message:
         """Delete a user (admin only).
 
         Args:
@@ -209,7 +210,6 @@ class AdminUsersController(Controller):
         """
         user = await users_service.get(user_id)
 
-        # Don't allow deleting yourself
         if user.id == request.user.id:
             from litestar.exceptions import NotAuthorizedException
 
@@ -218,7 +218,6 @@ class AdminUsersController(Controller):
         user_email = user.email
         await users_service.delete(user_id)
 
-        # Log the action
         await audit_service.log_action(
             action="admin.user.delete",
             actor_id=request.user.id,
@@ -229,4 +228,4 @@ class AdminUsersController(Controller):
             request=request,
         )
 
-        return {"message": f"User {user_email} deleted successfully"}
+        return Message(message=f"User {user_email} deleted successfully")

@@ -143,6 +143,24 @@
 - [x] Verify `create_service_provider` pattern is used correctly
 - [x] Verify inner repository pattern in services
 
+### 0.5 Advanced Alchemy Alignment ✅ COMPLETED
+- [x] Replace manual pagination in admin endpoints with filter-driven `OffsetPagination`
+- [x] Add limit/offset filters for tags, roles, teams, and team invitations
+- [x] Hash email verification + password reset tokens via `to_model_on_create`
+- [x] Encrypt OAuth access/refresh tokens using `EncryptedText`
+- [x] Switch domain models to `UUIDv7AuditBase`
+- [x] Enforce team owner on create and allow clearing tags on update
+- [x] Replace dict responses with msgspec `Message`/structs
+- [x] Remove direct session usage in admin audit and OAuth lookup paths
+- [x] Ensure `security_sensitive` loads for MFA and admin detail flows
+- [x] Remove legacy migration files (fresh baseline)
+- [x] Hash MFA backup codes in `UserService.to_model_on_*` and accept plaintext in controllers
+- [x] Remove unused admin list schemas and team invitation service provider
+- [x] Replace repository DML usage with service methods
+- [x] Convert admin audit user/target log endpoints to `OffsetPagination` with filters
+- [x] Remove unused audit helpers and MFA backup code hashing helper
+- [x] Clean inline comments from domain services/controllers
+
 ---
 
 ## Phase 1: Security Foundation

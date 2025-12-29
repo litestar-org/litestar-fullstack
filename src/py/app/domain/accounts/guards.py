@@ -88,7 +88,6 @@ def requires_superuser(connection: ASGIConnection[Any, m.User, Token, Any], _: B
         return
     raise PermissionDeniedException(detail="Insufficient privileges")
 
-
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> m.User | None:
     """Lookup current user from local JWT token.
 
@@ -133,7 +132,7 @@ def create_access_token(
 
     token = Token(
         sub=email,
-        exp=datetime.now(UTC) + timedelta(hours=1),  # 1 hour expiration
+        exp=datetime.now(UTC) + timedelta(hours=1),
         extras={
             "user_id": user_id,
             "is_superuser": is_superuser,
@@ -142,7 +141,6 @@ def create_access_token(
         },
     )
     return token.encode(secret=settings.app.SECRET_KEY, algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM)
-
 
 auth = OAuth2PasswordBearerAuth[m.User](
     retrieve_user_handler=current_user_from_token,
