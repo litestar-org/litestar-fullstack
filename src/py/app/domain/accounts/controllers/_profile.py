@@ -8,9 +8,9 @@ import structlog
 from litestar import Controller, delete, get, patch
 from litestar.di import Provide
 
-from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
-from app.schemas.base import Message
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from app.db import models as m

@@ -13,9 +13,9 @@ from sqlalchemy.orm import joinedload, load_only, selectinload, undefer_group
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import UserService
-from app.domain.admin.dependencies import provide_audit_log_service
+from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import AdminUserDetail, AdminUserSummary, AdminUserUpdate
-from app.schemas.base import Message
+from app.lib.schema import Message
 from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
@@ -155,7 +155,7 @@ class AdminUsersController(Controller):
             if value is not msgspec.UNSET:
                 update_data[field] = value
 
-        user = await users_service.update(item_id=user_id, data=m.User(**update_data), auto_commit=True)
+        user = await users_service.update(item_id=user_id, data=update_data, auto_commit=True)
 
         await audit_service.log_action(
             action="admin.user.update",
@@ -207,6 +207,9 @@ class AdminUsersController(Controller):
 
         Returns:
             Success message
+
+        Raises:
+            NotAuthorizedException: If attempting to delete the current user
         """
         user = await users_service.get(user_id)
 

@@ -10,7 +10,7 @@ from litestar.di import Provide
 from litestar.exceptions import NotAuthorizedException
 from sqlalchemy.orm import undefer_group
 
-from app.domain.accounts.dependencies import provide_refresh_token_service, provide_users_service
+from app.domain.accounts.deps import provide_refresh_token_service, provide_users_service
 from app.lib.crypt import verify_backup_code, verify_totp_code
 from app.lib.settings import AppSettings
 
@@ -22,8 +22,9 @@ if TYPE_CHECKING:
     from app.domain.accounts.schemas import MfaChallenge
     from app.domain.accounts.services import RefreshTokenService, UserService
 
-REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105
+REFRESH_COOKIE_NAME = "refresh_token"
 REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60
+LOW_BACKUP_CODE_THRESHOLD = 2
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,8 @@ class MfaChallengeController(Controller):
         Raises:
             NotAuthorizedException: If challenge token is invalid or code verification fails
         """
+        from uuid import uuid4
+
         from app.domain.accounts.guards import auth
 
         mfa_token = request.cookies.get("mfa_challenge")
@@ -78,8 +81,8 @@ class MfaChallengeController(Controller):
 
             decoded = JWTToken.decode(
                 encoded_token=mfa_token,
-                secret=settings.app.SECRET_KEY,
-                algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM,
+                secret=settings.SECRET_KEY,
+                algorithm=settings.JWT_ENCRYPTION_ALGORITHM,
             )
         except Exception as e:
             logger.warning("Failed to decode MFA challenge token: %s", e)
@@ -87,6 +90,8 @@ class MfaChallengeController(Controller):
 
         if decoded.extras.get("type") != "mfa_challenge":
             raise NotAuthorizedException(detail="Invalid challenge token")
+        if decoded.aud != "mfa_verification":
+            raise NotAuthorizedException(detail="Invalid challenge token audience")
 
         user_email = decoded.sub
         user_id = decoded.extras.get("user_id")
@@ -124,7 +129,7 @@ class MfaChallengeController(Controller):
 
             remaining_backup_codes = sum(1 for code in updated_codes if code)
 
-            if remaining_backup_codes <= 2:  # noqa: PLR2004
+            if remaining_backup_codes <= LOW_BACKUP_CODE_THRESHOLD:
                 logger.warning("User %s has only %d backup codes remaining", user.email, remaining_backup_codes)
 
         if not verified:
@@ -143,15 +148,26 @@ class MfaChallengeController(Controller):
             device_info=device_info,
         )
 
-        response = auth.login(user.email)
+        token_extras = {
+            "user_id": str(user.id),
+            "is_superuser": users_service.is_superuser(user),
+            "is_verified": user.is_verified,
+            "auth_method": "mfa",
+            "amr": ["pwd", "mfa"],
+        }
+        response = auth.login(
+            user.email,
+            token_unique_jwt_id=str(uuid4()),
+            token_extras=token_extras,
+        )
 
         response.set_cookie(
-            key=REFRESH_TOKEN_COOKIE_NAME,
+            key=REFRESH_COOKIE_NAME,
             value=raw_refresh_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.app.CSRF_COOKIE_SECURE,
-            samesite="lax",
+            secure=settings.CSRF_COOKIE_SECURE,
+            samesite="strict",
             path="/api/access",
         )
 

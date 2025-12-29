@@ -1,7 +1,11 @@
 # pylint: disable=[invalid-name,import-outside-toplevel]
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING, Any, cast
+from urllib.parse import urlencode
+
+import jwt
 
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
 from litestar import status_codes as status
@@ -16,6 +20,81 @@ if TYPE_CHECKING:
 
 
 AccessTokenState = tuple[OAuth2Token, str | None]
+OAUTH_STATE_EXPIRY_SECONDS = 600
+
+
+def create_oauth_state(
+    provider: str,
+    redirect_url: str,
+    secret_key: str,
+    action: str | None = None,
+    user_id: str | None = None,
+) -> str:
+    """Create a signed JWT state token for OAuth.
+
+    Args:
+        provider: OAuth provider name (google, github)
+        redirect_url: Frontend callback URL
+        secret_key: Secret key for signing
+        action: Optional OAuth action (login, link, upgrade)
+        user_id: Optional user id for validation on callback
+
+    Returns:
+        Signed JWT state token
+    """
+    payload: dict[str, Any] = {
+        "provider": provider,
+        "redirect_url": redirect_url,
+        "exp": int(time.time()) + OAUTH_STATE_EXPIRY_SECONDS,
+        "iat": int(time.time()),
+    }
+    if action:
+        payload["action"] = action
+    if user_id:
+        payload["user_id"] = user_id
+    return jwt.encode(payload, secret_key, algorithm="HS256")
+
+
+def verify_oauth_state(
+    state: str,
+    expected_provider: str,
+    secret_key: str,
+) -> tuple[bool, dict[str, Any], str]:
+    """Verify and decode OAuth state token.
+
+    Args:
+        state: The state token to verify
+        expected_provider: Expected OAuth provider
+        secret_key: Secret key for verification
+
+    Returns:
+        Tuple of (is_valid, payload, error_message)
+    """
+    try:
+        payload = cast("dict[str, Any]", jwt.decode(state, secret_key, algorithms=["HS256"]))
+        if payload.get("provider") != expected_provider:
+            return False, {}, "Invalid OAuth provider"
+        return True, payload, ""
+    except jwt.ExpiredSignatureError:
+        return False, {}, "OAuth session expired"
+    except jwt.InvalidTokenError:
+        return False, {}, "Invalid OAuth state"
+
+
+def build_oauth_error_redirect(base_url: str, error: str, message: str) -> str:
+    """Build error redirect URL with proper encoding.
+
+    Args:
+        base_url: Base redirect URL
+        error: Error code
+        message: Error message
+
+    Returns:
+        Complete redirect URL with error parameters
+    """
+    params = urlencode({"error": error, "message": message})
+    separator = "&" if "?" in base_url else "?"
+    return f"{base_url}{separator}{params}"
 
 
 class OAuth2AuthorizeCallbackError(OAuth2Error, HTTPException):

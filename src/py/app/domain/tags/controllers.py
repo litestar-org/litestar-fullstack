@@ -9,6 +9,7 @@ from litestar import Controller, delete, get, patch, post
 from litestar.params import Dependency, Parameter
 
 from app.db import models as m
+from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tags import schemas as s
 from app.domain.tags.services import TagService
 from app.lib.deps import create_service_dependencies
@@ -22,6 +23,7 @@ class TagController(Controller):
     """Handles the interactions within the Tag objects."""
 
     path = "/api/tags"
+    guards = [requires_active_user]
     dependencies = create_service_dependencies(
         TagService,
         key="tags_service",
@@ -74,7 +76,7 @@ class TagController(Controller):
         db_obj = await tags_service.get(tag_id)
         return tags_service.to_schema(db_obj, schema_type=s.Tag)
 
-    @post(operation_id="CreateTag", path="/{tag_id:uuid}")
+    @post(operation_id="CreateTag", path="", guards=[requires_superuser])
     async def create_tag(self, tags_service: TagService, data: s.TagCreate) -> s.Tag:
         """Create a new tag.
 
@@ -85,10 +87,10 @@ class TagController(Controller):
         Returns:
             The created tag.
         """
-        db_obj = await tags_service.create(data)
+        db_obj = await tags_service.create(data.to_dict())
         return tags_service.to_schema(db_obj, schema_type=s.Tag)
 
-    @patch(operation_id="UpdateTag", path="/{tag_id:uuid}")
+    @patch(operation_id="UpdateTag", path="/{tag_id:uuid}", guards=[requires_superuser])
     async def update_tag(
         self,
         tags_service: TagService,
@@ -105,10 +107,10 @@ class TagController(Controller):
         Returns:
             The updated tag.
         """
-        db_obj = await tags_service.update(item_id=tag_id, data=data)
+        db_obj = await tags_service.update(item_id=tag_id, data=data.to_dict())
         return tags_service.to_schema(db_obj, schema_type=s.Tag)
 
-    @delete(operation_id="DeleteTag", path="/{tag_id:uuid}", return_dto=None)
+    @delete(operation_id="DeleteTag", path="/{tag_id:uuid}", guards=[requires_superuser], return_dto=None)
     async def delete_tag(
         self,
         tags_service: TagService,

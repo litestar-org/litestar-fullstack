@@ -11,13 +11,13 @@ from litestar.params import Dependency
 from sqlalchemy.orm import selectinload
 
 from app.db import models as m
-from app.domain.teams.dependencies import provide_team_members_service, provide_teams_service
+from app.domain.teams.deps import provide_team_members_service, provide_teams_service
 from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
 from app.domain.teams.services import TeamInvitationService
 from app.lib.deps import create_service_dependencies
 from app.lib.email import email_service
 from app.lib.settings import AppSettings
-from app.schemas.base import Message
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -90,7 +90,7 @@ class TeamInvitationController(Controller):
             invitee_email=db_obj.email,
             inviter_name=current_user.name or current_user.email,
             team_name=team.name,
-            invitation_url=f"{settings.app.URL}/teams/{team_id}/invitations/{db_obj.id}/accept",
+            invitation_url=f"{settings.URL}/teams/{team_id}/invitations/{db_obj.id}/accept",
         )
         return team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation)
 

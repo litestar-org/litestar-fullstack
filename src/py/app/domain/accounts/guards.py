@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from litestar.exceptions import PermissionDeniedException
@@ -9,7 +10,7 @@ from litestar.security.jwt import OAuth2PasswordBearerAuth
 
 from app import config
 from app.db import models as m
-from app.domain.accounts import dependencies as deps
+from app.domain.accounts import deps as deps
 from app.lib import constants
 from app.lib.settings import get_settings
 
@@ -21,6 +22,8 @@ if TYPE_CHECKING:
     from litestar.security.jwt import Token
 
 settings = get_settings()
+ACCESS_TOKEN_EXPIRATION = timedelta(minutes=15)
+AUTH_TOKEN_URL = "/api/access/login"
 
 
 def provide_user(request: Request[m.User, Token, Any]) -> m.User:
@@ -113,6 +116,7 @@ def create_access_token(
     is_superuser: bool = False,
     is_verified: bool = False,
     auth_method: str = "password",
+    amr: list[str] | None = None,
 ) -> str:
     """Create a JWT access token.
 
@@ -126,18 +130,23 @@ def create_access_token(
     Returns:
         JWT token string
     """
-    from datetime import UTC, datetime, timedelta
+    from datetime import UTC, datetime
+    from uuid import uuid4
 
     from litestar.security.jwt import Token
 
+    if amr is None:
+        amr = ["pwd"] if auth_method == "password" else [auth_method]
     token = Token(
         sub=email,
-        exp=datetime.now(UTC) + timedelta(hours=1),
+        exp=datetime.now(UTC) + ACCESS_TOKEN_EXPIRATION,
+        jti=str(uuid4()),
         extras={
             "user_id": user_id,
             "is_superuser": is_superuser,
             "is_verified": is_verified,
             "auth_method": auth_method,
+            "amr": amr,
         },
     )
     return token.encode(secret=settings.app.SECRET_KEY, algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM)
@@ -145,7 +154,8 @@ def create_access_token(
 auth = OAuth2PasswordBearerAuth[m.User](
     retrieve_user_handler=current_user_from_token,
     token_secret=settings.app.SECRET_KEY,
-    token_url="/api/access/login",  # noqa: S106
+    token_url=AUTH_TOKEN_URL,
+    default_token_expiration=ACCESS_TOKEN_EXPIRATION,
     exclude=[
         "/api/health",
         "/api/access/login",

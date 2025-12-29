@@ -1,17 +1,17 @@
-from app.db.models.audit_log import AuditLog
-from app.db.models.email_verification_token import EmailVerificationToken
-from app.db.models.oauth_account import UserOAuthAccount
-from app.db.models.password_reset_token import PasswordResetToken
-from app.db.models.refresh_token import RefreshToken
-from app.db.models.role import Role
-from app.db.models.tag import Tag
-from app.db.models.team import Team
-from app.db.models.team_invitation import TeamInvitation
-from app.db.models.team_member import TeamMember
-from app.db.models.team_roles import TeamRoles
-from app.db.models.team_tag import team_tag
-from app.db.models.user import User
-from app.db.models.user_role import UserRole
+from app.db.models._audit_log import AuditLog
+from app.db.models._email_verification_token import EmailVerificationToken
+from app.db.models._oauth_account import UserOAuthAccount
+from app.db.models._password_reset_token import PasswordResetToken
+from app.db.models._refresh_token import RefreshToken
+from app.db.models._role import Role
+from app.db.models._tag import Tag
+from app.db.models._team import Team
+from app.db.models._team_invitation import TeamInvitation
+from app.db.models._team_member import TeamMember
+from app.db.models._team_roles import TeamRoles
+from app.db.models._team_tag import team_tag
+from app.db.models._user import User
+from app.db.models._user_role import UserRole
 
 __all__ = (
     "AuditLog",

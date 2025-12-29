@@ -1,10 +1,10 @@
 """Admin domain for system administration and audit logging."""
 
-from app.domain.admin import controllers, dependencies, schemas, services
+from app.domain.admin import controllers, deps, schemas, services
 
 __all__ = (
     "controllers",
-    "dependencies",
+    "deps",
     "schemas",
     "services",
 )

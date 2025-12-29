@@ -89,10 +89,10 @@ class UserCreate(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
 ```
 src/py/app/
 ├── db/models/          # SQLAlchemy models (use Mapped[] typing)
-├── schemas/            # msgspec.Struct DTOs
+├── domain/*/schemas/   # msgspec.Struct DTOs
 ├── services/           # Business logic (inner Repo pattern)
 ├── server/routes/      # Litestar controllers
-└── lib/                # Core utilities
+└── lib/                # Core utilities (including schema helpers)
 
 src/js/web/src/
 ├── components/         # React components
@@ -112,7 +112,7 @@ src/js/templates/
 
 1. Create/update SQLAlchemy models in `db/models/`
 2. Run `app database make-migrations`
-3. Create msgspec schemas in `schemas/`
+3. Create msgspec schemas in `domain/<domain>/schemas/`
 4. Implement service with inner Repo pattern in `services/`
 5. Add controller routes in `server/routes/`
 6. Register routes in `routes/__init__.py`

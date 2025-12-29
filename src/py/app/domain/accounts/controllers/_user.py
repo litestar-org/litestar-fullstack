@@ -84,7 +84,7 @@ class UserController(Controller):
         Returns:
             The created user.
         """
-        db_obj = await users_service.create(data)
+        db_obj = await users_service.create(data.to_dict())
         return users_service.to_schema(db_obj, schema_type=User)
 
     @patch(operation_id="UpdateUser", path="/{user_id:uuid}")
@@ -104,7 +104,7 @@ class UserController(Controller):
         Returns:
             The updated user.
         """
-        db_obj = await users_service.update(item_id=user_id, data=data)
+        db_obj = await users_service.update(item_id=user_id, data=data.to_dict())
         return users_service.to_schema(db_obj, schema_type=User)
 
     @delete(operation_id="DeleteUser", path="/{user_id:uuid}")

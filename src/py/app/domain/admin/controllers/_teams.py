@@ -12,10 +12,10 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
-from app.domain.admin.dependencies import provide_audit_log_service
+from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import AdminTeamDetail, AdminTeamSummary, AdminTeamUpdate
 from app.domain.teams.services import TeamService
-from app.schemas.base import Message
+from app.lib.schema import Message
 from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
@@ -157,7 +157,7 @@ class AdminTeamsController(Controller):
             if value is not msgspec.UNSET:
                 update_data[field] = value
 
-        team = await teams_service.update(item_id=team_id, data=m.Team(**update_data), auto_commit=True)
+        team = await teams_service.update(item_id=team_id, data=update_data, auto_commit=True)
 
         await audit_service.log_action(
             action="admin.team.update",

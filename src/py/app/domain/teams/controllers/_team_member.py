@@ -11,8 +11,8 @@ from litestar.params import Parameter
 from litestar.status_codes import HTTP_202_ACCEPTED
 
 from app.db import models as m
-from app.domain.accounts.dependencies import provide_users_service
-from app.domain.teams.dependencies import provide_team_members_service, provide_teams_service
+from app.domain.accounts.deps import provide_users_service
+from app.domain.teams.deps import provide_team_members_service, provide_teams_service
 from app.domain.teams.schemas import Team, TeamMember, TeamMemberModify, TeamMemberUpdate
 
 if TYPE_CHECKING:
@@ -36,6 +36,7 @@ class TeamMemberController(Controller):
     async def add_member_to_team(
         self,
         teams_service: TeamService,
+        team_members_service: TeamMemberService,
         users_service: UserService,
         data: TeamMemberModify,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
@@ -44,6 +45,7 @@ class TeamMemberController(Controller):
 
         Args:
             teams_service: Team Service
+            team_members_service: Team Member Service
             users_service: User Service
             data: Team Member Modify
             team_id: Team ID
@@ -54,14 +56,20 @@ class TeamMemberController(Controller):
         Returns:
             Team
         """
-        team_obj = await teams_service.get(team_id)
         user_obj = await users_service.get_one(email=data.user_name)
-        is_member = any(membership.team.id == team_id for membership in user_obj.teams)
-        if is_member:
+        existing_membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
+        if existing_membership is not None:
             msg = "User is already a member of the team."
             raise IntegrityError(msg)
-        team_obj.members.append(m.TeamMember(user_id=user_obj.id, role=m.TeamRoles.MEMBER))
-        team_obj = await teams_service.update(item_id=team_id, data=team_obj)
+        await team_members_service.create(
+            {
+                "team_id": team_id,
+                "user_id": user_obj.id,
+                "role": m.TeamRoles.MEMBER,
+                "is_owner": False,
+            }
+        )
+        team_obj = await teams_service.get(team_id)
         return teams_service.to_schema(team_obj, schema_type=Team)
 
     @delete(
@@ -75,7 +83,7 @@ class TeamMemberController(Controller):
         data: TeamMemberModify,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to delete.")],
     ) -> Team:
-        """Revoke a members access to a team.
+        """Revoke a member's access to a team.
 
         Args:
             teams_service: Team Service
@@ -91,14 +99,11 @@ class TeamMemberController(Controller):
             Team
         """
         user_obj = await users_service.get_one(email=data.user_name)
-        removed_member = False
-        for membership in user_obj.teams:
-            if membership.user_id == user_obj.id:
-                removed_member = True
-                _ = await team_members_service.delete(membership.id)
-        if not removed_member:
+        membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
+        if membership is None:
             msg = "User is not a member of this team."
             raise IntegrityError(msg)
+        _ = await team_members_service.delete(membership.id)
         team_obj = await teams_service.get(team_id)
         return teams_service.to_schema(team_obj, schema_type=Team)
 
@@ -110,7 +115,11 @@ class TeamMemberController(Controller):
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to update.")],
         data: TeamMemberUpdate,
     ) -> TeamMember:
-        """Update a team member's role."""
+        """Update a team member's role.
+
+        Raises:
+            IntegrityError: If the user is not a member of the team.
+        """
         membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_id)
         if membership is None:
             msg = "User is not a member of this team."

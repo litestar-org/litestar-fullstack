@@ -12,7 +12,7 @@ from litestar.di import Provide
 from litestar.exceptions import ClientException
 from sqlalchemy.orm import undefer_group
 
-from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import (
     MfaBackupCodes,
     MfaConfirm,
@@ -28,7 +28,7 @@ from app.lib.crypt import (
     verify_password,
     verify_totp_code,
 )
-from app.schemas.base import Message
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from litestar import Request

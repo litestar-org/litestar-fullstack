@@ -220,7 +220,7 @@ build-wheel:                                       ## Build Python wheel
 build-emails:                                      ## Build React email templates to HTML
 	@echo "${INFO} Building email templates... 📧"
 	@cd src/js/templates && (bun install --frozen-lockfile 2>/dev/null || bun install) && bun run build
-	@echo "${OK} Email templates built to src/py/app/templates/email/"
+	@echo "${OK} Email templates built to src/py/app/server/static/email/"
 
 
 # =============================================================================

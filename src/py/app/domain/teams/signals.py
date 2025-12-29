@@ -8,7 +8,7 @@ import structlog
 from litestar.events import listener
 
 from app.config import alchemy
-from app.domain.teams import dependencies as deps
+from app.domain.teams import deps as deps
 
 if TYPE_CHECKING:
     from uuid import UUID

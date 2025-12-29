@@ -12,7 +12,7 @@ from litestar.enums import RequestEncodingType
 from litestar.exceptions import ClientException, NotAuthorizedException
 from litestar.params import Body, Parameter
 
-from app.domain.accounts.dependencies import (
+from app.domain.accounts.deps import (
     provide_email_verification_service,
     provide_password_reset_service,
     provide_refresh_token_service,
@@ -36,7 +36,7 @@ from app.domain.accounts.schemas import (
 from app.lib.email import email_service
 from app.lib.settings import AppSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
-from app.schemas.base import Message
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -55,7 +55,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-REFRESH_TOKEN_COOKIE_NAME = "refresh_token"  # noqa: S105
+REFRESH_COOKIE_NAME = "refresh_token"
 REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60
 
 
@@ -90,11 +90,13 @@ class AccessController(Controller):
             data: OAuth2 Login Data
             users_service: User Service
             refresh_token_service: Refresh Token Service
+            settings: Application settings
 
         Returns:
             OAuth2 Login Response with refresh token cookie, or MFA challenge
         """
         from datetime import UTC, datetime, timedelta
+        from uuid import uuid4
 
         from litestar.security.jwt import Token as JWTToken
 
@@ -107,14 +109,15 @@ class AccessController(Controller):
             mfa_challenge_token = JWTToken(
                 sub=user.email,
                 exp=datetime.now(UTC) + timedelta(minutes=5),
+                aud="mfa_verification",
                 extras={
                     "type": "mfa_challenge",
                     "user_id": str(user.id),
                 },
             )
             encoded_challenge = mfa_challenge_token.encode(
-                secret=settings.app.SECRET_KEY,
-                algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM,
+                secret=settings.SECRET_KEY,
+                algorithm=settings.JWT_ENCRYPTION_ALGORITHM,
             )
 
             response = Response(
@@ -129,7 +132,7 @@ class AccessController(Controller):
                 value=encoded_challenge,
                 max_age=300,
                 httponly=True,
-                secure=settings.app.CSRF_COOKIE_SECURE,
+                secure=settings.CSRF_COOKIE_SECURE,
                 samesite="lax",
                 path="/api/mfa",
             )
@@ -142,15 +145,26 @@ class AccessController(Controller):
             device_info=device_info,
         )
 
-        response = auth.login(user.email)
+        token_extras = {
+            "user_id": str(user.id),
+            "is_superuser": users_service.is_superuser(user),
+            "is_verified": user.is_verified,
+            "auth_method": "password",
+            "amr": ["pwd"],
+        }
+        response = auth.login(
+            user.email,
+            token_unique_jwt_id=str(uuid4()),
+            token_extras=token_extras,
+        )
 
         response.set_cookie(
-            key=REFRESH_TOKEN_COOKIE_NAME,
+            key=REFRESH_COOKIE_NAME,
             value=raw_refresh_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.app.CSRF_COOKIE_SECURE,
-            samesite="lax",
+            secure=settings.CSRF_COOKIE_SECURE,
+            samesite="strict",
             path="/api/access",
         )
 
@@ -175,22 +189,18 @@ class AccessController(Controller):
         """
         from app.domain.accounts.guards import auth
 
-        raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
+        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
         if raw_refresh_token:
-            try:
-                token_hash = refresh_token_service.hash_token(raw_refresh_token)
-                refresh_token = await refresh_token_service.get_one_or_none(token_hash=token_hash)
-                if refresh_token:
-                    await refresh_token_service.revoke_token_family(refresh_token.family_id)
-            except Exception:  # noqa: BLE001, S110
-
-                pass
+            token_hash = refresh_token_service.hash_token(raw_refresh_token)
+            refresh_token = await refresh_token_service.get_one_or_none(token_hash=token_hash)
+            if refresh_token:
+                await refresh_token_service.revoke_token_family(refresh_token.family_id)
 
         request.cookies.pop(auth.key, None)
         request.clear_session()
         response = Response(Message(message="OK"), status_code=200)
         response.delete_cookie(auth.key)
-        response.delete_cookie(REFRESH_TOKEN_COOKIE_NAME, path="/api/access")
+        response.delete_cookie(REFRESH_COOKIE_NAME, path="/api/access")
         return response
 
     @post(operation_id="TokenRefresh", path="/api/access/refresh", exclude_from_auth=True)
@@ -198,6 +208,7 @@ class AccessController(Controller):
         self,
         request: Request[m.User, Token, Any],
         refresh_token_service: RefreshTokenService,
+        users_service: UserService,
         settings: AppSettings,
     ) -> Response[TokenRefresh]:
         """Refresh access token using refresh token.
@@ -208,6 +219,7 @@ class AccessController(Controller):
         Args:
             request: Request with refresh token cookie
             refresh_token_service: Refresh Token Service
+            users_service: User Service
 
         Returns:
             New access token with rotated refresh token
@@ -215,9 +227,11 @@ class AccessController(Controller):
         Raises:
             NotAuthorizedException: If refresh token is invalid or expired
         """
+        from uuid import uuid4
+
         from app.domain.accounts.guards import auth
 
-        raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
+        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
         if not raw_refresh_token:
             raise NotAuthorizedException(detail="No refresh token provided")
 
@@ -228,15 +242,27 @@ class AccessController(Controller):
             device_info=device_info,
         )
 
-        response = auth.login(new_token_model.user.email)
+        user = await users_service.get(new_token_model.user_id)
+        token_extras = {
+            "user_id": str(user.id),
+            "is_superuser": users_service.is_superuser(user),
+            "is_verified": user.is_verified,
+            "auth_method": "refresh",
+            "amr": ["refresh"],
+        }
+        response = auth.login(
+            user.email,
+            token_unique_jwt_id=str(uuid4()),
+            token_extras=token_extras,
+        )
 
         response.set_cookie(
-            key=REFRESH_TOKEN_COOKIE_NAME,
+            key=REFRESH_COOKIE_NAME,
             value=new_raw_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.app.CSRF_COOKIE_SECURE,
-            samesite="lax",
+            secure=settings.CSRF_COOKIE_SECURE,
+            samesite="strict",
             path="/api/access",
         )
 
@@ -259,7 +285,7 @@ class AccessController(Controller):
         """
 
         current_token_hash = None
-        raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
+        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
         if raw_refresh_token:
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
 
@@ -324,7 +350,7 @@ class AccessController(Controller):
         """
 
         current_token_hash = None
-        raw_refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
+        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
         if raw_refresh_token:
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
 
@@ -445,7 +471,7 @@ class AccessController(Controller):
                 return ResetTokenValidation(
                     valid=True, user_id=reset_token.user_id, expires_at=reset_token.expires_at.isoformat()
                 )
-        except Exception:  # noqa: BLE001
+        except ClientException:
             logger.warning("Failed to validate reset token", exc_info=True)
 
         return ResetTokenValidation(valid=False)
@@ -461,7 +487,6 @@ class AccessController(Controller):
 
         Args:
             data: Password reset request data
-            request: HTTP request object
             users_service: User service
             password_reset_service: Password reset service
 

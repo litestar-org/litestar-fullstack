@@ -10,8 +10,9 @@ from litestar.di import Provide
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_202_ACCEPTED
 
-from app.domain.accounts.dependencies import provide_roles_service, provide_user_roles_service, provide_users_service
-from app.schemas.base import Message
+from app.domain.accounts.deps import provide_roles_service, provide_user_roles_service, provide_users_service
+from app.domain.accounts.guards import requires_superuser
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from app.domain.accounts.schemas import UserRoleAdd, UserRoleRevoke
@@ -23,6 +24,7 @@ class UserRoleController(Controller):
 
     path = "/api/users/roles"
     tags = ["User Account Roles"]
+    guards = [requires_superuser]
     dependencies = {
         "users_service": Provide(provide_users_service),
         "roles_service": Provide(provide_roles_service),
@@ -38,7 +40,7 @@ class UserRoleController(Controller):
         data: UserRoleAdd,
         role_slug: str = Parameter(title="Role Slug", description="The role to grant."),
     ) -> Message:
-        """Create a new migration role.
+        """Assign a role to a user.
 
         Args:
             roles_service: Role Service

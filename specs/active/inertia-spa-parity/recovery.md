@@ -27,7 +27,7 @@ Read these files in order:
 ## ✅ COMPLETED Phase 0 Tasks
 
 ### 0.1 Schema Naming ✅ DONE
-All schemas renamed in `src/py/app/domain/accounts/schemas.py` and `src/py/app/domain/admin/schemas.py`.
+All schemas renamed in `src/py/app/domain/accounts/schemas/` and `src/py/app/domain/admin/schemas/`.
 TypeScript client regenerated and frontend API client updated for fetch-based hey-api.
 
 ### 0.2 Frontend Validation ✅ DONE
@@ -43,7 +43,7 @@ Created `src/js/web/src/lib/validation.ts` with Zod schemas for all forms.
 - Created `src/js/templates/` with all components and email templates
 - Components: Layout, Header, Footer, Button
 - Email templates: email-verification, password-reset, welcome, team-invitation
-- Build script: `bun run build` compiles to HTML in `src/py/app/templates/email/`
+- Build script: `bun run build` compiles to HTML in `src/py/app/server/static/email/`
 - Makefile target: `make build-emails`
 
 ### 0.3.5 Build System & Docker Updates ✅ DONE
@@ -53,8 +53,8 @@ Created `src/js/web/src/lib/validation.ts` with Zod schemas for all forms.
   - Install email template dependencies
   - Build email templates before wheel build
 - Added `force-include` to pyproject.toml for wheel packaging:
-  - `src/py/app/server/public` → `app/server/public`
-  - `src/py/app/templates/email` → `app/templates/email`
+  - `src/py/app/server/static/web` → `app/server/static/web`
+  - `src/py/app/server/static/email` → `app/server/static/email`
 - Verified wheel contains 689 files (Python code + assets + email templates)
 
 ### 0.4 Verified OK (No Changes)
@@ -156,7 +156,7 @@ class MyService(service.SQLAlchemyAsyncRepositoryService[m.MyModel]):
 ### Schema Pattern (msgspec)
 
 ```python
-from app.schemas.base import CamelizedBaseStruct
+from app.lib.schema import CamelizedBaseStruct
 
 class MySchema(CamelizedBaseStruct, gc=False, array_like=True, omit_defaults=True):
     field: str

@@ -112,7 +112,7 @@ COPY src/js/templates/ ./src/js/templates/
 COPY src/py/ ./src/py/
 
 # Create required directories
-RUN mkdir -p src/py/app/server/public src/py/app/templates/email
+RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
 
 # Build email templates (must be before wheel build to include in package)
 RUN cd src/js/templates && bun run build

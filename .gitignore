@@ -168,9 +168,7 @@ tmp/
 temp/
 
 # built files from the web UI
-src/py/app/server/web/public/*
-src/py/app/server/web/static/*
-src/py/app/server/public/*
+src/py/app/server/static/web/*
 .vite
 public/hot
 public/bundle
@@ -190,6 +188,6 @@ src/js/web/src/lib/generated
 src/js/web/public/hot
 
 # Email template build output
-src/py/app/templates/email/
+src/py/app/server/static/email/
 src/js/templates/node_modules/
 src/js/templates/bun.lock

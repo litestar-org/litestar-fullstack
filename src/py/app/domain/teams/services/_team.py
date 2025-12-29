@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
-from advanced_alchemy.utils.text import slugify
 from litestar.plugins.sqlalchemy import repository, service
 
 from app.db import models as m
@@ -85,12 +84,10 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
             tags_to_add = [tag for tag in input_tags if tag not in existing_tags]
             for tag_rm in tags_to_remove:
                 data.tags.remove(tag_rm)
-            data.tags.extend(
-                [
-                    await m.Tag.as_unique_async(self.repository.session, name=tag_text, slug=slugify(tag_text))
-                    for tag_text in tags_to_add
-                ],
-            )
+            from app.domain.tags.services import TagService
+
+            tag_service = TagService(session=self.repository.session)
+            data.tags.extend([await tag_service.upsert({"name": tag_text}) for tag_text in tags_to_add])
 
         if operation != "create" and (owner or owner_id):
             for member in data.members:

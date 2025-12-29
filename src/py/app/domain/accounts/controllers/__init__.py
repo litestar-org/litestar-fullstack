@@ -5,6 +5,7 @@ from app.domain.accounts.controllers._email_verification import EmailVerificatio
 from app.domain.accounts.controllers._mfa import MfaController
 from app.domain.accounts.controllers._mfa_challenge import MfaChallengeController
 from app.domain.accounts.controllers._oauth import OAuthController
+from app.domain.accounts.controllers._oauth_accounts import OAuthAccountController
 from app.domain.accounts.controllers._profile import ProfileController
 from app.domain.accounts.controllers._roles import RoleController
 from app.domain.accounts.controllers._user import UserController
@@ -16,6 +17,7 @@ __all__ = (
     "MfaChallengeController",
     "MfaController",
     "OAuthController",
+    "OAuthAccountController",
     "ProfileController",
     "RoleController",
     "UserController",

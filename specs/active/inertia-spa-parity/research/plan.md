@@ -220,8 +220,8 @@ The SPA already has `crypt.py` with TOTP functions:
 
 Files to create:
 - `__init__.py` - Domain exports
-- `dependencies.py` - `provide_audit_service`
-- `schemas.py` - Admin DTOs
+- `deps.py` - `provide_audit_service`
+- `schemas/` - Admin DTOs
 - `controllers/__init__.py` - Controller exports
 - `controllers/_dashboard.py` - Statistics and overview
 - `controllers/_users.py` - User CRUD management
@@ -230,7 +230,7 @@ Files to create:
 - `services/__init__.py` - Service exports
 - `services/_audit.py` - AuditLogService
 
-**New database model:** `src/py/app/db/models/audit_log.py`
+**New database model:** `src/py/app/db/models/_audit_log.py`
 ```python
 class AuditLog(UUIDAuditBase):
     __tablename__ = "audit_log"
@@ -269,7 +269,7 @@ class AuditLog(UUIDAuditBase):
 
 ### 3.5 Refresh Token System (NEW)
 
-**New database model:** `src/py/app/db/models/refresh_token.py`
+**New database model:** `src/py/app/db/models/_refresh_token.py`
 ```python
 class RefreshToken(UUIDAuditBase):
     __tablename__ = "refresh_token"
@@ -293,16 +293,16 @@ class RefreshToken(UUIDAuditBase):
 
 Both projects have email templates, but use different systems:
 - **Inertia**: Custom `{{PLACEHOLDER}}` template system
-- **SPA**: Jinja2 templates (`.j2` files)
+- **SPA**: React Email templates compiled to static HTML
 
 **SPA templates exist and are complete:**
-- `email_verification.html.j2` / `.txt.j2`
-- `password_reset.html.j2` / `.txt.j2`
-- `password_reset_confirmation.html.j2` / `.txt.j2`
-- `team_invitation.html.j2` / `.txt.j2`
-- `welcome.html.j2` / `.txt.j2`
+- `src/py/app/server/static/email/email-verification.html`
+- `src/py/app/server/static/email/password-reset.html`
+- `src/py/app/server/static/email/password-reset-confirmation.html`
+- `src/py/app/server/static/email/team-invitation.html`
+- `src/py/app/server/static/email/welcome.html`
 
-**No changes needed** - Jinja2 templates are more maintainable.
+**No changes needed** - React Email templates already align with the SPA build pipeline.
 
 ---
 

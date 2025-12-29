@@ -17,6 +17,7 @@
 ### 1.1 Complexity Assessment
 
 This is a **COMPLEX** implementation requiring 10+ phases. The analysis involved:
+
 - Comprehensive codebase comparison between `litestar-fullstack-inertia` and `litestar-fullstack-spa`
 - Multi-model AI consensus (Gemini 3 Pro + GPT 5.2) on authentication architecture
 - Detailed gap analysis across backend, frontend, and deployment tooling
@@ -24,6 +25,7 @@ This is a **COMPLEX** implementation requiring 10+ phases. The analysis involved
 ### 1.2 Similar Features Referenced
 
 Pattern analysis drew from existing implementations:
+
 - `src/py/app/domain/accounts/services/_user.py` - Service pattern with inner repository
 - `src/py/app/domain/accounts/controllers/_access.py` - Controller patterns for auth
 - `src/py/app/domain/accounts/controllers/_oauth.py` - OAuth flow patterns
@@ -33,6 +35,7 @@ Pattern analysis drew from existing implementations:
 ### 1.3 Patterns to Follow
 
 All implementations must follow:
+
 - **Service Pattern**: Inner `Repo` class within `SQLAlchemyAsyncRepositoryService`
 - **Schema Pattern**: `CamelizedBaseStruct` from msgspec (never dicts or Pydantic)
 - **Model Pattern**: `UUIDAuditBase` with `Mapped[]` typing
@@ -81,6 +84,7 @@ All of the following must be achieved:
 ### 3.1 Railway Deployment
 
 **REQUIRED:**
+
 - [ ] `tools/deploy/railway/deploy.sh` creates new Railway project
 - [ ] Script provisions PostgreSQL database automatically
 - [ ] Script configures all required environment variables
@@ -95,6 +99,7 @@ All of the following must be achieved:
 ### 3.2 Authentication & Refresh Tokens
 
 **REQUIRED:**
+
 - [ ] Login returns access token (15 min) + refresh token (7 days) in HTTP-only cookies
 - [ ] Access token cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/`
 - [ ] Refresh token cookie: `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/api/auth/refresh`
@@ -109,6 +114,7 @@ All of the following must be achieved:
 ### 3.3 MFA/TOTP System
 
 **REQUIRED:**
+
 - [ ] `POST /api/mfa/enable` returns TOTP secret + QR code (base64 PNG)
 - [ ] `POST /api/mfa/confirm` verifies 6-digit code and enables MFA
 - [ ] Confirmation returns 8 backup codes (shown once, stored hashed)
@@ -125,6 +131,7 @@ All of the following must be achieved:
 ### 3.4 OAuth Account Management
 
 **REQUIRED:**
+
 - [ ] `GET /api/profile/oauth/accounts` lists linked providers
 - [ ] `POST /api/profile/oauth/{provider}/link` initiates linking flow
 - [ ] `GET /api/profile/oauth/{provider}/complete` completes linking
@@ -137,6 +144,7 @@ All of the following must be achieved:
 ### 3.5 Admin Domain
 
 **REQUIRED:**
+
 - [ ] `GET /api/admin/dashboard` returns user/team statistics
 - [ ] Statistics include: total users, active users, verified users, total teams, recent signups
 - [ ] `GET /api/admin/users` lists users with pagination
@@ -151,6 +159,7 @@ All of the following must be achieved:
 ### 3.6 Frontend Pages
 
 **REQUIRED:**
+
 - [ ] `/mfa-challenge` page for MFA verification during login
 - [ ] Profile page has MFA settings section
 - [ ] MFA setup shows QR code in dialog
@@ -169,6 +178,7 @@ All of the following must be achieved:
 ### 3.7 Database Changes
 
 **REQUIRED:**
+
 - [ ] `refresh_token` table created with migration
 - [ ] `audit_log` table created with migration
 - [ ] User model has `totp_secret` (EncryptedString)
@@ -197,8 +207,8 @@ src/py/app/
 │   │   └── _mfa_challenge.py     # NEW: MFA during login
 │   └── admin/                    # NEW: Entire domain
 │       ├── __init__.py
-│       ├── dependencies.py
-│       ├── schemas.py
+│       ├── deps.py
+│       ├── schemas/
 │       ├── controllers/
 │       │   ├── __init__.py
 │       │   ├── _dashboard.py
@@ -405,6 +415,7 @@ refresh_cookie = Cookie(
 ### 5.1 Unit Tests (Required - 90%+ coverage)
 
 **Authentication tests:**
+
 - `test_refresh_token_rotation.py`
   - Token rotation issues new pair
   - Reuse detection triggers family revocation
@@ -418,6 +429,7 @@ refresh_cookie = Cookie(
   - Backup code verification and decrement
 
 **Admin tests:**
+
 - `test_audit_service.py`
   - Audit log creation
   - Filtering and pagination
@@ -426,6 +438,7 @@ refresh_cookie = Cookie(
 ### 5.2 Integration Tests (Required)
 
 **Auth flow tests:**
+
 - `test_mfa_flow.py`
   - Enable MFA end-to-end
   - Login with MFA challenge
@@ -438,6 +451,7 @@ refresh_cookie = Cookie(
   - Reuse detection scenario
 
 **Admin tests:**
+
 - `test_admin_endpoints.py`
   - Dashboard statistics accuracy
   - User management operations
@@ -461,16 +475,19 @@ refresh_cookie = Cookie(
 ### 6.2 Dependencies
 
 **Backend (already in pyproject.toml):**
+
 - `pyotp>=2.9.0` - TOTP generation/verification
 - `qrcode[pil]>=7.4.0` - QR code generation
 - `httpx-oauth>=0.15.0` - OAuth client
 
 **Frontend (already in package.json):**
+
 - TanStack Query - Data fetching
 - TanStack Router - Routing
 - Radix UI - Component primitives
 
 **New runtime dependency:**
+
 - None required
 
 ### 6.3 Migration Considerations
@@ -510,6 +527,7 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 ## 7. Rollout Plan
 
 ### Phase 1: Security Foundation
+
 1. Implement CSRF protection middleware
 2. Create RefreshToken model and migration
 3. Implement refresh token rotation endpoint
@@ -518,6 +536,7 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 6. **Tests required before proceeding**
 
 ### Phase 2: MFA System
+
 1. Verify User model has MFA fields (add migration if needed)
 2. Create MFA controller with enable/confirm/disable
 3. Create MFA challenge controller
@@ -525,6 +544,7 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 5. **Tests required before proceeding**
 
 ### Phase 3: Admin Domain
+
 1. Create AuditLog model and migration
 2. Create admin domain structure
 3. Implement dashboard controller
@@ -534,12 +554,14 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 7. **Tests required before proceeding**
 
 ### Phase 4: OAuth Enhancements
+
 1. Add profile OAuth account endpoints
 2. Implement account linking flow
 3. Add OAuth token refresh background job
 4. **Tests required before proceeding**
 
 ### Phase 5: Railway Deployment
+
 1. Create deploy.sh script
 2. Create env-setup.sh script
 3. Create railway.json
@@ -547,6 +569,7 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 5. Document deployment process
 
 ### Phase 6: Frontend Implementation
+
 1. MFA components (setup dialog, TOTP input, backup codes)
 2. MFA challenge page
 3. Profile MFA section
@@ -559,6 +582,7 @@ GITHUB_OAUTH2_CLIENT_SECRET=<your-client-secret>
 10. Silent token refresh interceptor
 
 ### Phase 7: Final Validation
+
 1. Run `make check-all`
 2. Verify all acceptance criteria
 3. Update TypeScript types with `make types`
@@ -909,22 +933,23 @@ This section documents critical fixes identified during implementation review.
 
 | Current Name | Correct Name | File Location |
 |--------------|--------------|---------------|
-| `MfaSetupResponse` | `MfaSetup` | `domain/accounts/schemas.py` |
-| `MfaConfirmRequest` | `MfaConfirm` | `domain/accounts/schemas.py` |
-| `MfaBackupCodesResponse` | `MfaBackupCodes` | `domain/accounts/schemas.py` |
-| `MfaDisableRequest` | `MfaDisable` | `domain/accounts/schemas.py` |
-| `MfaChallengeRequest` | `MfaChallenge` | `domain/accounts/schemas.py` |
-| `MfaChallengeResponse` | `MfaVerifyResult` | `domain/accounts/schemas.py` |
-| `MfaStatusResponse` | `MfaStatus` | `domain/accounts/schemas.py` |
-| `TokenRefreshResponse` | `TokenRefresh` | `domain/accounts/schemas.py` |
-| `ForgotPasswordResponse` | `PasswordResetSent` | `domain/accounts/schemas.py` |
-| `ResetPasswordResponse` | `PasswordResetComplete` | `domain/accounts/schemas.py` |
-| `ValidateResetTokenResponse` | `ResetTokenValidation` | `domain/accounts/schemas.py` |
-| `SessionsResponse` | `SessionList` | `domain/accounts/schemas.py` |
-| `OAuthAuthorizationResponse` | `OAuthAuthorization` | `domain/accounts/schemas.py` |
+| `MfaSetupResponse` | `MfaSetup` | `domain/accounts/schemas/` |
+| `MfaConfirmRequest` | `MfaConfirm` | `domain/accounts/schemas/` |
+| `MfaBackupCodesResponse` | `MfaBackupCodes` | `domain/accounts/schemas/` |
+| `MfaDisableRequest` | `MfaDisable` | `domain/accounts/schemas/` |
+| `MfaChallengeRequest` | `MfaChallenge` | `domain/accounts/schemas/` |
+| `MfaChallengeResponse` | `MfaVerifyResult` | `domain/accounts/schemas/` |
+| `MfaStatusResponse` | `MfaStatus` | `domain/accounts/schemas/` |
+| `TokenRefreshResponse` | `TokenRefresh` | `domain/accounts/schemas/` |
+| `ForgotPasswordResponse` | `PasswordResetSent` | `domain/accounts/schemas/` |
+| `ResetPasswordResponse` | `PasswordResetComplete` | `domain/accounts/schemas/` |
+| `ValidateResetTokenResponse` | `ResetTokenValidation` | `domain/accounts/schemas/` |
+| `SessionsResponse` | `SessionList` | `domain/accounts/schemas/` |
+| `OAuthAuthorizationResponse` | `OAuthAuthorization` | `domain/accounts/schemas/` |
 | `LoginResponse` | **REMOVE** | Use `OAuth2Login` directly |
 
 **Impact:**
+
 - Update all controller return type annotations
 - Update `signature_namespace` in route registrations
 - Run `make types` to regenerate TypeScript client
@@ -977,9 +1002,10 @@ src/js/templates/
 ```
 
 **Build Process:**
+
 1. Templates use placeholder syntax: `{{VARIABLE_NAME}}`
 2. Build script renders React to static HTML
-3. Output goes to `src/py/app/templates/email/`
+3. Output goes to `src/py/app/server/static/email/`
 4. Backend replaces placeholders at runtime
 
 **npm script:** `"build:emails": "bun run src/templates/build-emails.ts"`
@@ -1006,12 +1032,15 @@ None - All architectural decisions resolved through multi-model consensus.
 ### A. Critical Fix Reference Files
 
 **Schema naming reference:**
-- `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/schemas.py` - Correct naming pattern
+
+- `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/schemas/` - Correct naming pattern
 
 **React email template reference:**
+
 - `/home/cody/code/g/dma/accelerator/src/js/templates/` - Template structure and build script
 
 **Detailed analysis:**
+
 - `specs/active/inertia-spa-parity/research/critical-fixes.md` - Full research documentation
 
 ### B. Multi-Model Consensus Summary
@@ -1019,6 +1048,7 @@ None - All architectural decisions resolved through multi-model consensus.
 **Models consulted:** Gemini 3 Pro (for JWT), GPT 5.2 (against/challenging)
 
 **Unanimous agreements:**
+
 1. HTTP-only cookies required (not localStorage)
 2. CSRF protection mandatory
 3. Refresh token rotation with reuse detection required
@@ -1033,6 +1063,7 @@ None - All architectural decisions resolved through multi-model consensus.
 ### C. Reference Files
 
 **Inertia implementations to reference:**
+
 - `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/controllers/_mfa.py`
 - `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/controllers/_mfa_challenge.py`
 - `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/admin/controllers/_dashboard.py`

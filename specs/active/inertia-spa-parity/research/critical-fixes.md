@@ -11,7 +11,7 @@
 The SPA implementation uses `Response` and `Request` suffixes on schema names, which deviates from the Inertia reference implementation pattern. Schema names should describe what they represent, not their HTTP direction.
 
 ### Reference (Inertia - CORRECT)
-From `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/schemas.py`:
+From `/home/cody/code/litestar/litestar-fullstack-inertia/app/domain/accounts/schemas/`:
 
 ```python
 __all__ = (
@@ -27,7 +27,7 @@ __all__ = (
 ```
 
 ### Current SPA (WRONG)
-From `/home/cody/code/litestar/litestar-fullstack-spa/src/py/app/domain/accounts/schemas.py`:
+From `/home/cody/code/litestar/litestar-fullstack-spa/src/py/app/domain/accounts/schemas/`:
 
 | Current Name | Should Be | Notes |
 |--------------|-----------|-------|
@@ -83,7 +83,7 @@ backup_codes: Mapped[list | None] = mapped_column(
 ```
 
 ### SPA Implementation (CORRECT)
-From `/home/cody/code/litestar/litestar-fullstack-spa/src/py/app/db/models/user.py`:
+From `/home/cody/code/litestar/litestar-fullstack-spa/src/py/app/db/models/_user.py`:
 
 ```python
 hashed_password: Mapped[str | None] = mapped_column(
@@ -222,7 +222,7 @@ import { readdirSync, writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, basename } from "path";
 
 const EMAILS_DIR = join(__dirname, "src/emails");
-const OUTPUT_DIR = join(__dirname, "../../py/app/templates/email");
+const OUTPUT_DIR = join(__dirname, "../../py/app/server/static/email");
 
 async function buildTemplates() {
   if (!existsSync(OUTPUT_DIR)) {

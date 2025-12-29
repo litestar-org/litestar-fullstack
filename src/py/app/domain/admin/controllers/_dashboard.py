@@ -9,11 +9,11 @@ from litestar import Controller, get
 from litestar.di import Provide
 
 from app.db import models as m
-from app.domain.accounts.dependencies import provide_users_service
+from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.guards import requires_superuser
-from app.domain.admin.dependencies import provide_audit_log_service
+from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import ActivityLogEntry, DashboardStats, RecentActivity
-from app.domain.teams.dependencies import provide_teams_service
+from app.domain.teams.deps import provide_teams_service
 
 if TYPE_CHECKING:
     from litestar import Request

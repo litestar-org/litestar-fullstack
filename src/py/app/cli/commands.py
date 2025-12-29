@@ -83,7 +83,7 @@ def create_user(
     from rich import get_console
 
     from app.config import alchemy
-    from app.domain.accounts.dependencies import provide_users_service
+    from app.domain.accounts.deps import provide_users_service
     from app.domain.accounts.schemas import UserCreate
 
     console = get_console()
@@ -172,7 +172,7 @@ def create_default_roles() -> None:
 
     from app.config import alchemy
     from app.db.models import UserRole
-    from app.domain.accounts.dependencies import provide_users_service
+    from app.domain.accounts.deps import provide_users_service
     from app.domain.accounts.services import RoleService
     from app.lib.deps import create_service_provider
 
@@ -193,7 +193,7 @@ def create_default_roles() -> None:
                     else:
                         user.roles.append(UserRole(role_id=default_role.id))
                         console.print("Assigned %s default role", user.email)
-                        await users_service.repository.update(user)
+                        await users_service.update(item_id=user.id, data=user, auto_commit=False)
             await db_session.commit()
 
     console.rule("Creating default roles.")

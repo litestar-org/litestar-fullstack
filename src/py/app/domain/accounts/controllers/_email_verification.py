@@ -8,7 +8,7 @@ from litestar import Controller, get, post
 from litestar.di import Provide
 from litestar.status_codes import HTTP_200_OK, HTTP_201_CREATED
 
-from app.domain.accounts.dependencies import provide_email_verification_service, provide_users_service
+from app.domain.accounts.deps import provide_email_verification_service, provide_users_service
 from app.domain.accounts.schemas import (
     EmailVerificationConfirm,
     EmailVerificationRequest,

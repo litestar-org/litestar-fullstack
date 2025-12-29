@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Final, cast
 from advanced_alchemy.utils.text import slugify
 from litestar.data_extractors import RequestExtractorField
 from litestar.utils.module_loader import module_to_os_path
+from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
 from app.__metadata__ import __version__ as current_version
 from app.utils.env import get_env
@@ -33,13 +34,11 @@ if TYPE_CHECKING:
     from litestar.plugins.sqlalchemy import SQLAlchemyAsyncConfig
     from litestar.plugins.structlog import StructlogConfig
     from litestar_saq import SAQConfig
-    from litestar_vite import ViteConfig
     from sqlalchemy.ext.asyncio import AsyncEngine
 
 DEFAULT_MODULE_NAME = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
-STATIC_DIR = Path(BASE_DIR / "server" / "public")
-TEMPLATE_DIR = Path(BASE_DIR / "server" / "templates")
+STATIC_DIR = Path(BASE_DIR / "server" / "static" / "web")
 
 
 @dataclass
@@ -112,11 +111,10 @@ class ViteSettings:
     """Start `vite` development server."""
     BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", STATIC_DIR))
     """Bundle directory for built assets."""
-    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/"))
+    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/web/"))
     """Base URL for assets."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
-        from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
         return ViteConfig(
             mode="spa",
@@ -127,18 +125,7 @@ class ViteSettings:
                 bundle_dir=self.BUNDLE_DIR,
                 asset_url=self.ASSET_URL,
             ),
-            types=TypeGenConfig(
-                output=base_dir / "js" / "web" / "src" / "lib" / "generated",
-                openapi_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "openapi.json",
-                routes_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "routes.json",
-                routes_ts_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "routes.ts",
-                page_props_path=base_dir / "js" / "web" / "src" / "lib" / "generated" / "inertia-pages.json",
-                generate_zod=True,
-                generate_sdk=True,
-                generate_routes=True,
-                generate_page_props=True,
-                global_route=False,
-            ),
+            types=TypeGenConfig(output=base_dir / "js" / "web" / "src" / "lib" / "generated"),
         )
 
 
@@ -180,8 +167,9 @@ class SaqSettings:
     """Auto start and stop `saq` processes when starting the Litestar application."""
 
     def get_config(self, db: DatabaseSettings) -> SAQConfig:
-        from litestar_saq import QueueConfig, SAQConfig
+        from litestar_saq import CronJob, QueueConfig, SAQConfig
 
+        from app.domain.system import jobs as system_jobs
         from app.lib.worker import after_process, before_process, on_shutdown, on_startup
 
         return SAQConfig(
@@ -197,8 +185,15 @@ class SaqSettings:
                         "jobs_table": "task_queue",
                         "versions_table": "task_queue_ddl_version",
                     },
-                    tasks=[],
-                    scheduled_tasks=[],
+                    tasks=[system_jobs.cleanup_auth_tokens],
+                    scheduled_tasks=[
+                        CronJob(
+                            function=system_jobs.cleanup_auth_tokens,
+                            cron="0 * * * *",
+                            timeout=600,
+                            ttl=1800,
+                        )
+                    ],
                     concurrency=20,
                     startup=on_startup,
                     shutdown=on_shutdown,
@@ -271,7 +266,7 @@ class AppSettings:
     """CSRF HttpOnly Cookie - True because litestar-vite injects token into HTML as window.__LITESTAR_CSRF__"""
     STATIC_DIR: Path = field(default_factory=get_env("STATIC_DIR", STATIC_DIR))
     """Default URL where static assets are located."""
-    STATIC_URL: str = field(default_factory=get_env("STATIC_URL", "/web/"))
+    STATIC_URL: str = field(default_factory=get_env("STATIC_URL", "/static/web/"))
     """URL Location for Static assets."""
     BASE_URL: str | None = None
     """Fully qualified path to optional use for URL generation."""

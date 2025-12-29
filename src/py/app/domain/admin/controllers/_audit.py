@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING, Annotated, Any
 from uuid import UUID
 
 from advanced_alchemy.extensions.litestar.providers import FieldNameType
 from litestar import Controller, get
-from litestar.params import Dependency
+from litestar.params import Dependency, Parameter
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
@@ -57,9 +58,27 @@ class AuditController(Controller):
         request: Request[m.User, Token, Any],
         audit_service: AuditLogService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+        action: str | None = Parameter(query="action", required=False),
+        end_date: datetime | None = Parameter(query="endDate", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
-        """List audit logs with filtering and pagination."""
-        results, total = await audit_service.list_and_count(*filters)
+        """List audit logs with filtering and pagination.
+
+        Args:
+            request: Request with authenticated superuser
+            audit_service: Audit log service
+            filters: Filter and pagination parameters
+            action: Filter by action name
+            end_date: Filter for logs created on or before this time
+
+        Returns:
+            Paginated audit log list
+        """
+        extra_filters: list[Any] = []
+        if action:
+            extra_filters.append(m.AuditLog.action == action)
+        if end_date:
+            extra_filters.append(m.AuditLog.created_at <= end_date)
+        results, total = await audit_service.list_and_count(*filters, *extra_filters)
         return audit_service.to_schema(
             data=results,
             total=total,
@@ -107,10 +126,20 @@ class AuditController(Controller):
         audit_service: AuditLogService,
         user_id: UUID,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+        action: str | None = Parameter(query="action", required=False),
+        end_date: datetime | None = Parameter(query="endDate", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific user."""
-        filters.append(m.AuditLog.actor_id == user_id)
-        results, total = await audit_service.list_and_count(*filters)
+        extra_filters: list[Any] = []
+        if action:
+            extra_filters.append(m.AuditLog.action == action)
+        if end_date:
+            extra_filters.append(m.AuditLog.created_at <= end_date)
+        results, total = await audit_service.list_and_count(
+            *filters,
+            *extra_filters,
+            m.AuditLog.actor_id == user_id,
+        )
         return audit_service.to_schema(
             data=results,
             total=total,
@@ -126,11 +155,21 @@ class AuditController(Controller):
         target_type: str,
         target_id: str,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+        action: str | None = Parameter(query="action", required=False),
+        end_date: datetime | None = Parameter(query="endDate", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific target."""
-        filters.append(m.AuditLog.target_type == target_type)
-        filters.append(m.AuditLog.target_id == target_id)
-        results, total = await audit_service.list_and_count(*filters)
+        extra_filters: list[Any] = []
+        if action:
+            extra_filters.append(m.AuditLog.action == action)
+        if end_date:
+            extra_filters.append(m.AuditLog.created_at <= end_date)
+        results, total = await audit_service.list_and_count(
+            *filters,
+            *extra_filters,
+            m.AuditLog.target_type == target_type,
+            m.AuditLog.target_id == target_id,
+        )
         return audit_service.to_schema(
             data=results,
             total=total,

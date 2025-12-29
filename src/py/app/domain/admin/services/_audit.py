@@ -62,18 +62,40 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             if user_agent is None:
                 user_agent = request.headers.get("user-agent")
 
-        log_entry = m.AuditLog.create_log(
-            action=action,
-            actor_id=actor_id,
-            actor_email=actor_email,
-            target_type=target_type,
-            target_id=target_id,
-            target_label=target_label,
-            details=details,
-            ip_address=ip_address,
-            user_agent=user_agent,
+        return await self.create(
+            {
+                "action": action,
+                "actor_id": actor_id,
+                "actor_email": actor_email,
+                "target_type": target_type,
+                "target_id": target_id,
+                "target_label": target_label,
+                "details": details,
+                "ip_address": ip_address,
+                "user_agent": user_agent,
+            }
         )
-        return await self.create(log_entry.to_dict())
+
+    async def get_user_activity(
+        self,
+        user_id: UUID,
+        limit: int = 50,
+    ) -> list[m.AuditLog]:
+        """Get recent audit activity for a specific user.
+
+        Args:
+            user_id: User ID to filter by.
+            limit: Maximum number of entries to return.
+
+        Returns:
+            List of audit log entries for the user.
+        """
+        results = await self.list(
+            m.AuditLog.actor_id == user_id,
+            order_by=[m.AuditLog.created_at.desc()],
+            limit=limit,
+        )
+        return list(results)
 
     async def get_recent_activity(
         self,

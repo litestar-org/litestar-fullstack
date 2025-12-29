@@ -4,7 +4,7 @@
  * Uses Bun to compile TSX components and render to static HTML with all
  * styles inlined for email client compatibility.
  *
- * Output goes to src/py/app/templates/email/ for wheel bundling.
+ * Output goes to src/py/app/server/static/email/ for wheel bundling.
  *
  * Usage: bun run build-emails.ts
  */
@@ -14,7 +14,7 @@ import { writeFileSync, mkdirSync, readdirSync, readFileSync, existsSync } from 
 import { resolve, basename } from "node:path"
 
 // Output directory (inside Python package for wheel bundling)
-const OUTPUT_DIR = resolve(import.meta.dir, "../../py/app/templates/email")
+const OUTPUT_DIR = resolve(import.meta.dir, "../../py/app/server/static/email")
 
 // Optional global CSS file for additional styles
 const GLOBAL_CSS_PATH = resolve(import.meta.dir, "src/styles/global.css")

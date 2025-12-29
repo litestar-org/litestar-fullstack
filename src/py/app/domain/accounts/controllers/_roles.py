@@ -10,6 +10,7 @@ from litestar.exceptions import HTTPException
 from litestar.params import Dependency, Parameter
 
 from app.db import models as m
+from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.schemas import Role, RoleCreate, RoleUpdate
 from app.domain.accounts.services import RoleService
 from app.lib.constants import DEFAULT_ACCESS_ROLE, SUPERUSER_ACCESS_ROLE
@@ -25,6 +26,7 @@ class RoleController(Controller):
 
     path = "/api/roles"
     tags = ["Roles"]
+    guards = [requires_superuser]
     dependencies = create_service_dependencies(
         RoleService,
         key="roles_service",
@@ -74,7 +76,7 @@ class RoleController(Controller):
         db_obj = await roles_service.get(role_id)
         return roles_service.to_schema(db_obj, schema_type=Role)
 
-    @post(operation_id="CreateRole", path="/{role_id:uuid}")
+    @post(operation_id="CreateRole", path="")
     async def create_role(self, roles_service: RoleService, data: RoleCreate) -> Role:
         """Create a new role.
 
@@ -85,7 +87,7 @@ class RoleController(Controller):
         Returns:
             The created role.
         """
-        db_obj = await roles_service.create(data)
+        db_obj = await roles_service.create(data.to_dict())
         return roles_service.to_schema(db_obj, schema_type=Role)
 
     @patch(operation_id="UpdateRole", path="/{role_id:uuid}")
@@ -110,7 +112,7 @@ class RoleController(Controller):
         """
         if data.name in {DEFAULT_ACCESS_ROLE, SUPERUSER_ACCESS_ROLE}:
             raise HTTPException(status_code=400, detail="Cannot update default roles")
-        db_obj = await roles_service.update(item_id=role_id, data=data)
+        db_obj = await roles_service.update(item_id=role_id, data=data.to_dict())
         return roles_service.to_schema(db_obj, schema_type=Role)
 
     @delete(operation_id="DeleteRole", path="/{role_id:uuid}")
@@ -119,7 +121,7 @@ class RoleController(Controller):
         roles_service: RoleService,
         role_id: Annotated[UUID, Parameter(title="Role ID", description="The role to delete.")],
     ) -> None:
-        """Delete a tag.
+        """Delete a role.
 
         Args:
             role_id: The ID of the role to delete.

@@ -38,7 +38,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
 **msgspec Struct for DTOs** - Never use dicts or Pydantic:
 
 ```python
-from app.schemas.base import CamelizedBaseStruct
+from app.lib.schema import CamelizedBaseStruct
 
 class UserCreate(CamelizedBaseStruct, gc=False, array_like=True, omit_defaults=True):
     """User creation payload."""

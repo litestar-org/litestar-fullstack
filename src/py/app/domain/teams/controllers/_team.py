@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 from uuid import UUID
 
-from advanced_alchemy.service import FilterTypeT  # noqa: TC002
 from litestar import Controller, delete, get, patch, post
 from litestar.params import Dependency, Parameter
 from sqlalchemy import select
@@ -16,6 +15,7 @@ from app.domain.teams.services import TeamService
 from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
+    from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service.pagination import OffsetPagination
 
 
@@ -44,7 +44,7 @@ class TeamController(Controller):
         self,
         teams_service: TeamService,
         current_user: m.User,
-        filters: Annotated[list[FilterTypeT], Dependency(skip_validation=True)],
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
         """List teams that your account can access.
 
@@ -57,10 +57,16 @@ class TeamController(Controller):
             OffsetPagination[Team]
         """
         if not teams_service.can_view_all(current_user):
-            filters.append(
-                m.Team.id.in_(select(m.TeamMember.team_id).where(m.TeamMember.user_id == current_user.id)),  # type: ignore[arg-type]
+            results, total = await teams_service.list_and_count(
+                *filters,
+                m.Team.id.in_(
+                    select(m.TeamMember.team_id)
+                    .where(m.TeamMember.user_id == current_user.id)
+                    .scalar_subquery()
+                ),
             )
-        results, total = await teams_service.list_and_count(*filters)
+        else:
+            results, total = await teams_service.list_and_count(*filters)
         return teams_service.to_schema(results, total, filters, schema_type=Team)
 
     @post(operation_id="CreateTeam", path="/api/teams")
