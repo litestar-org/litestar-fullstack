@@ -101,19 +101,20 @@ class DashboardController(Controller):
         """
         recent_logs = await audit_service.get_recent_activity(hours=hours, limit=limit)
 
-        activities = [
-            ActivityLogEntry(
-                id=log.id,
-                action=log.action,
-                actor_email=log.actor_email,
-                target_label=log.target_label,
-                created_at=log.created_at,
-                ip_address=log.ip_address,
-            )
-            for log in recent_logs
-        ]
-
-        return RecentActivity(
-            activities=activities,
-            total=len(activities),
+        activities = audit_service.to_schema(
+            data=[
+                {
+                    "id": log.id,
+                    "action": log.action,
+                    "actor_email": log.actor_email,
+                    "target_label": log.target_label,
+                    "created_at": log.created_at,
+                    "ip_address": log.ip_address,
+                }
+                for log in recent_logs
+            ],
+            schema_type=ActivityLogEntry,
         )
+
+        activity_list = list(activities)
+        return RecentActivity(activities=activity_list, total=len(activity_list))

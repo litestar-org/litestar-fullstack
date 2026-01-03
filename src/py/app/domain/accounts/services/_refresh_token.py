@@ -230,5 +230,5 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         if not expired_tokens:
             return 0
 
-        await self.delete_many(expired_tokens)
+        await self.delete_many(list(expired_tokens))
         return len(expired_tokens)

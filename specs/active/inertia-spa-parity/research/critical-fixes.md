@@ -206,7 +206,7 @@ export const mfaChallengeFormSchema = z.union([
 ## 4. React Email Templates
 
 ### Current State
-The SPA project has no email templates found (no jinja2 templates in templates directory).
+The SPA project uses React Email templates in `src/js/templates/`, compiled to static HTML in `src/py/app/server/static/email/`.
 
 ### Reference Implementation
 The Accelerator project has React email templates at:
@@ -278,6 +278,7 @@ export default function EmailVerification() {
 3. Create email templates:
    - `email-verification.tsx`
    - `password-reset.tsx`
+   - `password-reset-confirmation.tsx`
    - `welcome.tsx`
    - `team-invitation.tsx`
 4. Create build script: `src/js/templates/build-emails.ts`

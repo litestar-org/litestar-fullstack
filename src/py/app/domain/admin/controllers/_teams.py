@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Annotated, Any
 from uuid import UUID
 
 from litestar import Controller, delete, get, patch
@@ -15,18 +15,16 @@ from app.domain.accounts.guards import requires_superuser
 from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import AdminTeamDetail, AdminTeamSummary, AdminTeamUpdate
 from app.domain.teams.services import TeamService
-from app.lib.schema import Message
 from app.lib.deps import create_service_dependencies
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
     from litestar import Request
     from litestar.security.jwt import Token
 
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service.pagination import OffsetPagination
-
     from app.domain.admin.services import AuditLogService
-    from app.domain.teams.services import TeamService
 
 
 class AdminTeamsController(Controller):
@@ -109,23 +107,24 @@ class AdminTeamsController(Controller):
         """
         team = await teams_service.get(team_id)
 
-        owner_email = None
-        if team.members:
-            for member in team.members:
-                if member.is_owner:
-                    owner_email = member.user.email if member.user else None
-                    break
-
-        return AdminTeamDetail(
-            id=team.id,
-            name=team.name,
-            slug=team.slug,
-            description=team.description,
-            is_active=team.is_active,
-            member_count=len(team.members) if team.members else 0,
-            owner_email=owner_email,
-            created_at=team.created_at,
-            updated_at=team.updated_at,
+        return teams_service.to_schema(
+            data={
+                "id": team.id,
+                "name": team.name,
+                "slug": team.slug,
+                "description": team.description,
+                "is_active": team.is_active,
+                "member_count": len(team.members) if team.members else 0,
+                "owner_email": next(
+                    (member.user.email for member in team.members if member.is_owner and member.user),
+                    None,
+                )
+                if team.members
+                else None,
+                "created_at": team.created_at,
+                "updated_at": team.updated_at,
+            },
+            schema_type=AdminTeamDetail,
         )
 
     @patch(operation_id="AdminUpdateTeam", path="/{team_id:uuid}")
@@ -159,34 +158,33 @@ class AdminTeamsController(Controller):
 
         team = await teams_service.update(item_id=team_id, data=update_data, auto_commit=True)
 
-        await audit_service.log_action(
-            action="admin.team.update",
+        await audit_service.log_admin_team_update(
             actor_id=request.user.id,
             actor_email=request.user.email,
-            target_type="team",
-            target_id=str(team_id),
-            target_label=team.name,
-            details={"changes": list(update_data.keys())},
+            team_id=team_id,
+            team_name=team.name,
+            changes=list(update_data.keys()),
             request=request,
         )
 
-        owner_email = None
-        if team.members:
-            for member in team.members:
-                if member.is_owner:
-                    owner_email = member.user.email if member.user else None
-                    break
-
-        return AdminTeamDetail(
-            id=team.id,
-            name=team.name,
-            slug=team.slug,
-            description=team.description,
-            is_active=team.is_active,
-            member_count=len(team.members) if team.members else 0,
-            owner_email=owner_email,
-            created_at=team.created_at,
-            updated_at=team.updated_at,
+        return teams_service.to_schema(
+            data={
+                "id": team.id,
+                "name": team.name,
+                "slug": team.slug,
+                "description": team.description,
+                "is_active": team.is_active,
+                "member_count": len(team.members) if team.members else 0,
+                "owner_email": next(
+                    (member.user.email for member in team.members if member.is_owner and member.user),
+                    None,
+                )
+                if team.members
+                else None,
+                "created_at": team.created_at,
+                "updated_at": team.updated_at,
+            },
+            schema_type=AdminTeamDetail,
         )
 
     @delete(operation_id="AdminDeleteTeam", path="/{team_id:uuid}", status_code=200)
@@ -213,13 +211,11 @@ class AdminTeamsController(Controller):
 
         await teams_service.delete(team_id)
 
-        await audit_service.log_action(
-            action="admin.team.delete",
+        await audit_service.log_admin_team_delete(
             actor_id=request.user.id,
             actor_email=request.user.email,
-            target_type="team",
-            target_id=str(team_id),
-            target_label=team_name,
+            team_id=team_id,
+            team_name=team_name,
             request=request,
         )
 

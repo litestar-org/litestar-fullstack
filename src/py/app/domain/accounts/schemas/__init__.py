@@ -17,7 +17,7 @@ from app.domain.accounts.schemas._mfa import (
     MfaStatus,
     MfaVerifyResult,
 )
-from app.domain.accounts.schemas._oauth import OAuthAccountInfo, OAuthAccountList, OAuthAuthorization
+from app.domain.accounts.schemas._oauth import OAuthAccountInfo, OAuthAuthorization
 from app.domain.accounts.schemas._password_reset import (
     ForgotPasswordRequest,
     PasswordResetComplete,
@@ -27,7 +27,7 @@ from app.domain.accounts.schemas._password_reset import (
     ValidateResetTokenRequest,
 )
 from app.domain.accounts.schemas._roles import Role, RoleCreate, RoleUpdate, UserRoleAdd, UserRoleRevoke
-from app.domain.accounts.schemas._sessions import ActiveSession, SessionList, TokenRefresh
+from app.domain.accounts.schemas._sessions import ActiveSession, TokenRefresh
 from app.domain.accounts.schemas._user import (
     OauthAccount,
     ProfileUpdate,
@@ -40,9 +40,9 @@ from app.domain.accounts.schemas._user import (
 from app.lib.schema import Message
 
 __all__ = (
-    "ActiveSession",
     "AccountLogin",
     "AccountRegister",
+    "ActiveSession",
     "EmailVerificationConfirm",
     "EmailVerificationRequest",
     "EmailVerificationSent",
@@ -57,10 +57,9 @@ __all__ = (
     "MfaSetup",
     "MfaStatus",
     "MfaVerifyResult",
-    "OauthAccount",
     "OAuthAccountInfo",
-    "OAuthAccountList",
     "OAuthAuthorization",
+    "OauthAccount",
     "PasswordResetComplete",
     "PasswordResetSent",
     "PasswordUpdate",
@@ -71,7 +70,6 @@ __all__ = (
     "Role",
     "RoleCreate",
     "RoleUpdate",
-    "SessionList",
     "TokenRefresh",
     "User",
     "UserCreate",

@@ -127,8 +127,3 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
     ) -> m.UserOAuthAccount | None:
         """Get an OAuth account by provider and account ID."""
         return await self.get_one_or_none(oauth_name=provider, account_id=account_id)
-
-    async def get_user_oauth_accounts(self, user_id: UUID) -> list[m.UserOAuthAccount]:
-        """Get all OAuth accounts for a user."""
-        result = await self.list(user_id=user_id)
-        return list(result)

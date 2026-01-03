@@ -3,7 +3,7 @@
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from app.db.models.email_verification_token import EmailVerificationToken
+from app.db import models as m
 
 
 class TestEmailVerificationToken:
@@ -12,7 +12,7 @@ class TestEmailVerificationToken:
     def test_create_expires_at_default(self) -> None:
         """Test create_expires_at with default 24 hours."""
         before = datetime.now(UTC)
-        expires_at = EmailVerificationToken.create_expires_at()
+        expires_at = m.EmailVerificationToken.create_expires_at()
         after = datetime.now(UTC)
 
         # Should be approximately 24 hours from now
@@ -24,7 +24,7 @@ class TestEmailVerificationToken:
     def test_create_expires_at_custom_hours(self) -> None:
         """Test create_expires_at with custom hours."""
         before = datetime.now(UTC)
-        expires_at = EmailVerificationToken.create_expires_at(hours=12)
+        expires_at = m.EmailVerificationToken.create_expires_at(hours=12)
         after = datetime.now(UTC)
 
         # Should be approximately 12 hours from now
@@ -35,9 +35,9 @@ class TestEmailVerificationToken:
 
     def test_is_expired_false_for_future_expiration(self) -> None:
         """Test is_expired returns False for future expiration."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) + timedelta(hours=1),
         )
@@ -46,9 +46,9 @@ class TestEmailVerificationToken:
 
     def test_is_expired_true_for_past_expiration(self) -> None:
         """Test is_expired returns True for past expiration."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) - timedelta(hours=1),
         )
@@ -57,9 +57,9 @@ class TestEmailVerificationToken:
 
     def test_is_used_false_when_used_at_is_none(self) -> None:
         """Test is_used returns False when used_at is None."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) + timedelta(hours=1),
             used_at=None,
@@ -69,9 +69,9 @@ class TestEmailVerificationToken:
 
     def test_is_used_true_when_used_at_is_set(self) -> None:
         """Test is_used returns True when used_at is set."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) + timedelta(hours=1),
             used_at=datetime.now(UTC),
@@ -81,9 +81,9 @@ class TestEmailVerificationToken:
 
     def test_is_valid_true_when_not_expired_and_not_used(self) -> None:
         """Test is_valid returns True when token is not expired and not used."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) + timedelta(hours=1),
             used_at=None,
@@ -93,9 +93,9 @@ class TestEmailVerificationToken:
 
     def test_is_valid_false_when_expired(self) -> None:
         """Test is_valid returns False when token is expired."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) - timedelta(hours=1),
             used_at=None,
@@ -105,9 +105,9 @@ class TestEmailVerificationToken:
 
     def test_is_valid_false_when_used(self) -> None:
         """Test is_valid returns False when token is used."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) + timedelta(hours=1),
             used_at=datetime.now(UTC),
@@ -117,9 +117,9 @@ class TestEmailVerificationToken:
 
     def test_is_valid_false_when_expired_and_used(self) -> None:
         """Test is_valid returns False when token is both expired and used."""
-        token = EmailVerificationToken(
+        token = m.EmailVerificationToken(
             user_id=uuid4(),
-            token="test_token",
+            token_hash="test_token_hash",
             email="test@example.com",
             expires_at=datetime.now(UTC) - timedelta(hours=1),
             used_at=datetime.now(UTC),

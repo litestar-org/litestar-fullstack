@@ -6,7 +6,7 @@ x-development-volumes: &development-volumes
     - ./Makefile:/workspace/app/Makefile
     - ./pyproject.toml:/workspace/app/pyproject.toml
     - ./uv.lock:/workspace/app/uv.lock
-    - ./.env.docker.example:/workspace/app/.env
+    - ../../.env.local.example:/workspace/app/.env
 
 services:
   app:
@@ -18,9 +18,8 @@ services:
       - "3006:3006"
     tty: true
     environment:
-      VITE_USE_SERVER_LIFESPAN: "true" # true in dev or run
       VITE_DEV_MODE: "true"
-      VITE_HOT_RELOAD: "true"
+      VITE_PORT: "3006"
       SAQ_USE_SERVER_LIFESPAN: "false"
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
@@ -40,7 +39,7 @@ services:
         condition: service_healthy
 
     env_file:
-      - .env.docker.example
+      - ../../.env.local.example
   migrator:
     build:
       context: .
@@ -49,7 +48,7 @@ services:
     restart: "no"
     <<: *development-volumes
     env_file:
-      - .env.docker.example
+      - ../../.env.local.example
     depends_on:
       db:
         condition: service_healthy

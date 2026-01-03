@@ -103,12 +103,13 @@
 - [x] Create `src/js/templates/src/components/index.ts`
 - [x] Create `src/js/templates/src/emails/email-verification.tsx`
 - [x] Create `src/js/templates/src/emails/password-reset.tsx`
+- [x] Create `src/js/templates/src/emails/password-reset-confirmation.tsx`
 - [x] Create `src/js/templates/src/emails/welcome.tsx`
 - [x] Create `src/js/templates/src/emails/team-invitation.tsx`
 - [x] Create `src/js/templates/build-emails.ts` build script
 - [x] Update Makefile with `make build-emails` target
 - [x] Create output directory `src/py/app/server/static/email/`
-- [x] Build and verify HTML output (4 templates built)
+- [x] Build and verify HTML output (5 templates built)
 - [x] Update .gitignore for email template artifacts
 
 **Files created:**
@@ -123,6 +124,7 @@
 - `src/js/templates/src/components/index.ts`
 - `src/js/templates/src/emails/email-verification.tsx`
 - `src/js/templates/src/emails/password-reset.tsx`
+- `src/js/templates/src/emails/password-reset-confirmation.tsx`
 - `src/js/templates/src/emails/welcome.tsx`
 - `src/js/templates/src/emails/team-invitation.tsx`
 
@@ -159,6 +161,7 @@
 ### 0.5 Advanced Alchemy Alignment ✅ COMPLETED
 
 - [x] Replace manual pagination in admin endpoints with filter-driven `OffsetPagination`
+- [x] Convert active sessions list to filter-driven `OffsetPagination`
 - [x] Add limit/offset filters for tags, roles, teams, and team invitations
 - [x] Hash email verification + password reset tokens via `to_model_on_create`
 - [x] Encrypt OAuth access/refresh tokens using `EncryptedText`
@@ -218,8 +221,8 @@
 - [x] Implement `revoke_token_family(family_id)`
 - [x] Implement `cleanup_expired_tokens()` for background job
 - [x] Add dependency provider function
-- [ ] Write unit tests for token rotation logic
-- [ ] Write unit tests for reuse detection
+- [x] Write unit tests for token rotation logic
+- [x] Write unit tests for reuse detection
 
 **Files to create:**
 
@@ -270,7 +273,7 @@
 - [x] Add `two_factor_confirmed_at` field (datetime nullable)
 - [x] Add `backup_codes` field (JSONB nullable)
 - [ ] Create database migration
-- [ ] Verify existing TOTP functions in `crypt.py` work correctly
+- [x] Verify existing TOTP functions in `crypt.py` work correctly
 
 **Files to modify:**
 
@@ -300,7 +303,7 @@
 - [x] Implement `POST /api/mfa/confirm` - Verify code, enable MFA, return backup codes
 - [x] Implement `DELETE /api/mfa/disable` - Disable MFA (requires password)
 - [x] Implement `POST /api/mfa/regenerate-codes` - Generate new backup codes
-- [ ] Add rate limiting (5 attempts per 15 minutes)
+- [x] Add rate limiting (5 attempts per 15 minutes)
 - [ ] Write unit tests for each endpoint
 - [ ] Write integration tests for full MFA setup flow
 
@@ -339,11 +342,11 @@
 
 ### 2.6 Frontend MFA Components
 
-- [ ] Create `totp-input.tsx` - 6-digit code input component
-- [ ] Create `mfa-setup-dialog.tsx` - QR code display + verification
-- [ ] Create `mfa-disable-dialog.tsx` - Password confirmation dialog
-- [ ] Create `backup-codes-display.tsx` - One-time code display
-- [ ] Create `mfa-section.tsx` - MFA settings card for profile
+- [x] Create `totp-input.tsx` - 6-digit code input component
+- [x] Create `mfa-setup-dialog.tsx` - QR code display + verification
+- [x] Create `mfa-disable-dialog.tsx` - Password confirmation dialog
+- [x] Create `backup-codes-display.tsx` - One-time code display
+- [x] Create `mfa-section.tsx` - MFA settings card for profile
 
 **Files to create:**
 
@@ -355,10 +358,10 @@
 
 ### 2.7 Frontend MFA Pages
 
-- [ ] Create `mfa-challenge.tsx` route in `_public/`
-- [ ] Add MFA section to profile settings page
-- [ ] Create TanStack Query hooks for MFA operations
-- [ ] Handle MFA challenge redirect in login flow
+- [x] Create `mfa-challenge.tsx` route in `_public/`
+- [x] Add MFA section to profile settings page
+- [x] Create TanStack Query hooks for MFA operations
+- [x] Handle MFA challenge redirect in login flow
 
 **Files to create:**
 
@@ -394,7 +397,7 @@
 - [x] Implement `log_action()` method
 - [x] Implement `get_user_activity()` method
 - [x] Implement `get_recent_activity()` method
-- [ ] Add helper functions for common audit events
+- [x] Add helper functions for common audit events
 - [ ] Write unit tests
 
 **Files to create:**
@@ -480,11 +483,11 @@
 
 ### 3.9 Frontend Admin Components
 
-- [ ] Create `stats-cards.tsx` - Dashboard statistics
-- [ ] Create `recent-activity.tsx` - Activity feed component
-- [ ] Create `user-table.tsx` - User management DataTable
-- [ ] Create `team-table.tsx` - Team management DataTable
-- [ ] Create `audit-log-table.tsx` - Filterable audit log
+- [x] Create `stats-cards.tsx` - Dashboard statistics
+- [x] Create `recent-activity.tsx` - Activity feed component
+- [x] Create `user-table.tsx` - User management DataTable
+- [x] Create `team-table.tsx` - Team management DataTable
+- [x] Create `audit-log-table.tsx` - Filterable audit log
 
 **Files to create:**
 
@@ -496,15 +499,15 @@
 
 ### 3.10 Frontend Admin Pages
 
-- [ ] Create admin route group `_app/admin/`
-- [ ] Create `admin/index.tsx` - Dashboard
-- [ ] Create `admin/users/index.tsx` - User list
-- [ ] Create `admin/users/$userId.tsx` - User detail
-- [ ] Create `admin/teams/index.tsx` - Team list
-- [ ] Create `admin/teams/$teamId.tsx` - Team detail
-- [ ] Create `admin/audit.tsx` - Audit log
-- [ ] Add admin navigation
-- [ ] Create TanStack Query hooks for admin API
+- [x] Create admin route group `_app/admin/`
+- [x] Create `admin/index.tsx` - Dashboard
+- [x] Create `admin/users/index.tsx` - User list
+- [x] Create `admin/users/$userId.tsx` - User detail
+- [x] Create `admin/teams/index.tsx` - Team list
+- [x] Create `admin/teams/$teamId.tsx` - Team detail
+- [x] Create `admin/audit.tsx` - Audit log
+- [x] Add admin navigation
+- [x] Create TanStack Query hooks for admin API
 
 **Files to create:**
 
@@ -551,10 +554,10 @@
 
 ### 4.3 OAuth Token Refresh Job
 
-- [ ] Create background job for OAuth token refresh
-- [ ] Implement token refresh logic per provider
-- [ ] Handle refresh failures gracefully
-- [ ] Add to SAQ job configuration
+- [x] Create background job for OAuth token refresh
+- [x] Implement token refresh logic per provider
+- [x] Handle refresh failures gracefully
+- [x] Add to SAQ job configuration
 
 **Files to create:**
 
@@ -566,10 +569,10 @@
 
 ### 4.4 Frontend Connected Accounts
 
-- [ ] Create `connected-accounts.tsx` - OAuth accounts list
-- [ ] Create `oauth-link-button.tsx` - Provider link buttons
-- [ ] Add connected accounts section to profile
-- [ ] Create TanStack Query hooks for OAuth account management
+- [x] Create `connected-accounts.tsx` - OAuth accounts list
+- [x] Create `oauth-link-button.tsx` - Provider link buttons
+- [x] Add connected accounts section to profile
+- [x] Create TanStack Query hooks for OAuth account management
 
 **Files to create:**
 
@@ -646,19 +649,19 @@
 
 ### 6.1 Run `make types`
 
-- [ ] Generate updated TypeScript client from OpenAPI schema
-- [ ] Verify all new endpoints are typed correctly
+- [x] Generate updated TypeScript client from OpenAPI schema
+- [x] Verify all new endpoints are typed correctly
 
 ### 6.2 Navigation Updates
 
-- [ ] Add admin link to navigation (superuser only)
+- [x] Add admin link to navigation (superuser only)
 - [ ] Add MFA status indicator to profile menu
 - [ ] Update mobile navigation
 
 **Files to modify:**
 
-- `src/js/web/src/components/layout/navigation.tsx`
-- `src/js/web/src/components/layout/user-menu.tsx`
+- `src/js/web/src/components/app-sidebar.tsx`
+- `src/js/web/src/components/user-menu.tsx`
 
 ### 6.3 Error Handling
 
@@ -685,8 +688,8 @@
 
 ### 7.2 Frontend Testing
 
-- [ ] Run `npm run lint` - No linting errors
-- [ ] Run `npm run build` - Build succeeds
+- [ ] Run `bun run lint` - No linting errors
+- [ ] Run `bun run build` - Build succeeds
 - [ ] Manual testing of all new features
 
 ### 7.3 Integration Testing

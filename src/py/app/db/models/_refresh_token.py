@@ -10,6 +10,7 @@ from advanced_alchemy.base import UUIDv7AuditBase
 from sqlalchemy import ForeignKey, String, case, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql.elements import ColumnElement
 
 if TYPE_CHECKING:
     from app.db.models._user import User
@@ -53,8 +54,8 @@ class RefreshToken(UUIDv7AuditBase):
         return datetime.now(UTC) > self.expires_at
 
     @is_expired.expression
-    def is_expired(cls) -> object:
-        return case((cls.expires_at <= func.now(), True), else_=False)
+    def _is_expired_expr(cls) -> ColumnElement[bool]:
+        return case((cls.__table__.c.expires_at <= func.now(), True), else_=False)
 
     @hybrid_property
     def is_revoked(self) -> bool:
@@ -62,8 +63,8 @@ class RefreshToken(UUIDv7AuditBase):
         return self.revoked_at is not None
 
     @is_revoked.expression
-    def is_revoked(cls) -> object:
-        return case((cls.revoked_at.isnot(None), True), else_=False)
+    def _is_revoked_expr(cls) -> ColumnElement[bool]:
+        return case((cls.__table__.c.revoked_at.is_not(None), True), else_=False)
 
     @hybrid_property
     def is_valid(self) -> bool:
@@ -71,9 +72,9 @@ class RefreshToken(UUIDv7AuditBase):
         return not self.is_expired and not self.is_revoked
 
     @is_valid.expression
-    def is_valid(cls) -> object:
+    def _is_valid_expr(cls) -> ColumnElement[bool]:
         return case(
-            ((cls.expires_at > func.now()) & cls.revoked_at.is_(None), True),
+            ((cls.__table__.c.expires_at > func.now()) & (cls.__table__.c.revoked_at.is_(None)), True),
             else_=False,
         )
 

@@ -817,14 +817,18 @@ class TestAuthenticationIntegration:
             reset_token = result.scalar_one()
 
             # 4. Validate reset token
-            response = await client.get("/api/access/reset-password", params={"token": reset_token.token})
+            response = await client.get("/api/access/reset-password", params={"token": reset_token.raw_token})
             assert response.status_code == 200
             assert response.json()["valid"] is True
 
             # 5. Reset password
             response = await client.post(
                 "/api/access/reset-password",
-                json={"token": reset_token.token, "password": "newPassword123!", "passwordConfirm": "newPassword123!"},
+                json={
+                    "token": reset_token.raw_token,
+                    "password": "newPassword123!",
+                    "passwordConfirm": "newPassword123!",
+                },
             )
             assert response.status_code == 200
 

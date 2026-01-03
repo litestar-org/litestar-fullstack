@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Literal, TypeVar
 
 import structlog
 from litestar import Controller, MediaType, get
-from litestar.di import Provide
 from litestar.response import Response
 from sqlalchemy import text
 
@@ -37,6 +36,7 @@ class SystemController(Controller):
 
         Args:
             db_session: The database session.
+            settings: Application settings.
 
         Returns:
             The response object.

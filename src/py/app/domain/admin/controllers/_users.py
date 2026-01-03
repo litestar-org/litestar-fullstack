@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Annotated, Any
 from uuid import UUID
 
 from litestar import Controller, delete, get, patch
@@ -15,17 +15,15 @@ from app.domain.accounts.guards import requires_superuser
 from app.domain.accounts.services import UserService
 from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import AdminUserDetail, AdminUserSummary, AdminUserUpdate
-from app.lib.schema import Message
 from app.lib.deps import create_service_dependencies
+from app.lib.schema import Message
 
 if TYPE_CHECKING:
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
     from litestar import Request
     from litestar.security.jwt import Token
 
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service.pagination import OffsetPagination
-
-    from app.domain.accounts.services import UserService
     from app.domain.admin.services import AuditLogService
 
 
@@ -105,25 +103,28 @@ class AdminUsersController(Controller):
         """
         user = await users_service.get(user_id, load=[undefer_group("security_sensitive")])
 
-        return AdminUserDetail(
-            id=user.id,
-            email=user.email,
-            name=user.name,
-            username=user.username,
-            phone=user.phone,
-            is_active=user.is_active,
-            is_superuser=user.is_superuser,
-            is_verified=user.is_verified,
-            verified_at=user.verified_at,
-            joined_at=user.joined_at,
-            login_count=user.login_count,
-            is_two_factor_enabled=user.is_two_factor_enabled,
-            has_password=user.hashed_password is not None,
-            roles=[r.role.name for r in user.roles if r.role] if user.roles else [],
-            teams=[t.team.name for t in user.teams if t.team] if user.teams else [],
-            oauth_providers=[a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
-            created_at=user.created_at,
-            updated_at=user.updated_at,
+        return users_service.to_schema(
+            data={
+                "id": user.id,
+                "email": user.email,
+                "name": user.name,
+                "username": user.username,
+                "phone": user.phone,
+                "is_active": user.is_active,
+                "is_superuser": user.is_superuser,
+                "is_verified": user.is_verified,
+                "verified_at": user.verified_at,
+                "joined_at": user.joined_at,
+                "login_count": user.login_count,
+                "is_two_factor_enabled": user.is_two_factor_enabled,
+                "has_password": user.hashed_password is not None,
+                "roles": [r.role.name for r in user.roles if r.role] if user.roles else [],
+                "teams": [t.team.name for t in user.teams if t.team] if user.teams else [],
+                "oauth_providers": [a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
+                "created_at": user.created_at,
+                "updated_at": user.updated_at,
+            },
+            schema_type=AdminUserDetail,
         )
 
     @patch(operation_id="AdminUpdateUser", path="/{user_id:uuid}")
@@ -157,36 +158,37 @@ class AdminUsersController(Controller):
 
         user = await users_service.update(item_id=user_id, data=update_data, auto_commit=True)
 
-        await audit_service.log_action(
-            action="admin.user.update",
+        await audit_service.log_admin_user_update(
             actor_id=request.user.id,
             actor_email=request.user.email,
-            target_type="user",
-            target_id=str(user_id),
-            target_label=user.email,
-            details={"changes": list(update_data.keys())},
+            user_id=user_id,
+            user_email=user.email,
+            changes=list(update_data.keys()),
             request=request,
         )
 
-        return AdminUserDetail(
-            id=user.id,
-            email=user.email,
-            name=user.name,
-            username=user.username,
-            phone=user.phone,
-            is_active=user.is_active,
-            is_superuser=user.is_superuser,
-            is_verified=user.is_verified,
-            verified_at=user.verified_at,
-            joined_at=user.joined_at,
-            login_count=user.login_count,
-            is_two_factor_enabled=user.is_two_factor_enabled,
-            has_password=user.hashed_password is not None,
-            roles=[r.role.name for r in user.roles if r.role] if user.roles else [],
-            teams=[t.team.name for t in user.teams if t.team] if user.teams else [],
-            oauth_providers=[a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
-            created_at=user.created_at,
-            updated_at=user.updated_at,
+        return users_service.to_schema(
+            data={
+                "id": user.id,
+                "email": user.email,
+                "name": user.name,
+                "username": user.username,
+                "phone": user.phone,
+                "is_active": user.is_active,
+                "is_superuser": user.is_superuser,
+                "is_verified": user.is_verified,
+                "verified_at": user.verified_at,
+                "joined_at": user.joined_at,
+                "login_count": user.login_count,
+                "is_two_factor_enabled": user.is_two_factor_enabled,
+                "has_password": user.hashed_password is not None,
+                "roles": [r.role.name for r in user.roles if r.role] if user.roles else [],
+                "teams": [t.team.name for t in user.teams if t.team] if user.teams else [],
+                "oauth_providers": [a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
+                "created_at": user.created_at,
+                "updated_at": user.updated_at,
+            },
+            schema_type=AdminUserDetail,
         )
 
     @delete(operation_id="AdminDeleteUser", path="/{user_id:uuid}", status_code=200)
@@ -221,13 +223,11 @@ class AdminUsersController(Controller):
         user_email = user.email
         await users_service.delete(user_id)
 
-        await audit_service.log_action(
-            action="admin.user.delete",
+        await audit_service.log_admin_user_delete(
             actor_id=request.user.id,
             actor_email=request.user.email,
-            target_type="user",
-            target_id=str(user_id),
-            target_label=user_email,
+            user_id=user_id,
+            user_email=user_email,
             request=request,
         )
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
 from unittest.mock import AsyncMock, Mock, create_autospec
@@ -11,7 +12,6 @@ from polyfactory import Ignore, Use
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 from app.db import models as m
-from app.db.models.team_roles import TeamRoles
 from app.lib.email import EmailService
 
 
@@ -35,6 +35,11 @@ class UserFactory(SQLAlchemyFactory[m.User]):
     password_reset_at = None
     failed_reset_attempts = 0
     reset_locked_until = None
+    # MFA fields - explicit None to avoid polyfactory generating naive datetimes
+    totp_secret = None
+    is_two_factor_enabled = False
+    two_factor_confirmed_at = None
+    backup_codes = None
 
     # Ignore relationships to avoid circular dependencies
     roles = Ignore()
@@ -42,6 +47,7 @@ class UserFactory(SQLAlchemyFactory[m.User]):
     oauth_accounts = Ignore()
     verification_tokens = Ignore()
     reset_tokens = Ignore()
+    refresh_tokens = Ignore()
 
 
 class AdminUserFactory(UserFactory):
@@ -80,7 +86,7 @@ class TeamMemberFactory(SQLAlchemyFactory[m.TeamMember]):
     __check_model__ = False  # Association proxies cause validation issues
 
     id = Use(uuid4)
-    role = TeamRoles.MEMBER
+    role = m.TeamRoles.MEMBER
     is_owner = False
 
     # These will be set by the caller
@@ -102,7 +108,8 @@ class EmailVerificationTokenFactory(SQLAlchemyFactory[m.EmailVerificationToken])
     __set_relationships__ = True
 
     id = Use(uuid4)
-    token = Use(lambda: uuid4().hex)
+    token_hash = Ignore()
+    email = Use(lambda: f"user{uuid4().hex[:8]}@example.com")
     expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
     used_at = None
 
@@ -112,6 +119,16 @@ class EmailVerificationTokenFactory(SQLAlchemyFactory[m.EmailVerificationToken])
     # Ignore relationships
     user = Ignore()
 
+    @classmethod
+    def build(cls, **kwargs: Any) -> m.EmailVerificationToken:
+        raw_token = kwargs.pop("raw_token", None)
+        if raw_token is None:
+            raw_token = uuid4().hex
+        kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
+        token = super().build(**kwargs)
+        token.raw_token = raw_token
+        return token
+
 
 class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
     """Factory for PasswordResetToken model."""
@@ -120,7 +137,7 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
     __set_relationships__ = True
 
     id = Use(uuid4)
-    token = Use(lambda: uuid4().hex)
+    token_hash = Ignore()
     expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
     used_at = None
     ip_address = "127.0.0.1"
@@ -131,6 +148,16 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
 
     # Ignore relationships
     user = Ignore()
+
+    @classmethod
+    def build(cls, **kwargs: Any) -> m.PasswordResetToken:
+        raw_token = kwargs.pop("raw_token", None)
+        if raw_token is None:
+            raw_token = uuid4().hex
+        kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
+        token = super().build(**kwargs)
+        token.raw_token = raw_token
+        return token
 
 
 class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
@@ -175,7 +202,7 @@ class TeamInvitationFactory(SQLAlchemyFactory[m.TeamInvitation]):
 
     id = Use(uuid4)
     email = Use(lambda: f"invite{uuid4().hex[:8]}@example.com")
-    role = TeamRoles.MEMBER
+    role = m.TeamRoles.MEMBER
     is_accepted = False
     invited_by_id = None
     invited_by_email = Use(lambda: f"inviter{uuid4().hex[:8]}@example.com")
@@ -253,7 +280,7 @@ async def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.
     await session.flush()  # Get the team ID
 
     # Create team membership
-    membership = TeamMemberFactory.build(team_id=team.id, user_id=user.id, role=TeamRoles.ADMIN, is_owner=True)
+    membership = TeamMemberFactory.build(team_id=team.id, user_id=user.id, role=m.TeamRoles.ADMIN, is_owner=True)
     session.add(membership)
 
     return user, team
@@ -271,7 +298,9 @@ async def create_team_with_members(session: Any, member_count: int = 3, **kwargs
     await session.flush()
 
     # Create owner membership
-    owner_membership = TeamMemberFactory.build(team_id=team.id, user_id=owner.id, role=TeamRoles.ADMIN, is_owner=True)
+    owner_membership = TeamMemberFactory.build(
+        team_id=team.id, user_id=owner.id, role=m.TeamRoles.ADMIN, is_owner=True
+    )
     session.add(owner_membership)
 
     # Create additional members
@@ -281,7 +310,7 @@ async def create_team_with_members(session: Any, member_count: int = 3, **kwargs
         session.add(member)
         await session.flush()
 
-        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER)
+        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER)
         session.add(membership)
         members.append(member)
 
@@ -425,7 +454,7 @@ class UsedEmailVerificationTokenFactory(EmailVerificationTokenFactory):
     """Factory for used email verification tokens."""
 
     expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=24))
-    used_at = Use(datetime.utcnow)
+    used_at = Use(lambda: datetime.now(UTC))
 
 
 class ValidPasswordResetTokenFactory(PasswordResetTokenFactory):
@@ -446,7 +475,7 @@ class UsedPasswordResetTokenFactory(PasswordResetTokenFactory):
     """Factory for used password reset tokens."""
 
     expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=1))
-    used_at = Use(datetime.utcnow)
+    used_at = Use(lambda: datetime.now(UTC))
 
 
 # Enhanced convenience functions for email verification scenarios

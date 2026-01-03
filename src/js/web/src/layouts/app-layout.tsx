@@ -30,8 +30,11 @@ export function AppLayout() {
     if (pathname.startsWith("/teams/")) {
       return { eyebrow: "Workspace", title: currentTeam?.name ?? "Team" }
     }
-    if (pathname === "/admin") {
+    if (pathname.startsWith("/admin")) {
       return { eyebrow: "Operations", title: "Admin" }
+    }
+    if (pathname.startsWith("/profile")) {
+      return { eyebrow: "Account", title: "Profile" }
     }
     return { eyebrow: "Workspace", title: "Dashboard" }
   }, [currentTeam?.name, pathname])

@@ -10,12 +10,13 @@ from litestar import Controller, Request, Response, delete, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import ClientException, NotAuthorizedException
-from litestar.params import Body, Parameter
+from litestar.params import Body, Dependency, Parameter
+from sqlalchemy.orm import selectinload
 
+from app.db import models as m
 from app.domain.accounts.deps import (
     provide_email_verification_service,
     provide_password_reset_service,
-    provide_refresh_token_service,
     provide_roles_service,
     provide_users_service,
 )
@@ -29,21 +30,23 @@ from app.domain.accounts.schemas import (
     PasswordResetSent,
     ResetPasswordRequest,
     ResetTokenValidation,
-    SessionList,
     TokenRefresh,
     User,
 )
+from app.domain.accounts.services import RefreshTokenService
+from app.lib.deps import create_service_dependencies
 from app.lib.email import email_service
+from app.lib.schema import Message
 from app.lib.settings import AppSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
-from app.lib.schema import Message
 
 if TYPE_CHECKING:
     from uuid import UUID
 
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
     from litestar.security.jwt import OAuth2Login, Token
 
-    from app.db import models as m
     from app.domain.accounts.services import (
         EmailVerificationTokenService,
         PasswordResetService,
@@ -63,12 +66,26 @@ class AccessController(Controller):
     """User login and registration."""
 
     tags = ["Access"]
-    dependencies = {
+    dependencies = create_service_dependencies(
+        RefreshTokenService,
+        key="refresh_token_service",
+        load=[selectinload(m.RefreshToken.user)],
+        error_messages={
+            "duplicate_key": "Refresh token already exists.",
+            "integrity": "Refresh token operation failed.",
+        },
+        filters={
+            "pagination_type": "limit_offset",
+            "pagination_size": 25,
+            "created_at": True,
+            "sort_field": "created_at",
+            "sort_order": "desc",
+        },
+    ) | {
         "users_service": Provide(provide_users_service),
         "roles_service": Provide(provide_roles_service),
         "verification_service": Provide(provide_email_verification_service),
         "password_reset_service": Provide(provide_password_reset_service),
-        "refresh_token_service": Provide(provide_refresh_token_service),
     }
 
     @post(operation_id="AccountLogin", path="/api/access/login", exclude_from_auth=True)
@@ -105,7 +122,6 @@ class AccessController(Controller):
         user = await users_service.authenticate(data.username, data.password)
 
         if user.is_two_factor_enabled and user.totp_secret:
-
             mfa_challenge_token = JWTToken(
                 sub=user.email,
                 exp=datetime.now(UTC) + timedelta(minutes=5),
@@ -273,36 +289,47 @@ class AccessController(Controller):
         self,
         request: Request[m.User, Token, Any],
         refresh_token_service: RefreshTokenService,
-    ) -> SessionList:
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> OffsetPagination[ActiveSession]:
         """Get all active sessions for the current user.
 
         Args:
             request: Request with authenticated user
             refresh_token_service: Refresh Token Service
+            filters: Filter and pagination parameters
 
         Returns:
-            List of active sessions
+            Paginated active sessions
         """
+        from datetime import UTC, datetime
 
         current_token_hash = None
         raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
         if raw_refresh_token:
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
 
-        active_tokens = await refresh_token_service.get_active_sessions(request.user.id)
+        active_tokens, total = await refresh_token_service.list_and_count(
+            *filters,
+            m.RefreshToken.user_id == request.user.id,
+            m.RefreshToken.revoked_at.is_(None),
+            m.RefreshToken.expires_at > datetime.now(UTC),
+        )
 
-        sessions = [
-            ActiveSession(
-                id=token.id,
-                device_info=token.device_info,
-                created_at=token.created_at,
-                expires_at=token.expires_at,
-                is_current=token.token_hash == current_token_hash,
-            )
-            for token in active_tokens
-        ]
-
-        return SessionList(sessions=sessions, count=len(sessions))
+        return refresh_token_service.to_schema(
+            data=[
+                {
+                    "id": token.id,
+                    "device_info": token.device_info,
+                    "created_at": token.created_at,
+                    "expires_at": token.expires_at,
+                    "is_current": token.token_hash == current_token_hash,
+                }
+                for token in active_tokens
+            ],
+            total=total,
+            filters=filters,
+            schema_type=ActiveSession,
+        )
 
     @delete(operation_id="RevokeSession", path="/api/access/sessions/{session_id:uuid}", status_code=200)
     async def revoke_session(
@@ -443,7 +470,6 @@ class AccessController(Controller):
             user=cast("UserProtocol", user),
             reset_token=reset_token,
             expires_in_minutes=60,
-            ip_address=ip_address,
         )
 
         return PasswordResetSent(

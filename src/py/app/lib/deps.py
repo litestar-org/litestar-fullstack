@@ -7,8 +7,9 @@ You should not have modify this module very often and should only be invoked und
 
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, Any, overload
+from collections.abc import AsyncGenerator, AsyncIterator, Callable
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, overload
 
 from advanced_alchemy.extensions.litestar.providers import (
     create_filter_dependencies,
@@ -17,19 +18,24 @@ from advanced_alchemy.extensions.litestar.providers import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator, Callable
-    from typing import TypeVar
-
     from litestar.connection import ASGIConnection
     from saq import Queue
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    S1 = TypeVar("S1")
-    S2 = TypeVar("S2")
-    S3 = TypeVar("S3")
-    S4 = TypeVar("S4")
-    S5 = TypeVar("S5")
-    T = TypeVar("T")
+T = TypeVar("T")
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
+T3 = TypeVar("T3")
+T4 = TypeVar("T4")
+T5 = TypeVar("T5")
+S = TypeVar("S", bound="_ServiceWithSession")
+
+
+class _ServiceWithSession(Protocol):
+    def __init__(self, *, session: AsyncSession) -> None: ...
+
+# Type alias for cleaner overload signatures
+ServiceProvider = Callable[["AsyncSession"], AsyncGenerator[T, None]]
 
 __all__ = (
     "CompositeServiceMixin",
@@ -55,70 +61,58 @@ async def get_task_queue() -> Queue:
     return task_queues
 
 
-# Type overloads for proper tuple typing with 1-5 providers
+# Overloads for 1-5 providers - Python's type system requires this for proper inference
+# (Similar to how asyncio.gather handles variadic typing)
 @overload
-@asynccontextmanager
-async def provide_services(
-    __p1: Callable[[AsyncSession], AsyncGenerator[S1, None]],
+def provide_services(
+    p1: ServiceProvider[T1],
     /,
     *,
     session: AsyncSession | None = ...,
     connection: ASGIConnection[Any, Any, Any, Any] | None = ...,
-) -> AsyncGenerator[tuple[S1], None]: ...
-
-
+) -> AbstractAsyncContextManager[tuple[T1]]: ...
 @overload
-@asynccontextmanager
-async def provide_services(
-    __p1: Callable[[AsyncSession], AsyncGenerator[S1, None]],
-    __p2: Callable[[AsyncSession], AsyncGenerator[S2, None]],
+def provide_services(
+    p1: ServiceProvider[T1],
+    p2: ServiceProvider[T2],
     /,
     *,
     session: AsyncSession | None = ...,
     connection: ASGIConnection[Any, Any, Any, Any] | None = ...,
-) -> AsyncGenerator[tuple[S1, S2], None]: ...
-
-
+) -> AbstractAsyncContextManager[tuple[T1, T2]]: ...
 @overload
-@asynccontextmanager
-async def provide_services(
-    __p1: Callable[[AsyncSession], AsyncGenerator[S1, None]],
-    __p2: Callable[[AsyncSession], AsyncGenerator[S2, None]],
-    __p3: Callable[[AsyncSession], AsyncGenerator[S3, None]],
+def provide_services(
+    p1: ServiceProvider[T1],
+    p2: ServiceProvider[T2],
+    p3: ServiceProvider[T3],
     /,
     *,
     session: AsyncSession | None = ...,
     connection: ASGIConnection[Any, Any, Any, Any] | None = ...,
-) -> AsyncGenerator[tuple[S1, S2, S3], None]: ...
-
-
+) -> AbstractAsyncContextManager[tuple[T1, T2, T3]]: ...
 @overload
-@asynccontextmanager
-async def provide_services(
-    __p1: Callable[[AsyncSession], AsyncGenerator[S1, None]],
-    __p2: Callable[[AsyncSession], AsyncGenerator[S2, None]],
-    __p3: Callable[[AsyncSession], AsyncGenerator[S3, None]],
-    __p4: Callable[[AsyncSession], AsyncGenerator[S4, None]],
+def provide_services(
+    p1: ServiceProvider[T1],
+    p2: ServiceProvider[T2],
+    p3: ServiceProvider[T3],
+    p4: ServiceProvider[T4],
     /,
     *,
     session: AsyncSession | None = ...,
     connection: ASGIConnection[Any, Any, Any, Any] | None = ...,
-) -> AsyncGenerator[tuple[S1, S2, S3, S4], None]: ...
-
-
+) -> AbstractAsyncContextManager[tuple[T1, T2, T3, T4]]: ...
 @overload
-@asynccontextmanager
-async def provide_services(
-    __p1: Callable[[AsyncSession], AsyncGenerator[S1, None]],
-    __p2: Callable[[AsyncSession], AsyncGenerator[S2, None]],
-    __p3: Callable[[AsyncSession], AsyncGenerator[S3, None]],
-    __p4: Callable[[AsyncSession], AsyncGenerator[S4, None]],
-    __p5: Callable[[AsyncSession], AsyncGenerator[S5, None]],
+def provide_services(
+    p1: ServiceProvider[T1],
+    p2: ServiceProvider[T2],
+    p3: ServiceProvider[T3],
+    p4: ServiceProvider[T4],
+    p5: ServiceProvider[T5],
     /,
     *,
     session: AsyncSession | None = ...,
     connection: ASGIConnection[Any, Any, Any, Any] | None = ...,
-) -> AsyncGenerator[tuple[S1, S2, S3, S4, S5], None]: ...
+) -> AbstractAsyncContextManager[tuple[T1, T2, T3, T4, T5]]: ...
 
 
 @asynccontextmanager
@@ -126,7 +120,7 @@ async def provide_services(
     *providers: Callable[[AsyncSession], AsyncGenerator[Any, None]],
     session: AsyncSession | None = None,
     connection: ASGIConnection[Any, Any, Any, Any] | None = None,
-) -> AsyncGenerator[tuple[Any, ...], None]:
+) -> AsyncIterator[tuple[Any, ...]]:
     """Provide multiple services sharing the same database session.
 
     This context manager simplifies acquiring services outside of Litestar's
@@ -230,7 +224,7 @@ class CompositeServiceMixin:
 
     _service_cache: dict[type, Any]
 
-    def _get_service(self, service_cls: type[T]) -> T:
+    def _get_service(self, service_cls: type[S]) -> S:
         """Get or create a dependent service instance.
 
         Args:
@@ -243,8 +237,6 @@ class CompositeServiceMixin:
             self._service_cache = {}
 
         if service_cls not in self._service_cache:
-            self._service_cache[service_cls] = service_cls(
-                session=self.repository.session  # type: ignore[attr-defined]
-            )
+            self._service_cache[service_cls] = service_cls(session=self.repository.session)  # type: ignore[arg-type]
 
         return self._service_cache[service_cls]

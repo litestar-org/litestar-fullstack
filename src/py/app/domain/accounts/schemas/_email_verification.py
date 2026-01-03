@@ -1,7 +1,7 @@
 """Email verification schemas."""
 
-from app.lib.validation import validate_email
 from app.lib.schema import CamelizedBaseStruct
+from app.lib.validation import validate_email
 
 
 class EmailVerificationRequest(CamelizedBaseStruct):

@@ -20,6 +20,7 @@ from app.domain.accounts.schemas import (
     MfaSetup,
     MfaStatus,
 )
+from app.domain.admin.deps import provide_audit_log_service
 from app.lib.crypt import (
     generate_backup_codes,
     generate_totp_qr_code,
@@ -36,6 +37,10 @@ if TYPE_CHECKING:
 
     from app.db import models as m
     from app.domain.accounts.services import UserService
+    from app.domain.admin.services import AuditLogService
+
+MFA_RATE_LIMIT_WINDOW_MINUTES = 15
+MFA_RATE_LIMIT_MAX_ATTEMPTS = 5
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +52,7 @@ class MfaController(Controller):
     path = "/api/mfa"
     dependencies = {
         "users_service": Provide(provide_users_service),
+        "audit_service": Provide(provide_audit_log_service),
     }
 
     @get(operation_id="GetMfaStatus", path="/status")
@@ -59,6 +65,7 @@ class MfaController(Controller):
 
         Args:
             request: Request with authenticated user
+            users_service: User service
 
         Returns:
             Current MFA status
@@ -120,6 +127,7 @@ class MfaController(Controller):
         self,
         request: Request[m.User, Token, Any],
         users_service: UserService,
+        audit_service: AuditLogService,
         data: MfaConfirm,
     ) -> MfaBackupCodes:
         """Confirm MFA setup with a valid TOTP code.
@@ -129,6 +137,7 @@ class MfaController(Controller):
         Args:
             request: Request with authenticated user
             users_service: User service
+            audit_service: Audit log service
             data: TOTP code from authenticator app
 
         Returns:
@@ -139,6 +148,14 @@ class MfaController(Controller):
         """
         user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
 
+        failed_attempts = await audit_service.count_recent_actions(
+            action="mfa.setup.failed",
+            actor_id=user.id,
+            window_minutes=MFA_RATE_LIMIT_WINDOW_MINUTES,
+        )
+        if failed_attempts >= MFA_RATE_LIMIT_MAX_ATTEMPTS:
+            raise ClientException(detail="Too many verification attempts. Please try again later.", status_code=429)
+
         if user.is_two_factor_enabled:
             raise ClientException(detail="MFA is already enabled", status_code=400)
 
@@ -146,6 +163,14 @@ class MfaController(Controller):
             raise ClientException(detail="No MFA setup in progress. Call /enable first.", status_code=400)
 
         if not verify_totp_code(user.totp_secret, data.code):
+            await audit_service.log_action(
+                action="mfa.setup.failed",
+                actor_id=user.id,
+                actor_email=user.email,
+                target_type="user",
+                target_id=str(user.id),
+                request=request,
+            )
             raise ClientException(detail="Invalid verification code", status_code=400)
 
         plaintext_codes = generate_backup_codes(count=8)
@@ -159,7 +184,14 @@ class MfaController(Controller):
             item_id=user.id,
         )
 
-        logger.info("MFA enabled for user %s", user.email)
+        await audit_service.log_action(
+            action="mfa.setup.confirmed",
+            actor_id=user.id,
+            actor_email=user.email,
+            target_type="user",
+            target_id=str(user.id),
+            request=request,
+        )
 
         return MfaBackupCodes(codes=plaintext_codes)
 

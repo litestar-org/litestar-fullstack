@@ -9,15 +9,15 @@ from __future__ import annotations
 
 import logging
 import re
+from pathlib import Path
 from typing import Protocol
 
 from app.lib.email.backends import get_backend
 from app.lib.email.base import EmailMultiAlternatives
-from app.lib.settings import get_settings
+from app.lib.settings import BASE_DIR, get_settings
 
 logger = logging.getLogger(__name__)
 
-# Pattern for stripping HTML tags for plain text fallback
 HTML_TAG_PATTERN = re.compile(r"<[^<]+?>")
 
 
@@ -50,6 +50,8 @@ class EmailService:
         """
         self.fail_silently = fail_silently
         self._settings = get_settings()
+        self._template_dir = Path(BASE_DIR / "server" / "static" / "email")
+        self._template_cache: dict[str, str] = {}
 
     @property
     def app_name(self) -> str:
@@ -65,6 +67,21 @@ class EmailService:
         """Normalize user details for templating and delivery."""
         user_name = user.name or "there"
         return user.email, user_name
+
+    def _load_template(self, template_name: str) -> str:
+        if template_name in self._template_cache:
+            return self._template_cache[template_name]
+        template_path = self._template_dir / template_name
+        html = template_path.read_text(encoding="utf-8")
+        self._template_cache[template_name] = html
+        return html
+
+    def _render_template(self, template_name: str, context: dict[str, str | int]) -> str:
+        html = self._load_template(template_name)
+        context = {"APP_NAME": self.app_name, **context}
+        for key, value in context.items():
+            html = html.replace(f"{{{{{key}}}}}", str(value))
+        return html
 
     async def send_email(
         self,
@@ -92,11 +109,9 @@ class EmailService:
             logger.info("Email service disabled. Would send email to %s with subject: %s", to_email, subject)
             return False
 
-        # Generate plain text from HTML if not provided
         if not text_content:
             text_content = self._html_to_text(html_content)
 
-        # Normalize recipients to list
         recipients = [to_email] if isinstance(to_email, str) else to_email
 
         message = EmailMultiAlternatives(
@@ -132,9 +147,13 @@ class EmailService:
         verification_url = f"{self.base_url}/verify-email?token={verification_token}"
         user_email, user_name = self._resolve_user_details(user)
 
-        html_content = self._generate_verification_html(
-            user_name=user_name,
-            verification_url=verification_url,
+        html_content = self._render_template(
+            "email-verification.html",
+            {
+                "USER_NAME": user_name,
+                "VERIFICATION_URL": verification_url,
+                "EXPIRES_HOURS": 24,
+            },
         )
 
         return await self.send_email(
@@ -155,9 +174,12 @@ class EmailService:
         login_url = f"{self.base_url}/login"
         user_email, user_name = self._resolve_user_details(user)
 
-        html_content = self._generate_welcome_html(
-            user_name=user_name,
-            login_url=login_url,
+        html_content = self._render_template(
+            "welcome.html",
+            {
+                "USER_NAME": user_name,
+                "LOGIN_URL": login_url,
+            },
         )
 
         return await self.send_email(
@@ -171,7 +193,6 @@ class EmailService:
         user: UserProtocol,
         reset_token: str,
         expires_in_minutes: int = 60,
-        ip_address: str = "unknown",
     ) -> bool:
         """Send password reset email to user.
 
@@ -179,7 +200,6 @@ class EmailService:
             user: The user to send the email to.
             reset_token: The password reset token string.
             expires_in_minutes: How long the token is valid for.
-            ip_address: IP address where reset was requested.
 
         Returns:
             True if email was sent successfully.
@@ -187,11 +207,14 @@ class EmailService:
         reset_url = f"{self.base_url}/reset-password?token={reset_token}"
         user_email, user_name = self._resolve_user_details(user)
 
-        html_content = self._generate_password_reset_html(
-            user_name=user_name,
-            reset_url=reset_url,
-            expires_in_minutes=expires_in_minutes,
-            ip_address=ip_address,
+        expires_hours = max(1, int((expires_in_minutes + 59) // 60))
+        html_content = self._render_template(
+            "password-reset.html",
+            {
+                "USER_NAME": user_name,
+                "RESET_URL": reset_url,
+                "EXPIRES_HOURS": expires_hours,
+            },
         )
 
         return await self.send_email(
@@ -212,9 +235,12 @@ class EmailService:
         login_url = f"{self.base_url}/login"
         user_email, user_name = self._resolve_user_details(user)
 
-        html_content = self._generate_password_reset_confirmation_html(
-            user_name=user_name,
-            login_url=login_url,
+        html_content = self._render_template(
+            "password-reset-confirmation.html",
+            {
+                "USER_NAME": user_name,
+                "LOGIN_URL": login_url,
+            },
         )
 
         return await self.send_email(
@@ -241,10 +267,13 @@ class EmailService:
         Returns:
             True if email was sent successfully.
         """
-        html_content = self._generate_team_invitation_html(
-            inviter_name=inviter_name,
-            team_name=team_name,
-            invitation_url=invitation_url,
+        html_content = self._render_template(
+            "team-invitation.html",
+            {
+                "INVITER_NAME": inviter_name,
+                "TEAM_NAME": team_name,
+                "INVITATION_URL": invitation_url,
+            },
         )
 
         return await self.send_email(
@@ -268,108 +297,8 @@ class EmailService:
         text = text.replace("&lt;", "<")
         text = text.replace("&gt;", ">")
         text = text.replace("&quot;", '"')
-        # Collapse whitespace
         text = re.sub(r"\s+", " ", text)
         return text.strip()
 
-    def _generate_base_html(self, content: str) -> str:
-        """Generate base HTML template.
 
-        Args:
-            content: Inner content for the email.
-
-        Returns:
-            Complete HTML email string.
-        """
-        return f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                     line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: #1a73e8; color: white; padding: 20px; text-align: center;">
-                <h1 style="margin: 0;">{self.app_name}</h1>
-            </div>
-            <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0;">
-                {content}
-            </div>
-            <div style="text-align: center; padding: 20px; font-size: 12px; color: #666;">
-                <p>&copy; {self.app_name}</p>
-            </div>
-        </body>
-        </html>
-        """
-
-    def _generate_verification_html(self, user_name: str, verification_url: str) -> str:
-        """Generate verification email HTML."""
-        content = f"""
-            <p>Hi {user_name},</p>
-            <p>Please verify your email address by clicking the link below:</p>
-            <p><a href="{verification_url}" style="display: inline-block; padding: 10px 20px;
-                background-color: #1a73e8; color: white; text-decoration: none;
-                border-radius: 4px;">Verify Email</a></p>
-            <p>Or copy and paste this URL: {verification_url}</p>
-            <p>This link expires in 24 hours.</p>
-            <p>If you didn't create an account, please ignore this email.</p>
-        """
-        return self._generate_base_html(content)
-
-    def _generate_welcome_html(self, user_name: str, login_url: str) -> str:
-        """Generate welcome email HTML."""
-        content = f"""
-            <p>Hi {user_name},</p>
-            <p>Welcome to {self.app_name}! Your account is now active.</p>
-            <p><a href="{login_url}" style="display: inline-block; padding: 10px 20px;
-                background-color: #28a745; color: white; text-decoration: none;
-                border-radius: 4px;">Log In</a></p>
-        """
-        return self._generate_base_html(content)
-
-    def _generate_password_reset_html(
-        self, user_name: str, reset_url: str, expires_in_minutes: int, ip_address: str
-    ) -> str:
-        """Generate password reset email HTML."""
-        content = f"""
-            <p>Hi {user_name},</p>
-            <p>You requested to reset your password. Click the link below:</p>
-            <p><a href="{reset_url}" style="display: inline-block; padding: 10px 20px;
-                background-color: #1a73e8; color: white; text-decoration: none;
-                border-radius: 4px;">Reset Password</a></p>
-            <p>Or copy and paste this URL: {reset_url}</p>
-            <p>This link expires in {expires_in_minutes} minutes.</p>
-            <p>Requested from IP: {ip_address}</p>
-            <p>If you didn't request this, please ignore this email.</p>
-        """
-        return self._generate_base_html(content)
-
-    def _generate_password_reset_confirmation_html(self, user_name: str, login_url: str) -> str:
-        """Generate password reset confirmation email HTML."""
-        content = f"""
-            <p>Hi {user_name},</p>
-            <p>Your password has been successfully reset.</p>
-            <p><a href="{login_url}" style="display: inline-block; padding: 10px 20px;
-                background-color: #28a745; color: white; text-decoration: none;
-                border-radius: 4px;">Log In</a></p>
-            <p>If you didn't make this change, contact support immediately.</p>
-        """
-        return self._generate_base_html(content)
-
-    def _generate_team_invitation_html(self, inviter_name: str, team_name: str, invitation_url: str) -> str:
-        """Generate team invitation email HTML."""
-        content = f"""
-            <p>Hi there,</p>
-            <p>{inviter_name} has invited you to join {team_name} on {self.app_name}.</p>
-            <p><a href="{invitation_url}" style="display: inline-block; padding: 10px 20px;
-                background-color: #1a73e8; color: white; text-decoration: none;
-                border-radius: 4px;">Accept Invitation</a></p>
-            <p>Or copy and paste this URL: {invitation_url}</p>
-            <p>If you don't want to join this team, you can safely ignore this email.</p>
-        """
-        return self._generate_base_html(content)
-
-
-# Global email service instance for backwards compatibility
 email_service = EmailService()

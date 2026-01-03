@@ -42,7 +42,7 @@ Created `src/js/web/src/lib/validation.ts` with Zod schemas for all forms.
 ### 0.3 React Email Templates ✅ DONE
 - Created `src/js/templates/` with all components and email templates
 - Components: Layout, Header, Footer, Button
-- Email templates: email-verification, password-reset, welcome, team-invitation
+- Email templates: email-verification, password-reset, password-reset-confirmation, welcome, team-invitation
 - Build script: `bun run build` compiles to HTML in `src/py/app/server/static/email/`
 - Makefile target: `make build-emails`
 
@@ -130,7 +130,7 @@ Phase 6 (Frontend) and Phase 7 (Validation) require all above
 - `src/py/app/lib/crypt.py` - TOTP functions (generate_totp_secret, verify_totp_code, etc.)
 - `src/py/app/domain/accounts/services/_user_oauth_account.py` - OAuth account service
 - `src/py/app/domain/accounts/controllers/_oauth.py` - Stateless OAuth login
-- Email templates in Jinja2 format (no changes needed)
+- React Email templates in `src/js/templates/` compiled to `src/py/app/server/static/email/`
 
 ### Frontend (Already Exists)
 

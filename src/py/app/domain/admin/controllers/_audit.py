@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import TYPE_CHECKING, Annotated, cast
 from uuid import UUID
 
-from advanced_alchemy.extensions.litestar.providers import FieldNameType
 from litestar import Controller, get
 from litestar.params import Dependency, Parameter
+
+from advanced_alchemy.extensions.litestar.providers import FilterConfig
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
@@ -17,13 +18,8 @@ from app.domain.admin.services import AuditLogService
 from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
-    from litestar import Request
-    from litestar.security.jwt import Token
-
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service.pagination import OffsetPagination
-
-    from app.domain.admin.services import AuditLogService
 
 
 class AuditController(Controller):
@@ -35,50 +31,51 @@ class AuditController(Controller):
     dependencies = create_service_dependencies(
         AuditLogService,
         key="audit_service",
-        filters={
-            "id_filter": UUID,
-            "search": "actor_email,action,target_label",
-            "in_fields": {
-                "action",
-                "target_type",
-                "target_id",
-                FieldNameType(name="actor_id", type_hint=UUID),
+        filters=cast(
+            FilterConfig,
+            {
+                "id_filter": UUID,
+                "search": "actor_email,action,target_label",
+                "in_fields": {
+                    "action",
+                    "target_type",
+                    "target_id",
+                    "actor_id",
+                },
+                "pagination_type": "limit_offset",
+                "pagination_size": 50,
+                "created_at": True,
+                "sort_field": "created_at",
+                "sort_order": "desc",
             },
-            "pagination_type": "limit_offset",
-            "pagination_size": 50,
-            "created_at": True,
-            "sort_field": "created_at",
-            "sort_order": "desc",
-        },
+        ),
     )
 
     @get(operation_id="AdminListAuditLogs", path="/")
     async def list_logs(
         self,
-        request: Request[m.User, Token, Any],
         audit_service: AuditLogService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="endDate", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
         """List audit logs with filtering and pagination.
 
         Args:
-            request: Request with authenticated superuser
             audit_service: Audit log service
             filters: Filter and pagination parameters
-            action: Filter by action name
-            end_date: Filter for logs created on or before this time
+            action: Optional action filter
+            end_date: Optional upper bound for created_at
 
         Returns:
             Paginated audit log list
         """
-        extra_filters: list[Any] = []
+        conditions = []
         if action:
-            extra_filters.append(m.AuditLog.action == action)
+            conditions.append(m.AuditLog.action == action)
         if end_date:
-            extra_filters.append(m.AuditLog.created_at <= end_date)
-        results, total = await audit_service.list_and_count(*filters, *extra_filters)
+            conditions.append(m.AuditLog.created_at <= end_date)
+        results, total = await audit_service.list_and_count(*filters, *conditions)
         return audit_service.to_schema(
             data=results,
             total=total,
@@ -89,14 +86,12 @@ class AuditController(Controller):
     @get(operation_id="AdminGetAuditLog", path="/{log_id:uuid}")
     async def get_log(
         self,
-        request: Request[m.User, Token, Any],
         audit_service: AuditLogService,
         log_id: UUID,
     ) -> AuditLogEntry:
         """Get a specific audit log entry.
 
         Args:
-            request: Request with authenticated superuser
             audit_service: Audit log service
             log_id: ID of audit log to retrieve
 
@@ -104,41 +99,26 @@ class AuditController(Controller):
             Audit log entry
         """
         log = await audit_service.get(log_id)
-
-        return AuditLogEntry(
-            id=log.id,
-            action=log.action,
-            actor_id=log.actor_id,
-            actor_email=log.actor_email,
-            target_type=log.target_type,
-            target_id=log.target_id,
-            target_label=log.target_label,
-            details=log.details,
-            ip_address=log.ip_address,
-            user_agent=log.user_agent,
-            created_at=log.created_at,
-        )
+        return audit_service.to_schema(log, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetUserAuditLogs", path="/user/{user_id:uuid}")
     async def get_user_logs(
         self,
-        request: Request[m.User, Token, Any],
         audit_service: AuditLogService,
         user_id: UUID,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="endDate", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific user."""
-        extra_filters: list[Any] = []
+        conditions = [m.AuditLog.actor_id == user_id]
         if action:
-            extra_filters.append(m.AuditLog.action == action)
+            conditions.append(m.AuditLog.action == action)
         if end_date:
-            extra_filters.append(m.AuditLog.created_at <= end_date)
+            conditions.append(m.AuditLog.created_at <= end_date)
         results, total = await audit_service.list_and_count(
             *filters,
-            *extra_filters,
-            m.AuditLog.actor_id == user_id,
+            *conditions,
         )
         return audit_service.to_schema(
             data=results,
@@ -150,26 +130,23 @@ class AuditController(Controller):
     @get(operation_id="AdminGetTargetAuditLogs", path="/target/{target_type:str}/{target_id:str}")
     async def get_target_logs(
         self,
-        request: Request[m.User, Token, Any],
         audit_service: AuditLogService,
         target_type: str,
         target_id: str,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="endDate", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific target."""
-        extra_filters: list[Any] = []
-        if action:
-            extra_filters.append(m.AuditLog.action == action)
-        if end_date:
-            extra_filters.append(m.AuditLog.created_at <= end_date)
-        results, total = await audit_service.list_and_count(
-            *filters,
-            *extra_filters,
+        conditions = [
             m.AuditLog.target_type == target_type,
             m.AuditLog.target_id == target_id,
-        )
+        ]
+        if action:
+            conditions.append(m.AuditLog.action == action)
+        if end_date:
+            conditions.append(m.AuditLog.created_at <= end_date)
+        results, total = await audit_service.list_and_count(*filters, *conditions)
         return audit_service.to_schema(
             data=results,
             total=total,

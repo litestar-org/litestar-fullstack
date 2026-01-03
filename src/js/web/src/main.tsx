@@ -26,6 +26,12 @@ const apiUrl = import.meta.env.VITE_API_URL ?? ""
 client.setConfig({
   baseUrl: apiUrl,
   credentials: "include",
+  auth: () => {
+    if (typeof window === "undefined") {
+      return undefined
+    }
+    return window.localStorage.getItem("access_token") ?? undefined
+  },
 })
 
 // Add CSRF token to all non-GET requests

@@ -1,14 +1,11 @@
 """Unit tests for email service functionality."""
 
-from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 import pytest
 
-from app.db.models.email_verification_token import EmailVerificationToken
-from app.db.models.password_reset_token import PasswordResetToken
-from app.db.models.user import User
+from app.db import models as m
 from app.lib.email import EmailService
 from app.lib.email.backends.locmem import InMemoryBackend
 
@@ -30,9 +27,9 @@ class TestEmailService:
         return EmailService(fail_silently=False)
 
     @pytest.fixture
-    def user(self) -> User:
+    def user(self) -> m.User:
         """Create test user."""
-        return User(
+        return m.User(
             id=uuid4(),
             email="test@example.com",
             name="Test User",
@@ -43,9 +40,9 @@ class TestEmailService:
         )
 
     @pytest.fixture
-    def user_without_name(self) -> User:
+    def user_without_name(self) -> m.User:
         """Create test user without name."""
-        return User(
+        return m.User(
             id=uuid4(),
             email="noname@example.com",
             name=None,
@@ -56,25 +53,14 @@ class TestEmailService:
         )
 
     @pytest.fixture
-    def verification_token(self, user: User) -> EmailVerificationToken:
+    def verification_token(self) -> str:
         """Create test verification token."""
-        return EmailVerificationToken(
-            user_id=user.id,
-            token="test_verification_token_12345",
-            email=user.email,
-            expires_at=datetime.now(UTC) + timedelta(hours=24),
-        )
+        return "test_verification_token_12345"
 
     @pytest.fixture
-    def password_reset_token(self, user: User) -> PasswordResetToken:
+    def password_reset_token(self) -> str:
         """Create test password reset token."""
-        return PasswordResetToken(
-            user_id=user.id,
-            token="test_reset_token_12345",
-            expires_at=datetime.now(UTC) + timedelta(hours=1),
-            ip_address="127.0.0.1",
-            user_agent="Test Agent",
-        )
+        return "test_reset_token_12345"
 
     def test_email_service_initialization(self) -> None:
         """Test EmailService initialization."""
@@ -106,8 +92,8 @@ class TestEmailService:
     async def test_send_verification_email_with_name(
         self,
         email_service: EmailService,
-        user: User,
-        verification_token: EmailVerificationToken,
+        user: m.User,
+        verification_token: str,
     ) -> None:
         """Test sending verification email to user with name."""
         # Act
@@ -119,8 +105,8 @@ class TestEmailService:
     async def test_send_verification_email_without_name(
         self,
         email_service: EmailService,
-        user_without_name: User,
-        verification_token: EmailVerificationToken,
+        user_without_name: m.User,
+        verification_token: str,
     ) -> None:
         """Test sending verification email to user without name."""
         # Act
@@ -134,17 +120,20 @@ class TestEmailService:
     async def test_send_verification_email_url_construction(
         self,
         email_service: EmailService,
-        user: User,
-        verification_token: EmailVerificationToken,
+        user: m.User,
+        verification_token: str,
     ) -> None:
         """Test verification email URL construction."""
         # The base URL comes from settings
-        expected_url = f"{email_service.base_url}/verify-email?token={verification_token.token}"
+        expected_url = f"{email_service.base_url}/verify-email?token={verification_token}"
 
-        # Act - generate the HTML to verify URL is correct
-        html = email_service._generate_verification_html(
-            user_name=user.name or "there",
-            verification_url=expected_url,
+        html = email_service._render_template(
+            "email-verification.html",
+            {
+                "USER_NAME": user.name or "there",
+                "VERIFICATION_URL": expected_url,
+                "EXPIRES_HOURS": 24,
+            },
         )
 
         # Assert
@@ -153,7 +142,7 @@ class TestEmailService:
     async def test_send_welcome_email(
         self,
         email_service: EmailService,
-        user: User,
+        user: m.User,
     ) -> None:
         """Test sending welcome email."""
         # Act
@@ -165,8 +154,8 @@ class TestEmailService:
     async def test_send_password_reset_email(
         self,
         email_service: EmailService,
-        user: User,
-        password_reset_token: PasswordResetToken,
+        user: m.User,
+        password_reset_token: str,
     ) -> None:
         """Test sending password reset email."""
         # Act
@@ -174,7 +163,6 @@ class TestEmailService:
             cast("UserProtocol", user),
             password_reset_token,
             expires_in_minutes=60,
-            ip_address="192.168.1.1",
         )
 
         # Assert
@@ -183,7 +171,7 @@ class TestEmailService:
     async def test_send_password_reset_confirmation_email(
         self,
         email_service: EmailService,
-        user: User,
+        user: m.User,
     ) -> None:
         """Test sending password reset confirmation email."""
         # Act
@@ -211,15 +199,19 @@ class TestEmailService:
     async def test_verification_email_content_structure(
         self,
         email_service: EmailService,
-        user: User,
-        verification_token: EmailVerificationToken,
+        user: m.User,
+        verification_token: str,
     ) -> None:
         """Test that verification email content has proper structure."""
         # Act - generate HTML content
-        verification_url = f"{email_service.base_url}/verify-email?token={verification_token.token}"
-        html = email_service._generate_verification_html(
-            user_name=user.name or "there",
-            verification_url=verification_url,
+        verification_url = f"{email_service.base_url}/verify-email?token={verification_token}"
+        html = email_service._render_template(
+            "email-verification.html",
+            {
+                "USER_NAME": user.name or "there",
+                "VERIFICATION_URL": verification_url,
+                "EXPIRES_HOURS": 24,
+            },
         )
 
         # Assert - check for required elements
@@ -231,15 +223,19 @@ class TestEmailService:
     async def test_verification_email_security_considerations(
         self,
         email_service: EmailService,
-        user: User,
-        verification_token: EmailVerificationToken,
+        user: m.User,
+        verification_token: str,
     ) -> None:
         """Test security-related aspects of verification email."""
         # Act - generate HTML content
-        verification_url = f"{email_service.base_url}/verify-email?token={verification_token.token}"
-        html = email_service._generate_verification_html(
-            user_name=user.name or "there",
-            verification_url=verification_url,
+        verification_url = f"{email_service.base_url}/verify-email?token={verification_token}"
+        html = email_service._render_template(
+            "email-verification.html",
+            {
+                "USER_NAME": user.name or "there",
+                "VERIFICATION_URL": verification_url,
+                "EXPIRES_HOURS": 24,
+            },
         )
 
         # Assert - check security messaging
@@ -265,17 +261,16 @@ class TestEmailService:
         assert "World" in text
         assert "Link" in text
 
-    def test_generate_base_html(
+    def test_template_rendering(
         self,
         email_service: EmailService,
     ) -> None:
-        """Test base HTML template generation."""
-        # Act
-        html = email_service._generate_base_html("<p>Content</p>")
+        """Test email template rendering."""
+        html = email_service._render_template(
+            "welcome.html",
+            {"USER_NAME": "Test User", "LOGIN_URL": "https://example.com/login"},
+        )
 
-        # Assert
-        assert "<!DOCTYPE html>" in html
-        assert "<html>" in html
-        assert "<body" in html
+        assert "Test User" in html
+        assert "https://example.com/login" in html
         assert email_service.app_name in html
-        assert "<p>Content</p>" in html

@@ -9,16 +9,13 @@ import pytest
 from advanced_alchemy.exceptions import RepositoryError
 from sqlalchemy.exc import IntegrityError
 
-from app.db.models.team_roles import TeamRoles
+from app.db import models as m
 from app.domain.teams.services import TeamService
 from app.lib import constants
 from tests.factories import RoleFactory, TagFactory, TeamFactory, TeamMemberFactory, UserFactory, UserRoleFactory
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
-
-    from app.db import models as m
-
 
 pytestmark = [pytest.mark.unit, pytest.mark.services]
 
@@ -57,7 +54,7 @@ class TestTeamServiceCRUD:
 
         owner_member = team.members[0]
         assert owner_member.user_id == owner.id
-        assert owner_member.role == TeamRoles.ADMIN
+        assert owner_member.role == m.TeamRoles.ADMIN
         assert owner_member.is_owner is True
 
     @pytest.mark.asyncio
@@ -205,7 +202,7 @@ class TestTeamServiceOwnershipAndMembers:
         owner_member = team.members[0]
         assert owner_member.user_id == owner.id
         assert owner_member.is_owner is True
-        assert owner_member.role == TeamRoles.ADMIN
+        assert owner_member.role == m.TeamRoles.ADMIN
 
     @pytest.mark.asyncio
     async def test_update_team_change_owner(self, session: AsyncSession, team_service: TeamService) -> None:
@@ -221,7 +218,7 @@ class TestTeamServiceOwnershipAndMembers:
 
         # Add new owner as member first
         new_member = TeamMemberFactory.build(
-            team_id=team.id, user_id=new_owner.id, role=TeamRoles.MEMBER, is_owner=False
+            team_id=team.id, user_id=new_owner.id, role=m.TeamRoles.MEMBER, is_owner=False
         )
         session.add(new_member)
         await session.commit()
@@ -234,7 +231,7 @@ class TestTeamServiceOwnershipAndMembers:
         new_owner_member = next((m for m in updated_team.members if m.user_id == new_owner.id), None)
         assert new_owner_member is not None
         assert new_owner_member.is_owner is True
-        assert new_owner_member.role == TeamRoles.ADMIN
+        assert new_owner_member.role == m.TeamRoles.ADMIN
 
 
 class TestTeamServicePermissions:
@@ -490,8 +487,8 @@ class TestTeamServiceIntegration:
         team = await team_service.create(data=team_data)
 
         # Add additional members manually (simulating team invitation acceptance)
-        member1_membership = TeamMemberFactory.build(team_id=team.id, user_id=member1.id, role=TeamRoles.MEMBER)
-        member2_membership = TeamMemberFactory.build(team_id=team.id, user_id=member2.id, role=TeamRoles.MEMBER)
+        member1_membership = TeamMemberFactory.build(team_id=team.id, user_id=member1.id, role=m.TeamRoles.MEMBER)
+        member2_membership = TeamMemberFactory.build(team_id=team.id, user_id=member2.id, role=m.TeamRoles.MEMBER)
         session.add_all([member1_membership, member2_membership])
         await session.commit()
 
@@ -506,11 +503,11 @@ class TestTeamServiceIntegration:
         owner_member = next((m for m in team.members if m.user_id == owner.id), None)
         assert owner_member is not None
         assert owner_member.is_owner is True
-        assert owner_member.role == TeamRoles.ADMIN
+        assert owner_member.role == m.TeamRoles.ADMIN
 
         # Verify regular members
         regular_members = [m for m in team.members if not m.is_owner]
         assert len(regular_members) == 2
         for member in regular_members:
-            assert member.role == TeamRoles.MEMBER
+            assert member.role == m.TeamRoles.MEMBER
             assert member.is_owner is False

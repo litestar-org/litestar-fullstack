@@ -35,11 +35,13 @@ class TestPasswordResetTokenCreation:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            token = await service.create_reset_token(user.id, ip_address="127.0.0.1", user_agent="Test Browser")
+            token, raw_token = await service.create_reset_token(
+                user.id, ip_address="127.0.0.1", user_agent="Test Browser"
+            )
 
             assert token.user_id == user.id
-            assert token.token is not None
-            assert len(token.token) >= 32  # URL-safe token should be substantial
+            assert raw_token is not None
+            assert len(raw_token) >= 32
             assert token.expires_at > datetime.now(UTC)
             assert token.used_at is None
             assert token.ip_address == "127.0.0.1"
@@ -58,10 +60,10 @@ class TestPasswordResetTokenCreation:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            token = await service.create_reset_token(user.id)
+            token, raw_token = await service.create_reset_token(user.id)
 
             assert token.user_id == user.id
-            assert token.token is not None
+            assert raw_token is not None
             assert token.ip_address is None
             assert token.user_agent is None
             assert token.is_valid is True
@@ -79,11 +81,11 @@ class TestPasswordResetTokenCreation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             # Create first token
-            first_token = await service.create_reset_token(user.id)
+            first_token, _ = await service.create_reset_token(user.id)
             assert first_token.is_valid is True
 
             # Create second token - should invalidate first
-            second_token = await service.create_reset_token(user.id)
+            second_token, _ = await service.create_reset_token(user.id)
 
             # Refresh first token from database
             first_token_refreshed = await service.get_one(item_id=first_token.id)
@@ -106,7 +108,7 @@ class TestPasswordResetTokenCreation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             before_creation = datetime.now(UTC)
-            token = await service.create_reset_token(user.id)
+            token, _ = await service.create_reset_token(user.id)
             after_creation = datetime.now(UTC)
 
             # Token should expire in approximately 1 hour
@@ -128,10 +130,10 @@ class TestPasswordResetTokenCreation:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            token1 = await service.create_reset_token(user1.id)
-            token2 = await service.create_reset_token(user2.id)
+            token1, raw_token1 = await service.create_reset_token(user1.id)
+            token2, raw_token2 = await service.create_reset_token(user2.id)
 
-            assert token1.token != token2.token
+            assert raw_token1 != raw_token2
             assert token1.user_id != token2.user_id
 
 
@@ -150,10 +152,10 @@ class TestPasswordResetTokenValidation:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            created_token = await service.create_reset_token(user.id)
+            created_token, raw_token = await service.create_reset_token(user.id)
 
             # Validate the token
-            validated_token = await service.validate_reset_token(created_token.token)
+            validated_token = await service.validate_reset_token(raw_token)
 
             assert validated_token is not None
             assert validated_token.id == created_token.id
@@ -195,7 +197,7 @@ class TestPasswordResetTokenValidation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             with pytest.raises(ClientException) as exc_info:
-                await service.validate_reset_token(expired_token.token)
+                await service.validate_reset_token(expired_token.raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Reset token has expired" in str(exc_info.value)
@@ -218,7 +220,7 @@ class TestPasswordResetTokenValidation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             with pytest.raises(ClientException) as exc_info:
-                await service.validate_reset_token(used_token.token)
+                await service.validate_reset_token(used_token.raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Reset token has already been used" in str(exc_info.value)
@@ -239,11 +241,11 @@ class TestPasswordResetTokenUsage:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            created_token = await service.create_reset_token(user.id)
+            created_token, raw_token = await service.create_reset_token(user.id)
 
             # Use the token
             before_use = datetime.now(UTC)
-            used_token = await service.use_reset_token(created_token.token)
+            used_token = await service.use_reset_token(raw_token)
             after_use = datetime.now(UTC)
 
             assert used_token.id == created_token.id
@@ -283,7 +285,7 @@ class TestPasswordResetTokenUsage:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             with pytest.raises(ClientException) as exc_info:
-                await service.use_reset_token(expired_token.token)
+                await service.use_reset_token(expired_token.raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Reset token has expired" in str(exc_info.value)
@@ -300,14 +302,14 @@ class TestPasswordResetTokenUsage:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            created_token = await service.create_reset_token(user.id)
+            created_token, raw_token = await service.create_reset_token(user.id)
 
             # Use token first time
-            await service.use_reset_token(created_token.token)
+            await service.use_reset_token(raw_token)
 
             # Try to use again
             with pytest.raises(ClientException) as exc_info:
-                await service.use_reset_token(created_token.token)
+                await service.use_reset_token(raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Reset token has already been used" in str(exc_info.value)
@@ -330,9 +332,9 @@ class TestPasswordResetTokenInvalidation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             # Create tokens for both users
-            user1_token1 = await service.create_reset_token(user1.id)
+            user1_token1, _ = await service.create_reset_token(user1.id)
             user1_token2 = PasswordResetTokenFactory.build(user_id=user1.id)
-            user2_token = await service.create_reset_token(user2.id)
+            user2_token, _ = await service.create_reset_token(user2.id)
 
             session.add(user1_token2)
             await session.commit()
@@ -374,13 +376,13 @@ class TestPasswordResetTokenInvalidation:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             # Create tokens
-            token1 = await service.create_reset_token(user.id)
+            token1, raw_token1 = await service.create_reset_token(user.id)
             token2 = PasswordResetTokenFactory.build(user_id=user.id)
             session.add(token2)
             await session.commit()
 
             # Use one token
-            await service.use_reset_token(token1.token)
+            await service.use_reset_token(raw_token1)
 
             # Invalidate all tokens
             await service.invalidate_user_tokens(user.id)
@@ -667,20 +669,20 @@ class TestPasswordResetIntegration:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             # 1. Create reset token
-            token = await service.create_reset_token(user.id, "127.0.0.1", "Test Browser")
+            token, raw_token = await service.create_reset_token(user.id, "127.0.0.1", "Test Browser")
             assert token.is_valid is True
 
             # 2. Validate token (like checking if reset link is valid)
-            validated_token = await service.validate_reset_token(token.token)
+            validated_token = await service.validate_reset_token(raw_token)
             assert validated_token.is_valid is True
 
             # 3. Use token (when user submits new password)
-            used_token = await service.use_reset_token(token.token)
+            used_token = await service.use_reset_token(raw_token)
             assert used_token.is_used is True
 
             # 4. Try to use again (should fail)
             with pytest.raises(ClientException):
-                await service.use_reset_token(token.token)
+                await service.use_reset_token(raw_token)
 
     @pytest.mark.asyncio
     async def test_security_features_integration(
@@ -704,7 +706,7 @@ class TestPasswordResetIntegration:
             assert is_rate_limited is True
 
             # Test token invalidation on new request
-            valid_token = await service.create_reset_token(user.id)
+            valid_token, _ = await service.create_reset_token(user.id)
 
             # All previous tokens should be invalidated
             tokens = await service.repository.list(m.PasswordResetToken.user_id == user.id)
@@ -727,8 +729,8 @@ class TestPasswordResetIntegration:
             # Create many tokens
             tokens = []
             for _ in range(10):
-                token = await service.create_reset_token(user1.id)
-                tokens.append(token.token)
+                _, raw_token = await service.create_reset_token(user1.id)
+                tokens.append(raw_token)
 
             # Verify all tokens are unique
             assert len(set(tokens)) == len(tokens)
@@ -755,8 +757,8 @@ class TestPasswordResetIntegration:
 
         async with PasswordResetService.new(sessionmaker()) as service:
             # Simulate concurrent requests by creating tokens in sequence
-            token1 = await service.create_reset_token(user.id, "192.168.1.1", "Browser 1")
-            token2 = await service.create_reset_token(user.id, "192.168.1.2", "Browser 2")
+            token1, _ = await service.create_reset_token(user.id, "192.168.1.1", "Browser 1")
+            token2, _ = await service.create_reset_token(user.id, "192.168.1.2", "Browser 2")
 
             # Only the latest token should be valid
             token1_refreshed = await service.get_one(item_id=token1.id)

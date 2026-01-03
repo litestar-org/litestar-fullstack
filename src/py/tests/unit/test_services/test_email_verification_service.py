@@ -35,12 +35,12 @@ class TestEmailVerificationTokenCreation:
         await session.commit()
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
-            token = await service.create_verification_token(user.id, user.email)
+            token, raw_token = await service.create_verification_token(user.id, user.email)
 
             assert token.user_id == user.id
             assert token.email == user.email
-            assert token.token is not None
-            assert len(token.token) >= 32  # URL-safe token should be substantial
+            assert raw_token is not None
+            assert len(raw_token) >= 32
             assert token.expires_at > datetime.now(UTC)
             assert token.used_at is None
             assert token.is_valid is True
@@ -59,11 +59,11 @@ class TestEmailVerificationTokenCreation:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create first token
-            first_token = await service.create_verification_token(user.id, user.email)
+            first_token, _ = await service.create_verification_token(user.id, user.email)
             assert first_token.is_valid is True
 
             # Create second token - should invalidate first
-            second_token = await service.create_verification_token(user.id, user.email)
+            second_token, _ = await service.create_verification_token(user.id, user.email)
 
             # Refresh first token from database
             first_token_refreshed = await service.get_one(item_id=first_token.id)
@@ -87,10 +87,10 @@ class TestEmailVerificationTokenCreation:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create token for original email
-            token1 = await service.create_verification_token(user.id, user.email)
+            token1, _ = await service.create_verification_token(user.id, user.email)
 
             # Create token for different email
-            token2 = await service.create_verification_token(user.id, "different@example.com")
+            token2, _ = await service.create_verification_token(user.id, "different@example.com")
 
             # Both tokens should be valid
             assert token1.is_valid is True
@@ -111,10 +111,10 @@ class TestEmailVerificationTokenCreation:
         await session.commit()
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
-            token1 = await service.create_verification_token(user1.id, user1.email)
-            token2 = await service.create_verification_token(user2.id, user2.email)
+            token1, raw_token1 = await service.create_verification_token(user1.id, user1.email)
+            token2, raw_token2 = await service.create_verification_token(user2.id, user2.email)
 
-            assert token1.token != token2.token
+            assert raw_token1 != raw_token2
             assert token1.user_id != token2.user_id
 
 
@@ -134,10 +134,10 @@ class TestEmailVerificationTokenVerification:
         await session.commit()
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
-            created_token = await service.create_verification_token(user.id, user.email)
+            created_token, raw_token = await service.create_verification_token(user.id, user.email)
 
             # Verify the token
-            verified_token = await service.verify_token(created_token.token)
+            verified_token = await service.verify_token(raw_token)
 
             assert verified_token.id == created_token.id
             assert verified_token.is_used is True
@@ -179,7 +179,7 @@ class TestEmailVerificationTokenVerification:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             with pytest.raises(ClientException) as exc_info:
-                await service.verify_token(expired_token.token)
+                await service.verify_token(expired_token.raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Verification token has expired" in str(exc_info.value)
@@ -198,12 +198,12 @@ class TestEmailVerificationTokenVerification:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create and verify token once
-            created_token = await service.create_verification_token(user.id, user.email)
-            await service.verify_token(created_token.token)
+            created_token, raw_token = await service.create_verification_token(user.id, user.email)
+            await service.verify_token(raw_token)
 
             # Try to verify again
             with pytest.raises(ClientException) as exc_info:
-                await service.verify_token(created_token.token)
+                await service.verify_token(raw_token)
 
             assert exc_info.value.status_code == 400
             assert "Verification token has already been used" in str(exc_info.value)
@@ -221,7 +221,7 @@ class TestEmailVerificationTokenVerification:
         await session.commit()
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
-            created_token = await service.create_verification_token(user.id, user.email)
+            created_token, raw_token = await service.create_verification_token(user.id, user.email)
 
             # Verify token is initially unused
             assert created_token.is_used is False
@@ -229,7 +229,7 @@ class TestEmailVerificationTokenVerification:
 
             # Verify the token
             before_verify = datetime.now(UTC)
-            verified_token = await service.verify_token(created_token.token)
+            verified_token = await service.verify_token(raw_token)
             after_verify = datetime.now(UTC)
 
             # Check it's marked as used with correct timestamp
@@ -256,9 +256,9 @@ class TestEmailVerificationTokenInvalidation:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create tokens for both users
-            user1_token1 = await service.create_verification_token(user1.id, user1.email)
-            user1_token2 = await service.create_verification_token(user1.id, "alt@example.com")
-            user2_token = await service.create_verification_token(user2.id, user2.email)
+            user1_token1, _ = await service.create_verification_token(user1.id, user1.email)
+            user1_token2, _ = await service.create_verification_token(user1.id, "alt@example.com")
+            user2_token, _ = await service.create_verification_token(user2.id, user2.email)
 
             # Invalidate user1's tokens
             await service.invalidate_user_tokens(user1.id)
@@ -286,8 +286,8 @@ class TestEmailVerificationTokenInvalidation:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create tokens for different emails
-            primary_token = await service.create_verification_token(user.id, user.email)
-            alt_token = await service.create_verification_token(user.id, "alt@example.com")
+            primary_token, _ = await service.create_verification_token(user.id, user.email)
+            alt_token, _ = await service.create_verification_token(user.id, "alt@example.com")
 
             # Invalidate only primary email tokens
             await service.invalidate_user_tokens(user.id, user.email)
@@ -325,11 +325,11 @@ class TestEmailVerificationTokenInvalidation:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create tokens
-            token1 = await service.create_verification_token(user.id, user.email)
-            token2 = await service.create_verification_token(user.id, "alt@example.com")
+            token1, raw_token1 = await service.create_verification_token(user.id, user.email)
+            token2, _ = await service.create_verification_token(user.id, "alt@example.com")
 
             # Use one token
-            await service.verify_token(token1.token)
+            await service.verify_token(raw_token1)
 
             # Invalidate all tokens
             await service.invalidate_user_tokens(user.id)
@@ -515,16 +515,16 @@ class TestEmailVerificationTokenIntegration:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # 1. Create verification token
-            token = await service.create_verification_token(user.id, user.email)
+            token, raw_token = await service.create_verification_token(user.id, user.email)
             assert token.is_valid is True
 
             # 2. Verify token
-            verified_token = await service.verify_token(token.token)
+            verified_token = await service.verify_token(raw_token)
             assert verified_token.is_used is True
 
             # 3. Try to verify again (should fail)
             with pytest.raises(ClientException):
-                await service.verify_token(token.token)
+                await service.verify_token(raw_token)
 
     @pytest.mark.asyncio
     async def test_multiple_email_verification_workflow(
@@ -540,18 +540,18 @@ class TestEmailVerificationTokenIntegration:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create tokens for different emails
-            primary_token = await service.create_verification_token(user.id, user.email)
-            alt_token = await service.create_verification_token(user.id, "alt@example.com")
+            primary_token, primary_raw = await service.create_verification_token(user.id, user.email)
+            alt_token, alt_raw = await service.create_verification_token(user.id, "alt@example.com")
 
             # Verify primary email
-            await service.verify_token(primary_token.token)
+            await service.verify_token(primary_raw)
 
             # Alt email token should still be valid
             alt_token_refreshed = await service.get_one(item_id=alt_token.id)
             assert alt_token_refreshed.is_valid is True
 
             # Verify alt email
-            await service.verify_token(alt_token.token)
+            await service.verify_token(alt_raw)
 
     @pytest.mark.asyncio
     async def test_token_security_properties(
@@ -570,8 +570,8 @@ class TestEmailVerificationTokenIntegration:
             # Create many tokens
             tokens = []
             for _ in range(10):
-                token = await service.create_verification_token(user1.id, user1.email)
-                tokens.append(token.token)
+                _, raw_token = await service.create_verification_token(user1.id, user1.email)
+                tokens.append(raw_token)
 
             # Verify all tokens are unique
             assert len(set(tokens)) == len(tokens)

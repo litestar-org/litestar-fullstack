@@ -55,13 +55,15 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
 
         token = secrets.token_urlsafe(32)
 
-        created = await self.create({
-            "user_id": user_id,
-            "token": token,
-            "expires_at": m.PasswordResetToken.create_expires_at(hours=1),
-            "ip_address": ip_address,
-            "user_agent": user_agent,
-        })
+        created = await self.create(
+            {
+                "user_id": user_id,
+                "token": token,
+                "expires_at": m.PasswordResetToken.create_expires_at(hours=1),
+                "ip_address": ip_address,
+                "user_agent": user_agent,
+            }
+        )
         return created, token
 
     async def validate_reset_token(self, token: str) -> m.PasswordResetToken:

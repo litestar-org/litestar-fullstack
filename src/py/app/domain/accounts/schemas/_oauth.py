@@ -22,10 +22,3 @@ class OAuthAccountInfo(msgspec.Struct, gc=False, array_like=True, omit_defaults=
     name: str | None = None
     avatar_url: str | None = None
     last_login_at: datetime | None = None
-
-
-class OAuthAccountList(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
-    """List of linked OAuth accounts."""
-
-    accounts: list[OAuthAccountInfo]
-    count: int

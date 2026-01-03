@@ -82,9 +82,9 @@ def create_user(
     import click
     from rich import get_console
 
-    from app.config import alchemy
     from app.domain.accounts.deps import provide_users_service
     from app.domain.accounts.schemas import UserCreate
+    from app.lib.deps import provide_services
 
     console = get_console()
 
@@ -100,8 +100,7 @@ def create_user(
             password=password,
             is_superuser=superuser,
         )
-        async with alchemy.get_session() as db_session:
-            users_service = await anext(provide_users_service(db_session))
+        async with provide_services(provide_users_service) as (users_service,):
             user = await users_service.create(data=obj_in.to_dict(), auto_commit=True)
             console.print(f"User created: {user.email}")
 
@@ -170,20 +169,17 @@ def create_default_roles() -> None:
     from advanced_alchemy.utils.text import slugify
     from rich import get_console
 
-    from app.config import alchemy
     from app.db.models import UserRole
     from app.domain.accounts.deps import provide_users_service
     from app.domain.accounts.services import RoleService
-    from app.lib.deps import create_service_provider
+    from app.lib.deps import create_service_provider, provide_services
 
     provide_roles_service = create_service_provider(RoleService)
     console = get_console()
 
     async def _create_default_roles() -> None:
         await load_database_fixtures()
-        async with alchemy.get_session() as db_session:
-            users_service = await anext(provide_users_service(db_session))
-            roles_service = await anext(provide_roles_service(db_session))
+        async with provide_services(provide_users_service, provide_roles_service) as (users_service, roles_service):
             default_role = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
             if default_role:
                 all_active_users = await users_service.list(is_active=True)
@@ -193,8 +189,7 @@ def create_default_roles() -> None:
                     else:
                         user.roles.append(UserRole(role_id=default_role.id))
                         console.print("Assigned %s default role", user.email)
-                        await users_service.update(item_id=user.id, data=user, auto_commit=False)
-            await db_session.commit()
+                        await users_service.update(item_id=user.id, data=user, auto_commit=True)
 
     console.rule("Creating default roles.")
     anyio.run(_create_default_roles)

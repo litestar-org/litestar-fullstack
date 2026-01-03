@@ -6,8 +6,8 @@ from uuid import UUID
 import msgspec
 
 from app.db.models._team_roles import TeamRoles
-from app.lib.validation import validate_email, validate_name, validate_password, validate_phone, validate_username
 from app.lib.schema import CamelizedBaseStruct
+from app.lib.validation import validate_email, validate_name, validate_password, validate_phone, validate_username
 
 
 class UserTeam(CamelizedBaseStruct):
@@ -64,6 +64,7 @@ class User(CamelizedBaseStruct):
     is_superuser: bool = False
     is_active: bool = False
     is_verified: bool = False
+    is_two_factor_enabled: bool = False
     has_password: bool = False
     teams: list[UserTeam] = []
     roles: list[UserRole] = []

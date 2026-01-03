@@ -9,6 +9,7 @@ from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
 from app.lib import constants, crypt
+from app.lib.deps import CompositeServiceMixin
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
 MAX_FAILED_RESET_ATTEMPTS = 5
@@ -18,8 +19,10 @@ if TYPE_CHECKING:
 
     from httpx_oauth.oauth2 import OAuth2Token
 
+    from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
 
-class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
+
+class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Handles database operations for users."""
 
     class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
@@ -30,6 +33,13 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     repository_type = Repo
     default_role = constants.DEFAULT_ACCESS_ROLE
     match_fields = ["email"]
+
+    @property
+    def oauth_accounts(self) -> UserOAuthAccountService:
+        """Lazy-loaded OAuth account service sharing this session."""
+        from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
+
+        return self._get_service(UserOAuthAccountService)
 
     async def to_model_on_create(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
         return await self._populate_model(data)
@@ -247,12 +257,12 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         codes = data.get("backup_codes")
         if codes is None or not isinstance(codes, list):
             return data
-        non_null_codes = [code for code in codes if code is not None]
+        if not all(code is None or isinstance(code, str) for code in codes):
+            return data
+        non_null_codes = [code for code in codes if isinstance(code, str)]
         if not non_null_codes or all(code.startswith("$") for code in non_null_codes):
             return data
-        data["backup_codes"] = [
-            None if code is None else await crypt.get_password_hash(code) for code in codes
-        ]
+        data["backup_codes"] = [None if code is None else await crypt.get_password_hash(code) for code in codes]
         return data
 
     async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
@@ -307,15 +317,11 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         Returns:
             Tuple of (user, is_new_user)
         """
-        from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
-
         email = oauth_data.get("email", "")
         existing_user = await self.get_one_or_none(email=email) if email else None
 
         if existing_user:
-
-            oauth_service = UserOAuthAccountService(session=self.repository.session)
-            await oauth_service.create_or_update_oauth_account(
+            await self.oauth_accounts.create_or_update_oauth_account(
                 user_id=existing_user.id,
                 provider=provider,
                 oauth_data=oauth_data,
@@ -329,8 +335,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             token_data=token_data,
         )
 
-        oauth_service = UserOAuthAccountService(session=self.repository.session)
-        await oauth_service.create_or_update_oauth_account(
+        await self.oauth_accounts.create_or_update_oauth_account(
             user_id=new_user.id,
             provider=provider,
             oauth_data=oauth_data,

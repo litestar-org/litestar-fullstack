@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import os
 from datetime import UTC, datetime, timedelta
 
@@ -24,17 +25,12 @@ os.environ.update(
         "DATABASE_URL": "sqlite+aiosqlite:///:memory:",
         "DATABASE_ECHO": "false",
         "DATABASE_ECHO_POOL": "false",
-        "VALKEY_PORT": "6308",
-        "REDIS_URL": "redis://localhost:6308/0",
         "SAQ_USE_SERVER_LIFESPAN": "False",
         "SAQ_WEB_ENABLED": "True",
-        "SAQ_BACKGROUND_WORKERS": "1",
+        "SAQ_PROCESSES": "1",
         "SAQ_CONCURRENCY": "1",
-        "VITE_HOST": "localhost",
         "VITE_PORT": "3006",
-        "VITE_HOT_RELOAD": "True",
         "VITE_DEV_MODE": "True",
-        "VITE_USE_SERVER_LIFESPAN": "False",
         "EMAIL_ENABLED": "false",
     }
 )
@@ -408,12 +404,15 @@ async def test_tag(session: AsyncSession) -> m.Tag:
 @pytest.fixture
 async def test_verification_token(session: AsyncSession, unverified_user: m.User) -> m.EmailVerificationToken:
     """Create a test email verification token."""
+    raw_token = uuid4().hex
     token = m.EmailVerificationToken(
         id=uuid4(),
         user_id=unverified_user.id,
-        token=uuid4().hex,
+        token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+        email=unverified_user.email,
         expires_at=datetime.now(UTC) + timedelta(hours=24),
     )
+    token.raw_token = raw_token
     session.add(token)
     await session.commit()
     await session.refresh(token)
@@ -424,14 +423,16 @@ async def test_verification_token(session: AsyncSession, unverified_user: m.User
 async def test_password_reset_token(session: AsyncSession, test_user: m.User) -> m.PasswordResetToken:
     """Create a test password reset token."""
 
+    raw_token = uuid4().hex
     token = m.PasswordResetToken(
         id=uuid4(),
         user_id=test_user.id,
-        token=uuid4().hex,
+        token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
         expires_at=datetime.now(UTC) + timedelta(hours=1),
         ip_address="127.0.0.1",
         user_agent="Test User Agent",
     )
+    token.raw_token = raw_token
     session.add(token)
     await session.commit()
     await session.refresh(token)

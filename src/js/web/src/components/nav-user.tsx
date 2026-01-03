@@ -1,8 +1,9 @@
 "use client"
 
 import { useNavigate } from "@tanstack/react-router"
-import { ChevronsUpDown, LogOut } from "lucide-react"
+import { ChevronsUpDown, LogOut, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/auth"
@@ -58,6 +59,17 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate({ to: "/profile" })}>
+              <User />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-default focus:bg-transparent">
+              MFA
+              <Badge variant={user.isTwoFactorEnabled ? "default" : "secondary"} className="ml-auto">
+                {user.isTwoFactorEnabled ? "Enabled" : "Disabled"}
+              </Badge>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
               <LogOut />

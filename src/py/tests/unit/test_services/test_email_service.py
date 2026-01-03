@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.db.models import EmailVerificationToken, PasswordResetToken, User
+from app.db import models as m
 from app.lib.email import EmailService, get_backend
 from app.lib.email.backends.locmem import InMemoryBackend
 from app.lib.email.base import EmailMessage, EmailMultiAlternatives
@@ -23,7 +23,7 @@ def clear_outbox():
 @pytest.fixture
 def mock_user():
     """Create a mock user."""
-    user = Mock(spec=User)
+    user = Mock(spec=m.User)
     user.email = "user@test.com"
     user.name = "Test User"
     return user
@@ -32,17 +32,13 @@ def mock_user():
 @pytest.fixture
 def mock_verification_token():
     """Create a mock verification token."""
-    token = Mock(spec=EmailVerificationToken)
-    token.token = "test-verification-token-123"
-    return token
+    return "test-verification-token-123"
 
 
 @pytest.fixture
 def mock_reset_token():
     """Create a mock password reset token."""
-    token = Mock(spec=PasswordResetToken)
-    token.token = "test-reset-token-456"
-    return token
+    return "test-reset-token-456"
 
 
 class TestEmailMessage:
@@ -179,66 +175,64 @@ class TestEmailService:
         assert ">" in text
         assert '"' in text
 
-    def test_generate_base_html(self):
-        """Test base HTML template generation."""
+    def test_render_welcome_template(self):
+        """Test welcome email template rendering."""
         service = EmailService()
 
-        html = service._generate_base_html("<p>Content</p>")
+        html = service._render_template(
+            "welcome.html",
+            {"USER_NAME": "Test User", "LOGIN_URL": "http://test.com/login"},
+        )
 
-        assert "<!DOCTYPE html>" in html
+        assert "Test User" in html
+        assert "http://test.com/login" in html
         assert service.app_name in html
-        assert "<p>Content</p>" in html
 
-    def test_generate_verification_html(self):
-        """Test verification email HTML generation."""
+    def test_render_verification_template(self):
+        """Test verification email template rendering."""
         service = EmailService()
 
-        html = service._generate_verification_html(
-            user_name="Test User",
-            verification_url="http://test.com/verify?token=abc",
+        html = service._render_template(
+            "email-verification.html",
+            {
+                "USER_NAME": "Test User",
+                "VERIFICATION_URL": "http://test.com/verify?token=abc",
+                "EXPIRES_HOURS": 24,
+            },
         )
 
         assert "Test User" in html
         assert "http://test.com/verify?token=abc" in html
         assert "verify" in html.lower()
 
-    def test_generate_welcome_html(self):
-        """Test welcome email HTML generation."""
+    def test_render_password_reset_template(self):
+        """Test password reset email template rendering."""
         service = EmailService()
 
-        html = service._generate_welcome_html(
-            user_name="Test User",
-            login_url="http://test.com/login",
-        )
-
-        assert "Test User" in html
-        assert "http://test.com/login" in html
-        assert "welcome" in html.lower()
-
-    def test_generate_password_reset_html(self):
-        """Test password reset email HTML generation."""
-        service = EmailService()
-
-        html = service._generate_password_reset_html(
-            user_name="Test User",
-            reset_url="http://test.com/reset?token=abc",
-            expires_in_minutes=60,
-            ip_address="192.168.1.1",
+        html = service._render_template(
+            "password-reset.html",
+            {
+                "USER_NAME": "Test User",
+                "RESET_URL": "http://test.com/reset?token=abc",
+                "EXPIRES_MINUTES": 60,
+            },
         )
 
         assert "Test User" in html
         assert "http://test.com/reset?token=abc" in html
-        assert "60 minutes" in html
-        assert "192.168.1.1" in html
+        assert "60" in html
 
-    def test_generate_team_invitation_html(self):
-        """Test team invitation email HTML generation."""
+    def test_render_team_invitation_template(self):
+        """Test team invitation email template rendering."""
         service = EmailService()
 
-        html = service._generate_team_invitation_html(
-            inviter_name="John Doe",
-            team_name="Test Team",
-            invitation_url="http://test.com/invite?token=abc",
+        html = service._render_template(
+            "team-invitation.html",
+            {
+                "INVITER_NAME": "John Doe",
+                "TEAM_NAME": "Test Team",
+                "INVITATION_URL": "http://test.com/invite?token=abc",
+            },
         )
 
         assert "John Doe" in html
@@ -287,7 +281,6 @@ class TestEmailService:
             mock_user,
             mock_reset_token,
             expires_in_minutes=60,
-            ip_address="192.168.1.1",
         )
 
         assert result is False  # Email disabled by default

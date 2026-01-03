@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, patch
 
@@ -291,7 +292,7 @@ class TestEmailVerificationEndpoints:
         test_verification_token: m.EmailVerificationToken,
     ) -> None:
         """Test successful email verification."""
-        verify_data = {"token": test_verification_token.token}
+        verify_data = {"token": test_verification_token.raw_token}
 
         response = await client.post("/api/email-verification/verify", json=verify_data)
 
@@ -315,14 +316,16 @@ class TestEmailVerificationEndpoints:
         from datetime import UTC, datetime, timedelta
         from uuid import uuid4
 
+        raw_token = uuid4().hex
         token = m.EmailVerificationToken(
             id=uuid4(),
             user_id=test_user.id,
-            token=uuid4().hex,
+            token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+            email=test_user.email,
             expires_at=datetime.now(UTC) + timedelta(hours=24),
         )
 
-        verify_data = {"token": token.token}
+        verify_data = {"token": raw_token}
 
         response = await client.post("/api/email-verification/verify", json=verify_data)
 
@@ -367,7 +370,7 @@ class TestPasswordResetEndpoints:
     ) -> None:
         """Test successful password reset."""
         reset_data = {
-            "token": test_password_reset_token.token,
+            "token": test_password_reset_token.raw_token,
             "new_password": "NewPassword123!",
         }
 
@@ -397,7 +400,7 @@ class TestPasswordResetEndpoints:
     ) -> None:
         """Test password reset with weak password."""
         reset_data = {
-            "token": test_password_reset_token.token,
+            "token": test_password_reset_token.raw_token,
             "new_password": "weak",
         }
 

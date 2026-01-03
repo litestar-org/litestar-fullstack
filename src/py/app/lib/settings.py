@@ -115,7 +115,6 @@ class ViteSettings:
     """Base URL for assets."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
-
         return ViteConfig(
             mode="spa",
             dev_mode=self.DEV_MODE,
@@ -169,6 +168,7 @@ class SaqSettings:
     def get_config(self, db: DatabaseSettings) -> SAQConfig:
         from litestar_saq import CronJob, QueueConfig, SAQConfig
 
+        from app.domain.accounts import jobs as account_jobs
         from app.domain.system import jobs as system_jobs
         from app.lib.worker import after_process, before_process, on_shutdown, on_startup
 
@@ -185,14 +185,20 @@ class SaqSettings:
                         "jobs_table": "task_queue",
                         "versions_table": "task_queue_ddl_version",
                     },
-                    tasks=[system_jobs.cleanup_auth_tokens],
+                    tasks=[system_jobs.cleanup_auth_tokens, account_jobs.refresh_oauth_tokens],
                     scheduled_tasks=[
                         CronJob(
                             function=system_jobs.cleanup_auth_tokens,
                             cron="0 * * * *",
                             timeout=600,
                             ttl=1800,
-                        )
+                        ),
+                        CronJob(
+                            function=account_jobs.refresh_oauth_tokens,
+                            cron="*/15 * * * *",
+                            timeout=600,
+                            ttl=1800,
+                        ),
                     ],
                     concurrency=20,
                     startup=on_startup,

@@ -9,7 +9,6 @@ from litestar.testing import AsyncTestClient
 from sqlalchemy import select
 
 from app.db import models as m
-from app.db.models.team_roles import TeamRoles
 from app.lib.crypt import get_password_hash
 from tests.factories import TeamFactory, TeamMemberFactory, UserFactory, create_team_with_members, create_user_with_team
 
@@ -66,7 +65,7 @@ class TestTeamCRUD:
             assert len(response_data["members"]) == 1  # Creator is automatically a member
             assert response_data["members"][0]["email"] == user.email
             assert response_data["members"][0]["isOwner"] is True
-            assert response_data["members"][0]["role"] == TeamRoles.ADMIN.value
+            assert response_data["members"][0]["role"] == m.TeamRoles.ADMIN.value
 
         # Verify team was created in database
         result = await session.execute(select(m.Team).where(m.Team.name == "Test Team"))
@@ -78,7 +77,7 @@ class TestTeamCRUD:
         membership = membership_result.scalar_one_or_none()
         assert membership is not None
         assert membership.is_owner is True
-        assert membership.role == TeamRoles.ADMIN
+        assert membership.role == m.TeamRoles.ADMIN
 
     @pytest.mark.asyncio
     async def test_create_team_unauthenticated(
@@ -110,7 +109,7 @@ class TestTeamCRUD:
         await session.flush()
 
         other_membership = TeamMemberFactory.build(
-            team_id=other_team.id, user_id=other_user.id, role=TeamRoles.ADMIN, is_owner=True
+            team_id=other_team.id, user_id=other_user.id, role=m.TeamRoles.ADMIN, is_owner=True
         )
         session.add(other_membership)
 
@@ -224,7 +223,9 @@ class TestTeamCRUD:
         await session.flush()
 
         # Add member to team with MEMBER role
-        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
+        membership = TeamMemberFactory.build(
+            team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False
+        )
         session.add(membership)
         await session.commit()
 
@@ -280,7 +281,9 @@ class TestTeamCRUD:
         session.add(member)
         await session.flush()
 
-        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
+        membership = TeamMemberFactory.build(
+            team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False
+        )
         session.add(membership)
         await session.commit()
 
@@ -343,7 +346,7 @@ class TestTeamMemberManagement:
         )
         membership = result.scalar_one_or_none()
         assert membership is not None
-        assert membership.role == TeamRoles.MEMBER
+        assert membership.role == m.TeamRoles.MEMBER
 
     @pytest.mark.asyncio
     async def test_add_member_already_exists(
@@ -519,7 +522,7 @@ class TestTeamPermissions:
         await session.flush()
 
         admin_membership = TeamMemberFactory.build(
-            team_id=team.id, user_id=admin.id, role=TeamRoles.ADMIN, is_owner=False
+            team_id=team.id, user_id=admin.id, role=m.TeamRoles.ADMIN, is_owner=False
         )
         session.add(admin_membership)
         await session.commit()
@@ -559,7 +562,7 @@ class TestTeamPermissions:
         await session.flush()
 
         member_membership = TeamMemberFactory.build(
-            team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False
+            team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False
         )
         session.add(member_membership)
         await session.commit()
@@ -784,7 +787,9 @@ class TestTeamIntegration:
         await session.flush()
 
         # Add as regular member
-        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=TeamRoles.MEMBER, is_owner=False)
+        membership = TeamMemberFactory.build(
+            team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False
+        )
         session.add(membership)
         await session.commit()
 
@@ -801,7 +806,7 @@ class TestTeamIntegration:
             assert response.status_code == 403
 
             # Update member to admin role (in database directly for this test)
-            membership.role = TeamRoles.ADMIN
+            membership.role = m.TeamRoles.ADMIN
             await session.commit()
 
             # Member should now be able to update team as admin

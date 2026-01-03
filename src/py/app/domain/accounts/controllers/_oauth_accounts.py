@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Annotated, Any, cast
 from urllib.parse import urlencode
 
 from httpx_oauth.clients.github import GitHubOAuth2
@@ -12,21 +12,25 @@ from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Token
 from litestar import Controller, delete, get, post
 from litestar.di import Provide
 from litestar.exceptions import HTTPException
-from litestar.params import Parameter
+from litestar.params import Dependency, Parameter
 from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 from sqlalchemy.orm import undefer_group
 
-from app.domain.accounts.deps import provide_user_oauth_service, provide_users_service
-from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAccountList, OAuthAuthorization
+from app.domain.accounts.deps import provide_users_service
+from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorization
+from app.domain.accounts.services import UserOAuthAccountService
+from app.lib.deps import create_service_dependencies
 from app.lib.schema import Message
 from app.utils.oauth import OAuth2AuthorizeCallback, build_oauth_error_redirect, create_oauth_state, verify_oauth_state
 
 if TYPE_CHECKING:
+    from advanced_alchemy.filters import FilterTypes
+    from advanced_alchemy.service.pagination import OffsetPagination
     from litestar import Request
 
     from app.db import models as m
-    from app.domain.accounts.services import UserOAuthAccountService, UserService
+    from app.domain.accounts.services import UserService
     from app.lib.settings import AppSettings
 
 OAUTH_DEFAULT_SCOPES: dict[str, list[str]] = {
@@ -35,7 +39,12 @@ OAUTH_DEFAULT_SCOPES: dict[str, list[str]] = {
 }
 
 
-def _get_oauth_client(provider: str, settings: AppSettings) -> BaseOAuth2[OAuth2Token]:
+def _get_oauth_client(provider: str, settings: AppSettings) -> GoogleOAuth2 | GitHubOAuth2:
+    """Return an OAuth client for the requested provider.
+
+    Raises:
+        HTTPException: If the provider is unsupported or not configured.
+    """
     if provider == "google":
         if not settings.GOOGLE_OAUTH2_CLIENT_ID or not settings.GOOGLE_OAUTH2_CLIENT_SECRET:
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Google OAuth is not configured")
@@ -58,9 +67,18 @@ class OAuthAccountController(Controller):
 
     path = "/api/profile/oauth"
     tags = ["Profile"]
-    dependencies = {
+    dependencies = create_service_dependencies(
+        UserOAuthAccountService,
+        key="oauth_account_service",
+        filters={
+            "pagination_type": "limit_offset",
+            "pagination_size": 20,
+            "created_at": True,
+            "sort_field": "created_at",
+            "sort_order": "desc",
+        },
+    ) | {
         "users_service": Provide(provide_users_service),
-        "oauth_account_service": Provide(provide_user_oauth_service),
     }
 
     @get(operation_id="ProfileOAuthAccounts", path="/accounts")
@@ -68,35 +86,45 @@ class OAuthAccountController(Controller):
         self,
         current_user: m.User,
         oauth_account_service: UserOAuthAccountService,
-    ) -> OAuthAccountList:
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
+    ) -> OffsetPagination[OAuthAccountInfo]:
         """List linked OAuth accounts.
 
         Args:
             current_user: The authenticated user.
             oauth_account_service: OAuth account service.
+            filters: Filter and pagination parameters.
 
         Returns:
             Linked OAuth accounts.
         """
-        accounts = await oauth_account_service.get_user_oauth_accounts(current_user.id)
-        results = [
-            OAuthAccountInfo(
-                provider=account.oauth_name,
-                oauth_id=account.account_id,
-                email=account.account_email,
-                name=None,
-                avatar_url=None,
-                linked_at=account.created_at,
-                last_login_at=account.last_login_at,
-            )
+        accounts, total = await oauth_account_service.list_and_count(
+            *filters,
+            m.UserOAuthAccount.user_id == current_user.id,
+        )
+        items = [
+            {
+                "provider": account.oauth_name,
+                "oauth_id": account.account_id,
+                "email": account.account_email,
+                "name": None,
+                "avatar_url": None,
+                "linked_at": account.created_at,
+                "last_login_at": account.last_login_at,
+            }
             for account in accounts
         ]
-        return OAuthAccountList(accounts=results, count=len(results))
+        return oauth_account_service.to_schema(
+            data=items,
+            total=total,
+            filters=filters,
+            schema_type=OAuthAccountInfo,
+        )
 
     @post(operation_id="ProfileOAuthLink", path="/{provider:str}/link")
     async def start_link(
         self,
-        request: Request,
+        request: Request[Any, Any, Any],
         current_user: m.User,
         settings: AppSettings,
         provider: str,
@@ -137,7 +165,7 @@ class OAuthAccountController(Controller):
     @get(operation_id="ProfileOAuthComplete", path="/{provider:str}/complete", name="oauth:profile:complete")
     async def complete_link(
         self,
-        request: Request,
+        request: Request[Any, Any, Any],
         current_user: m.User,
         settings: AppSettings,
         oauth_account_service: UserOAuthAccountService,
@@ -160,101 +188,91 @@ class OAuthAccountController(Controller):
             error: OAuth error code.
             error_description: OAuth error description.
 
+        Raises:
+            HTTPException: If OAuth is not configured or provider is invalid.
+
         Returns:
             Redirect to frontend with success or error parameters.
         """
         default_callback = f"{settings.URL}/profile"
-        if not oauth_state:
-            return Redirect(
-                path=build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter"),
-                status_code=HTTP_302_FOUND,
+        payload: dict[str, Any] = {}
+        frontend_callback = default_callback
+        redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
+
+        if oauth_state:
+            is_valid, payload, error_msg = verify_oauth_state(
+                state=oauth_state,
+                expected_provider=provider,
+                secret_key=settings.SECRET_KEY,
             )
+            frontend_callback = payload.get("redirect_url", default_callback)
+            if not is_valid:
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
+            else:
+                state_user_id = payload.get("user_id")
+                if state_user_id and state_user_id != str(current_user.id):
+                    redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", "Invalid OAuth session")
+                elif error:
+                    error_msg = error_description or error
+                    redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
+                elif not code:
+                    redirect_path = build_oauth_error_redirect(
+                        frontend_callback, "oauth_failed", "Missing authorization code"
+                    )
+                else:
+                    client = _get_oauth_client(provider, settings)
+                    callback_url = str(request.url_for("oauth:profile:complete", provider=provider))
+                    oauth2_callback = OAuth2AuthorizeCallback(
+                        cast("BaseOAuth2[OAuth2Token]", client), redirect_url=callback_url
+                    )
+                    try:
+                        token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
+                    except GetAccessTokenError:
+                        redirect_path = build_oauth_error_redirect(
+                            frontend_callback, "oauth_failed", "Failed to exchange code for token"
+                        )
+                    else:
+                        try:
+                            account_id, account_email = await client.get_id_email(token_data["access_token"])
+                        except GetIdEmailError:
+                            redirect_path = build_oauth_error_redirect(
+                                frontend_callback, "oauth_failed", "Failed to get account info"
+                            )
+                        else:
+                            if not account_email:
+                                redirect_path = build_oauth_error_redirect(
+                                    frontend_callback, "oauth_failed", "OAuth provider did not return email"
+                                )
+                            else:
+                                existing = await oauth_account_service.get_by_provider_account_id(provider, account_id)
+                                if existing and existing.user_id != current_user.id:
+                                    redirect_path = build_oauth_error_redirect(
+                                        frontend_callback, "oauth_failed", "OAuth account already linked"
+                                    )
+                                else:
+                                    scopes = token_data.get("scope", "")
+                                    scope_list = scopes.split() if scopes else OAUTH_DEFAULT_SCOPES.get(provider)
 
-        is_valid, payload, error_msg = verify_oauth_state(
-            state=oauth_state,
-            expected_provider=provider,
-            secret_key=settings.SECRET_KEY,
-        )
-        frontend_callback = payload.get("redirect_url", default_callback)
-        if not is_valid:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg),
-                status_code=HTTP_302_FOUND,
-            )
+                                    await oauth_account_service.link_or_update_oauth(
+                                        user_id=current_user.id,
+                                        provider=provider,
+                                        account_id=account_id,
+                                        account_email=account_email,
+                                        access_token=token_data["access_token"],
+                                        refresh_token=token_data.get("refresh_token"),
+                                        expires_at=token_data.get("expires_at"),
+                                        scopes=scope_list,
+                                        provider_user_data={"id": account_id, "email": account_email},
+                                    )
 
-        state_user_id = payload.get("user_id")
-        if state_user_id and state_user_id != str(current_user.id):
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Invalid OAuth session"),
-                status_code=HTTP_302_FOUND,
-            )
+                                    action = payload.get("action", "link")
+                                    params = urlencode({"provider": provider, "action": action, "linked": "true"})
+                                    separator = "&" if "?" in frontend_callback else "?"
+                                    redirect_path = f"{frontend_callback}{separator}{params}"
 
-        if error:
-            error_msg = error_description or error
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg),
-                status_code=HTTP_302_FOUND,
-            )
+        return Redirect(path=redirect_path, status_code=HTTP_302_FOUND)
 
-        if not code:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Missing authorization code"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        client = _get_oauth_client(provider, settings)
-        callback_url = str(request.url_for("oauth:profile:complete", provider=provider))
-        oauth2_callback = OAuth2AuthorizeCallback(cast("BaseOAuth2[OAuth2Token]", client), redirect_url=callback_url)
-        try:
-            token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
-        except GetAccessTokenError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to exchange code for token"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        try:
-            account_id, account_email = await client.get_id_email(token_data["access_token"])
-        except GetIdEmailError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get account info"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        if not account_email:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "OAuth provider did not return email"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        existing = await oauth_account_service.get_by_provider_account_id(provider, account_id)
-        if existing and existing.user_id != current_user.id:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "OAuth account already linked"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        scopes = token_data.get("scope", "")
-        scope_list = scopes.split() if scopes else OAUTH_DEFAULT_SCOPES.get(provider)
-
-        await oauth_account_service.link_or_update_oauth(
-            user_id=current_user.id,
-            provider=provider,
-            account_id=account_id,
-            account_email=account_email,
-            access_token=token_data["access_token"],
-            refresh_token=token_data.get("refresh_token"),
-            expires_at=token_data.get("expires_at"),
-            scopes=scope_list,
-            provider_user_data={"id": account_id, "email": account_email},
-        )
-
-        action = payload.get("action", "link")
-        params = urlencode({"provider": provider, "action": action, "linked": "true"})
-        separator = "&" if "?" in frontend_callback else "?"
-        return Redirect(path=f"{frontend_callback}{separator}{params}", status_code=HTTP_302_FOUND)
-
-    @delete(operation_id="ProfileOAuthUnlink", path="/{provider:str}")
+    @delete(operation_id="ProfileOAuthUnlink", path="/{provider:str}", status_code=200)
     async def unlink(
         self,
         current_user: m.User,
@@ -293,7 +311,7 @@ class OAuthAccountController(Controller):
     @post(operation_id="ProfileOAuthUpgradeScopes", path="/{provider:str}/upgrade-scopes")
     async def upgrade_scopes(
         self,
-        request: Request,
+        request: Request[Any, Any, Any],
         current_user: m.User,
         settings: AppSettings,
         provider: str,

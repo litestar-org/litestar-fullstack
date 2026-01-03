@@ -325,5 +325,6 @@ docker-shell:                                      ## Open a shell in the app co
 .PHONY: types
 types:                                             ## Export OpenAPI schema and generate TypeScript types/client
 	@echo "${INFO} Exporting OpenAPI schema and generating TypeScript types..."
-	@uv run app assets generate-types
+	@mkdir -p tmp
+	@TMPDIR=$(PWD)/tmp uv run app assets generate-types
 	@echo "${OK} TypeScript types and client generated from OpenAPI schema."

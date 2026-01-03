@@ -981,7 +981,7 @@ export const mfaSetupFormSchema = z.object({ code: totpCodeSchema });
 
 ### 9.3 React Email Templates
 
-**Problem:** No email templates exist in the SPA. Need to implement React-based templates following Accelerator pattern.
+**Status:** React Email templates exist in the SPA and compile to static HTML for backend delivery.
 
 **Directory Structure:**
 ```
@@ -995,6 +995,7 @@ src/js/templates/
 │   └── emails/
 │       ├── email-verification.tsx
 │       ├── password-reset.tsx
+│       ├── password-reset-confirmation.tsx
 │       ├── welcome.tsx
 │       └── team-invitation.tsx
 ├── build-emails.ts

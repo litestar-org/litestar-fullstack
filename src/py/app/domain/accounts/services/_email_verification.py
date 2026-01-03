@@ -91,8 +91,7 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             raise ClientException(detail="Verification token has already been used", status_code=400)
 
         verification_token.used_at = datetime.now(UTC)
-        obj = await self.update(verification_token)
-        return obj
+        return await self.update(verification_token)
 
     async def invalidate_user_tokens(self, user_id: UUID, email: str | None = None) -> None:
         """Invalidate all tokens for a user, optionally filtered by email.

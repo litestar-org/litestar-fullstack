@@ -46,7 +46,6 @@ class EmailVerificationController(Controller):
 
         user = await users_service.get_one_or_none(email=data.email)
         if user is None:
-
             return EmailVerificationSent(message="If the email exists, a verification link has been sent")
 
         if user.is_verified:

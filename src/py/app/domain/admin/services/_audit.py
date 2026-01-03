@@ -76,6 +76,114 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             }
         )
 
+    async def count_recent_actions(
+        self,
+        *,
+        action: str,
+        actor_id: UUID,
+        window_minutes: int,
+    ) -> int:
+        """Count recent actions for an actor within a rolling window.
+
+        Args:
+            action: Action name to count.
+            actor_id: Actor ID to filter by.
+            window_minutes: Window size in minutes.
+
+        Returns:
+            Number of matching actions within the time window.
+        """
+        cutoff_time = datetime.now(UTC) - timedelta(minutes=window_minutes)
+        return await self.count(
+            m.AuditLog.action == action,
+            m.AuditLog.actor_id == actor_id,
+            m.AuditLog.created_at >= cutoff_time,
+        )
+
+    async def log_admin_user_update(
+        self,
+        *,
+        actor_id: UUID,
+        actor_email: str | None,
+        user_id: UUID,
+        user_email: str,
+        changes: list[str],
+        request: Request[Any, Any, Any] | None = None,
+    ) -> m.AuditLog:
+        """Log an admin user update event."""
+        return await self.log_action(
+            action="admin.user.update",
+            actor_id=actor_id,
+            actor_email=actor_email,
+            target_type="user",
+            target_id=str(user_id),
+            target_label=user_email,
+            details={"changes": changes},
+            request=request,
+        )
+
+    async def log_admin_user_delete(
+        self,
+        *,
+        actor_id: UUID,
+        actor_email: str | None,
+        user_id: UUID,
+        user_email: str,
+        request: Request[Any, Any, Any] | None = None,
+    ) -> m.AuditLog:
+        """Log an admin user deletion event."""
+        return await self.log_action(
+            action="admin.user.delete",
+            actor_id=actor_id,
+            actor_email=actor_email,
+            target_type="user",
+            target_id=str(user_id),
+            target_label=user_email,
+            request=request,
+        )
+
+    async def log_admin_team_update(
+        self,
+        *,
+        actor_id: UUID,
+        actor_email: str | None,
+        team_id: UUID,
+        team_name: str,
+        changes: list[str],
+        request: Request[Any, Any, Any] | None = None,
+    ) -> m.AuditLog:
+        """Log an admin team update event."""
+        return await self.log_action(
+            action="admin.team.update",
+            actor_id=actor_id,
+            actor_email=actor_email,
+            target_type="team",
+            target_id=str(team_id),
+            target_label=team_name,
+            details={"changes": changes},
+            request=request,
+        )
+
+    async def log_admin_team_delete(
+        self,
+        *,
+        actor_id: UUID,
+        actor_email: str | None,
+        team_id: UUID,
+        team_name: str,
+        request: Request[Any, Any, Any] | None = None,
+    ) -> m.AuditLog:
+        """Log an admin team deletion event."""
+        return await self.log_action(
+            action="admin.team.delete",
+            actor_id=actor_id,
+            actor_email=actor_email,
+            target_type="team",
+            target_id=str(team_id),
+            target_label=team_name,
+            request=request,
+        )
+
     async def get_user_activity(
         self,
         user_id: UUID,

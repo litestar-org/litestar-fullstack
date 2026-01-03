@@ -16,7 +16,6 @@ from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
 from app.domain.teams.services import TeamInvitationService
 from app.lib.deps import create_service_dependencies
 from app.lib.email import email_service
-from app.lib.settings import AppSettings
 from app.lib.schema import Message
 
 if TYPE_CHECKING:
@@ -25,7 +24,8 @@ if TYPE_CHECKING:
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service import OffsetPagination
 
-    from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
+    from app.domain.teams.services import TeamMemberService, TeamService
+    from app.lib.settings import AppSettings
 
 
 class TeamInvitationController(Controller):
@@ -71,6 +71,7 @@ class TeamInvitationController(Controller):
             data: The data to create the team invitation with.
             team_invitations_service: The team invitation service.
             teams_service: The teams service.
+            settings: Application settings.
             team_id: The team id.
 
         Raises:
@@ -106,6 +107,7 @@ class TeamInvitationController(Controller):
         Args:
             team_id: The ID of the team to list the invitations for.
             team_invitations_service: The team invitation service.
+            filters: Filter and pagination parameters
 
         Returns:
             The list of team invitations.
@@ -177,12 +179,14 @@ class TeamInvitationController(Controller):
         )
         if existing_membership is not None:
             raise HTTPException(status_code=400, detail="User is already a member of this team")
-        await team_members_service.create({
-            "team_id": team_id,
-            "user_id": current_user.id,
-            "role": db_obj.role,
-            "is_owner": False,
-        })
+        await team_members_service.create(
+            {
+                "team_id": team_id,
+                "user_id": current_user.id,
+                "role": db_obj.role,
+                "is_owner": False,
+            }
+        )
         await team_invitations_service.update(item_id=invitation_id, data={"is_accepted": True})
         return Message(message="Team invitation accepted")
 

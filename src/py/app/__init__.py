@@ -1,7 +1,7 @@
 import multiprocessing
 import platform
 
-from app import cli, config, db, domain, lib, schemas, server, utils
+from app import cli, config, db, domain, lib, server, utils
 
 __all__ = (
     "cli",
@@ -9,7 +9,6 @@ __all__ = (
     "db",
     "domain",
     "lib",
-    "schemas",
     "server",
     "utils",
 )

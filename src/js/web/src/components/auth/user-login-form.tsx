@@ -34,7 +34,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.username, data.password)
+      const result = await login(data.username, data.password)
+      if (result.mfaRequired) {
+        navigate({ to: "/mfa-challenge" })
+        return
+      }
       navigate({ to: "/home" })
     } catch (_error) {
       // Error is handled by useAuthStore

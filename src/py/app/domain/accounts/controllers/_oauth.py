@@ -9,7 +9,7 @@ from httpx_oauth.clients.github import GitHubOAuth2
 from httpx_oauth.clients.google import GoogleOAuth2
 from httpx_oauth.exceptions import GetIdEmailError
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Token
-from litestar import Controller, get, post
+from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import HTTPException
 from litestar.params import Parameter
@@ -22,6 +22,7 @@ from app.utils.oauth import OAuth2AuthorizeCallback, build_oauth_error_redirect,
 
 if TYPE_CHECKING:
     from litestar import Request
+
     from app.domain.accounts.services import UserService
     from app.lib.settings import AppSettings
 
@@ -116,90 +117,78 @@ class OAuthController(Controller):
         """
 
         default_callback = f"{settings.URL}/auth/google/callback"
+        payload: dict[str, Any] = {}
+        frontend_callback = default_callback
+        redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
-        if not oauth_state:
-            return Redirect(
-                path=build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter"),
-                status_code=HTTP_302_FOUND,
+        if oauth_state:
+            is_valid, payload, error_msg = verify_oauth_state(
+                state=oauth_state,
+                expected_provider="google",
+                secret_key=settings.SECRET_KEY,
             )
 
-        is_valid, payload, error_msg = verify_oauth_state(
-            state=oauth_state,
-            expected_provider="google",
-            secret_key=settings.SECRET_KEY,
-        )
+            frontend_callback = payload.get("redirect_url", default_callback)
+            if not is_valid:
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
+            elif error:
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error)
+            elif not code:
+                redirect_path = build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Missing authorization code"
+                )
+            else:
+                client = GoogleOAuth2(
+                    client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
+                    client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
+                )
 
-        if not is_valid:
-            return Redirect(
-                path=build_oauth_error_redirect(payload.get("redirect_url", default_callback), "oauth_failed", error_msg),
-                status_code=HTTP_302_FOUND,
-            )
+                callback_url = str(request.url_for("oauth:google:callback"))
+                oauth2_callback = OAuth2AuthorizeCallback(
+                    cast("BaseOAuth2[OAuth2Token]", client),
+                    redirect_url=callback_url,
+                )
 
-        frontend_callback = payload.get("redirect_url", default_callback)
+                try:
+                    token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
+                except GetAccessTokenError:
+                    redirect_path = build_oauth_error_redirect(
+                        frontend_callback, "oauth_failed", "Failed to exchange code for token"
+                    )
+                else:
+                    try:
+                        user_id, user_email = await client.get_id_email(token_data["access_token"])
+                        user_data = {
+                            "id": user_id,
+                            "email": user_email,
+                        }
+                    except GetIdEmailError:
+                        redirect_path = build_oauth_error_redirect(
+                            frontend_callback, "oauth_failed", "Failed to get user info from Google"
+                        )
+                    else:
+                        user, is_new = await user_service.authenticate_or_create_oauth_user(
+                            provider="google",
+                            oauth_data=user_data,
+                            token_data=token_data,
+                        )
 
-        if error:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", error),
-                status_code=HTTP_302_FOUND,
-            )
+                        from app.domain.accounts.guards import create_access_token
 
-        if not code:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Missing authorization code"),
-                status_code=HTTP_302_FOUND,
-            )
+                        access_token = create_access_token(
+                            user_id=str(user.id),
+                            email=user.email,
+                            is_superuser=user_service.is_superuser(user),
+                            is_verified=user.is_verified,
+                            auth_method="oauth",
+                        )
 
-        client = GoogleOAuth2(
-            client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
-            client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
-        )
+                        params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
+                        separator = "&" if "?" in frontend_callback else "?"
+                        redirect_path = f"{frontend_callback}{separator}{params}"
 
-        callback_url = str(request.url_for("oauth:google:callback"))
-        oauth2_callback = OAuth2AuthorizeCallback(
-            cast("BaseOAuth2[OAuth2Token]", client),
-            redirect_url=callback_url,
-        )
-
-        try:
-            token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
-        except GetAccessTokenError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to exchange code for token"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        try:
-            user_id, user_email = await client.get_id_email(token_data["access_token"])
-            user_data = {
-                "id": user_id,
-                "email": user_email,
-            }
-        except GetIdEmailError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get user info from Google"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        user, is_new = await user_service.authenticate_or_create_oauth_user(
-            provider="google",
-            oauth_data=user_data,
-            token_data=token_data,
-        )
-
-        from app.domain.accounts.guards import create_access_token
-
-        access_token = create_access_token(
-            user_id=str(user.id),
-            email=user.email,
-            is_superuser=user_service.is_superuser(user),
-            is_verified=user.is_verified,
-            auth_method="oauth",
-        )
-
-        params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
-        separator = "&" if "?" in frontend_callback else "?"
         return Redirect(
-            path=f"{frontend_callback}{separator}{params}",
+            path=redirect_path,
             status_code=HTTP_302_FOUND,
         )
 
@@ -282,90 +271,78 @@ class OAuthController(Controller):
         """
 
         default_callback = f"{settings.URL}/auth/github/callback"
+        payload: dict[str, Any] = {}
+        frontend_callback = default_callback
+        redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
-        if not oauth_state:
-            return Redirect(
-                path=build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter"),
-                status_code=HTTP_302_FOUND,
+        if oauth_state:
+            is_valid, payload, error_msg = verify_oauth_state(
+                state=oauth_state,
+                expected_provider="github",
+                secret_key=settings.SECRET_KEY,
             )
 
-        is_valid, payload, error_msg = verify_oauth_state(
-            state=oauth_state,
-            expected_provider="github",
-            secret_key=settings.SECRET_KEY,
-        )
+            frontend_callback = payload.get("redirect_url", default_callback)
+            if not is_valid:
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
+            elif error:
+                error_msg = error_description or error
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
+            elif not code:
+                redirect_path = build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Missing authorization code"
+                )
+            else:
+                client = GitHubOAuth2(
+                    client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
+                    client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
+                )
 
-        if not is_valid:
-            return Redirect(
-                path=build_oauth_error_redirect(payload.get("redirect_url", default_callback), "oauth_failed", error_msg),
-                status_code=HTTP_302_FOUND,
-            )
+                callback_url = str(request.url_for("oauth:github:callback"))
+                oauth2_callback = OAuth2AuthorizeCallback(
+                    cast("BaseOAuth2[OAuth2Token]", client),
+                    redirect_url=callback_url,
+                )
 
-        frontend_callback = payload.get("redirect_url", default_callback)
+                try:
+                    token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
+                except GetAccessTokenError:
+                    redirect_path = build_oauth_error_redirect(
+                        frontend_callback, "oauth_failed", "Failed to exchange code for token"
+                    )
+                else:
+                    try:
+                        user_id, user_email = await client.get_id_email(token_data["access_token"])
+                        user_data = {
+                            "id": user_id,
+                            "email": user_email,
+                        }
+                    except GetIdEmailError:
+                        redirect_path = build_oauth_error_redirect(
+                            frontend_callback, "oauth_failed", "Failed to get user info from GitHub"
+                        )
+                    else:
+                        user, is_new = await user_service.authenticate_or_create_oauth_user(
+                            provider="github",
+                            oauth_data=user_data,
+                            token_data=token_data,
+                        )
 
-        if error:
-            error_msg = error_description or error
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg),
-                status_code=HTTP_302_FOUND,
-            )
+                        from app.domain.accounts.guards import create_access_token
 
-        if not code:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Missing authorization code"),
-                status_code=HTTP_302_FOUND,
-            )
+                        access_token = create_access_token(
+                            user_id=str(user.id),
+                            email=user.email,
+                            is_superuser=user_service.is_superuser(user),
+                            is_verified=user.is_verified,
+                            auth_method="oauth",
+                        )
 
-        client = GitHubOAuth2(
-            client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
-            client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
-        )
+                        params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
+                        separator = "&" if "?" in frontend_callback else "?"
+                        redirect_path = f"{frontend_callback}{separator}{params}"
 
-        callback_url = str(request.url_for("oauth:github:callback"))
-        oauth2_callback = OAuth2AuthorizeCallback(
-            cast("BaseOAuth2[OAuth2Token]", client),
-            redirect_url=callback_url,
-        )
-
-        try:
-            token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
-        except GetAccessTokenError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to exchange code for token"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        try:
-            user_id, user_email = await client.get_id_email(token_data["access_token"])
-            user_data = {
-                "id": user_id,
-                "email": user_email,
-            }
-        except GetIdEmailError:
-            return Redirect(
-                path=build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get user info from GitHub"),
-                status_code=HTTP_302_FOUND,
-            )
-
-        user, is_new = await user_service.authenticate_or_create_oauth_user(
-            provider="github",
-            oauth_data=user_data,
-            token_data=token_data,
-        )
-
-        from app.domain.accounts.guards import create_access_token
-
-        access_token = create_access_token(
-            user_id=str(user.id),
-            email=user.email,
-            is_superuser=user_service.is_superuser(user),
-            is_verified=user.is_verified,
-            auth_method="oauth",
-        )
-
-        params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
-        separator = "&" if "?" in frontend_callback else "?"
         return Redirect(
-            path=f"{frontend_callback}{separator}{params}",
+            path=redirect_path,
             status_code=HTTP_302_FOUND,
         )

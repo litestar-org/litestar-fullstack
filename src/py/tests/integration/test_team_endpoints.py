@@ -242,13 +242,10 @@ class TestTeamEndpoints:
         await session.commit()
 
         # Add user as regular member (not owner)
-        from app.db.models.team_member import TeamMember
-        from app.db.models.team_roles import TeamRoles
-
-        membership = TeamMember(
+        membership = m.TeamMember(
             team_id=test_team.id,
             user_id=member_user.id,
-            role=TeamRoles.MEMBER,
+            role=m.TeamRoles.MEMBER,
             is_owner=False,
         )
         session.add(membership)
@@ -397,13 +394,10 @@ class TestTeamMemberEndpoints:
         await session.commit()
 
         # Add first user as regular member
-        from app.db.models.team_member import TeamMember
-        from app.db.models.team_roles import TeamRoles
-
-        membership = TeamMember(
+        membership = m.TeamMember(
             team_id=test_team.id,
             user_id=member_user.id,
-            role=TeamRoles.MEMBER,
+            role=m.TeamRoles.MEMBER,
             is_owner=False,
         )
         session.add(membership)
@@ -452,13 +446,10 @@ class TestTeamMemberEndpoints:
         await session.commit()
 
         # Add them to the team
-        from app.db.models.team_member import TeamMember
-        from app.db.models.team_roles import TeamRoles
-
-        membership = TeamMember(
+        membership = m.TeamMember(
             team_id=test_team.id,
             user_id=member_to_remove.id,
-            role=TeamRoles.MEMBER,
+            role=m.TeamRoles.MEMBER,
             is_owner=False,
         )
         session.add(membership)
@@ -494,13 +485,10 @@ class TestTeamMemberEndpoints:
         await session.commit()
 
         # Add them to the team as member
-        from app.db.models.team_member import TeamMember
-        from app.db.models.team_roles import TeamRoles
-
-        membership = TeamMember(
+        membership = m.TeamMember(
             team_id=test_team.id,
             user_id=member_user.id,
-            role=TeamRoles.MEMBER,
+            role=m.TeamRoles.MEMBER,
             is_owner=False,
         )
         session.add(membership)

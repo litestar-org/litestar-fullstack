@@ -60,9 +60,7 @@ class TeamController(Controller):
             results, total = await teams_service.list_and_count(
                 *filters,
                 m.Team.id.in_(
-                    select(m.TeamMember.team_id)
-                    .where(m.TeamMember.user_id == current_user.id)
-                    .scalar_subquery()
+                    select(m.TeamMember.team_id).where(m.TeamMember.user_id == current_user.id).scalar_subquery()
                 ),
             )
         else:

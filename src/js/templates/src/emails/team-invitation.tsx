@@ -6,7 +6,6 @@
  * - {{INVITER_NAME}} - Name of the person who sent the invitation
  * - {{TEAM_NAME}} - Name of the team
  * - {{INVITATION_URL}} - Team invitation link
- * - {{EXPIRES_DAYS}} - Token expiration time in days
  */
 
 import { Heading, Text } from "@react-email/components"
@@ -108,16 +107,6 @@ export default function TeamInvitation() {
         }}
       >
         {"{{INVITATION_URL}}"}
-      </Text>
-
-      <Text
-        style={{
-          margin: "0 0 16px 0",
-          color: "#9aa0a6",
-          fontSize: "13px",
-        }}
-      >
-        This invitation will expire in {"{{EXPIRES_DAYS}}"} days.
       </Text>
 
       <Text

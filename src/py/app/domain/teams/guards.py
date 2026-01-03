@@ -86,6 +86,7 @@ def requires_team_ownership(connection: ASGIConnection[Any, m.User, Token, Any],
     msg = "Insufficient permissions to access team."
     raise PermissionDeniedException(msg)
 
+
 __all__ = (
     "requires_team_admin",
     "requires_team_membership",

@@ -23,7 +23,8 @@ interface AuthState {
   teams: Team[]
   isLoading: boolean
   isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<{ mfaRequired: boolean }>
+  completeMfaLogin: (accessToken: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
   setCurrentTeam: (team: Team) => void
@@ -45,8 +46,12 @@ export const useAuthStore = create<AuthState>()(
           const response = await accountLogin({ body: { username: email, password } })
 
           if (response.data) {
-            // Successful login response
-            const loginData = response.data as { access_token?: string }
+            const loginData = response.data as { access_token?: string; mfa_required?: boolean }
+            if (loginData.mfa_required) {
+              setAccessToken(null)
+              set({ user: null, isAuthenticated: false })
+              return { mfaRequired: true }
+            }
             if (loginData.access_token) {
               setAccessToken(loginData.access_token)
             }
@@ -56,16 +61,34 @@ export const useAuthStore = create<AuthState>()(
             // Verify the authentication by getting the profile
             const { data: user } = await accountProfile()
             set({ user, isAuthenticated: true })
-            return
+            return { mfaRequired: false }
           }
 
           set({ user: null, currentTeam: null, isAuthenticated: false })
           toast.error(response.error?.detail || "Login failed")
+          return { mfaRequired: false }
         } catch (error) {
           setAccessToken(null)
           set({ user: null, currentTeam: null, isAuthenticated: false })
           toast.error("An error occurred", {
             description: error instanceof Error ? error.message : "Unknown error",
+          })
+          return { mfaRequired: false }
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+      completeMfaLogin: async (accessToken: string) => {
+        set({ isLoading: true })
+        try {
+          setAccessToken(accessToken)
+          const { data: user } = await accountProfile()
+          set({ user, isAuthenticated: true })
+        } catch (error) {
+          setAccessToken(null)
+          set({ user: null, currentTeam: null, isAuthenticated: false })
+          toast.error("MFA verification failed", {
+            description: error instanceof Error ? error.message : "Unable to complete login",
           })
         } finally {
           set({ isLoading: false })

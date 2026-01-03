@@ -177,5 +177,6 @@ async def verify_backup_code(
         if hashed is not None and await verify_password(code, hashed):
             return i
     if raise_on_not_found:
-        raise ValueError("Invalid backup code")
+        msg = "Invalid backup code"
+        raise ValueError(msg)
     return None

@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 from litestar.exceptions import PermissionDeniedException
 from litestar.security.jwt import OAuth2PasswordBearerAuth
 
-from app import config
 from app.db import models as m
-from app.domain.accounts import deps as deps
+from app.domain.accounts import deps
 from app.lib import constants
+from app.lib.deps import provide_services
 from app.lib.settings import get_settings
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 settings = get_settings()
 ACCESS_TOKEN_EXPIRATION = timedelta(minutes=15)
-AUTH_TOKEN_URL = "/api/access/login"
+AUTH_TOKEN_URL = "/api/access/login"  # noqa: S105
 
 
 def provide_user(request: Request[m.User, Token, Any]) -> m.User:
@@ -91,6 +91,7 @@ def requires_superuser(connection: ASGIConnection[Any, m.User, Token, Any], _: B
         return
     raise PermissionDeniedException(detail="Insufficient privileges")
 
+
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> m.User | None:
     """Lookup current user from local JWT token.
 
@@ -103,11 +104,9 @@ async def current_user_from_token(token: Token, connection: ASGIConnection[Any, 
     Returns:
         User: User record mapped to the JWT identifier
     """
-    service = await anext(
-        deps.provide_users_service(config.alchemy.provide_session(connection.app.state, connection.scope))
-    )
-    user = await service.get_one_or_none(email=token.sub)
-    return user if user and user.is_active else None
+    async with provide_services(deps.provide_users_service, connection=connection) as (service,):
+        user = await service.get_one_or_none(email=token.sub)
+        return user if user and user.is_active else None
 
 
 def create_access_token(
@@ -126,6 +125,7 @@ def create_access_token(
         is_superuser: Whether user is superuser
         is_verified: Whether user email is verified
         auth_method: Authentication method used
+        amr: Authentication methods reference for the token
 
     Returns:
         JWT token string
@@ -150,6 +150,7 @@ def create_access_token(
         },
     )
     return token.encode(secret=settings.app.SECRET_KEY, algorithm=settings.app.JWT_ENCRYPTION_ALGORITHM)
+
 
 auth = OAuth2PasswordBearerAuth[m.User](
     retrieve_user_handler=current_user_from_token,

@@ -7,14 +7,17 @@ from litestar.plugins.sqlalchemy import repository, service
 
 from app.db import models as m
 from app.lib import constants
+from app.lib.deps import CompositeServiceMixin
 
 if TYPE_CHECKING:
     from uuid import UUID
 
     from advanced_alchemy.service import ModelDictT
 
+    from app.domain.tags.services import TagService
 
-class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
+
+class TeamService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.Team]):
     """Team Service."""
 
     class Repo(repository.SQLAlchemyAsyncSlugRepository[m.Team]):
@@ -24,6 +27,13 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
 
     repository_type = Repo
     match_fields = ["name"]
+
+    @property
+    def tags(self) -> TagService:
+        """Lazy-loaded tag service sharing this session."""
+        from app.domain.tags.services import TagService
+
+        return self._get_service(TagService)
 
     async def to_model_on_create(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
         data = service.schema_dump(data)
@@ -84,10 +94,7 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
             tags_to_add = [tag for tag in input_tags if tag not in existing_tags]
             for tag_rm in tags_to_remove:
                 data.tags.remove(tag_rm)
-            from app.domain.tags.services import TagService
-
-            tag_service = TagService(session=self.repository.session)
-            data.tags.extend([await tag_service.upsert({"name": tag_text}) for tag_text in tags_to_add])
+            data.tags.extend([await self.tags.upsert({"name": tag_text}) for tag_text in tags_to_add])
 
         if operation != "create" and (owner or owner_id):
             for member in data.members:

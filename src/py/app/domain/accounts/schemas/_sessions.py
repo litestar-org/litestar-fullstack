@@ -16,13 +16,6 @@ class ActiveSession(msgspec.Struct, gc=False, array_like=True, omit_defaults=Tru
     is_current: bool = False
 
 
-class SessionList(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
-    """List of active user sessions."""
-
-    sessions: list[ActiveSession]
-    count: int
-
-
 class TokenRefresh(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
     """Confirmation that token was refreshed."""
 

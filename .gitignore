@@ -180,11 +180,7 @@ local.duckdb
 requirements.txt
 dist-ssr
 *.local
-src/js/web/.litestar-vite.json
 src/js/web/.litestar.json
-src/js/web/src/generated
-src/js/web/src/lib/api
-src/js/web/src/lib/generated
 src/js/web/public/hot
 
 # Email template build output

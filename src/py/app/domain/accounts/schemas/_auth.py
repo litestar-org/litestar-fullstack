@@ -2,8 +2,8 @@
 
 import msgspec
 
-from app.lib.validation import validate_email, validate_name, validate_password, validate_username
 from app.lib.schema import CamelizedBaseStruct
+from app.lib.validation import validate_email, validate_name, validate_password, validate_username
 
 
 class AccountLogin(CamelizedBaseStruct):

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urlencode
 
 import jwt
-
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
 from litestar import status_codes as status
 from litestar.exceptions import HTTPException
@@ -74,7 +73,8 @@ def verify_oauth_state(
         payload = cast("dict[str, Any]", jwt.decode(state, secret_key, algorithms=["HS256"]))
         if payload.get("provider") != expected_provider:
             return False, {}, "Invalid OAuth provider"
-        return True, payload, ""
+        else:
+            return True, payload, ""
     except jwt.ExpiredSignatureError:
         return False, {}, "OAuth session expired"
     except jwt.InvalidTokenError:
