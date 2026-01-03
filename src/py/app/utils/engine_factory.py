@@ -46,7 +46,7 @@ def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
             """
 
             def encoder(bin_value: bytes) -> bytes:
-                return b"\x01" + encode_json(bin_value)
+                return b"\x01" + bin_value
 
             def decoder(bin_value: bytes) -> Any:
                 # the byte is the \x01 prefix for jsonb used by PostgreSQL.
