@@ -19,11 +19,7 @@ import { z } from "zod"
 /**
  * Email schema with format validation.
  */
-export const emailSchema = z
-  .string()
-  .min(1, "Email is required")
-  .email("Please enter a valid email address")
-  .max(255, "Email must be less than 255 characters")
+export const emailSchema = z.string().min(1, "Email is required").email("Please enter a valid email address").max(255, "Email must be less than 255 characters")
 
 /**
  * Password schema with strength requirements.
@@ -44,10 +40,7 @@ export const passwordSchema = z
 /**
  * Simple password schema for login (no strength requirements).
  */
-export const passwordLoginSchema = z
-  .string()
-  .min(1, "Password is required")
-  .max(128, "Password must be less than 128 characters")
+export const passwordLoginSchema = z.string().min(1, "Password is required").max(128, "Password must be less than 128 characters")
 
 /**
  * Username schema with character restrictions.
@@ -57,20 +50,13 @@ export const usernameSchema = z
   .string()
   .min(3, "Username must be at least 3 characters")
   .max(30, "Username must be less than 30 characters")
-  .regex(
-    /^[a-zA-Z0-9_-]+$/,
-    "Username can only contain letters, numbers, underscores, and hyphens"
-  )
+  .regex(/^[a-zA-Z0-9_-]+$/, "Username can only contain letters, numbers, underscores, and hyphens")
   .optional()
 
 /**
  * Name schema for display names.
  */
-export const nameSchema = z
-  .string()
-  .min(1, "Name is required")
-  .max(100, "Name must be less than 100 characters")
-  .optional()
+export const nameSchema = z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters").optional()
 
 /**
  * TOTP code schema - exactly 6 digits.
@@ -113,10 +99,7 @@ export const registerFormSchema = z
     passwordConfirm: z.string().min(1, "Please confirm your password"),
     name: nameSchema,
     username: usernameSchema,
-    initialTeamName: z
-      .string()
-      .max(50, "Team name must be less than 50 characters")
-      .optional(),
+    initialTeamName: z.string().max(50, "Team name must be less than 50 characters").optional(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "Passwords do not match",
@@ -186,7 +169,7 @@ export const mfaChallengeFormSchema = z
     {
       message: "Invalid code format",
       path: ["code"],
-    }
+    },
   )
 
 export type MfaChallengeFormData = z.infer<typeof mfaChallengeFormSchema>
@@ -225,14 +208,8 @@ export type ProfileUpdateFormData = z.infer<typeof profileUpdateFormSchema>
  * Team create/update form schema.
  */
 export const teamFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Team name must be at least 2 characters")
-    .max(50, "Team name must be less than 50 characters"),
-  description: z
-    .string()
-    .max(500, "Description must be less than 500 characters")
-    .optional(),
+  name: z.string().min(2, "Team name must be at least 2 characters").max(50, "Team name must be less than 50 characters"),
+  description: z.string().max(500, "Description must be less than 500 characters").optional(),
 })
 
 export type TeamFormData = z.infer<typeof teamFormSchema>
@@ -253,11 +230,7 @@ export function checkPasswordStrength(password: string): {
   hasNumber: boolean
 } {
   return {
-    isValid:
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /[0-9]/.test(password),
+    isValid: password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password),
     minLength: password.length >= 8,
     hasUppercase: /[A-Z]/.test(password),
     hasLowercase: /[a-z]/.test(password),

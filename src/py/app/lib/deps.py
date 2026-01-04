@@ -22,6 +22,14 @@ if TYPE_CHECKING:
     from saq import Queue
     from sqlalchemy.ext.asyncio import AsyncSession
 
+__all__ = (
+    "CompositeServiceMixin",
+    "create_filter_dependencies",
+    "create_service_dependencies",
+    "create_service_provider",
+    "get_task_queue",
+    "provide_services",
+)
 T = TypeVar("T")
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")
@@ -34,17 +42,9 @@ S = TypeVar("S", bound="_ServiceWithSession")
 class _ServiceWithSession(Protocol):
     def __init__(self, *, session: AsyncSession) -> None: ...
 
+
 # Type alias for cleaner overload signatures
 ServiceProvider = Callable[["AsyncSession"], AsyncGenerator[T, None]]
-
-__all__ = (
-    "CompositeServiceMixin",
-    "create_filter_dependencies",
-    "create_service_dependencies",
-    "create_service_provider",
-    "get_task_queue",
-    "provide_services",
-)
 
 
 async def get_task_queue() -> Queue:

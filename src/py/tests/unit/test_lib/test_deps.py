@@ -95,11 +95,13 @@ async def test_provide_services_standalone_mode() -> None:
 
     mock_alchemy.get_session = asynccontextmanager(mock_get_session)
 
-    with patch("app.lib.deps.alchemy", mock_alchemy, create=True):
-        with patch.dict("sys.modules", {"app.config": MagicMock(alchemy=mock_alchemy)}):
-            async with provide_services(mock_provider) as (service,):
-                assert isinstance(service, MockService)
-                assert service.session is mock_session
+    with (
+        patch("app.lib.deps.alchemy", mock_alchemy, create=True),
+        patch.dict("sys.modules", {"app.config": MagicMock(alchemy=mock_alchemy)}),
+    ):
+        async with provide_services(mock_provider) as (service,):
+            assert isinstance(service, MockService)
+            assert service.session is mock_session
 
 
 @pytest.mark.asyncio

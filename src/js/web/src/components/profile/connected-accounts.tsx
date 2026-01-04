@@ -5,8 +5,8 @@ import { OAuthLinkButton } from "@/components/profile/oauth-link-button"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SkeletonCard } from "@/components/ui/skeleton"
-import { useOAuthAccounts, useStartOAuthLink, useUnlinkOAuthAccount } from "@/lib/api/hooks/auth"
 import { useOAuthConfig } from "@/hooks/use-oauth-config"
+import { useOAuthAccounts, useStartOAuthLink, useUnlinkOAuthAccount } from "@/lib/api/hooks/auth"
 
 export function ConnectedAccounts() {
   const { data, isLoading, isError } = useOAuthAccounts()
@@ -36,8 +36,8 @@ export function ConnectedAccounts() {
     try {
       const redirectUrl = `${window.location.origin}/profile`
       const result = await startLink.mutateAsync({ provider, redirectUrl })
-      if (result?.authorization_url) {
-        window.location.href = result.authorization_url
+      if (result?.authorizationUrl) {
+        window.location.href = result.authorizationUrl
         return
       }
       toast.error("Unable to start OAuth flow")
@@ -66,9 +66,7 @@ export function ConnectedAccounts() {
         <CardDescription>Manage your linked OAuth providers.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {accounts.length === 0 && (
-          <p className="text-muted-foreground text-sm">No connected accounts yet.</p>
-        )}
+        {accounts.length === 0 && <p className="text-muted-foreground text-sm">No connected accounts yet.</p>}
         <div className="space-y-3">
           {accounts.map((account) => {
             const Icon = account.provider === "google" ? Icons.google : Icons.gitHub

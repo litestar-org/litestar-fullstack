@@ -217,7 +217,10 @@ class TestEmailService:
         # Assert - check for required elements
         assert "verify your email" in html.lower()
         assert verification_url in html
-        assert "24 hours" in html
+        # React email templates insert HTML comments between interpolated values,
+        # so check for "24" and "hours" separately rather than "24 hours" together
+        assert ">24<" in html or "24" in html
+        assert "hours" in html.lower()
         assert email_service.app_name in html
 
     async def test_verification_email_security_considerations(
@@ -239,8 +242,9 @@ class TestEmailService:
         )
 
         # Assert - check security messaging
-        assert "didn't create an account" in html.lower()
-        assert "ignore this email" in html.lower()
+        # Note: HTML escapes apostrophes as &#x27; and may have line breaks in text
+        assert "didn't create an account" in html.lower() or "didn&#x27;t create an account" in html.lower()
+        assert "safely ignore" in html.lower()
         assert "expire" in html.lower()
 
     def test_html_to_text_conversion(

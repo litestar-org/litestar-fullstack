@@ -10,6 +10,7 @@ from litestar.params import Dependency, Parameter
 from sqlalchemy import select
 
 from app.db import models as m
+from app.domain.teams.guards import requires_team_admin, requires_team_membership, requires_team_ownership
 from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
 from app.lib.deps import create_service_dependencies
@@ -84,7 +85,7 @@ class TeamController(Controller):
         db_obj = await teams_service.create(obj)
         return teams_service.to_schema(db_obj, schema_type=Team)
 
-    @get(operation_id="GetTeam", path="/api/teams/{team_id:uuid}")
+    @get(operation_id="GetTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_membership])
     async def get_team(
         self,
         teams_service: TeamService,
@@ -102,7 +103,7 @@ class TeamController(Controller):
         db_obj = await teams_service.get(team_id)
         return teams_service.to_schema(db_obj, schema_type=Team)
 
-    @patch(operation_id="UpdateTeam", path="/api/teams/{team_id:uuid}")
+    @patch(operation_id="UpdateTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_admin])
     async def update_team(
         self,
         data: TeamUpdate,
@@ -127,7 +128,7 @@ class TeamController(Controller):
         fresh_obj = await teams_service.get_one(id=team_id)
         return teams_service.to_schema(fresh_obj, schema_type=Team)
 
-    @delete(operation_id="DeleteTeam", path="/api/teams/{team_id:uuid}")
+    @delete(operation_id="DeleteTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_ownership])
     async def delete_team(
         self,
         teams_service: TeamService,

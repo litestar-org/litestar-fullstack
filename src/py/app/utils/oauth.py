@@ -73,12 +73,12 @@ def verify_oauth_state(
         payload = cast("dict[str, Any]", jwt.decode(state, secret_key, algorithms=["HS256"]))
         if payload.get("provider") != expected_provider:
             return False, {}, "Invalid OAuth provider"
-        else:
-            return True, payload, ""
     except jwt.ExpiredSignatureError:
         return False, {}, "OAuth session expired"
     except jwt.InvalidTokenError:
         return False, {}, "Invalid OAuth state"
+    else:
+        return True, payload, ""
 
 
 def build_oauth_error_redirect(base_url: str, error: str, message: str) -> str:

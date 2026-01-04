@@ -48,7 +48,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from datetime import datetime
         from uuid import UUID
 
-        from advanced_alchemy.exceptions import RepositoryError
+        from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
         from httpx_oauth.oauth2 import OAuth2Token
         from litestar.enums import RequestEncodingType
         from litestar.params import Body
@@ -106,7 +106,11 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             TeamMemberService,
             TeamService,
         )
-        from app.lib.exceptions import ApplicationError, exception_to_http_response  # pyright: ignore
+        from app.lib.exceptions import (  # pyright: ignore
+            ApplicationClientError,
+            ApplicationError,
+            exception_to_http_response,
+        )
         from app.lib.settings import AppSettings, get_settings, provide_app_settings
         from app.server import plugins
 
@@ -125,7 +129,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config = auth.on_app_init(app_config)
         # security
         app_config.cors_config = config.cors
-        app_config.csrf_config = config.csrf
+        # Note: CSRF is not used - this is an API-first SPA with JWT Bearer token auth
         # plugins
         app_config.plugins.extend(
             [
@@ -202,7 +206,9 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         # exception handling
         app_config.exception_handlers = {
             ApplicationError: exception_to_http_response,
+            ApplicationClientError: exception_to_http_response,
             RepositoryError: exception_to_http_response,
+            DuplicateKeyError: exception_to_http_response,
         }
         # dependencies
         dependencies = {

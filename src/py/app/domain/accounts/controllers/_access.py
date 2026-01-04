@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Annotated, Any, cast
 
+from advanced_alchemy.exceptions import DuplicateKeyError
 from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, delete, get, post
 from litestar.di import Provide
@@ -37,7 +38,6 @@ from app.domain.accounts.services import RefreshTokenService
 from app.lib.deps import create_service_dependencies
 from app.lib.email import email_service
 from app.lib.schema import Message
-from app.lib.settings import AppSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
 if TYPE_CHECKING:
@@ -50,11 +50,11 @@ if TYPE_CHECKING:
     from app.domain.accounts.services import (
         EmailVerificationTokenService,
         PasswordResetService,
-        RefreshTokenService,
         RoleService,
         UserService,
     )
     from app.lib.email.service import UserProtocol
+    from app.lib.settings import AppSettings
 
 logger = logging.getLogger(__name__)
 
@@ -148,7 +148,7 @@ class AccessController(Controller):
                 value=encoded_challenge,
                 max_age=300,
                 httponly=True,
-                secure=settings.CSRF_COOKIE_SECURE,
+                secure=settings.COOKIE_SECURE,
                 samesite="lax",
                 path="/api/mfa",
             )
@@ -179,7 +179,7 @@ class AccessController(Controller):
             value=raw_refresh_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.CSRF_COOKIE_SECURE,
+            secure=settings.COOKIE_SECURE,
             samesite="strict",
             path="/api/access",
         )
@@ -236,6 +236,7 @@ class AccessController(Controller):
             request: Request with refresh token cookie
             refresh_token_service: Refresh Token Service
             users_service: User Service
+            settings: Application settings
 
         Returns:
             New access token with rotated refresh token
@@ -277,7 +278,7 @@ class AccessController(Controller):
             value=new_raw_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.CSRF_COOKIE_SECURE,
+            secure=settings.COOKIE_SECURE,
             samesite="strict",
             path="/api/access",
         )
@@ -419,7 +420,10 @@ class AccessController(Controller):
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
 
-        user = await users_service.create(user_data)
+        try:
+            user = await users_service.create(user_data)
+        except DuplicateKeyError as exc:
+            raise ClientException(detail="User with this email already exists", status_code=409) from exc
         request.app.emit(event_id="user_created", user_id=user.id)
 
         _, verification_token = await verification_service.create_verification_token(user_id=user.id, email=user.email)

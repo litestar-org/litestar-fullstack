@@ -355,11 +355,11 @@ async def unverified_user(session: AsyncSession) -> m.User:
 
 @pytest.fixture
 async def inactive_user(session: AsyncSession) -> m.User:
-    """Create an inactive user."""
-
+    """Create an inactive user with a unique email."""
+    unique_id = uuid4()
     user = m.User(
-        id=uuid4(),
-        email="inactive@example.com",
+        id=unique_id,
+        email=f"inactive{str(unique_id)[:8]}@example.com",
         name="Inactive User",
         hashed_password=await get_password_hash("TestPassword123!"),
         is_active=False,

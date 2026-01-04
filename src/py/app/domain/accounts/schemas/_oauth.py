@@ -2,17 +2,17 @@
 
 from datetime import datetime
 
-import msgspec
+from app.lib.schema import CamelizedBaseStruct
 
 
-class OAuthAuthorization(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class OAuthAuthorization(CamelizedBaseStruct):
     """OAuth authorization URL and state."""
 
     authorization_url: str
     state: str | None = None
 
 
-class OAuthAccountInfo(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class OAuthAccountInfo(CamelizedBaseStruct):
     """OAuth account information."""
 
     provider: str

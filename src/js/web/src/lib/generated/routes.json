@@ -34,6 +34,19 @@
       "methods": [
         "POST"
       ],
+      "parameterTypes": {
+        "role_slug": "string"
+      },
+      "parameters": [
+        "role_slug"
+      ],
+      "uri": "/api/roles/{role_slug}/assign"
+    },
+    "assign_role_api_users_roles": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
       "queryParameters": {
         "role_slug": "string"
       },
@@ -294,11 +307,13 @@
         "target_type"
       ],
       "queryParameters": {
+        "action": "string | undefined",
         "actionIn": "string[] | undefined",
         "actorIdIn": "string[] | undefined",
         "createdAfter": "DateTime | undefined",
         "createdBefore": "DateTime | undefined",
         "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
         "ids": "string[] | undefined",
         "orderBy": "string | undefined",
         "pageSize": "number | undefined",
@@ -374,11 +389,13 @@
         "user_id"
       ],
       "queryParameters": {
+        "action": "string | undefined",
         "actionIn": "string[] | undefined",
         "actorIdIn": "string[] | undefined",
         "createdAfter": "DateTime | undefined",
         "createdBefore": "DateTime | undefined",
         "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
         "ids": "string[] | undefined",
         "orderBy": "string | undefined",
         "pageSize": "number | undefined",
@@ -415,6 +432,14 @@
       "methods": [
         "GET"
       ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined"
+      },
       "uri": "/api/profile/oauth/accounts"
     },
     "list_logs": {
@@ -423,11 +448,13 @@
         "GET"
       ],
       "queryParameters": {
+        "action": "string | undefined",
         "actionIn": "string[] | undefined",
         "actorIdIn": "string[] | undefined",
         "createdAfter": "DateTime | undefined",
         "createdBefore": "DateTime | undefined",
         "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
         "ids": "string[] | undefined",
         "orderBy": "string | undefined",
         "pageSize": "number | undefined",
@@ -735,6 +762,19 @@
       "uri": "/api/access/sessions"
     },
     "revoke_role": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "role_slug": "string"
+      },
+      "parameters": [
+        "role_slug"
+      ],
+      "uri": "/api/roles/{role_slug}/revoke"
+    },
+    "revoke_role_api_users_roles": {
       "method": "delete",
       "methods": [
         "DELETE"

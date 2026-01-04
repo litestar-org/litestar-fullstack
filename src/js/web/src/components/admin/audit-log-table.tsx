@@ -56,16 +56,8 @@ export function AuditLogTable() {
           <Input placeholder="Action" value={action} onChange={(event) => setAction(event.target.value)} />
           <Input placeholder="Actor ID" value={actorId} onChange={(event) => setActorId(event.target.value)} />
           <Input placeholder="Target type" value={targetType} onChange={(event) => setTargetType(event.target.value)} />
-          <Input
-            placeholder="Created after (ISO)"
-            value={startDate}
-            onChange={(event) => setStartDate(event.target.value)}
-          />
-          <Input
-            placeholder="Created before (ISO)"
-            value={endDate}
-            onChange={(event) => setEndDate(event.target.value)}
-          />
+          <Input placeholder="Created after (ISO)" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
+          <Input placeholder="Created before (ISO)" value={endDate} onChange={(event) => setEndDate(event.target.value)} />
         </div>
         <Table>
           <TableHeader>
@@ -87,9 +79,9 @@ export function AuditLogTable() {
             {data.items.map((entry) => (
               <TableRow key={entry.id}>
                 <TableCell>{entry.action}</TableCell>
-                <TableCell className="text-muted-foreground">{entry.actor_email ?? entry.actor_id ?? "System"}</TableCell>
-                <TableCell className="text-muted-foreground">{entry.target_label ?? entry.target_id ?? "-"}</TableCell>
-                <TableCell className="text-muted-foreground">{new Date(entry.created_at).toLocaleString()}</TableCell>
+                <TableCell className="text-muted-foreground">{entry.actorEmail ?? entry.actorId ?? "System"}</TableCell>
+                <TableCell className="text-muted-foreground">{entry.targetLabel ?? entry.targetId ?? "-"}</TableCell>
+                <TableCell className="text-muted-foreground">{new Date(entry.createdAt).toLocaleString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -42,15 +42,17 @@ class UserRole(CamelizedBaseStruct):
 
 
 class OauthAccount(CamelizedBaseStruct):
-    """Holds linked Oauth details for a user."""
+    """Holds linked OAuth details for a user.
+
+    Note: Sensitive fields (access_token, refresh_token, expires_at) are
+    intentionally excluded from this schema to prevent token leakage to
+    the frontend. These fields should only be accessed server-side.
+    """
 
     id: UUID
     oauth_name: str
-    access_token: str
     account_id: str
     account_email: str
-    expires_at: int | None = None
-    refresh_token: str | None = None
 
 
 class User(CamelizedBaseStruct):

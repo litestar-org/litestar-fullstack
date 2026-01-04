@@ -9,6 +9,7 @@ export function StatsCards() {
     return (
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton placeholders
           <SkeletonCard key={`stats-skeleton-${index}`} />
         ))}
       </div>
@@ -27,13 +28,13 @@ export function StatsCards() {
   }
 
   const items = [
-    { label: "Total users", value: data.total_users },
-    { label: "Active users", value: data.active_users },
-    { label: "Verified users", value: data.verified_users },
-    { label: "Total teams", value: data.total_teams },
-    { label: "New users today", value: data.new_users_today },
-    { label: "New users this week", value: data.new_users_week },
-    { label: "Events today", value: data.events_today },
+    { label: "Total users", value: data.totalUsers },
+    { label: "Active users", value: data.activeUsers },
+    { label: "Verified users", value: data.verifiedUsers },
+    { label: "Total teams", value: data.totalTeams },
+    { label: "New users today", value: data.newUsersToday },
+    { label: "New users this week", value: data.newUsersWeek },
+    { label: "Events today", value: data.eventsToday },
   ]
 
   return (

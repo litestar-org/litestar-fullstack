@@ -69,7 +69,7 @@ export function MfaSetupDialog({ disabled }: MfaSetupDialogProps) {
     return (
       <div className="space-y-4">
         <div className="flex justify-center rounded-lg border border-border/60 bg-muted/40 p-4">
-          <img src={setup.qr_code} alt="MFA QR code" className="h-40 w-40" />
+          <img src={setup.qrCode} alt="MFA QR code" className="h-40 w-40" />
         </div>
         <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 font-mono text-sm">{setup.secret}</div>
         <TotpInput value={code} onChange={setCode} disabled={isLoading} autoFocus />
@@ -85,15 +85,10 @@ export function MfaSetupDialog({ disabled }: MfaSetupDialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Enable multi-factor authentication</DialogTitle>
-          <DialogDescription>
-            Scan the QR code with your authenticator app, then enter the 6-digit verification code.
-          </DialogDescription>
+          <DialogDescription>Scan the QR code with your authenticator app, then enter the 6-digit verification code.</DialogDescription>
         </DialogHeader>
         {codes ? (
-          <BackupCodesDisplay
-            codes={codes}
-            description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator."
-          />
+          <BackupCodesDisplay codes={codes} description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator." />
         ) : (
           qrContent
         )}

@@ -20,7 +20,7 @@ class TestUserRegistrationEmailVerification:
         # Arrange
         user_data = {
             "email": "newuser@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "New User",
         }
 
@@ -40,7 +40,7 @@ class TestUserRegistrationEmailVerification:
         # Arrange
         user_data = {
             "email": "emailtest@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "Email Test User",
         }
 
@@ -63,7 +63,7 @@ class TestUserRegistrationEmailVerification:
         # Arrange
         user_data = {
             "email": "complete@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "Complete User",
         }
 
@@ -77,7 +77,7 @@ class TestUserRegistrationEmailVerification:
         # Verify user is initially unverified
         status_response = await client.get(f"/api/email-verification/status/{user_id}")
         assert status_response.status_code == 200
-        assert status_response.json()["is_verified"] is False
+        assert status_response.json()["isVerified"] is False
 
         # Act 2 - Request verification email
         request_data = {"email": "complete@example.com"}
@@ -99,14 +99,14 @@ class TestUserRegistrationEmailVerification:
         # Double-check with status endpoint
         final_status_response = await client.get(f"/api/email-verification/status/{user_id}")
         assert final_status_response.status_code == 200
-        assert final_status_response.json()["is_verified"] is True
+        assert final_status_response.json()["isVerified"] is True
 
     async def test_registration_with_duplicate_email(self, client: AsyncTestClient) -> None:
         """Test registration with duplicate email address."""
         # Arrange
         user_data = {
             "email": "duplicate@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "First User",
         }
 
@@ -126,7 +126,7 @@ class TestUserRegistrationEmailVerification:
         # Arrange
         user_data = {
             "email": "logintest@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "Login Test User",
         }
 
@@ -137,7 +137,7 @@ class TestUserRegistrationEmailVerification:
         # Act 2 - Try to login before verification
         login_data = {
             "username": "logintest@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
         }
         login_response = await client.post(
             "/api/access/login",
@@ -145,15 +145,16 @@ class TestUserRegistrationEmailVerification:
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
 
-        # Assert - Login should succeed (email verification is not required for login)
-        assert login_response.status_code == 200
+        # Assert - Login should succeed even for unverified users
+        # Email verification is not required for login in this application
+        assert login_response.status_code == 201
 
     async def test_registration_with_initial_team(self, client: AsyncTestClient) -> None:
         """Test registration with initial team creation."""
         # Arrange
         user_data = {
             "email": "teamuser@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "Team User",
             "initial_team_name": "My Team",
         }
@@ -173,7 +174,7 @@ class TestUserRegistrationEmailVerification:
         # Arrange
         user_data = {
             "email": "multiple@example.com",
-            "password": "SecurePass123",
+            "password": "SecurePass123!",
             "name": "Multiple User",
         }
 

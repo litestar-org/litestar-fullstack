@@ -160,6 +160,36 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
         return token
 
 
+class RefreshTokenFactory(SQLAlchemyFactory[m.RefreshToken]):
+    """Factory for RefreshToken model."""
+
+    __model__ = m.RefreshToken
+    __set_relationships__ = True
+
+    id = Use(uuid4)
+    token_hash = Ignore()
+    family_id = Use(uuid4)
+    expires_at = Use(lambda: datetime.now(UTC) + timedelta(days=7))
+    revoked_at = None
+    device_info = "Mozilla/5.0 (Test Device) TestBrowser/1.0"
+
+    # These will be set by the caller
+    user_id = None
+
+    # Ignore relationships
+    user = Ignore()
+
+    @classmethod
+    def build(cls, **kwargs: Any) -> m.RefreshToken:
+        raw_token = kwargs.pop("raw_token", None)
+        if raw_token is None:
+            raw_token = uuid4().hex + uuid4().hex  # Make it longer for security
+        kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
+        token = super().build(**kwargs)
+        token.raw_token = raw_token
+        return token
+
+
 class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     """Factory for UserOauthAccount model."""
 
@@ -298,9 +328,7 @@ async def create_team_with_members(session: Any, member_count: int = 3, **kwargs
     await session.flush()
 
     # Create owner membership
-    owner_membership = TeamMemberFactory.build(
-        team_id=team.id, user_id=owner.id, role=m.TeamRoles.ADMIN, is_owner=True
-    )
+    owner_membership = TeamMemberFactory.build(team_id=team.id, user_id=owner.id, role=m.TeamRoles.ADMIN, is_owner=True)
     session.add(owner_membership)
 
     # Create additional members

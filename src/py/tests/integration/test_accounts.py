@@ -9,7 +9,7 @@ async def test_update_user_no_auth(client: "AsyncClient") -> None:
     assert response.status_code == 401
     response = await client.post(
         "/api/users/",
-        json={"name": "A User", "email": "new-user@example.com", "password": "S3cret!"},
+        json={"name": "A User", "email": "new-user@example.com", "password": "Test_Password1!"},
     )
     assert response.status_code == 401
     response = await client.get("/api/users/97108ac1-ffcb-411d-8b1e-d9183399f63b")
@@ -35,7 +35,7 @@ async def test_accounts_get(client: "AsyncClient", superuser_token_headers: dict
 async def test_accounts_create(client: "AsyncClient", superuser_token_headers: dict[str, str]) -> None:
     response = await client.post(
         "/api/users",
-        json={"name": "A User", "email": "new-user@example.com", "password": "S3cret!"},
+        json={"name": "A User", "email": "new-user@example.com", "password": "Test_Password1!"},
         headers=superuser_token_headers,
     )
     assert response.status_code == 201
@@ -76,7 +76,7 @@ async def test_accounts_with_incorrect_role(client: "AsyncClient", user_token_he
     assert response.status_code == 403
     response = await client.post(
         "/api/users/",
-        json={"name": "A User", "email": "new-user@example.com", "password": "S3cret!"},
+        json={"name": "A User", "email": "new-user@example.com", "password": "Test_Password1!"},
         headers=user_token_headers,
     )
     assert response.status_code == 403

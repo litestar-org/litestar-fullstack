@@ -42,12 +42,7 @@ export function MfaDisableDialog({ disabled }: MfaDisableDialogProps) {
           <DialogTitle>Disable multi-factor authentication</DialogTitle>
           <DialogDescription>Confirm your password to turn off MFA.</DialogDescription>
         </DialogHeader>
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+        <Input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
         <DialogFooter>
           <Button onClick={handleDisable} disabled={disableMfa.isPending}>
             Disable MFA

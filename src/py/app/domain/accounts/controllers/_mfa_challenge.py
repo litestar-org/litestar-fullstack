@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Any
-from uuid import UUID
 
 from litestar import Controller, Response, post
 from litestar.di import Provide
@@ -16,6 +15,8 @@ from app.domain.admin.deps import provide_audit_log_service
 from app.lib.crypt import verify_backup_code, verify_totp_code
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from litestar import Request
     from litestar.security.jwt import OAuth2Login, Token
 
@@ -132,7 +133,7 @@ class MfaChallengeController(Controller):
             value=raw_refresh_token,
             max_age=REFRESH_TOKEN_MAX_AGE,
             httponly=True,
-            secure=settings.CSRF_COOKIE_SECURE,
+            secure=settings.COOKIE_SECURE,
             samesite="strict",
             path="/api/access",
         )

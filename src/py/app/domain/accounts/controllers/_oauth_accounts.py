@@ -17,6 +17,7 @@ from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 from sqlalchemy.orm import undefer_group
 
+from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import OAuthAccountInfo, OAuthAuthorization
 from app.domain.accounts.services import UserOAuthAccountService
@@ -29,7 +30,6 @@ if TYPE_CHECKING:
     from advanced_alchemy.service.pagination import OffsetPagination
     from litestar import Request
 
-    from app.db import models as m
     from app.domain.accounts.services import UserService
     from app.lib.settings import AppSettings
 
@@ -139,9 +139,6 @@ class OAuthAccountController(Controller):
             provider: OAuth provider name.
             redirect_url: Frontend callback URL after linking.
 
-        Raises:
-            HTTPException: If OAuth is not configured or provider is invalid.
-
         Returns:
             Authorization URL and state.
         """
@@ -188,9 +185,6 @@ class OAuthAccountController(Controller):
             error: OAuth error code.
             error_description: OAuth error description.
 
-        Raises:
-            HTTPException: If OAuth is not configured or provider is invalid.
-
         Returns:
             Redirect to frontend with success or error parameters.
         """
@@ -211,7 +205,9 @@ class OAuthAccountController(Controller):
             else:
                 state_user_id = payload.get("user_id")
                 if state_user_id and state_user_id != str(current_user.id):
-                    redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", "Invalid OAuth session")
+                    redirect_path = build_oauth_error_redirect(
+                        frontend_callback, "oauth_failed", "Invalid OAuth session"
+                    )
                 elif error:
                     error_msg = error_description or error
                     redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
@@ -325,9 +321,6 @@ class OAuthAccountController(Controller):
             settings: Application settings.
             provider: OAuth provider name.
             redirect_url: Frontend callback URL after upgrade.
-
-        Raises:
-            HTTPException: If OAuth is not configured or provider is invalid.
 
         Returns:
             Authorization URL and state.

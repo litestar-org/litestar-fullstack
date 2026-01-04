@@ -33,7 +33,7 @@ class AdminTeamDetail(CamelizedBaseStruct, kw_only=True):
     owner_email: str | None = None
 
 
-class AdminTeamUpdate(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class AdminTeamUpdate(msgspec.Struct, gc=False, omit_defaults=True):
     """Update payload for admin team management."""
 
     name: str | None | msgspec.UnsetType = msgspec.UNSET

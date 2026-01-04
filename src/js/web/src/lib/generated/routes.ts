@@ -21,6 +21,7 @@ export type RouteName =
   | 'accept_team_invitation'
   | 'add_member_to_team'
   | 'assign_role'
+  | 'assign_role_api_users_roles'
   | 'confirm_setup'
   | 'create_role'
   | 'create_tag'
@@ -78,6 +79,7 @@ export type RouteName =
   | 'reset_password_with_token'
   | 'revoke_all_sessions'
   | 'revoke_role'
+  | 'revoke_role_api_users_roles'
   | 'revoke_session'
   | 'saq'
   | 'signup'
@@ -120,7 +122,10 @@ export interface RoutePathParams {
   'add_member_to_team': {
     team_id: UUID;
   };
-  'assign_role': Record<string, never>;
+  'assign_role': {
+    role_slug: string;
+  };
+  'assign_role_api_users_roles': Record<string, never>;
   'confirm_setup': Record<string, never>;
   'create_role': Record<string, never>;
   'create_tag': Record<string, never>;
@@ -224,7 +229,10 @@ export interface RoutePathParams {
   'request_verification': Record<string, never>;
   'reset_password_with_token': Record<string, never>;
   'revoke_all_sessions': Record<string, never>;
-  'revoke_role': Record<string, never>;
+  'revoke_role': {
+    role_slug: string;
+  };
+  'revoke_role_api_users_roles': Record<string, never>;
   'revoke_session': {
     session_id: UUID;
   };
@@ -308,7 +316,8 @@ export interface RoutePathParams {
 export interface RouteQueryParams {
   'accept_team_invitation': Record<string, never>;
   'add_member_to_team': Record<string, never>;
-  'assign_role': {
+  'assign_role': Record<string, never>;
+  'assign_role_api_users_roles': {
     role_slug: string;
   };
   'confirm_setup': Record<string, never>;
@@ -345,11 +354,13 @@ export interface RouteQueryParams {
   'get_stats': Record<string, never>;
   'get_tag': Record<string, never>;
   'get_target_logs': {
+    action?: string;
     actionIn?: string[];
     actorIdIn?: string[];
     createdAfter?: DateTime;
     createdBefore?: DateTime;
     currentPage?: number;
+    end_date?: DateTime;
     ids?: string[];
     orderBy?: string;
     pageSize?: number;
@@ -364,11 +375,13 @@ export interface RouteQueryParams {
   'get_user': Record<string, never>;
   'get_user_api_users_user_id:uuid': Record<string, never>;
   'get_user_logs': {
+    action?: string;
     actionIn?: string[];
     actorIdIn?: string[];
     createdAfter?: DateTime;
     createdBefore?: DateTime;
     currentPage?: number;
+    end_date?: DateTime;
     ids?: string[];
     orderBy?: string;
     pageSize?: number;
@@ -380,13 +393,22 @@ export interface RouteQueryParams {
   };
   'get_verification_status': Record<string, never>;
   'initiate_setup': Record<string, never>;
-  'list_accounts': Record<string, never>;
+  'list_accounts': {
+    createdAfter?: DateTime;
+    createdBefore?: DateTime;
+    currentPage?: number;
+    orderBy?: string;
+    pageSize?: number;
+    sortOrder?: "asc" | "desc";
+  };
   'list_logs': {
+    action?: string;
     actionIn?: string[];
     actorIdIn?: string[];
     createdAfter?: DateTime;
     createdBefore?: DateTime;
     currentPage?: number;
+    end_date?: DateTime;
     ids?: string[];
     orderBy?: string;
     pageSize?: number;
@@ -514,7 +536,8 @@ export interface RouteQueryParams {
   'request_verification': Record<string, never>;
   'reset_password_with_token': Record<string, never>;
   'revoke_all_sessions': Record<string, never>;
-  'revoke_role': {
+  'revoke_role': Record<string, never>;
+  'revoke_role_api_users_roles': {
     role_slug: string;
   };
   'revoke_session': Record<string, never>;
@@ -581,6 +604,13 @@ export const routeDefinitions = {
     queryParams: [] as const,
   },
   'assign_role': {
+    path: '/api/roles/{role_slug}/assign',
+    methods: ['POST'] as const,
+    method: 'post',
+    pathParams: ['role_slug'] as const,
+    queryParams: [] as const,
+  },
+  'assign_role_api_users_roles': {
     path: '/api/users/roles',
     methods: ['POST'] as const,
     method: 'post',
@@ -753,7 +783,7 @@ export const routeDefinitions = {
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['target_id', 'target_type'] as const,
-    queryParams: ['actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
+    queryParams: ['action', 'actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'end_date', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
   },
   'get_team': {
     path: '/api/admin/teams/{team_id}',
@@ -788,7 +818,7 @@ export const routeDefinitions = {
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['user_id'] as const,
-    queryParams: ['actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
+    queryParams: ['action', 'actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'end_date', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
   },
   'get_verification_status': {
     path: '/api/email-verification/status/{user_id}',
@@ -809,14 +839,14 @@ export const routeDefinitions = {
     methods: ['GET'] as const,
     method: 'get',
     pathParams: [] as const,
-    queryParams: [] as const,
+    queryParams: ['createdAfter', 'createdBefore', 'currentPage', 'orderBy', 'pageSize', 'sortOrder'] as const,
   },
   'list_logs': {
     path: '/api/admin/audit',
     methods: ['GET'] as const,
     method: 'get',
     pathParams: [] as const,
-    queryParams: ['actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
+    queryParams: ['action', 'actionIn', 'actorIdIn', 'createdAfter', 'createdBefore', 'currentPage', 'end_date', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'targetIdIn', 'targetTypeIn'] as const,
   },
   'list_roles': {
     path: '/api/roles',
@@ -981,6 +1011,13 @@ export const routeDefinitions = {
     queryParams: [] as const,
   },
   'revoke_role': {
+    path: '/api/roles/{role_slug}/revoke',
+    methods: ['POST'] as const,
+    method: 'post',
+    pathParams: ['role_slug'] as const,
+    queryParams: [] as const,
+  },
+  'revoke_role_api_users_roles': {
     path: '/api/users/roles',
     methods: ['DELETE'] as const,
     method: 'delete',

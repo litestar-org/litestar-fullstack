@@ -198,7 +198,7 @@ class TestEmailVerificationTokenVerification:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create and verify token once
-            created_token, raw_token = await service.create_verification_token(user.id, user.email)
+            _created_token, raw_token = await service.create_verification_token(user.id, user.email)
             await service.verify_token(raw_token)
 
             # Try to verify again
@@ -540,7 +540,7 @@ class TestEmailVerificationTokenIntegration:
 
         async with EmailVerificationTokenService.new(sessionmaker()) as service:
             # Create tokens for different emails
-            primary_token, primary_raw = await service.create_verification_token(user.id, user.email)
+            _primary_token, primary_raw = await service.create_verification_token(user.id, user.email)
             alt_token, alt_raw = await service.create_verification_token(user.id, "alt@example.com")
 
             # Verify primary email

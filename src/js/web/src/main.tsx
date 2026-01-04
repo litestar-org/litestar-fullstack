@@ -71,11 +71,16 @@ const processQueue = (error: Error | null) => {
 client.interceptors.error.use(async (error, response, request, options) => {
   // Only attempt refresh for 401 errors, not on refresh endpoint itself
   const requestUrl = request.url
-  if (
-    response?.status === 401 &&
-    !requestUrl?.includes("/api/access/refresh") &&
-    !requestUrl?.includes("/api/access/login")
-  ) {
+  if (response?.status === 401 && !requestUrl?.includes("/api/access/refresh") && !requestUrl?.includes("/api/access/login")) {
+    // Skip refresh attempt if we're already on a public auth page to prevent infinite loops
+    const currentPath = window.location.pathname
+    const isPublicAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].some((p) => currentPath.startsWith(p))
+
+    if (isPublicAuthPage) {
+      // Don't try to refresh or redirect on public auth pages - just throw the error
+      throw error
+    }
+
     if (isRefreshing) {
       // If already refreshing, queue this request
       return new Promise((resolve, reject) => {
@@ -98,8 +103,11 @@ client.interceptors.error.use(async (error, response, request, options) => {
     } catch (refreshError) {
       processQueue(refreshError as Error)
       // Refresh failed - clear auth state and redirect to login
+      // But only if we're not already on the login page
       queryClient.clear()
-      window.location.href = "/login"
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login"
+      }
       throw refreshError
     } finally {
       isRefreshing = false

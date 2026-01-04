@@ -45,7 +45,7 @@ class AdminUserDetail(CamelizedBaseStruct, kw_only=True):
     oauth_providers: list[str] = []
 
 
-class AdminUserUpdate(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class AdminUserUpdate(msgspec.Struct, gc=False, omit_defaults=True):
     """Update payload for admin user management."""
 
     name: str | None | msgspec.UnsetType = msgspec.UNSET

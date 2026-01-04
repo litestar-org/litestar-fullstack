@@ -23,10 +23,7 @@ function MfaChallengePage() {
 
   const handleVerify = async () => {
     try {
-      const payload =
-        tab === "totp"
-          ? { code }
-          : { recovery_code: recoveryCode.trim().toUpperCase() }
+      const payload = tab === "totp" ? { code } : { recovery_code: recoveryCode.trim().toUpperCase() }
       const response = await verify.mutateAsync(payload)
       const accessToken = (response as { access_token?: string })?.access_token
       if (!accessToken) {
@@ -62,11 +59,7 @@ function MfaChallengePage() {
               <TotpInput value={code} onChange={setCode} autoFocus />
             </TabsContent>
             <TabsContent value="recovery" className="space-y-3">
-              <Input
-                placeholder="XXXX-XXXX"
-                value={recoveryCode}
-                onChange={(event) => setRecoveryCode(event.target.value)}
-              />
+              <Input placeholder="XXXX-XXXX" value={recoveryCode} onChange={(event) => setRecoveryCode(event.target.value)} />
             </TabsContent>
           </Tabs>
           <Button className="w-full" onClick={handleVerify} disabled={disableAction}>

@@ -71,6 +71,8 @@ class SystemController(Controller):
         name="system:oauth-config",
         path="/api/config/oauth",
         summary="Get OAuth Configuration",
+        exclude_from_auth=True,
+        security=[],  # Public endpoint - no auth required
     )
     async def get_oauth_config(self, settings: AppSettings) -> s.OAuthConfig:
         """Get OAuth provider configuration for frontend.

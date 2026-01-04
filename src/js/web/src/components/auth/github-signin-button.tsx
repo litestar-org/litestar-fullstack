@@ -29,9 +29,9 @@ export function GitHubSignInButton({ variant = "signin", onSuccess, onError, red
       return response.data
     },
     onSuccess: (data) => {
-      if (data?.authorization_url) {
+      if (data?.authorizationUrl) {
         // Redirect to GitHub OAuth
-        window.location.href = data.authorization_url
+        window.location.href = data.authorizationUrl
       } else {
         toast.error("Failed to get authorization URL")
         onError?.("Failed to get authorization URL")

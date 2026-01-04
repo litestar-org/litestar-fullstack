@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import {
+  type AdminListAuditLogsData,
+  type AdminListTeamsData,
+  type AdminListUsersData,
+  type AdminTeamDetail,
+  type AdminTeamSummary,
+  type AdminUserDetail,
+  type AdminUserSummary,
+  type AuditLogEntry,
   adminDeleteTeam,
   adminDeleteUser,
   adminGetTeam,
@@ -10,17 +18,9 @@ import {
   adminListUsers,
   adminUpdateTeam,
   adminUpdateUser,
+  type DashboardStats,
   getDashboardStats,
   getRecentActivity,
-  type AdminListAuditLogsData,
-  type AdminListTeamsData,
-  type AdminListUsersData,
-  type AdminTeamDetail,
-  type AdminTeamSummary,
-  type AdminUserDetail,
-  type AdminUserSummary,
-  type AuditLogEntry,
-  type DashboardStats,
   type RecentActivity,
 } from "@/lib/generated/api"
 
@@ -82,16 +82,7 @@ export function useAdminAuditLogs(params: {
   startDate?: string
   endDate?: string
 }) {
-  const {
-    page = 1,
-    pageSize = 50,
-    search,
-    action,
-    actorId,
-    targetType,
-    startDate,
-    endDate,
-  } = params
+  const { page = 1, pageSize = 50, search, action, actorId, targetType, startDate, endDate } = params
   return useQuery({
     queryKey: ["admin", "audit", page, pageSize, search, action, actorId, targetType, startDate, endDate],
     queryFn: async () => {

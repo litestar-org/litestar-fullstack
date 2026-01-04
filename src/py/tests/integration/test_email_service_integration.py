@@ -97,7 +97,7 @@ class TestEmailServiceIntegration:
                 error_data = response.json()
                 assert "detail" in error_data or "message" in error_data
             else:
-                assert response.status_code == 200
+                assert response.status_code == 201
                 data = response.json()
                 assert "reset" in data["message"].lower() or "password" in data["message"].lower()
 

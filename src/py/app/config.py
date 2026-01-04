@@ -5,7 +5,6 @@ from app.lib.settings import get_settings
 _settings = get_settings()
 
 compression = _settings.app.get_compression_config()
-csrf = _settings.app.get_csrf_config()
 cors = _settings.app.get_cors_config()
 alchemy = _settings.db.get_config()
 vite = _settings.vite.get_config()

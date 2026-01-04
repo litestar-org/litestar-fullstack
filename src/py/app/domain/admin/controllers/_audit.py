@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING, Annotated, cast
 from uuid import UUID
 
 from litestar import Controller, get
 from litestar.params import Dependency, Parameter
-
-from advanced_alchemy.extensions.litestar.providers import FilterConfig
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
@@ -18,6 +15,9 @@ from app.domain.admin.services import AuditLogService
 from app.lib.deps import create_service_dependencies
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
+    from advanced_alchemy.extensions.litestar.providers import FilterConfig
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service.pagination import OffsetPagination
 
@@ -32,7 +32,7 @@ class AuditController(Controller):
         AuditLogService,
         key="audit_service",
         filters=cast(
-            FilterConfig,
+            "FilterConfig",
             {
                 "id_filter": UUID,
                 "search": "actor_email,action,target_label",
@@ -57,7 +57,7 @@ class AuditController(Controller):
         audit_service: AuditLogService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="end_date", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
         """List audit logs with filtering and pagination.
 
@@ -108,7 +108,7 @@ class AuditController(Controller):
         user_id: UUID,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="end_date", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific user."""
         conditions = [m.AuditLog.actor_id == user_id]
@@ -135,7 +135,7 @@ class AuditController(Controller):
         target_id: str,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
         action: str | None = Parameter(query="action", required=False),
-        end_date: datetime | None = Parameter(query="end_date", required=False),
+        end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific target."""
         conditions = [

@@ -65,11 +65,11 @@
       },
       "ActiveSession": {
         "properties": {
-          "created_at": {
+          "createdAt": {
             "format": "date-time",
             "type": "string"
           },
-          "device_info": {
+          "deviceInfo": {
             "oneOf": [
               {
                 "type": "string"
@@ -79,7 +79,7 @@
               }
             ]
           },
-          "expires_at": {
+          "expiresAt": {
             "format": "date-time",
             "type": "string"
           },
@@ -87,14 +87,14 @@
             "format": "uuid",
             "type": "string"
           },
-          "is_current": {
+          "isCurrent": {
             "default": false,
             "type": "boolean"
           }
         },
         "required": [
-          "created_at",
-          "expires_at",
+          "createdAt",
+          "expiresAt",
           "id"
         ],
         "title": "ActiveSession",
@@ -810,10 +810,10 @@
       },
       "MfaSetup": {
         "properties": {
-          "provisioning_uri": {
+          "provisioningUri": {
             "type": "string"
           },
-          "qr_code": {
+          "qrCode": {
             "type": "string"
           },
           "secret": {
@@ -821,8 +821,8 @@
           }
         },
         "required": [
-          "provisioning_uri",
-          "qr_code",
+          "provisioningUri",
+          "qrCode",
           "secret"
         ],
         "title": "MfaSetup",
@@ -830,7 +830,7 @@
       },
       "MfaStatus": {
         "properties": {
-          "backup_codes_remaining": {
+          "backupCodesRemaining": {
             "oneOf": [
               {
                 "type": "integer"
@@ -840,7 +840,7 @@
               }
             ]
           },
-          "confirmed_at": {
+          "confirmedAt": {
             "oneOf": [
               {
                 "format": "date-time",
@@ -899,7 +899,7 @@
       },
       "OAuthAccountInfo": {
         "properties": {
-          "avatar_url": {
+          "avatarUrl": {
             "oneOf": [
               {
                 "type": "string"
@@ -912,7 +912,7 @@
           "email": {
             "type": "string"
           },
-          "last_login_at": {
+          "lastLoginAt": {
             "oneOf": [
               {
                 "format": "date-time",
@@ -923,7 +923,7 @@
               }
             ]
           },
-          "linked_at": {
+          "linkedAt": {
             "format": "date-time",
             "type": "string"
           },
@@ -937,7 +937,7 @@
               }
             ]
           },
-          "oauth_id": {
+          "oauthId": {
             "type": "string"
           },
           "provider": {
@@ -946,35 +946,16 @@
         },
         "required": [
           "email",
-          "linked_at",
-          "oauth_id",
+          "linkedAt",
+          "oauthId",
           "provider"
         ],
         "title": "OAuthAccountInfo",
         "type": "object"
       },
-      "OAuthAccountList": {
-        "properties": {
-          "accounts": {
-            "items": {
-              "$ref": "#/components/schemas/OAuthAccountInfo"
-            },
-            "type": "array"
-          },
-          "count": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "accounts",
-          "count"
-        ],
-        "title": "OAuthAccountList",
-        "type": "object"
-      },
       "OAuthAuthorization": {
         "properties": {
-          "authorization_url": {
+          "authorizationUrl": {
             "type": "string"
           },
           "state": {
@@ -989,7 +970,7 @@
           }
         },
         "required": [
-          "authorization_url"
+          "authorizationUrl"
         ],
         "title": "OAuthAuthorization",
         "type": "object"
@@ -1011,24 +992,11 @@
       },
       "OauthAccount": {
         "properties": {
-          "accessToken": {
-            "type": "string"
-          },
           "accountEmail": {
             "type": "string"
           },
           "accountId": {
             "type": "string"
-          },
-          "expiresAt": {
-            "oneOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ]
           },
           "id": {
             "format": "uuid",
@@ -1036,26 +1004,42 @@
           },
           "oauthName": {
             "type": "string"
-          },
-          "refreshToken": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
           }
         },
         "required": [
-          "accessToken",
           "accountEmail",
           "accountId",
           "id",
           "oauthName"
         ],
         "title": "OauthAccount",
+        "type": "object"
+      },
+      "OffsetPagination_app.domain.accounts.schemas._oauth.OAuthAccountInfo_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OAuthAccountInfo"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "limit",
+          "offset",
+          "total"
+        ],
+        "title": "OffsetPagination[OAuthAccountInfo]",
         "type": "object"
       },
       "OffsetPagination_app.domain.accounts.schemas._roles.Role_": {
@@ -1306,21 +1290,21 @@
           "message": {
             "type": "string"
           },
-          "user_id": {
+          "userId": {
             "format": "uuid",
             "type": "string"
           }
         },
         "required": [
           "message",
-          "user_id"
+          "userId"
         ],
         "title": "PasswordResetComplete",
         "type": "object"
       },
       "PasswordResetSent": {
         "properties": {
-          "expires_in_minutes": {
+          "expiresInMinutes": {
             "default": 60,
             "type": "integer"
           },
@@ -1428,7 +1412,7 @@
       },
       "ResetTokenValidation": {
         "properties": {
-          "expires_at": {
+          "expiresAt": {
             "oneOf": [
               {
                 "type": "string"
@@ -1438,7 +1422,7 @@
               }
             ]
           },
-          "user_id": {
+          "userId": {
             "oneOf": [
               {
                 "format": "uuid",
@@ -3064,7 +3048,28 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actorIdIn",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3106,7 +3111,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3127,15 +3132,31 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "action",
             "required": false,
             "schema": {
               "oneOf": [
                 {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
                 },
                 {
                   "type": "null"
@@ -3396,7 +3417,28 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actorIdIn",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3438,7 +3480,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3459,15 +3501,31 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "action",
             "required": false,
             "schema": {
               "oneOf": [
                 {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
                 },
                 {
                   "type": "null"
@@ -3720,7 +3778,28 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actorIdIn",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3762,7 +3841,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3783,15 +3862,31 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "action",
             "required": false,
             "schema": {
               "oneOf": [
                 {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
                 },
                 {
                   "type": "null"
@@ -6180,17 +6275,163 @@
       "get": {
         "deprecated": false,
         "operationId": "ProfileOAuthAccounts",
+        "parameters": [
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "createdBefore",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "createdAfter",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "currentPage",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1.0,
+              "type": "integer"
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "minimum": 1.0,
+              "type": "integer"
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "orderBy",
+            "required": false,
+            "schema": {
+              "default": "created_at",
+              "oneOf": [
+                {
+                  "default": "created_at",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order by field"
+            }
+          },
+          {
+            "allowEmptyValue": false,
+            "allowReserved": false,
+            "deprecated": false,
+            "in": "query",
+            "name": "sortOrder",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc",
+                null
+              ],
+              "title": "Field to search",
+              "type": [
+                "null",
+                "string"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthAccountList"
+                  "$ref": "#/components/schemas/OffsetPagination_app.domain.accounts.schemas._oauth.OAuthAccountInfo_"
                 }
               }
             },
             "description": "Request fulfilled, document follows",
             "headers": {}
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "detail": "Bad Request",
+                      "extra": {},
+                      "status_code": 400
+                    }
+                  ],
+                  "properties": {
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad request syntax or unsupported method"
           }
         },
         "summary": "ListAccounts",
@@ -7080,6 +7321,176 @@
           }
         },
         "summary": "UpdateRole",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/api/roles/{role_slug}/assign": {
+      "post": {
+        "deprecated": false,
+        "operationId": "AssignRole",
+        "parameters": [
+          {
+            "deprecated": false,
+            "description": "The role slug to assign.",
+            "in": "path",
+            "name": "role_slug",
+            "required": true,
+            "schema": {
+              "description": "The role slug to assign.",
+              "title": "Role Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleAdd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Document created, URL follows",
+            "headers": {}
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "detail": "Bad Request",
+                      "extra": {},
+                      "status_code": 400
+                    }
+                  ],
+                  "properties": {
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad request syntax or unsupported method"
+          }
+        },
+        "summary": "AssignRole",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/api/roles/{role_slug}/revoke": {
+      "post": {
+        "deprecated": false,
+        "operationId": "RevokeRole",
+        "parameters": [
+          {
+            "deprecated": false,
+            "description": "The role slug to revoke.",
+            "in": "path",
+            "name": "role_slug",
+            "required": true,
+            "schema": {
+              "description": "The role slug to revoke.",
+              "title": "Role Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleRevoke"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Document created, URL follows",
+            "headers": {}
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "detail": "Bad Request",
+                      "extra": {},
+                      "status_code": 400
+                    }
+                  ],
+                  "properties": {
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad request syntax or unsupported method"
+          }
+        },
+        "summary": "RevokeRole",
         "tags": [
           "Roles"
         ]

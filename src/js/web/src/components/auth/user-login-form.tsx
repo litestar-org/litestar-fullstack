@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { useAuthStore } from "@/lib/auth"
-import { loginFormSchema, type LoginFormData } from "@/lib/validation"
+import { type LoginFormData, loginFormSchema } from "@/lib/validation"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 

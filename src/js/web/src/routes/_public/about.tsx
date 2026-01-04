@@ -76,7 +76,8 @@ function AboutPage() {
   }, [konamiIndex, easterEggActive])
 
   return (
-    <div ref={containerRef} onMouseMove={handleMouseMove} className="relative min-h-screen">
+    // biome-ignore lint/a11y/noStaticElementInteractions: Visual-only mouse tracker for cursor-following gradient effect
+    <div ref={containerRef} onMouseMove={handleMouseMove} role="presentation" className="relative min-h-screen">
       {/* Easter egg overlay */}
       {easterEggActive && (
         <motion.div

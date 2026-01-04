@@ -1,62 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { client } from "@/lib/generated/api/client.gen"
-import {
-  confirmMfaSetup,
-  disableMfa,
-  getMfaStatus,
-  initiateMfaSetup,
-  regenerateMfaBackupCodes,
-  verifyMfaChallenge,
-  type MfaBackupCodes,
-  type MfaSetup,
-  type MfaStatus,
-  type OAuthAuthorization,
-  type OffsetPaginationAppDomainAccountsSchemasOauthOAuthAccountInfo,
-} from "@/lib/generated/api"
-
-const bearerAuth = [{ scheme: "bearer", type: "http" }] as const
-
-const fetchOAuthAccounts = async () => {
-  const response = await client.get<OffsetPaginationAppDomainAccountsSchemasOauthOAuthAccountInfo>({
-    url: "/api/profile/oauth/accounts",
-    security: bearerAuth,
-  })
-  return response.data
-}
-
-const startOAuthLink = async (provider: string, redirectUrl: string) => {
-  const response = await client.post<OAuthAuthorization>({
-    url: `/api/profile/oauth/${provider}/link`,
-    security: bearerAuth,
-    query: { redirect_url: redirectUrl },
-  })
-  return response.data
-}
-
-const unlinkOAuthAccount = async (provider: string) => {
-  const response = await client.delete({
-    url: `/api/profile/oauth/${provider}`,
-    security: bearerAuth,
-  })
-  return response.data
-}
+import { confirmMfaSetup, disableMfa, initiateMfaSetup, profileOAuthLink, profileOAuthUnlink, regenerateMfaBackupCodes, verifyMfaChallenge } from "@/lib/generated/api"
+import { getMfaStatusOptions, profileOAuthAccountsOptions, profileOAuthAccountsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function useMfaStatus() {
-  return useQuery({
-    queryKey: ["mfa", "status"],
-    queryFn: async () => {
-      const response = await getMfaStatus()
-      return response.data as MfaStatus
-    },
-  })
+  return useQuery(getMfaStatusOptions())
 }
 
 export function useInitiateMfaSetup() {
   return useMutation({
     mutationFn: async () => {
-      const response = await initiateMfaSetup()
-      return response.data as MfaSetup
+      const { data } = await initiateMfaSetup({ throwOnError: true })
+      return data
     },
   })
 }
@@ -65,11 +20,11 @@ export function useConfirmMfaSetup() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (code: string) => {
-      const response = await confirmMfaSetup({ body: { code } })
-      return response.data as MfaBackupCodes
+      const { data } = await confirmMfaSetup({ body: { code }, throwOnError: true })
+      return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mfa", "status"] })
+      queryClient.invalidateQueries({ queryKey: ["getMfaStatus"] })
     },
   })
 }
@@ -78,11 +33,11 @@ export function useDisableMfa() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (password: string) => {
-      const response = await disableMfa({ body: { password } })
-      return response.data
+      const { data } = await disableMfa({ body: { password }, throwOnError: true })
+      return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mfa", "status"] })
+      queryClient.invalidateQueries({ queryKey: ["getMfaStatus"] })
       toast.success("MFA disabled")
     },
   })
@@ -92,11 +47,11 @@ export function useRegenerateBackupCodes() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (password: string) => {
-      const response = await regenerateMfaBackupCodes({ body: { password } })
-      return response.data as MfaBackupCodes
+      const { data } = await regenerateMfaBackupCodes({ body: { password }, throwOnError: true })
+      return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mfa", "status"] })
+      queryClient.invalidateQueries({ queryKey: ["getMfaStatus"] })
       toast.success("Backup codes regenerated")
     },
   })
@@ -105,23 +60,25 @@ export function useRegenerateBackupCodes() {
 export function useVerifyMfaChallenge() {
   return useMutation({
     mutationFn: async (payload: { code?: string; recovery_code?: string }) => {
-      const response = await verifyMfaChallenge({ body: payload })
-      return response.data
+      const { data } = await verifyMfaChallenge({ body: payload, throwOnError: true })
+      return data
     },
   })
 }
 
 export function useOAuthAccounts() {
-  return useQuery({
-    queryKey: ["profile", "oauth-accounts"],
-    queryFn: fetchOAuthAccounts,
-  })
+  return useQuery(profileOAuthAccountsOptions())
 }
 
 export function useStartOAuthLink() {
   return useMutation({
     mutationFn: async (payload: { provider: string; redirectUrl: string }) => {
-      return startOAuthLink(payload.provider, payload.redirectUrl)
+      const { data } = await profileOAuthLink({
+        path: { provider: payload.provider },
+        query: { redirect_url: payload.redirectUrl },
+        throwOnError: true,
+      })
+      return data
     },
   })
 }
@@ -129,9 +86,12 @@ export function useStartOAuthLink() {
 export function useUnlinkOAuthAccount() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (provider: string) => unlinkOAuthAccount(provider),
+    mutationFn: async (provider: string) => {
+      const { data } = await profileOAuthUnlink({ path: { provider }, throwOnError: true })
+      return data
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile", "oauth-accounts"] })
+      queryClient.invalidateQueries({ queryKey: profileOAuthAccountsQueryKey() })
     },
   })
 }

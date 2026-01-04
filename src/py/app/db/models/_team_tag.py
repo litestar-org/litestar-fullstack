@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from advanced_alchemy.base import orm_registry
-from sqlalchemy import Column, ForeignKey, Table, UUID
+from sqlalchemy import UUID, Column, ForeignKey, Table
 
 team_tag = Table(
     "team_tag",

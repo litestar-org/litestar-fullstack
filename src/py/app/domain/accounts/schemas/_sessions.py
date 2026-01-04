@@ -3,10 +3,10 @@
 from datetime import datetime
 from uuid import UUID
 
-import msgspec
+from app.lib.schema import CamelizedBaseStruct
 
 
-class ActiveSession(msgspec.Struct, gc=False, array_like=True, omit_defaults=True, kw_only=True):
+class ActiveSession(CamelizedBaseStruct, kw_only=True):
     """Information about an active session (refresh token)."""
 
     id: UUID
@@ -16,7 +16,7 @@ class ActiveSession(msgspec.Struct, gc=False, array_like=True, omit_defaults=Tru
     is_current: bool = False
 
 
-class TokenRefresh(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class TokenRefresh(CamelizedBaseStruct):
     """Confirmation that token was refreshed."""
 
     message: str = "Token refreshed successfully"

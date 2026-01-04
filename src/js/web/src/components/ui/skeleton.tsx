@@ -39,6 +39,7 @@ function SkeletonTable({ rows = 5, className }: { rows?: number; className?: str
     <div className={cn("space-y-3", className)}>
       <Skeleton className="h-10 w-full" />
       {Array.from({ length: rows }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton placeholders
         <Skeleton key={`skeleton-row-${i}`} className="h-14 w-full" />
       ))}
     </div>
@@ -53,6 +54,7 @@ function SkeletonText({ lines = 3, className }: { lines?: number; className?: st
   return (
     <div className={cn("space-y-2", className)}>
       {Array.from({ length: lines }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton placeholders
         <Skeleton key={`skeleton-line-${i}`} className={cn("h-4", i === lines - 1 ? "w-2/3" : "w-full")} />
       ))}
     </div>

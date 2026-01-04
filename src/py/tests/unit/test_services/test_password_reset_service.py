@@ -302,7 +302,7 @@ class TestPasswordResetTokenUsage:
         await session.commit()
 
         async with PasswordResetService.new(sessionmaker()) as service:
-            created_token, raw_token = await service.create_reset_token(user.id)
+            _created_token, raw_token = await service.create_reset_token(user.id)
 
             # Use token first time
             await service.use_reset_token(raw_token)

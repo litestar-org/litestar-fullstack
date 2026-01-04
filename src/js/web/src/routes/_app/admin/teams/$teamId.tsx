@@ -41,15 +41,15 @@ function AdminTeamDetailPage() {
           </div>
           <div>
             <p className="text-muted-foreground">Owner</p>
-            <p>{data.owner_email ?? "—"}</p>
+            <p>{data.ownerEmail ?? "—"}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Members</p>
-            <p>{data.member_count ?? 0}</p>
+            <p>{data.memberCount ?? 0}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Status</p>
-            <p>{data.is_active ? "Active" : "Inactive"}</p>
+            <p>{data.isActive ? "Active" : "Inactive"}</p>
           </div>
           <div className="md:col-span-2">
             <p className="text-muted-foreground">Description</p>
@@ -57,12 +57,8 @@ function AdminTeamDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            onClick={() => updateTeam.mutate({ is_active: !data.is_active })}
-            disabled={updateTeam.isPending}
-          >
-            {data.is_active ? "Deactivate" : "Activate"}
+          <Button variant="outline" onClick={() => updateTeam.mutate({ is_active: !data.isActive })} disabled={updateTeam.isPending}>
+            {data.isActive ? "Deactivate" : "Activate"}
           </Button>
         </div>
       </CardContent>

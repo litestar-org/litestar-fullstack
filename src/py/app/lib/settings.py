@@ -28,7 +28,6 @@ if TYPE_CHECKING:
 
     from litestar.config.compression import CompressionConfig
     from litestar.config.cors import CORSConfig
-    from litestar.config.csrf import CSRFConfig
     from litestar.data_extractors import ResponseExtractorField
     from litestar.plugins.problem_details import ProblemDetailsConfig
     from litestar.plugins.sqlalchemy import SQLAlchemyAsyncConfig
@@ -262,14 +261,8 @@ class AppSettings:
     """JWT Algorithm to use"""
     ALLOWED_CORS_ORIGINS: list[str] | str = field(default_factory=get_env("ALLOWED_CORS_ORIGINS", ["*"], list[str]))
     """Allowed CORS Origins"""
-    CSRF_COOKIE_NAME: str = field(default_factory=get_env("CSRF_COOKIE_NAME", "XSRF-TOKEN"))
-    """CSRF Cookie Name"""
-    CSRF_HEADER_NAME: str = field(default_factory=get_env("CSRF_HEADER_NAME", "X-XSRF-TOKEN"))
-    """CSRF Header Name"""
-    CSRF_COOKIE_SECURE: bool = field(default_factory=get_env("CSRF_COOKIE_SECURE", False))
-    """CSRF Secure Cookie"""
-    CSRF_COOKIE_HTTPONLY: bool = field(default_factory=get_env("CSRF_COOKIE_HTTPONLY", True))
-    """CSRF HttpOnly Cookie - True because litestar-vite injects token into HTML as window.__LITESTAR_CSRF__"""
+    COOKIE_SECURE: bool = field(default_factory=get_env("COOKIE_SECURE", False))
+    """Use secure cookies (set to True in production with HTTPS)"""
     STATIC_DIR: Path = field(default_factory=get_env("STATIC_DIR", STATIC_DIR))
     """Default URL where static assets are located."""
     STATIC_URL: str = field(default_factory=get_env("STATIC_URL", "/static/web/"))
@@ -314,19 +307,6 @@ class AppSettings:
         from litestar.config.compression import CompressionConfig
 
         return CompressionConfig(backend="gzip")
-
-    def get_csrf_config(self) -> CSRFConfig:
-        from litestar.config.csrf import CSRFConfig
-
-        return CSRFConfig(
-            secret=self.SECRET_KEY,
-            cookie_secure=self.CSRF_COOKIE_SECURE,
-            cookie_httponly=self.CSRF_COOKIE_HTTPONLY,
-            cookie_name=self.CSRF_COOKIE_NAME,
-            header_name=self.CSRF_HEADER_NAME,
-            # Exclude OAuth callbacks since they're initiated externally
-            exclude=["/api/auth/oauth/*/callback"],
-        )
 
     def get_cors_config(self) -> CORSConfig:
         from litestar.config.cors import CORSConfig

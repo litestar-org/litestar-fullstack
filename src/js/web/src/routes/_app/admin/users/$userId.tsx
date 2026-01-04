@@ -45,42 +45,30 @@ function AdminUserDetailPage() {
           </div>
           <div>
             <p className="text-muted-foreground">Status</p>
-            <p>{data.is_active ? "Active" : "Inactive"}</p>
+            <p>{data.isActive ? "Active" : "Inactive"}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Superuser</p>
-            <p>{data.is_superuser ? "Yes" : "No"}</p>
+            <p>{data.isSuperuser ? "Yes" : "No"}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Verified</p>
-            <p>{data.is_verified ? "Yes" : "No"}</p>
+            <p>{data.isVerified ? "Yes" : "No"}</p>
           </div>
           <div>
             <p className="text-muted-foreground">MFA enabled</p>
-            <p>{data.is_two_factor_enabled ? "Yes" : "No"}</p>
+            <p>{data.isTwoFactorEnabled ? "Yes" : "No"}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            onClick={() => updateUser.mutate({ is_active: !data.is_active })}
-            disabled={updateUser.isPending}
-          >
-            {data.is_active ? "Deactivate" : "Activate"}
+          <Button variant="outline" onClick={() => updateUser.mutate({ is_active: !data.isActive })} disabled={updateUser.isPending}>
+            {data.isActive ? "Deactivate" : "Activate"}
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => updateUser.mutate({ is_superuser: !data.is_superuser })}
-            disabled={updateUser.isPending}
-          >
-            {data.is_superuser ? "Remove superuser" : "Make superuser"}
+          <Button variant="outline" onClick={() => updateUser.mutate({ is_superuser: !data.isSuperuser })} disabled={updateUser.isPending}>
+            {data.isSuperuser ? "Remove superuser" : "Make superuser"}
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => updateUser.mutate({ is_verified: !data.is_verified })}
-            disabled={updateUser.isPending}
-          >
-            {data.is_verified ? "Mark unverified" : "Mark verified"}
+          <Button variant="outline" onClick={() => updateUser.mutate({ is_verified: !data.isVerified })} disabled={updateUser.isPending}>
+            {data.isVerified ? "Mark unverified" : "Mark verified"}
           </Button>
         </div>
       </CardContent>

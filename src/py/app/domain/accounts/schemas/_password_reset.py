@@ -4,10 +4,11 @@ from uuid import UUID
 
 import msgspec
 
+from app.lib.schema import CamelizedBaseStruct
 from app.lib.validation import validate_email, validate_password
 
 
-class ForgotPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class ForgotPasswordRequest(msgspec.Struct, gc=False, omit_defaults=True):
     """Request to initiate password reset flow."""
 
     email: str
@@ -17,20 +18,20 @@ class ForgotPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defa
         self.email = validate_email(self.email)
 
 
-class PasswordResetSent(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class PasswordResetSent(CamelizedBaseStruct):
     """Confirmation that password reset email was sent."""
 
     message: str
     expires_in_minutes: int = 60
 
 
-class ValidateResetTokenRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class ValidateResetTokenRequest(msgspec.Struct, gc=False, omit_defaults=True):
     """Request to validate a reset token."""
 
     token: str
 
 
-class ResetTokenValidation(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class ResetTokenValidation(CamelizedBaseStruct):
     """Result of reset token validation."""
 
     valid: bool
@@ -38,7 +39,7 @@ class ResetTokenValidation(msgspec.Struct, gc=False, array_like=True, omit_defau
     expires_at: str | None = None
 
 
-class ResetPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class ResetPasswordRequest(msgspec.Struct, gc=False, omit_defaults=True):
     """Request to reset password with token."""
 
     token: str
@@ -53,7 +54,7 @@ class ResetPasswordRequest(msgspec.Struct, gc=False, array_like=True, omit_defau
         self.password = validate_password(self.password)
 
 
-class PasswordResetComplete(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class PasswordResetComplete(CamelizedBaseStruct):
     """Confirmation that password was reset successfully."""
 
     message: str

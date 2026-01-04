@@ -4,8 +4,10 @@ from datetime import datetime
 
 import msgspec
 
+from app.lib.schema import CamelizedBaseStruct
 
-class MfaSetup(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+
+class MfaSetup(CamelizedBaseStruct):
     """MFA setup data with QR code and secret."""
 
     secret: str
@@ -16,14 +18,14 @@ class MfaSetup(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
     """The otpauth:// URI for manual entry."""
 
 
-class MfaConfirm(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaConfirm(msgspec.Struct, gc=False, omit_defaults=True):
     """TOTP code to confirm MFA setup."""
 
     code: str
     """The 6-digit TOTP code from the authenticator app."""
 
 
-class MfaBackupCodes(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaBackupCodes(CamelizedBaseStruct):
     """Backup codes for MFA recovery."""
 
     codes: list[str]
@@ -31,14 +33,14 @@ class MfaBackupCodes(msgspec.Struct, gc=False, array_like=True, omit_defaults=Tr
     message: str = "Save these backup codes securely. They will not be shown again."
 
 
-class MfaDisable(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaDisable(msgspec.Struct, gc=False, omit_defaults=True):
     """Password confirmation to disable MFA."""
 
     password: str
     """Current password for verification."""
 
 
-class MfaChallenge(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaChallenge(msgspec.Struct, gc=False, omit_defaults=True):
     """TOTP code or recovery code for MFA verification."""
 
     code: str | None = None
@@ -56,7 +58,7 @@ class MfaChallenge(msgspec.Struct, gc=False, array_like=True, omit_defaults=True
             raise ValueError(msg)
 
 
-class MfaVerifyResult(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaVerifyResult(CamelizedBaseStruct):
     """Result of MFA verification attempt."""
 
     verified: bool
@@ -67,7 +69,7 @@ class MfaVerifyResult(msgspec.Struct, gc=False, array_like=True, omit_defaults=T
     """Number of remaining backup codes (if backup code was used)."""
 
 
-class MfaStatus(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class MfaStatus(CamelizedBaseStruct):
     """Current MFA status for a user."""
 
     enabled: bool
@@ -78,7 +80,7 @@ class MfaStatus(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
     """Number of remaining backup codes."""
 
 
-class LoginMfaChallenge(msgspec.Struct, gc=False, array_like=True, omit_defaults=True):
+class LoginMfaChallenge(CamelizedBaseStruct):
     """Login result when MFA verification is required."""
 
     mfa_required: bool = True

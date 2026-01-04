@@ -30,7 +30,7 @@ class TestInputValidation:
             data={"username": user.email, "password": "testPassword123!"},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         return response.json()["access_token"]
 
     @pytest.mark.asyncio
@@ -267,7 +267,7 @@ class TestSQLInjectionProtection:
             data={"username": user.email, "password": "testPassword123!"},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         return response.json()["access_token"]
 
     @pytest.mark.asyncio
@@ -472,7 +472,7 @@ class TestAuthenticationSecurity:
                 data={"username": "session@example.com", "password": "testPassword123!"},
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
-            assert response.status_code == 200
+            assert response.status_code == 201
             token = response.json()["access_token"]
 
             # Use token to access protected resource
@@ -498,11 +498,11 @@ class TestAuthenticationSecurity:
             # Test rate limiting on password reset
             for _ in range(3):  # Should be allowed
                 response = await client.post("/api/access/forgot-password", json={"email": "ratelimit@example.com"})
-                assert response.status_code == 200
+                assert response.status_code == 201
 
             # Fourth request should be rate limited
             response = await client.post("/api/access/forgot-password", json={"email": "ratelimit@example.com"})
-            assert response.status_code == 200  # Still returns 200 for security
+            assert response.status_code == 201  # Still returns 201 for security
             response_data = response.json()
             assert "Too many" in response_data["message"]
 
@@ -529,7 +529,7 @@ class TestAuthenticationSecurity:
                 data={"username": "password@example.com", "password": "oldPassword123!"},
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
-            assert response.status_code == 200
+            assert response.status_code == 201
             token = response.json()["access_token"]
 
             # Test password reuse prevention could be implemented here
@@ -555,7 +555,7 @@ class TestDataSanitization:
             data={"username": user.email, "password": "testPassword123!"},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         return response.json()["access_token"]
 
     @pytest.mark.asyncio
@@ -668,7 +668,7 @@ class TestDataSanitization:
             response = await client.post("/api/access/forgot-password", json={"email": "nonexistent@example.com"})
 
             # Should return success message for security (timing attack prevention)
-            assert response.status_code == 200
+            assert response.status_code == 201
             response_data = response.json()
             assert "if the email exists" in response_data["message"].lower()
 
@@ -683,7 +683,7 @@ class TestAccessControl:
             data={"username": user.email, "password": "testPassword123!"},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         return response.json()["access_token"]
 
     @pytest.mark.asyncio
@@ -838,11 +838,12 @@ class TestSecurityHeaders:
         async with AsyncTestClient(app=app) as client:
             response = await client.post(
                 "/api/access/signup",
-                json={"email": "test@example.com", "password": "securePassword123!", "name": "Test User"},
+                json={"email": f"test-{uuid4().hex[:8]}@example.com", "password": "securePassword123!", "name": "Test User"},
             )
 
-            # Response should have proper content type
-            assert "application/json" in response.headers.get("content-type", "").lower()
+            # Response should have proper content type (json or problem+json for errors)
+            content_type = response.headers.get("content-type", "").lower()
+            assert "application/json" in content_type or "application/problem+json" in content_type
 
     @pytest.mark.asyncio
     async def test_response_data_consistency(
@@ -851,8 +852,9 @@ class TestSecurityHeaders:
         session: AsyncSession,
     ) -> None:
         """Test that response data is consistent and secure."""
+        unique_email = f"consistent-{uuid4().hex[:8]}@example.com"
         user = UserFactory.build(
-            email="consistent@example.com",
+            email=unique_email,
             hashed_password=await get_password_hash("testPassword123!"),
             is_active=True,
             is_verified=True,
@@ -864,10 +866,10 @@ class TestSecurityHeaders:
             # Login
             response = await client.post(
                 "/api/access/login",
-                data={"username": "consistent@example.com", "password": "testPassword123!"},
+                data={"username": unique_email, "password": "testPassword123!"},
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
-            assert response.status_code == 200
+            assert response.status_code == 201
 
             login_data = response.json()
             assert "access_token" in login_data
@@ -880,7 +882,7 @@ class TestSecurityHeaders:
             assert response.status_code == 200
 
             profile_data = response.json()
-            assert profile_data["email"] == "consistent@example.com"
+            assert profile_data["email"] == unique_email
             assert "id" in profile_data
             assert isinstance(profile_data["isActive"], bool)
             assert isinstance(profile_data["isVerified"], bool)
