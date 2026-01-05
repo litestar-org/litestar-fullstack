@@ -227,7 +227,7 @@ export function ValidatedInput({
 
       {/* Password strength indicator */}
       {showPasswordStrength && isPassword && value && (
-        <div className="mt-3">
+        <div className="pt-2">
           <PasswordStrength password={value} />
         </div>
       )}

@@ -6,6 +6,23 @@ import { motion, type Variants } from "framer-motion"
 import type * as React from "react"
 import { cn } from "@/lib/utils"
 
+// Animation Duration Constants
+// Use these for consistency across all animated components
+export const DURATION = {
+  fast: 0.15, // micro-interactions: tooltips, dropdowns
+  normal: 0.2, // standard: buttons, inputs, focus states
+  medium: 0.3, // moderate: cards, overlays
+  slow: 0.4, // entrance: page transitions, modals
+  slower: 0.6, // dramatic: hero sections, staggered lists
+} as const
+
+// Tailwind CSS equivalent classes:
+// fast   -> duration-150
+// normal -> duration-200
+// medium -> duration-300
+// slow   -> duration-400 (custom) or duration-[400ms]
+// slower -> duration-500 or duration-[600ms]
+
 // Animation Variants
 export const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -49,7 +66,7 @@ export const springTransition = {
 }
 
 export const smoothTransition = {
-  duration: 0.3,
+  duration: DURATION.medium,
   ease: [0.25, 0.1, 0.25, 1],
 }
 

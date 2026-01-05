@@ -280,10 +280,15 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  /* Border opacity semantic tokens:
+   * /40 - subtle: glass cards, decorative backgrounds
+   * /60 - standard: containers, list items, dividers (default)
+   * /80 - strong: interactive elements, inputs, focus states
+   */
   .glass {
-    @apply bg-background/60 backdrop-blur-lg border-border/50;
+    @apply bg-background/60 backdrop-blur-lg border-border/40;
   }
   .glass-card {
-    @apply bg-card/60 backdrop-blur-md border-border/50 shadow-xl;
+    @apply bg-card/60 backdrop-blur-md border-border/40 shadow-xl;
   }
 }

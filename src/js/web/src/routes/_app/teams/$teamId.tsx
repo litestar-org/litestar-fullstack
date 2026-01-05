@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useParams } from "@tanstack/react-router"
+import { createFileRoute, Link, useParams } from "@tanstack/react-router"
+import { ArrowLeft } from "lucide-react"
 import { useEffect } from "react"
 import { InviteMemberDialog } from "@/components/teams/invite-member-dialog"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { Separator } from "@/components/ui/separator"
 import { useAuthStore } from "@/lib/auth"
 import { getTeam, removeMemberFromTeam, type TeamMember } from "@/lib/generated/api"
@@ -49,84 +50,90 @@ function TeamDetail() {
   })
 
   if (isTeamLoading) {
-    return <div className="text-muted-foreground">Loading team…</div>
+    return (
+      <PageContainer className="flex-1">
+        <div className="text-muted-foreground">Loading team...</div>
+      </PageContainer>
+    )
   }
 
-  if (isTeamError) {
-    return <div className="text-muted-foreground">We couldn’t load this team yet. Try refreshing.</div>
-  }
-
-  if (!team) {
-    return <div className="text-muted-foreground">Team not found</div>
+  if (isTeamError || !team) {
+    return (
+      <PageContainer className="flex-1">
+        <div className="text-muted-foreground">
+          {isTeamError ? "We couldn't load this team yet. Try refreshing." : "Team not found"}
+        </div>
+      </PageContainer>
+    )
   }
 
   const members = team.members ?? []
   const ownerId = members.find((member) => member.isOwner)?.userId
   const canManageMembers = ownerId === user?.id || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
-  const initials = team.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
 
   return (
-    <div className="container mx-auto space-y-6 py-8">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-12 w-12 bg-primary/20 text-primary">
-            <AvatarFallback className="text-lg font-semibold text-primary">{initials}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="font-['Space_Grotesk'] text-3xl font-semibold">{team.name}</h1>
-            <p className="text-muted-foreground">{team.description || "No description provided."}</p>
+    <PageContainer className="flex-1 space-y-8">
+      <PageHeader
+        eyebrow="Teams"
+        title={team.name}
+        description={team.description || "No description provided."}
+        actions={
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/teams">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
+              </Link>
+            </Button>
+            {canManageMembers && <InviteMemberDialog teamId={teamId} />}
           </div>
-        </div>
-        {canManageMembers && <InviteMemberDialog teamId={teamId} />}
-      </div>
+        }
+      />
 
-      <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-border/60 bg-card/80 shadow-md shadow-primary/10">
-          <CardHeader>
-            <CardTitle>Members</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {members.map((member: TeamMember) => (
-              <div key={member.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-background/60 p-3">
-                <div className="flex flex-col">
-                  <p className="font-medium text-foreground">{member.name ?? member.email}</p>
-                  <p className="text-muted-foreground text-sm">{member.email}</p>
+      <PageSection>
+        <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+          <Card className="border-border/60 bg-card/80 shadow-md shadow-primary/10">
+            <CardHeader>
+              <CardTitle>Members</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {members.map((member: TeamMember) => (
+                <div key={member.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-background/60 p-3">
+                  <div className="flex flex-col">
+                    <p className="font-medium text-foreground">{member.name ?? member.email}</p>
+                    <p className="text-muted-foreground text-sm">{member.email}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="uppercase">
+                      {member.role ?? "MEMBER"}
+                    </Badge>
+                    {canManageMembers && (
+                      <Button variant="outline" size="sm" onClick={() => removeMemberMutation.mutate(member.email)}>
+                        Remove
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Badge variant="outline" className="uppercase">
-                    {member.role ?? "MEMBER"}
-                  </Badge>
-                  {canManageMembers && (
-                    <Button variant="outline" size="sm" onClick={() => removeMemberMutation.mutate(member.email)}>
-                      Remove
-                    </Button>
-                  )}
-                </div>
+              ))}
+              {members.length === 0 && <div className="text-muted-foreground text-sm">No members yet.</div>}
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/60 bg-card/80 shadow-md shadow-primary/10">
+            <CardHeader>
+              <CardTitle>Team overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex justify-between text-foreground">
+                <span>Member count</span>
+                <Badge variant="secondary">{members.length}</Badge>
               </div>
-            ))}
-            {members.length === 0 && <div className="text-muted-foreground text-sm">No members yet.</div>}
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/80 shadow-md shadow-primary/10">
-          <CardHeader>
-            <CardTitle>Team overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm text-muted-foreground">
-            <div className="flex justify-between text-foreground">
-              <span>Member count</span>
-              <Badge variant="secondary">{members.length}</Badge>
-            </div>
-            <Separator className="my-3" />
-            <p>Use this space to track key links, environments, or runbooks for the team.</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+              <Separator className="my-3" />
+              <p>Use this space to track key links, environments, or runbooks for the team.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </PageSection>
+    </PageContainer>
   )
 }
 

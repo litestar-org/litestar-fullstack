@@ -39,7 +39,7 @@ export function PageHeader({ eyebrow, title, description, actions, className, an
     <div className={cn("mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between", className)}>
       <div className="space-y-2">
         {eyebrow && <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{eyebrow}</p>}
-        <h1 className="font-['Space_Grotesk'] text-3xl font-semibold tracking-tight md:text-4xl">{title}</h1>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">{title}</h1>
         {description && <p className="max-w-2xl text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
