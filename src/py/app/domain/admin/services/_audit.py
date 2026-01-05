@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 
 from app.db import models as m
 

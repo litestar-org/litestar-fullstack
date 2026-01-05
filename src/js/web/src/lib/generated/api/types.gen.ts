@@ -1043,8 +1043,8 @@ export type AdminListAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     actionIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
@@ -1110,8 +1110,8 @@ export type AdminGetTargetAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     actionIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
@@ -1176,8 +1176,8 @@ export type AdminGetUserAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     actionIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;

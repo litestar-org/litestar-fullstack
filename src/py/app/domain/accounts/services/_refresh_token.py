@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from litestar.exceptions import NotAuthorizedException
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 
 from app.db import models as m
 

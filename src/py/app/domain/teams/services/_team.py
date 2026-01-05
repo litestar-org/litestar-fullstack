@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.exceptions import RepositoryError
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 
 from app.db import models as m
 from app.lib import constants

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Literal, overload
 
 from litestar.dto import DataclassDTO, dto_field
 from litestar.dto.config import DTOConfig
-from litestar.plugins.sqlalchemy import SQLAlchemyDTO, SQLAlchemyDTOConfig
+from advanced_alchemy.extensions.litestar import SQLAlchemyDTO, SQLAlchemyDTOConfig
 
 if TYPE_CHECKING:
     from collections.abc import Set as AbstractSet

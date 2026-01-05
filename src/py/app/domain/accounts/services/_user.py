@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any, cast
 
 from litestar.exceptions import ClientException, PermissionDeniedException
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m

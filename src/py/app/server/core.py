@@ -347,7 +347,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         dependencies = {
             "current_user": Provide(provide_user, sync_to_thread=False),
             "settings": Provide(provide_app_settings, sync_to_thread=False),
-            "app_email_service": Provide(provide_app_email_service, sync_to_thread=False),
+            # Note: sync_to_thread is not used for generators - they're managed by the event loop
+            "app_email_service": Provide(provide_app_email_service),
         }
         app_config.dependencies.update(dependencies)
 

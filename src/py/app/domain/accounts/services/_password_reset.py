@@ -6,7 +6,7 @@ from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
 from litestar.exceptions import ClientException
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 
 from app.db import models as m
 
@@ -135,7 +135,9 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         if not expired_tokens:
             return 0
 
-        await self.delete_many(list(expired_tokens))
+        # Pass IDs explicitly to delete_many, not model objects
+        token_ids = [token.id for token in expired_tokens]
+        await self.delete_many(token_ids)
         return len(expired_tokens)
 
     async def check_rate_limit(self, user_id: UUID, hours: float = 1) -> bool:

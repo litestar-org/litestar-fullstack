@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from litestar.config.cors import CORSConfig
     from litestar.data_extractors import ResponseExtractorField
     from litestar.plugins.problem_details import ProblemDetailsConfig
-    from litestar.plugins.sqlalchemy import SQLAlchemyAsyncConfig
+    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from litestar.plugins.structlog import StructlogConfig
     from litestar_email import EmailConfig
     from litestar_saq import SAQConfig
@@ -89,7 +89,7 @@ class DatabaseSettings:
         return self._engine_instance
 
     def get_config(self) -> SQLAlchemyAsyncConfig:
-        from litestar.plugins.sqlalchemy import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
+        from advanced_alchemy.extensions.litestar import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
 
         return SQLAlchemyAsyncConfig(
             engine_instance=self.get_engine(),

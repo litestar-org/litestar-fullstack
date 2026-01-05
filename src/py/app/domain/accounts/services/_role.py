@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from litestar.plugins.sqlalchemy import repository, service
+from advanced_alchemy.extensions.litestar import repository, service
 
 from app.db import models as m
 
