@@ -58,8 +58,8 @@ export {
   listTeamInvitations,
   listTeams,
   listUsers,
-  type Options,
   oAuthConfig,
+  type Options,
   profileOAuthAccounts,
   profileOAuthComplete,
   profileOAuthLink,
@@ -82,7 +82,7 @@ export {
   updateUser,
   validateResetToken,
   verifyMfaChallenge,
-} from "./sdk.gen"
+} from "./sdk.gen";
 export type {
   AcceptTeamInvitationData,
   AcceptTeamInvitationError,
@@ -380,13 +380,13 @@ export type {
   MfaSetup,
   MfaStatus,
   OAuth2Login,
+  OauthAccount,
   OAuthAccountInfo,
   OAuthAuthorization,
   OAuthConfig,
   OAuthConfigData,
   OAuthConfigResponse,
   OAuthConfigResponses,
-  OauthAccount,
   OffsetPaginationAppDomainAccountsSchemasOauthOAuthAccountInfo,
   OffsetPaginationAppDomainAccountsSchemasRolesRole,
   OffsetPaginationAppDomainAccountsSchemasSessionsActiveSession,
@@ -532,4 +532,4 @@ export type {
   VerifyMfaChallengeErrors,
   VerifyMfaChallengeResponse,
   VerifyMfaChallengeResponses,
-} from "./types.gen"
+} from "./types.gen";

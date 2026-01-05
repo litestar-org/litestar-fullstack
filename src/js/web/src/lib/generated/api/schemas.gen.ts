@@ -12,7 +12,7 @@ export const AccountLoginSchema = {
   required: ["password", "username"],
   title: "AccountLogin",
   type: "object",
-} as const
+} as const;
 
 export const AccountRegisterSchema = {
   properties: {
@@ -56,7 +56,7 @@ export const AccountRegisterSchema = {
   required: ["email", "password"],
   title: "AccountRegister",
   type: "object",
-} as const
+} as const;
 
 export const ActiveSessionSchema = {
   properties: {
@@ -90,7 +90,7 @@ export const ActiveSessionSchema = {
   required: ["createdAt", "expiresAt", "id"],
   title: "ActiveSession",
   type: "object",
-} as const
+} as const;
 
 export const ActivityLogEntrySchema = {
   properties: {
@@ -139,7 +139,7 @@ export const ActivityLogEntrySchema = {
   required: ["action", "createdAt", "id"],
   title: "ActivityLogEntry",
   type: "object",
-} as const
+} as const;
 
 export const AdminTeamDetailSchema = {
   properties: {
@@ -193,7 +193,7 @@ export const AdminTeamDetailSchema = {
   required: ["createdAt", "id", "name", "slug", "updatedAt"],
   title: "AdminTeamDetail",
   type: "object",
-} as const
+} as const;
 
 export const AdminTeamSummarySchema = {
   properties: {
@@ -223,7 +223,7 @@ export const AdminTeamSummarySchema = {
   required: ["createdAt", "id", "name", "slug"],
   title: "AdminTeamSummary",
   type: "object",
-} as const
+} as const;
 
 export const AdminTeamUpdateSchema = {
   properties: {
@@ -258,7 +258,7 @@ export const AdminTeamUpdateSchema = {
   required: [],
   title: "AdminTeamUpdate",
   type: "object",
-} as const
+} as const;
 
 export const AdminUserDetailSchema = {
   properties: {
@@ -375,7 +375,7 @@ export const AdminUserDetailSchema = {
   required: ["createdAt", "email", "id", "updatedAt"],
   title: "AdminUserDetail",
   type: "object",
-} as const
+} as const;
 
 export const AdminUserSummarySchema = {
   properties: {
@@ -430,7 +430,7 @@ export const AdminUserSummarySchema = {
   required: ["createdAt", "email", "id"],
   title: "AdminUserSummary",
   type: "object",
-} as const
+} as const;
 
 export const AdminUserUpdateSchema = {
   properties: {
@@ -489,7 +489,7 @@ export const AdminUserUpdateSchema = {
   required: [],
   title: "AdminUserUpdate",
   type: "object",
-} as const
+} as const;
 
 export const AuditLogEntrySchema = {
   properties: {
@@ -590,7 +590,7 @@ export const AuditLogEntrySchema = {
   required: ["action", "createdAt", "id"],
   title: "AuditLogEntry",
   type: "object",
-} as const
+} as const;
 
 export const DashboardStatsSchema = {
   properties: {
@@ -616,10 +616,18 @@ export const DashboardStatsSchema = {
       type: "integer",
     },
   },
-  required: ["activeUsers", "eventsToday", "newUsersToday", "newUsersWeek", "totalTeams", "totalUsers", "verifiedUsers"],
+  required: [
+    "activeUsers",
+    "eventsToday",
+    "newUsersToday",
+    "newUsersWeek",
+    "totalTeams",
+    "totalUsers",
+    "verifiedUsers",
+  ],
   title: "DashboardStats",
   type: "object",
-} as const
+} as const;
 
 export const EmailVerificationConfirmSchema = {
   properties: {
@@ -630,7 +638,7 @@ export const EmailVerificationConfirmSchema = {
   required: ["token"],
   title: "EmailVerificationConfirm",
   type: "object",
-} as const
+} as const;
 
 export const EmailVerificationRequestSchema = {
   properties: {
@@ -641,7 +649,7 @@ export const EmailVerificationRequestSchema = {
   required: ["email"],
   title: "EmailVerificationRequest",
   type: "object",
-} as const
+} as const;
 
 export const EmailVerificationSentSchema = {
   properties: {
@@ -662,7 +670,7 @@ export const EmailVerificationSentSchema = {
   required: ["message"],
   title: "EmailVerificationSent",
   type: "object",
-} as const
+} as const;
 
 export const EmailVerificationStatusSchema = {
   properties: {
@@ -673,7 +681,7 @@ export const EmailVerificationStatusSchema = {
   required: ["isVerified"],
   title: "EmailVerificationStatus",
   type: "object",
-} as const
+} as const;
 
 export const ForgotPasswordRequestSchema = {
   properties: {
@@ -684,7 +692,7 @@ export const ForgotPasswordRequestSchema = {
   required: ["email"],
   title: "ForgotPasswordRequest",
   type: "object",
-} as const
+} as const;
 
 export const MessageSchema = {
   properties: {
@@ -695,7 +703,7 @@ export const MessageSchema = {
   required: ["message"],
   title: "Message",
   type: "object",
-} as const
+} as const;
 
 export const MfaBackupCodesSchema = {
   properties: {
@@ -706,14 +714,15 @@ export const MfaBackupCodesSchema = {
       type: "array",
     },
     message: {
-      default: "Save these backup codes securely. They will not be shown again.",
+      default:
+        "Save these backup codes securely. They will not be shown again.",
       type: "string",
     },
   },
   required: ["codes"],
   title: "MfaBackupCodes",
   type: "object",
-} as const
+} as const;
 
 export const MfaChallengeSchema = {
   properties: {
@@ -741,7 +750,7 @@ export const MfaChallengeSchema = {
   required: [],
   title: "MfaChallenge",
   type: "object",
-} as const
+} as const;
 
 export const MfaConfirmSchema = {
   properties: {
@@ -752,7 +761,7 @@ export const MfaConfirmSchema = {
   required: ["code"],
   title: "MfaConfirm",
   type: "object",
-} as const
+} as const;
 
 export const MfaDisableSchema = {
   properties: {
@@ -763,7 +772,7 @@ export const MfaDisableSchema = {
   required: ["password"],
   title: "MfaDisable",
   type: "object",
-} as const
+} as const;
 
 export const MfaSetupSchema = {
   properties: {
@@ -780,7 +789,7 @@ export const MfaSetupSchema = {
   required: ["provisioningUri", "qrCode", "secret"],
   title: "MfaSetup",
   type: "object",
-} as const
+} as const;
 
 export const MfaStatusSchema = {
   properties: {
@@ -812,7 +821,7 @@ export const MfaStatusSchema = {
   required: ["enabled"],
   title: "MfaStatus",
   type: "object",
-} as const
+} as const;
 
 export const OAuth2LoginSchema = {
   properties: {
@@ -846,7 +855,7 @@ export const OAuth2LoginSchema = {
   required: ["access_token", "token_type"],
   title: "OAuth2Login",
   type: "object",
-} as const
+} as const;
 
 export const OAuthAccountInfoSchema = {
   properties: {
@@ -898,7 +907,7 @@ export const OAuthAccountInfoSchema = {
   required: ["email", "linkedAt", "oauthId", "provider"],
   title: "OAuthAccountInfo",
   type: "object",
-} as const
+} as const;
 
 export const OAuthAuthorizationSchema = {
   properties: {
@@ -919,7 +928,7 @@ export const OAuthAuthorizationSchema = {
   required: ["authorizationUrl"],
   title: "OAuthAuthorization",
   type: "object",
-} as const
+} as const;
 
 export const OAuthConfigSchema = {
   properties: {
@@ -935,7 +944,7 @@ export const OAuthConfigSchema = {
   required: [],
   title: "OAuthConfig",
   type: "object",
-} as const
+} as const;
 
 export const OauthAccountSchema = {
   properties: {
@@ -956,30 +965,31 @@ export const OauthAccountSchema = {
   required: ["accountEmail", "accountId", "id", "oauthName"],
   title: "OauthAccount",
   type: "object",
-} as const
+} as const;
 
-export const OffsetPagination_app_domain_accounts_schemas__oauth_OAuthAccountInfo_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_accounts_schemas__oauth_OAuthAccountInfo_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/OAuthAccountInfo",
+        items: {
+          $ref: "#/components/schemas/OAuthAccountInfo",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[OAuthAccountInfo]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[OAuthAccountInfo]",
+    type: "object",
+  } as const;
 
 export const OffsetPagination_app_domain_accounts_schemas__roles_Role_Schema = {
   properties: {
@@ -1002,30 +1012,31 @@ export const OffsetPagination_app_domain_accounts_schemas__roles_Role_Schema = {
   required: ["items", "limit", "offset", "total"],
   title: "OffsetPagination[Role]",
   type: "object",
-} as const
+} as const;
 
-export const OffsetPagination_app_domain_accounts_schemas__sessions_ActiveSession_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_accounts_schemas__sessions_ActiveSession_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/ActiveSession",
+        items: {
+          $ref: "#/components/schemas/ActiveSession",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[ActiveSession]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[ActiveSession]",
+    type: "object",
+  } as const;
 
 export const OffsetPagination_app_domain_accounts_schemas__user_User_Schema = {
   properties: {
@@ -1048,76 +1059,79 @@ export const OffsetPagination_app_domain_accounts_schemas__user_User_Schema = {
   required: ["items", "limit", "offset", "total"],
   title: "OffsetPagination[User]",
   type: "object",
-} as const
+} as const;
 
-export const OffsetPagination_app_domain_admin_schemas__audit_AuditLogEntry_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_admin_schemas__audit_AuditLogEntry_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/AuditLogEntry",
+        items: {
+          $ref: "#/components/schemas/AuditLogEntry",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[AuditLogEntry]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[AuditLogEntry]",
+    type: "object",
+  } as const;
 
-export const OffsetPagination_app_domain_admin_schemas__teams_AdminTeamSummary_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_admin_schemas__teams_AdminTeamSummary_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/AdminTeamSummary",
+        items: {
+          $ref: "#/components/schemas/AdminTeamSummary",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[AdminTeamSummary]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[AdminTeamSummary]",
+    type: "object",
+  } as const;
 
-export const OffsetPagination_app_domain_admin_schemas__users_AdminUserSummary_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_admin_schemas__users_AdminUserSummary_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/AdminUserSummary",
+        items: {
+          $ref: "#/components/schemas/AdminUserSummary",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[AdminUserSummary]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[AdminUserSummary]",
+    type: "object",
+  } as const;
 
 export const OffsetPagination_app_domain_tags_schemas__tag_Tag_Schema = {
   properties: {
@@ -1140,30 +1154,31 @@ export const OffsetPagination_app_domain_tags_schemas__tag_Tag_Schema = {
   required: ["items", "limit", "offset", "total"],
   title: "OffsetPagination[Tag]",
   type: "object",
-} as const
+} as const;
 
-export const OffsetPagination_app_domain_teams_schemas__invitation_TeamInvitation_Schema = {
-  properties: {
-    items: {
+export const OffsetPagination_app_domain_teams_schemas__invitation_TeamInvitation_Schema =
+  {
+    properties: {
       items: {
-        $ref: "#/components/schemas/TeamInvitation",
+        items: {
+          $ref: "#/components/schemas/TeamInvitation",
+        },
+        type: "array",
       },
-      type: "array",
+      limit: {
+        type: "integer",
+      },
+      offset: {
+        type: "integer",
+      },
+      total: {
+        type: "integer",
+      },
     },
-    limit: {
-      type: "integer",
-    },
-    offset: {
-      type: "integer",
-    },
-    total: {
-      type: "integer",
-    },
-  },
-  required: ["items", "limit", "offset", "total"],
-  title: "OffsetPagination[TeamInvitation]",
-  type: "object",
-} as const
+    required: ["items", "limit", "offset", "total"],
+    title: "OffsetPagination[TeamInvitation]",
+    type: "object",
+  } as const;
 
 export const OffsetPagination_app_domain_teams_schemas__team_Team_Schema = {
   properties: {
@@ -1186,7 +1201,7 @@ export const OffsetPagination_app_domain_teams_schemas__team_Team_Schema = {
   required: ["items", "limit", "offset", "total"],
   title: "OffsetPagination[Team]",
   type: "object",
-} as const
+} as const;
 
 export const PasswordResetCompleteSchema = {
   properties: {
@@ -1201,7 +1216,7 @@ export const PasswordResetCompleteSchema = {
   required: ["message", "userId"],
   title: "PasswordResetComplete",
   type: "object",
-} as const
+} as const;
 
 export const PasswordResetSentSchema = {
   properties: {
@@ -1216,7 +1231,7 @@ export const PasswordResetSentSchema = {
   required: ["message"],
   title: "PasswordResetSent",
   type: "object",
-} as const
+} as const;
 
 export const PasswordUpdateSchema = {
   properties: {
@@ -1230,7 +1245,7 @@ export const PasswordUpdateSchema = {
   required: ["currentPassword", "newPassword"],
   title: "PasswordUpdate",
   type: "object",
-} as const
+} as const;
 
 export const ProfileUpdateSchema = {
   properties: {
@@ -1268,7 +1283,7 @@ export const ProfileUpdateSchema = {
   required: [],
   title: "ProfileUpdate",
   type: "object",
-} as const
+} as const;
 
 export const RecentActivitySchema = {
   properties: {
@@ -1285,7 +1300,7 @@ export const RecentActivitySchema = {
   required: ["activities", "total"],
   title: "RecentActivity",
   type: "object",
-} as const
+} as const;
 
 export const ResetPasswordRequestSchema = {
   properties: {
@@ -1302,7 +1317,7 @@ export const ResetPasswordRequestSchema = {
   required: ["password", "password_confirm", "token"],
   title: "ResetPasswordRequest",
   type: "object",
-} as const
+} as const;
 
 export const ResetTokenValidationSchema = {
   properties: {
@@ -1334,7 +1349,7 @@ export const ResetTokenValidationSchema = {
   required: ["valid"],
   title: "ResetTokenValidation",
   type: "object",
-} as const
+} as const;
 
 export const RoleSchema = {
   properties: {
@@ -1360,7 +1375,7 @@ export const RoleSchema = {
   required: ["createdAt", "id", "name", "slug", "updatedAt"],
   title: "Role",
   type: "object",
-} as const
+} as const;
 
 export const RoleCreateSchema = {
   properties: {
@@ -1371,7 +1386,7 @@ export const RoleCreateSchema = {
   required: ["name"],
   title: "RoleCreate",
   type: "object",
-} as const
+} as const;
 
 export const RoleUpdateSchema = {
   properties: {
@@ -1389,7 +1404,7 @@ export const RoleUpdateSchema = {
   required: [],
   title: "RoleUpdate",
   type: "object",
-} as const
+} as const;
 
 export const SystemHealthSchema = {
   properties: {
@@ -1409,7 +1424,7 @@ export const SystemHealthSchema = {
   required: ["app"],
   title: "SystemHealth",
   type: "object",
-} as const
+} as const;
 
 export const TagSchema = {
   properties: {
@@ -1427,7 +1442,7 @@ export const TagSchema = {
   required: ["id", "name", "slug"],
   title: "Tag",
   type: "object",
-} as const
+} as const;
 
 export const TagCreateSchema = {
   properties: {
@@ -1438,7 +1453,7 @@ export const TagCreateSchema = {
   required: ["name"],
   title: "TagCreate",
   type: "object",
-} as const
+} as const;
 
 export const TagUpdateSchema = {
   properties: {
@@ -1456,7 +1471,7 @@ export const TagUpdateSchema = {
   required: [],
   title: "TagUpdate",
   type: "object",
-} as const
+} as const;
 
 export const TeamSchema = {
   properties: {
@@ -1500,7 +1515,7 @@ export const TeamSchema = {
   required: ["id", "name", "slug"],
   title: "Team",
   type: "object",
-} as const
+} as const;
 
 export const TeamCreateSchema = {
   properties: {
@@ -1527,7 +1542,7 @@ export const TeamCreateSchema = {
   required: ["name"],
   title: "TeamCreate",
   type: "object",
-} as const
+} as const;
 
 export const TeamInvitationSchema = {
   properties: {
@@ -1557,7 +1572,7 @@ export const TeamInvitationSchema = {
   required: ["createdAt", "email", "id", "role", "updatedAt"],
   title: "TeamInvitation",
   type: "object",
-} as const
+} as const;
 
 export const TeamInvitationCreateSchema = {
   properties: {
@@ -1571,7 +1586,7 @@ export const TeamInvitationCreateSchema = {
   required: ["email", "role"],
   title: "TeamInvitationCreate",
   type: "object",
-} as const
+} as const;
 
 export const TeamMemberSchema = {
   properties: {
@@ -1622,7 +1637,7 @@ export const TeamMemberSchema = {
   required: ["email", "id", "userId"],
   title: "TeamMember",
   type: "object",
-} as const
+} as const;
 
 export const TeamMemberModifySchema = {
   properties: {
@@ -1633,7 +1648,7 @@ export const TeamMemberModifySchema = {
   required: ["userName"],
   title: "TeamMemberModify",
   type: "object",
-} as const
+} as const;
 
 export const TeamMemberUpdateSchema = {
   properties: {
@@ -1644,14 +1659,14 @@ export const TeamMemberUpdateSchema = {
   required: ["role"],
   title: "TeamMemberUpdate",
   type: "object",
-} as const
+} as const;
 
 export const TeamRolesSchema = {
   description: "Valid Values for Team Roles.",
   enum: ["ADMIN", "MEMBER"],
   title: "TeamRoles",
   type: "string",
-} as const
+} as const;
 
 export const TeamTagSchema = {
   properties: {
@@ -1669,7 +1684,7 @@ export const TeamTagSchema = {
   required: ["id", "name", "slug"],
   title: "TeamTag",
   type: "object",
-} as const
+} as const;
 
 export const TeamUpdateSchema = {
   properties: {
@@ -1710,7 +1725,7 @@ export const TeamUpdateSchema = {
   required: [],
   title: "TeamUpdate",
   type: "object",
-} as const
+} as const;
 
 export const TokenRefreshSchema = {
   properties: {
@@ -1722,7 +1737,7 @@ export const TokenRefreshSchema = {
   required: [],
   title: "TokenRefresh",
   type: "object",
-} as const
+} as const;
 
 export const UserSchema = {
   properties: {
@@ -1815,7 +1830,7 @@ export const UserSchema = {
   required: ["email", "id"],
   title: "User",
   type: "object",
-} as const
+} as const;
 
 export const UserCreateSchema = {
   properties: {
@@ -1871,7 +1886,7 @@ export const UserCreateSchema = {
   required: ["email", "password"],
   title: "UserCreate",
   type: "object",
-} as const
+} as const;
 
 export const UserRoleSchema = {
   properties: {
@@ -1893,7 +1908,7 @@ export const UserRoleSchema = {
   required: ["assignedAt", "roleId", "roleName", "roleSlug"],
   title: "UserRole",
   type: "object",
-} as const
+} as const;
 
 export const UserRoleAddSchema = {
   properties: {
@@ -1904,7 +1919,7 @@ export const UserRoleAddSchema = {
   required: ["userName"],
   title: "UserRoleAdd",
   type: "object",
-} as const
+} as const;
 
 export const UserRoleRevokeSchema = {
   properties: {
@@ -1915,7 +1930,7 @@ export const UserRoleRevokeSchema = {
   required: ["userName"],
   title: "UserRoleRevoke",
   type: "object",
-} as const
+} as const;
 
 export const UserTeamSchema = {
   properties: {
@@ -1944,7 +1959,7 @@ export const UserTeamSchema = {
   required: ["teamId", "teamName"],
   title: "UserTeam",
   type: "object",
-} as const
+} as const;
 
 export const UserUpdateSchema = {
   properties: {
@@ -2032,4 +2047,4 @@ export const UserUpdateSchema = {
   required: [],
   title: "UserUpdate",
   type: "object",
-} as const
+} as const;
