@@ -18,7 +18,6 @@ from app.lib.exceptions import ApplicationError
 if TYPE_CHECKING:
     from collections import abc
 
-
 pytestmark = pytest.mark.anyio
 
 

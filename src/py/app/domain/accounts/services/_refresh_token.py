@@ -124,9 +124,6 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
 
         Returns:
             Tuple of (new_raw_token, new_RefreshToken)
-
-        Raises:
-            NotAuthorizedException: If token is invalid, expired, or revoked
         """
         old_token = await self.validate_refresh_token(raw_token)
 
@@ -230,5 +227,7 @@ class RefreshTokenService(service.SQLAlchemyAsyncRepositoryService[m.RefreshToke
         if not expired_tokens:
             return 0
 
-        await self.delete_many(list(expired_tokens))
+        # delete_many expects a list of IDs, not model instances
+        token_ids = [token.id for token in expired_tokens]
+        await self.delete_many(token_ids)
         return len(expired_tokens)

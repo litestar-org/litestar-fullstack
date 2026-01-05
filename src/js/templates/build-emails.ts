@@ -9,9 +9,9 @@
  * Usage: bun run build-emails.ts
  */
 
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs"
+import { basename, resolve } from "node:path"
 import { render } from "@react-email/render"
-import { writeFileSync, mkdirSync, readdirSync, readFileSync, existsSync } from "node:fs"
-import { resolve, basename } from "node:path"
 
 // Output directory (inside Python package for wheel bundling)
 const OUTPUT_DIR = resolve(import.meta.dir, "../../py/app/server/static/email")
@@ -48,9 +48,7 @@ function inlineGlobalCSS(html: string): string {
 async function buildTemplates() {
   console.log("📧 Building email templates...\n")
 
-  const templateFiles = readdirSync(emailsDir).filter(
-    (f) => f.endsWith(".tsx") && !f.startsWith("_")
-  )
+  const templateFiles = readdirSync(emailsDir).filter((f) => f.endsWith(".tsx") && !f.startsWith("_"))
 
   let successCount = 0
   let failCount = 0

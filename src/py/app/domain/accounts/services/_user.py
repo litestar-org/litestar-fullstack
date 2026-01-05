@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from litestar.exceptions import ClientException, PermissionDeniedException
 from litestar.plugins.sqlalchemy import repository, service
@@ -255,14 +255,18 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         if "backup_codes" not in data:
             return data
         codes = data.get("backup_codes")
-        if codes is None or not isinstance(codes, list):
+        if not isinstance(codes, list):
             return data
-        if not all(code is None or isinstance(code, str) for code in codes):
+        typed_codes = cast("list[object]", codes)
+        if not all(code is None or isinstance(code, str) for code in typed_codes):
             return data
-        non_null_codes = [code for code in codes if isinstance(code, str)]
+        validated_codes = cast("list[str | None]", typed_codes)
+        non_null_codes = [code for code in validated_codes if code is not None]
         if not non_null_codes or all(code.startswith("$") for code in non_null_codes):
             return data
-        data["backup_codes"] = [None if code is None else await crypt.get_password_hash(code) for code in codes]
+        data["backup_codes"] = [
+            None if code is None else await crypt.get_password_hash(code) for code in validated_codes
+        ]
         return data
 
     async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:

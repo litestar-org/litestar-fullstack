@@ -4,21 +4,7 @@ import hashlib
 import os
 from datetime import UTC, datetime, timedelta
 
-from app.db import models as m
-from app.domain.accounts.services import (
-    EmailVerificationTokenService,
-    PasswordResetService,
-    RoleService,
-    UserOAuthAccountService,
-    UserRoleService,
-    UserService,
-)
-from app.domain.tags.services import TagService
-from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
-from app.lib.crypt import get_password_hash
-from app.lib.email import EmailService
-
-# Set test environment before any other imports
+# Set test environment BEFORE any app imports (settings are cached on first import)
 os.environ.update(
     {
         "SECRET_KEY": "secret-key",
@@ -31,19 +17,35 @@ os.environ.update(
         "SAQ_CONCURRENCY": "1",
         "VITE_PORT": "3006",
         "VITE_DEV_MODE": "True",
-        "EMAIL_ENABLED": "false",
+        "EMAIL_BACKEND": "memory",
     }
 )
 
+# Now import app modules after environment is configured
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import pytest
 from advanced_alchemy.base import UUIDAuditBase
 from litestar.testing import AsyncTestClient
+from litestar_email import EmailConfig, EmailService, InMemoryBackend
+from sqlalchemy import text
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
+
+from app.db import models as m
+from app.domain.accounts.services import (
+    EmailVerificationTokenService,
+    PasswordResetService,
+    RoleService,
+    UserOAuthAccountService,
+    UserRoleService,
+    UserService,
+)
+from app.domain.tags.services import TagService
+from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
+from app.lib.crypt import get_password_hash
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -53,8 +55,8 @@ if TYPE_CHECKING:
     from pytest_databases.docker.postgres import PostgresService
     from sqlalchemy.ext.asyncio import AsyncEngine
 
-
 pytestmark = pytest.mark.anyio
+
 pytest_plugins = [
     "tests.data_fixtures",
     "pytest_databases.docker",
@@ -67,12 +69,22 @@ def anyio_backend() -> str:
     return "asyncio"
 
 
+@pytest.fixture(scope="session")
+def anyio_backend_options() -> dict[str, bool]:
+    """Prefer uvloop when available for AnyIO's asyncio backend."""
+    try:
+        import uvloop  # noqa: F401
+    except ImportError:
+        return {}
+    return {"use_uvloop": True}
+
+
 @pytest.fixture(autouse=True)
 def _patch_settings(monkeypatch: MonkeyPatch) -> None:
     """Patch the settings - environment already set at module level."""
 
 
-@pytest.fixture(name="engine")
+@pytest.fixture(name="engine", scope="session")
 async def fx_engine(postgres_service: PostgresService) -> AsyncGenerator[AsyncEngine, None]:
     """PostgreSQL instance for testing.
 
@@ -93,27 +105,62 @@ async def fx_engine(postgres_service: PostgresService) -> AsyncGenerator[AsyncEn
         poolclass=NullPool,
     )
 
-    # Create all tables
-    metadata = UUIDAuditBase.registry.metadata
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.create_all)
-
     yield engine
 
-    # Clean up
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
     await engine.dispose()
 
 
-@pytest.fixture(name="sessionmaker")
-async def fx_sessionmaker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+@pytest.fixture(name="db_schema", scope="session")
+async def fx_db_schema(engine: AsyncEngine) -> AsyncGenerator[None, None]:
+    """Create/drop schema once per test session."""
+    metadata = UUIDAuditBase.registry.metadata
+    async with engine.begin() as conn:
+        await conn.run_sync(metadata.create_all)
+    yield
+    async with engine.begin() as conn:
+        await conn.run_sync(metadata.drop_all)
+
+
+async def _truncate_all_tables(engine: AsyncEngine) -> None:
+    metadata = UUIDAuditBase.registry.metadata
+    if not metadata.tables:
+        return
+    preparer = engine.dialect.identifier_preparer
+    table_names: list[str] = []
+    for table in metadata.sorted_tables:
+        if table.schema:
+            table_names.append(f"{preparer.quote(table.schema)}.{preparer.quote(table.name)}")
+        else:
+            table_names.append(preparer.quote(table.name))
+    async with engine.begin() as conn:
+        if engine.dialect.name == "sqlite":
+            for table in reversed(metadata.sorted_tables):
+                name = preparer.quote(table.name)
+                await conn.execute(text(f"DELETE FROM {name}"))
+            return
+        await conn.execute(
+            text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE"),
+        )
+
+
+@pytest.fixture
+async def db_cleanup(engine: AsyncEngine, db_schema: None) -> AsyncGenerator[None, None]:
+    """Clean database state between tests without recreating schema."""
+    yield
+    await _truncate_all_tables(engine)
+
+
+@pytest.fixture(name="sessionmaker", scope="session")
+def fx_sessionmaker(engine: AsyncEngine, db_schema: None) -> async_sessionmaker[AsyncSession]:
     """Create sessionmaker factory."""
     return async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
 @pytest.fixture
-async def session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
+async def session(
+    sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
+) -> AsyncGenerator[AsyncSession, None]:
     """Create database session for tests."""
     async with sessionmaker() as session:
         yield session
@@ -138,7 +185,9 @@ async def client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
 
 
 @pytest.fixture
-async def user_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[UserService, None]:
+async def user_service(
+    sessionmaker: async_sessionmaker[AsyncSession], db_cleanup: None
+) -> AsyncGenerator[UserService, None]:
     """Create UserService instance."""
 
     async with UserService.new(sessionmaker()) as service:
@@ -146,7 +195,9 @@ async def user_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncG
 
 
 @pytest.fixture
-async def team_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[TeamService, None]:
+async def team_service(
+    sessionmaker: async_sessionmaker[AsyncSession], db_cleanup: None
+) -> AsyncGenerator[TeamService, None]:
     """Create TeamService instance."""
 
     async with TeamService.new(sessionmaker()) as service:
@@ -231,7 +282,7 @@ async def authenticated_client(client: AsyncTestClient, test_user: m.User) -> As
         "/api/access/login", data={"username": test_user.email, "password": "TestPassword123!"}
     )
 
-    if login_response.status_code == 200:
+    if login_response.status_code == 201:  # OAuth2 login returns 201 Created
         token = login_response.json()["access_token"]
         client.headers.update({"Authorization": f"Bearer {token}"})
 
@@ -246,7 +297,7 @@ async def admin_client(client: AsyncTestClient, admin_user: m.User) -> AsyncTest
         "/api/access/login", data={"username": admin_user.email, "password": "AdminPassword123!"}
     )
 
-    if login_response.status_code == 200:
+    if login_response.status_code == 201:  # OAuth2 login returns 201 Created
         token = login_response.json()["access_token"]
         client.headers.update({"Authorization": f"Bearer {token}"})
 
@@ -254,9 +305,12 @@ async def admin_client(client: AsyncTestClient, admin_user: m.User) -> AsyncTest
 
 
 # Service fixtures
+
+
 @pytest.fixture
 async def email_verification_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[EmailVerificationTokenService, None]:
     """Create EmailVerificationTokenService instance."""
     async with EmailVerificationTokenService.new(sessionmaker()) as service:
@@ -266,6 +320,7 @@ async def email_verification_service(
 @pytest.fixture
 async def password_reset_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[PasswordResetService, None]:
     """Create PasswordResetService instance."""
     async with PasswordResetService.new(sessionmaker()) as service:
@@ -273,7 +328,9 @@ async def password_reset_service(
 
 
 @pytest.fixture
-async def role_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[RoleService, None]:
+async def role_service(
+    sessionmaker: async_sessionmaker[AsyncSession], db_cleanup: None
+) -> AsyncGenerator[RoleService, None]:
     """Create RoleService instance."""
 
     async with RoleService.new(sessionmaker()) as service:
@@ -281,7 +338,9 @@ async def role_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncG
 
 
 @pytest.fixture
-async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[TagService, None]:
+async def tag_service(
+    sessionmaker: async_sessionmaker[AsyncSession], db_cleanup: None
+) -> AsyncGenerator[TagService, None]:
     """Create TagService instance."""
     async with TagService.new(sessionmaker()) as service:
         yield service
@@ -290,6 +349,7 @@ async def tag_service(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGe
 @pytest.fixture
 async def team_member_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[TeamMemberService, None]:
     """Create TeamMemberService instance."""
 
@@ -300,6 +360,7 @@ async def team_member_service(
 @pytest.fixture
 async def team_invitation_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[TeamInvitationService, None]:
     """Create TeamInvitationService instance."""
 
@@ -310,6 +371,7 @@ async def team_invitation_service(
 @pytest.fixture
 async def user_role_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[UserRoleService, None]:
     """Create UserRoleService instance."""
 
@@ -320,6 +382,7 @@ async def user_role_service(
 @pytest.fixture
 async def user_oauth_service(
     sessionmaker: async_sessionmaker[AsyncSession],
+    db_cleanup: None,
 ) -> AsyncGenerator[UserOAuthAccountService, None]:
     """Create UserOAuthAccountService instance."""
 
@@ -329,12 +392,21 @@ async def user_oauth_service(
 
 @pytest.fixture
 def email_service() -> EmailService:
-    """Create EmailService instance for testing."""
+    """Create EmailService instance for testing with in-memory backend."""
+    config = EmailConfig(backend="memory")
+    return EmailService(config=config)
 
-    return EmailService()
+
+@pytest.fixture
+def email_outbox() -> list:
+    """Get the email outbox and clear it before each test."""
+    InMemoryBackend.clear()
+    return InMemoryBackend.outbox
 
 
 # Test data fixtures
+
+
 @pytest.fixture
 async def unverified_user(session: AsyncSession) -> m.User:
     """Create an unverified user."""
@@ -412,7 +484,7 @@ async def test_verification_token(session: AsyncSession, unverified_user: m.User
         email=unverified_user.email,
         expires_at=datetime.now(UTC) + timedelta(hours=24),
     )
-    token.raw_token = raw_token
+    setattr(token, "raw_token", raw_token)
     session.add(token)
     await session.commit()
     await session.refresh(token)
@@ -432,7 +504,7 @@ async def test_password_reset_token(session: AsyncSession, test_user: m.User) ->
         ip_address="127.0.0.1",
         user_agent="Test User Agent",
     )
-    token.raw_token = raw_token
+    setattr(token, "raw_token", raw_token)
     session.add(token)
     await session.commit()
     await session.refresh(token)

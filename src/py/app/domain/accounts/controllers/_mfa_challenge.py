@@ -193,7 +193,10 @@ class MfaChallengeController(Controller):
         request: Request[m.User, Token, Any],
     ) -> tuple[bool, int | None]:
         if data.code:
-            if verify_totp_code(user.totp_secret, data.code):
+            totp_secret = user.totp_secret
+            if not totp_secret:
+                raise NotAuthorizedException(detail="MFA is not enabled for this user")
+            if verify_totp_code(totp_secret, data.code):
                 return False, None
             await audit_service.log_action(
                 action="mfa.challenge.failed",

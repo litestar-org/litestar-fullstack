@@ -13,16 +13,13 @@ import { Button, Layout } from "../components"
 
 export default function TeamInvitation() {
   return (
-    <Layout
-      preview="You've been invited to join {{TEAM_NAME}}"
-      appName="{{APP_NAME}}"
-    >
+    <Layout preview="You've been invited to join {{TEAM_NAME}}" appName="{{APP_NAME}}">
       <Heading
         style={{
           margin: "0 0 16px 0",
           fontSize: "20px",
           fontWeight: 600,
-          color: "#202235",
+          color: "#f3f4f6",
         }}
       >
         You've been invited to join a team
@@ -31,7 +28,7 @@ export default function TeamInvitation() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -41,27 +38,26 @@ export default function TeamInvitation() {
       <Text
         style={{
           margin: "0 0 24px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
-        {"{{INVITER_NAME}}"} has invited you to join the team{" "}
-        <strong>{"{{TEAM_NAME}}"}</strong> on {"{{APP_NAME}}"}.
+        {"{{INVITER_NAME}}"} has invited you to join the team <strong>{"{{TEAM_NAME}}"}</strong> on {"{{APP_NAME}}"}.
       </Text>
 
       <div
         style={{
           margin: "0 0 24px 0",
           padding: "16px",
-          backgroundColor: "#f8f9fa",
+          backgroundColor: "#1c2237",
           borderRadius: "8px",
-          borderLeft: "4px solid #202235",
+          borderLeft: "4px solid #FFB000",
         }}
       >
         <Text
           style={{
             margin: "0",
-            color: "#202235",
+            color: "#f3f4f6",
             fontSize: "14px",
             fontWeight: 500,
           }}
@@ -71,7 +67,7 @@ export default function TeamInvitation() {
         <Text
           style={{
             margin: "8px 0 0 0",
-            color: "#5f6368",
+            color: "#d1d5db",
             fontSize: "13px",
           }}
         >
@@ -88,7 +84,7 @@ export default function TeamInvitation() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -99,10 +95,10 @@ export default function TeamInvitation() {
         style={{
           margin: "0 0 24px 0",
           padding: "12px 16px",
-          backgroundColor: "#f8f9fa",
+          backgroundColor: "#1c2237",
           borderRadius: "6px",
           fontSize: "12px",
-          color: "#202235",
+          color: "#FFB000",
           wordBreak: "break-all" as const,
         }}
       >
@@ -112,7 +108,7 @@ export default function TeamInvitation() {
       <Text
         style={{
           margin: "24px 0 0 0",
-          color: "#9aa0a6",
+          color: "#9ca3af",
           fontSize: "13px",
         }}
       >

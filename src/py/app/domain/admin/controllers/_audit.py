@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, cast
+from typing import TYPE_CHECKING, Annotated, Any, cast
 from uuid import UUID
 
 from litestar import Controller, get
@@ -70,7 +70,7 @@ class AuditController(Controller):
         Returns:
             Paginated audit log list
         """
-        conditions = []
+        conditions: list[Any] = []
         if action:
             conditions.append(m.AuditLog.action == action)
         if end_date:
@@ -111,7 +111,7 @@ class AuditController(Controller):
         end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
         """Get audit logs for a specific user."""
-        conditions = [m.AuditLog.actor_id == user_id]
+        conditions: list[Any] = [m.AuditLog.actor_id == user_id]
         if action:
             conditions.append(m.AuditLog.action == action)
         if end_date:

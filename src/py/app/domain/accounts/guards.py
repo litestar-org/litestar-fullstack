@@ -158,7 +158,7 @@ auth = OAuth2PasswordBearerAuth[m.User](
     token_url=AUTH_TOKEN_URL,
     default_token_expiration=ACCESS_TOKEN_EXPIRATION,
     exclude=[
-        "/api/health",
+        "/health",
         "/api/access/login",
         "/api/access/logout",
         "/api/access/signup",

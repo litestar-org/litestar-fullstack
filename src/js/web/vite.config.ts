@@ -14,7 +14,7 @@ export default defineConfig({
     port: Number(process.env.VITE_PORT ?? 3006),
   },
   build: {
-    outDir: path.resolve(__dirname, "../py/app/server/static/web"),
+    outDir: path.resolve(__dirname, "../../py/app/server/static/web"),
     emptyOutDir: true,
   },
   plugins: [
@@ -23,7 +23,8 @@ export default defineConfig({
     react(),
     litestar({
       input: ["src/main.tsx", "src/styles.css"],
-      bundleDir: path.resolve(__dirname, "../py/app/server/static/web"),
+      bundleDir: path.resolve(__dirname, "../../py/app/server/static/web"),
+      hotFile: path.resolve(__dirname, "../../py/app/server/static/web/hot"),
     }),
   ],
   resolve: {

@@ -4,12 +4,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
-from advanced_alchemy.base import UUIDAuditBase
 from advanced_alchemy.utils.fixtures import open_fixture_async
 from litestar.testing import AsyncTestClient
-from sqlalchemy.engine import URL
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import NullPool
 
 from app import config
 from app.db.models import Team, User
@@ -23,68 +19,30 @@ if TYPE_CHECKING:
 
     from httpx import AsyncClient
     from litestar import Litestar
-    from pytest_databases.docker.postgres import PostgresService
+    from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
-here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="engine")
-async def fx_engine(postgres_service: PostgresService) -> AsyncEngine:
-    """Postgresql instance for end-to-end testing.
-
-    Returns:
-        Async SQLAlchemy engine instance.
-    """
-    return create_async_engine(
-        URL(
-            drivername="postgresql+psycopg",
-            username=postgres_service.user,
-            password=postgres_service.password,
-            host=postgres_service.host,
-            port=postgres_service.port,
-            database=postgres_service.database,
-            query={},  # type:ignore[arg-type]
-        ),
-        echo=False,
-        poolclass=NullPool,
-    )
-
-
-@pytest.fixture(name="sessionmaker")
-async def fx_session_maker_factory(engine: AsyncEngine) -> AsyncGenerator[async_sessionmaker[AsyncSession], None]:
-    yield async_sessionmaker(bind=engine, expire_on_commit=False)
-
-
-@pytest.fixture(name="session")
-async def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
-    async with sessionmaker() as session:
-        yield session
-
-
-@pytest.fixture(autouse=True)
-async def _seed_db(
-    engine: AsyncEngine,
+@pytest.fixture
+async def seeded_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     raw_users: list[User | dict[str, Any]],
     raw_teams: list[Team | dict[str, Any]],
+    db_cleanup: None,
 ) -> AsyncGenerator[None, None]:
-    """Populate test database with.
+    """Populate test database with fixtures when explicitly requested.
 
     Args:
-        engine: The SQLAlchemy engine instance.
         sessionmaker: The SQLAlchemy sessionmaker factory.
         raw_users: Test users to add to the database
         raw_teams: Test teams to add to the database
+        db_cleanup: Per-test cleanup dependency to ensure isolation.
 
     """
 
     settings = get_settings()
     fixtures_path = Path(settings.db.FIXTURE_PATH)
-    metadata = UUIDAuditBase.registry.metadata
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
-        await conn.run_sync(metadata.create_all)
     async with RoleService.new(sessionmaker()) as service:
         fixture = await open_fixture_async(fixtures_path, "role")
         for obj in fixture:
@@ -101,25 +59,33 @@ async def _seed_db(
 
 
 @pytest.fixture(autouse=True)
-def _patch_db(
+async def _patch_db(
     app: Litestar,
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Patch the database connection for integration tests.
+
+    This fixture ensures that all HTTP requests made through the test client
+    use the same test database that fixtures populate.
+    """
     monkeypatch.setattr(config.alchemy, "session_maker", sessionmaker)
     monkeypatch.setattr(config.alchemy, "engine_instance", engine)
+    # Also patch app state for tests that check app.state directly
+    app.state[config.alchemy.engine_app_state_key] = engine
+    app.state[config.alchemy.session_maker_app_state_key] = sessionmaker
 
 
 @pytest.fixture(name="client")
-async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
+async def fx_client(app: Litestar, db_cleanup: None) -> AsyncIterator[AsyncClient]:
     """Async client that calls requests on the app."""
     async with AsyncTestClient(app) as client:
         yield client
 
 
 @pytest.fixture(name="superuser_token_headers")
-def fx_superuser_token_headers() -> dict[str, str]:
+def fx_superuser_token_headers(seeded_db: None) -> dict[str, str]:
     """Valid superuser token."""
     token = create_access_token(
         user_id="superuser",
@@ -132,7 +98,7 @@ def fx_superuser_token_headers() -> dict[str, str]:
 
 
 @pytest.fixture(name="user_token_headers")
-def fx_user_token_headers() -> dict[str, str]:
+def fx_user_token_headers(seeded_db: None) -> dict[str, str]:
     """Valid user token."""
     token = create_access_token(
         user_id="user",

@@ -15,7 +15,6 @@ from app.domain.teams.deps import provide_team_members_service, provide_teams_se
 from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
 from app.domain.teams.services import TeamInvitationService
 from app.lib.deps import create_service_dependencies
-from app.lib.email import email_service
 from app.lib.schema import Message
 
 if TYPE_CHECKING:
@@ -25,6 +24,7 @@ if TYPE_CHECKING:
     from advanced_alchemy.service import OffsetPagination
 
     from app.domain.teams.services import TeamMemberService, TeamService
+    from app.lib.email import AppEmailService
     from app.lib.settings import AppSettings
 
 
@@ -60,6 +60,7 @@ class TeamInvitationController(Controller):
         current_user: m.User,
         team_invitations_service: TeamInvitationService,
         teams_service: TeamService,
+        app_email_service: AppEmailService,
         settings: AppSettings,
         team_id: UUID,
         data: TeamInvitationCreate,
@@ -68,11 +69,12 @@ class TeamInvitationController(Controller):
 
         Args:
             current_user: The current user sending the invitation.
-            data: The data to create the team invitation with.
             team_invitations_service: The team invitation service.
             teams_service: The teams service.
+            app_email_service: Email service for sending invitation emails.
             settings: Application settings.
             team_id: The team id.
+            data: The data to create the team invitation with.
 
         Raises:
             HTTPException: If the invitee is already a team member
@@ -87,7 +89,7 @@ class TeamInvitationController(Controller):
         payload["team_id"] = team_id
         payload["invited_by"] = current_user
         db_obj = await team_invitations_service.create(payload)
-        await email_service.send_team_invitation_email(
+        await app_email_service.send_team_invitation_email(
             invitee_email=db_obj.email,
             inviter_name=current_user.name or current_user.email,
             team_name=team.name,

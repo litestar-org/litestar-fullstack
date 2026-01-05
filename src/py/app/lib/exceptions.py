@@ -7,7 +7,7 @@ into HTTP exceptions.
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy.exceptions import DuplicateKeyError, IntegrityError
 from litestar.exceptions import (
@@ -18,18 +18,19 @@ from litestar.exceptions import (
     PermissionDeniedException,
 )
 from litestar.exceptions.responses import (
-    create_debug_response,  # pyright: ignore[reportUnknownVariableType]
-    create_exception_response,  # pyright: ignore[reportUnknownVariableType]
+    create_debug_response as _create_debug_response,  # pyright: ignore[reportUnknownVariableType]
+)
+from litestar.exceptions.responses import (
+    create_exception_response as _create_exception_response,  # pyright: ignore[reportUnknownVariableType]
 )
 from litestar.repository.exceptions import ConflictError, NotFoundError, RepositoryError
 from litestar.status_codes import HTTP_409_CONFLICT, HTTP_500_INTERNAL_SERVER_ERROR
 from structlog.contextvars import bind_contextvars
 
 if TYPE_CHECKING:
-    from typing import Any
+    from collections.abc import Callable
 
     from litestar.connection import Request
-    from litestar.middleware.exceptions.middleware import ExceptionResponseContent
     from litestar.response import Response
     from litestar.types import Scope
 
@@ -113,10 +114,22 @@ def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
     bind_contextvars(exc_info=sys.exc_info())
 
 
-def exception_to_http_response(  # pyright: ignore[reportUnknownParameterType]
+_create_debug_response_typed = cast("Callable[[Any, Exception], Any]", _create_debug_response)
+_create_exception_response_typed = cast("Callable[[Any, HTTPException], Any]", _create_exception_response)
+
+
+def create_debug_response(request: Request[Any, Any, Any], exc: Exception) -> Response[Any]:
+    return cast("Response[Any]", _create_debug_response_typed(request, exc))
+
+
+def create_exception_response(request: Request[Any, Any, Any], exc: HTTPException) -> Response[Any]:
+    return cast("Response[Any]", _create_exception_response_typed(request, exc))
+
+
+def exception_to_http_response(
     request: Request[Any, Any, Any],
     exc: ApplicationError | RepositoryError,
-) -> Response[ExceptionResponseContent]:
+) -> Response[Any]:
     """Transform repository exceptions to HTTP exceptions.
 
     Args:
@@ -138,7 +151,7 @@ def exception_to_http_response(  # pyright: ignore[reportUnknownParameterType]
     else:
         http_exc = InternalServerException
     if request.app.debug and http_exc not in {PermissionDeniedException, NotFoundError, AuthorizationError}:
-        return create_debug_response(request, exc)  # pyright: ignore[reportUnknownVariableType]
+        return create_debug_response(request, exc)
     # Use the exception's detail if available (for ApplicationError subclasses), otherwise use __cause__ or str(exc)
     detail = getattr(exc, "detail", "") or (str(exc.__cause__) if exc.__cause__ else str(exc))
-    return create_exception_response(request, http_exc(detail=detail))  # pyright: ignore[reportUnknownVariableType]
+    return create_exception_response(request, http_exc(detail=detail))

@@ -1,8 +1,7 @@
-"""High-level email service.
+"""Application-specific email service with template rendering.
 
-This module provides the EmailService class which offers a high-level
-API for sending various types of transactional emails including
-verification, password reset, welcome, and team invitation emails.
+This module provides the AppEmailService class which wraps the litestar-email
+plugin's EmailService to provide template-aware transactional email methods.
 """
 
 from __future__ import annotations
@@ -10,11 +9,14 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
-from app.lib.email.backends import get_backend
-from app.lib.email.base import EmailMultiAlternatives
+from litestar_email import EmailMultiAlternatives
+
 from app.lib.settings import BASE_DIR, get_settings
+
+if TYPE_CHECKING:
+    from litestar_email import EmailService
 
 logger = logging.getLogger(__name__)
 
@@ -28,27 +30,30 @@ class UserProtocol(Protocol):
     name: str | None
 
 
-class EmailService:
-    """High-level service for sending transactional emails.
+class AppEmailService:
+    """High-level service for sending transactional emails with templates.
 
-    This service provides methods for sending various types of emails
-    including verification, password reset, welcome, and invitation emails.
+    This wraps the litestar-email plugin's EmailService to provide
+    template rendering and app-specific email methods.
 
-    The service uses the configured email backend for flexible email delivery.
+    The service is injected via Litestar's DI system and receives
+    the plugin's EmailService (mailer) for actual email sending.
 
     Example:
-        service = EmailService()
-        await service.send_verification_email(user, token)
-        await service.send_password_reset_email(user, token)
+        # In a controller, inject via DI:
+        async def signup(app_email_service: AppEmailService, ...):
+            await app_email_service.send_verification_email(user, token)
     """
 
-    def __init__(self, fail_silently: bool = False) -> None:
+    __slots__ = ("_mailer", "_settings", "_template_cache", "_template_dir")
+
+    def __init__(self, mailer: EmailService) -> None:
         """Initialize the email service.
 
         Args:
-            fail_silently: If True, suppress exceptions during send.
+            mailer: The litestar-email plugin's EmailService instance.
         """
-        self.fail_silently = fail_silently
+        self._mailer = mailer
         self._settings = get_settings()
         self._template_dir = Path(BASE_DIR / "server" / "static" / "email")
         self._template_cache: dict[str, str] = {}
@@ -105,10 +110,6 @@ class EmailService:
         Returns:
             True if email was sent successfully, False otherwise.
         """
-        if not self._settings.email.ENABLED:
-            logger.info("Email service disabled. Would send email to %s with subject: %s", to_email, subject)
-            return False
-
         if not text_content:
             text_content = self._html_to_text(html_content)
 
@@ -124,13 +125,10 @@ class EmailService:
         )
 
         try:
-            backend = get_backend(fail_silently=self.fail_silently)
-            num_sent = await backend.send_messages([message])
+            num_sent = await self._mailer.send_message(message)
         except Exception:
             logger.exception("Failed to send email to %s", to_email)
-            if not self.fail_silently:
-                raise
-            return False
+            raise
         else:
             return num_sent > 0
 
@@ -299,6 +297,3 @@ class EmailService:
         text = text.replace("&quot;", '"')
         text = re.sub(r"\s+", " ", text)
         return text.strip()
-
-
-email_service = EmailService()

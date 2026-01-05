@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncGenerator, AsyncIterator, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast, overload
 
 from advanced_alchemy.extensions.litestar.providers import (
     create_filter_dependencies,
@@ -185,20 +185,24 @@ async def provide_services(
         msg = "At least one service provider is required"
         raise ValueError(msg)
 
+    async def _collect_services(db_session: AsyncSession) -> tuple[object, ...]:
+        services: list[object] = [await anext(provider(db_session)) for provider in providers]
+        return tuple(services)
+
     # Route to appropriate session source
     if session is not None:
         # External session provided - don't manage lifecycle
-        services = tuple([await anext(provider(session)) for provider in providers])
+        services = await _collect_services(session)
         yield services
     elif connection is not None:
         # Request context - get session from connection scope (lifecycle managed by Litestar)
         db_session = alchemy.provide_session(connection.app.state, connection.scope)
-        services = tuple([await anext(provider(db_session)) for provider in providers])
+        services = await _collect_services(db_session)
         yield services
     else:
         # Standalone context - create and manage session lifecycle
         async with alchemy.get_session() as db_session:
-            services = tuple([await anext(provider(db_session)) for provider in providers])
+            services = await _collect_services(db_session)
             yield services
 
 
@@ -237,6 +241,7 @@ class CompositeServiceMixin:
             self._service_cache = {}
 
         if service_cls not in self._service_cache:
-            self._service_cache[service_cls] = service_cls(session=self.repository.session)  # type: ignore[arg-type]
+            repository = cast("Any", self).repository
+            self._service_cache[service_cls] = service_cls(session=repository.session)
 
-        return self._service_cache[service_cls]
+        return cast("S", self._service_cache[service_cls])

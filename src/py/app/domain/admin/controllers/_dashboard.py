@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from litestar import Controller, get
 from litestar.di import Provide
@@ -116,5 +116,5 @@ class DashboardController(Controller):
             schema_type=ActivityLogEntry,
         )
 
-        activity_list = list(activities)
+        activity_list = cast("list[ActivityLogEntry]", activities)
         return RecentActivity(activities=activity_list, total=len(activity_list))

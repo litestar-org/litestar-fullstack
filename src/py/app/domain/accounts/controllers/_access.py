@@ -36,7 +36,6 @@ from app.domain.accounts.schemas import (
 )
 from app.domain.accounts.services import RefreshTokenService
 from app.lib.deps import create_service_dependencies
-from app.lib.email import email_service
 from app.lib.schema import Message
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
@@ -53,6 +52,7 @@ if TYPE_CHECKING:
         RoleService,
         UserService,
     )
+    from app.lib.email import AppEmailService
     from app.lib.email.service import UserProtocol
     from app.lib.settings import AppSettings
 
@@ -398,6 +398,7 @@ class AccessController(Controller):
         users_service: UserService,
         roles_service: RoleService,
         verification_service: EmailVerificationTokenService,
+        app_email_service: AppEmailService,
         data: AccountRegister,
     ) -> User:
         """User Signup.
@@ -407,6 +408,7 @@ class AccessController(Controller):
             users_service: User Service
             roles_service: Role Service
             verification_service: Email Verification Service
+            app_email_service: Email service for sending verification emails
             data: Account Register Data
 
         Returns:
@@ -427,7 +429,7 @@ class AccessController(Controller):
         request.app.emit(event_id="user_created", user_id=user.id)
 
         _, verification_token = await verification_service.create_verification_token(user_id=user.id, email=user.email)
-        await email_service.send_verification_email(cast("UserProtocol", user), verification_token)
+        await app_email_service.send_verification_email(cast("UserProtocol", user), verification_token)
 
         return users_service.to_schema(user, schema_type=User)
 
@@ -438,6 +440,7 @@ class AccessController(Controller):
         request: Request[m.User, Token, Any],
         users_service: UserService,
         password_reset_service: PasswordResetService,
+        app_email_service: AppEmailService,
     ) -> PasswordResetSent:
         """Initiate password reset flow.
 
@@ -446,6 +449,7 @@ class AccessController(Controller):
             request: HTTP request object
             users_service: User service
             password_reset_service: Password reset service
+            app_email_service: Email service for sending reset emails
 
         Returns:
             Response indicating reset email status
@@ -470,7 +474,7 @@ class AccessController(Controller):
             user_id=user.id, ip_address=ip_address, user_agent=user_agent
         )
 
-        await email_service.send_password_reset_email(
+        await app_email_service.send_password_reset_email(
             user=cast("UserProtocol", user),
             reset_token=reset_token,
             expires_in_minutes=60,
@@ -512,6 +516,7 @@ class AccessController(Controller):
         data: ResetPasswordRequest,
         users_service: UserService,
         password_reset_service: PasswordResetService,
+        app_email_service: AppEmailService,
     ) -> PasswordResetComplete:
         """Complete password reset with token.
 
@@ -519,6 +524,7 @@ class AccessController(Controller):
             data: Password reset request data
             users_service: User service
             password_reset_service: Password reset service
+            app_email_service: Email service for sending confirmation emails
 
         Returns:
             Password reset confirmation
@@ -539,6 +545,6 @@ class AccessController(Controller):
 
         user = await users_service.reset_password_with_token(user_id=reset_token.user_id, new_password=data.password)
 
-        await email_service.send_password_reset_confirmation_email(cast("UserProtocol", user))
+        await app_email_service.send_password_reset_confirmation_email(cast("UserProtocol", user))
 
         return PasswordResetComplete(message="Password has been successfully reset", user_id=user.id)

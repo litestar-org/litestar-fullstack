@@ -1,4 +1,5 @@
 import { Heading, Text } from "@react-email/components"
+import { emailTheme } from "../lib/theme"
 
 interface HeaderProps {
   appName: string
@@ -8,17 +9,17 @@ export const Header = ({ appName }: HeaderProps) => {
   return (
     <div
       style={{
-        backgroundColor: "#202235",
-        padding: "24px 32px",
+        backgroundColor: emailTheme.colors.brandGold,
+        padding: emailTheme.spacing.headerPadding,
         textAlign: "center" as const,
       }}
     >
       <Heading
         style={{
           margin: 0,
-          color: "#ffffff",
+          color: emailTheme.colors.brandNavy,
           fontSize: "24px",
-          fontWeight: 600,
+          fontWeight: 700,
           letterSpacing: "-0.5px",
         }}
       >
@@ -27,9 +28,9 @@ export const Header = ({ appName }: HeaderProps) => {
       <Text
         style={{
           margin: "4px 0 0 0",
-          color: "rgba(255, 255, 255, 0.8)",
+          color: `${emailTheme.colors.brandNavy}cc`, // 80% opacity
           fontSize: "12px",
-          fontWeight: 400,
+          fontWeight: 500,
         }}
       >
         Secure Application Platform

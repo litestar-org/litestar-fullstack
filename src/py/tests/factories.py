@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import UTC, date, datetime, timedelta
-from typing import Any
+from typing import Any, Protocol, cast, overload
 from unittest.mock import AsyncMock, Mock, create_autospec
 from uuid import uuid4
 
@@ -13,6 +13,22 @@ from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 from app.db import models as m
 from app.lib.email import EmailService
+
+
+class _RawTokenCarrier(Protocol):
+    raw_token: str
+
+
+@overload
+def get_raw_token(token: m.EmailVerificationToken) -> str: ...
+@overload
+def get_raw_token(token: m.PasswordResetToken) -> str: ...
+@overload
+def get_raw_token(token: m.RefreshToken) -> str: ...
+
+
+def get_raw_token(token: object) -> str:
+    return cast("_RawTokenCarrier", token).raw_token
 
 
 class UserFactory(SQLAlchemyFactory[m.User]):
@@ -126,7 +142,7 @@ class EmailVerificationTokenFactory(SQLAlchemyFactory[m.EmailVerificationToken])
             raw_token = uuid4().hex
         kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
         token = super().build(**kwargs)
-        token.raw_token = raw_token
+        setattr(token, "raw_token", raw_token)
         return token
 
 
@@ -156,7 +172,7 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
             raw_token = uuid4().hex
         kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
         token = super().build(**kwargs)
-        token.raw_token = raw_token
+        setattr(token, "raw_token", raw_token)
         return token
 
 
@@ -186,7 +202,7 @@ class RefreshTokenFactory(SQLAlchemyFactory[m.RefreshToken]):
             raw_token = uuid4().hex + uuid4().hex  # Make it longer for security
         kwargs.setdefault("token_hash", hashlib.sha256(raw_token.encode()).hexdigest())
         token = super().build(**kwargs)
-        token.raw_token = raw_token
+        setattr(token, "raw_token", raw_token)
         return token
 
 
@@ -299,6 +315,8 @@ class TagFactory(SQLAlchemyFactory[m.Tag]):
 
 
 # Convenience functions for creating complex test scenarios
+
+
 async def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:
     """Create a user with an associated team."""
     user = UserFactory.build(**kwargs)
@@ -507,6 +525,8 @@ class UsedPasswordResetTokenFactory(PasswordResetTokenFactory):
 
 
 # Enhanced convenience functions for email verification scenarios
+
+
 def create_user_with_verification_token(
     session: Any, token_state: str = "valid", **user_kwargs: Any
 ) -> tuple[m.User, m.EmailVerificationToken]:

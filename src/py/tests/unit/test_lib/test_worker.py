@@ -11,6 +11,8 @@ from app.lib import worker
 if TYPE_CHECKING:
     from saq.types import Context
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture()
 def mock_queue() -> MagicMock:

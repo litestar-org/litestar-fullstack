@@ -12,16 +12,13 @@ import { Button, Layout } from "../components"
 
 export default function PasswordResetConfirmation() {
   return (
-    <Layout
-      preview="Your password has been reset"
-      appName="{{APP_NAME}}"
-    >
+    <Layout preview="Your password has been reset" appName="{{APP_NAME}}">
       <Heading
         style={{
           margin: "0 0 16px 0",
           fontSize: "20px",
           fontWeight: 600,
-          color: "#202235",
+          color: "#f3f4f6",
         }}
       >
         Password reset complete
@@ -30,7 +27,7 @@ export default function PasswordResetConfirmation() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -40,7 +37,7 @@ export default function PasswordResetConfirmation() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -50,7 +47,7 @@ export default function PasswordResetConfirmation() {
       <Text
         style={{
           margin: "0 0 24px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -64,12 +61,11 @@ export default function PasswordResetConfirmation() {
       <Text
         style={{
           margin: "24px 0 0 0",
-          color: "#9aa0a6",
+          color: "#9ca3af",
           fontSize: "13px",
         }}
       >
-        For security, avoid reusing old passwords and consider enabling
-        multi-factor authentication.
+        For security, avoid reusing old passwords and consider enabling multi-factor authentication.
       </Text>
     </Layout>
   )

@@ -8,359 +8,357 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PublicRouteImport } from './routes/_public'
-import { Route as AppRouteImport } from './routes/_app'
-import { Route as SplatRouteImport } from './routes/$'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PublicVerifyEmailRouteImport } from './routes/_public/verify-email'
-import { Route as PublicTermsRouteImport } from './routes/_public/terms'
-import { Route as PublicSignupRouteImport } from './routes/_public/signup'
-import { Route as PublicResetPasswordRouteImport } from './routes/_public/reset-password'
-import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
-import { Route as PublicMfaChallengeRouteImport } from './routes/_public/mfa-challenge'
-import { Route as PublicLoginRouteImport } from './routes/_public/login'
-import { Route as PublicLandingRouteImport } from './routes/_public/landing'
-import { Route as PublicForgotPasswordRouteImport } from './routes/_public/forgot-password'
-import { Route as PublicAboutRouteImport } from './routes/_public/about'
-import { Route as AppTeamsRouteImport } from './routes/_app/teams'
-import { Route as AppHomeRouteImport } from './routes/_app/home'
-import { Route as AppAdminRouteImport } from './routes/_app/admin'
-import { Route as AppTeamsIndexRouteImport } from './routes/_app/teams/index'
-import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
-import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
-import { Route as AppTeamsNewRouteImport } from './routes/_app/teams/new'
-import { Route as AppTeamsTeamIdRouteImport } from './routes/_app/teams/$teamId'
-import { Route as AppAdminAuditRouteImport } from './routes/_app/admin/audit'
-import { Route as AppAdminUsersIndexRouteImport } from './routes/_app/admin/users/index'
-import { Route as AppAdminTeamsIndexRouteImport } from './routes/_app/admin/teams/index'
-import { Route as PublicAuthGoogleCallbackRouteImport } from './routes/_public/auth/google/callback'
-import { Route as PublicAuthGithubCallbackRouteImport } from './routes/_public/auth/github/callback'
-import { Route as AppAdminUsersUserIdRouteImport } from './routes/_app/admin/users/$userId'
-import { Route as AppAdminTeamsTeamIdRouteImport } from './routes/_app/admin/teams/$teamId'
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as AppRouteImport } from "./routes/_app"
+import { Route as AppAdminRouteImport } from "./routes/_app/admin"
+import { Route as AppAdminAuditRouteImport } from "./routes/_app/admin/audit"
+import { Route as AppAdminIndexRouteImport } from "./routes/_app/admin/index"
+import { Route as AppAdminTeamsTeamIdRouteImport } from "./routes/_app/admin/teams/$teamId"
+import { Route as AppAdminTeamsIndexRouteImport } from "./routes/_app/admin/teams/index"
+import { Route as AppAdminUsersUserIdRouteImport } from "./routes/_app/admin/users/$userId"
+import { Route as AppAdminUsersIndexRouteImport } from "./routes/_app/admin/users/index"
+import { Route as AppHomeRouteImport } from "./routes/_app/home"
+import { Route as AppProfileIndexRouteImport } from "./routes/_app/profile/index"
+import { Route as AppTeamsRouteImport } from "./routes/_app/teams"
+import { Route as AppTeamsTeamIdRouteImport } from "./routes/_app/teams/$teamId"
+import { Route as AppTeamsIndexRouteImport } from "./routes/_app/teams/index"
+import { Route as AppTeamsNewRouteImport } from "./routes/_app/teams/new"
+import { Route as PublicRouteImport } from "./routes/_public"
+import { Route as PublicAboutRouteImport } from "./routes/_public/about"
+import { Route as PublicAuthGithubCallbackRouteImport } from "./routes/_public/auth/github/callback"
+import { Route as PublicAuthGoogleCallbackRouteImport } from "./routes/_public/auth/google/callback"
+import { Route as PublicForgotPasswordRouteImport } from "./routes/_public/forgot-password"
+import { Route as PublicLandingRouteImport } from "./routes/_public/landing"
+import { Route as PublicLoginRouteImport } from "./routes/_public/login"
+import { Route as PublicMfaChallengeRouteImport } from "./routes/_public/mfa-challenge"
+import { Route as PublicPrivacyRouteImport } from "./routes/_public/privacy"
+import { Route as PublicResetPasswordRouteImport } from "./routes/_public/reset-password"
+import { Route as PublicSignupRouteImport } from "./routes/_public/signup"
+import { Route as PublicTermsRouteImport } from "./routes/_public/terms"
+import { Route as PublicVerifyEmailRouteImport } from "./routes/_public/verify-email"
+import { Route as SplatRouteImport } from "./routes/$"
+import { Route as IndexRouteImport } from "./routes/index"
 
 const PublicRoute = PublicRouteImport.update({
-  id: '/_public',
+  id: "/_public",
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
-  id: '/_app',
+  id: "/_app",
   getParentRoute: () => rootRouteImport,
 } as any)
 const SplatRoute = SplatRouteImport.update({
-  id: '/$',
-  path: '/$',
+  id: "/$",
+  path: "/$",
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicVerifyEmailRoute = PublicVerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
+  id: "/verify-email",
+  path: "/verify-email",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicTermsRoute = PublicTermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+  id: "/terms",
+  path: "/terms",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicSignupRoute = PublicSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+  id: "/signup",
+  path: "/signup",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicResetPasswordRoute = PublicResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+  id: "/reset-password",
+  path: "/reset-password",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
+  id: "/privacy",
+  path: "/privacy",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicMfaChallengeRoute = PublicMfaChallengeRouteImport.update({
-  id: '/mfa-challenge',
-  path: '/mfa-challenge',
+  id: "/mfa-challenge",
+  path: "/mfa-challenge",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicLandingRoute = PublicLandingRouteImport.update({
-  id: '/landing',
-  path: '/landing',
+  id: "/landing",
+  path: "/landing",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicForgotPasswordRoute = PublicForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+  id: "/forgot-password",
+  path: "/forgot-password",
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicAboutRoute = PublicAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+  id: "/about",
+  path: "/about",
   getParentRoute: () => PublicRoute,
 } as any)
 const AppTeamsRoute = AppTeamsRouteImport.update({
-  id: '/teams',
-  path: '/teams',
+  id: "/teams",
+  path: "/teams",
   getParentRoute: () => AppRoute,
 } as any)
 const AppHomeRoute = AppHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
+  id: "/home",
+  path: "/home",
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+  id: "/admin",
+  path: "/admin",
   getParentRoute: () => AppRoute,
 } as any)
 const AppTeamsIndexRoute = AppTeamsIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => AppTeamsRoute,
 } as any)
 const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
-  id: '/profile/',
-  path: '/profile/',
+  id: "/profile/",
+  path: "/profile/",
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => AppAdminRoute,
 } as any)
 const AppTeamsNewRoute = AppTeamsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
+  id: "/new",
+  path: "/new",
   getParentRoute: () => AppTeamsRoute,
 } as any)
 const AppTeamsTeamIdRoute = AppTeamsTeamIdRouteImport.update({
-  id: '/$teamId',
-  path: '/$teamId',
+  id: "/$teamId",
+  path: "/$teamId",
   getParentRoute: () => AppTeamsRoute,
 } as any)
 const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
+  id: "/audit",
+  path: "/audit",
   getParentRoute: () => AppAdminRoute,
 } as any)
 const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
+  id: "/users/",
+  path: "/users/",
   getParentRoute: () => AppAdminRoute,
 } as any)
 const AppAdminTeamsIndexRoute = AppAdminTeamsIndexRouteImport.update({
-  id: '/teams/',
-  path: '/teams/',
+  id: "/teams/",
+  path: "/teams/",
   getParentRoute: () => AppAdminRoute,
 } as any)
-const PublicAuthGoogleCallbackRoute =
-  PublicAuthGoogleCallbackRouteImport.update({
-    id: '/auth/google/callback',
-    path: '/auth/google/callback',
-    getParentRoute: () => PublicRoute,
-  } as any)
-const PublicAuthGithubCallbackRoute =
-  PublicAuthGithubCallbackRouteImport.update({
-    id: '/auth/github/callback',
-    path: '/auth/github/callback',
-    getParentRoute: () => PublicRoute,
-  } as any)
+const PublicAuthGoogleCallbackRoute = PublicAuthGoogleCallbackRouteImport.update({
+  id: "/auth/google/callback",
+  path: "/auth/google/callback",
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicAuthGithubCallbackRoute = PublicAuthGithubCallbackRouteImport.update({
+  id: "/auth/github/callback",
+  path: "/auth/github/callback",
+  getParentRoute: () => PublicRoute,
+} as any)
 const AppAdminUsersUserIdRoute = AppAdminUsersUserIdRouteImport.update({
-  id: '/users/$userId',
-  path: '/users/$userId',
+  id: "/users/$userId",
+  path: "/users/$userId",
   getParentRoute: () => AppAdminRoute,
 } as any)
 const AppAdminTeamsTeamIdRoute = AppAdminTeamsTeamIdRouteImport.update({
-  id: '/teams/$teamId',
-  path: '/teams/$teamId',
+  id: "/teams/$teamId",
+  path: "/teams/$teamId",
   getParentRoute: () => AppAdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/admin': typeof AppAdminRouteWithChildren
-  '/home': typeof AppHomeRoute
-  '/teams': typeof AppTeamsRouteWithChildren
-  '/about': typeof PublicAboutRoute
-  '/forgot-password': typeof PublicForgotPasswordRoute
-  '/landing': typeof PublicLandingRoute
-  '/login': typeof PublicLoginRoute
-  '/mfa-challenge': typeof PublicMfaChallengeRoute
-  '/privacy': typeof PublicPrivacyRoute
-  '/reset-password': typeof PublicResetPasswordRoute
-  '/signup': typeof PublicSignupRoute
-  '/terms': typeof PublicTermsRoute
-  '/verify-email': typeof PublicVerifyEmailRoute
-  '/admin/audit': typeof AppAdminAuditRoute
-  '/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/teams/new': typeof AppTeamsNewRoute
-  '/admin/': typeof AppAdminIndexRoute
-  '/profile': typeof AppProfileIndexRoute
-  '/teams/': typeof AppTeamsIndexRoute
-  '/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
-  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
-  '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
-  '/admin/teams': typeof AppAdminTeamsIndexRoute
-  '/admin/users': typeof AppAdminUsersIndexRoute
+  "/": typeof IndexRoute
+  "/$": typeof SplatRoute
+  "/admin": typeof AppAdminRouteWithChildren
+  "/home": typeof AppHomeRoute
+  "/teams": typeof AppTeamsRouteWithChildren
+  "/about": typeof PublicAboutRoute
+  "/forgot-password": typeof PublicForgotPasswordRoute
+  "/landing": typeof PublicLandingRoute
+  "/login": typeof PublicLoginRoute
+  "/mfa-challenge": typeof PublicMfaChallengeRoute
+  "/privacy": typeof PublicPrivacyRoute
+  "/reset-password": typeof PublicResetPasswordRoute
+  "/signup": typeof PublicSignupRoute
+  "/terms": typeof PublicTermsRoute
+  "/verify-email": typeof PublicVerifyEmailRoute
+  "/admin/audit": typeof AppAdminAuditRoute
+  "/teams/$teamId": typeof AppTeamsTeamIdRoute
+  "/teams/new": typeof AppTeamsNewRoute
+  "/admin/": typeof AppAdminIndexRoute
+  "/profile": typeof AppProfileIndexRoute
+  "/teams/": typeof AppTeamsIndexRoute
+  "/admin/teams/$teamId": typeof AppAdminTeamsTeamIdRoute
+  "/admin/users/$userId": typeof AppAdminUsersUserIdRoute
+  "/auth/github/callback": typeof PublicAuthGithubCallbackRoute
+  "/auth/google/callback": typeof PublicAuthGoogleCallbackRoute
+  "/admin/teams": typeof AppAdminTeamsIndexRoute
+  "/admin/users": typeof AppAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/home': typeof AppHomeRoute
-  '/about': typeof PublicAboutRoute
-  '/forgot-password': typeof PublicForgotPasswordRoute
-  '/landing': typeof PublicLandingRoute
-  '/login': typeof PublicLoginRoute
-  '/mfa-challenge': typeof PublicMfaChallengeRoute
-  '/privacy': typeof PublicPrivacyRoute
-  '/reset-password': typeof PublicResetPasswordRoute
-  '/signup': typeof PublicSignupRoute
-  '/terms': typeof PublicTermsRoute
-  '/verify-email': typeof PublicVerifyEmailRoute
-  '/admin/audit': typeof AppAdminAuditRoute
-  '/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/teams/new': typeof AppTeamsNewRoute
-  '/admin': typeof AppAdminIndexRoute
-  '/profile': typeof AppProfileIndexRoute
-  '/teams': typeof AppTeamsIndexRoute
-  '/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
-  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
-  '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
-  '/admin/teams': typeof AppAdminTeamsIndexRoute
-  '/admin/users': typeof AppAdminUsersIndexRoute
+  "/": typeof IndexRoute
+  "/$": typeof SplatRoute
+  "/home": typeof AppHomeRoute
+  "/about": typeof PublicAboutRoute
+  "/forgot-password": typeof PublicForgotPasswordRoute
+  "/landing": typeof PublicLandingRoute
+  "/login": typeof PublicLoginRoute
+  "/mfa-challenge": typeof PublicMfaChallengeRoute
+  "/privacy": typeof PublicPrivacyRoute
+  "/reset-password": typeof PublicResetPasswordRoute
+  "/signup": typeof PublicSignupRoute
+  "/terms": typeof PublicTermsRoute
+  "/verify-email": typeof PublicVerifyEmailRoute
+  "/admin/audit": typeof AppAdminAuditRoute
+  "/teams/$teamId": typeof AppTeamsTeamIdRoute
+  "/teams/new": typeof AppTeamsNewRoute
+  "/admin": typeof AppAdminIndexRoute
+  "/profile": typeof AppProfileIndexRoute
+  "/teams": typeof AppTeamsIndexRoute
+  "/admin/teams/$teamId": typeof AppAdminTeamsTeamIdRoute
+  "/admin/users/$userId": typeof AppAdminUsersUserIdRoute
+  "/auth/github/callback": typeof PublicAuthGithubCallbackRoute
+  "/auth/google/callback": typeof PublicAuthGoogleCallbackRoute
+  "/admin/teams": typeof AppAdminTeamsIndexRoute
+  "/admin/users": typeof AppAdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/_app': typeof AppRouteWithChildren
-  '/_public': typeof PublicRouteWithChildren
-  '/_app/admin': typeof AppAdminRouteWithChildren
-  '/_app/home': typeof AppHomeRoute
-  '/_app/teams': typeof AppTeamsRouteWithChildren
-  '/_public/about': typeof PublicAboutRoute
-  '/_public/forgot-password': typeof PublicForgotPasswordRoute
-  '/_public/landing': typeof PublicLandingRoute
-  '/_public/login': typeof PublicLoginRoute
-  '/_public/mfa-challenge': typeof PublicMfaChallengeRoute
-  '/_public/privacy': typeof PublicPrivacyRoute
-  '/_public/reset-password': typeof PublicResetPasswordRoute
-  '/_public/signup': typeof PublicSignupRoute
-  '/_public/terms': typeof PublicTermsRoute
-  '/_public/verify-email': typeof PublicVerifyEmailRoute
-  '/_app/admin/audit': typeof AppAdminAuditRoute
-  '/_app/teams/$teamId': typeof AppTeamsTeamIdRoute
-  '/_app/teams/new': typeof AppTeamsNewRoute
-  '/_app/admin/': typeof AppAdminIndexRoute
-  '/_app/profile/': typeof AppProfileIndexRoute
-  '/_app/teams/': typeof AppTeamsIndexRoute
-  '/_app/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
-  '/_app/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/_public/auth/github/callback': typeof PublicAuthGithubCallbackRoute
-  '/_public/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
-  '/_app/admin/teams/': typeof AppAdminTeamsIndexRoute
-  '/_app/admin/users/': typeof AppAdminUsersIndexRoute
+  "/": typeof IndexRoute
+  "/$": typeof SplatRoute
+  "/_app": typeof AppRouteWithChildren
+  "/_public": typeof PublicRouteWithChildren
+  "/_app/admin": typeof AppAdminRouteWithChildren
+  "/_app/home": typeof AppHomeRoute
+  "/_app/teams": typeof AppTeamsRouteWithChildren
+  "/_public/about": typeof PublicAboutRoute
+  "/_public/forgot-password": typeof PublicForgotPasswordRoute
+  "/_public/landing": typeof PublicLandingRoute
+  "/_public/login": typeof PublicLoginRoute
+  "/_public/mfa-challenge": typeof PublicMfaChallengeRoute
+  "/_public/privacy": typeof PublicPrivacyRoute
+  "/_public/reset-password": typeof PublicResetPasswordRoute
+  "/_public/signup": typeof PublicSignupRoute
+  "/_public/terms": typeof PublicTermsRoute
+  "/_public/verify-email": typeof PublicVerifyEmailRoute
+  "/_app/admin/audit": typeof AppAdminAuditRoute
+  "/_app/teams/$teamId": typeof AppTeamsTeamIdRoute
+  "/_app/teams/new": typeof AppTeamsNewRoute
+  "/_app/admin/": typeof AppAdminIndexRoute
+  "/_app/profile/": typeof AppProfileIndexRoute
+  "/_app/teams/": typeof AppTeamsIndexRoute
+  "/_app/admin/teams/$teamId": typeof AppAdminTeamsTeamIdRoute
+  "/_app/admin/users/$userId": typeof AppAdminUsersUserIdRoute
+  "/_public/auth/github/callback": typeof PublicAuthGithubCallbackRoute
+  "/_public/auth/google/callback": typeof PublicAuthGoogleCallbackRoute
+  "/_app/admin/teams/": typeof AppAdminTeamsIndexRoute
+  "/_app/admin/users/": typeof AppAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/$'
-    | '/admin'
-    | '/home'
-    | '/teams'
-    | '/about'
-    | '/forgot-password'
-    | '/landing'
-    | '/login'
-    | '/mfa-challenge'
-    | '/privacy'
-    | '/reset-password'
-    | '/signup'
-    | '/terms'
-    | '/verify-email'
-    | '/admin/audit'
-    | '/teams/$teamId'
-    | '/teams/new'
-    | '/admin/'
-    | '/profile'
-    | '/teams/'
-    | '/admin/teams/$teamId'
-    | '/admin/users/$userId'
-    | '/auth/github/callback'
-    | '/auth/google/callback'
-    | '/admin/teams'
-    | '/admin/users'
+    | "/"
+    | "/$"
+    | "/admin"
+    | "/home"
+    | "/teams"
+    | "/about"
+    | "/forgot-password"
+    | "/landing"
+    | "/login"
+    | "/mfa-challenge"
+    | "/privacy"
+    | "/reset-password"
+    | "/signup"
+    | "/terms"
+    | "/verify-email"
+    | "/admin/audit"
+    | "/teams/$teamId"
+    | "/teams/new"
+    | "/admin/"
+    | "/profile"
+    | "/teams/"
+    | "/admin/teams/$teamId"
+    | "/admin/users/$userId"
+    | "/auth/github/callback"
+    | "/auth/google/callback"
+    | "/admin/teams"
+    | "/admin/users"
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/$'
-    | '/home'
-    | '/about'
-    | '/forgot-password'
-    | '/landing'
-    | '/login'
-    | '/mfa-challenge'
-    | '/privacy'
-    | '/reset-password'
-    | '/signup'
-    | '/terms'
-    | '/verify-email'
-    | '/admin/audit'
-    | '/teams/$teamId'
-    | '/teams/new'
-    | '/admin'
-    | '/profile'
-    | '/teams'
-    | '/admin/teams/$teamId'
-    | '/admin/users/$userId'
-    | '/auth/github/callback'
-    | '/auth/google/callback'
-    | '/admin/teams'
-    | '/admin/users'
+    | "/"
+    | "/$"
+    | "/home"
+    | "/about"
+    | "/forgot-password"
+    | "/landing"
+    | "/login"
+    | "/mfa-challenge"
+    | "/privacy"
+    | "/reset-password"
+    | "/signup"
+    | "/terms"
+    | "/verify-email"
+    | "/admin/audit"
+    | "/teams/$teamId"
+    | "/teams/new"
+    | "/admin"
+    | "/profile"
+    | "/teams"
+    | "/admin/teams/$teamId"
+    | "/admin/users/$userId"
+    | "/auth/github/callback"
+    | "/auth/google/callback"
+    | "/admin/teams"
+    | "/admin/users"
   id:
-    | '__root__'
-    | '/'
-    | '/$'
-    | '/_app'
-    | '/_public'
-    | '/_app/admin'
-    | '/_app/home'
-    | '/_app/teams'
-    | '/_public/about'
-    | '/_public/forgot-password'
-    | '/_public/landing'
-    | '/_public/login'
-    | '/_public/mfa-challenge'
-    | '/_public/privacy'
-    | '/_public/reset-password'
-    | '/_public/signup'
-    | '/_public/terms'
-    | '/_public/verify-email'
-    | '/_app/admin/audit'
-    | '/_app/teams/$teamId'
-    | '/_app/teams/new'
-    | '/_app/admin/'
-    | '/_app/profile/'
-    | '/_app/teams/'
-    | '/_app/admin/teams/$teamId'
-    | '/_app/admin/users/$userId'
-    | '/_public/auth/github/callback'
-    | '/_public/auth/google/callback'
-    | '/_app/admin/teams/'
-    | '/_app/admin/users/'
+    | "__root__"
+    | "/"
+    | "/$"
+    | "/_app"
+    | "/_public"
+    | "/_app/admin"
+    | "/_app/home"
+    | "/_app/teams"
+    | "/_public/about"
+    | "/_public/forgot-password"
+    | "/_public/landing"
+    | "/_public/login"
+    | "/_public/mfa-challenge"
+    | "/_public/privacy"
+    | "/_public/reset-password"
+    | "/_public/signup"
+    | "/_public/terms"
+    | "/_public/verify-email"
+    | "/_app/admin/audit"
+    | "/_app/teams/$teamId"
+    | "/_app/teams/new"
+    | "/_app/admin/"
+    | "/_app/profile/"
+    | "/_app/teams/"
+    | "/_app/admin/teams/$teamId"
+    | "/_app/admin/users/$userId"
+    | "/_public/auth/github/callback"
+    | "/_public/auth/google/callback"
+    | "/_app/admin/teams/"
+    | "/_app/admin/users/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -370,208 +368,208 @@ export interface RootRouteChildren {
   PublicRoute: typeof PublicRouteWithChildren
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
+    "/_public": {
+      id: "/_public"
+      path: ""
+      fullPath: ""
       preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: ''
+    "/_app": {
+      id: "/_app"
+      path: ""
+      fullPath: ""
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
+    "/$": {
+      id: "/$"
+      path: "/$"
+      fullPath: "/$"
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_public/verify-email': {
-      id: '/_public/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
+    "/_public/verify-email": {
+      id: "/_public/verify-email"
+      path: "/verify-email"
+      fullPath: "/verify-email"
       preLoaderRoute: typeof PublicVerifyEmailRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/terms': {
-      id: '/_public/terms'
-      path: '/terms'
-      fullPath: '/terms'
+    "/_public/terms": {
+      id: "/_public/terms"
+      path: "/terms"
+      fullPath: "/terms"
       preLoaderRoute: typeof PublicTermsRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/signup': {
-      id: '/_public/signup'
-      path: '/signup'
-      fullPath: '/signup'
+    "/_public/signup": {
+      id: "/_public/signup"
+      path: "/signup"
+      fullPath: "/signup"
       preLoaderRoute: typeof PublicSignupRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/reset-password': {
-      id: '/_public/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
+    "/_public/reset-password": {
+      id: "/_public/reset-password"
+      path: "/reset-password"
+      fullPath: "/reset-password"
       preLoaderRoute: typeof PublicResetPasswordRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/privacy': {
-      id: '/_public/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
+    "/_public/privacy": {
+      id: "/_public/privacy"
+      path: "/privacy"
+      fullPath: "/privacy"
       preLoaderRoute: typeof PublicPrivacyRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/mfa-challenge': {
-      id: '/_public/mfa-challenge'
-      path: '/mfa-challenge'
-      fullPath: '/mfa-challenge'
+    "/_public/mfa-challenge": {
+      id: "/_public/mfa-challenge"
+      path: "/mfa-challenge"
+      fullPath: "/mfa-challenge"
       preLoaderRoute: typeof PublicMfaChallengeRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
+    "/_public/login": {
+      id: "/_public/login"
+      path: "/login"
+      fullPath: "/login"
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/landing': {
-      id: '/_public/landing'
-      path: '/landing'
-      fullPath: '/landing'
+    "/_public/landing": {
+      id: "/_public/landing"
+      path: "/landing"
+      fullPath: "/landing"
       preLoaderRoute: typeof PublicLandingRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/forgot-password': {
-      id: '/_public/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
+    "/_public/forgot-password": {
+      id: "/_public/forgot-password"
+      path: "/forgot-password"
+      fullPath: "/forgot-password"
       preLoaderRoute: typeof PublicForgotPasswordRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/about': {
-      id: '/_public/about'
-      path: '/about'
-      fullPath: '/about'
+    "/_public/about": {
+      id: "/_public/about"
+      path: "/about"
+      fullPath: "/about"
       preLoaderRoute: typeof PublicAboutRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_app/teams': {
-      id: '/_app/teams'
-      path: '/teams'
-      fullPath: '/teams'
+    "/_app/teams": {
+      id: "/_app/teams"
+      path: "/teams"
+      fullPath: "/teams"
       preLoaderRoute: typeof AppTeamsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/home': {
-      id: '/_app/home'
-      path: '/home'
-      fullPath: '/home'
+    "/_app/home": {
+      id: "/_app/home"
+      path: "/home"
+      fullPath: "/home"
       preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/admin': {
-      id: '/_app/admin'
-      path: '/admin'
-      fullPath: '/admin'
+    "/_app/admin": {
+      id: "/_app/admin"
+      path: "/admin"
+      fullPath: "/admin"
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/teams/': {
-      id: '/_app/teams/'
-      path: '/'
-      fullPath: '/teams/'
+    "/_app/teams/": {
+      id: "/_app/teams/"
+      path: "/"
+      fullPath: "/teams/"
       preLoaderRoute: typeof AppTeamsIndexRouteImport
       parentRoute: typeof AppTeamsRoute
     }
-    '/_app/profile/': {
-      id: '/_app/profile/'
-      path: '/profile'
-      fullPath: '/profile'
+    "/_app/profile/": {
+      id: "/_app/profile/"
+      path: "/profile"
+      fullPath: "/profile"
       preLoaderRoute: typeof AppProfileIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/admin/': {
-      id: '/_app/admin/'
-      path: '/'
-      fullPath: '/admin/'
+    "/_app/admin/": {
+      id: "/_app/admin/"
+      path: "/"
+      fullPath: "/admin/"
       preLoaderRoute: typeof AppAdminIndexRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/_app/teams/new': {
-      id: '/_app/teams/new'
-      path: '/new'
-      fullPath: '/teams/new'
+    "/_app/teams/new": {
+      id: "/_app/teams/new"
+      path: "/new"
+      fullPath: "/teams/new"
       preLoaderRoute: typeof AppTeamsNewRouteImport
       parentRoute: typeof AppTeamsRoute
     }
-    '/_app/teams/$teamId': {
-      id: '/_app/teams/$teamId'
-      path: '/$teamId'
-      fullPath: '/teams/$teamId'
+    "/_app/teams/$teamId": {
+      id: "/_app/teams/$teamId"
+      path: "/$teamId"
+      fullPath: "/teams/$teamId"
       preLoaderRoute: typeof AppTeamsTeamIdRouteImport
       parentRoute: typeof AppTeamsRoute
     }
-    '/_app/admin/audit': {
-      id: '/_app/admin/audit'
-      path: '/audit'
-      fullPath: '/admin/audit'
+    "/_app/admin/audit": {
+      id: "/_app/admin/audit"
+      path: "/audit"
+      fullPath: "/admin/audit"
       preLoaderRoute: typeof AppAdminAuditRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/_app/admin/users/': {
-      id: '/_app/admin/users/'
-      path: '/users'
-      fullPath: '/admin/users'
+    "/_app/admin/users/": {
+      id: "/_app/admin/users/"
+      path: "/users"
+      fullPath: "/admin/users"
       preLoaderRoute: typeof AppAdminUsersIndexRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/_app/admin/teams/': {
-      id: '/_app/admin/teams/'
-      path: '/teams'
-      fullPath: '/admin/teams'
+    "/_app/admin/teams/": {
+      id: "/_app/admin/teams/"
+      path: "/teams"
+      fullPath: "/admin/teams"
       preLoaderRoute: typeof AppAdminTeamsIndexRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/_public/auth/google/callback': {
-      id: '/_public/auth/google/callback'
-      path: '/auth/google/callback'
-      fullPath: '/auth/google/callback'
+    "/_public/auth/google/callback": {
+      id: "/_public/auth/google/callback"
+      path: "/auth/google/callback"
+      fullPath: "/auth/google/callback"
       preLoaderRoute: typeof PublicAuthGoogleCallbackRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_public/auth/github/callback': {
-      id: '/_public/auth/github/callback'
-      path: '/auth/github/callback'
-      fullPath: '/auth/github/callback'
+    "/_public/auth/github/callback": {
+      id: "/_public/auth/github/callback"
+      path: "/auth/github/callback"
+      fullPath: "/auth/github/callback"
       preLoaderRoute: typeof PublicAuthGithubCallbackRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/_app/admin/users/$userId': {
-      id: '/_app/admin/users/$userId'
-      path: '/users/$userId'
-      fullPath: '/admin/users/$userId'
+    "/_app/admin/users/$userId": {
+      id: "/_app/admin/users/$userId"
+      path: "/users/$userId"
+      fullPath: "/admin/users/$userId"
       preLoaderRoute: typeof AppAdminUsersUserIdRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/_app/admin/teams/$teamId': {
-      id: '/_app/admin/teams/$teamId'
-      path: '/teams/$teamId'
-      fullPath: '/admin/teams/$teamId'
+    "/_app/admin/teams/$teamId": {
+      id: "/_app/admin/teams/$teamId"
+      path: "/teams/$teamId"
+      fullPath: "/admin/teams/$teamId"
       preLoaderRoute: typeof AppAdminTeamsTeamIdRouteImport
       parentRoute: typeof AppAdminRoute
     }
@@ -596,9 +594,7 @@ const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
 }
 
-const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
-  AppAdminRouteChildren,
-)
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(AppAdminRouteChildren)
 
 interface AppTeamsRouteChildren {
   AppTeamsTeamIdRoute: typeof AppTeamsTeamIdRoute
@@ -612,9 +608,7 @@ const AppTeamsRouteChildren: AppTeamsRouteChildren = {
   AppTeamsIndexRoute: AppTeamsIndexRoute,
 }
 
-const AppTeamsRouteWithChildren = AppTeamsRoute._addFileChildren(
-  AppTeamsRouteChildren,
-)
+const AppTeamsRouteWithChildren = AppTeamsRoute._addFileChildren(AppTeamsRouteChildren)
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
@@ -662,8 +656,7 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicAuthGoogleCallbackRoute: PublicAuthGoogleCallbackRoute,
 }
 
-const PublicRouteWithChildren =
-  PublicRoute._addFileChildren(PublicRouteChildren)
+const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -671,6 +664,4 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
 }
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()

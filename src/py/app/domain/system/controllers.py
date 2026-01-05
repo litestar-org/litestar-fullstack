@@ -26,7 +26,14 @@ class SystemController(Controller):
     tags = ["System"]
     dependencies = {}
 
-    @get(operation_id="SystemHealth", name="system:health", path="/health", summary="Health Check")
+    @get(
+        operation_id="SystemHealth",
+        name="system:health",
+        path="/health",
+        summary="Health Check",
+        exclude_from_auth=True,
+        security=[],  # Public endpoint - no auth required
+    )
     async def check_system_health(
         self,
         db_session: AsyncSession,

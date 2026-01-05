@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.services]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_rotate_refresh_token_revokes_old_token(
     session: AsyncSession,
     sessionmaker: async_sessionmaker[AsyncSession],
@@ -35,7 +35,7 @@ async def test_rotate_refresh_token_revokes_old_token(
         assert refreshed_old.revoked_at is not None
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_reuse_detection_revokes_family(
     session: AsyncSession,
     sessionmaker: async_sessionmaker[AsyncSession],

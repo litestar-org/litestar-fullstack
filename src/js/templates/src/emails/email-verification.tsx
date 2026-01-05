@@ -13,16 +13,13 @@ import { Button, Layout } from "../components"
 
 export default function EmailVerification() {
   return (
-    <Layout
-      preview="Verify your email address"
-      appName="{{APP_NAME}}"
-    >
+    <Layout preview="Verify your email address" appName="{{APP_NAME}}">
       <Heading
         style={{
           margin: "0 0 16px 0",
           fontSize: "20px",
           fontWeight: 600,
-          color: "#202235",
+          color: "#f3f4f6",
         }}
       >
         Verify your email address
@@ -31,7 +28,7 @@ export default function EmailVerification() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -41,12 +38,11 @@ export default function EmailVerification() {
       <Text
         style={{
           margin: "0 0 24px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
-        Thank you for signing up for {"{{APP_NAME}}"}. Please verify your
-        email address by clicking the button below:
+        Thank you for signing up for {"{{APP_NAME}}"}. Please verify your email address by clicking the button below:
       </Text>
 
       <div style={{ textAlign: "center" as const, margin: "32px 0" }}>
@@ -56,7 +52,7 @@ export default function EmailVerification() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#5f6368",
+          color: "#d1d5db",
           fontSize: "14px",
         }}
       >
@@ -67,10 +63,10 @@ export default function EmailVerification() {
         style={{
           margin: "0 0 24px 0",
           padding: "12px 16px",
-          backgroundColor: "#f8f9fa",
+          backgroundColor: "#1c2237",
           borderRadius: "6px",
           fontSize: "12px",
-          color: "#202235",
+          color: "#FFB000",
           wordBreak: "break-all" as const,
         }}
       >
@@ -80,7 +76,7 @@ export default function EmailVerification() {
       <Text
         style={{
           margin: "0 0 16px 0",
-          color: "#9aa0a6",
+          color: "#9ca3af",
           fontSize: "13px",
         }}
       >
@@ -90,12 +86,11 @@ export default function EmailVerification() {
       <Text
         style={{
           margin: "24px 0 0 0",
-          color: "#9aa0a6",
+          color: "#9ca3af",
           fontSize: "13px",
         }}
       >
-        If you didn't create an account with {"{{APP_NAME}}"}, you can safely
-        ignore this email.
+        If you didn't create an account with {"{{APP_NAME}}"}, you can safely ignore this email.
       </Text>
     </Layout>
   )

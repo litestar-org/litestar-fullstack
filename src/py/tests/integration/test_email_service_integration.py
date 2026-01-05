@@ -3,154 +3,162 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from unittest.mock import AsyncMock, patch
+from uuid import uuid4
+
+import pytest
+from litestar_email import EmailMultiAlternatives, InMemoryBackend
 
 if TYPE_CHECKING:
     from litestar.testing import AsyncTestClient
 
+pytestmark = pytest.mark.anyio
 
-class TestEmailServiceIntegration:
-    """Integration tests for email service in the application flow."""
 
-    async def test_user_registration_triggers_email_service(
-        self,
-        client: AsyncTestClient,
-    ) -> None:
-        """Test that registering a user triggers the email service."""
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock) as mock_send:
-            mock_send.return_value = True
+@pytest.fixture(autouse=True)
+def clear_email_outbox() -> None:
+    """Clear email outbox before each test."""
+    InMemoryBackend.clear()
 
-            # Register a new user
-            response = await client.post(
-                "/api/access/signup",
-                json={
-                    "email": "newuser@example.com",
-                    "password": "TestPassword123!",
-                    "name": "New User",
-                },
-            )
 
-            assert response.status_code == 201
-            data = response.json()
-            assert data["email"] == "newuser@example.com"
+async def test_user_registration_triggers_verification_email(
+    client: AsyncTestClient,
+) -> None:
+    """Test that registering a user triggers the email service."""
+    unique_email = f"newuser_{uuid4().hex[:8]}@example.com"
+    response = await client.post(
+        "/api/access/signup",
+        json={
+            "email": unique_email,
+            "password": "TestPassword123!",
+            "name": "New User",
+        },
+    )
 
-            # Check that verification email was triggered
-            mock_send.assert_called_once()
-            call_args = mock_send.call_args[0]
-            assert call_args[0].email == "newuser@example.com"
+    assert response.status_code == 201
+    data = response.json()
+    assert data["email"] == unique_email
 
-    async def test_resend_verification_triggers_email_service(
-        self,
-        client: AsyncTestClient,
-    ) -> None:
-        """Test resending verification email triggers the email service."""
-        # First register a user
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock) as mock_send:
-            mock_send.return_value = True
+    # Check that verification email was sent
+    assert len(InMemoryBackend.outbox) == 1
+    message = InMemoryBackend.outbox[0]
+    assert unique_email in message.to
+    assert "verify" in message.subject.lower()
 
-            response = await client.post(
-                "/api/access/signup",
-                json={
-                    "email": "resendtest@example.com",
-                    "password": "TestPassword123!",
-                    "name": "Resend Test",
-                },
-            )
-            assert response.status_code == 201
 
-        # Request resend
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock) as mock_resend:
-            mock_resend.return_value = True
+async def test_resend_verification_triggers_email_service(
+    client: AsyncTestClient,
+) -> None:
+    """Test resending verification email triggers the email service."""
+    unique_email = f"resendtest_{uuid4().hex[:8]}@example.com"
+    # First register a user
+    response = await client.post(
+        "/api/access/signup",
+        json={
+            "email": unique_email,
+            "password": "TestPassword123!",
+            "name": "Resend Test",
+        },
+    )
+    assert response.status_code == 201
 
-            response = await client.post("/api/email-verification/request", json={"email": "resendtest@example.com"})
-            assert response.status_code == 201
+    # Clear the outbox after signup
+    InMemoryBackend.clear()
 
-            # Check that email was triggered
-            mock_resend.assert_called()
+    # Request resend
+    response = await client.post("/api/email-verification/request", json={"email": unique_email})
+    assert response.status_code == 201
 
-    async def test_password_reset_request_triggers_email_service(
-        self,
-        client: AsyncTestClient,
-    ) -> None:
-        """Test that requesting password reset triggers the email service."""
-        # First create a user
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock):
-            response = await client.post(
-                "/api/access/signup",
-                json={
-                    "email": "resettest@example.com",
-                    "password": "TestPassword123!",
-                    "name": "Reset Test",
-                },
-            )
-            assert response.status_code == 201
+    # Check that email was sent
+    assert len(InMemoryBackend.outbox) == 1
+    message = InMemoryBackend.outbox[0]
+    assert unique_email in message.to
 
-        # Request password reset
-        with patch("app.lib.email.email_service.send_password_reset_email", new_callable=AsyncMock) as mock_send:
-            mock_send.return_value = True
 
-            response = await client.post("/api/access/forgot-password", json={"email": "resettest@example.com"})
+async def test_password_reset_request_triggers_email_service(
+    client: AsyncTestClient,
+) -> None:
+    """Test that requesting password reset triggers the email service."""
+    unique_email = f"resettest_{uuid4().hex[:8]}@example.com"
+    # First create a user
+    response = await client.post(
+        "/api/access/signup",
+        json={
+            "email": unique_email,
+            "password": "TestPassword123!",
+            "name": "Reset Test",
+        },
+    )
+    assert response.status_code == 201
 
-            # Check response - note it might be 400 if validation fails
-            if response.status_code == 400:
-                # This might be due to validation, let's check the error
-                error_data = response.json()
-                assert "detail" in error_data or "message" in error_data
-            else:
-                assert response.status_code == 201
-                data = response.json()
-                assert "reset" in data["message"].lower() or "password" in data["message"].lower()
+    # Clear the outbox after signup
+    InMemoryBackend.clear()
 
-                # Check that reset email was triggered if successful
-                mock_send.assert_called_once()
+    # Request password reset
+    response = await client.post("/api/access/forgot-password", json={"email": unique_email})
 
-    async def test_email_service_disabled_registration_works(
-        self,
-        client: AsyncTestClient,
-    ) -> None:
-        """Test that registration works even with disabled email service."""
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock) as mock_send:
-            # Configure mock to simulate disabled service
-            mock_send.return_value = True
+    assert response.status_code == 201
+    data = response.json()
+    assert "reset" in data["message"].lower() or "password" in data["message"].lower()
 
-            response = await client.post(
-                "/api/access/signup",
-                json={
-                    "email": "disabled_test@example.com",
-                    "password": "TestPassword123!",
-                    "name": "Disabled Test",
-                },
-            )
+    # Check that reset email was sent
+    assert len(InMemoryBackend.outbox) == 1
+    message = InMemoryBackend.outbox[0]
+    assert unique_email in message.to
+    assert "reset" in message.subject.lower()
 
-            assert response.status_code == 201
-            data = response.json()
-            assert data["email"] == "disabled_test@example.com"
 
-    async def test_email_service_handles_failures_gracefully(
-        self,
-        client: AsyncTestClient,
-    ) -> None:
-        """Test that email service failures don't break the application flow."""
-        # First create a user with successful email
-        with patch("app.lib.email.email_service.send_verification_email", new_callable=AsyncMock) as mock_send:
-            mock_send.return_value = True
+async def test_registration_sends_verification_email_with_correct_content(
+    client: AsyncTestClient,
+) -> None:
+    """Test that registration sends a proper verification email."""
+    unique_email = f"content_test_{uuid4().hex[:8]}@example.com"
+    response = await client.post(
+        "/api/access/signup",
+        json={
+            "email": unique_email,
+            "password": "TestPassword123!",
+            "name": "Content Test User",
+        },
+    )
 
-            response = await client.post(
-                "/api/access/signup",
-                json={
-                    "email": "failtest@example.com",
-                    "password": "TestPassword123!",
-                    "name": "Fail Test",
-                },
-            )
-            assert response.status_code == 201
+    assert response.status_code == 201
 
-        # Now test password reset with failing email service
-        with patch("app.lib.email.email_service.send_password_reset_email", new_callable=AsyncMock) as mock_send:
-            mock_send.side_effect = Exception("Email service error")  # Simulate exception
+    # Check email content
+    assert len(InMemoryBackend.outbox) == 1
+    message = InMemoryBackend.outbox[0]
+    assert unique_email in message.to
 
-            response = await client.post("/api/access/forgot-password", json={"email": "failtest@example.com"})
+    # HTML body should contain verification link
+    assert isinstance(message, EmailMultiAlternatives)
+    assert message.html_body is not None
+    assert "verify" in message.html_body.lower()
 
-            # The application should handle the error gracefully
-            # It might return 400 due to validation or 200/500 depending on error handling
-            assert response.status_code in [200, 400, 500]
+
+async def test_multiple_signups_send_multiple_emails(
+    client: AsyncTestClient,
+) -> None:
+    """Test that multiple signups each send their own verification email."""
+    unique_suffix = uuid4().hex[:8]
+    users = [
+        {"email": f"user1_{unique_suffix}@example.com", "name": "User One"},
+        {"email": f"user2_{unique_suffix}@example.com", "name": "User Two"},
+        {"email": f"user3_{unique_suffix}@example.com", "name": "User Three"},
+    ]
+
+    for user in users:
+        response = await client.post(
+            "/api/access/signup",
+            json={
+                "email": user["email"],
+                "password": "TestPassword123!",
+                "name": user["name"],
+            },
+        )
+        assert response.status_code == 201
+
+    # Check that all emails were sent
+    assert len(InMemoryBackend.outbox) == 3
+
+    sent_to = [msg.to[0] for msg in InMemoryBackend.outbox]
+    for user in users:
+        assert user["email"] in sent_to

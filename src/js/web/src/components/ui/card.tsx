@@ -12,10 +12,9 @@ function Card({ className, hover = false, glow = false, ...props }: CardProps) {
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col gap-6 rounded-xl border border-border/60 bg-card/80 py-6 text-card-foreground shadow-lg shadow-primary/5 backdrop-blur-sm",
-        "transition-all duration-300",
-        hover && "hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1",
-        glow && "hover:shadow-glow-sm",
+        "flex flex-col gap-6 rounded-xl border border-border/50 bg-card/60 py-6 text-card-foreground shadow-sm backdrop-blur-xl transition-all duration-300",
+        hover && "hover:shadow-lg hover:border-primary/30 hover:-translate-y-1",
+        glow && "hover:shadow-glow-sm border-primary/20",
         className,
       )}
       {...props}

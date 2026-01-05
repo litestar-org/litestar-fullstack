@@ -1,6 +1,7 @@
 from advanced_alchemy.extensions.litestar import SQLAlchemyPlugin
 from litestar.plugins.problem_details import ProblemDetailsPlugin
 from litestar.plugins.structlog import StructlogPlugin
+from litestar_email import EmailPlugin
 from litestar_granian import GranianPlugin
 from litestar_saq import SAQPlugin
 from litestar_vite import VitePlugin
@@ -15,3 +16,4 @@ alchemy = SQLAlchemyPlugin(config=config.alchemy)
 granian = GranianPlugin()
 problem_details = ProblemDetailsPlugin(config=config.problem_details)
 oauth2_provider = OAuth2ProviderPlugin()
+email = EmailPlugin(config=config.email)

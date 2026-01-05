@@ -15,15 +15,15 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,structlog]",
-  "advanced-alchemy[uuid,obstore,cryptography,pwdlib]",
+  "litestar[jinja,jwt,structlog,cryptography]",
+  "advanced-alchemy[uuid,obstore,pwdlib]",
   "psycopg[pool,binary]",
   "python-dotenv",
   "litestar-saq",
   "litestar-vite>=0.15.0b4",
   "litestar-granian[uvloop]",
+  "litestar-email[smtp,resend]",
   "httpx-oauth",
-  "aiosmtplib>=3.0.0",
   "pyotp>=2.9.0",
   "qrcode[pil]>=7.4.0",
 ]
@@ -71,7 +71,6 @@ test = [
   "bump-my-version",
   "pytest",
   "pytest-xdist",
-  "pytest-asyncio",
   "pytest-mock",
   "pytest-cov",
   "coverage[toml]",
@@ -172,8 +171,6 @@ addopts = [
   "-v",
   "-ra",
 ]
-asyncio_default_fixture_loop_scope = "function"
-asyncio_mode = "auto"
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
