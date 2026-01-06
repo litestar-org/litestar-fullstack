@@ -1018,7 +1018,7 @@
       "parameters": [
         "file_path"
       ],
-      "uri": "/static/web/{file_path}"
+      "uri": "/static/{file_path}"
     },
     "vite_spa": {
       "method": "get",

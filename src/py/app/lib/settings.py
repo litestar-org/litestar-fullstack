@@ -111,7 +111,7 @@ class ViteSettings:
     """Start `vite` development server."""
     BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", STATIC_DIR))
     """Bundle directory for built assets."""
-    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/web/"))
+    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
     """Base URL for assets."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:

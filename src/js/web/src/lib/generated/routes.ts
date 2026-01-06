@@ -1165,7 +1165,7 @@ export const routeDefinitions = {
     queryParams: [] as const,
   },
   'vite': {
-    path: '/static/web/{file_path}',
+    path: '/static/{file_path}',
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['file_path'] as const,
