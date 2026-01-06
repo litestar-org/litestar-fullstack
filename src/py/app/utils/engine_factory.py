@@ -25,12 +25,14 @@ def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
         if settings.POOL_DISABLED:
             engine_kwargs["poolclass"] = NullPool
         else:
-            engine_kwargs.update({
-                "max_overflow": settings.POOL_MAX_OVERFLOW,
-                "pool_size": settings.POOL_SIZE,
-                "pool_timeout": settings.POOL_TIMEOUT,
-                "pool_use_lifo": True,
-            })
+            engine_kwargs.update(
+                {
+                    "max_overflow": settings.POOL_MAX_OVERFLOW,
+                    "pool_size": settings.POOL_SIZE,
+                    "pool_timeout": settings.POOL_TIMEOUT,
+                    "pool_use_lifo": True,
+                }
+            )
         engine = create_async_engine(**engine_kwargs)
         """Database session factory.
 
@@ -124,11 +126,13 @@ def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
         if settings.POOL_DISABLED:
             engine_kwargs["poolclass"] = NullPool
         else:
-            engine_kwargs.update({
-                "max_overflow": settings.POOL_MAX_OVERFLOW,
-                "pool_size": settings.POOL_SIZE,
-                "pool_timeout": settings.POOL_TIMEOUT,
-                "pool_use_lifo": True,
-            })
+            engine_kwargs.update(
+                {
+                    "max_overflow": settings.POOL_MAX_OVERFLOW,
+                    "pool_size": settings.POOL_SIZE,
+                    "pool_timeout": settings.POOL_TIMEOUT,
+                    "pool_use_lifo": True,
+                }
+            )
         engine = create_async_engine(**engine_kwargs)
     return engine
