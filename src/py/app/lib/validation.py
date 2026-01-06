@@ -7,7 +7,8 @@ from typing import Annotated, Any
 from urllib.parse import urlparse
 
 import msgspec
-from litestar.exceptions import ClientException
+
+from app.lib.exceptions import ApplicationClientError
 
 # Compiled regex patterns for performance
 # Email patterns
@@ -163,10 +164,11 @@ BLOCKED_URL_DOMAINS = {
 SUSPICIOUS_URL_PATTERNS = ["javascript:", "data:", "vbscript:", "file:"]
 
 
-class ValidationError(ClientException):
+class ValidationError(ApplicationClientError):
     """Custom validation error for all field validations.
 
-    Inherits from Litestar's ClientException for automatic 400 Bad Request handling.
+    Inherits from ApplicationClientError for proper exception hierarchy integration.
+    The exception_to_http_response handler converts this to HTTP 400 Bad Request.
     """
 
 
