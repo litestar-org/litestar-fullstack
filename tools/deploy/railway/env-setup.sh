@@ -161,7 +161,9 @@ configure_email() {
     echo ""
 
     read -p "Enter Resend API key: " RESEND_API_KEY
-    read -p "Enter 'From' email address (must be verified in Resend): " EMAIL_FROM
+    read -p "Enter 'From' email address (must be verified in Resend): " EMAIL_FROM_ADDRESS
+    read -p "Enter 'From' display name [Litestar App]: " EMAIL_FROM_NAME
+    EMAIL_FROM_NAME="${EMAIL_FROM_NAME:-Litestar App}"
 
     log_info "Configuring Resend..."
 
@@ -169,7 +171,8 @@ configure_email() {
 
     railway variables --set "EMAIL_ENABLED=true" \
         --set "EMAIL_BACKEND=resend" \
-        --set "EMAIL_FROM=${EMAIL_FROM}" \
+        --set "EMAIL_FROM_ADDRESS=${EMAIL_FROM_ADDRESS}" \
+        --set "EMAIL_FROM_NAME=${EMAIL_FROM_NAME}" \
         --set "RESEND_API_KEY=${RESEND_API_KEY}"
 
     log_success "Resend configured successfully"
