@@ -132,6 +132,7 @@ dependencies = [
     { name = "pyotp" },
     { name = "python-dotenv" },
     { name = "qrcode", extra = ["pil"] },
+    { name = "redis" },
 ]
 
 [package.dev-dependencies]
@@ -207,6 +208,7 @@ requires-dist = [
     { name = "pyotp", specifier = ">=2.9.0" },
     { name = "python-dotenv" },
     { name = "qrcode", extras = ["pil"], specifier = ">=7.4.0" },
+    { name = "redis", specifier = ">=5.0.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -310,6 +312,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/74/cd/15777dfde1c29d96de7f18edf4cc94c385646852e7c7b0320aa91ccca583/argon2_cffi_bindings-25.1.0-cp39-abi3-win32.whl", hash = "sha256:473bcb5f82924b1becbb637b63303ec8d10e84c8d241119419897a26116515d2", size = 27180, upload-time = "2025-07-30T10:01:57.759Z" },
     { url = "https://files.pythonhosted.org/packages/e2/c6/a759ece8f1829d1f162261226fbfd2c6832b3ff7657384045286d2afa384/argon2_cffi_bindings-25.1.0-cp39-abi3-win_amd64.whl", hash = "sha256:a98cd7d17e9f7ce244c0803cad3c23a7d379c301ba618a5fa76a67d116618b98", size = 31715, upload-time = "2025-07-30T10:01:58.56Z" },
     { url = "https://files.pythonhosted.org/packages/42/b9/f8d6fa329ab25128b7e98fd83a3cb34d9db5b059a9847eddb840a0af45dd/argon2_cffi_bindings-25.1.0-cp39-abi3-win_arm64.whl", hash = "sha256:b0fdbcf513833809c882823f98dc2f931cf659d9a1429616ac3adebb49f5db94", size = 27149, upload-time = "2025-07-30T10:01:59.329Z" },
+]
+
+[[package]]
+name = "async-timeout"
+version = "5.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/ae/136395dfbfe00dfc94da3f3e136d0b13f394cba8f4841120e34226265780/async_timeout-5.0.1.tar.gz", hash = "sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3", size = 9274, upload-time = "2024-11-06T16:41:39.6Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fe/ba/e2081de779ca30d473f21f5b30e0e737c438205440784c7dfc81efc2b029/async_timeout-5.0.1-py3-none-any.whl", hash = "sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c", size = 6233, upload-time = "2024-11-06T16:41:37.9Z" },
 ]
 
 [[package]]
@@ -1289,7 +1300,7 @@ wheels = [
 
 [[package]]
 name = "litestar-vite"
-version = "0.16.2"
+version = "0.16.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -1297,9 +1308,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/43/b4/d0ba05be5421d05469d76ffc092cc6f4b6533b8b13d4eadb956c5bdd08c5/litestar_vite-0.16.2.tar.gz", hash = "sha256:0c33b6ea682fef9094266c01181eb6eb78187963ac865fd8bfc0150ad088fd40", size = 396694, upload-time = "2026-01-05T03:09:18.563Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/db/ff6a3766f20b831d7266306deccf679195170121ff57570ac51ec9298d78/litestar_vite-0.16.3.tar.gz", hash = "sha256:11e13f55de597e75153a8e086cb04ed0cb46acc6335fd70c9a14520111537bcd", size = 398559, upload-time = "2026-01-06T04:03:57.396Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/f0/e7961db2f3ce1123e70c097250444b87fcdceb7e6bcfade93d10502c1939/litestar_vite-0.16.2-py3-none-any.whl", hash = "sha256:00a92eeadd44e018f6ce624951fb3229734b43d2817402ad165d82de4b6f89ca", size = 226130, upload-time = "2026-01-05T03:09:17.109Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/0c/4b0877a5ab557fb06fb9ad48fa5fc8296012fd21e334f5a60bbc1a543dff/litestar_vite-0.16.3-py3-none-any.whl", hash = "sha256:d63041054afc96d8519b552f886e8d323ac9cf9f72cbdcdbf0b7bb6b127da05b", size = 226669, upload-time = "2026-01-06T04:03:55.723Z" },
 ]
 
 [[package]]
@@ -1784,11 +1795,11 @@ wheels = [
 
 [[package]]
 name = "pathspec"
-version = "0.12.1"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ca/bc/f35b8446f4531a7cb215605d100cd88b7ac6f44ab3fc94870c120ab3adbf/pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712", size = 51043, upload-time = "2023-12-10T22:30:45Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c2/97/39352be14d20d377a387828daf9d3f765fad1ff29bd49913d5bbf4cefe61/pathspec-1.0.0.tar.gz", hash = "sha256:9ada63a23541746b0cf7d5672a39ea77eac31dd23a80470be90df83537512131", size = 129410, upload-time = "2026-01-06T03:21:22.892Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cc/20/ff623b09d963f88bfde16306a54e12ee5ea43e9b597108672ff3a408aad6/pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08", size = 31191, upload-time = "2023-12-10T22:30:43.14Z" },
+    { url = "https://files.pythonhosted.org/packages/05/bb/39e6768529454cc2b57e1e2fa0a0a18ff64397a16303270e215a3e03285f/pathspec-1.0.0-py3-none-any.whl", hash = "sha256:1373719036e64a2b9de3b8ddd9e30afb082a915619f07265ed76d9ae507800ae", size = 54316, upload-time = "2026-01-06T03:21:21.74Z" },
 ]
 
 [[package]]
@@ -2254,16 +2265,16 @@ wheels = [
 
 [[package]]
 name = "pytest-databases"
-version = "0.15.0"
+version = "0.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "docker" },
     { name = "filelock" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/33/39/25d33c0246ed8f99ba82fb3c998400bbb704a9874f3eb6791b90f361a043/pytest_databases-0.15.0.tar.gz", hash = "sha256:e1b8cda6d1976def17658cc0e9c07ec70aed0126020b724fb3700e2880c15883", size = 215682, upload-time = "2025-10-06T21:30:48.504Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/95/64/1ab9c5e863b19c09103d48370de806ea3c9b44933bc97e29559584506210/pytest_databases-0.15.1.tar.gz", hash = "sha256:fa5e188e746d15b862d32f94033db2756680eeee68e8f138e4146aa857826781", size = 215964, upload-time = "2026-01-05T23:10:40.434Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/31/48b9168189cb62bca61eca2f05a323cb44c7e65b04a43cde5732a95b88f8/pytest_databases-0.15.0-py3-none-any.whl", hash = "sha256:a2b01053def11264e18fd405ee68c07ce5accafc0872310539bc0d669bbf922c", size = 28734, upload-time = "2025-10-06T21:30:46.999Z" },
+    { url = "https://files.pythonhosted.org/packages/76/e3/12ce50de73b08b5c0b383b910e9f6a3753899a5398da42c6b2f91935e413/pytest_databases-0.15.1-py3-none-any.whl", hash = "sha256:8b18c465d7eeea29cf63bd6000524283c0551190b20d9c7310a921479b7f4d01", size = 28765, upload-time = "2026-01-05T23:10:39.024Z" },
 ]
 
 [package.optional-dependencies]
@@ -2440,6 +2451,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f6/45/eafb0bba0f9988f6a2520f9ca2df2c82ddfa8d67c95d6625452e97b204a5/questionary-2.1.1.tar.gz", hash = "sha256:3d7e980292bb0107abaa79c68dd3eee3c561b83a0f89ae482860b181c8bd412d", size = 25845, upload-time = "2025-08-28T19:00:20.851Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3c/26/1062c7ec1b053db9e499b4d2d5bc231743201b74051c973dadeac80a8f43/questionary-2.1.1-py3-none-any.whl", hash = "sha256:a51af13f345f1cdea62347589fbb6df3b290306ab8930713bfae4d475a7d4a59", size = 36753, upload-time = "2025-08-28T19:00:19.56Z" },
+]
+
+[[package]]
+name = "redis"
+version = "7.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/43/c8/983d5c6579a411d8a99bc5823cc5712768859b5ce2c8afe1a65b37832c81/redis-7.1.0.tar.gz", hash = "sha256:b1cc3cfa5a2cb9c2ab3ba700864fb0ad75617b41f01352ce5779dabf6d5f9c3c", size = 4796669, upload-time = "2025-11-19T15:54:39.961Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/89/f0/8956f8a86b20d7bb9d6ac0187cf4cd54d8065bc9a1a09eb8011d4d326596/redis-7.1.0-py3-none-any.whl", hash = "sha256:23c52b208f92b56103e17c5d06bdc1a6c2c0b3106583985a76a18f83b265de2b", size = 354159, upload-time = "2025-11-19T15:54:38.064Z" },
 ]
 
 [[package]]

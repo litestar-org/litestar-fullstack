@@ -18,6 +18,7 @@ dependencies = [
   "litestar[jinja,jwt,structlog,cryptography]",
   "advanced-alchemy[uuid,obstore,pwdlib]",
   "psycopg[pool,binary]",
+  "redis>=5.0.0",
   "python-dotenv",
   "litestar-saq",
   "litestar-vite>=0.15.0b4",

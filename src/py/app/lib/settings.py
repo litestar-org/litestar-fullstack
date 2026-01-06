@@ -59,7 +59,7 @@ class DatabaseSettings:
     """Amount of time to wait before recycling connections."""
     POOL_PRE_PING: bool = field(default_factory=get_env("DATABASE_PRE_POOL_PING", False))
     """Optionally ping database before fetching a session from the connection pool."""
-    URL: str = field(default_factory=get_env("DATABASE_URL", "postgres://app:app@localhost:15432/app"))
+    URL: str = field(default_factory=get_env("DATABASE_URL", "postgresql+psycopg://app:app@localhost:15432/app"))
     """SQLAlchemy Database URL."""
     MIGRATION_CONFIG: str = field(
         default_factory=get_env("DATABASE_MIGRATION_CONFIG", f"{BASE_DIR}/db/migrations/alembic.ini")
@@ -149,8 +149,10 @@ class ServerSettings:
 
 @dataclass
 class SaqSettings:
-    """Server configurations."""
+    """SAQ (Simple Async Queue) configuration using Redis as broker."""
 
+    REDIS_URL: str = field(default_factory=get_env("SAQ_REDIS_URL", "redis://localhost:16379/0"))
+    """Redis URL for SAQ broker."""
     PROCESSES: int = field(default_factory=get_env("SAQ_PROCESSES", 1))
     """The number of worker processes to start.
 
@@ -166,7 +168,7 @@ class SaqSettings:
     USE_SERVER_LIFESPAN: bool = field(default_factory=get_env("SAQ_USE_SERVER_LIFESPAN", True))
     """Auto start and stop `saq` processes when starting the Litestar application."""
 
-    def get_config(self, db: DatabaseSettings) -> SAQConfig:
+    def get_config(self) -> SAQConfig:
         from litestar_saq import CronJob, QueueConfig, SAQConfig
 
         from app.domain.accounts import jobs as account_jobs
@@ -180,12 +182,7 @@ class SaqSettings:
             queue_configs=[
                 QueueConfig(
                     name="background-tasks",
-                    dsn=db.URL.replace("postgresql+psycopg", "postgresql"),
-                    broker_options={
-                        "stats_table": "task_queue_stats",
-                        "jobs_table": "task_queue",
-                        "versions_table": "task_queue_ddl_version",
-                    },
+                    dsn=self.REDIS_URL,
                     tasks=[system_jobs.cleanup_auth_tokens, account_jobs.refresh_oauth_tokens],
                     scheduled_tasks=[
                         CronJob(

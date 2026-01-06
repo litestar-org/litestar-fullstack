@@ -186,5 +186,4 @@ src/js/web/public/hot
 # Email template build output
 src/py/app/server/static/email/
 src/js/templates/node_modules/
-src/js/templates/bun.lock
 src/js/py/app/server/static/

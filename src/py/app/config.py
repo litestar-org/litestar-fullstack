@@ -1,4 +1,7 @@
+from functools import cache
+
 import structlog
+from litestar_saq import SAQConfig
 
 from app.lib.settings import get_settings
 
@@ -8,10 +11,15 @@ compression = _settings.app.get_compression_config()
 cors = _settings.app.get_cors_config()
 alchemy = _settings.db.get_config()
 vite = _settings.vite.get_config()
-saq = _settings.saq.get_config(_settings.db)
 problem_details = _settings.app.get_problem_details_config()
 log = _settings.log.get_structlog_config()
 email = _settings.email.get_config()
+
+
+@cache
+def get_saq_config() -> SAQConfig:
+    """Get SAQ config lazily to avoid Redis connection during build."""
+    return _settings.saq.get_config()
 
 
 def setup_logging() -> None:

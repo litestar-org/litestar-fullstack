@@ -73,7 +73,11 @@ ENV GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
     PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
     LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
+    LC_ALL=C.UTF-8 \
+    # Build-time settings to prevent connection attempts
+    DATABASE_POOL_DISABLED=true \
+    SAQ_USE_SERVER_LIFESPAN=false \
+    SAQ_WEB_ENABLED=false
 
 # Install build dependencies
 RUN apt-get update \
@@ -212,7 +216,7 @@ STOPSIGNAL SIGTERM
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/local/bin/tini", "--"]
-CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["app", "run", "--host", "0.0.0.0", "--port", "8000"]
 
 # Labels for container metadata (OCI spec)
 LABEL org.opencontainers.image.title="Litestar Fullstack SPA" \

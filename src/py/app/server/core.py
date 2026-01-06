@@ -236,7 +236,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 plugins.granian,
                 plugins.alchemy,
                 plugins.vite,
-                plugins.saq,
+                plugins.get_saq_plugin(),
                 plugins.problem_details,
                 plugins.oauth2_provider,
                 plugins.email,

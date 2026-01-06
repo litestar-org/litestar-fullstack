@@ -55,7 +55,7 @@ async def get_task_queue() -> Queue:
     """
     from app.server import plugins
 
-    task_queues = plugins.saq.get_queue("background-tasks")
+    task_queues = plugins.get_saq_plugin().get_queue("background-tasks")
     await task_queues.connect()
 
     return task_queues
