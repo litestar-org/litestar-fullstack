@@ -528,7 +528,7 @@ class Settings:
         env_file_exists = env_file.is_file()
         if env_file_exists:
             console.print(f"[yellow]Loading environment configuration from {dotenv_filename}[/]")
-            load_dotenv(env_file, override=True)
+            load_dotenv(env_file, override=False)  # Env vars take precedence over .env file
         try:
             db: DatabaseSettings = DatabaseSettings()
             server: ServerSettings = ServerSettings()

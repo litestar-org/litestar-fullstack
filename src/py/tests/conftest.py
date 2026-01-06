@@ -18,6 +18,7 @@ os.environ.update(
         "VITE_PORT": "3006",
         "VITE_DEV_MODE": "True",
         "EMAIL_BACKEND": "memory",
+        "LITESTAR_DEBUG": "False",
     }
 )
 

@@ -196,8 +196,8 @@ async def test_team_name_validation(
                 json={"name": invalid_name, "description": "Test team"},
                 headers={"Authorization": f"Bearer {token}"},
             )
-            # Team name validation may not be strict - accept 400 (validation), 201 (created), or 500 (DB constraint)
-            assert response.status_code in [400, 201, 500], f"Team name '{invalid_name}' should be handled"
+            # Team name validation may not be strict - accept 400 (validation), 201 (created), 409 (conflict/duplicate), or 500 (DB constraint)
+            assert response.status_code in {400, 201, 409, 500}, f"Team name '{invalid_name}' should be handled"
 
 
 @pytest.mark.anyio

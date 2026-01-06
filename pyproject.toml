@@ -78,6 +78,7 @@ test = [
   "pytest-sugar",
   "pytest-databases[postgres]>=0.1.0",
   "polyfactory",
+  "aiosqlite",  # For SQLite fallback when PostgreSQL unavailable
 ]
 
 
