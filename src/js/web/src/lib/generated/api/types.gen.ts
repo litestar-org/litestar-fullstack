@@ -306,106 +306,6 @@ export type OauthAccount = {
 };
 
 /**
- * OffsetPagination[OAuthAccountInfo]
- */
-export type OffsetPaginationAppDomainAccountsSchemasOauthOAuthAccountInfo = {
-  items: Array<OAuthAccountInfo>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[Role]
- */
-export type OffsetPaginationAppDomainAccountsSchemasRolesRole = {
-  items: Array<Role>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[ActiveSession]
- */
-export type OffsetPaginationAppDomainAccountsSchemasSessionsActiveSession = {
-  items: Array<ActiveSession>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[User]
- */
-export type OffsetPaginationAppDomainAccountsSchemasUserUser = {
-  items: Array<User>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[AuditLogEntry]
- */
-export type OffsetPaginationAppDomainAdminSchemasAuditAuditLogEntry = {
-  items: Array<AuditLogEntry>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[AdminTeamSummary]
- */
-export type OffsetPaginationAppDomainAdminSchemasTeamsAdminTeamSummary = {
-  items: Array<AdminTeamSummary>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[AdminUserSummary]
- */
-export type OffsetPaginationAppDomainAdminSchemasUsersAdminUserSummary = {
-  items: Array<AdminUserSummary>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[Tag]
- */
-export type OffsetPaginationAppDomainTagsSchemasTagTag = {
-  items: Array<Tag>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[TeamInvitation]
- */
-export type OffsetPaginationAppDomainTeamsSchemasInvitationTeamInvitation = {
-  items: Array<TeamInvitation>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
- * OffsetPagination[Team]
- */
-export type OffsetPaginationAppDomainTeamsSchemasTeamTeam = {
-  items: Array<Team>;
-  limit: number;
-  offset: number;
-  total: number;
-};
-
-/**
  * PasswordResetComplete
  */
 export type PasswordResetComplete = {
@@ -938,7 +838,21 @@ export type GetActiveSessionsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAccountsSchemasSessionsActiveSession;
+  200: {
+    items?: Array<ActiveSession>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type GetActiveSessionsResponse =
@@ -1042,8 +956,8 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     action?: string | null;
@@ -1075,7 +989,21 @@ export type AdminListAuditLogsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAdminSchemasAuditAuditLogEntry;
+  200: {
+    items?: Array<AuditLogEntry>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type AdminListAuditLogsResponse =
@@ -1109,8 +1037,8 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     action?: string | null;
@@ -1142,7 +1070,21 @@ export type AdminGetTargetAuditLogsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAdminSchemasAuditAuditLogEntry;
+  200: {
+    items?: Array<AuditLogEntry>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type AdminGetTargetAuditLogsResponse =
@@ -1175,8 +1117,8 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     action?: string | null;
@@ -1208,7 +1150,21 @@ export type AdminGetUserAuditLogsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAdminSchemasAuditAuditLogEntry;
+  200: {
+    items?: Array<AuditLogEntry>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type AdminGetUserAuditLogsResponse =
@@ -1362,7 +1318,21 @@ export type AdminListTeamsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAdminSchemasTeamsAdminTeamSummary;
+  200: {
+    items?: Array<AdminTeamSummary>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type AdminListTeamsResponse =
@@ -1535,7 +1505,21 @@ export type AdminListUsersResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAdminSchemasUsersAdminUserSummary;
+  200: {
+    items?: Array<AdminUserSummary>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type AdminListUsersResponse =
@@ -2257,7 +2241,21 @@ export type ProfileOAuthAccountsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAccountsSchemasOauthOAuthAccountInfo;
+  200: {
+    items?: Array<OAuthAccountInfo>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ProfileOAuthAccountsResponse =
@@ -2470,7 +2468,21 @@ export type ListRolesResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAccountsSchemasRolesRole;
+  200: {
+    items?: Array<Role>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ListRolesResponse = ListRolesResponses[keyof ListRolesResponses];
@@ -2767,7 +2779,21 @@ export type ListTagsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainTagsSchemasTagTag;
+  200: {
+    items?: Array<Tag>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ListTagsResponse = ListTagsResponses[keyof ListTagsResponses];
@@ -2982,7 +3008,21 @@ export type ListTeamsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainTeamsSchemasTeamTeam;
+  200: {
+    items?: Array<Team>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ListTeamsResponse = ListTeamsResponses[keyof ListTeamsResponses];
@@ -3191,7 +3231,21 @@ export type ListTeamInvitationsResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainTeamsSchemasInvitationTeamInvitation;
+  200: {
+    items?: Array<TeamInvitation>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ListTeamInvitationsResponse =
@@ -3540,7 +3594,21 @@ export type ListUsersResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: OffsetPaginationAppDomainAccountsSchemasUserUser;
+  200: {
+    items?: Array<User>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
 };
 
 export type ListUsersResponse = ListUsersResponses[keyof ListUsersResponses];

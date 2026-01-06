@@ -1015,276 +1015,6 @@
         "title": "OauthAccount",
         "type": "object"
       },
-      "OffsetPagination_app.domain.accounts.schemas._oauth.OAuthAccountInfo_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/OAuthAccountInfo"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[OAuthAccountInfo]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.accounts.schemas._roles.Role_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Role"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[Role]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.accounts.schemas._sessions.ActiveSession_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ActiveSession"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[ActiveSession]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.accounts.schemas._user.User_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/User"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[User]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.admin.schemas._audit.AuditLogEntry_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/AuditLogEntry"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[AuditLogEntry]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.admin.schemas._teams.AdminTeamSummary_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/AdminTeamSummary"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[AdminTeamSummary]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.admin.schemas._users.AdminUserSummary_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/AdminUserSummary"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[AdminUserSummary]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.tags.schemas._tag.Tag_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Tag"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[Tag]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.teams.schemas._invitation.TeamInvitation_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/TeamInvitation"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[TeamInvitation]",
-        "type": "object"
-      },
-      "OffsetPagination_app.domain.teams.schemas._team.Team_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Team"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "offset": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "limit",
-          "offset",
-          "total"
-        ],
-        "title": "OffsetPagination[Team]",
-        "type": "object"
-      },
       "PasswordResetComplete": {
         "properties": {
           "message": {
@@ -2675,7 +2405,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.accounts.schemas._sessions.ActiveSession_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/ActiveSession"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -3048,7 +2798,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3069,7 +2819,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3170,7 +2920,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.admin.schemas._audit.AuditLogEntry_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/AuditLogEntry"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -3417,7 +3187,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3438,7 +3208,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3539,7 +3309,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.admin.schemas._audit.AuditLogEntry_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/AuditLogEntry"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -3778,7 +3568,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3799,7 +3589,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3900,7 +3690,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.admin.schemas._audit.AuditLogEntry_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/AuditLogEntry"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -4351,7 +4161,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.admin.schemas._teams.AdminTeamSummary_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/AdminTeamSummary"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -4844,7 +4674,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.admin.schemas._users.AdminUserSummary_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/AdminUserSummary"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -6402,7 +6252,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.accounts.schemas._oauth.OAuthAccountInfo_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/OAuthAccountInfo"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -6992,7 +6862,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.accounts.schemas._roles.Role_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/Role"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -7726,7 +7616,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.tags.schemas._tag.Tag_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/Tag"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -8290,7 +8200,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.teams.schemas._team.Team_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/Team"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -8803,7 +8733,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.teams.schemas._invitation.TeamInvitation_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/TeamInvitation"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },
@@ -9663,7 +9613,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OffsetPagination_app.domain.accounts.schemas._user.User_"
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      },
+                      "type": "array"
+                    },
+                    "limit": {
+                      "description": "Maximal number of items to send.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "Offset from the beginning of the query.",
+                      "type": "integer"
+                    },
+                    "total": {
+                      "description": "Total number of items.",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 }
               }
             },

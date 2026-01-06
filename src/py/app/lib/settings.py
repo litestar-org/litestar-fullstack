@@ -122,7 +122,7 @@ class ViteSettings:
             runtime=RuntimeConfig(executor="bun"),
             paths=PathConfig(
                 root=js_home,
-                bundle_dir=Path(os.path.relpath(self.BUNDLE_DIR, js_home)),
+                bundle_dir=self.BUNDLE_DIR,
                 asset_url=self.ASSET_URL,
             ),
             types=TypeGenConfig(output=Path("src/lib/generated")),
