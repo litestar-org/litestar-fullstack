@@ -1,12 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-heading: "Syne", sans-serif;
+  --font-heading: "Inter", system-ui, sans-serif;
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -69,6 +68,7 @@
   --color-brand-gold: hsl(var(--brand-gold));
   --color-brand-gold-light: hsl(var(--brand-gold-light));
   --color-brand-gray: hsl(var(--brand-gray));
+  --color-brand-gray-light: hsl(var(--brand-gray-light));
 
   /* Shadows */
   --shadow-glow-sm: 0 0 10px hsl(var(--brand-gold) / 0.3);
@@ -132,6 +132,7 @@
   --brand-gold-light: 40 100% 75%; /* #FFD480 */
   --brand-navy: 234 25% 17%; /* #202235 - Official Navy */
   --brand-gray: 218 13% 88%; /* #DCDFE4 */
+  --brand-gray-light: 220 14% 96%; /* Very light gray */
 
   /* Radius - Softer, more modern */
   --radius: 0.75rem;
@@ -146,7 +147,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
 
-  --primary: 217 91% 60%; /* Litestar Blue */
+  --primary: 234 25% 17%; /* Brand Navy */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 214 32% 91%;
@@ -170,17 +171,17 @@
 
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 217 91% 60%;
+  --ring: 234 25% 17%;
 
   /* Sidebar Light */
   --sidebar: 0 0% 100%;
   --sidebar-foreground: 222 47% 11%;
-  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary: 234 25% 17%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 214 32% 91%;
+  --sidebar-accent: 220 14% 95%;
   --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-border: 214 32% 91%;
-  --sidebar-ring: 217 91% 60%;
+  --sidebar-border: 220 14% 92%;
+  --sidebar-ring: 234 25% 17%;
 
   /* RetroGrid Light - Gold accents on navy hero panel */
   --grid-line: rgba(255, 255, 255, 0.06);
@@ -208,7 +209,7 @@
   --popover: 234 25% 10%;
   --popover-foreground: 220 20% 97%;
 
-  --primary: 217 91% 60%; /* Blue (same as light theme) */
+  --primary: 234 25% 30%; /* Lighter navy for contrast */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 234 25% 15%;
@@ -232,17 +233,17 @@
 
   --border: 234 25% 18%;
   --input: 234 25% 18%;
-  --ring: 217 91% 60%; /* Blue ring */
+  --ring: 234 25% 30%;
 
   /* Sidebar Dark */
   --sidebar: 234 25% 6%;
   --sidebar-foreground: 220 20% 97%;
-  --sidebar-primary: 217 91% 60%; /* Blue */
+  --sidebar-primary: 234 25% 30%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 234 25% 15%;
   --sidebar-accent-foreground: 220 20% 97%;
   --sidebar-border: 234 25% 15%;
-  --sidebar-ring: 217 91% 60%; /* Blue */
+  --sidebar-ring: 234 25% 30%;
 
   /* RetroGrid Dark - Gold highlights */
   --grid-line: rgba(255, 255, 255, 0.06);

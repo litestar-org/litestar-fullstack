@@ -14,7 +14,7 @@ export function AuthHeroPanel({
   showTestimonial = true,
 }: AuthHeroPanelProps) {
   return (
-    <div className="relative hidden h-full flex-col bg-brand-navy p-10 text-white lg:flex">
+    <div className="relative hidden min-h-screen w-1/2 max-w-2xl flex-col bg-brand-navy p-10 text-white lg:flex">
       <RetroGrid />
       <Link to="/" className="relative z-20">
         <div className="flex items-center font-medium text-lg">

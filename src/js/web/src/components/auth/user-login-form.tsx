@@ -9,11 +9,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { useAuthStore } from "@/lib/auth"
+import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 import { type LoginFormData, loginFormSchema } from "@/lib/validation"
 
-interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  redirectUrl?: string | null
+}
 
-export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
+export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFormProps) {
   const navigate = useNavigate()
   const { login, isLoading } = useAuthStore()
   const { data: oauthConfig } = useOAuthConfig()
@@ -21,6 +24,9 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const googleOAuthEnabled = oauthConfig?.googleEnabled ?? false
   const githubOAuthEnabled = oauthConfig?.githubEnabled ?? false
   const hasOAuthProviders = googleOAuthEnabled || githubOAuthEnabled
+
+  // Use redirect URL or default to /home
+  const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -36,10 +42,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     try {
       const result = await login(data.username, data.password)
       if (result.mfaRequired) {
-        navigate({ to: "/mfa-challenge" })
+        // Preserve redirect through MFA flow
+        navigate({ to: "/mfa-challenge", search: { redirect: finalRedirect } })
         return
       }
-      navigate({ to: "/home" })
+      navigate({ to: finalRedirect })
     } catch (_error) {
       // Error is handled by useAuthStore
     }
@@ -104,8 +111,8 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
               </div>
             </div>
             <div className="grid gap-2">
-              {githubOAuthEnabled && <GitHubSignInButton variant="signin" className="w-full" onSuccess={() => navigate({ to: "/home" })} />}
-              {googleOAuthEnabled && <GoogleSignInButton variant="signin" className="w-full" onSuccess={() => navigate({ to: "/home" })} />}
+              {githubOAuthEnabled && <GitHubSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
+              {googleOAuthEnabled && <GoogleSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
             </div>
           </>
         )}

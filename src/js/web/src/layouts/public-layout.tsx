@@ -47,21 +47,6 @@ export function PublicLayout() {
         </header>
       )}
 
-      {/* Floating theme toggle only for landing page */}
-      {isLandingPage && (
-        <div className="fixed top-4 right-4 z-50">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleTheme}
-            className="size-9 rounded-full bg-background/80 backdrop-blur-sm border-border/50 shadow-lg"
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-          >
-            {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
-          </Button>
-        </div>
-      )}
-
       <main className="flex flex-1">
         <Outlet />
       </main>

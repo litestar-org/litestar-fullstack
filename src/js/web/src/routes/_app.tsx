@@ -4,12 +4,15 @@ import { useAuthStore } from "@/lib/auth"
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const { isAuthenticated, checkAuth } = useAuthStore.getState()
+
+    // Build redirect search params preserving current URL
+    const redirectSearch = { redirect: location.pathname + location.search }
 
     // If not authenticated according to persisted state, redirect immediately
     if (!isAuthenticated) {
-      throw redirect({ to: "/login" })
+      throw redirect({ to: "/login", search: redirectSearch })
     }
 
     // Verify the session is still valid by checking with the server
@@ -18,7 +21,7 @@ export const Route = createFileRoute("/_app")({
       // Re-check after verification - checkAuth updates the store if session is invalid
       const { isAuthenticated: stillAuthenticated } = useAuthStore.getState()
       if (!stillAuthenticated) {
-        throw redirect({ to: "/login" })
+        throw redirect({ to: "/login", search: redirectSearch })
       }
     } catch {
       // If checkAuth fails, clear state and redirect
@@ -27,7 +30,7 @@ export const Route = createFileRoute("/_app")({
         user: null,
         currentTeam: null,
       })
-      throw redirect({ to: "/login" })
+      throw redirect({ to: "/login", search: redirectSearch })
     }
   },
 })

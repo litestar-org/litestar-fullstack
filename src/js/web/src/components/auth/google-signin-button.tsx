@@ -4,15 +4,20 @@ import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { apiAuthOauthGoogleGoogleAuthorize } from "@/lib/generated/api"
 
+/** Key used to store the post-auth redirect destination in sessionStorage */
+export const GOOGLE_AUTH_REDIRECT_KEY = "google_auth_redirect"
+
 interface GoogleSignInButtonProps {
   variant?: "signin" | "signup" | "link"
   onSuccess?: () => void
   onError?: (error: string) => void
   redirectUrl?: string
+  /** The destination to redirect to after successful OAuth authentication */
+  authRedirect?: string
   className?: string
 }
 
-export function GoogleSignInButton({ variant = "signin", onSuccess, onError, redirectUrl, className }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ variant = "signin", onSuccess, onError, redirectUrl, authRedirect, className }: GoogleSignInButtonProps) {
   const { mutate: initiateOAuth, isPending } = useMutation({
     mutationFn: async () => {
       const targetUrl = redirectUrl ?? `${window.location.origin}/auth/google/callback`
@@ -30,6 +35,12 @@ export function GoogleSignInButton({ variant = "signin", onSuccess, onError, red
     },
     onSuccess: (data) => {
       if (data?.authorizationUrl) {
+        // Store the post-auth redirect destination before leaving for OAuth
+        if (authRedirect) {
+          sessionStorage.setItem(GOOGLE_AUTH_REDIRECT_KEY, authRedirect)
+        } else {
+          sessionStorage.removeItem(GOOGLE_AUTH_REDIRECT_KEY)
+        }
         // Redirect to Google OAuth
         window.location.href = data.authorizationUrl
       } else {

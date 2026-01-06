@@ -46,7 +46,7 @@ export function AppLayout() {
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div>
                     <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{header.eyebrow}</p>
-                    <p className="font-['Space_Grotesk'] text-lg font-semibold text-foreground">{header.title}</p>
+                    <p className="font-heading text-lg font-semibold text-foreground">{header.title}</p>
                   </div>
                 </div>
                 {currentTeam && pathname !== "/teams/new" && !pathname.startsWith(`/teams/${currentTeam.id}`) && (

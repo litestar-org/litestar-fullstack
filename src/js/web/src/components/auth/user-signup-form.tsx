@@ -14,6 +14,7 @@ import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { validatePassword } from "@/hooks/use-validation"
 import { useAuthStore } from "@/lib/auth"
 import { accountRegister } from "@/lib/generated/api"
+import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 
 const signupSchema = z
   .object({
@@ -37,12 +38,15 @@ const signupSchema = z
 
 type SignupFormData = z.infer<typeof signupSchema>
 
-interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  redirectUrl?: string | null
+}
 
-export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
+export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupFormProps) {
   const navigate = useNavigate()
   const { isLoading } = useAuthStore()
   const { data: oauthConfig } = useOAuthConfig()
+  const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
 
   const googleOAuthEnabled = oauthConfig?.googleEnabled ?? false
   const githubOAuthEnabled = oauthConfig?.githubEnabled ?? false
@@ -69,7 +73,9 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
 
       if (response.data) {
         toast.success("Account created! Please check your email to verify your account.")
-        navigate({ to: "/login" })
+        // Preserve redirect URL when navigating to login
+        const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
+        navigate({ to: "/login", search: loginSearch })
         return
       }
 
@@ -167,8 +173,8 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
               </div>
             </div>
             <div className="grid gap-2">
-              {githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" onSuccess={() => navigate({ to: "/home" })} />}
-              {googleOAuthEnabled && <GoogleSignInButton variant="signup" className="w-full" onSuccess={() => navigate({ to: "/home" })} />}
+              {githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} onSuccess={() => navigate({ to: finalRedirect })} />}
+              {googleOAuthEnabled && <GoogleSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} onSuccess={() => navigate({ to: finalRedirect })} />}
             </div>
           </>
         )}

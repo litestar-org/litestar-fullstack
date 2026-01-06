@@ -6,9 +6,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
+import { AuthHeroPanel } from "@/components/auth/auth-hero-panel"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
@@ -105,59 +105,61 @@ function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
-          <CardHeader className="text-center">
-            <CardTitle>Invalid Reset Link</CardTitle>
-            <CardDescription>This password reset link is invalid or incomplete.</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="relative flex min-h-screen w-full">
+        <AuthHeroPanel showTestimonial={false} description="Secure password recovery for your account." />
+        <div className="flex flex-1 flex-col items-center justify-center bg-brand-gray-light px-4 py-12 dark:bg-background">
+          <div className="w-full max-w-md space-y-6">
+            <div className="text-center">
+              <h1 className="text-2xl font-semibold tracking-tight">Invalid Reset Link</h1>
+              <p className="mt-2 text-sm text-muted-foreground">This password reset link is invalid or incomplete.</p>
+            </div>
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>Please request a new password reset link.</AlertDescription>
             </Alert>
-          </CardContent>
-          <CardFooter>
-            <Button variant="default" className="w-full" onClick={() => navigate({ to: "/forgot-password" })}>
+            <Button className="w-full" onClick={() => navigate({ to: "/forgot-password" })}>
               Request new reset link
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (isSuccess) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-              <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+      <div className="relative flex min-h-screen w-full">
+        <AuthHeroPanel showTestimonial={false} description="Secure password recovery for your account." />
+        <div className="flex flex-1 flex-col items-center justify-center bg-brand-gray-light px-4 py-12 dark:bg-background">
+          <div className="w-full max-w-md space-y-6">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <h1 className="text-2xl font-semibold tracking-tight">Password Reset Successfully</h1>
+              <p className="mt-2 text-sm text-muted-foreground">Your password has been reset. Redirecting to login...</p>
             </div>
-            <CardTitle>Password Reset Successfully</CardTitle>
-            <CardDescription>Your password has been reset. Redirecting to login...</CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button variant="default" className="w-full" onClick={() => navigate({ to: "/login" })}>
+            <Button className="w-full" onClick={() => navigate({ to: "/login" })}>
               Go to login
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
-        <CardHeader className="text-center">
-          <CardTitle>Reset your password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
-        </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
+    <div className="relative flex min-h-screen w-full">
+      <AuthHeroPanel showTestimonial={false} description="Secure password recovery for your account." />
+      <div className="flex flex-1 flex-col items-center justify-center bg-brand-gray-light px-4 py-12 dark:bg-background">
+        <div className="w-full max-w-md space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">Reset your password</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Enter your new password below</p>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="password"
@@ -202,15 +204,14 @@ function ResetPasswordPage() {
                   </FormItem>
                 )}
               />
-            </CardContent>
-            <CardFooter>
+
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending ? "Resetting..." : "Reset password"}
               </Button>
-            </CardFooter>
-          </form>
-        </Form>
-      </Card>
+            </form>
+          </Form>
+        </div>
+      </div>
     </div>
   )
 }

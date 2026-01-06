@@ -1,6 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router"
 import { Icons } from "@/components/icons"
 import { buttonVariants } from "@/components/ui/button"
+import { validateRedirectUrl } from "@/lib/redirect-utils"
 import { cn } from "@/lib/utils"
 
 import { AuthHeroPanel } from "./auth-hero-panel"
@@ -13,6 +14,15 @@ export function AuthForm() {
 
   const isLogin = pathname === "/login"
 
+  // Get redirect param from URL search params
+  const searchParams = new URLSearchParams(router.state.location.search)
+  const redirectParam = searchParams.get("redirect")
+  const validatedRedirect = validateRedirectUrl(redirectParam)
+
+  // Build toggle URL with redirect preserved
+  const togglePath = isLogin ? "/signup" : "/login"
+  const toggleSearch = validatedRedirect ? { redirect: validatedRedirect } : undefined
+
   return (
     <div className="relative flex min-h-screen w-full">
       {/* Left panel with RetroGrid - hidden on mobile */}
@@ -21,7 +31,7 @@ export function AuthForm() {
       {/* Right panel with form - centers on mobile when hero is hidden */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
         {/* Toggle link in top right */}
-        <Link to={isLogin ? "/signup" : "/login"} className={cn(buttonVariants({ variant: "ghost" }), "absolute top-4 right-4 md:top-8 md:right-8")}>
+        <Link to={togglePath} search={toggleSearch} className={cn(buttonVariants({ variant: "ghost" }), "absolute top-4 right-4 md:top-8 md:right-8")}>
           {isLogin ? "Need an account?" : "Sign in"}
         </Link>
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-87.5">
@@ -33,7 +43,7 @@ export function AuthForm() {
             <p className="text-muted-foreground text-sm">{isLogin ? "Enter your credentials to sign in to your account" : "Enter your details to create your account"}</p>
           </div>
 
-          {isLogin ? <UserLoginForm /> : <UserSignupForm />}
+          {isLogin ? <UserLoginForm redirectUrl={validatedRedirect} /> : <UserSignupForm redirectUrl={validatedRedirect} />}
 
           {isLogin && (
             <div className="text-center">

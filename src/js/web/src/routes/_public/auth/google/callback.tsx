@@ -2,11 +2,13 @@ import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
+import { GOOGLE_AUTH_REDIRECT_KEY } from "@/components/auth/google-signin-button"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
+import { getSafeRedirectUrl } from "@/lib/redirect-utils"
 
 export const Route = createFileRoute("/_public/auth/google/callback")({
   validateSearch: (search) =>
@@ -50,7 +52,13 @@ function GoogleCallbackPage() {
       localStorage.setItem("access_token", token)
       await refetchUser()
       toast.success("Successfully signed in with Google!")
-      navigate({ to: "/home" })
+
+      // Get and clear stored redirect destination
+      const storedRedirect = sessionStorage.getItem(GOOGLE_AUTH_REDIRECT_KEY)
+      sessionStorage.removeItem(GOOGLE_AUTH_REDIRECT_KEY)
+      const finalRedirect = getSafeRedirectUrl(storedRedirect)
+
+      navigate({ to: finalRedirect })
     }
 
     run()
