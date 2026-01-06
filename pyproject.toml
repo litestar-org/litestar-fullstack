@@ -15,7 +15,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,structlog,cryptography]",
+  "litestar[jinja,jwt,structlog,cryptography,pydantic]",
   "advanced-alchemy[uuid,obstore,pwdlib]",
   "psycopg[pool,binary]",
   "redis",
@@ -96,12 +96,7 @@ sources = ["src/py"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "docs"]
-include = [
-  "src/**/*",
-  "tools/*",
-  "resources",
-  "LICENSE",
-]
+include = ["src/**/*", "tools/*", "resources", "LICENSE"]
 skip-excluded-dirs = false
 
 [tool.hatch.build.targets.wheel]
