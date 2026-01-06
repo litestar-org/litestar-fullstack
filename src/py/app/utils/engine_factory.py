@@ -11,21 +11,27 @@ if TYPE_CHECKING:
 def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
     url = settings.URL.replace("postgresql://", "postgresql+psycopg://")
     if url.startswith("postgresql+asyncpg"):
-        engine = create_async_engine(
-            url=url,
-            future=True,
-            json_serializer=encode_json,
-            json_deserializer=decode_json,
-            echo=settings.ECHO,
-            echo_pool=settings.ECHO_POOL,
-            max_overflow=settings.POOL_MAX_OVERFLOW,
-            pool_size=settings.POOL_SIZE,
-            pool_timeout=settings.POOL_TIMEOUT,
-            pool_recycle=settings.POOL_RECYCLE,
-            pool_pre_ping=settings.POOL_PRE_PING,
-            pool_use_lifo=True,  # use lifo to reduce the number of idle connections
-            poolclass=NullPool if settings.POOL_DISABLED else None,
-        )
+        # Build engine kwargs - pool args are invalid with NullPool
+        engine_kwargs: dict[str, Any] = {
+            "url": url,
+            "future": True,
+            "json_serializer": encode_json,
+            "json_deserializer": decode_json,
+            "echo": settings.ECHO,
+            "echo_pool": settings.ECHO_POOL,
+            "pool_recycle": settings.POOL_RECYCLE,
+            "pool_pre_ping": settings.POOL_PRE_PING,
+        }
+        if settings.POOL_DISABLED:
+            engine_kwargs["poolclass"] = NullPool
+        else:
+            engine_kwargs.update({
+                "max_overflow": settings.POOL_MAX_OVERFLOW,
+                "pool_size": settings.POOL_SIZE,
+                "pool_timeout": settings.POOL_TIMEOUT,
+                "pool_use_lifo": True,
+            })
+        engine = create_async_engine(**engine_kwargs)
         """Database session factory.
 
         See [`async_sessionmaker()`][sqlalchemy.ext.asyncio.async_sessionmaker].
@@ -104,19 +110,25 @@ def create_sqlalchemy_engine(settings: "DatabaseSettings") -> "AsyncEngine":
             dbapi_connection.exec_driver_sql("BEGIN")
 
     else:
-        engine = create_async_engine(
-            url=url,
-            future=True,
-            json_serializer=encode_json,
-            json_deserializer=decode_json,
-            echo=settings.ECHO,
-            echo_pool=settings.ECHO_POOL,
-            max_overflow=settings.POOL_MAX_OVERFLOW,
-            pool_size=settings.POOL_SIZE,
-            pool_timeout=settings.POOL_TIMEOUT,
-            pool_recycle=settings.POOL_RECYCLE,
-            pool_pre_ping=settings.POOL_PRE_PING,
-            pool_use_lifo=True,  # use lifo to reduce the number of idle connections
-            poolclass=NullPool if settings.POOL_DISABLED else None,
-        )
+        # Build engine kwargs - pool args are invalid with NullPool
+        engine_kwargs = {
+            "url": url,
+            "future": True,
+            "json_serializer": encode_json,
+            "json_deserializer": decode_json,
+            "echo": settings.ECHO,
+            "echo_pool": settings.ECHO_POOL,
+            "pool_recycle": settings.POOL_RECYCLE,
+            "pool_pre_ping": settings.POOL_PRE_PING,
+        }
+        if settings.POOL_DISABLED:
+            engine_kwargs["poolclass"] = NullPool
+        else:
+            engine_kwargs.update({
+                "max_overflow": settings.POOL_MAX_OVERFLOW,
+                "pool_size": settings.POOL_SIZE,
+                "pool_timeout": settings.POOL_TIMEOUT,
+                "pool_use_lifo": True,
+            })
+        engine = create_async_engine(**engine_kwargs)
     return engine
