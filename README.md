@@ -46,8 +46,10 @@ make install
 
 ```bash
 cp .env.local.example .env
+. .venv/bin/activate
 make start-infra
-uv run app run
+app database upgrade
+app run
 ```
 
 ### Docker

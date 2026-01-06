@@ -9,7 +9,7 @@ This file provides guidance to AI coding agents working in this repository.
 ```bash
 make install                    # Fresh installation (Python + Node)
 cp .env.local.example .env      # Setup environment
-make start-infra                # Start PostgreSQL + Redis + MailHog
+make start-infra                # Start PostgreSQL + Redis + Mailpit + RustFS
 uv run app run                  # Start all services (SAQ, Vite, Litestar)
 ```
 
@@ -135,11 +135,11 @@ src/js/templates/
 
 ## Development Infrastructure
 
-### MailHog (Email Testing)
+### Mailpit (Email Testing)
 
 - Web UI: <http://localhost:18025>
 - SMTP: localhost:11025
-- Access: `make mailhog`
+- Access: `make mailpit`
 - All dev emails are caught here
 
 ## Critical Rules

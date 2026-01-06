@@ -47,12 +47,12 @@ services:
       interval: 2s
       timeout: 3s
       retries: 40
-  mailhog:
-    image: mailhog/mailhog:latest
+  mailpit:
+    image: axllent/mailpit:latest
     ports:
       - "18025:8025"  # Web UI
       - "11025:1025"  # SMTP server
-    hostname: mailhog
+    hostname: mailpit
     restart: unless-stopped
     logging:
       options:
@@ -63,10 +63,38 @@ services:
         - CMD
         - sh
         - -c
-        - "wget --no-verbose --tries=1 --spider http://localhost:8025 || exit 1"
+        - "wget --no-verbose --tries=1 --spider http://localhost:8025/livez || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  storage:
+    image: rustfs/rustfs:latest
+    ports:
+      - "19000:9000"   # S3 API
+      - "19001:9001"   # Web Console
+    hostname: storage
+    environment:
+      RUSTFS_ACCESS_KEY: "app"
+      RUSTFS_SECRET_KEY: "app"
+      RUSTFS_VOLUMES: "/data"
+      RUSTFS_CONSOLE_ENABLE: "true"
+    volumes:
+      - storage-data:/data
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:9000/minio/health/live
       interval: 10s
       timeout: 5s
       retries: 3
 volumes:
   db-data: {}
   cache-data: {}
+  storage-data: {}

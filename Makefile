@@ -249,10 +249,10 @@ wipe-infra:                                        ## Remove local infrastructur
 infra-logs:                                        ## Tail infrastructure logs
 	@docker compose -f $(COMPOSE_INFRA) logs -f
 
-.PHONY: mailhog
-mailhog:                                           ## Open MailHog web interface
-	@echo "${INFO} Opening MailHog web interface... 📧"
-	@echo "${INFO} MailHog UI: http://localhost:18025"
+.PHONY: mailpit
+mailpit:                                           ## Open Mailpit web interface
+	@echo "${INFO} Opening Mailpit web interface... 📧"
+	@echo "${INFO} Mailpit UI: http://localhost:18025"
 	@echo "${INFO} SMTP Server: localhost:11025"
 	@if command -v open >/dev/null 2>&1; then \
 		open http://localhost:18025; \
