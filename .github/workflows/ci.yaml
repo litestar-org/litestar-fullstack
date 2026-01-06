@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install base libraries
         run: pip install nodeenv cython setuptools pip  --upgrade --quiet --user
@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11","3.12","3.13"]
+        python-version: ["3.12","3.13"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -53,7 +53,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
       - name: Install base libraries
@@ -63,7 +62,7 @@ jobs:
         run: uv sync --all-groups
 
       - name: Test with Coverage
-        run: uv run pytest tests --cov=app --cov-report=xml
+        run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
 
       - if: matrix.python-version == '3.13'
         uses: actions/upload-artifact@v4
@@ -88,7 +87,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
       - name: Install dependencies
@@ -128,7 +126,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
       - name: Install dependencies

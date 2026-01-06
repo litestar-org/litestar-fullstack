@@ -198,7 +198,7 @@ class SaqSettings:
                             ttl=1800,
                         ),
                     ],
-                    concurrency=20,
+                    concurrency=self.CONCURRENCY,
                     startup=on_startup,
                     shutdown=on_shutdown,
                     before_process=before_process,
