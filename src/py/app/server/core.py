@@ -137,6 +137,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             exception_to_http_response,
         )
         from app.lib.settings import AppSettings, get_settings, provide_app_settings
+        from app.lib.validation import ValidationError
         from app.server import plugins
 
         settings = get_settings()
@@ -205,6 +206,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             exception_to_http_response=exception_to_http_response,
             application_error=ApplicationError,
             application_client_error=ApplicationClientError,
+            validation_error=ValidationError,
             repository_error=RepositoryError,
             duplicate_key_error=DuplicateKeyError,
         )
@@ -320,12 +322,14 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         exception_to_http_response: Any,
         application_error: type[Exception],
         application_client_error: type[Exception],
+        validation_error: type[Exception],
         repository_error: type[Exception],
         duplicate_key_error: type[Exception],
     ) -> None:
         app_config.exception_handlers = {
             application_error: exception_to_http_response,
             application_client_error: exception_to_http_response,
+            validation_error: exception_to_http_response,
             repository_error: exception_to_http_response,
             duplicate_key_error: exception_to_http_response,
         }

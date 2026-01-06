@@ -19,8 +19,8 @@ async def test_get_task_queue() -> None:
     mock_saq_plugin = MagicMock()
     mock_saq_plugin.get_queue = MagicMock(return_value=mock_queue)
 
-    # Patch the saq plugin directly in the plugins module
-    with patch("app.server.plugins.saq", mock_saq_plugin):
+    # Patch the get_saq_plugin function to return our mock
+    with patch("app.server.plugins.get_saq_plugin", return_value=mock_saq_plugin):
         # Call the function under test
         returned_queue = await deps.get_task_queue()
 
