@@ -121,8 +121,9 @@ RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
 # Build email templates (must be before wheel build to include in package)
 RUN cd src/js/templates && bun run build
 
-# Build frontend assets and create wheel (--wheel builds directly from source, avoiding sdist)
+# Build frontend assets, copy index.html for SPA mode, and create wheel
 RUN uv run app assets build \
+    && cp src/js/web/index.html src/py/app/server/static/web/index.html \
     && uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
     && uv build --wheel
 

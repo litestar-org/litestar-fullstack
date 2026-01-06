@@ -206,6 +206,25 @@ ensure_database() {
 }
 
 # -----------------------------------------------------------------------------
+# Redis Provisioning (for SAQ background tasks)
+# -----------------------------------------------------------------------------
+
+ensure_redis() {
+    log_info "Checking Redis for SAQ..."
+    cd "${PROJECT_ROOT}"
+
+    # Check if Redis service already exists
+    if railway status --json 2>/dev/null | grep -qi 'redis'; then
+        log_success "Redis already provisioned"
+        return 0
+    fi
+
+    log_info "Provisioning Redis for SAQ background tasks..."
+    railway add --database redis
+    log_success "Redis provisioned"
+}
+
+# -----------------------------------------------------------------------------
 # App Service Setup
 # -----------------------------------------------------------------------------
 
@@ -268,6 +287,12 @@ ensure_environment() {
             log_info "Setting SQLALCHEMY_LOG_LEVEL=30 (WARNING)..."
             railway variables --set "SQLALCHEMY_LOG_LEVEL=30" --skip-deploys
         fi
+
+        # Ensure SAQ_REDIS_URL is set (for existing deployments without Redis)
+        if ! railway variables --kv 2>/dev/null | grep -q "SAQ_REDIS_URL="; then
+            log_info "Setting SAQ_REDIS_URL for background tasks..."
+            railway variables --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' --skip-deploys
+        fi
         return 0
     fi
 
@@ -285,11 +310,13 @@ ensure_environment() {
         --set "PORT=8080" \
         --set "LITESTAR_PORT=8080" \
         --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
+        --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' \
         --set 'APP_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}' \
         --skip-deploys
 
     log_success "Environment variables configured"
     log_info "  - DATABASE_URL: linked to Postgres service"
+    log_info "  - SAQ_REDIS_URL: linked to Redis service"
     log_info "  - APP_URL: auto-configured from Railway domain"
     log_info "  - PORT/LITESTAR_PORT: 8080"
 }
@@ -399,7 +426,8 @@ display_summary() {
     echo "Project: ${PROJECT_NAME:-$(railway status --json 2>/dev/null | grep -o '"name": *"[^"]*"' | head -1 | cut -d'"' -f4 || echo 'Unknown')}"
     echo ""
     echo "Configuration:"
-    echo "  - PostgreSQL database with shared DATABASE_URL"
+    echo "  - PostgreSQL database (DATABASE_URL)"
+    echo "  - Redis for SAQ background tasks (SAQ_REDIS_URL)"
     echo "  - Public domain (APP_URL auto-detected)"
     echo "  - PORT/LITESTAR_PORT: 8080"
     echo "  - Dockerfile.distroless builder"
@@ -446,6 +474,7 @@ main() {
         check_existing_project
         ensure_project
         ensure_database
+        ensure_redis
         ensure_app_service
         ensure_domain
         ensure_environment
