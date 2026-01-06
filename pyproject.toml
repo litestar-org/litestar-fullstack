@@ -17,7 +17,6 @@ classifiers = [
 dependencies = [
   "litestar[jinja,jwt,structlog,cryptography,pydantic]",
   "advanced-alchemy[uuid,obstore,pwdlib]",
-  "psycopg[pool,binary]",
   "redis",
   "python-dotenv",
   "litestar-saq[hiredis]",
@@ -78,7 +77,8 @@ test = [
   "pytest-sugar",
   "pytest-databases[postgres]>=0.1.0",
   "polyfactory",
-  "aiosqlite",  # For SQLite fallback when PostgreSQL unavailable
+  "aiosqlite",
+  "asyncpg",
 ]
 
 
@@ -169,6 +169,8 @@ addopts = [
   "--tb=short",
   "-v",
   "-ra",
+  "-n",
+  "auto",                      # Enable xdist with auto-detected worker count
 ]
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
