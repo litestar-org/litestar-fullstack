@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy.extensions.litestar import repository, service
@@ -227,7 +227,7 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         db_obj.failed_reset_attempts += 1
 
         if db_obj.failed_reset_attempts >= MAX_FAILED_RESET_ATTEMPTS:
-            db_obj.reset_locked_until = datetime.now(UTC).replace(hour=datetime.now(UTC).hour + 1)
+            db_obj.reset_locked_until = datetime.now(UTC) + timedelta(hours=1)
 
         await self.update(
             item_id=db_obj.id,

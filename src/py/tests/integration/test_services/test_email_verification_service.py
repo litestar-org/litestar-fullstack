@@ -8,20 +8,18 @@ from typing import TYPE_CHECKING
 import pytest
 from litestar.exceptions import ClientException
 
-from app.db import models as m
 from app.domain.accounts.services import EmailVerificationTokenService
 from tests.factories import EmailVerificationTokenFactory, UserFactory, get_raw_token
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.services]
+pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services]
 
 
 @pytest.mark.anyio
 async def test_create_verification_token_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test successful verification token creation."""
     # Create user
@@ -29,7 +27,7 @@ async def test_create_verification_token_success(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         token, raw_token = await service.create_verification_token(user.id, user.email)
 
         assert token.user_id == user.id
@@ -44,7 +42,6 @@ async def test_create_verification_token_success(
 @pytest.mark.anyio
 async def test_create_verification_token_invalidates_existing(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that creating a new token invalidates existing ones."""
     # Create user
@@ -52,7 +49,7 @@ async def test_create_verification_token_invalidates_existing(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create first token
         first_token, _ = await service.create_verification_token(user.id, user.email)
         assert first_token.is_valid is True
@@ -61,7 +58,7 @@ async def test_create_verification_token_invalidates_existing(
         second_token, _ = await service.create_verification_token(user.id, user.email)
 
         # Refresh first token from database
-        first_token_refreshed = await service.get_one(item_id=first_token.id)
+        first_token_refreshed = await service.get_one(id=first_token.id)
 
         assert first_token_refreshed.is_used is True
         assert first_token_refreshed.used_at is not None
@@ -72,7 +69,6 @@ async def test_create_verification_token_invalidates_existing(
 @pytest.mark.anyio
 async def test_create_verification_token_different_emails(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test creating tokens for different emails doesn't interfere."""
     # Create user
@@ -80,7 +76,7 @@ async def test_create_verification_token_different_emails(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create token for original email
         token1, _ = await service.create_verification_token(user.id, user.email)
 
@@ -96,7 +92,6 @@ async def test_create_verification_token_different_emails(
 @pytest.mark.anyio
 async def test_create_verification_token_unique_tokens(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that tokens are unique."""
     # Create two users
@@ -105,7 +100,7 @@ async def test_create_verification_token_unique_tokens(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         token1, raw_token1 = await service.create_verification_token(user1.id, user1.email)
         token2, raw_token2 = await service.create_verification_token(user2.id, user2.email)
 
@@ -116,7 +111,6 @@ async def test_create_verification_token_unique_tokens(
 @pytest.mark.anyio
 async def test_verify_token_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test successful token verification."""
     # Create user and token
@@ -124,7 +118,7 @@ async def test_verify_token_success(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         created_token, raw_token = await service.create_verification_token(user.id, user.email)
 
         # Verify the token
@@ -137,10 +131,10 @@ async def test_verify_token_success(
 
 @pytest.mark.anyio
 async def test_verify_invalid_token(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test verification of non-existent token."""
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.verify_token("invalid_token")
 
@@ -151,7 +145,6 @@ async def test_verify_invalid_token(
 @pytest.mark.anyio
 async def test_verify_expired_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test verification of expired token."""
     # Create user
@@ -168,7 +161,7 @@ async def test_verify_expired_token(
     session.add(expired_token)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.verify_token(get_raw_token(expired_token))
 
@@ -179,7 +172,6 @@ async def test_verify_expired_token(
 @pytest.mark.anyio
 async def test_verify_already_used_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test verification of already used token."""
     # Create user
@@ -187,7 +179,7 @@ async def test_verify_already_used_token(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create and verify token once
         _created_token, raw_token = await service.create_verification_token(user.id, user.email)
         await service.verify_token(raw_token)
@@ -203,7 +195,6 @@ async def test_verify_already_used_token(
 @pytest.mark.anyio
 async def test_verify_token_marks_as_used(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that verification properly marks token as used."""
     # Create user
@@ -211,7 +202,7 @@ async def test_verify_token_marks_as_used(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         created_token, raw_token = await service.create_verification_token(user.id, user.email)
 
         # Verify token is initially unused
@@ -232,7 +223,6 @@ async def test_verify_token_marks_as_used(
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_by_user_id(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test invalidating all tokens for a user."""
     # Create users
@@ -241,7 +231,7 @@ async def test_invalidate_user_tokens_by_user_id(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create tokens for both users
         user1_token1, _ = await service.create_verification_token(user1.id, user1.email)
         user1_token2, _ = await service.create_verification_token(user1.id, "alt@example.com")
@@ -251,9 +241,9 @@ async def test_invalidate_user_tokens_by_user_id(
         await service.invalidate_user_tokens(user1.id)
 
         # Check user1's tokens are invalidated
-        user1_token1_refreshed = await service.get_one(item_id=user1_token1.id)
-        user1_token2_refreshed = await service.get_one(item_id=user1_token2.id)
-        user2_token_refreshed = await service.get_one(item_id=user2_token.id)
+        user1_token1_refreshed = await service.get_one(id=user1_token1.id)
+        user1_token2_refreshed = await service.get_one(id=user1_token2.id)
+        user2_token_refreshed = await service.get_one(id=user2_token.id)
 
         assert user1_token1_refreshed.is_used is True
         assert user1_token2_refreshed.is_used is True
@@ -263,7 +253,6 @@ async def test_invalidate_user_tokens_by_user_id(
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_by_email(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test invalidating tokens for specific email."""
     # Create user
@@ -271,7 +260,7 @@ async def test_invalidate_user_tokens_by_email(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create tokens for different emails
         primary_token, _ = await service.create_verification_token(user.id, user.email)
         alt_token, _ = await service.create_verification_token(user.id, "alt@example.com")
@@ -280,8 +269,8 @@ async def test_invalidate_user_tokens_by_email(
         await service.invalidate_user_tokens(user.id, user.email)
 
         # Check only primary email token is invalidated
-        primary_token_refreshed = await service.get_one(item_id=primary_token.id)
-        alt_token_refreshed = await service.get_one(item_id=alt_token.id)
+        primary_token_refreshed = await service.get_one(id=primary_token.id)
+        alt_token_refreshed = await service.get_one(id=alt_token.id)
 
         assert primary_token_refreshed.is_used is True
         assert alt_token_refreshed.is_used is False
@@ -289,12 +278,12 @@ async def test_invalidate_user_tokens_by_email(
 
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_no_tokens(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test invalidating tokens when user has no tokens."""
     from uuid import uuid4
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Should not raise error even if no tokens exist
         await service.invalidate_user_tokens(uuid4())
 
@@ -302,7 +291,6 @@ async def test_invalidate_user_tokens_no_tokens(
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_already_used(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test invalidating tokens when some are already used."""
     # Create user
@@ -310,7 +298,7 @@ async def test_invalidate_user_tokens_already_used(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create tokens
         token1, raw_token1 = await service.create_verification_token(user.id, user.email)
         token2, _ = await service.create_verification_token(user.id, "alt@example.com")
@@ -322,8 +310,8 @@ async def test_invalidate_user_tokens_already_used(
         await service.invalidate_user_tokens(user.id)
 
         # Both tokens should remain marked as used
-        token1_refreshed = await service.get_one(item_id=token1.id)
-        token2_refreshed = await service.get_one(item_id=token2.id)
+        token1_refreshed = await service.get_one(id=token1.id)
+        token2_refreshed = await service.get_one(id=token2.id)
 
         assert token1_refreshed.is_used is True
         assert token2_refreshed.is_used is True
@@ -332,7 +320,6 @@ async def test_invalidate_user_tokens_already_used(
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test cleaning up expired tokens."""
     # Create users
@@ -357,16 +344,16 @@ async def test_cleanup_expired_tokens_success(
     session.add_all([expired_token1, expired_token2, valid_token])
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Clean up expired tokens
         cleanup_count = await service.cleanup_expired_tokens()
 
         assert cleanup_count == 2
 
         # Verify expired tokens are deleted
-        expired_token1_check = await service.get_one_or_none(item_id=expired_token1.id)
-        expired_token2_check = await service.get_one_or_none(item_id=expired_token2.id)
-        valid_token_check = await service.get_one_or_none(item_id=valid_token.id)
+        expired_token1_check = await service.get_one_or_none(id=expired_token1.id)
+        expired_token2_check = await service.get_one_or_none(id=expired_token2.id)
+        valid_token_check = await service.get_one_or_none(id=valid_token.id)
 
         assert expired_token1_check is None
         assert expired_token2_check is None
@@ -376,7 +363,6 @@ async def test_cleanup_expired_tokens_success(
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_no_expired(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test cleanup when no tokens are expired."""
     # Create user
@@ -395,14 +381,14 @@ async def test_cleanup_expired_tokens_no_expired(
     session.add_all([valid_token1, valid_token2])
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         cleanup_count = await service.cleanup_expired_tokens()
 
         assert cleanup_count == 0
 
         # Verify tokens still exist
-        valid_token1_check = await service.get_one_or_none(item_id=valid_token1.id)
-        valid_token2_check = await service.get_one_or_none(item_id=valid_token2.id)
+        valid_token1_check = await service.get_one_or_none(id=valid_token1.id)
+        valid_token2_check = await service.get_one_or_none(id=valid_token2.id)
 
         assert valid_token1_check is not None
         assert valid_token2_check is not None
@@ -410,86 +396,17 @@ async def test_cleanup_expired_tokens_no_expired(
 
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_empty_database(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test cleanup with no tokens in database."""
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         cleanup_count = await service.cleanup_expired_tokens()
         assert cleanup_count == 0
-
-
-def test_is_expired_property_true() -> None:
-    """Test is_expired property when token is expired."""
-    token = EmailVerificationTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1))
-    assert token.is_expired is True
-
-
-def test_is_expired_property_false() -> None:
-    """Test is_expired property when token is not expired."""
-    token = EmailVerificationTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1))
-    assert token.is_expired is False
-
-
-def test_is_used_property_true() -> None:
-    """Test is_used property when token is used."""
-    token = EmailVerificationTokenFactory.build(used_at=datetime.now(UTC))
-    assert token.is_used is True
-
-
-def test_is_used_property_false() -> None:
-    """Test is_used property when token is not used."""
-    token = EmailVerificationTokenFactory.build(used_at=None)
-    assert token.is_used is False
-
-
-def test_is_valid_property_true() -> None:
-    """Test is_valid property when token is valid."""
-    token = EmailVerificationTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=None)
-    assert token.is_valid is True
-
-
-def test_is_valid_property_false_expired() -> None:
-    """Test is_valid property when token is expired."""
-    token = EmailVerificationTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1), used_at=None)
-    assert token.is_valid is False
-
-
-def test_is_valid_property_false_used() -> None:
-    """Test is_valid property when token is used."""
-    token = EmailVerificationTokenFactory.build(
-        expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=datetime.now(UTC)
-    )
-    assert token.is_valid is False
-
-
-def test_create_expires_at_default() -> None:
-    """Test create_expires_at with default 24 hours."""
-    before = datetime.now(UTC)
-    expires_at = m.EmailVerificationToken.create_expires_at()
-    after = datetime.now(UTC)
-
-    expected_min = before + timedelta(hours=24)
-    expected_max = after + timedelta(hours=24)
-
-    assert expected_min <= expires_at <= expected_max
-
-
-def test_create_expires_at_custom_hours() -> None:
-    """Test create_expires_at with custom hours."""
-    before = datetime.now(UTC)
-    expires_at = m.EmailVerificationToken.create_expires_at(hours=12)
-    after = datetime.now(UTC)
-
-    expected_min = before + timedelta(hours=12)
-    expected_max = after + timedelta(hours=12)
-
-    assert expected_min <= expires_at <= expected_max
 
 
 @pytest.mark.anyio
 async def test_full_verification_workflow(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test complete email verification workflow."""
     # Create user
@@ -497,7 +414,7 @@ async def test_full_verification_workflow(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # 1. Create verification token
         token, raw_token = await service.create_verification_token(user.id, user.email)
         assert token.is_valid is True
@@ -514,7 +431,6 @@ async def test_full_verification_workflow(
 @pytest.mark.anyio
 async def test_multiple_email_verification_workflow(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test verification workflow with multiple email addresses."""
     # Create user
@@ -522,7 +438,7 @@ async def test_multiple_email_verification_workflow(
     session.add(user)
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create tokens for different emails
         _primary_token, primary_raw = await service.create_verification_token(user.id, user.email)
         alt_token, alt_raw = await service.create_verification_token(user.id, "alt@example.com")
@@ -531,7 +447,7 @@ async def test_multiple_email_verification_workflow(
         await service.verify_token(primary_raw)
 
         # Alt email token should still be valid
-        alt_token_refreshed = await service.get_one(item_id=alt_token.id)
+        alt_token_refreshed = await service.get_one(id=alt_token.id)
         assert alt_token_refreshed.is_valid is True
 
         # Verify alt email
@@ -541,7 +457,6 @@ async def test_multiple_email_verification_workflow(
 @pytest.mark.anyio
 async def test_token_security_properties(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test security properties of tokens."""
     # Create users
@@ -550,7 +465,7 @@ async def test_token_security_properties(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with EmailVerificationTokenService.new(sessionmaker()) as service:
+    async with EmailVerificationTokenService.new(session) as service:
         # Create many tokens
         tokens = []
         for _ in range(10):

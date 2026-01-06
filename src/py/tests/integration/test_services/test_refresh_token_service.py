@@ -10,21 +10,19 @@ from app.domain.accounts.services import RefreshTokenService
 from tests.factories import UserFactory
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+    from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.services]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.services]
 
 
-@pytest.mark.anyio
 async def test_rotate_refresh_token_revokes_old_token(
     session: AsyncSession,
-    sessionmaker: async_sessionmaker[AsyncSession],
 ) -> None:
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with RefreshTokenService.new(sessionmaker()) as service:
+    async with RefreshTokenService.new(session) as service:
         raw_token, old_token = await service.create_refresh_token(user_id=user.id)
         new_raw_token, new_token = await service.rotate_refresh_token(raw_token)
 
@@ -35,16 +33,14 @@ async def test_rotate_refresh_token_revokes_old_token(
         assert refreshed_old.revoked_at is not None
 
 
-@pytest.mark.anyio
 async def test_reuse_detection_revokes_family(
     session: AsyncSession,
-    sessionmaker: async_sessionmaker[AsyncSession],
 ) -> None:
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with RefreshTokenService.new(sessionmaker()) as service:
+    async with RefreshTokenService.new(session) as service:
         raw_token, old_token = await service.create_refresh_token(user_id=user.id)
         _, rotated = await service.rotate_refresh_token(raw_token)
 

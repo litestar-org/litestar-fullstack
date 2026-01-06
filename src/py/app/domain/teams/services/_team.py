@@ -84,26 +84,50 @@ class TeamService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
 
         data = await super().to_model(data)
 
+        # For create, add the owner as an admin member
         if operation == "create" and (owner or owner_id):
             owner_data: dict[str, Any] = {"user": owner} if owner else {"user_id": owner_id}
             data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
 
+        # Set tags - for updates, SQLAlchemy will replace the existing tags when
+        # the attribute is copied to the existing instance in service.update()
         if input_tags is not None:
-            existing_tags = [tag.name for tag in data.tags]
-            tags_to_remove = [tag for tag in data.tags if tag.name not in input_tags]
-            tags_to_add = [tag for tag in input_tags if tag not in existing_tags]
-            for tag_rm in tags_to_remove:
-                data.tags.remove(tag_rm)
-            data.tags.extend([await self.tags.upsert({"name": tag_text}) for tag_text in tags_to_add])
-
-        if operation != "create" and (owner or owner_id):
-            for member in data.members:
-                if member.user_id == owner.id if owner is not None else owner_id and not member.is_owner:
-                    member.is_owner = True
-                    member.role = m.TeamRoles.ADMIN
-                    break
-            else:
-                owner_data = {"user": owner} if owner else {"user_id": owner_id}
-                data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
+            data.tags = [await self.tags.upsert({"name": tag_text}) for tag_text in input_tags]
 
         return data
+
+    async def update(
+        self,
+        data: ModelDictT[m.Team],
+        item_id: Any | None = None,
+        **kwargs: Any,
+    ) -> m.Team:
+        """Update team with owner change support.
+
+        Handles owner changes by updating member records after the base update.
+        """
+        # Check if data contains owner_id for ownership transfer
+        pending_owner_id: UUID | None = None
+        if service.is_dict(data) and "owner_id" in data:
+            pending_owner_id = data.get("owner_id")
+
+        # Perform the base update
+        team = await super().update(data, item_id=item_id, **kwargs)
+
+        # Handle ownership transfer if needed
+        if pending_owner_id is not None:
+            await self._transfer_ownership(team, pending_owner_id)
+
+        return team
+
+    async def _transfer_ownership(self, team: m.Team, new_owner_id: UUID) -> None:
+        """Transfer team ownership to a new member."""
+        # Load members if not already loaded
+        await self.repository.session.refresh(team, ["members"])
+
+        for member in team.members:
+            if member.user_id == new_owner_id:
+                member.is_owner = True
+                member.role = m.TeamRoles.ADMIN
+            elif member.is_owner:
+                member.is_owner = False

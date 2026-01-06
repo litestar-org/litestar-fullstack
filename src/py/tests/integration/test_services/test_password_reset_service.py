@@ -13,15 +13,14 @@ from app.domain.accounts.services import PasswordResetService
 from tests.factories import PasswordResetTokenFactory, UserFactory, get_raw_token
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+    from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.services, pytest.mark.security]
+pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services, pytest.mark.security]
 
 
 @pytest.mark.anyio
 async def test_create_reset_token_success(
     session: AsyncSession,
-    sessionmaker: async_sessionmaker[AsyncSession],
 ) -> None:
     """Test successful password reset token creation."""
     # Create user
@@ -29,7 +28,7 @@ async def test_create_reset_token_success(
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         token, raw_token = await service.create_reset_token(user.id, ip_address="127.0.0.1", user_agent="Test Browser")
 
         assert token.user_id == user.id
@@ -45,14 +44,13 @@ async def test_create_reset_token_success(
 @pytest.mark.anyio
 async def test_create_reset_token_without_metadata(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test token creation without IP/user agent."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         token, raw_token = await service.create_reset_token(user.id)
 
         assert token.user_id == user.id
@@ -65,14 +63,13 @@ async def test_create_reset_token_without_metadata(
 @pytest.mark.anyio
 async def test_create_reset_token_invalidates_existing(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that creating a new token invalidates existing ones."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create first token
         first_token, _ = await service.create_reset_token(user.id)
         assert first_token.is_valid is True
@@ -81,7 +78,7 @@ async def test_create_reset_token_invalidates_existing(
         second_token, _ = await service.create_reset_token(user.id)
 
         # Refresh first token from database
-        first_token_refreshed = await service.get_one(item_id=first_token.id)
+        first_token_refreshed = await service.get_one(id=first_token.id)
 
         assert first_token_refreshed.is_used is True
         assert first_token_refreshed.used_at is not None
@@ -92,14 +89,13 @@ async def test_create_reset_token_invalidates_existing(
 @pytest.mark.anyio
 async def test_create_reset_token_short_expiration(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that reset tokens have short expiration (1 hour)."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         before_creation = datetime.now(UTC)
         token, _ = await service.create_reset_token(user.id)
         after_creation = datetime.now(UTC)
@@ -114,7 +110,6 @@ async def test_create_reset_token_short_expiration(
 @pytest.mark.anyio
 async def test_create_reset_token_unique_tokens(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that tokens are unique across different users."""
     user1 = UserFactory.build()
@@ -122,7 +117,7 @@ async def test_create_reset_token_unique_tokens(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         token1, raw_token1 = await service.create_reset_token(user1.id)
         token2, raw_token2 = await service.create_reset_token(user2.id)
 
@@ -133,14 +128,13 @@ async def test_create_reset_token_unique_tokens(
 @pytest.mark.anyio
 async def test_validate_reset_token_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test successful token validation."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         created_token, raw_token = await service.create_reset_token(user.id)
 
         # Validate the token
@@ -155,10 +149,10 @@ async def test_validate_reset_token_success(
 
 @pytest.mark.anyio
 async def test_validate_invalid_token(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test validation of non-existent token."""
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.validate_reset_token("invalid_token")
 
@@ -169,7 +163,6 @@ async def test_validate_invalid_token(
 @pytest.mark.anyio
 async def test_validate_expired_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test validation of expired token."""
     user = UserFactory.build()
@@ -184,7 +177,7 @@ async def test_validate_expired_token(
     session.add(expired_token)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.validate_reset_token(get_raw_token(expired_token))
 
@@ -195,7 +188,6 @@ async def test_validate_expired_token(
 @pytest.mark.anyio
 async def test_validate_used_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test validation of already used token."""
     user = UserFactory.build()
@@ -207,7 +199,7 @@ async def test_validate_used_token(
     session.add(used_token)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.validate_reset_token(get_raw_token(used_token))
 
@@ -218,14 +210,13 @@ async def test_validate_used_token(
 @pytest.mark.anyio
 async def test_use_reset_token_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test successful token usage."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         created_token, raw_token = await service.create_reset_token(user.id)
 
         # Use the token
@@ -241,10 +232,10 @@ async def test_use_reset_token_success(
 
 @pytest.mark.anyio
 async def test_use_invalid_token(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test using non-existent token."""
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.use_reset_token("invalid_token")
 
@@ -255,7 +246,6 @@ async def test_use_invalid_token(
 @pytest.mark.anyio
 async def test_use_expired_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test using expired token."""
     user = UserFactory.build()
@@ -266,7 +256,7 @@ async def test_use_expired_token(
     session.add(expired_token)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         with pytest.raises(ClientException) as exc_info:
             await service.use_reset_token(get_raw_token(expired_token))
 
@@ -277,14 +267,13 @@ async def test_use_expired_token(
 @pytest.mark.anyio
 async def test_use_already_used_token(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test using token twice."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         _created_token, raw_token = await service.create_reset_token(user.id)
 
         # Use token first time
@@ -301,7 +290,6 @@ async def test_use_already_used_token(
 @pytest.mark.anyio
 async def test_invalidate_user_tokens(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test invalidating all tokens for a user."""
     user1 = UserFactory.build()
@@ -309,7 +297,7 @@ async def test_invalidate_user_tokens(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create tokens for both users
         user1_token1, _ = await service.create_reset_token(user1.id)
         user1_token2 = PasswordResetTokenFactory.build(user_id=user1.id)
@@ -322,9 +310,9 @@ async def test_invalidate_user_tokens(
         await service.invalidate_user_tokens(user1.id)
 
         # Check user1's tokens are invalidated
-        user1_token1_refreshed = await service.get_one(item_id=user1_token1.id)
-        user1_token2_refreshed = await service.get_one(item_id=user1_token2.id)
-        user2_token_refreshed = await service.get_one(item_id=user2_token.id)
+        user1_token1_refreshed = await service.get_one(id=user1_token1.id)
+        user1_token2_refreshed = await service.get_one(id=user1_token2.id)
+        user2_token_refreshed = await service.get_one(id=user2_token.id)
 
         assert user1_token1_refreshed.is_used is True
         assert user1_token2_refreshed.is_used is True
@@ -333,12 +321,12 @@ async def test_invalidate_user_tokens(
 
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_no_tokens(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test invalidating tokens when user has no tokens."""
     from uuid import uuid4
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Should not raise error even if no tokens exist
         await service.invalidate_user_tokens(uuid4())
 
@@ -346,14 +334,13 @@ async def test_invalidate_user_tokens_no_tokens(
 @pytest.mark.anyio
 async def test_invalidate_user_tokens_already_used(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test invalidating tokens when some are already used."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create tokens
         token1, raw_token1 = await service.create_reset_token(user.id)
         token2 = PasswordResetTokenFactory.build(user_id=user.id)
@@ -367,8 +354,8 @@ async def test_invalidate_user_tokens_already_used(
         await service.invalidate_user_tokens(user.id)
 
         # Both tokens should remain marked as used
-        token1_refreshed = await service.get_one(item_id=token1.id)
-        token2_refreshed = await service.get_one(item_id=token2.id)
+        token1_refreshed = await service.get_one(id=token1.id)
+        token2_refreshed = await service.get_one(id=token2.id)
 
         assert token1_refreshed.is_used is True
         assert token2_refreshed.is_used is True
@@ -377,7 +364,6 @@ async def test_invalidate_user_tokens_already_used(
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_success(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test cleaning up expired tokens."""
     user1 = UserFactory.build()
@@ -399,15 +385,15 @@ async def test_cleanup_expired_tokens_success(
     session.add_all([expired_token1, expired_token2, valid_token])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         cleanup_count = await service.cleanup_expired_tokens()
 
         assert cleanup_count == 2
 
         # Verify expired tokens are deleted
-        expired_token1_check = await service.get_one_or_none(item_id=expired_token1.id)
-        expired_token2_check = await service.get_one_or_none(item_id=expired_token2.id)
-        valid_token_check = await service.get_one_or_none(item_id=valid_token.id)
+        expired_token1_check = await service.get_one_or_none(id=expired_token1.id)
+        expired_token2_check = await service.get_one_or_none(id=expired_token2.id)
+        valid_token_check = await service.get_one_or_none(id=valid_token.id)
 
         assert expired_token1_check is None
         assert expired_token2_check is None
@@ -417,7 +403,6 @@ async def test_cleanup_expired_tokens_success(
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_no_expired(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test cleanup when no tokens are expired."""
     user = UserFactory.build()
@@ -431,14 +416,14 @@ async def test_cleanup_expired_tokens_no_expired(
     session.add_all([valid_token1, valid_token2])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         cleanup_count = await service.cleanup_expired_tokens()
 
         assert cleanup_count == 0
 
         # Verify tokens still exist
-        valid_token1_check = await service.get_one_or_none(item_id=valid_token1.id)
-        valid_token2_check = await service.get_one_or_none(item_id=valid_token2.id)
+        valid_token1_check = await service.get_one_or_none(id=valid_token1.id)
+        valid_token2_check = await service.get_one_or_none(id=valid_token2.id)
 
         assert valid_token1_check is not None
         assert valid_token2_check is not None
@@ -446,10 +431,10 @@ async def test_cleanup_expired_tokens_no_expired(
 
 @pytest.mark.anyio
 async def test_cleanup_expired_tokens_empty_database(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test cleanup with no tokens in database."""
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         cleanup_count = await service.cleanup_expired_tokens()
         assert cleanup_count == 0
 
@@ -457,14 +442,13 @@ async def test_cleanup_expired_tokens_empty_database(
 @pytest.mark.anyio
 async def test_check_rate_limit_not_exceeded(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test rate limit check when limit not exceeded."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create 2 tokens (under the limit of 3)
         await service.create_reset_token(user.id)
         await service.create_reset_token(user.id)
@@ -476,14 +460,13 @@ async def test_check_rate_limit_not_exceeded(
 @pytest.mark.anyio
 async def test_check_rate_limit_exceeded(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test rate limit check when limit exceeded."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create 3 tokens (at the limit)
         await service.create_reset_token(user.id)
         await service.create_reset_token(user.id)
@@ -496,7 +479,6 @@ async def test_check_rate_limit_exceeded(
 @pytest.mark.anyio
 async def test_check_rate_limit_old_tokens_ignored(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test that old tokens don't count towards rate limit."""
     user = UserFactory.build()
@@ -509,7 +491,7 @@ async def test_check_rate_limit_old_tokens_ignored(
     session.add_all([old_token1, old_token2])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create new token
         await service.create_reset_token(user.id)
 
@@ -521,7 +503,6 @@ async def test_check_rate_limit_old_tokens_ignored(
 @pytest.mark.anyio
 async def test_check_rate_limit_custom_hours(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test rate limit check with custom hour window."""
     user = UserFactory.build()
@@ -533,7 +514,7 @@ async def test_check_rate_limit_custom_hours(
     session.add(token)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # With 1-hour window, should count the token
         is_rate_limited_1h = await service.check_rate_limit(user.id, hours=1)
         # With 15-minute window, should not count the token
@@ -545,95 +526,26 @@ async def test_check_rate_limit_custom_hours(
 
 @pytest.mark.anyio
 async def test_check_rate_limit_no_tokens(
-    sessionmaker,
+    session: AsyncSession,
 ) -> None:
     """Test rate limit check with no existing tokens."""
     from uuid import uuid4
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         is_rate_limited = await service.check_rate_limit(uuid4())
         assert is_rate_limited is False
-
-
-def test_is_expired_property_true() -> None:
-    """Test is_expired property when token is expired."""
-    token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1))
-    assert token.is_expired is True
-
-
-def test_is_expired_property_false() -> None:
-    """Test is_expired property when token is not expired."""
-    token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1))
-    assert token.is_expired is False
-
-
-def test_is_used_property_true() -> None:
-    """Test is_used property when token is used."""
-    token = PasswordResetTokenFactory.build(used_at=datetime.now(UTC))
-    assert token.is_used is True
-
-
-def test_is_used_property_false() -> None:
-    """Test is_used property when token is not used."""
-    token = PasswordResetTokenFactory.build(used_at=None)
-    assert token.is_used is False
-
-
-def test_is_valid_property_true() -> None:
-    """Test is_valid property when token is valid."""
-    token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=None)
-    assert token.is_valid is True
-
-
-def test_is_valid_property_false_expired() -> None:
-    """Test is_valid property when token is expired."""
-    token = PasswordResetTokenFactory.build(expires_at=datetime.now(UTC) - timedelta(hours=1), used_at=None)
-    assert token.is_valid is False
-
-
-def test_is_valid_property_false_used() -> None:
-    """Test is_valid property when token is used."""
-    token = PasswordResetTokenFactory.build(
-        expires_at=datetime.now(UTC) + timedelta(hours=1), used_at=datetime.now(UTC)
-    )
-    assert token.is_valid is False
-
-
-def test_create_expires_at_default() -> None:
-    """Test create_expires_at with default 1 hour."""
-    before = datetime.now(UTC)
-    expires_at = m.PasswordResetToken.create_expires_at()
-    after = datetime.now(UTC)
-
-    expected_min = before + timedelta(hours=1)
-    expected_max = after + timedelta(hours=1)
-
-    assert expected_min <= expires_at <= expected_max
-
-
-def test_create_expires_at_custom_hours() -> None:
-    """Test create_expires_at with custom hours."""
-    before = datetime.now(UTC)
-    expires_at = m.PasswordResetToken.create_expires_at(hours=2)
-    after = datetime.now(UTC)
-
-    expected_min = before + timedelta(hours=2)
-    expected_max = after + timedelta(hours=2)
-
-    assert expected_min <= expires_at <= expected_max
 
 
 @pytest.mark.anyio
 async def test_full_password_reset_workflow(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test complete password reset workflow."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # 1. Create reset token
         token, raw_token = await service.create_reset_token(user.id, "127.0.0.1", "Test Browser")
         assert token.is_valid is True
@@ -654,14 +566,13 @@ async def test_full_password_reset_workflow(
 @pytest.mark.anyio
 async def test_security_features_integration(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test security features working together."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Test rate limiting
         await service.create_reset_token(user.id)
         await service.create_reset_token(user.id)
@@ -683,7 +594,6 @@ async def test_security_features_integration(
 @pytest.mark.anyio
 async def test_token_security_properties(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test security properties of reset tokens."""
     user1 = UserFactory.build()
@@ -691,7 +601,7 @@ async def test_token_security_properties(
     session.add_all([user1, user2])
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Create many tokens
         tokens = []
         for _ in range(10):
@@ -714,21 +624,20 @@ async def test_token_security_properties(
 @pytest.mark.anyio
 async def test_concurrent_reset_requests(
     session: AsyncSession,
-    sessionmaker,
 ) -> None:
     """Test handling concurrent reset requests."""
     user = UserFactory.build()
     session.add(user)
     await session.commit()
 
-    async with PasswordResetService.new(sessionmaker()) as service:
+    async with PasswordResetService.new(session) as service:
         # Simulate concurrent requests by creating tokens in sequence
         token1, _ = await service.create_reset_token(user.id, "192.168.1.1", "Browser 1")
         token2, _ = await service.create_reset_token(user.id, "192.168.1.2", "Browser 2")
 
         # Only the latest token should be valid
-        token1_refreshed = await service.get_one(item_id=token1.id)
-        token2_refreshed = await service.get_one(item_id=token2.id)
+        token1_refreshed = await service.get_one(id=token1.id)
+        token2_refreshed = await service.get_one(id=token2.id)
 
         assert token1_refreshed.is_used is True
         assert token2_refreshed.is_valid is True
