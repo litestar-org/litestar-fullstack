@@ -105,7 +105,19 @@ def get_totp_provisioning_uri(secret: str, email: str, issuer: str = "Litestar A
     return totp.provisioning_uri(name=email, issuer_name=issuer)
 
 
-def generate_totp_qr_code(secret: str, email: str, issuer: str = "Litestar App") -> bytes:
+def _generate_qr_code_sync(uri: str) -> bytes:
+    """Synchronous QR code generation (CPU-bound, runs in executor)."""
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(uri)
+    qr.make(fit=True)
+    img = cast("Image", qr.make_image(fill_color="black", back_color="white"))
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
+async def generate_totp_qr_code(secret: str, email: str, issuer: str = "Litestar App") -> bytes:
     """Generate a QR code image for TOTP setup.
 
     Args:
@@ -117,11 +129,7 @@ def generate_totp_qr_code(secret: str, email: str, issuer: str = "Litestar App")
         PNG image data as bytes.
     """
     uri = get_totp_provisioning_uri(secret, email, issuer)
-    img = cast("Image", qrcode.make(uri))
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
-    return buffer.getvalue()
+    return await asyncio.get_running_loop().run_in_executor(None, _generate_qr_code_sync, uri)
 
 
 def generate_backup_codes(count: int = 8) -> list[str]:

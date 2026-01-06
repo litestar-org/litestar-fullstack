@@ -68,8 +68,8 @@ export function MfaSetupDialog({ disabled }: MfaSetupDialogProps) {
     }
     return (
       <div className="space-y-4">
-        <div className="flex justify-center rounded-lg border border-border/60 bg-muted/40 p-4">
-          <img src={setup.qrCode} alt="MFA QR code" className="h-40 w-40" />
+        <div className="flex justify-center rounded-lg border border-border/60 bg-white p-4">
+          <img src={setup.qrCode} alt="MFA QR code" className="h-48 w-48" />
         </div>
         <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 font-mono text-sm">{setup.secret}</div>
         <TotpInput value={code} onChange={setCode} disabled={isLoading} autoFocus />

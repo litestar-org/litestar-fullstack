@@ -17,8 +17,6 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    env:
-      SETUPTOOLS_USE_DISTUTILS: stdlib
     steps:
       - uses: actions/checkout@v5
 
@@ -26,10 +24,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip  --upgrade --quiet --user
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
 
-      - uses: pre-commit/action@v3.0.1
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files
 
   test:
     needs: validate
@@ -37,7 +41,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.12","3.13"]
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -54,9 +58,6 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-
-      - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
 
       - name: Install dependencies
         run: uv sync --all-groups

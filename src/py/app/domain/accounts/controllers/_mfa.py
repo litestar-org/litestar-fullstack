@@ -111,7 +111,7 @@ class MfaController(Controller):
 
         await users_service.update({"totp_secret": secret}, item_id=user.id)
 
-        qr_code_bytes = generate_totp_qr_code(secret, user.email, issuer="Litestar App")
+        qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer="Litestar App")
         qr_code_base64 = base64.b64encode(qr_code_bytes).decode("utf-8")
 
         provisioning_uri = get_totp_provisioning_uri(secret, user.email, issuer="Litestar App")
