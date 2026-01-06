@@ -725,7 +725,7 @@
       "methods": [
         "DELETE"
       ],
-      "uri": "/profile"
+      "uri": "/api/me"
     },
     "remove_member_from_team": {
       "method": "delete",

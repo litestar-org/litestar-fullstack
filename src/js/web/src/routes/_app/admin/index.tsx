@@ -11,11 +11,7 @@ export const Route = createFileRoute("/_app/admin/")({
 function AdminDashboardPage() {
   return (
     <PageContainer className="flex-1 space-y-8">
-      <PageHeader
-        eyebrow="Administration"
-        title="Admin Console"
-        description="Review activity, manage users, and oversee teams."
-      />
+      <PageHeader eyebrow="Administration" title="Admin Console" description="Review activity, manage users, and oversee teams." />
       <AdminNav />
       <PageSection>
         <StatsCards />

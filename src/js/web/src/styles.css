@@ -181,11 +181,11 @@
   --sidebar-border: 214 32% 91%;
   --sidebar-ring: 217 91% 60%;
 
-  /* RetroGrid Light */
-  --grid-line: rgba(32, 34, 53, 0.08);
-  --grid-line-strong: rgba(32, 34, 53, 0.15);
-  --grid-glow: rgba(59, 130, 246, 0.3);
-  --grid-star: rgba(59, 130, 246, 0.4);
+  /* RetroGrid Light - Gold accents on navy hero panel */
+  --grid-line: rgba(255, 255, 255, 0.06);
+  --grid-line-strong: rgba(255, 255, 255, 0.12);
+  --grid-glow: rgba(237, 182, 65, 0.25);
+  --grid-star: rgba(237, 182, 65, 0.5);
 
   /* Charts */
   --chart-1: 217 91% 60%;

@@ -3,9 +3,13 @@ import { cn } from "@/lib/utils"
 interface RetroGridProps {
   className?: string
   angle?: number
+  /** Use "dark" variant when placed on a dark background (like brand-navy) */
+  variant?: "default" | "dark"
 }
 
-export function RetroGrid({ className, angle = 65 }: RetroGridProps) {
+export function RetroGrid({ className, angle = 65, variant = "dark" }: RetroGridProps) {
+  const isDark = variant === "dark"
+
   return (
     <div
       className={cn("pointer-events-none absolute inset-0 overflow-hidden opacity-60 [perspective:200px]", className)}
@@ -44,8 +48,8 @@ export function RetroGrid({ className, angle = 65 }: RetroGridProps) {
         />
       </div>
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent to-90%" />
+      {/* Gradient overlay - uses brand-navy for dark variant */}
+      <div className={cn("absolute inset-0 bg-linear-to-t to-transparent to-90%", isDark ? "from-brand-navy via-brand-navy/50" : "from-background via-background/50")} />
 
       {/* Horizon glow */}
       <div className="absolute inset-x-0 bottom-24 h-24 bg-[radial-gradient(ellipse_at_center,var(--grid-glow)_0%,transparent_70%)]" />

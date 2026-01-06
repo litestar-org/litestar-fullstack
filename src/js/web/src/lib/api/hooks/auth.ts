@@ -20,7 +20,10 @@ export function useConfirmMfaSetup() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (code: string) => {
-      const { data } = await confirmMfaSetup({ body: { code }, throwOnError: true })
+      const { data } = await confirmMfaSetup({
+        body: { code },
+        throwOnError: true,
+      })
       return data
     },
     onSuccess: () => {
@@ -33,7 +36,10 @@ export function useDisableMfa() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (password: string) => {
-      const { data } = await disableMfa({ body: { password }, throwOnError: true })
+      const { data } = await disableMfa({
+        body: { password },
+        throwOnError: true,
+      })
       return data
     },
     onSuccess: () => {
@@ -47,7 +53,10 @@ export function useRegenerateBackupCodes() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (password: string) => {
-      const { data } = await regenerateMfaBackupCodes({ body: { password }, throwOnError: true })
+      const { data } = await regenerateMfaBackupCodes({
+        body: { password },
+        throwOnError: true,
+      })
       return data
     },
     onSuccess: () => {
@@ -60,7 +69,10 @@ export function useRegenerateBackupCodes() {
 export function useVerifyMfaChallenge() {
   return useMutation({
     mutationFn: async (payload: { code?: string; recovery_code?: string }) => {
-      const { data } = await verifyMfaChallenge({ body: payload, throwOnError: true })
+      const { data } = await verifyMfaChallenge({
+        body: payload,
+        throwOnError: true,
+      })
       return data
     },
   })
@@ -87,11 +99,16 @@ export function useUnlinkOAuthAccount() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (provider: string) => {
-      const { data } = await profileOAuthUnlink({ path: { provider }, throwOnError: true })
+      const { data } = await profileOAuthUnlink({
+        path: { provider },
+        throwOnError: true,
+      })
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileOAuthAccountsQueryKey() })
+      queryClient.invalidateQueries({
+        queryKey: profileOAuthAccountsQueryKey(),
+      })
     },
   })
 }

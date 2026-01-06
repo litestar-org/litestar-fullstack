@@ -9,7 +9,9 @@ const navItems = [
 ] as const
 
 export function AdminNav() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
 
   return (
     <div className="flex flex-wrap gap-2">

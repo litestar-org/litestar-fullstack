@@ -10,11 +10,7 @@ export const Route = createFileRoute("/_app/admin/teams/")({
 function AdminTeamsPage() {
   return (
     <PageContainer className="flex-1 space-y-8">
-      <PageHeader
-        eyebrow="Administration"
-        title="Teams"
-        description="View and manage all teams in the system."
-      />
+      <PageHeader eyebrow="Administration" title="Teams" description="View and manage all teams in the system." />
       <AdminNav />
       <PageSection>
         <TeamTable />

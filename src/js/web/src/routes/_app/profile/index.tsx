@@ -10,11 +10,7 @@ export const Route = createFileRoute("/_app/profile/")({
 function ProfilePage() {
   return (
     <PageContainer className="flex-1 space-y-8">
-      <PageHeader
-        eyebrow="Account"
-        title="Profile settings"
-        description="Manage security, connected accounts, and authentication options."
-      />
+      <PageHeader eyebrow="Account" title="Profile settings" description="Manage security, connected accounts, and authentication options." />
       <PageSection>
         <div className="grid gap-6 lg:grid-cols-2">
           <MfaSection />

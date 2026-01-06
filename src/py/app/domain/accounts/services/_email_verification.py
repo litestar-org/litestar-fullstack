@@ -5,8 +5,8 @@ import secrets
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from litestar.exceptions import ClientException
 from advanced_alchemy.extensions.litestar import repository, service
+from litestar.exceptions import ClientException
 
 from app.db import models as m
 

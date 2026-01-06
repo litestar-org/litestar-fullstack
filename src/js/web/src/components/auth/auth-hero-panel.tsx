@@ -14,7 +14,7 @@ export function AuthHeroPanel({
   showTestimonial = true,
 }: AuthHeroPanelProps) {
   return (
-    <div className="relative hidden h-full flex-col bg-muted p-10 text-foreground lg:flex dark:border-r">
+    <div className="relative hidden h-full flex-col bg-brand-navy p-10 text-white lg:flex">
       <RetroGrid />
       <Link to="/" className="relative z-20">
         <div className="flex items-center font-medium text-lg">
@@ -28,18 +28,27 @@ export function AuthHeroPanel({
           <div className="space-y-4">
             <p className="text-lg font-medium leading-relaxed">{description}</p>
             <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                <div className="h-8 w-8 rounded-full bg-primary/20 ring-2 ring-background" />
-                <div className="h-8 w-8 rounded-full bg-primary/30 ring-2 ring-background" />
-                <div className="h-8 w-8 rounded-full bg-primary/40 ring-2 ring-background" />
+              <div className="flex -space-x-1">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
+                  <Icons.python className="h-5 w-5" />
+                </div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
+                  <Icons.react className="h-5 w-5 text-[#61DAFB]" />
+                </div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
+                  <Icons.vite className="h-5 w-5" />
+                </div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
+                  <Icons.typescript className="h-5 w-5" />
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">Built with</span> Python, React, and modern tooling
+              <div className="text-sm text-white/70">
+                <span className="font-medium text-white">Built with</span> Python, React & modern tooling
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-lg font-medium leading-relaxed text-muted-foreground">{description}</p>
+          <p className="text-lg font-medium leading-relaxed text-white/70">{description}</p>
         )}
       </div>
     </div>

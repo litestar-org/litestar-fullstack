@@ -22,7 +22,9 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
       if (!user?.email) {
         throw new Error("User email not available")
       }
-      const response = await apiEmailVerificationRequestRequestVerification({ body: { email: user.email } })
+      const response = await apiEmailVerificationRequestRequestVerification({
+        body: { email: user.email },
+      })
       if (response.error) {
         throw new Error((response.error as any).detail || "Failed to send verification email")
       }

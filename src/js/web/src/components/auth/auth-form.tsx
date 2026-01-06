@@ -14,17 +14,16 @@ export function AuthForm() {
   const isLogin = pathname === "/login"
 
   return (
-    <div className="container relative flex min-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      {/* Toggle link in top right */}
-      <Link to={isLogin ? "/signup" : "/login"} className={cn(buttonVariants({ variant: "ghost" }), "absolute top-4 right-4 md:top-8 md:right-8")}>
-        {isLogin ? "Need an account?" : "Sign in"}
-      </Link>
-
-      {/* Left panel with RetroGrid */}
+    <div className="relative flex min-h-screen w-full">
+      {/* Left panel with RetroGrid - hidden on mobile */}
       <AuthHeroPanel title="Litestar Fullstack" description="Build high-performance web applications with Python and React. Seamless SPA experience powered by Vite." />
 
-      {/* Right panel with form */}
-      <div className="flex flex-col justify-center px-4 py-8 sm:px-6 lg:px-8">
+      {/* Right panel with form - centers on mobile when hero is hidden */}
+      <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+        {/* Toggle link in top right */}
+        <Link to={isLogin ? "/signup" : "/login"} className={cn(buttonVariants({ variant: "ghost" }), "absolute top-4 right-4 md:top-8 md:right-8")}>
+          {isLogin ? "Need an account?" : "Sign in"}
+        </Link>
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-87.5">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="flex items-center justify-center gap-2 font-semibold text-2xl tracking-tight">

@@ -1236,6 +1236,33 @@ export const apiEmailVerificationVerifyVerifyEmailMutation = (
   return mutationOptions;
 };
 
+/**
+ * RemoveAccount
+ */
+export const accountDeleteMutation = (
+  options?: Partial<Options<AccountDeleteData>>,
+): UseMutationOptions<
+  AccountDeleteResponse,
+  DefaultError,
+  Options<AccountDeleteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AccountDeleteResponse,
+    DefaultError,
+    Options<AccountDeleteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await accountDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const accountProfileQueryKey = (options?: Options<AccountProfileData>) =>
   createQueryKey("accountProfile", options);
 
@@ -2487,30 +2514,3 @@ export const systemHealthOptions = (options?: Options<SystemHealthData>) =>
     },
     queryKey: systemHealthQueryKey(options),
   });
-
-/**
- * RemoveAccount
- */
-export const accountDeleteMutation = (
-  options?: Partial<Options<AccountDeleteData>>,
-): UseMutationOptions<
-  AccountDeleteResponse,
-  DefaultError,
-  Options<AccountDeleteData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    AccountDeleteResponse,
-    DefaultError,
-    Options<AccountDeleteData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await accountDelete({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};

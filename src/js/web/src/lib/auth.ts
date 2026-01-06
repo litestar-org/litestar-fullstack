@@ -43,10 +43,15 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true })
         try {
           // Login request
-          const response = await accountLogin({ body: { username: email, password } })
+          const response = await accountLogin({
+            body: { username: email, password },
+          })
 
           if (response.data) {
-            const loginData = response.data as { access_token?: string; mfa_required?: boolean }
+            const loginData = response.data as {
+              access_token?: string
+              mfa_required?: boolean
+            }
             if (loginData.mfa_required) {
               setAccessToken(null)
               set({ user: null, isAuthenticated: false })

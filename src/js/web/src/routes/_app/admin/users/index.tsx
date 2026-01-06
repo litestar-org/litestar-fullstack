@@ -10,11 +10,7 @@ export const Route = createFileRoute("/_app/admin/users/")({
 function AdminUsersPage() {
   return (
     <PageContainer className="flex-1 space-y-8">
-      <PageHeader
-        eyebrow="Administration"
-        title="Users"
-        description="View and manage all users in the system."
-      />
+      <PageHeader eyebrow="Administration" title="Users" description="View and manage all users in the system." />
       <AdminNav />
       <PageSection>
         <UserTable />

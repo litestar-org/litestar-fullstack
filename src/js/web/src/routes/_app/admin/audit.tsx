@@ -10,11 +10,7 @@ export const Route = createFileRoute("/_app/admin/audit")({
 function AdminAuditPage() {
   return (
     <PageContainer className="flex-1 space-y-8">
-      <PageHeader
-        eyebrow="Administration"
-        title="Audit Log"
-        description="Track system events and user actions."
-      />
+      <PageHeader eyebrow="Administration" title="Audit Log" description="Track system events and user actions." />
       <AdminNav />
       <PageSection>
         <AuditLogTable />

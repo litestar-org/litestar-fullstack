@@ -1042,10 +1042,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1109,10 +1109,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1175,10 +1175,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1931,6 +1931,23 @@ export type ApiEmailVerificationVerifyVerifyEmailResponses = {
 
 export type ApiEmailVerificationVerifyVerifyEmailResponse =
   ApiEmailVerificationVerifyVerifyEmailResponses[keyof ApiEmailVerificationVerifyVerifyEmailResponses];
+
+export type AccountDeleteData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/me";
+};
+
+export type AccountDeleteResponses = {
+  /**
+   * Request fulfilled, nothing follows
+   */
+  204: void;
+};
+
+export type AccountDeleteResponse =
+  AccountDeleteResponses[keyof AccountDeleteResponses];
 
 export type AccountProfileData = {
   body?: never;
@@ -3787,20 +3804,3 @@ export type SystemHealthResponses = {
 
 export type SystemHealthResponse =
   SystemHealthResponses[keyof SystemHealthResponses];
-
-export type AccountDeleteData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: "/profile";
-};
-
-export type AccountDeleteResponses = {
-  /**
-   * Request fulfilled, nothing follows
-   */
-  204: void;
-};
-
-export type AccountDeleteResponse =
-  AccountDeleteResponses[keyof AccountDeleteResponses];

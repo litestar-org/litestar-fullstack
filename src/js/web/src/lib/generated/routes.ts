@@ -976,7 +976,7 @@ export const routeDefinitions = {
     queryParams: [] as const,
   },
   'remove_account': {
-    path: '/profile',
+    path: '/api/me',
     methods: ['DELETE'] as const,
     method: 'delete',
     pathParams: [] as const,

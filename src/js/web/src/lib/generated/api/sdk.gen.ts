@@ -819,6 +819,22 @@ export const apiEmailVerificationVerifyVerifyEmail = <
   });
 
 /**
+ * RemoveAccount
+ */
+export const accountDelete = <ThrowOnError extends boolean = false>(
+  options?: Options<AccountDeleteData, ThrowOnError>,
+) =>
+  (options?.client ?? client).delete<
+    AccountDeleteResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/me",
+    ...options,
+  });
+
+/**
  * User Profile
  *
  * User profile information.
@@ -1645,19 +1661,3 @@ export const systemHealth = <ThrowOnError extends boolean = false>(
       ...options,
     },
   );
-
-/**
- * RemoveAccount
- */
-export const accountDelete = <ThrowOnError extends boolean = false>(
-  options?: Options<AccountDeleteData, ThrowOnError>,
-) =>
-  (options?.client ?? client).delete<
-    AccountDeleteResponses,
-    unknown,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/profile",
-    ...options,
-  });

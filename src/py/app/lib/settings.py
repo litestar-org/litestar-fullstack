@@ -26,11 +26,11 @@ from app.utils.env import get_env
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from litestar.config.compression import CompressionConfig
     from litestar.config.cors import CORSConfig
     from litestar.data_extractors import ResponseExtractorField
     from litestar.plugins.problem_details import ProblemDetailsConfig
-    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from litestar.plugins.structlog import StructlogConfig
     from litestar_email import EmailConfig
     from litestar_saq import SAQConfig
@@ -115,16 +115,17 @@ class ViteSettings:
     """Base URL for assets."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
+        js_home = base_dir / "js" / "web"
         return ViteConfig(
             mode="spa",
             dev_mode=self.DEV_MODE,
             runtime=RuntimeConfig(executor="bun"),
             paths=PathConfig(
-                root=base_dir / "js" / "web",
-                bundle_dir=self.BUNDLE_DIR,
+                root=js_home,
+                bundle_dir=Path(os.path.relpath(self.BUNDLE_DIR, js_home)),
                 asset_url=self.ASSET_URL,
             ),
-            types=TypeGenConfig(output=base_dir / "js" / "web" / "src" / "lib" / "generated"),
+            types=TypeGenConfig(output=Path("src/lib/generated")),
         )
 
 

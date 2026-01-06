@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { Home, ShieldCheck, User, Users } from "lucide-react"
+import { Home, ShieldCheck, Users } from "lucide-react"
 import type * as React from "react"
 import { useEffect, useMemo } from "react"
 import { NavMain } from "@/components/nav-main"
@@ -45,11 +45,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Home,
       },
       {
-        title: "Profile",
-        to: "/profile",
-        icon: User,
-      },
-      {
         title: "Teams",
         to: "/teams",
         icon: Users,
@@ -93,9 +88,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {teamLinks.length > 0 && <NavProjects label="Teams" projects={teamLinks} />}
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex items-center justify-between gap-2">
-          <NavUser />
-          <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <NavUser />
+          </div>
+          <div className="shrink-0 group-data-[collapsible=icon]:hidden">
+            <ThemeToggle />
+          </div>
         </div>
       </SidebarFooter>
       <SidebarRail />

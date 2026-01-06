@@ -20,9 +20,21 @@ const teamMembers = [
 ]
 
 const features = [
-  { icon: Zap, title: "High Performance", description: "Built for speed with async-first architecture" },
-  { icon: Star, title: "Type Safety", description: "End-to-end typing from Python to React" },
-  { icon: Heart, title: "Developer Experience", description: "Intuitive APIs and excellent documentation" },
+  {
+    icon: Zap,
+    title: "High Performance",
+    description: "Built for speed with async-first architecture",
+  },
+  {
+    icon: Star,
+    title: "Type Safety",
+    description: "End-to-end typing from Python to React",
+  },
+  {
+    icon: Heart,
+    title: "Developer Experience",
+    description: "Intuitive APIs and excellent documentation",
+  },
 ]
 
 function AboutPage() {
@@ -123,7 +135,11 @@ function AboutPage() {
               }}
               transition={{
                 scale: { duration: 2, repeat: Number.POSITIVE_INFINITY },
-                rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
+                rotate: {
+                  duration: 20,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                },
               }}
               className="relative flex h-32 w-32 items-center justify-center rounded-full bg-primary/20 shadow-glow-lg backdrop-blur"
             >
@@ -175,7 +191,13 @@ function AboutPage() {
           className="mb-12 grid gap-6 md:grid-cols-3"
         >
           {features.map((feature) => (
-            <motion.div key={feature.title} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+            <motion.div
+              key={feature.title}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+            >
               <Card hover glow className="h-full">
                 <CardContent className="space-y-3 p-6">
                   <motion.div

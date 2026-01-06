@@ -81,7 +81,7 @@ class ProfileController(Controller):
         await users_service.update_password(data.to_dict(), db_obj=current_user)
         return Message(message="Your password was successfully modified.")
 
-    @delete(operation_id="AccountDelete", path="/profile/")
+    @delete(operation_id="AccountDelete", path="/api/me")
     async def remove_account(
         self,
         current_user: m.User,

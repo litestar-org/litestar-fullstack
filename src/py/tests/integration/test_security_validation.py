@@ -555,7 +555,7 @@ async def test_xss_prevention_in_names(
             # XSS payloads may be accepted (200) or rejected (400/422)
             # Note: If accepted, the app may store the payload as-is (output encoding responsibility)
             # This is a security consideration - verify app handles XSS appropriately at output layer
-            assert response.status_code in [200, 400, 422], f"XSS payload should be handled"
+            assert response.status_code in [200, 400, 422], "XSS payload should be handled"
 
             # Test in team creation
             response = await client.post(
@@ -565,7 +565,7 @@ async def test_xss_prevention_in_names(
             )
 
             # XSS payloads may be accepted (201) or rejected (400/422)
-            assert response.status_code in [201, 400, 422], f"XSS payload should be handled in teams"
+            assert response.status_code in [201, 400, 422], "XSS payload should be handled in teams"
 
 
 @pytest.mark.anyio
@@ -622,7 +622,7 @@ async def test_error_message_security(
         # Should not have specific "user does not exist" or similar that reveals user enumeration
         assert "does not exist" not in error_text
         # Accept combined messages like "user not found or password invalid"
-        assert ("invalid" in error_text or "forbidden" in error_text or "not found" in error_text)
+        assert "invalid" in error_text or "forbidden" in error_text or "not found" in error_text
 
         # Test password reset for non-existent user
         response = await client.post("/api/access/forgot-password", json={"email": "nonexistent@example.com"})

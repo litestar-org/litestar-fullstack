@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal, overload
 
+from advanced_alchemy.extensions.litestar import SQLAlchemyDTO, SQLAlchemyDTOConfig
 from litestar.dto import DataclassDTO, dto_field
 from litestar.dto.config import DTOConfig
-from advanced_alchemy.extensions.litestar import SQLAlchemyDTO, SQLAlchemyDTOConfig
 
 if TYPE_CHECKING:
     from collections.abc import Set as AbstractSet
