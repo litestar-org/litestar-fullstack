@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Any
+from uuid import uuid4
 
 from litestar import Controller, Response, post
 from litestar.di import Provide
 from litestar.exceptions import ClientException, NotAuthorizedException
+from litestar.security.jwt import Token as JWTToken
 from sqlalchemy.orm import undefer_group
 
 from app.domain.accounts.deps import provide_refresh_token_service, provide_users_service
+from app.domain.accounts.guards import auth
 from app.domain.admin.deps import provide_audit_log_service
 from app.lib.crypt import verify_backup_code, verify_totp_code
 
@@ -46,7 +49,7 @@ class MfaChallengeController(Controller):
         "audit_service": Provide(provide_audit_log_service),
     }
 
-    @post(operation_id="VerifyMfaChallenge", path="/verify", exclude_from_auth=True)
+    @post(operation_id="VerifyMfaChallenge", path="/verify", exclude_from_auth=True, security=[])
     async def verify_challenge(
         self,
         request: Request[m.User, Token, Any],
@@ -76,12 +79,8 @@ class MfaChallengeController(Controller):
             Full OAuth2 login response with access token
 
         Raises:
-            ClientException: If verification attempts are rate limited
             NotAuthorizedException: If challenge token is invalid or code verification fails
         """
-        from uuid import uuid4
-
-        from app.domain.accounts.guards import auth
 
         mfa_token = request.cookies.get("mfa_challenge")
         if not mfa_token:
@@ -144,8 +143,6 @@ class MfaChallengeController(Controller):
 
     def _decode_mfa_challenge_token(self, token: str, settings: AppSettings) -> tuple[str, str]:
         try:
-            from litestar.security.jwt import Token as JWTToken
-
             decoded = JWTToken.decode(
                 encoded_token=token,
                 secret=settings.SECRET_KEY,

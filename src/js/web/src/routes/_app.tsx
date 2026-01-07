@@ -8,7 +8,8 @@ export const Route = createFileRoute("/_app")({
     const { isAuthenticated, checkAuth } = useAuthStore.getState()
 
     // Build redirect search params preserving current URL
-    const redirectSearch = { redirect: location.pathname + location.search }
+    // Note: location.search is an object in TanStack Router, use href for full path
+    const redirectSearch = { redirect: location.href }
 
     // If not authenticated according to persisted state, redirect immediately
     if (!isAuthenticated) {

@@ -72,6 +72,9 @@ export function useVerifyMfaChallenge() {
       const { data } = await verifyMfaChallenge({
         body: payload,
         throwOnError: true,
+        // MFA challenge uses cookie-based auth (mfa_challenge cookie), not bearer token
+        // Override security to prevent client from adding Authorization header
+        security: [],
       })
       return data
     },
