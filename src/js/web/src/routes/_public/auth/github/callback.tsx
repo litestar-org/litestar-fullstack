@@ -15,7 +15,8 @@ export const Route = createFileRoute("/_public/auth/github/callback")({
     z
       .object({
         token: z.string().optional(),
-        is_new: z.string().optional(),
+        // TanStack Router parses "true"/"false" as booleans, coerce to string
+        is_new: z.coerce.string().optional(),
         error: z.string().optional(),
         message: z.string().optional(),
       })
