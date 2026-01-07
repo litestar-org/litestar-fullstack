@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { createRouter, RouterProvider } from "@tanstack/react-router"
 import React from "react"
 import ReactDOM from "react-dom/client"
+import { ErrorBoundary } from "@/components/error-boundary"
 import { client } from "@/lib/generated/api/client.gen"
 import { ThemeProvider } from "@/lib/theme-context"
 
@@ -127,6 +128,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultErrorComponent: ErrorBoundary,
 })
 
 declare module "@tanstack/react-router" {
