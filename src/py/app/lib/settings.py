@@ -113,13 +113,15 @@ class ViteSettings:
     """Bundle directory for built assets."""
     ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
     """Base URL for assets."""
+    TRUSTED_PROXIES: str | None = field(default_factory=get_env("LITESTAR_TRUSTED_PROXIES", None))
+    """Trust X-Forwarded-* headers from these proxies. Use "*" to trust all."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
         js_home = base_dir / "js" / "web"
         return ViteConfig(
             mode="spa",
             dev_mode=self.DEV_MODE,
-            runtime=RuntimeConfig(executor="bun"),
+            runtime=RuntimeConfig(executor="bun", trusted_proxies=self.TRUSTED_PROXIES),
             paths=PathConfig(
                 root=js_home,
                 bundle_dir=self.BUNDLE_DIR,

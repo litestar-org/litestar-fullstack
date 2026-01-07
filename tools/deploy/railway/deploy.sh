@@ -293,6 +293,12 @@ ensure_environment() {
             log_info "Setting SAQ_REDIS_URL for background tasks..."
             railway variables --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' --skip-deploys
         fi
+
+        # Ensure LITESTAR_TRUSTED_PROXIES is set (for OAuth redirect URL protocol)
+        if ! railway variables --kv 2>/dev/null | grep -q "LITESTAR_TRUSTED_PROXIES="; then
+            log_info "Setting LITESTAR_TRUSTED_PROXIES=* for proxy header support..."
+            railway variables --set "LITESTAR_TRUSTED_PROXIES=*" --skip-deploys
+        fi
         return 0
     fi
 
@@ -303,6 +309,7 @@ ensure_environment() {
     railway variables --set "SECRET_KEY=${SECRET_KEY}" \
         --set "LITESTAR_DEBUG=false" \
         --set "VITE_DEV_MODE=false" \
+        --set "LITESTAR_TRUSTED_PROXIES=*" \
         --set "DATABASE_ECHO=false" \
         --set "SQLALCHEMY_LOG_LEVEL=30" \
         --set "EMAIL_ENABLED=false" \
