@@ -50,9 +50,9 @@ export const useAuthStore = create<AuthState>()(
           if (response.data) {
             const loginData = response.data as {
               access_token?: string
-              mfa_required?: boolean
+              mfaRequired?: boolean // camelCase from CamelizedBaseStruct
             }
-            if (loginData.mfa_required) {
+            if (loginData.mfaRequired) {
               setAccessToken(null)
               set({ user: null, isAuthenticated: false })
               return { mfaRequired: true }
