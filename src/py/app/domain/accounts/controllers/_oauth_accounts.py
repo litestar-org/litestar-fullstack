@@ -101,12 +101,12 @@ class OAuthAccountController(Controller):
         items = [
             {
                 "provider": account.oauth_name,
-                "oauth_id": account.account_id,
+                "oauthId": account.account_id,
                 "email": account.account_email,
                 "name": None,
-                "avatar_url": None,
-                "linked_at": account.created_at,
-                "last_login_at": account.last_login_at,
+                "avatarUrl": None,
+                "linkedAt": account.created_at,
+                "lastLoginAt": account.last_login_at,
             }
             for account in accounts
         ]
