@@ -69,7 +69,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         user_id: UUID,
         provider: str,
         account_id: str,
-        account_email: str,
+        account_email: str | None,
         access_token: str,
         refresh_token: str | None = None,
         expires_at: int | None = None,
