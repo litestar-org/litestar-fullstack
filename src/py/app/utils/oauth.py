@@ -9,7 +9,6 @@ import jwt
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
 from litestar import status_codes as status
 from litestar.exceptions import HTTPException
-from litestar.params import Parameter
 from litestar.plugins import InitPluginProtocol
 
 if TYPE_CHECKING:
@@ -171,15 +170,30 @@ class OAuth2AuthorizeCallback:
     async def __call__(
         self,
         request: Request[Any, Any, Any],
-        code: str | None = Parameter(query="code", required=False),
-        code_verifier: str | None = Parameter(query="code_verifier", required=False),
-        callback_state: str | None = Parameter(query="state", required=False),
-        error: str | None = Parameter(query="error", required=False),
+        code: str | None = None,
+        code_verifier: str | None = None,
+        callback_state: str | None = None,
+        error: str | None = None,
     ) -> AccessTokenState:
+        """Execute the OAuth2 callback to exchange code for token.
+
+        Args:
+            request: The Litestar request object.
+            code: Authorization code from OAuth provider.
+            code_verifier: PKCE code verifier (optional).
+            callback_state: State parameter for CSRF protection.
+            error: Error message from OAuth provider if authorization failed.
+
+        Returns:
+            Tuple of (access_token_data, callback_state).
+
+        Raises:
+            OAuth2AuthorizeCallbackError: If code is missing or error is present.
+        """
         if code is None or error is not None:
             raise OAuth2AuthorizeCallbackError(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=error if error is not None else None,
+                detail=error,
             )
 
         redirect_url = str(request.url_for(self.route_name)) if self.route_name else self.redirect_url
