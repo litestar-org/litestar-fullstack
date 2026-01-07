@@ -203,7 +203,7 @@ configure_github_oauth() {
     fi
 
     app_url="${app_url%/}"
-    callback_url="${app_url}/o/github/complete"
+    callback_url="${app_url}/api/auth/oauth/github/callback"
 
     echo ""
     echo "Use these values when creating the OAuth App:"
