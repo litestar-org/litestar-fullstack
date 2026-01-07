@@ -100,7 +100,7 @@ class OAuthController(Controller):
         user_service: UserService,
         code: str | None = Parameter(query="code", required=False),
         oauth_state: str | None = Parameter(query="state", required=False),
-        error: str | None = Parameter(query="error", required=False),
+        oauth_error: str | None = Parameter(query="error", required=False),
     ) -> Redirect:
         """Handle Google OAuth callback.
 
@@ -110,7 +110,7 @@ class OAuthController(Controller):
             user_service: User service
             code: Authorization code from Google
             oauth_state: Signed state token for CSRF protection
-            error: Error message from Google if authorization failed
+            oauth_error: Error message from Google if authorization failed
 
         Returns:
             Redirect response to frontend with authentication result
@@ -131,8 +131,8 @@ class OAuthController(Controller):
             frontend_callback = payload.get("redirect_url", default_callback)
             if not is_valid:
                 redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
-            elif error:
-                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error)
+            elif oauth_error:
+                redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", oauth_error)
             elif not code:
                 redirect_path = build_oauth_error_redirect(
                     frontend_callback, "oauth_failed", "Missing authorization code"
@@ -252,8 +252,8 @@ class OAuthController(Controller):
         user_service: UserService,
         code: str | None = Parameter(query="code", required=False),
         oauth_state: str | None = Parameter(query="state", required=False),
-        error: str | None = Parameter(query="error", required=False),
-        error_description: str | None = Parameter(query="error_description", required=False),
+        oauth_error: str | None = Parameter(query="error", required=False),
+        oauth_error_description: str | None = Parameter(query="error_description", required=False),
     ) -> Redirect:
         """Handle GitHub OAuth callback.
 
@@ -263,8 +263,8 @@ class OAuthController(Controller):
             user_service: User service
             code: Authorization code from GitHub
             oauth_state: Signed state token for CSRF protection
-            error: Error code from GitHub if authorization failed
-            error_description: Detailed error message from GitHub
+            oauth_error: Error code from GitHub if authorization failed
+            oauth_error_description: Detailed error message from GitHub
 
         Returns:
             Redirect response to frontend with authentication result
@@ -285,8 +285,8 @@ class OAuthController(Controller):
             frontend_callback = payload.get("redirect_url", default_callback)
             if not is_valid:
                 redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
-            elif error:
-                error_msg = error_description or error
+            elif oauth_error:
+                error_msg = oauth_error_description or oauth_error
                 redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", error_msg)
             elif not code:
                 redirect_path = build_oauth_error_redirect(
