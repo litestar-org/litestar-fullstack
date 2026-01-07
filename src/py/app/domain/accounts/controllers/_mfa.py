@@ -38,6 +38,7 @@ if TYPE_CHECKING:
     from app.db import models as m
     from app.domain.accounts.services import UserService
     from app.domain.admin.services import AuditLogService
+    from app.lib.settings import AppSettings
 
 MFA_RATE_LIMIT_WINDOW_MINUTES = 15
 MFA_RATE_LIMIT_MAX_ATTEMPTS = 5
@@ -87,6 +88,7 @@ class MfaController(Controller):
         self,
         request: Request[m.User, Token, Any],
         users_service: UserService,
+        settings: AppSettings,
     ) -> MfaSetup:
         """Initiate MFA setup - generates TOTP secret and QR code.
 
@@ -95,6 +97,7 @@ class MfaController(Controller):
         Args:
             request: Request with authenticated user
             users_service: User service
+            settings: Application settings
 
         Returns:
             TOTP secret and QR code for authenticator app
@@ -111,10 +114,13 @@ class MfaController(Controller):
 
         await users_service.update({"totp_secret": secret}, item_id=user.id)
 
-        qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer="Litestar App")
+        # Sanitize app name for otpauth:// URI compatibility (replace spaces with hyphens)
+        issuer = settings.app.NAME.replace(" ", "-")
+
+        qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer=issuer)
         qr_code_base64 = base64.b64encode(qr_code_bytes).decode("utf-8")
 
-        provisioning_uri = get_totp_provisioning_uri(secret, user.email, issuer="Litestar App")
+        provisioning_uri = get_totp_provisioning_uri(secret, user.email, issuer=issuer)
 
         return MfaSetup(
             secret=secret,
