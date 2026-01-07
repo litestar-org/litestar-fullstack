@@ -25,7 +25,7 @@ class Tag(UUIDv7AuditBase, SlugKey, UniqueMixin):
     name: Mapped[str] = mapped_column(index=False)
     description: Mapped[str | None] = mapped_column(String(length=255), index=False, nullable=True)
 
-    teams: Mapped[list[Team]] = relationship(secondary=lambda: _team_tag(), back_populates="tags")
+    teams: Mapped[list[Team]] = relationship(secondary=lambda: _team_tag(), back_populates="tags", viewonly=True)
 
     @classmethod
     def unique_hash(cls, name: str, slug: str | None = None) -> Hashable:
