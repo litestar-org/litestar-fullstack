@@ -210,8 +210,15 @@ class OAuthController(Controller):
             redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", "Missing authorization code")
         else:
             redirect_path = await self._process_google_callback(
-                request, settings, user_service, oauth_account_service,
-                code, oauth_state, frontend_callback, action, payload
+                request,
+                settings,
+                user_service,
+                oauth_account_service,
+                code,
+                oauth_state,
+                frontend_callback,
+                action,
+                payload,
             )
 
         return Redirect(path=redirect_path, status_code=HTTP_302_FOUND)
@@ -246,13 +253,23 @@ class OAuthController(Controller):
         if action in ("link", "upgrade"):
             state_user_id = payload.get("user_id")
             if not state_user_id:
-                return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Invalid OAuth session - missing user")
+                return build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Invalid OAuth session - missing user"
+                )
             return await _handle_oauth_link(
-                oauth_account_service, "google", account_id, account_email,
-                token_data, state_user_id, frontend_callback, action
+                oauth_account_service,
+                "google",
+                account_id,
+                account_email,
+                token_data,
+                state_user_id,
+                frontend_callback,
+                action,
             )
 
-        return await _handle_oauth_login(user_service, "google", account_id, account_email, token_data, frontend_callback)
+        return await _handle_oauth_login(
+            user_service, "google", account_id, account_email, token_data, frontend_callback
+        )
 
     @get("/github", name="oauth:github:authorize")
     async def github_authorize(
@@ -338,8 +355,15 @@ class OAuthController(Controller):
             redirect_path = build_oauth_error_redirect(frontend_callback, "oauth_failed", "Missing authorization code")
         else:
             redirect_path = await self._process_github_callback(
-                request, settings, user_service, oauth_account_service,
-                code, oauth_state, frontend_callback, action, payload
+                request,
+                settings,
+                user_service,
+                oauth_account_service,
+                code,
+                oauth_state,
+                frontend_callback,
+                action,
+                payload,
             )
 
         return Redirect(path=redirect_path, status_code=HTTP_302_FOUND)
@@ -374,10 +398,20 @@ class OAuthController(Controller):
         if action in ("link", "upgrade"):
             state_user_id = payload.get("user_id")
             if not state_user_id:
-                return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Invalid OAuth session - missing user")
+                return build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Invalid OAuth session - missing user"
+                )
             return await _handle_oauth_link(
-                oauth_account_service, "github", account_id, account_email,
-                token_data, state_user_id, frontend_callback, action
+                oauth_account_service,
+                "github",
+                account_id,
+                account_email,
+                token_data,
+                state_user_id,
+                frontend_callback,
+                action,
             )
 
-        return await _handle_oauth_login(user_service, "github", account_id, account_email, token_data, frontend_callback)
+        return await _handle_oauth_login(
+            user_service, "github", account_id, account_email, token_data, frontend_callback
+        )

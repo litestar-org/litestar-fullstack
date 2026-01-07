@@ -100,8 +100,8 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
             account_data["last_login_at"] = last_login_at
         existing = await self.get_one_or_none(user_id=user_id, oauth_name=provider)
         if existing:
-            return await self.update(item_id=existing.id, data=account_data)
-        return await self.create(data=account_data)
+            return await self.update(item_id=existing.id, data=account_data, auto_commit=True)
+        return await self.create(data=account_data, auto_commit=True)
 
     async def unlink_oauth_account(
         self,
@@ -115,7 +115,7 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         )
 
         if oauth_account:
-            await self.delete(item_id=oauth_account.id)
+            await self.delete(item_id=oauth_account.id, auto_commit=True)
             return True
 
         return False
