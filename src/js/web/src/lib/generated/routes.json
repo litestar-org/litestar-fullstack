@@ -665,25 +665,6 @@
       },
       "uri": "/api/auth/oauth/google/callback"
     },
-    "oauth:profile:complete": {
-      "method": "get",
-      "methods": [
-        "GET"
-      ],
-      "parameterTypes": {
-        "provider": "string"
-      },
-      "parameters": [
-        "provider"
-      ],
-      "queryParameters": {
-        "code": "string | undefined",
-        "error": "string | undefined",
-        "error_description": "string | undefined",
-        "state": "string | undefined"
-      },
-      "uri": "/api/profile/oauth/{provider}/complete"
-    },
     "openapi.json": {
       "method": "get",
       "methods": [

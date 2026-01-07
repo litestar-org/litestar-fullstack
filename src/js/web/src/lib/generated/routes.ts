@@ -68,7 +68,6 @@ export type RouteName =
   | 'oauth:github:callback'
   | 'oauth:google:authorize'
   | 'oauth:google:callback'
-  | 'oauth:profile:complete'
   | 'openapi.json'
   | 'refresh_token'
   | 'regenerate_backup_codes'
@@ -212,9 +211,6 @@ export interface RoutePathParams {
   'oauth:github:callback': Record<string, never>;
   'oauth:google:authorize': Record<string, never>;
   'oauth:google:callback': Record<string, never>;
-  'oauth:profile:complete': {
-    provider: string;
-  };
   'openapi.json': Record<string, never>;
   'refresh_token': Record<string, never>;
   'regenerate_backup_codes': Record<string, never>;
@@ -519,12 +515,6 @@ export interface RouteQueryParams {
   'oauth:google:callback': {
     code?: string;
     error?: string;
-    state?: string;
-  };
-  'oauth:profile:complete': {
-    code?: string;
-    error?: string;
-    error_description?: string;
     state?: string;
   };
   'openapi.json': Record<string, never>;
@@ -939,13 +929,6 @@ export const routeDefinitions = {
     method: 'get',
     pathParams: [] as const,
     queryParams: ['code', 'error', 'state'] as const,
-  },
-  'oauth:profile:complete': {
-    path: '/api/profile/oauth/{provider}/complete',
-    methods: ['GET'] as const,
-    method: 'get',
-    pathParams: ['provider'] as const,
-    queryParams: ['code', 'error', 'error_description', 'state'] as const,
   },
   'openapi.json': {
     path: '/schema/openapi.json',

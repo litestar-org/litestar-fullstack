@@ -956,10 +956,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1037,10 +1037,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1117,10 +1117,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actionIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -2298,46 +2298,6 @@ export type ProfileOAuthUnlinkResponses = {
 
 export type ProfileOAuthUnlinkResponse =
   ProfileOAuthUnlinkResponses[keyof ProfileOAuthUnlinkResponses];
-
-export type ProfileOAuthCompleteData = {
-  body?: never;
-  path: {
-    provider: string;
-  };
-  query?: {
-    code?: string | null;
-    state?: string | null;
-    error?: string | null;
-    error_description?: string | null;
-  };
-  url: "/api/profile/oauth/{provider}/complete";
-};
-
-export type ProfileOAuthCompleteErrors = {
-  /**
-   * Validation Exception
-   */
-  400: {
-    detail: string;
-    extra?:
-      | null
-      | {
-          [key: string]: unknown;
-        }
-      | Array<unknown>;
-    status_code: number;
-  };
-};
-
-export type ProfileOAuthCompleteError =
-  ProfileOAuthCompleteErrors[keyof ProfileOAuthCompleteErrors];
-
-export type ProfileOAuthCompleteResponses = {
-  /**
-   * Redirect Response
-   */
-  200: unknown;
-};
 
 export type ProfileOAuthLinkData = {
   body?: never;

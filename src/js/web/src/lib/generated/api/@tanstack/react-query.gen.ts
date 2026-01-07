@@ -68,7 +68,6 @@ import {
   oAuthConfig,
   type Options,
   profileOAuthAccounts,
-  profileOAuthComplete,
   profileOAuthLink,
   profileOAuthUnlink,
   profileOAuthUpgradeScopes,
@@ -258,8 +257,6 @@ import type {
   ProfileOAuthAccountsData,
   ProfileOAuthAccountsError,
   ProfileOAuthAccountsResponse,
-  ProfileOAuthCompleteData,
-  ProfileOAuthCompleteError,
   ProfileOAuthLinkData,
   ProfileOAuthLinkError,
   ProfileOAuthLinkResponse,
@@ -1558,34 +1555,6 @@ export const profileOAuthUnlinkMutation = (
   };
   return mutationOptions;
 };
-
-export const profileOAuthCompleteQueryKey = (
-  options: Options<ProfileOAuthCompleteData>,
-) => createQueryKey("profileOAuthComplete", options);
-
-/**
- * CompleteLink
- */
-export const profileOAuthCompleteOptions = (
-  options: Options<ProfileOAuthCompleteData>,
-) =>
-  queryOptions<
-    unknown,
-    ProfileOAuthCompleteError,
-    unknown,
-    ReturnType<typeof profileOAuthCompleteQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await profileOAuthComplete({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: profileOAuthCompleteQueryKey(options),
-  });
 
 /**
  * StartLink

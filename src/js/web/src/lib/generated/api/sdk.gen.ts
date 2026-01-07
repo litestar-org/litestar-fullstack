@@ -178,9 +178,6 @@ import type {
   ProfileOAuthAccountsData,
   ProfileOAuthAccountsErrors,
   ProfileOAuthAccountsResponses,
-  ProfileOAuthCompleteData,
-  ProfileOAuthCompleteErrors,
-  ProfileOAuthCompleteResponses,
   ProfileOAuthLinkData,
   ProfileOAuthLinkErrors,
   ProfileOAuthLinkResponses,
@@ -1031,22 +1028,6 @@ export const profileOAuthUnlink = <ThrowOnError extends boolean = false>(
   >({
     security: [{ scheme: "bearer", type: "http" }],
     url: "/api/profile/oauth/{provider}",
-    ...options,
-  });
-
-/**
- * CompleteLink
- */
-export const profileOAuthComplete = <ThrowOnError extends boolean = false>(
-  options: Options<ProfileOAuthCompleteData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    ProfileOAuthCompleteResponses,
-    ProfileOAuthCompleteErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/api/profile/oauth/{provider}/complete",
     ...options,
   });
 

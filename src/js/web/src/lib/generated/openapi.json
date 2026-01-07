@@ -2798,7 +2798,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -2819,7 +2819,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -2861,7 +2861,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3187,7 +3187,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3208,7 +3208,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3250,7 +3250,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3568,7 +3568,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "targetIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3589,7 +3589,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetTypeIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3631,7 +3631,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "targetIdIn",
+            "name": "targetTypeIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -6391,152 +6391,6 @@
           }
         },
         "summary": "Unlink",
-        "tags": [
-          "Profile"
-        ]
-      }
-    },
-    "/api/profile/oauth/{provider}/complete": {
-      "get": {
-        "deprecated": false,
-        "operationId": "ProfileOAuthComplete",
-        "parameters": [
-          {
-            "deprecated": false,
-            "in": "path",
-            "name": "provider",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "allowEmptyValue": false,
-            "allowReserved": false,
-            "deprecated": false,
-            "in": "query",
-            "name": "code",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            }
-          },
-          {
-            "allowEmptyValue": false,
-            "allowReserved": false,
-            "deprecated": false,
-            "in": "query",
-            "name": "state",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            }
-          },
-          {
-            "allowEmptyValue": false,
-            "allowReserved": false,
-            "deprecated": false,
-            "in": "query",
-            "name": "error",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            }
-          },
-          {
-            "allowEmptyValue": false,
-            "allowReserved": false,
-            "deprecated": false,
-            "in": "query",
-            "name": "error_description",
-            "required": false,
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Redirect Response",
-            "headers": {
-              "location": {
-                "deprecated": false,
-                "description": "target path for the redirect",
-                "required": false,
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "Validation Exception",
-                  "examples": [
-                    {
-                      "detail": "Bad Request",
-                      "extra": {},
-                      "status_code": 400
-                    }
-                  ],
-                  "properties": {
-                    "detail": {
-                      "type": "string"
-                    },
-                    "extra": {
-                      "additionalProperties": {},
-                      "type": [
-                        "null",
-                        "object",
-                        "array"
-                      ]
-                    },
-                    "status_code": {
-                      "type": "integer"
-                    }
-                  },
-                  "required": [
-                    "detail",
-                    "status_code"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad request syntax or unsupported method"
-          }
-        },
-        "summary": "CompleteLink",
         "tags": [
           "Profile"
         ]
