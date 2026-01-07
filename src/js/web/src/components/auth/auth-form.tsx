@@ -15,7 +15,7 @@ export function AuthForm() {
   const isLogin = pathname === "/login"
 
   // Get redirect param from URL search params
-  const searchParams = new URLSearchParams(router.state.location.search)
+  const searchParams = new URLSearchParams(router.state.location.searchStr)
   const redirectParam = searchParams.get("redirect")
   const validatedRedirect = validateRedirectUrl(redirectParam)
 

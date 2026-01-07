@@ -41,7 +41,7 @@ async def _handle_oauth_link(
     provider: str,
     account_id: str,
     account_email: str | None,
-    token_data: dict[str, Any],
+    token_data: OAuth2Token,
     state_user_id: str,
     frontend_callback: str,
     action: str,
@@ -82,7 +82,7 @@ async def _handle_oauth_login(
     provider: str,
     account_id: str,
     account_email: str | None,
-    token_data: dict[str, Any],
+    token_data: OAuth2Token,
     frontend_callback: str,
 ) -> str:
     """Handle OAuth login/signup flow.
