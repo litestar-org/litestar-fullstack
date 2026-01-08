@@ -202,7 +202,7 @@ docs-linkcheck-full:                               ## Run the full link check on
 # Build
 # =============================================================================
 .PHONY: build
-build: build-assets build-wheel                    ## Build wheel with frontend assets
+build: build-emails build-assets build-wheel      ## Build wheel with frontend assets
 
 .PHONY: build-assets
 build-assets:                                      ## Build frontend assets

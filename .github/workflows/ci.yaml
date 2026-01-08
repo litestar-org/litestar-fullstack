@@ -59,8 +59,14 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         run: uv sync --all-groups
+
+      - name: Build email templates
+        run: make build-emails
 
       - name: Test with Coverage
         run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
