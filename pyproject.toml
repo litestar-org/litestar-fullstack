@@ -15,25 +15,26 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,redis,structlog]",
-  "advanced-alchemy[uuid]>=0.33.2",
-  "asyncpg",
+  "litestar[jinja,jwt,structlog,cryptography,pydantic]",
+  "advanced-alchemy[uuid,obstore,pwdlib]",
+  "redis",
+  "psycopg[pool,binary]",
   "python-dotenv",
-  "passlib[argon2]",
-  "litestar-saq",
-  "litestar-vite",
-  "litestar-granian",
-  "aiosqlite",
-  "httptools",
-  "httpx-oauth>=0.16.1",
+  "litestar-saq[hiredis]",
+  "litestar-vite>=0.15.0b4",
+  "litestar-granian[uvloop]",
+  "litestar-email[smtp]>=0.3.0",
+  "httpx-oauth",
+  "pyotp>=2.9.0",
+  "qrcode[pil]>=7.4.0",
 ]
-description = "Opinionated template for a Litestar application."
-keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
+description = "Reference application for building a fullstack application with Litestar."
+keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vite", "spa"]
 license = { text = "MIT" }
 name = "app"
 readme = "README.md"
 requires-python = ">=3.11"
-version = "0.2.0"
+version = "0.3.0"
 
 [project.urls]
 Discord = "https://discord.gg/litestar"
@@ -65,8 +66,6 @@ linting = [
   "types-click",
   "types-passlib",
   "types-pyyaml",
-  "types-redis",
-  "asyncpg-stubs",
   "pyright",
 ]
 test = [
@@ -75,9 +74,12 @@ test = [
   "pytest-xdist",
   "pytest-mock",
   "pytest-cov",
-  "coverage",
+  "coverage[toml]",
   "pytest-sugar",
-  "pytest-databases[postgres,redis]>=0.1.0",
+  "pytest-databases[postgres]>=0.1.0",
+  "polyfactory",
+  "aiosqlite",
+  "asyncpg",
 ]
 
 
@@ -90,18 +92,18 @@ requires = ["hatchling", "setuptools"]
 allow-direct-references = true
 
 [tool.hatch.build]
-dev-mode-dirs = ["src", "."]
+dev-mode-dirs = ["src/py", "."]
 ignore-vcs = true
-sources = ["src"]
+sources = ["src/py"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "docs"]
-include = ["src/*", "tests/*", "public/*", "tools/*", "resources", "LICENSE"]
+include = ["src/**/*", "tools/*", "resources", "LICENSE"]
 skip-excluded-dirs = false
 
 [tool.hatch.build.targets.wheel]
-# artifacts = ["app/domain/web/public/*"]
-packages = ["app"]
+packages = ["src/py/app"]
+# ignore-vcs is inherited from [tool.hatch.build] - static assets are included automatically
 
 [tool.bumpversion]
 allow_dirty = false
@@ -127,15 +129,10 @@ replace = 'version = "{new_version}"'
 search = 'version = "{current_version}"'
 
 [[tool.bumpversion.files]]
-filename = "package.json"
+filename = "src/js/web/package.json"
 replace = '"version": "{new_version}"'
 search = '"version": "{current_version}"'
 
-
-[tool.uv]
-default-groups = ["dev", "docs", "linting", "test"]
-# no-binary-package = ["charset-normalizer"]
-# no-build-isolation-package = ["charset-normalizer"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -156,12 +153,26 @@ show_missing = true
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/*/migrations/**/*.py", "tools/*"]
+concurrency = ["multiprocessing"]
+omit = ["**/*/tests/*", "**/*/migrations/**/*.py", "tools/*"]
+parallel = true
+relative_files = true
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "--ignore", "migrations"]
-# env_files = [".env.testing"]
-# env_override_existing_values = 1
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+  "--cov=src/py/app",
+  "--cov-report=term-missing",
+  "--cov-report=html:htmlcov",
+  "--cov-report=xml",
+  "--cov-fail-under=65",
+  "--tb=short",
+  "-v",
+  "-ra",
+  "-n",
+  "auto",                      # Enable xdist with auto-detected worker count
+]
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
@@ -172,7 +183,24 @@ filterwarnings = [
   "ignore::DeprecationWarning:litestar.cli.*",
   "ignore::DeprecationWarning:httpx._client",
 ]
-testpaths = ["tests"]
+markers = [
+  "unit: marks tests as unit tests (fast, isolated)",
+  "integration: marks tests as integration tests (slower, database)",
+  "slow: marks tests as slow running tests",
+  "auth: marks tests related to authentication",
+  "email: marks tests that send emails",
+  "external: marks tests that call external services",
+  "oauth: marks tests related to OAuth functionality",
+  "services: marks tests for service layer",
+  "models: marks tests for database models",
+  "endpoints: marks tests for API endpoints",
+  "security: marks tests for security features",
+  "teams: marks tests related to team functionality",
+]
+python_classes = ["Test*"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+testpaths = ["src/py/tests"]
 
 [tool.ruff]
 exclude = [
@@ -196,14 +224,19 @@ exclude = [
   "node_modules",
   "venv",
   '__pycache__',
-  "src/app/db/migrations/versions/*.py",
-
+  "src/py/app/db/migrations/versions/*.py",
 ]
 fix = true
 line-length = 120
-lint.fixable = ["ALL"]
-lint.ignore = [
-  "E501",    # pycodestyle line too long, handled by black
+src = ["src/py", "src/py/tests"]
+target-version = "py311"
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+ignore = [
+  "A003",    # flake8-builtins - class attribute {name} is shadowing a python builtin
+  "A005",    # flake8-builtins - module {name} shadows a Python standard-library module
+  "B010",    # flake8-bugbear - do not call setattr with a constant attribute value
   "D100",    # pydocstyle - missing docstring in public module
   "D101",    # pydocstyle - missing docstring in public class
   "D102",    # pydocstyle - missing docstring in public method
@@ -215,48 +248,53 @@ lint.ignore = [
   "D202",    # pydocstyle - no blank lines allowed after function docstring
   "D205",    # pydocstyle - 1 blank line required between summary line and description
   "D415",    # pydocstyle - first line should end with a period, question mark, or exclamation point
-  "UP037",   # pyupgrade - removes quotes from type annotation
-  "A003",    # flake8-builtins - class attribute {name} is shadowing a python builtin
-  "B010",    # flake8-bugbear - do not call setattr with a constant attribute value
-  "B008",    #  flake8-bugbear - Do not perform function call `Parameter` in argument defaultsRuff(B008)
-  "RUF012",  # ruff - mutable class attributes should be annotated with `typing.ClassVar`
-  "ANN401",  # ruff - Dynamically typed expressions (typing.Any) are disallowed
-  "PLR0913", # ruff - Too many arguments to function call
-  "PLR2004", # Magic value used in comparison
-  "FBT001",  # Boolean typed positional argument in function definition
-  "FBT002",  # Boolean default positional argument in function definition
-  "FBT003",  # Boolean Boolean default positional argument in function definition
-  "ARG002",  # Unused method argument
-  "ARG001",  #  Unused function argument
-  "TD002",
-  "TD003",
-  "FIX002",
-  "PGH003",
-  "RUF006",
-  "SLF001",
-  "PT007",
-  'S603',
-  "E501",    # pycodestyle line too long, handled by black
+  "E501",    # pydocstyle line too long, handled by black
   "PLW2901", # pylint - for loop variable overwritten by assignment target
+  "RUF012",  # Ruff-specific rule - annotated with classvar
   "ANN401",
   "FBT",
   "PLR0913", # too many arguments
   "PT",
   "TD",
+  "ARG002",  # ignore for now; investigate
+  "ARG003",  # ignore for now; investigate
   "PERF203", # ignore for now; investigate
+  "PD011",   # pandas
+  "PLR0912",
+  "ISC001",
   "COM812",
+  "CPY001",
+  "PGH003",
+  "FA100",
+  "PLC0415", # import should be at the top of the file
+  "PLR0904", # too many public methods
+  "PLR0917",
+  "PGH003",
+  "PLC2701",
+  "PLW3201",
+  "PLR6301",
 ]
-lint.select = ["ALL"]
+select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
-lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-src = ["src", "tests/"]
-target-version = "py311"
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ['F401', 'D104']
+"docs/**/*.*" = ["S", "B", "DTZ", "A", "TC", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
+"docs/conf.py" = ["FIX002", "ARG001", "INP001"]
+"src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
+"src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
+"src/py/app/db/models/*.py" = ["PLW0108", "TC003"]
+"src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
+"tools/*.py" = ["INP001", "ERA001", "N999"]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
+
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.mccabe]
-max-complexity = 12
+max-complexity = 16
 
 [tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
@@ -269,22 +307,16 @@ classmethod-decorators = [
 [tool.ruff.lint.isort]
 known-first-party = ['tests', 'app']
 
-[tool.ruff.lint.per-file-ignores]
-"*/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
-"__init__.py" = ['F401', 'D104']
-"docs/**/*.*" = ["S", "B", "DTZ", "A", "TC", "ERA", "D", "RET", "E731", "RUF012", "FA100", "ARG001"]
-"docs/conf.py" = ["FIX002", "ARG001", "INP001"]
-"src/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
-"tests/*.py" = ['D103', 'S101', 'D104']
-"tools/*.py" = ["INP001", "ERA001", "N999"]
-"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001"]
+[tool.ruff.lint.flake8-tidy-imports]
+# Disallow all relative imports.
+ban-relative-imports = "all"
 
 [tool.slotscheck]
 strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog,selectin,selectinload"
-skip = 'uv.lock, package-lock.json'
+skip = 'uv.lock, package-lock.json, src/js/web/bun.lock, src/js/templates/bun.lock'
 
 [tool.mypy]
 disallow_any_generics = false
@@ -300,7 +332,10 @@ exclude = '''(?x)(
 )
 '''
 implicit_reexport = false
+packages = ["app", "tests", "docs", "tools"]
 plugins = []
+python_version = "3.11"
+show_error_codes = true
 strict = true
 warn_redundant_casts = true
 warn_return_any = true
@@ -309,13 +344,10 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
+disable_error_code = "attr-defined,type-var,union-attr"
 disallow_untyped_decorators = false
 module = ["tests.*"]
-
-[[tool.mypy.overrides]]
-disallow_untyped_calls = false
-disallow_untyped_decorators = false
-module = ["aisoql.*"]
+warn_unused_ignores = false
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
@@ -337,68 +369,15 @@ module = ["app.db.migrations.*", "app.lib.dto.*"]
 
 
 [tool.pyright]
-exclude = ["scripts", "docs"]
-include = ["src/app", "tests"]
-
-[tool.git-cliff.changelog]
-body = """
-{% if version %}\
-    `Release [v{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }} <https://github.com/litestar-org/litestar-fullstack/releases/tag/v{{ version | trim_start_matches(pat="v") }}>`_
-    ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    * `See All commits in v{{ version | trim_start_matches(pat="v") }} <https://github.com/litestar-org/litestar-fullstack/commits/v{{ version | trim_start_matches(pat="v") }}>`_
-{% else %}\
-    [unreleased]
-    ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-{% endif %}\
-{% if previous %}\
-    {% if previous.commit_id %}
-        `{{ previous.commit_id | truncate(length=7, end="") }} <https://github.com/litestar-org/litestar-fullstack/commit/{{ previous.commit_id }}>`_ ... \
-            `{{ previous.commit_id | truncate(length=7, end="") }} <https://github.com/litestar-org/litestar-fullstack/commit/{{ commit_id }}>`_ \
-            | `See diff for {{ version }} <https://github.com/litestar-org/litestar-fullstack/compare/{{ previous.commit_id }}...{{ commit_id }}>`_
-    {% endif %}\
-{% endif %}\
-{% for group, commits in commits | group_by(attribute="group") %}
-    {{ group | upper_first }}
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    {% for commit in commits %}
-        * (`{{ commit.id | truncate(length=7, end="") }} <https://github.com/litestar-org/litestar-fullstack/commit/{{ commit.id }}>`_) {% if commit.breaking %}[**breaking**] {% endif %} - {{ commit.message | upper_first }} ({{ commit.author.name }})\
-          {% for footer in commit.footers -%}
-            , {{ footer.token }}{{ footer.separator }}{{ footer.value }}\
-          {% endfor %}\
-    {% endfor %}
-{% endfor %}\n
-"""
-footer = """
-Litestar Fullstack Changelog
-"""
-header = """
-=========
-Changelog
-=========\n
-All commits to this project will be documented in this file.\n
-"""
-trim = true
-
-[tool.git-cliff.git]
-commit_parsers = [
-  { message = "^feat", group = "Features" },
-  { message = "^fix", group = "Bug Fixes" },
-  { message = "^doc", group = "Documentation" },
-  { message = "^perf", group = "Performance" },
-  { message = "^refactor", group = "Refactor" },
-  { message = "^style", group = "Styling" },
-  { message = "^test", group = "Testing" },
-  { message = "^chore\\(release\\): prepare for", skip = true },
-  { message = "^chore", group = "Miscellaneous Tasks" },
-  { body = ".*security", group = "Security" },
-]
-conventional_commits = true
-filter_commits = false
-filter_unconventional = true
-ignore_tags = ""
-protect_breaking_commits = false
-skip_tags = "v0.1.0-beta.1"
-sort_commits = "oldest"
-split_commits = false
-tag_pattern = "v[0-9]*"
-topo_order = false
+disableBytesTypePromotions = true
+exclude = ["src/py/app/db/migrations"]
+include = ["src/py/app", "src/py/tests"]
+pythonVersion = "3.11"
+reportMissingTypeStubs = false
+reportPrivateImportUsage = false
+reportUnknownMemberType = false
+reportUnnecessaryTypeIgnoreComment = true
+reportUnusedFunction = false
+strict = ["src/py/app/**/*"]
+venv = ".venv"
+venvPath = "."

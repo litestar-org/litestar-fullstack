@@ -1,0 +1,56 @@
+x-development-volumes: &development-volumes
+  volumes:
+    - ./docs:/workspace/app/docs/
+    - ./tools:/workspace/app/tools/
+    - ./src:/workspace/app/src/
+    - ./Makefile:/workspace/app/Makefile
+    - ./pyproject.toml:/workspace/app/pyproject.toml
+    - ./uv.lock:/workspace/app/uv.lock
+    - ../../.env.local.example:/workspace/app/.env
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    ports:
+      - "8000:8000"
+      - "3006:3006"
+    tty: true
+    environment:
+      VITE_DEV_MODE: "true"
+      VITE_PORT: "3006"
+      SAQ_USE_SERVER_LIFESPAN: "false"
+    command: litestar run --reload --host 0.0.0.0 --port 8000
+    restart: always
+    <<: *development-volumes
+  worker:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    command: litestar workers run
+    tty: true
+    restart: always
+    <<: *development-volumes
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+    env_file:
+      - ../../.env.local.example
+  migrator:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    command: litestar database upgrade --no-prompt
+    restart: "no"
+    <<: *development-volumes
+    env_file:
+      - ../../.env.local.example
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy

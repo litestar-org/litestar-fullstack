@@ -1,0 +1,227 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Distroless Production Python Container
+# =============================================================================
+# This Dockerfile creates a minimal, secure container using Google's distroless
+# base image for maximum security in production.
+#
+# Security features:
+# - Multi-stage build to minimize attack surface
+# - Non-root user execution (UID 65532)
+# - No shell or package manager in runtime image
+# - Minimal runtime dependencies
+# - Distroless base image (no unnecessary OS components)
+# - Multi-architecture support (amd64/arm64)
+#
+# Optimization features:
+# - uv for all package installations
+# - Bytecode compilation for faster startup
+# - Railway-compatible (no cache mounts required)
+#
+# Build: docker build -f Dockerfile.distroless -t app:distroless .
+# Multi-arch: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.distroless -t app:distroless .
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Build Arguments
+# -----------------------------------------------------------------------------
+ARG PYTHON_VERSION=3.13
+ARG DEBIAN_VERSION=bookworm
+ARG BUILDER_IMAGE=python:${PYTHON_VERSION}-slim-${DEBIAN_VERSION}
+ARG RUN_IMAGE=gcr.io/distroless/cc-debian12:nonroot
+
+# =============================================================================
+# Stage 1: Python Base
+# =============================================================================
+# Minimal base image with build tools
+# =============================================================================
+FROM ${BUILDER_IMAGE} AS python-base
+
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        tini \
+        unzip \
+        ca-certificates \
+    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /var/log/* /tmp/*
+
+# Install uv (fast Python package installer)
+# Pin to specific version for reproducible builds
+# For SHA256 pinning: COPY --from=ghcr.io/astral-sh/uv@sha256:<digest> /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Install bun (fast JavaScript runtime/bundler)
+COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
+
+# =============================================================================
+# Stage 2: Builder
+# =============================================================================
+# Installs all dependencies and builds the application
+# =============================================================================
+FROM python-base AS builder
+
+ARG UV_INSTALL_ARGS="--no-dev"
+
+# Environment configuration for optimal builds
+ENV GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
+    UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_SYSTEM_PYTHON=1 \
+    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    # Build-time settings to prevent connection attempts
+    DATABASE_POOL_DISABLED=true \
+    SAQ_USE_SERVER_LIFESPAN=false \
+    SAQ_WEB_ENABLED=false
+
+# Install build dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        git \
+    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /var/log/* /tmp/*
+
+WORKDIR /workspace/app
+
+# Copy dependency files first (better layer caching)
+COPY pyproject.toml uv.lock README.md ./
+COPY src/js/web/package.json src/js/web/bun.lock ./src/js/web/
+COPY src/js/web/biome.json src/js/web/vite.config.ts src/js/web/tsconfig.json ./src/js/web/
+COPY src/js/templates/package.json src/js/templates/bun.lock ./src/js/templates/
+
+# Install JavaScript dependencies for web app
+WORKDIR /workspace/app/src/js/web
+RUN bun install --frozen-lockfile
+
+# Install JavaScript dependencies for email templates
+WORKDIR /workspace/app/src/js/templates
+RUN bun install --frozen-lockfile
+WORKDIR /workspace/app
+
+# Create virtual environment and install Python dependencies
+RUN uv venv \
+    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
+    && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --no-emit-project --output-file=requirements.txt
+
+# Copy application source
+COPY tools ./tools/
+COPY src/js/web/ ./src/js/web/
+COPY src/js/templates/ ./src/js/templates/
+COPY src/py/ ./src/py/
+
+# Create required directories
+RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
+
+# Build email templates (must be before wheel build to include in package)
+RUN cd src/js/templates && bun run build
+
+# Build frontend assets, copy index.html for SPA mode, and create wheel
+RUN uv run app assets build \
+    && cp src/js/web/index.html src/py/app/server/static/web/index.html \
+    && uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
+    && uv build --wheel
+
+# =============================================================================
+# Stage 3: Runtime Preparation
+# =============================================================================
+# Prepares the runtime environment with Python and dependencies
+# =============================================================================
+FROM python-base AS runtime-prep
+
+# Use TARGETARCH provided by Docker buildx for multi-arch support
+ARG TARGETARCH
+
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1
+
+# Create non-root user matching distroless nonroot user
+RUN groupadd --system --gid 65532 nonroot \
+    && useradd --no-create-home --system --uid 65532 --gid 65532 nonroot \
+    && mkdir -p /workspace/app \
+    && chown -R nonroot:nonroot /workspace
+
+# Create virtual environment with copied Python for distroless
+RUN python -m venv --copies /workspace/app/.venv
+
+# Copy requirements and wheel from builder
+COPY --from=builder --chown=65532:65532 /workspace/app/requirements.txt /tmp/requirements.txt
+COPY --from=builder --chown=65532:65532 /workspace/app/dist/*.whl /tmp/
+
+WORKDIR /workspace/app
+
+# Install dependencies into the virtual environment using uv
+# uv is faster and more reliable than pip
+RUN uv pip install \
+        --quiet \
+        --no-cache-dir \
+        --no-deps \
+        --requirement=/tmp/requirements.txt \
+    && uv pip install \
+        --quiet \
+        --no-cache-dir \
+        --no-deps \
+        /tmp/*.whl \
+    && rm -rf /tmp/*
+
+# Detect architecture and create symlinks for library paths
+# This enables the same Dockerfile to work on both amd64 and arm64
+RUN ARCH_DIR=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64-linux-gnu" || echo "x86_64-linux-gnu") \
+    && mkdir -p /runtime-libs/lib /runtime-libs/usr/lib \
+    && cp -a /lib/${ARCH_DIR} /runtime-libs/lib/ \
+    && cp -a /usr/lib/${ARCH_DIR} /runtime-libs/usr/lib/ \
+    && echo "${ARCH_DIR}" > /runtime-libs/arch
+
+# =============================================================================
+# Stage 4: Distroless Runtime
+# =============================================================================
+# Minimal production image with no shell or package manager
+# =============================================================================
+FROM ${RUN_IMAGE} AS runtime
+
+ARG LITESTAR_APP="app.server.asgi:create_app"
+
+ENV PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    LITESTAR_APP="${LITESTAR_APP}"
+
+# Copy Python interpreter and standard library
+COPY --from=runtime-prep /usr/local/lib/ /usr/local/lib/
+COPY --from=runtime-prep /usr/local/bin/python /usr/local/bin/python
+COPY --from=runtime-prep /etc/ld.so.cache /etc/ld.so.cache
+
+# Copy tini for proper signal handling
+COPY --from=runtime-prep /usr/bin/tini /usr/local/bin/tini
+
+# Copy required shared libraries (architecture-aware)
+COPY --from=runtime-prep /runtime-libs/lib/ /lib/
+COPY --from=runtime-prep /runtime-libs/usr/lib/ /usr/lib/
+COPY --from=runtime-prep /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Copy the application virtual environment
+WORKDIR /workspace/app
+COPY --from=runtime-prep --chown=65532:65532 /workspace/app/.venv /workspace/app/.venv
+
+# Container configuration
+STOPSIGNAL SIGTERM
+EXPOSE 8000
+
+ENTRYPOINT ["/usr/local/bin/tini", "--"]
+CMD ["app", "run", "--host", "0.0.0.0", "--port", "8000"]
+
+# Labels for container metadata (OCI spec)
+LABEL org.opencontainers.image.title="Litestar Fullstack SPA" \
+      org.opencontainers.image.description="Secure distroless Python application" \
+      org.opencontainers.image.vendor="Litestar" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.base.name="gcr.io/distroless/cc-debian12:nonroot"

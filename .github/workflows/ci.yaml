@@ -17,19 +17,23 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    env:
-      SETUPTOOLS_USE_DISTUTILS: stdlib
     steps:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
-      - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip  --upgrade --quiet --user
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
 
-      - uses: pre-commit/action@v3.0.1
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files
 
   test:
     needs: validate
@@ -37,7 +41,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11","3.12","3.13"]
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -53,17 +57,19 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
-      - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Build email templates
+        run: make build-emails
+
       - name: Test with Coverage
-        run: uv run pytest tests --cov=app --cov-report=xml
+        run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
 
       - if: matrix.python-version == '3.13'
         uses: actions/upload-artifact@v6
@@ -88,7 +94,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
       - name: Install dependencies
@@ -128,7 +133,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.10"
           enable-cache: true
 
       - name: Install dependencies

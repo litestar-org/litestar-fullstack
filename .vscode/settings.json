@@ -4,52 +4,86 @@
     "**/*.pyc": {
       "when": "$(basename).py"
     },
-    ".mypy_cache": true,
+    "**/.mypy_cache": true,
     "**/__pycache__": true,
-    ".venv": false,
+    ".venv": true,
     ".idea": true,
     ".run": true,
     ".pytest_cache": true,
-    ".hypothesis": true,
-    ".nova": true,
     ".cache": true,
     ".dist": true,
     "**/.pytest_cache": true,
     "site": true,
     ".angular": true,
     ".ruff_cache": true,
+    ".unasyncd_cache": true,
     ".coverage": true,
-    "node_modules": false
+    "coverage": true,
+    "**/node_modules": true,
+    ".terraform": true,
+    "tmp": false,
+    "scratch": true,
+    ".static": true,
+    "dist": false,
+    ".dmypy.json": true,
+    ".claude": false,
+    "htmlcov": true
   },
-  "ruff.format.args": ["--config=${workspaceFolder}/pyproject.toml"],
-  "ruff.lint.run": "onType",
-  "ruff.lint.args": ["--config=${workspaceFolder}/pyproject.toml"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
-  "black-formatter.importStrategy": "fromEnvironment",
-  "pylint.importStrategy": "fromEnvironment",
-  "pylint.args": [ "--rcfile=pylintrc"],
-  "python.autoComplete.extraPaths": ["${workspaceFolder}/src"],
-  "python.terminal.activateEnvInCurrentTerminal": true,
-  "python.terminal.executeInFileDir": true,
-  "python.testing.pytestEnabled": true,
-  "autoDocstring.guessTypes": false,
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.autoFormatStrings": true,
-  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
   "editor.formatOnSave": true,
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "notebook.formatOnSave.enabled": true,
-  "black-formatter.args": ["--line-length=120"],
   "evenBetterToml.formatter.reorderKeys": true,
   "evenBetterToml.formatter.trailingNewline": true,
   "evenBetterToml.formatter.columnWidth": 120,
   "evenBetterToml.formatter.arrayAutoCollapse": true,
-  "python.globalModuleInstallation": false,
-  "python.testing.unittestEnabled": false,
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.ruff": "explicit",
-    "source.organizeImports.ruff": "explicit"
+    "source.organizeImports.ruff": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
   },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "pyproject.toml,uv.lock,poetry.lock,poetry.toml,mkdocs.yaml,.gcloudignore,.gitignore,.editorconfig,.bumpversion.cfg,.pylintrc,.pre-commit-config.yaml,LICENSE,mkdocs.yml,service_account.json,nixpacks.toml,railway.json,sonar-project.properties,sonar-project.properties.example,sonar-project.properties.example.example,biome.json",
+    ".env": ".env*,.*.env",
+    "docker-compose.yml": "docker-compose.yml, docker-compose.*.yml, .dockerignore",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.*.json, tsconfig.json, .stylelintrc.json,angular.json,proxy.conf.json,cypress.*.ts,extra-webpack*.cjs,.eslintrc.json, biome.json, components.json, vite.config.js, tsconfig.json, vite.config.js, .cta.json, postcss.config.js, tailwind.config.js, vite.config.ts, openapi-api.config.ts, bun.lock",
+    "README.md": "CONTRIBUTING.rst"
+  },
+  "terminal.integrated.allowChords": false,
   "[python]": {
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
@@ -62,20 +96,34 @@
       "source.organizeImports": "explicit"
     }
   },
-  "python.analysis.fixAll": [
-    "source.unusedImports",
-    "source.convertImportFormat"
+  "python.analysis.fixAll": ["source.unusedImports", "source.convertImportFormat"],
+  "python.testing.unittestEnabled": false,
+  "python.analysis.supportDocstringTemplate": true,
+  "python.analysis.supportRestructuredText": true,
+  "python.analysis.regenerateStdLibIndices": true,
+  "python.analysis.showOnlyDirectDependenciesInAutoImport": false,
+  "python.analysis.includeAliasesFromUserFiles": true,
+  "python.analysis.generateWithTypeAnnotation": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.executeInFileDir": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.autoFormatStrings": true,
+  "ruff.configuration": "${workspaceFolder}/pyproject.toml",
+  "ruff.nativeServer": "auto",
+  "ruff.lint.preview": true,
+  "ruff.format.preview": true,
+  "ruff.lineLength": 120,
+  "ruff.lint.extendSelect": ["ALL"],
+  "ruff.lint.select": ["ALL"],
+  "ruff.configurationPreference": "filesystemFirst",
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}/src/py/tests",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/src/py"
   ],
-  "sqltools.disableReleaseNotifications": true,
-  "sqltools.disableNodeDetectNotifications": true,
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./tests",
-    "-p",
-    "test_*.py"
-  ],
-  "python.testing.pytestArgs": [
-    "tests"
-  ],
+  "biome.rename": true,
+  "biome.lsp.bin": "src/js/node_modules/@biomejs/biome/bin/biome"
 }

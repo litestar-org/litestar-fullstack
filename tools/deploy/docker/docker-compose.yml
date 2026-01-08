@@ -1,0 +1,115 @@
+services:
+  cache:
+    image: valkey/valkey:latest
+    ports:
+      - "16379:6379"
+    hostname: cache
+    command: redis-server --appendonly yes
+    volumes:
+      - cache-data:/data
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
+  db:
+    image: postgres:latest
+    ports:
+      - "15432:5432"
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: "app"
+      POSTGRES_USER: "app"
+      POSTGRES_DB: "app"
+    volumes:
+      - db-data:/var/lib/postgresql
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - app
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "18025:8025"  # Web UI
+      - "11025:1025"  # SMTP server
+    hostname: mailpit
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - sh
+        - -c
+        - "wget --no-verbose --tries=1 --spider http://localhost:8025/livez || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  app:
+    build:
+      context: .
+      dockerfile: docker/run/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      VITE_DEV_MODE: "false"
+      SAQ_USE_SERVER_LIFESPAN: "false"
+    env_file:
+      - ../../.env.local.example
+  worker:
+    build:
+      context: .
+      dockerfile: docker/run/Dockerfile
+    command: litestar workers run
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    env_file:
+      - ../../.env.local.example
+  migrator:
+    build:
+      context: .
+      dockerfile: docker/run/Dockerfile
+    restart: "no"
+    command: litestar database upgrade --no-prompt
+    env_file:
+      - ../../.env.local.example
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+volumes:
+  db-data: {}
+  cache-data: {}

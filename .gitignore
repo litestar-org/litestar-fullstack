@@ -104,6 +104,7 @@ celerybeat.pid
 .env*
 !.env.*.example
 !.env.testing
+!tools/deploy/docker/.env.docker
 .venv
 env/
 venv/
@@ -131,11 +132,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
+.cursor/
 # vscode
 # .vscode
 .venv
-
+TODO.md
 # Logs
 logs
 *.log
@@ -167,15 +168,28 @@ tmp/
 temp/
 
 # built files from the web UI
-src/app/domain/web/public
-src/app/domain/web/public/hot
+src/py/app/server/static/web/*
 .vite
-src/app/domain/web/static
 public/hot
 public/bundle
-pdm-pythn
 
+pdm-python
 db.duckdb
 local.duckdb
 
 requirements.txt
+dist-ssr
+*.local
+src/js/web/.litestar.json
+src/js/web/public/hot
+
+# Email template build output
+src/py/app/server/static/email/
+src/js/templates/node_modules/
+src/js/py/app/server/static/
+
+# AI agent symlinks (AGENTS.md is tracked, tool-specific symlinks are not)
+CLAUDE.md
+GEMINI.md
+.gemini/
+.claude/

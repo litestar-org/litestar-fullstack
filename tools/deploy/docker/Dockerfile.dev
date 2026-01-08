@@ -1,0 +1,126 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Development Python Container
+# =============================================================================
+# This Dockerfile creates a development container with hot-reloading enabled.
+#
+# Features:
+# - All development dependencies included
+# - Hot-reload enabled for rapid development
+# - Build tools available for native extensions
+# - Cache mounts for faster rebuilds
+#
+# Build: docker build -f Dockerfile.dev -t app:dev .
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Build Arguments
+# -----------------------------------------------------------------------------
+ARG PYTHON_VERSION=3.13
+ARG DEBIAN_VERSION=bookworm
+ARG BUILDER_IMAGE=python:${PYTHON_VERSION}-slim-${DEBIAN_VERSION}
+
+# =============================================================================
+# Stage 1: Python Base
+# =============================================================================
+# Base image with development tools and dependencies
+# =============================================================================
+FROM ${BUILDER_IMAGE} AS python-base
+
+ARG LITESTAR_APP="app.server.asgi:create_app"
+
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    LITESTAR_APP="${LITESTAR_APP}"
+
+RUN --mount=type=cache,id=apt-cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,id=apt-lib,target=/var/lib/apt,sharing=locked \
+    apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+        tini \
+        ca-certificates \
+    && rm -rf /var/log/* /tmp/* \
+    && mkdir -p /workspace/app /cloudsql
+
+# Install uv (fast Python package installer)
+# Pin to specific version for reproducible builds
+# For SHA256 pinning: COPY --from=ghcr.io/astral-sh/uv@sha256:<digest> /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Install bun (fast JavaScript runtime/bundler)
+COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
+
+# =============================================================================
+# Stage 2: Development Builder
+# =============================================================================
+# Installs all dependencies including dev for development use
+# =============================================================================
+FROM python-base AS builder
+
+ARG UV_INSTALL_ARGS="--all-extras --dev"
+
+ENV GRPC_PYTHON_BUILD_WITH_CYTHON=1 \
+    UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_SYSTEM_PYTHON=1 \
+    PATH="/workspace/app/.venv/bin:/usr/local/bin:$PATH"
+
+WORKDIR /workspace/app
+
+# Copy dependency files first (better layer caching)
+COPY pyproject.toml uv.lock README.md ./
+COPY src/js/web/package.json src/js/web/bun.lock ./src/js/web/
+COPY src/js/web/biome.json src/js/web/vite.config.ts src/js/web/tsconfig.json ./src/js/web/
+COPY src/js/templates/package.json src/js/templates/bun.lock ./src/js/templates/
+
+# Install JavaScript dependencies for web app
+WORKDIR /workspace/app/src/js/web
+RUN bun install --frozen-lockfile
+
+# Install JavaScript dependencies for email templates
+WORKDIR /workspace/app/src/js/templates
+RUN bun install --frozen-lockfile
+WORKDIR /workspace/app
+
+# Create virtual environment and install Python dependencies
+# Using cache mounts for faster rebuilds
+RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
+    uv venv \
+    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable
+
+# Copy application source
+COPY tools ./tools/
+COPY src/js/web/ ./src/js/web/
+COPY src/js/templates/ ./src/js/templates/
+COPY src/py/ ./src/py/
+
+# Create required directories
+RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
+
+# Build email templates (must be before wheel build to include in package)
+RUN cd src/js/templates && bun run build
+
+# Build frontend assets and complete sync
+RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
+    uv run app assets build \
+    && uv sync ${UV_INSTALL_ARGS} --frozen
+
+# Container configuration
+STOPSIGNAL SIGTERM
+EXPOSE 8000
+
+ENTRYPOINT ["tini", "--"]
+CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+# Volume for development with mounted source code
+VOLUME /workspace/app

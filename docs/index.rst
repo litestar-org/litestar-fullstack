@@ -9,27 +9,16 @@ and as a reference for how to build a large scale fullstack Litestar application
 You can take pieces as needed, or use the entire thing as a starting point for your project.
 It includes the following capabilities out of the box:
 
-.. seealso:: It is built on the `Litestar <https://litestar.dev>`_, ReactJS, `Vite <https://vitejs.dev/>`_,
-  :doc:`SAQ <saq:index>`, `TailwindCSS <https://tailwindcss.com/>`_ and comes with great features to reference:
+.. seealso:: It is built on the `Litestar <https://litestar.dev>`_, React, `Vite <https://vitejs.dev/>`_,
+  :doc:`SAQ <saq:index>`, `TailwindCSS <https://tailwindcss.com/>`_, and
+  :doc:`Advanced Alchemy <advanced-alchemy:index>` with features to reference:
 
-  - User creation, authentication, and authorization via `UserController` and `AccessController`
-  - Endpoints for listing, creating, updating, and deleting users
-  - Login, logout, and signup functionalities with OAuth2 support
-  - Profile management for authenticated users
-  - Role-based access control using `RoleService` and guards
-  - Job/Task Queues via :doc:`SAQ <saq:index>`
-  - Fully featured frontend stack with ReactJS (supports Vue, Angular, and all other JS frameworks) and native Vite integration via
-    the `litestar-vite <https://github.com/cofin/litestar-vite>`_ plugin
-  - Fully featured backend API with Litestar
-    - Includes the utilization of :doc:`Guards <litestar:usage/security/guards>` and team-based authentication,
-    - Extensive CLI
-  - Advanced logging with :doc:`structlog <structlog:index>`
-  - SQLAlchemy ORMs, including the :doc:`Advanced Alchemy <advanced-alchemy:index>` helper library by `Jolt <https://jolt.rs>`_
-    - UUIDv7 based Primary Keys using `uuid-utils`
-  - AioSQL for raw queries without the ORM
-  - Alembic migrations
-  - Dockerized development and production environments
-  - Test suite
+  - SPA frontend with React 19 and Vite (SPA mode via `litestar-vite <https://github.com/cofin/litestar-vite>`_)
+  - JWT auth with refresh tokens, MFA, OAuth, and admin tooling
+  - Service/repository pattern with UUIDv7 primary keys
+  - Background jobs via :doc:`SAQ <saq:index>` and structured logging with :doc:`structlog <structlog:index>`
+  - Dockerized development and production workflows
+  - Test suite for backend features
 
 Installation
 ------------
