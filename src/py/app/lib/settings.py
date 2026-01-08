@@ -247,13 +247,17 @@ class EmailSettings:
     """Resend API key for production email sending."""
 
     def get_config(self) -> EmailConfig:
-        """Return EmailConfig for the litestar-email plugin."""
+        """Return EmailConfig for the litestar-email plugin.
+
+        As of litestar-email v0.3.0, the backend parameter accepts either
+        a string ("console", "memory") or a config object (SMTPConfig,
+        ResendConfig).
+        """
         from litestar_email import EmailConfig, ResendConfig, SMTPConfig
 
-        backend_config: SMTPConfig | ResendConfig | None
-        backend_config = None
+        backend: str | SMTPConfig | ResendConfig = self.BACKEND
         if self.BACKEND == "smtp":
-            backend_config = SMTPConfig(
+            backend = SMTPConfig(
                 host=self.SMTP_HOST,
                 port=self.SMTP_PORT,
                 username=self.SMTP_USER,
@@ -263,11 +267,10 @@ class EmailSettings:
                 timeout=self.TIMEOUT,
             )
         elif self.BACKEND == "resend":
-            backend_config = ResendConfig(api_key=self.RESEND_API_KEY)
+            backend = ResendConfig(api_key=self.RESEND_API_KEY)
 
         return EmailConfig(
-            backend=self.BACKEND,
-            backend_config=backend_config,
+            backend=backend,
             from_email=self.FROM_EMAIL,
             from_name=self.FROM_NAME,
         )

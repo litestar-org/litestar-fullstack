@@ -23,7 +23,7 @@ dependencies = [
   "litestar-saq[hiredis]",
   "litestar-vite>=0.15.0b4",
   "litestar-granian[uvloop]",
-  "litestar-email[smtp,resend]",
+  "litestar-email[smtp]>=0.3.0",
   "httpx-oauth",
   "pyotp>=2.9.0",
   "qrcode[pil]>=7.4.0",

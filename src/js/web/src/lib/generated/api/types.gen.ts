@@ -956,10 +956,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
+    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1037,10 +1037,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
+    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1117,10 +1117,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
+    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };

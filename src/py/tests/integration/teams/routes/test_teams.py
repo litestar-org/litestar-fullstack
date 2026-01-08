@@ -1,15 +1,25 @@
-"""Integration tests for team management endpoints."""
+"""Integration tests for team management endpoints.
+
+This module combines tests from:
+- test_team_endpoints.py (team CRUD and member operations)
+- test_team_management.py (team lifecycle and permissions)
+"""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 import pytest
 from litestar_email import InMemoryBackend
+from sqlalchemy import select
 
 from app.db import models as m
+from app.lib.crypt import get_password_hash
+from tests.factories import TeamFactory, TeamMemberFactory, UserFactory, create_team_with_members, create_user_with_team
 
 if TYPE_CHECKING:
+    from httpx import AsyncClient
     from litestar.testing import AsyncTestClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +30,22 @@ pytestmark = [pytest.mark.integration, pytest.mark.teams, pytest.mark.endpoints]
 def clear_email_outbox() -> None:
     """Clear email outbox before each test."""
     InMemoryBackend.clear()
+
+
+async def _login_user(client: AsyncClient, user: m.User, password: str = "testPassword123!") -> str:
+    """Helper to login user and return auth token."""
+    response = await client.post(
+        "/api/access/login",
+        data={"username": user.email, "password": password},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    assert response.status_code == 201
+    return response.json()["access_token"]
+
+
+# =============================================================================
+# Team CRUD Tests
+# =============================================================================
 
 
 @pytest.mark.anyio
@@ -41,6 +67,50 @@ async def test_create_team_success(authenticated_client: AsyncTestClient) -> Non
 
 
 @pytest.mark.anyio
+async def test_create_team_with_session(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test successful team creation with database verification."""
+    user = UserFactory.build(
+        email="teamcreator@example.com",
+        hashed_password=await get_password_hash("testPassword123!"),
+        is_active=True,
+        is_verified=True,
+    )
+    session.add(user)
+    await session.commit()
+
+    token = await _login_user(client, user)
+
+    response = await client.post(
+        "/api/teams",
+        json={"name": "My New Test Team", "description": "A test team", "tags": ["development", "testing"]},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 201
+    response_data = response.json()
+    assert response_data["name"] == "My New Test Team"
+    assert response_data["description"] == "A test team"
+    assert len(response_data["members"]) == 1
+    assert response_data["members"][0]["email"] == user.email
+    assert response_data["members"][0]["isOwner"] is True
+    assert response_data["members"][0]["role"] == m.TeamRoles.ADMIN.value
+
+    result = await session.execute(select(m.Team).where(m.Team.name == "My New Test Team"))
+    team = result.scalar_one_or_none()
+    assert team is not None
+    membership_result = await session.execute(
+        select(m.TeamMember).where(m.TeamMember.team_id == team.id, m.TeamMember.user_id == user.id)
+    )
+    membership = membership_result.scalar_one_or_none()
+    assert membership is not None
+    assert membership.is_owner is True
+    assert membership.role == m.TeamRoles.ADMIN
+
+
+@pytest.mark.anyio
 async def test_create_team_unauthenticated(client: AsyncTestClient) -> None:
     """Test team creation without authentication fails."""
     team_data = {
@@ -56,7 +126,6 @@ async def test_create_team_unauthenticated(client: AsyncTestClient) -> None:
 @pytest.mark.anyio
 async def test_create_team_invalid_data(authenticated_client: AsyncTestClient) -> None:
     """Test team creation with invalid data."""
-    # Missing required name field
     team_data = {
         "description": "A test team without name",
     }
@@ -92,6 +161,39 @@ async def test_get_user_teams_unauthenticated(client: AsyncTestClient) -> None:
 
 
 @pytest.mark.anyio
+async def test_list_teams_as_member(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test listing teams where user is a member."""
+    user, team1 = await create_user_with_team(session)
+
+    other_user = UserFactory.build()
+    other_team = TeamFactory.build()
+    session.add_all([other_user, other_team])
+    await session.flush()
+
+    other_membership = TeamMemberFactory.build(
+        team_id=other_team.id, user_id=other_user.id, role=m.TeamRoles.ADMIN, is_owner=True
+    )
+    session.add(other_membership)
+
+    user.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
+
+    token = await _login_user(client, user)
+
+    response = await client.get("/api/teams", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 200
+    response_data = response.json()
+
+    team_ids = [team["id"] for team in response_data["items"]]
+    assert str(team1.id) in team_ids
+    assert str(other_team.id) not in team_ids
+
+
+@pytest.mark.anyio
 async def test_get_team_details(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -113,11 +215,6 @@ async def test_get_team_details_not_member(
     session: AsyncSession,
 ) -> None:
     """Test getting team details when not a member."""
-    # Create a different user
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     other_user = m.User(
         id=uuid4(),
         email="other@example.com",
@@ -129,7 +226,6 @@ async def test_get_team_details_not_member(
     session.add(other_user)
     await session.commit()
 
-    # Login as the other user
     login_response = await client.post(
         "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
     )
@@ -140,18 +236,14 @@ async def test_get_team_details_not_member(
 
         response = await client.get(f"/api/teams/{test_team.id}", headers=headers)
 
-        # Should either be forbidden or not found depending on implementation
         assert response.status_code in [403, 404]
 
 
 @pytest.mark.anyio
 async def test_get_team_details_nonexistent(authenticated_client: AsyncTestClient) -> None:
     """Test getting details for non-existent team."""
-    from uuid import uuid4
-
     response = await authenticated_client.get(f"/api/teams/{uuid4()}")
 
-    # Should return 403 (security by obscurity - don't reveal if team exists)
     assert response.status_code == 403
 
 
@@ -175,17 +267,69 @@ async def test_update_team(
 
 
 @pytest.mark.anyio
+async def test_update_team_as_admin(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test updating team as admin with database verification."""
+    user, team = await create_user_with_team(session)
+    user.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
+
+    token = await _login_user(client, user)
+
+    response = await client.patch(
+        f"/api/teams/{team.id}",
+        json={"name": "Updated Team Name", "description": "Updated description"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data["name"] == "Updated Team Name"
+    assert response_data["description"] == "Updated description"
+
+    await session.refresh(team)
+    assert team.name == "Updated Team Name"
+    assert team.description == "Updated description"
+
+
+@pytest.mark.anyio
+async def test_update_team_as_member(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test updating team as regular member (should fail)."""
+    _owner, team = await create_user_with_team(session)
+
+    member = UserFactory.build(
+        hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
+    )
+    session.add(member)
+    await session.flush()
+
+    membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False)
+    session.add(membership)
+    await session.commit()
+
+    token = await _login_user(client, member)
+
+    response = await client.patch(
+        f"/api/teams/{team.id}",
+        json={"name": "Should Not Update"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.anyio
 async def test_update_team_not_authorized(
     client: AsyncTestClient,
     test_team: m.Team,
     session: AsyncSession,
 ) -> None:
     """Test updating team when not authorized."""
-    # Create a different user who is not a team member
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     other_user = m.User(
         id=uuid4(),
         email="unauthorized@example.com",
@@ -197,7 +341,6 @@ async def test_update_team_not_authorized(
     session.add(other_user)
     await session.commit()
 
-    # Login as the unauthorized user
     login_response = await client.post(
         "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
     )
@@ -225,17 +368,34 @@ async def test_delete_team(
 
 
 @pytest.mark.anyio
+async def test_delete_team_as_admin(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test deleting team as admin with database verification."""
+    user, team = await create_user_with_team(session)
+    user.hashed_password = await get_password_hash("testPassword123!")
+    team_id = team.id
+    await session.commit()
+
+    token = await _login_user(client, user)
+
+    response = await client.delete(f"/api/teams/{team_id}", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 204
+
+    result = await session.execute(select(m.Team).where(m.Team.id == team_id))
+    deleted_team = result.scalar_one_or_none()
+    assert deleted_team is None
+
+
+@pytest.mark.anyio
 async def test_delete_team_not_owner(
     client: AsyncTestClient,
     test_team: m.Team,
     session: AsyncSession,
 ) -> None:
     """Test deleting team when not owner."""
-    # Create a different user
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     member_user = m.User(
         id=uuid4(),
         email="member@example.com",
@@ -247,7 +407,6 @@ async def test_delete_team_not_owner(
     session.add(member_user)
     await session.commit()
 
-    # Add user as regular member (not owner)
     membership = m.TeamMember(
         team_id=test_team.id,
         user_id=member_user.id,
@@ -257,7 +416,6 @@ async def test_delete_team_not_owner(
     session.add(membership)
     await session.commit()
 
-    # Login as the member
     login_response = await client.post(
         "/api/access/login", data={"username": member_user.email, "password": "TestPassword123!"}
     )
@@ -271,60 +429,23 @@ async def test_delete_team_not_owner(
         assert response.status_code == 403
 
 
+# =============================================================================
+# Team Member Tests
+# =============================================================================
+
+
 @pytest.mark.anyio
 async def test_get_team_members(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
 ) -> None:
-    """Test getting team members via team detail response.
-
-    Note: Members are returned as part of the team detail response, not via a separate endpoint.
-    """
+    """Test getting team members via team detail response."""
     response = await authenticated_client.get(f"/api/teams/{test_team.id}")
 
     assert response.status_code == 200
     team = response.json()
-    # Members should be included in team detail response
     members = team.get("members", [])
-    assert len(members) >= 1  # At least the owner should be present
-
-
-@pytest.mark.anyio
-async def test_get_team_members_not_member(
-    client: AsyncTestClient,
-    test_team: m.Team,
-    session: AsyncSession,
-) -> None:
-    """Test getting team members when not a member."""
-    # Create a different user
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
-    other_user = m.User(
-        id=uuid4(),
-        email="outsider@example.com",
-        name="Outsider User",
-        hashed_password=await get_password_hash("TestPassword123!"),
-        is_active=True,
-        is_verified=True,
-    )
-    session.add(other_user)
-    await session.commit()
-
-    # Login as the outsider
-    login_response = await client.post(
-        "/api/access/login", data={"username": other_user.email, "password": "TestPassword123!"}
-    )
-
-    if login_response.status_code == 201:
-        token = login_response.json()["access_token"]
-        headers = {"Authorization": f"Bearer {token}"}
-
-        # Note: There is no GET endpoint for team members, test the team endpoint instead
-        response = await client.get(f"/api/teams/{test_team.id}", headers=headers)
-
-        assert response.status_code in [403, 404]
+    assert len(members) >= 1
 
 
 @pytest.mark.anyio
@@ -334,11 +455,6 @@ async def test_add_team_member(
     session: AsyncSession,
 ) -> None:
     """Test adding a team member."""
-    # Create a user to add
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     new_member = m.User(
         id=uuid4(),
         email="newmember@example.com",
@@ -350,7 +466,6 @@ async def test_add_team_member(
     session.add(new_member)
     await session.commit()
 
-    # API uses userName (email) not user_id
     member_data = {
         "userName": new_member.email,
     }
@@ -358,77 +473,92 @@ async def test_add_team_member(
     response = await authenticated_client.post(f"/api/teams/{test_team.id}/members", json=member_data)
 
     assert response.status_code == 201
-    # API returns the Team object, not the membership
     team = response.json()
     assert "id" in team
-    # Verify member was added by checking team members
-    # Members have either direct email or nested user.email
     member_emails = [member.get("email") or member.get("user", {}).get("email") for member in team.get("members", [])]
     assert new_member.email in member_emails
 
 
 @pytest.mark.anyio
-async def test_add_team_member_not_admin(
-    client: AsyncTestClient,
-    test_team: m.Team,
+async def test_add_member_to_team_success(
+    client: AsyncClient,
     session: AsyncSession,
 ) -> None:
-    """Test adding team member when not admin."""
-    # Create two users
-    from uuid import uuid4
+    """Test successfully adding a member to a team with database verification."""
+    owner, team = await create_user_with_team(session)
+    owner.hashed_password = await get_password_hash("testPassword123!")
 
-    from app.lib.crypt import get_password_hash
-
-    member_user = m.User(
-        id=uuid4(),
-        email="member@example.com",
-        name="Member User",
-        hashed_password=await get_password_hash("TestPassword123!"),
-        is_active=True,
-        is_verified=True,
-    )
-
-    target_user = m.User(
-        id=uuid4(),
-        email="target@example.com",
-        name="Target User",
-        hashed_password=await get_password_hash("TestPassword123!"),
-        is_active=True,
-        is_verified=True,
-    )
-
-    session.add_all([member_user, target_user])
+    new_member = UserFactory.build(email="newmember@example.com", is_active=True, is_verified=True)
+    session.add(new_member)
     await session.commit()
 
-    # Add first user as regular member
-    membership = m.TeamMember(
-        team_id=test_team.id,
-        user_id=member_user.id,
-        role=m.TeamRoles.MEMBER,
-        is_owner=False,
+    token = await _login_user(client, owner)
+
+    response = await client.post(
+        f"/api/teams/{team.id}/members",
+        json={"userName": "newmember@example.com"},
+        headers={"Authorization": f"Bearer {token}"},
     )
-    session.add(membership)
+
+    assert response.status_code == 201
+    response_data = response.json()
+
+    member_emails = [
+        member.get("user", {}).get("email") or member.get("email") for member in response_data.get("members", [])
+    ]
+    assert "newmember@example.com" in member_emails
+
+    result = await session.execute(
+        select(m.TeamMember).where(m.TeamMember.team_id == team.id, m.TeamMember.user_id == new_member.id)
+    )
+    membership = result.scalar_one_or_none()
+    assert membership is not None
+    assert membership.role == m.TeamRoles.MEMBER
+
+
+@pytest.mark.anyio
+async def test_add_member_already_exists(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test adding a member who is already in the team."""
+    team, members = await create_team_with_members(session, member_count=2)
+    owner = members[0]
+    existing_member = members[1]
+
+    owner.hashed_password = await get_password_hash("testPassword123!")
     await session.commit()
 
-    # Login as the regular member
-    login_response = await client.post(
-        "/api/access/login", data={"username": member_user.email, "password": "TestPassword123!"}
+    token = await _login_user(client, owner)
+
+    response = await client.post(
+        f"/api/teams/{team.id}/members",
+        json={"userName": existing_member.email},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
-    if login_response.status_code == 201:
-        token = login_response.json()["access_token"]
-        headers = {"Authorization": f"Bearer {token}"}
+    assert response.status_code in {409, 500}
 
-        # API uses userName (email) not user_id
-        member_data = {
-            "userName": target_user.email,
-        }
 
-        response = await client.post(f"/api/teams/{test_team.id}/members", json=member_data, headers=headers)
+@pytest.mark.anyio
+async def test_add_member_nonexistent_user(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test adding a non-existent user to a team."""
+    owner, team = await create_user_with_team(session)
+    owner.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
 
-        # API allows members to add other members (no admin check enforced)
-        # Ideally this should return 403 for non-admin members
-        assert response.status_code in [201, 403]
+    token = await _login_user(client, owner)
+
+    response = await client.post(
+        f"/api/teams/{team.id}/members",
+        json={"userName": "nonexistent@example.com"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code in {404, 500}
 
 
 @pytest.mark.anyio
@@ -438,11 +568,6 @@ async def test_remove_team_member(
     session: AsyncSession,
 ) -> None:
     """Test removing a team member."""
-    # Create a member to remove
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     member_to_remove = m.User(
         id=uuid4(),
         email="removeme@example.com",
@@ -454,7 +579,6 @@ async def test_remove_team_member(
     session.add(member_to_remove)
     await session.commit()
 
-    # Add them to the team
     membership = m.TeamMember(
         team_id=test_team.id,
         user_id=member_to_remove.id,
@@ -464,14 +588,48 @@ async def test_remove_team_member(
     session.add(membership)
     await session.commit()
 
-    # Remove the member - API uses DELETE with body, not path param
     response = await authenticated_client.request(
         "DELETE",
         f"/api/teams/{test_team.id}/members",
         json={"userName": member_to_remove.email},
     )
 
-    assert response.status_code == 202  # Returns 202 Accepted
+    assert response.status_code == 202
+
+
+@pytest.mark.anyio
+async def test_remove_member_from_team_success(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test successfully removing a member from a team with database verification."""
+    team, members = await create_team_with_members(session, member_count=3)
+    owner = members[0]
+    member_to_remove = members[1]
+
+    owner.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
+
+    token = await _login_user(client, owner)
+
+    response = await client.request(
+        "DELETE",
+        f"/api/teams/{team.id}/members",
+        json={"userName": member_to_remove.email},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 202
+    response_data = response.json()
+
+    member_emails = [member["email"] for member in response_data["members"]]
+    assert member_to_remove.email not in member_emails
+
+    result = await session.execute(
+        select(m.TeamMember).where(m.TeamMember.team_id == team.id, m.TeamMember.user_id == member_to_remove.id)
+    )
+    membership = result.scalar_one_or_none()
+    assert membership is None
 
 
 @pytest.mark.anyio
@@ -481,11 +639,6 @@ async def test_update_member_role(
     session: AsyncSession,
 ) -> None:
     """Test updating a team member's role."""
-    # Create a member
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     member_user = m.User(
         id=uuid4(),
         email="promoteme@example.com",
@@ -497,7 +650,6 @@ async def test_update_member_role(
     session.add(member_user)
     await session.commit()
 
-    # Add them to the team as member
     membership = m.TeamMember(
         team_id=test_team.id,
         user_id=member_user.id,
@@ -507,7 +659,6 @@ async def test_update_member_role(
     session.add(membership)
     await session.commit()
 
-    # Update their role
     update_data = {"role": m.TeamRoles.ADMIN.value}
 
     response = await authenticated_client.patch(f"/api/teams/{test_team.id}/members/{member_user.id}", json=update_data)
@@ -515,6 +666,11 @@ async def test_update_member_role(
     assert response.status_code == 200
     membership = response.json()
     assert membership["role"] == m.TeamRoles.ADMIN.value
+
+
+# =============================================================================
+# Team Invitation Tests
+# =============================================================================
 
 
 @pytest.mark.anyio
@@ -539,7 +695,6 @@ async def test_invite_team_member(
     assert invitation["role"] == m.TeamRoles.MEMBER.value
     assert invitation["isAccepted"] is False
 
-    # Verify invitation email was sent
     assert len(InMemoryBackend.outbox) == 1
     assert "newmember@example.com" in InMemoryBackend.outbox[0].to
 
@@ -552,7 +707,7 @@ async def test_invite_existing_member(
 ) -> None:
     """Test inviting someone who is already a member."""
     invitation_data = {
-        "email": test_user.email,  # User is already team owner
+        "email": test_user.email,
         "role": m.TeamRoles.MEMBER.value,
     }
 
@@ -585,11 +740,6 @@ async def test_accept_team_invitation(
     session: AsyncSession,
 ) -> None:
     """Test accepting a team invitation."""
-    # Create a user with the invitation email
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     invited_user = m.User(
         id=uuid4(),
         email=test_team_invitation.email,
@@ -601,7 +751,6 @@ async def test_accept_team_invitation(
     session.add(invited_user)
     await session.commit()
 
-    # Login as the invited user
     login_response = await client.post(
         "/api/access/login", data={"username": invited_user.email, "password": "TestPassword123!"}
     )
@@ -614,7 +763,6 @@ async def test_accept_team_invitation(
         headers=headers,
     )
 
-    # API returns 201 for accept (creates membership)
     assert response.status_code == 201
     result = response.json()
     assert "accepted" in result["message"].lower() or "joined" in result["message"].lower()
@@ -627,10 +775,6 @@ async def test_reject_team_invitation(
     session: AsyncSession,
 ) -> None:
     """Test rejecting a team invitation."""
-    from uuid import uuid4
-
-    from app.lib.crypt import get_password_hash
-
     invited_user = m.User(
         id=uuid4(),
         email=test_team_invitation.email,
@@ -655,7 +799,6 @@ async def test_reject_team_invitation(
         headers=headers,
     )
 
-    # API returns 201 for reject (creates a rejection record)
     assert response.status_code == 201
     result = response.json()
     assert "rejected" in result["message"].lower() or "declined" in result["message"].lower()
@@ -672,6 +815,140 @@ async def test_cancel_team_invitation(
     )
 
     assert response.status_code in [200, 204]
+
+
+# =============================================================================
+# Permission Tests
+# =============================================================================
+
+
+@pytest.mark.anyio
+async def test_team_owner_permissions(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test that team owners have all permissions."""
+    owner, team = await create_user_with_team(session)
+    owner.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
+
+    token = await _login_user(client, owner)
+
+    response = await client.get(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+
+    response = await client.patch(
+        f"/api/teams/{team.id}", json={"name": "Updated by Owner"}, headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+
+    response = await client.delete(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 204
+
+
+@pytest.mark.anyio
+async def test_team_admin_permissions(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test that team admins have appropriate permissions."""
+    _owner, team = await create_user_with_team(session)
+
+    admin = UserFactory.build(
+        hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
+    )
+    session.add(admin)
+    await session.flush()
+
+    admin_membership = TeamMemberFactory.build(
+        team_id=team.id, user_id=admin.id, role=m.TeamRoles.ADMIN, is_owner=False
+    )
+    session.add(admin_membership)
+    await session.commit()
+
+    token = await _login_user(client, admin)
+
+    response = await client.get(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+
+    response = await client.patch(
+        f"/api/teams/{team.id}", json={"name": "Updated by Admin"}, headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+
+    response = await client.delete(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_team_member_permissions(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test that team members have limited permissions."""
+    _owner, team = await create_user_with_team(session)
+
+    member = UserFactory.build(
+        hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
+    )
+    session.add(member)
+    await session.flush()
+
+    member_membership = TeamMemberFactory.build(
+        team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False
+    )
+    session.add(member_membership)
+    await session.commit()
+
+    token = await _login_user(client, member)
+
+    response = await client.get(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+
+    response = await client.patch(
+        f"/api/teams/{team.id}",
+        json={"name": "Unauthorized Update"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 403
+
+    response = await client.delete(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_non_member_permissions(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test that non-members have no access to team."""
+    _owner, team = await create_user_with_team(session)
+
+    non_member = UserFactory.build(
+        hashed_password=await get_password_hash("testPassword123!"), is_active=True, is_verified=True
+    )
+    session.add(non_member)
+    await session.commit()
+
+    token = await _login_user(client, non_member)
+
+    response = await client.get(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 403
+
+    response = await client.patch(
+        f"/api/teams/{team.id}",
+        json={"name": "Unauthorized Update"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 403
+
+    response = await client.delete(f"/api/teams/{team.id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 403
+
+
+# =============================================================================
+# Seeded Data Tests
+# =============================================================================
 
 
 @pytest.mark.anyio
@@ -819,3 +1096,121 @@ async def test_tags_list(
     resj = response.json()
     assert response.status_code == 200
     assert int(resj["total"]) >= 3
+
+
+# =============================================================================
+# Lifecycle Tests
+# =============================================================================
+
+
+@pytest.mark.anyio
+async def test_complete_team_lifecycle(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test complete team creation, management, and deletion workflow."""
+    owner = UserFactory.build(
+        email="owner@example.com",
+        hashed_password=await get_password_hash("testPassword123!"),
+        is_active=True,
+        is_verified=True,
+    )
+    member1 = UserFactory.build(email="member1@example.com", is_active=True, is_verified=True)
+    member2 = UserFactory.build(email="member2@example.com", is_active=True, is_verified=True)
+    session.add_all([owner, member1, member2])
+    await session.commit()
+
+    token = await _login_user(client, owner)
+
+    response = await client.post(
+        "/api/teams",
+        json={"name": "Full Lifecycle Team", "description": "Test team for complete workflow"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+    team_data = response.json()
+    team_id = team_data["id"]
+
+    response = await client.post(
+        f"/api/teams/{team_id}/members",
+        json={"userName": "member1@example.com"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+
+    response = await client.post(
+        f"/api/teams/{team_id}/members",
+        json={"userName": "member2@example.com"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+
+    response = await client.get(f"/api/teams/{team_id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    team_data = response.json()
+    assert len(team_data["members"]) == 3
+
+    response = await client.patch(
+        f"/api/teams/{team_id}",
+        json={"name": "Updated Lifecycle Team", "description": "Updated description"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+
+    response = await client.request(
+        "DELETE",
+        f"/api/teams/{team_id}/members",
+        json={"userName": "member2@example.com"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 202
+
+    response = await client.get(f"/api/teams/{team_id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    team_data = response.json()
+    assert len(team_data["members"]) == 2
+    member_emails = [member.get("user", {}).get("email") or member.get("email") for member in team_data["members"]]
+    assert "member2@example.com" not in member_emails
+
+    response = await client.delete(f"/api/teams/{team_id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 204
+
+    response = await client.get(f"/api/teams/{team_id}", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code in {403, 404}
+
+
+@pytest.mark.anyio
+async def test_team_security_isolation(
+    client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    """Test that team data is properly isolated between teams."""
+    owner1, team1 = await create_user_with_team(session)
+    owner2, team2 = await create_user_with_team(session)
+
+    owner1.hashed_password = await get_password_hash("testPassword123!")
+    owner2.hashed_password = await get_password_hash("testPassword123!")
+    await session.commit()
+
+    token1 = await _login_user(client, owner1)
+    token2 = await _login_user(client, owner2)
+
+    response = await client.get("/api/teams", headers={"Authorization": f"Bearer {token1}"})
+    assert response.status_code == 200
+    teams_data = response.json()
+    team_ids = [team["id"] for team in teams_data["items"]]
+    assert str(team1.id) in team_ids
+    assert str(team2.id) not in team_ids
+
+    response = await client.get("/api/teams", headers={"Authorization": f"Bearer {token2}"})
+    assert response.status_code == 200
+    teams_data = response.json()
+    team_ids = [team["id"] for team in teams_data["items"]]
+    assert str(team2.id) in team_ids
+    assert str(team1.id) not in team_ids
+
+    response = await client.get(f"/api/teams/{team2.id}", headers={"Authorization": f"Bearer {token1}"})
+    assert response.status_code == 403
+
+    response = await client.get(f"/api/teams/{team1.id}", headers={"Authorization": f"Bearer {token2}"})
+    assert response.status_code == 403

@@ -113,10 +113,7 @@ class MfaController(Controller):
         secret = generate_totp_secret()
 
         await users_service.update({"totp_secret": secret}, item_id=user.id)
-
-        # Sanitize app name for otpauth:// URI compatibility (replace spaces with hyphens)
-        issuer = settings.app.NAME.replace(" ", "-")
-
+        issuer = settings.slug
         qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer=issuer)
         qr_code_base64 = base64.b64encode(qr_code_bytes).decode("utf-8")
 
