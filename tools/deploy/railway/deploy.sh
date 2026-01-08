@@ -39,6 +39,10 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 PROJECT_NAME=""
 EXISTING_PROJECT=false
 
+# Service names (can be customized if renamed in Railway dashboard)
+APP_SERVICE_NAME="${APP_SERVICE_NAME:-Litestar Web Frontend}"
+WORKER_SERVICE_NAME="${WORKER_SERVICE_NAME:-SAQ Worker}"
+
 # -----------------------------------------------------------------------------
 # Parse Arguments
 # -----------------------------------------------------------------------------
@@ -233,15 +237,15 @@ ensure_app_service() {
     cd "${PROJECT_ROOT}"
 
     # Check if app service already exists
-    if railway status --json 2>/dev/null | grep -qi '"app"'; then
+    if railway status --json 2>/dev/null | grep -qi "\"${APP_SERVICE_NAME}\""; then
         log_success "Application service already exists"
-        railway service link app 2>/dev/null || true
+        railway service link "${APP_SERVICE_NAME}" 2>/dev/null || true
         return 0
     fi
 
     log_info "Creating application service..."
-    railway add --service "app"
-    railway service link app
+    railway add --service "${APP_SERVICE_NAME}"
+    railway service link "${APP_SERVICE_NAME}"
     log_success "Application service created and linked"
 }
 
@@ -253,13 +257,15 @@ ensure_worker_service() {
     log_info "Checking background worker service..."
     cd "${PROJECT_ROOT}"
 
-    if railway status --json 2>/dev/null | grep -qi '"worker"'; then
+    if railway status --json 2>/dev/null | grep -qi "\"${WORKER_SERVICE_NAME}\""; then
         log_success "Worker service already exists"
+        railway service link "${WORKER_SERVICE_NAME}" 2>/dev/null || true
         return 0
     fi
 
     log_info "Creating background worker service..."
-    railway add --service "worker"
+    railway add --service "${WORKER_SERVICE_NAME}"
+    railway service link "${WORKER_SERVICE_NAME}"
     log_success "Worker service created"
 }
 
@@ -353,7 +359,7 @@ ensure_environment() {
 configure_app_service() {
     log_info "Configuring app service..."
     cd "${PROJECT_ROOT}"
-    railway service link app
+    railway service link "${APP_SERVICE_NAME}"
 
     local current_vars
     current_vars=$(railway variables --kv 2>/dev/null || echo "")
@@ -376,7 +382,7 @@ configure_app_service() {
 configure_worker_service() {
     log_info "Configuring worker service..."
     cd "${PROJECT_ROOT}"
-    railway service link worker
+    railway service link "${WORKER_SERVICE_NAME}"
 
     local current_vars
     current_vars=$(railway variables --kv 2>/dev/null || echo "")
@@ -395,11 +401,11 @@ configure_worker_service() {
     if ! echo "$current_vars" | grep -q "SECRET_KEY="; then
         log_info "Copying shared environment variables to worker..."
 
-        railway service link app
+        railway service link "${APP_SERVICE_NAME}"
         local secret_key
         secret_key=$(railway variables --kv 2>/dev/null | grep "SECRET_KEY=" | cut -d'=' -f2-)
 
-        railway service link worker
+        railway service link "${WORKER_SERVICE_NAME}"
         railway variables \
             --set "SECRET_KEY=${secret_key}" \
             --set "LITESTAR_DEBUG=false" \
@@ -422,13 +428,13 @@ enable_metal_builds() {
     cd "${PROJECT_ROOT}"
 
     # Enable on app service
-    railway service link app
+    railway service link "${APP_SERVICE_NAME}"
     if ! railway variables --kv 2>/dev/null | grep -q "RAILWAY_USE_METAL_BUILDS=true"; then
         railway variables --set "RAILWAY_USE_METAL_BUILDS=true" --skip-deploys
     fi
 
     # Enable on worker service
-    railway service link worker
+    railway service link "${WORKER_SERVICE_NAME}"
     if ! railway variables --kv 2>/dev/null | grep -q "RAILWAY_USE_METAL_BUILDS=true"; then
         railway variables --set "RAILWAY_USE_METAL_BUILDS=true" --skip-deploys
     fi
@@ -475,12 +481,12 @@ deploy() {
     # Always use detached mode to avoid hanging on health checks
     # Deploy app service
     log_info "Deploying app service..."
-    railway service link app
+    railway service link "${APP_SERVICE_NAME}"
     railway up --detach
 
     # Deploy worker service
     log_info "Deploying worker service..."
-    railway service link worker
+    railway service link "${WORKER_SERVICE_NAME}"
     railway up --detach
 
     log_success "Deployment started"
