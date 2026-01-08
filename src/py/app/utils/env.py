@@ -135,18 +135,11 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
     parse_as_list = False
     parse_as_dict = False
 
-    if type_hint != _UNSET and isinstance(type_hint, type):
-        final_type = type_hint
+    if type_hint != _UNSET:
         origin = get_origin(type_hint)
         args = get_args(type_hint)
-        # Dict/TypedDict support
-        if origin is dict or is_typed_dict(type_hint):
-            parse_as_dict = True
-        # List support (existing)
-        elif "list[" in str(type_hint) and "Path" in str(type_hint):
-            parse_as_list = True
-            item_constructor = Path
-        elif origin is list and args:
+        # Handle parameterized generics like list[Path], list[str], dict[str, Any]
+        if origin is list and args:
             parse_as_list = True
             item_type_arg = args[0]
             if item_type_arg is str:
@@ -156,6 +149,10 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
             else:
                 msg = f"Unsupported item type '{item_type_arg}' in list type hint for key '{key}'"
                 raise ValueError(msg)
+        elif origin is dict or is_typed_dict(type_hint):
+            parse_as_dict = True
+        elif isinstance(type_hint, type):
+            final_type = type_hint
     elif type_hint != _UNSET and str(type_hint) == "list[pathlib._local.Path]":
         parse_as_list = True
         item_constructor = Path
