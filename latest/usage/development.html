@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Development - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Starting the server" href="startup.html" /><link rel="prev" title="Getting Started" href="installation.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="Development"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -134,6 +134,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#generate-new-migrations">Generate New Migrations</a></li>
 <li><a class="reference internal" href="#upgrade-a-database-to-the-latest-revision">Upgrade a Database to the Latest Revision</a></li>
 <li><a class="reference internal" href="#execute-full-test-suite">Execute Full Test Suite</a></li>
+<li><a class="reference internal" href="#generate-typescript-types">Generate TypeScript Types</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#full-makefile">Full Makefile</a></li>
@@ -141,7 +142,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -168,8 +170,8 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="development">
 <h1>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h1>
 <p>This section describes tips on developing using this example repository.</p>
@@ -188,7 +190,7 @@ data-aria-dark="Switch to auto color mode">
 <p>This command will upgrade all components of the application at the same time. It automatically executes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">lock</span> <span class="pre">--upgrade</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">update</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bun</span> <span class="pre">update</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">autoupdate</span></code></p></li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span>upgrade
@@ -204,15 +206,15 @@ data-aria-dark="Switch to auto color mode">
 </section>
 <section id="generate-new-migrations">
 <h3>Generate New Migrations<a class="headerlink" href="#generate-new-migrations" title="Link to this heading">¶</a></h3>
-<p>This command is a shorthand for executing <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">database</span> <span class="pre">make-migrations</span></code>.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span>migrations
+<p>Create a new migration with the Litestar CLI:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>database<span class="w"> </span>make-migrations
 </span></pre></div>
 </div>
 </section>
 <section id="upgrade-a-database-to-the-latest-revision">
 <h3>Upgrade a Database to the Latest Revision<a class="headerlink" href="#upgrade-a-database-to-the-latest-revision" title="Link to this heading">¶</a></h3>
-<p>This command is a shorthand for executing <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">database</span> <span class="pre">upgrade</span></code>.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span>migrate
+<p>Upgrade the database to the latest revision:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>database<span class="w"> </span>upgrade
 </span></pre></div>
 </div>
 </section>
@@ -220,6 +222,13 @@ data-aria-dark="Switch to auto color mode">
 <h3>Execute Full Test Suite<a class="headerlink" href="#execute-full-test-suite" title="Link to this heading">¶</a></h3>
 <p>This command executes all tests for the project.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span><span class="nb">test</span>
+</span></pre></div>
+</div>
+</section>
+<section id="generate-typescript-types">
+<h3>Generate TypeScript Types<a class="headerlink" href="#generate-typescript-types" title="Link to this heading">¶</a></h3>
+<p>After backend schema changes, regenerate the TypeScript client:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span>types
 </span></pre></div>
 </div>
 </section>
@@ -239,211 +248,326 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="8"><span class="nf">.EXPORT_ALL_VARIABLES</span><span class="o">:</span>
 </span><span data-line="9"><span class="nv">MAKEFLAGS</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span>--no-print-directory
 </span><span data-line="10">
-</span><span data-line="11"><span class="c"># Define colors and formatting</span>
-</span><span data-line="12"><span class="nv">BLUE</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;34m&quot;</span><span class="k">)</span>
-</span><span data-line="13"><span class="nv">GREEN</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;32m&quot;</span><span class="k">)</span>
-</span><span data-line="14"><span class="nv">RED</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;31m&quot;</span><span class="k">)</span>
-</span><span data-line="15"><span class="nv">YELLOW</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;33m&quot;</span><span class="k">)</span>
-</span><span data-line="16"><span class="nv">NC</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[0m&quot;</span><span class="k">)</span>
-</span><span data-line="17"><span class="nv">INFO</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>BLUE<span class="k">)</span><span class="s2">ℹ</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
-</span><span data-line="18"><span class="nv">OK</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>GREEN<span class="k">)</span><span class="s2">✓</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
-</span><span data-line="19"><span class="nv">WARN</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">⚠</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
-</span><span data-line="20"><span class="nv">ERROR</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>RED<span class="k">)</span><span class="s2">✖</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
-</span><span data-line="21">
-</span><span data-line="22"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">help</span>
-</span><span data-line="23"><span class="nf">help</span><span class="o">:</span><span class="w">                                               </span><span class="c">## Display this help text for Makefile</span>
-</span><span data-line="24"><span class="w">	</span>@awk<span class="w"> </span><span class="s1">&#39;BEGIN {FS = &quot;:.*##&quot;; printf &quot;\nUsage:\n  make \033[36m&lt;target&gt;\033[0m\n&quot;} /^[a-zA-Z0-9_-]+:.*?##/ { printf &quot;  \033[36m%-15s\033[0m %s\n&quot;, $$1, $$2 } /^##@/ { printf &quot;\n\033[1m%s\033[0m\n&quot;, substr($$0, 5) } &#39;</span><span class="w"> </span><span class="k">$(</span>MAKEFILE_LIST<span class="k">)</span>
-</span><span data-line="25">
-</span><span data-line="26">
-</span><span data-line="27"><span class="c"># =============================================================================</span>
-</span><span data-line="28"><span class="c"># Developer Utils</span>
-</span><span data-line="29"><span class="c"># =============================================================================</span>
-</span><span data-line="30"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>-<span class="n">uv</span>
-</span><span data-line="31"><span class="nf">install-uv</span><span class="o">:</span><span class="w">                                         </span><span class="c">## Install latest version of uv</span>
-</span><span data-line="32"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Installing uv...&quot;</span>
-</span><span data-line="33"><span class="w">	</span>@curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="34"><span class="w">	</span>@uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>nodeenv<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="35"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> UV installed successfully&quot;</span>
-</span><span data-line="36">
-</span><span data-line="37"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>
-</span><span data-line="38"><span class="nf">install</span><span class="o">:</span><span class="w"> </span><span class="n">destroy</span> <span class="n">clean</span>                              <span class="c">## Install the project, dependencies, and pre-commit for local development</span>
-</span><span data-line="39"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting fresh installation...&quot;</span>
-</span><span data-line="40"><span class="w">	</span>@uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span><span class="m">3</span>.13<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="41"><span class="w">	</span>@uv<span class="w"> </span>venv<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="42"><span class="w">	</span>@uv<span class="w"> </span>sync<span class="w"> </span>--all-extras<span class="w"> </span>--dev
-</span><span data-line="43"><span class="w">	</span>@if<span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>npm<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="se">\</span>
-</span><span data-line="44"><span class="w">		</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Installing Node environment... 📦&quot;</span><span class="p">;</span><span class="w"> </span><span class="se">\</span>
-</span><span data-line="45"><span class="w">		</span>uvx<span class="w"> </span>nodeenv<span class="w"> </span>.venv<span class="w"> </span>--force<span class="w"> </span>--quiet<span class="p">;</span><span class="w"> </span><span class="se">\</span>
-</span><span data-line="46"><span class="w">	</span><span class="k">fi</span>
-</span><span data-line="47"><span class="w">	</span>@NODE_OPTIONS<span class="o">=</span><span class="s2">&quot;--no-deprecation --disable-warning=ExperimentalWarning&quot;</span><span class="w"> </span>npm<span class="w"> </span>install<span class="w"> </span>--no-fund
-</span><span data-line="48"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Installation complete! 🎉&quot;</span>
-</span><span data-line="49">
-</span><span data-line="50"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">upgrade</span>
-</span><span data-line="51"><span class="nf">upgrade</span><span class="o">:</span><span class="w">                                            </span><span class="c">## Upgrade all dependencies to the latest stable versions</span>
-</span><span data-line="52"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Updating all dependencies... 🔄&quot;</span>
-</span><span data-line="53"><span class="w">	</span>@uv<span class="w"> </span>lock<span class="w"> </span>--upgrade
-</span><span data-line="54"><span class="w">	</span>@NODE_OPTIONS<span class="o">=</span><span class="s2">&quot;--no-deprecation --disable-warning=ExperimentalWarning&quot;</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>npm<span class="w"> </span>upgrade<span class="w"> </span>--latest
-</span><span data-line="55"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Dependencies updated 🔄&quot;</span>
-</span><span data-line="56"><span class="w">	</span>@NODE_OPTIONS<span class="o">=</span><span class="s2">&quot;--no-deprecation --disable-warning=ExperimentalWarning&quot;</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>autoupdate
-</span><span data-line="57"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Updated Pre-commit hooks 🔄&quot;</span>
-</span><span data-line="58">
-</span><span data-line="59"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">clean</span>
-</span><span data-line="60"><span class="nf">clean</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Cleanup temporary build artifacts</span>
-</span><span data-line="61"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Cleaning working directory...&quot;</span>
-</span><span data-line="62"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>pytest_cache<span class="w"> </span>.ruff_cache<span class="w"> </span>.hypothesis<span class="w"> </span>build/<span class="w"> </span>-rf<span class="w"> </span>dist/<span class="w"> </span>.eggs/<span class="w"> </span>.coverage<span class="w"> </span>coverage.xml<span class="w"> </span>coverage.json<span class="w"> </span>htmlcov/<span class="w"> </span>.pytest_cache<span class="w"> </span>tests/.pytest_cache<span class="w"> </span>tests/**/.pytest_cache<span class="w"> </span>.mypy_cache<span class="w"> </span>.unasyncd_cache/<span class="w"> </span>.auto_pytabs_cache<span class="w"> </span>node_modules<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="63"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg-info&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="64"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="65"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyc&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="66"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyo&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="67"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*~&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="68"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;__pycache__&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="69"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;.ipynb_checkpoints&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="70"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Working directory cleaned&quot;</span>
-</span><span data-line="71"><span class="w">	</span><span class="k">$(</span>MAKE<span class="k">)</span><span class="w"> </span>docs-clean
-</span><span data-line="72">
-</span><span data-line="73"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">destroy</span>
-</span><span data-line="74"><span class="nf">destroy</span><span class="o">:</span><span class="w">                                            </span><span class="c">## Destroy the virtual environment</span>
-</span><span data-line="75"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Destroying virtual environment... 🗑️&quot;</span>
-</span><span data-line="76"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>.venv
-</span><span data-line="77"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Virtual environment destroyed 🗑️&quot;</span>
-</span><span data-line="78">
-</span><span data-line="79"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lock</span>
-</span><span data-line="80"><span class="nf">lock</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Rebuild lockfiles from scratch, updating all dependencies</span>
-</span><span data-line="81"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Rebuilding lockfiles... 🔄&quot;</span>
-</span><span data-line="82"><span class="w">	</span>@uv<span class="w"> </span>lock<span class="w"> </span>--upgrade<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="83"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Lockfiles updated&quot;</span>
-</span><span data-line="84">
-</span><span data-line="85"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">release</span>
-</span><span data-line="86"><span class="nf">release</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Bump version and create release tag</span>
-</span><span data-line="87"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Preparing for release... 📦&quot;</span>
-</span><span data-line="88"><span class="w">	</span>@make<span class="w"> </span>clean
-</span><span data-line="89"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>bump-my-version<span class="w"> </span>bump<span class="w"> </span><span class="k">$(</span>bump<span class="k">)</span>
-</span><span data-line="90"><span class="w">	</span>@make<span class="w"> </span>build
-</span><span data-line="91"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Release complete 🎉&quot;</span>
-</span><span data-line="92">
-</span><span data-line="93">
-</span><span data-line="94"><span class="c"># =============================================================================</span>
-</span><span data-line="95"><span class="c"># Tests, Linting, Coverage</span>
-</span><span data-line="96"><span class="c"># =============================================================================</span>
-</span><span data-line="97"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">mypy</span>
-</span><span data-line="98"><span class="nf">mypy</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Run mypy</span>
-</span><span data-line="99"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running mypy... 🔍&quot;</span>
-</span><span data-line="100"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>dmypy<span class="w"> </span>run<span class="w"> </span>src/app
-</span><span data-line="101"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Mypy checks passed ✨&quot;</span>
+</span><span data-line="11"><span class="c"># Docker compose configuration</span>
+</span><span data-line="12"><span class="nv">COMPOSE_DIR</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>tools/deploy/docker
+</span><span data-line="13"><span class="nv">COMPOSE_INFRA</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>COMPOSE_DIR<span class="k">)</span>/docker-compose.infra.yml
+</span><span data-line="14"><span class="nv">COMPOSE_APP</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>COMPOSE_DIR<span class="k">)</span>/docker-compose.yml
+</span><span data-line="15"><span class="nv">COMPOSE_DEV</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>COMPOSE_DIR<span class="k">)</span>/docker-compose.dev.yml
+</span><span data-line="16">
+</span><span data-line="17"><span class="c"># Define colors and formatting</span>
+</span><span data-line="18"><span class="nv">BLUE</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;34m&quot;</span><span class="k">)</span>
+</span><span data-line="19"><span class="nv">GREEN</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;32m&quot;</span><span class="k">)</span>
+</span><span data-line="20"><span class="nv">RED</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;31m&quot;</span><span class="k">)</span>
+</span><span data-line="21"><span class="nv">YELLOW</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[1;33m&quot;</span><span class="k">)</span>
+</span><span data-line="22"><span class="nv">NC</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;\033[0m&quot;</span><span class="k">)</span>
+</span><span data-line="23"><span class="nv">INFO</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>BLUE<span class="k">)</span><span class="s2">ℹ</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
+</span><span data-line="24"><span class="nv">OK</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>GREEN<span class="k">)</span><span class="s2">✓</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
+</span><span data-line="25"><span class="nv">WARN</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">⚠</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
+</span><span data-line="26"><span class="nv">ERROR</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>RED<span class="k">)</span><span class="s2">✖</span><span class="k">$(</span>NC<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span>
+</span><span data-line="27">
+</span><span data-line="28"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">help</span>
+</span><span data-line="29"><span class="nf">help</span><span class="o">:</span><span class="w">                                               </span><span class="c">## Display this help text for Makefile</span>
+</span><span data-line="30"><span class="w">	</span>@awk<span class="w"> </span><span class="s1">&#39;BEGIN {FS = &quot;:.*##&quot;; printf &quot;\nUsage:\n  make \033[36m&lt;target&gt;\033[0m\n&quot;} /^[a-zA-Z0-9_-]+:.*?##/ { printf &quot;  \033[36m%-15s\033[0m %s\n&quot;, $$1, $$2 } /^##@/ { printf &quot;\n\033[1m%s\033[0m\n&quot;, substr($$0, 5) } &#39;</span><span class="w"> </span><span class="k">$(</span>MAKEFILE_LIST<span class="k">)</span>
+</span><span data-line="31">
+</span><span data-line="32">
+</span><span data-line="33"><span class="c"># =============================================================================</span>
+</span><span data-line="34"><span class="c"># Developer Utils</span>
+</span><span data-line="35"><span class="c"># =============================================================================</span>
+</span><span data-line="36"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>-<span class="n">uv</span>
+</span><span data-line="37"><span class="nf">install-uv</span><span class="o">:</span><span class="w">                                         </span><span class="c">## Install latest version of uv</span>
+</span><span data-line="38"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Installing uv...&quot;</span>
+</span><span data-line="39"><span class="w">	</span>@curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="40"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> UV installed successfully&quot;</span>
+</span><span data-line="41">
+</span><span data-line="42"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>-<span class="n">bun</span>
+</span><span data-line="43"><span class="nf">install-bun</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Install latest version of bun</span>
+</span><span data-line="44"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Installing bun...&quot;</span>
+</span><span data-line="45"><span class="w">	</span>@curl<span class="w"> </span>-fsSL<span class="w"> </span>https://bun.sh/install<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="46"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Bun installed successfully&quot;</span>
+</span><span data-line="47">
+</span><span data-line="48"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span>
+</span><span data-line="49"><span class="nf">install</span><span class="o">:</span><span class="w"> </span><span class="n">destroy</span> <span class="n">clean</span>                              <span class="c">## Install the project, dependencies, and pre-commit for local development</span>
+</span><span data-line="50"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting fresh installation...&quot;</span>
+</span><span data-line="51"><span class="w">	</span>@uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span><span class="m">3</span>.13<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="52"><span class="w">	</span>@uv<span class="w"> </span>venv<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="53"><span class="w">	</span>@uv<span class="w"> </span>sync<span class="w"> </span>--all-extras<span class="w"> </span>--dev
+</span><span data-line="54"><span class="w">	</span>@if<span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>bun<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="55"><span class="w">		</span><span class="k">$(</span>MAKE<span class="k">)</span><span class="w"> </span>install-bun<span class="p">;</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="56"><span class="w">	</span><span class="k">fi</span>
+</span><span data-line="57"><span class="w">	</span>@cd<span class="w"> </span>src/js/web<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bun<span class="w"> </span>install<span class="w"> </span>--frozen-lockfile<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="58"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Installation complete! 🎉&quot;</span>
+</span><span data-line="59">
+</span><span data-line="60"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">upgrade</span>
+</span><span data-line="61"><span class="nf">upgrade</span><span class="o">:</span><span class="w">                                            </span><span class="c">## Upgrade all dependencies to the latest stable versions</span>
+</span><span data-line="62"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Updating all dependencies... 🔄&quot;</span>
+</span><span data-line="63"><span class="w">	</span>@uv<span class="w"> </span>lock<span class="w"> </span>--upgrade
+</span><span data-line="64"><span class="w">	</span>@cd<span class="w"> </span>src/js/web<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bun<span class="w"> </span>update
+</span><span data-line="65"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Dependencies updated 🔄&quot;</span>
+</span><span data-line="66"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>autoupdate
+</span><span data-line="67"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Updated Pre-commit hooks 🔄&quot;</span>
+</span><span data-line="68">
+</span><span data-line="69"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">clean</span>
+</span><span data-line="70"><span class="nf">clean</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Cleanup temporary build artifacts</span>
+</span><span data-line="71"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Cleaning working directory...&quot;</span>
+</span><span data-line="72"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>pytest_cache<span class="w"> </span>.ruff_cache<span class="w"> </span>.hypothesis<span class="w"> </span>build/<span class="w"> </span>-rf<span class="w"> </span>dist/<span class="w"> </span>.eggs/<span class="w"> </span>.coverage<span class="w"> </span>coverage.xml<span class="w"> </span>coverage.json<span class="w"> </span>htmlcov/<span class="w"> </span>.pytest_cache<span class="w"> </span>src/py/tests/.pytest_cache<span class="w"> </span>src/py/tests/**/.pytest_cache<span class="w"> </span>.mypy_cache<span class="w"> </span>.unasyncd_cache/<span class="w"> </span>.auto_pytabs_cache<span class="w"> </span>node_modules<span class="w"> </span>src/js/web/node_modules<span class="w"> </span>src/js/templates/node_modules<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="73"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg-info&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="74"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.egg&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="75"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyc&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="76"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyo&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="77"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*~&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="78"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;__pycache__&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="79"><span class="w">	</span>@find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;.ipynb_checkpoints&#39;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="80"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Working directory cleaned&quot;</span>
+</span><span data-line="81"><span class="w">	</span><span class="k">$(</span>MAKE<span class="k">)</span><span class="w"> </span>docs-clean
+</span><span data-line="82">
+</span><span data-line="83"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">destroy</span>
+</span><span data-line="84"><span class="nf">destroy</span><span class="o">:</span><span class="w">                                            </span><span class="c">## Destroy the virtual environment</span>
+</span><span data-line="85"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Destroying virtual environment... 🗑️&quot;</span>
+</span><span data-line="86"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>.venv
+</span><span data-line="87"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Virtual environment destroyed 🗑️&quot;</span>
+</span><span data-line="88">
+</span><span data-line="89"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lock</span>
+</span><span data-line="90"><span class="nf">lock</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Rebuild lockfiles from scratch, updating all dependencies</span>
+</span><span data-line="91"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Rebuilding lockfiles... 🔄&quot;</span>
+</span><span data-line="92"><span class="w">	</span>@uv<span class="w"> </span>lock<span class="w"> </span>--upgrade<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="93"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Lockfiles updated&quot;</span>
+</span><span data-line="94">
+</span><span data-line="95"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">release</span>
+</span><span data-line="96"><span class="nf">release</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Bump version and create release tag</span>
+</span><span data-line="97"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Preparing for release... 📦&quot;</span>
+</span><span data-line="98"><span class="w">	</span>@make<span class="w"> </span>clean
+</span><span data-line="99"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>bump-my-version<span class="w"> </span>bump<span class="w"> </span><span class="k">$(</span>bump<span class="k">)</span>
+</span><span data-line="100"><span class="w">	</span>@make<span class="w"> </span>build
+</span><span data-line="101"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Release complete 🎉&quot;</span>
 </span><span data-line="102">
-</span><span data-line="103"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">pyright</span>
-</span><span data-line="104"><span class="nf">pyright</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Run pyright</span>
-</span><span data-line="105"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running pyright... 🔍&quot;</span>
-</span><span data-line="106"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pyright
-</span><span data-line="107"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Pyright checks passed ✨&quot;</span>
-</span><span data-line="108">
-</span><span data-line="109"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">type</span>-<span class="n">check</span>
-</span><span data-line="110"><span class="nf">type-check</span><span class="o">:</span><span class="w"> </span><span class="n">mypy</span> <span class="n">pyright</span>                           <span class="c">## Run all type checking</span>
-</span><span data-line="111">
-</span><span data-line="112"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">pre</span>-<span class="n">commit</span>
-</span><span data-line="113"><span class="nf">pre-commit</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Runs pre-commit hooks; includes ruff formatting and linting, codespell</span>
-</span><span data-line="114"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running pre-commit checks... 🔎&quot;</span>
-</span><span data-line="115"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--color<span class="o">=</span>always<span class="w"> </span>--all-files
-</span><span data-line="116"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Pre-commit checks passed ✨&quot;</span>
-</span><span data-line="117">
-</span><span data-line="118"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">slotscheck</span>
-</span><span data-line="119"><span class="nf">slotscheck</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Run slotscheck</span>
-</span><span data-line="120"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running slots check... 🔍&quot;</span>
-</span><span data-line="121"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>slotscheck<span class="w"> </span>-m<span class="w"> </span>app
-</span><span data-line="122"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Slots check passed ✨&quot;</span>
-</span><span data-line="123">
-</span><span data-line="124"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">fix</span>
-</span><span data-line="125"><span class="nf">fix</span><span class="o">:</span><span class="w">                                               </span><span class="c">## Run formatting scripts</span>
-</span><span data-line="126"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running code formatters... 🔧&quot;</span>
-</span><span data-line="127"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>--unsafe-fixes
-</span><span data-line="128"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Code formatting complete ✨&quot;</span>
-</span><span data-line="129">
-</span><span data-line="130"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span>
-</span><span data-line="131"><span class="nf">lint</span><span class="o">:</span><span class="w"> </span><span class="n">pre</span>-<span class="n">commit</span> <span class="n">type</span>-<span class="n">check</span> <span class="n">slotscheck</span>             <span class="c">## Run all linting</span>
-</span><span data-line="132">
-</span><span data-line="133"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">coverage</span>
-</span><span data-line="134"><span class="nf">coverage</span><span class="o">:</span><span class="w">                                          </span><span class="c">## Run the tests and generate coverage report</span>
-</span><span data-line="135"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running tests with coverage... 📊&quot;</span>
-</span><span data-line="136"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests<span class="w"> </span>--cov<span class="w"> </span>-n<span class="w"> </span>auto<span class="w"> </span>--quiet
-</span><span data-line="137"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>coverage<span class="w"> </span>html<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="138"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>coverage<span class="w"> </span>xml<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="139"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Coverage report generated ✨&quot;</span>
+</span><span data-line="103">
+</span><span data-line="104"><span class="c"># =============================================================================</span>
+</span><span data-line="105"><span class="c"># Tests, Linting, Coverage</span>
+</span><span data-line="106"><span class="c"># =============================================================================</span>
+</span><span data-line="107"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">mypy</span>
+</span><span data-line="108"><span class="nf">mypy</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Run mypy</span>
+</span><span data-line="109"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running mypy... 🔍&quot;</span>
+</span><span data-line="110"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>dmypy<span class="w"> </span>run<span class="w"> </span>src/py/app
+</span><span data-line="111"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Mypy checks passed ✨&quot;</span>
+</span><span data-line="112">
+</span><span data-line="113"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">pyright</span>
+</span><span data-line="114"><span class="nf">pyright</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Run pyright</span>
+</span><span data-line="115"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running pyright... 🔍&quot;</span>
+</span><span data-line="116"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pyright
+</span><span data-line="117"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Pyright checks passed ✨&quot;</span>
+</span><span data-line="118">
+</span><span data-line="119"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">type</span>-<span class="n">check</span>
+</span><span data-line="120"><span class="nf">type-check</span><span class="o">:</span><span class="w"> </span><span class="n">mypy</span> <span class="n">pyright</span>                           <span class="c">## Run all type checking</span>
+</span><span data-line="121">
+</span><span data-line="122"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">pre</span>-<span class="n">commit</span>
+</span><span data-line="123"><span class="nf">pre-commit</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Runs pre-commit hooks; includes ruff formatting and linting, codespell</span>
+</span><span data-line="124"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running pre-commit checks... 🔎&quot;</span>
+</span><span data-line="125"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--color<span class="o">=</span>always<span class="w"> </span>--all-files
+</span><span data-line="126"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Pre-commit checks passed ✨&quot;</span>
+</span><span data-line="127">
+</span><span data-line="128"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">slotscheck</span>
+</span><span data-line="129"><span class="nf">slotscheck</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Run slotscheck</span>
+</span><span data-line="130"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running slots check... 🔍&quot;</span>
+</span><span data-line="131"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>slotscheck<span class="w"> </span>-m<span class="w"> </span>app
+</span><span data-line="132"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Slots check passed ✨&quot;</span>
+</span><span data-line="133">
+</span><span data-line="134"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">fix</span>
+</span><span data-line="135"><span class="nf">fix</span><span class="o">:</span><span class="w">                                               </span><span class="c">## Run formatting scripts</span>
+</span><span data-line="136"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running code formatters... 🔧&quot;</span>
+</span><span data-line="137"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>--unsafe-fixes
+</span><span data-line="138"><span class="w">	</span>@cd<span class="w"> </span>src/js/web<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bun<span class="w"> </span>run<span class="w"> </span>lint
+</span><span data-line="139"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Code formatting complete ✨&quot;</span>
 </span><span data-line="140">
-</span><span data-line="141"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>
-</span><span data-line="142"><span class="nf">test</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Run the tests</span>
-</span><span data-line="143"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running test cases... 🧪&quot;</span>
-</span><span data-line="144"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>--quiet
-</span><span data-line="145"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Tests passed ✨&quot;</span>
-</span><span data-line="146">
-</span><span data-line="147"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>-<span class="n">all</span>
-</span><span data-line="148"><span class="nf">test-all</span><span class="o">:</span><span class="w">                                          </span><span class="c">## Run all tests</span>
-</span><span data-line="149"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running all test cases... 🧪&quot;</span>
-</span><span data-line="150"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>--quiet
-</span><span data-line="151"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> All tests passed ✨&quot;</span>
-</span><span data-line="152">
-</span><span data-line="153"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">check</span>-<span class="n">all</span>
-</span><span data-line="154"><span class="nf">check-all</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span> <span class="n">test</span>-<span class="n">all</span> <span class="n">coverage</span>                  <span class="c">## Run all linting, tests, and coverage checks</span>
-</span><span data-line="155">
-</span><span data-line="156">
-</span><span data-line="157"><span class="c"># =============================================================================</span>
-</span><span data-line="158"><span class="c"># Docs</span>
-</span><span data-line="159"><span class="c"># =============================================================================</span>
-</span><span data-line="160"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>
-</span><span data-line="161"><span class="nf">docs-clean</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Dump the existing built docs</span>
-</span><span data-line="162"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Cleaning documentation build assets... 🧹&quot;</span>
-</span><span data-line="163"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>docs/_build<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="164"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Documentation assets cleaned&quot;</span>
-</span><span data-line="165">
-</span><span data-line="166"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">serve</span>
-</span><span data-line="167"><span class="nf">docs-serve</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>                             <span class="c">## Serve the docs locally</span>
-</span><span data-line="168"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting documentation server... 📚&quot;</span>
-</span><span data-line="169"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-autobuild<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>--watch<span class="w"> </span>app<span class="w"> </span>--watch<span class="w"> </span>docs<span class="w"> </span>--watch<span class="w"> </span>tests<span class="w"> </span>--watch<span class="w"> </span>CONTRIBUTING.rst<span class="w"> </span>--port<span class="w"> </span><span class="m">8002</span>
-</span><span data-line="170">
-</span><span data-line="171"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>
-</span><span data-line="172"><span class="nf">docs</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>                                   <span class="c">## Dump the existing built docs and rebuild them</span>
-</span><span data-line="173"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building documentation... 📝&quot;</span>
-</span><span data-line="174"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-E<span class="w"> </span>-a<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>-W<span class="w"> </span>--keep-going
-</span><span data-line="175"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Documentation built successfully&quot;</span>
+</span><span data-line="141"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span>
+</span><span data-line="142"><span class="nf">lint</span><span class="o">:</span><span class="w"> </span><span class="n">pre</span>-<span class="n">commit</span> <span class="n">type</span>-<span class="n">check</span> <span class="n">slotscheck</span>             <span class="c">## Run all linting</span>
+</span><span data-line="143">
+</span><span data-line="144"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">coverage</span>
+</span><span data-line="145"><span class="nf">coverage</span><span class="o">:</span><span class="w">                                          </span><span class="c">## Run the tests and generate coverage report</span>
+</span><span data-line="146"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running tests with coverage... 📊&quot;</span>
+</span><span data-line="147"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>src/py/tests<span class="w"> </span>--cov<span class="w"> </span>--quiet
+</span><span data-line="148"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>coverage<span class="w"> </span>html<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="149"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>coverage<span class="w"> </span>xml<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="150"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Coverage report generated ✨&quot;</span>
+</span><span data-line="151">
+</span><span data-line="152"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>
+</span><span data-line="153"><span class="nf">test</span><span class="o">:</span><span class="w">                                              </span><span class="c">## Run the tests</span>
+</span><span data-line="154"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running test cases... 🧪&quot;</span>
+</span><span data-line="155"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>src/py/tests<span class="w"> </span>--quiet
+</span><span data-line="156"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Tests passed ✨&quot;</span>
+</span><span data-line="157">
+</span><span data-line="158"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>-<span class="n">all</span>
+</span><span data-line="159"><span class="nf">test-all</span><span class="o">:</span><span class="w">                                          </span><span class="c">## Run all tests</span>
+</span><span data-line="160"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running all test cases... 🧪&quot;</span>
+</span><span data-line="161"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>src/py/tests<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>--quiet
+</span><span data-line="162"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> All tests passed ✨&quot;</span>
+</span><span data-line="163">
+</span><span data-line="164"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">check</span>-<span class="n">all</span>
+</span><span data-line="165"><span class="nf">check-all</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span> <span class="n">test</span>-<span class="n">all</span> <span class="n">coverage</span>                  <span class="c">## Run all linting, tests, and coverage checks</span>
+</span><span data-line="166">
+</span><span data-line="167">
+</span><span data-line="168"><span class="c"># =============================================================================</span>
+</span><span data-line="169"><span class="c"># Docs</span>
+</span><span data-line="170"><span class="c"># =============================================================================</span>
+</span><span data-line="171"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>
+</span><span data-line="172"><span class="nf">docs-clean</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Dump the existing built docs</span>
+</span><span data-line="173"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Cleaning documentation build assets... 🧹&quot;</span>
+</span><span data-line="174"><span class="w">	</span>@rm<span class="w"> </span>-rf<span class="w"> </span>docs/_build<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="175"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Documentation assets cleaned&quot;</span>
 </span><span data-line="176">
-</span><span data-line="177"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">linkcheck</span>
-</span><span data-line="178"><span class="nf">docs-linkcheck</span><span class="o">:</span><span class="w">                                    </span><span class="c">## Run the link check on the docs</span>
-</span><span data-line="179"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Checking documentation links... 🔗&quot;</span>
-</span><span data-line="180"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-b<span class="w"> </span>linkcheck<span class="w"> </span>./docs<span class="w"> </span>./docs/_build<span class="w"> </span>-D<span class="w"> </span><span class="nv">linkcheck_ignore</span><span class="o">=</span><span class="s1">&#39;http://.*&#39;</span>,<span class="s1">&#39;https://.*&#39;</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="181"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Link check complete&quot;</span>
-</span><span data-line="182">
-</span><span data-line="183"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">linkcheck</span>-<span class="n">full</span>
-</span><span data-line="184"><span class="nf">docs-linkcheck-full</span><span class="o">:</span><span class="w">                               </span><span class="c">## Run the full link check on the docs</span>
-</span><span data-line="185"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running full link check... 🔗&quot;</span>
-</span><span data-line="186"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-b<span class="w"> </span>linkcheck<span class="w"> </span>./docs<span class="w"> </span>./docs/_build<span class="w"> </span>-D<span class="w"> </span><span class="nv">linkcheck_anchors</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="187"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Full link check complete&quot;</span>
-</span><span data-line="188">
-</span><span data-line="189">
-</span><span data-line="190"><span class="c"># -----------------------------------------------------------------------------</span>
-</span><span data-line="191"><span class="c"># Local Infrastructure</span>
-</span><span data-line="192"><span class="c"># -----------------------------------------------------------------------------</span>
+</span><span data-line="177"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">serve</span>
+</span><span data-line="178"><span class="nf">docs-serve</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>                             <span class="c">## Serve the docs locally</span>
+</span><span data-line="179"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting documentation server... 📚&quot;</span>
+</span><span data-line="180"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-autobuild<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>--watch<span class="w"> </span>app<span class="w"> </span>--watch<span class="w"> </span>docs<span class="w"> </span>--watch<span class="w"> </span>tests<span class="w"> </span>--watch<span class="w"> </span>CONTRIBUTING.rst<span class="w"> </span>--port<span class="w"> </span><span class="m">8002</span>
+</span><span data-line="181">
+</span><span data-line="182"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>
+</span><span data-line="183"><span class="nf">docs</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">clean</span>                                   <span class="c">## Dump the existing built docs and rebuild them</span>
+</span><span data-line="184"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building documentation... 📝&quot;</span>
+</span><span data-line="185"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>docs/_build/<span class="w"> </span>-E<span class="w"> </span>-a<span class="w"> </span>-j<span class="w"> </span>auto<span class="w"> </span>-W<span class="w"> </span>--keep-going
+</span><span data-line="186"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Documentation built successfully&quot;</span>
+</span><span data-line="187">
+</span><span data-line="188"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">linkcheck</span>
+</span><span data-line="189"><span class="nf">docs-linkcheck</span><span class="o">:</span><span class="w">                                    </span><span class="c">## Run the link check on the docs</span>
+</span><span data-line="190"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Checking documentation links... 🔗&quot;</span>
+</span><span data-line="191"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-b<span class="w"> </span>linkcheck<span class="w"> </span>./docs<span class="w"> </span>./docs/_build<span class="w"> </span>-D<span class="w"> </span><span class="nv">linkcheck_ignore</span><span class="o">=</span><span class="s1">&#39;http://.*&#39;</span>,<span class="s1">&#39;https://.*&#39;</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="192"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Link check complete&quot;</span>
 </span><span data-line="193">
-</span><span data-line="194"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">start</span>-<span class="n">infra</span>
-</span><span data-line="195"><span class="nf">start-infra</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Start local containers</span>
-</span><span data-line="196"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting local infrastructure... 🚀&quot;</span>
-</span><span data-line="197"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>deploy/docker-compose.infra.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--force-recreate<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="198"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure is ready&quot;</span>
+</span><span data-line="194"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docs</span>-<span class="n">linkcheck</span>-<span class="n">full</span>
+</span><span data-line="195"><span class="nf">docs-linkcheck-full</span><span class="o">:</span><span class="w">                               </span><span class="c">## Run the full link check on the docs</span>
+</span><span data-line="196"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Running full link check... 🔗&quot;</span>
+</span><span data-line="197"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>sphinx-build<span class="w"> </span>-b<span class="w"> </span>linkcheck<span class="w"> </span>./docs<span class="w"> </span>./docs/_build<span class="w"> </span>-D<span class="w"> </span><span class="nv">linkcheck_anchors</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="198"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Full link check complete&quot;</span>
 </span><span data-line="199">
-</span><span data-line="200"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">stop</span>-<span class="n">infra</span>
-</span><span data-line="201"><span class="nf">stop-infra</span><span class="o">:</span><span class="w">                                         </span><span class="c">## Stop local containers</span>
-</span><span data-line="202"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Stopping infrastructure... 🛑&quot;</span>
-</span><span data-line="203"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>deploy/docker-compose.infra.yml<span class="w"> </span>down<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="204"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure stopped&quot;</span>
-</span><span data-line="205">
-</span><span data-line="206"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">wipe</span>-<span class="n">infra</span>
-</span><span data-line="207"><span class="nf">wipe-infra</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Remove local container info</span>
-</span><span data-line="208"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Wiping infrastructure... 🧹&quot;</span>
-</span><span data-line="209"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>deploy/docker-compose.infra.yml<span class="w"> </span>down<span class="w"> </span>-v<span class="w"> </span>--remove-orphans<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span><span data-line="210"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure wiped clean&quot;</span>
-</span><span data-line="211">
-</span><span data-line="212"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">infra</span>-<span class="n">logs</span>
-</span><span data-line="213"><span class="nf">infra-logs</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Tail development infrastructure logs</span>
-</span><span data-line="214"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Tailing infrastructure logs... 📋&quot;</span>
-</span><span data-line="215"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>deploy/docker-compose.infra.yml<span class="w"> </span>logs<span class="w"> </span>-f
+</span><span data-line="200">
+</span><span data-line="201"><span class="c"># =============================================================================</span>
+</span><span data-line="202"><span class="c"># Build</span>
+</span><span data-line="203"><span class="c"># =============================================================================</span>
+</span><span data-line="204"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>
+</span><span data-line="205"><span class="nf">build</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>-<span class="n">emails</span> <span class="n">build</span>-<span class="n">assets</span> <span class="n">build</span>-<span class="n">wheel</span>      <span class="c">## Build wheel with frontend assets</span>
+</span><span data-line="206">
+</span><span data-line="207"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>-<span class="n">assets</span>
+</span><span data-line="208"><span class="nf">build-assets</span><span class="o">:</span><span class="w">                                      </span><span class="c">## Build frontend assets</span>
+</span><span data-line="209"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building frontend assets... 🎨&quot;</span>
+</span><span data-line="210"><span class="w">	</span>@uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>assets<span class="w"> </span>build
+</span><span data-line="211"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Frontend assets built&quot;</span>
+</span><span data-line="212">
+</span><span data-line="213"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>-<span class="n">wheel</span>
+</span><span data-line="214"><span class="nf">build-wheel</span><span class="o">:</span><span class="w">                                       </span><span class="c">## Build Python wheel</span>
+</span><span data-line="215"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building Python wheel... 📦&quot;</span>
+</span><span data-line="216"><span class="w">	</span>@uv<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span><span data-line="217"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Wheel built: dist/*.whl&quot;</span>
+</span><span data-line="218">
+</span><span data-line="219"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>-<span class="n">emails</span>
+</span><span data-line="220"><span class="nf">build-emails</span><span class="o">:</span><span class="w">                                      </span><span class="c">## Build React email templates to HTML</span>
+</span><span data-line="221"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building email templates... 📧&quot;</span>
+</span><span data-line="222"><span class="w">	</span>@cd<span class="w"> </span>src/js/templates<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">(</span>bun<span class="w"> </span>install<span class="w"> </span>--frozen-lockfile<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>bun<span class="w"> </span>install<span class="o">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bun<span class="w"> </span>run<span class="w"> </span>build
+</span><span data-line="223"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Email templates built to src/py/app/server/static/email/&quot;</span>
+</span><span data-line="224">
+</span><span data-line="225">
+</span><span data-line="226"><span class="c"># =============================================================================</span>
+</span><span data-line="227"><span class="c"># Local Infrastructure (Database only - for normal development)</span>
+</span><span data-line="228"><span class="c"># =============================================================================</span>
+</span><span data-line="229">
+</span><span data-line="230"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">start</span>-<span class="n">infra</span>
+</span><span data-line="231"><span class="nf">start-infra</span><span class="o">:</span><span class="w">                                       </span><span class="c">## Start local infrastructure (PostgreSQL)</span>
+</span><span data-line="232"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Starting local infrastructure... 🚀&quot;</span>
+</span><span data-line="233"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_INFRA<span class="k">)</span><span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--force-recreate
+</span><span data-line="234"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure is ready&quot;</span>
+</span><span data-line="235">
+</span><span data-line="236"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">stop</span>-<span class="n">infra</span>
+</span><span data-line="237"><span class="nf">stop-infra</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Stop local infrastructure</span>
+</span><span data-line="238"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Stopping infrastructure... 🛑&quot;</span>
+</span><span data-line="239"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_INFRA<span class="k">)</span><span class="w"> </span>down
+</span><span data-line="240"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure stopped&quot;</span>
+</span><span data-line="241">
+</span><span data-line="242"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">wipe</span>-<span class="n">infra</span>
+</span><span data-line="243"><span class="nf">wipe-infra</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Remove local infrastructure and volumes</span>
+</span><span data-line="244"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Wiping infrastructure... 🧹&quot;</span>
+</span><span data-line="245"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_INFRA<span class="k">)</span><span class="w"> </span>down<span class="w"> </span>-v<span class="w"> </span>--remove-orphans
+</span><span data-line="246"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Infrastructure wiped clean&quot;</span>
+</span><span data-line="247">
+</span><span data-line="248"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">infra</span>-<span class="n">logs</span>
+</span><span data-line="249"><span class="nf">infra-logs</span><span class="o">:</span><span class="w">                                        </span><span class="c">## Tail infrastructure logs</span>
+</span><span data-line="250"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_INFRA<span class="k">)</span><span class="w"> </span>logs<span class="w"> </span>-f
+</span><span data-line="251">
+</span><span data-line="252"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">mailpit</span>
+</span><span data-line="253"><span class="nf">mailpit</span><span class="o">:</span><span class="w">                                           </span><span class="c">## Open Mailpit web interface</span>
+</span><span data-line="254"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Opening Mailpit web interface... 📧&quot;</span>
+</span><span data-line="255"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Mailpit UI: http://localhost:18025&quot;</span>
+</span><span data-line="256"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> SMTP Server: localhost:11025&quot;</span>
+</span><span data-line="257"><span class="w">	</span>@if<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>open<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="258"><span class="w">		</span>open<span class="w"> </span>http://localhost:18025<span class="p">;</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="259"><span class="w">	</span><span class="k">elif</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>xdg-open<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="260"><span class="w">		</span>xdg-open<span class="w"> </span>http://localhost:18025<span class="p">;</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="261"><span class="cp">	else \</span>
+</span><span data-line="262"><span class="cp">		echo &quot;${WARN} Please open http://localhost:18025 in your browser&quot;; \</span>
+</span><span data-line="263"><span class="cp">	fi</span>
+</span><span data-line="264">
+</span><span data-line="265">
+</span><span data-line="266"><span class="c"># =============================================================================</span>
+</span><span data-line="267"><span class="c"># Full Docker Stack - Production (Distroless)</span>
+</span><span data-line="268"><span class="c"># =============================================================================</span>
+</span><span data-line="269"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">start</span>-<span class="n">all</span>-<span class="n">docker</span>
+</span><span data-line="270"><span class="nf">start-all-docker</span><span class="o">:</span><span class="w">                                  </span><span class="c">## Start production Docker stack (distroless + database)</span>
+</span><span data-line="271"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building and starting production Docker stack... 🐳&quot;</span>
+</span><span data-line="272"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_APP<span class="k">)</span><span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build<span class="w"> </span>--force-recreate
+</span><span data-line="273"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Production Docker stack is running&quot;</span>
+</span><span data-line="274">
+</span><span data-line="275"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">stop</span>-<span class="n">all</span>-<span class="n">docker</span>
+</span><span data-line="276"><span class="nf">stop-all-docker</span><span class="o">:</span><span class="w">                                   </span><span class="c">## Stop production Docker stack</span>
+</span><span data-line="277"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Stopping production Docker stack... 🛑&quot;</span>
+</span><span data-line="278"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_APP<span class="k">)</span><span class="w"> </span>down
+</span><span data-line="279"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Production Docker stack stopped&quot;</span>
+</span><span data-line="280">
+</span><span data-line="281"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">wipe</span>-<span class="n">all</span>-<span class="n">docker</span>
+</span><span data-line="282"><span class="nf">wipe-all-docker</span><span class="o">:</span><span class="w">                                   </span><span class="c">## Remove production Docker stack, images, and volumes</span>
+</span><span data-line="283"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Wiping production Docker stack... 🧹&quot;</span>
+</span><span data-line="284"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_APP<span class="k">)</span><span class="w"> </span>down<span class="w"> </span>-v<span class="w"> </span>--remove-orphans<span class="w"> </span>--rmi<span class="w"> </span><span class="nb">local</span>
+</span><span data-line="285"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Production Docker stack wiped clean&quot;</span>
+</span><span data-line="286">
+</span><span data-line="287"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docker</span>-<span class="n">logs</span>
+</span><span data-line="288"><span class="nf">docker-logs</span><span class="o">:</span><span class="w">                                       </span><span class="c">## Tail production Docker stack logs</span>
+</span><span data-line="289"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_APP<span class="k">)</span><span class="w"> </span>logs<span class="w"> </span>-f
+</span><span data-line="290">
+</span><span data-line="291">
+</span><span data-line="292"><span class="c"># =============================================================================</span>
+</span><span data-line="293"><span class="c"># Full Docker Stack - Development</span>
+</span><span data-line="294"><span class="c"># =============================================================================</span>
+</span><span data-line="295"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">start</span>-<span class="n">all</span>-<span class="n">docker</span>-<span class="n">dev</span>
+</span><span data-line="296"><span class="nf">start-all-docker-dev</span><span class="o">:</span><span class="w">                              </span><span class="c">## Start development Docker stack (with hot-reload)</span>
+</span><span data-line="297"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Building and starting development Docker stack... 🐳&quot;</span>
+</span><span data-line="298"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build<span class="w"> </span>--force-recreate
+</span><span data-line="299"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Development Docker stack is running&quot;</span>
+</span><span data-line="300">
+</span><span data-line="301"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">stop</span>-<span class="n">all</span>-<span class="n">docker</span>-<span class="n">dev</span>
+</span><span data-line="302"><span class="nf">stop-all-docker-dev</span><span class="o">:</span><span class="w">                               </span><span class="c">## Stop development Docker stack</span>
+</span><span data-line="303"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Stopping development Docker stack... 🛑&quot;</span>
+</span><span data-line="304"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span>down
+</span><span data-line="305"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Development Docker stack stopped&quot;</span>
+</span><span data-line="306">
+</span><span data-line="307"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">wipe</span>-<span class="n">all</span>-<span class="n">docker</span>-<span class="n">dev</span>
+</span><span data-line="308"><span class="nf">wipe-all-docker-dev</span><span class="o">:</span><span class="w">                               </span><span class="c">## Remove development Docker stack, images, and volumes</span>
+</span><span data-line="309"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Wiping development Docker stack... 🧹&quot;</span>
+</span><span data-line="310"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span>down<span class="w"> </span>-v<span class="w"> </span>--remove-orphans<span class="w"> </span>--rmi<span class="w"> </span><span class="nb">local</span>
+</span><span data-line="311"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> Development Docker stack wiped clean&quot;</span>
+</span><span data-line="312">
+</span><span data-line="313"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docker</span>-<span class="n">dev</span>-<span class="n">logs</span>
+</span><span data-line="314"><span class="nf">docker-dev-logs</span><span class="o">:</span><span class="w">                                   </span><span class="c">## Tail development Docker stack logs</span>
+</span><span data-line="315"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span>logs<span class="w"> </span>-f
+</span><span data-line="316">
+</span><span data-line="317"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">docker</span>-<span class="n">shell</span>
+</span><span data-line="318"><span class="nf">docker-shell</span><span class="o">:</span><span class="w">                                      </span><span class="c">## Open a shell in the app container</span>
+</span><span data-line="319"><span class="w">	</span>@docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span><span class="nb">exec</span><span class="w"> </span>app<span class="w"> </span>/bin/bash<span class="w"> </span><span class="o">||</span><span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>COMPOSE_DEV<span class="k">)</span><span class="w"> </span><span class="nb">exec</span><span class="w"> </span>app<span class="w"> </span>/bin/sh
+</span><span data-line="320">
+</span><span data-line="321">
+</span><span data-line="322"><span class="c"># =============================================================================</span>
+</span><span data-line="323"><span class="c"># Type Generation</span>
+</span><span data-line="324"><span class="c"># =============================================================================</span>
+</span><span data-line="325"><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">types</span>
+</span><span data-line="326"><span class="nf">types</span><span class="o">:</span><span class="w">                                             </span><span class="c">## Export OpenAPI schema and generate TypeScript types/client</span>
+</span><span data-line="327"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INFO</span><span class="si">}</span><span class="s2"> Exporting OpenAPI schema and generating TypeScript types...&quot;</span>
+</span><span data-line="328"><span class="w">	</span>@mkdir<span class="w"> </span>-p<span class="w"> </span>tmp
+</span><span data-line="329"><span class="w">	</span>@TMPDIR<span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span>/tmp<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>assets<span class="w"> </span>generate-types
+</span><span data-line="330"><span class="w">	</span>@echo<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OK</span><span class="si">}</span><span class="s2"> TypeScript types and client generated from OpenAPI schema.&quot;</span>
 </span></pre></div>
 </div>
 </div>
@@ -490,11 +614,11 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=e2230717"></script></body>
+      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
 </html>

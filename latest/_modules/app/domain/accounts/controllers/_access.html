@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>app.domain.accounts.controllers._access - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../../../genindex.html" /><link rel="search" title="Search" href="../../../../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/shibuya.css?v=a318c5d4" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="app.domain.accounts.controllers._access"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../../index.html">
+      
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage/index.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/startup.html">Starting the server</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/asgi.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/db.html">db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/lib/index.html">lib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/crypt.html">crypt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/deps.html">deps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/schema.html">schema</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/domain/index.html">domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/teams/index.html">teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/teams/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/web/index.html">web</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/web/controllers.html">controllers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/system/tasks.html">tasks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">app.domain.accounts.controllers._access</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <h1>Source code for app.domain.accounts.controllers._access</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;User Access Controllers.&quot;&quot;&quot;</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DuplicateKeyError</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.utils.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">slugify</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">get</span><span class="p">,</span> <span class="n">post</span>
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.di</span><span class="w"> </span><span class="kn">import</span> <span class="n">Provide</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestEncodingType</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientException</span><span class="p">,</span> <span class="n">NotAuthorizedException</span>
+</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">Body</span><span class="p">,</span> <span class="n">Dependency</span><span class="p">,</span> <span class="n">Parameter</span>
+</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">selectinload</span>
+</span><span data-line="16">
+</span><span data-line="17"><span class="kn">from</span><span class="w"> </span><span class="nn">app.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span> <span class="k">as</span> <span class="n">m</span>
+</span><span data-line="18"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.deps</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="19">    <span class="n">provide_email_verification_service</span><span class="p">,</span>
+</span><span data-line="20">    <span class="n">provide_password_reset_service</span><span class="p">,</span>
+</span><span data-line="21">    <span class="n">provide_roles_service</span><span class="p">,</span>
+</span><span data-line="22">    <span class="n">provide_users_service</span><span class="p">,</span>
+</span><span data-line="23"><span class="p">)</span>
+</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="25">    <span class="n">AccountLogin</span><span class="p">,</span>
+</span><span data-line="26">    <span class="n">AccountRegister</span><span class="p">,</span>
+</span><span data-line="27">    <span class="n">ActiveSession</span><span class="p">,</span>
+</span><span data-line="28">    <span class="n">ForgotPasswordRequest</span><span class="p">,</span>
+</span><span data-line="29">    <span class="n">LoginMfaChallenge</span><span class="p">,</span>
+</span><span data-line="30">    <span class="n">PasswordResetComplete</span><span class="p">,</span>
+</span><span data-line="31">    <span class="n">PasswordResetSent</span><span class="p">,</span>
+</span><span data-line="32">    <span class="n">ResetPasswordRequest</span><span class="p">,</span>
+</span><span data-line="33">    <span class="n">ResetTokenValidation</span><span class="p">,</span>
+</span><span data-line="34">    <span class="n">TokenRefresh</span><span class="p">,</span>
+</span><span data-line="35">    <span class="n">User</span><span class="p">,</span>
+</span><span data-line="36"><span class="p">)</span>
+</span><span data-line="37"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">RefreshTokenService</span>
+</span><span data-line="38"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.deps</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_service_dependencies</span>
+</span><span data-line="39"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span>
+</span><span data-line="40"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasswordValidationError</span><span class="p">,</span> <span class="n">validate_password_strength</span>
+</span><span data-line="41">
+</span><span data-line="42"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span data-line="43">    <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+</span><span data-line="44">
+</span><span data-line="45">    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterTypes</span>
+</span><span data-line="46">    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.service.pagination</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetPagination</span>
+</span><span data-line="47">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2Login</span><span class="p">,</span> <span class="n">Token</span>
+</span><span data-line="48">
+</span><span data-line="49">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.services</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="50">        <span class="n">EmailVerificationTokenService</span><span class="p">,</span>
+</span><span data-line="51">        <span class="n">PasswordResetService</span><span class="p">,</span>
+</span><span data-line="52">        <span class="n">RoleService</span><span class="p">,</span>
+</span><span data-line="53">        <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="54">    <span class="p">)</span>
+</span><span data-line="55">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.email</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppEmailService</span>
+</span><span data-line="56">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.email.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserProtocol</span>
+</span><span data-line="57">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppSettings</span>
+</span><span data-line="58">
+</span><span data-line="59"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span data-line="60">
+</span><span data-line="61"><span class="n">REFRESH_COOKIE_NAME</span> <span class="o">=</span> <span class="s2">&quot;refresh_token&quot;</span>
+</span><span data-line="62"><span class="n">REFRESH_TOKEN_MAX_AGE</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+</span><span data-line="63">
+</span><span data-line="64">
+<div class="viewcode-block" id="AccessController">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController">[docs]</a>
+</span><span data-line="65"><span class="k">class</span><span class="w"> </span><span class="nc">AccessController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+</span><span data-line="66"><span class="w">    </span><span class="sd">&quot;&quot;&quot;User login and registration.&quot;&quot;&quot;</span>
+</span><span data-line="67">
+</span><span data-line="68">    <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Access&quot;</span><span class="p">]</span>
+</span><span data-line="69">    <span class="n">dependencies</span> <span class="o">=</span> <span class="n">create_service_dependencies</span><span class="p">(</span>
+</span><span data-line="70">        <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="71">        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;refresh_token_service&quot;</span><span class="p">,</span>
+</span><span data-line="72">        <span class="n">load</span><span class="o">=</span><span class="p">[</span><span class="n">selectinload</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">RefreshToken</span><span class="o">.</span><span class="n">user</span><span class="p">)],</span>
+</span><span data-line="73">        <span class="n">error_messages</span><span class="o">=</span><span class="p">{</span>
+</span><span data-line="74">            <span class="s2">&quot;duplicate_key&quot;</span><span class="p">:</span> <span class="s2">&quot;Refresh token already exists.&quot;</span><span class="p">,</span>
+</span><span data-line="75">            <span class="s2">&quot;integrity&quot;</span><span class="p">:</span> <span class="s2">&quot;Refresh token operation failed.&quot;</span><span class="p">,</span>
+</span><span data-line="76">        <span class="p">},</span>
+</span><span data-line="77">        <span class="n">filters</span><span class="o">=</span><span class="p">{</span>
+</span><span data-line="78">            <span class="s2">&quot;pagination_type&quot;</span><span class="p">:</span> <span class="s2">&quot;limit_offset&quot;</span><span class="p">,</span>
+</span><span data-line="79">            <span class="s2">&quot;pagination_size&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+</span><span data-line="80">            <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="81">            <span class="s2">&quot;sort_field&quot;</span><span class="p">:</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span>
+</span><span data-line="82">            <span class="s2">&quot;sort_order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span>
+</span><span data-line="83">        <span class="p">},</span>
+</span><span data-line="84">    <span class="p">)</span> <span class="o">|</span> <span class="p">{</span>
+</span><span data-line="85">        <span class="s2">&quot;users_service&quot;</span><span class="p">:</span> <span class="n">Provide</span><span class="p">(</span><span class="n">provide_users_service</span><span class="p">),</span>
+</span><span data-line="86">        <span class="s2">&quot;roles_service&quot;</span><span class="p">:</span> <span class="n">Provide</span><span class="p">(</span><span class="n">provide_roles_service</span><span class="p">),</span>
+</span><span data-line="87">        <span class="s2">&quot;verification_service&quot;</span><span class="p">:</span> <span class="n">Provide</span><span class="p">(</span><span class="n">provide_email_verification_service</span><span class="p">),</span>
+</span><span data-line="88">        <span class="s2">&quot;password_reset_service&quot;</span><span class="p">:</span> <span class="n">Provide</span><span class="p">(</span><span class="n">provide_password_reset_service</span><span class="p">),</span>
+</span><span data-line="89">    <span class="p">}</span>
+</span><span data-line="90">
+</span><span data-line="91">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;AccountLogin&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/login&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="92">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span>
+</span><span data-line="93">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="94">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="95">        <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="96">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="97">        <span class="n">settings</span><span class="p">:</span> <span class="n">AppSettings</span><span class="p">,</span>
+</span><span data-line="98">        <span class="n">data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">AccountLogin</span><span class="p">,</span> <span class="n">Body</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;OAuth2 Login&quot;</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">RequestEncodingType</span><span class="o">.</span><span class="n">URL_ENCODED</span><span class="p">)],</span>
+</span><span data-line="99">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">OAuth2Login</span><span class="p">]</span> <span class="o">|</span> <span class="n">Response</span><span class="p">[</span><span class="n">LoginMfaChallenge</span><span class="p">]:</span>
+</span><span data-line="100"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate a user.</span>
+</span><span data-line="101">
+</span><span data-line="102"><span class="sd">        If MFA is enabled, returns a response indicating MFA is required</span>
+</span><span data-line="103"><span class="sd">        with a challenge token in a cookie. Otherwise, returns full OAuth2 tokens.</span>
+</span><span data-line="104">
+</span><span data-line="105"><span class="sd">        Args:</span>
+</span><span data-line="106"><span class="sd">            request: The HTTP request</span>
+</span><span data-line="107"><span class="sd">            data: OAuth2 Login Data</span>
+</span><span data-line="108"><span class="sd">            users_service: User Service</span>
+</span><span data-line="109"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="110"><span class="sd">            settings: Application settings</span>
+</span><span data-line="111">
+</span><span data-line="112"><span class="sd">        Returns:</span>
+</span><span data-line="113"><span class="sd">            OAuth2 Login Response with refresh token cookie, or MFA challenge</span>
+</span><span data-line="114"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="115">        <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+</span><span data-line="116">        <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+</span><span data-line="117">
+</span><span data-line="118">        <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Token</span> <span class="k">as</span> <span class="n">JWTToken</span>
+</span><span data-line="119">
+</span><span data-line="120">        <span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span>
+</span><span data-line="121">
+</span><span data-line="122">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">users_service</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+</span><span data-line="123">
+</span><span data-line="124">        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">is_two_factor_enabled</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">totp_secret</span><span class="p">:</span>
+</span><span data-line="125">            <span class="n">mfa_challenge_token</span> <span class="o">=</span> <span class="n">JWTToken</span><span class="p">(</span>
+</span><span data-line="126">                <span class="n">sub</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+</span><span data-line="127">                <span class="n">exp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+</span><span data-line="128">                <span class="n">aud</span><span class="o">=</span><span class="s2">&quot;mfa_verification&quot;</span><span class="p">,</span>
+</span><span data-line="129">                <span class="n">extras</span><span class="o">=</span><span class="p">{</span>
+</span><span data-line="130">                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;mfa_challenge&quot;</span><span class="p">,</span>
+</span><span data-line="131">                    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span data-line="132">                <span class="p">},</span>
+</span><span data-line="133">            <span class="p">)</span>
+</span><span data-line="134">            <span class="n">encoded_challenge</span> <span class="o">=</span> <span class="n">mfa_challenge_token</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+</span><span data-line="135">                <span class="n">secret</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span>
+</span><span data-line="136">                <span class="n">algorithm</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">JWT_ENCRYPTION_ALGORITHM</span><span class="p">,</span>
+</span><span data-line="137">            <span class="p">)</span>
+</span><span data-line="138">
+</span><span data-line="139">            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span>
+</span><span data-line="140">                <span class="n">LoginMfaChallenge</span><span class="p">(</span>
+</span><span data-line="141">                    <span class="n">mfa_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="142">                    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;MFA verification required&quot;</span><span class="p">,</span>
+</span><span data-line="143">                <span class="p">),</span>
+</span><span data-line="144">                <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span data-line="145">            <span class="p">)</span>
+</span><span data-line="146">            <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span>
+</span><span data-line="147">                <span class="n">key</span><span class="o">=</span><span class="s2">&quot;mfa_challenge&quot;</span><span class="p">,</span>
+</span><span data-line="148">                <span class="n">value</span><span class="o">=</span><span class="n">encoded_challenge</span><span class="p">,</span>
+</span><span data-line="149">                <span class="n">max_age</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+</span><span data-line="150">                <span class="n">httponly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="151">                <span class="n">secure</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">COOKIE_SECURE</span><span class="p">,</span>
+</span><span data-line="152">                <span class="n">samesite</span><span class="o">=</span><span class="s2">&quot;lax&quot;</span><span class="p">,</span>
+</span><span data-line="153">                <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/mfa&quot;</span><span class="p">,</span>
+</span><span data-line="154">            <span class="p">)</span>
+</span><span data-line="155">            <span class="k">return</span> <span class="n">response</span>
+</span><span data-line="156">
+</span><span data-line="157">        <span class="n">device_info</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[:</span><span class="mi">255</span><span class="p">]</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="158">
+</span><span data-line="159">        <span class="n">raw_refresh_token</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">create_refresh_token</span><span class="p">(</span>
+</span><span data-line="160">            <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="161">            <span class="n">device_info</span><span class="o">=</span><span class="n">device_info</span><span class="p">,</span>
+</span><span data-line="162">        <span class="p">)</span>
+</span><span data-line="163">
+</span><span data-line="164">        <span class="n">token_extras</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="165">            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span data-line="166">            <span class="s2">&quot;is_superuser&quot;</span><span class="p">:</span> <span class="n">users_service</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">(</span><span class="n">user</span><span class="p">),</span>
+</span><span data-line="167">            <span class="s2">&quot;is_verified&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">is_verified</span><span class="p">,</span>
+</span><span data-line="168">            <span class="s2">&quot;auth_method&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+</span><span data-line="169">            <span class="s2">&quot;amr&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pwd&quot;</span><span class="p">],</span>
+</span><span data-line="170">        <span class="p">}</span>
+</span><span data-line="171">        <span class="n">response</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
+</span><span data-line="172">            <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+</span><span data-line="173">            <span class="n">token_unique_jwt_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()),</span>
+</span><span data-line="174">            <span class="n">token_extras</span><span class="o">=</span><span class="n">token_extras</span><span class="p">,</span>
+</span><span data-line="175">        <span class="p">)</span>
+</span><span data-line="176">
+</span><span data-line="177">        <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span>
+</span><span data-line="178">            <span class="n">key</span><span class="o">=</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">,</span>
+</span><span data-line="179">            <span class="n">value</span><span class="o">=</span><span class="n">raw_refresh_token</span><span class="p">,</span>
+</span><span data-line="180">            <span class="n">max_age</span><span class="o">=</span><span class="n">REFRESH_TOKEN_MAX_AGE</span><span class="p">,</span>
+</span><span data-line="181">            <span class="n">httponly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="182">            <span class="n">secure</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">COOKIE_SECURE</span><span class="p">,</span>
+</span><span data-line="183">            <span class="n">samesite</span><span class="o">=</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span>
+</span><span data-line="184">            <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access&quot;</span><span class="p">,</span>
+</span><span data-line="185">        <span class="p">)</span>
+</span><span data-line="186">
+</span><span data-line="187">        <span class="k">return</span> <span class="n">response</span>
+</span><span data-line="188">
+</span><span data-line="189">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;AccountLogout&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/logout&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="190">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">(</span>
+</span><span data-line="191">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="192">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="193">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="194">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
+</span><span data-line="195"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Account Logout</span>
+</span><span data-line="196">
+</span><span data-line="197"><span class="sd">        Revokes the current refresh token family and clears cookies.</span>
+</span><span data-line="198">
+</span><span data-line="199"><span class="sd">        Args:</span>
+</span><span data-line="200"><span class="sd">            request: Request</span>
+</span><span data-line="201"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="202">
+</span><span data-line="203"><span class="sd">        Returns:</span>
+</span><span data-line="204"><span class="sd">            Logout Response</span>
+</span><span data-line="205"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="206">        <span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span>
+</span><span data-line="207">
+</span><span data-line="208">        <span class="n">raw_refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">)</span>
+</span><span data-line="209">        <span class="k">if</span> <span class="n">raw_refresh_token</span><span class="p">:</span>
+</span><span data-line="210">            <span class="n">token_hash</span> <span class="o">=</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">hash_token</span><span class="p">(</span><span class="n">raw_refresh_token</span><span class="p">)</span>
+</span><span data-line="211">            <span class="n">refresh_token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="n">token_hash</span><span class="o">=</span><span class="n">token_hash</span><span class="p">)</span>
+</span><span data-line="212">            <span class="k">if</span> <span class="n">refresh_token</span><span class="p">:</span>
+</span><span data-line="213">                <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">revoke_token_family</span><span class="p">(</span><span class="n">refresh_token</span><span class="o">.</span><span class="n">family_id</span><span class="p">)</span>
+</span><span data-line="214">
+</span><span data-line="215">        <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">auth</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="216">        <span class="n">request</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+</span><span data-line="217">        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;OK&quot;</span><span class="p">),</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span><span data-line="218">        <span class="n">response</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="n">auth</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</span><span data-line="219">        <span class="n">response</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access&quot;</span><span class="p">)</span>
+</span><span data-line="220">        <span class="k">return</span> <span class="n">response</span>
+</span><span data-line="221">
+</span><span data-line="222">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;TokenRefresh&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/refresh&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="223">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">refresh_token</span><span class="p">(</span>
+</span><span data-line="224">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="225">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="226">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="227">        <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="228">        <span class="n">settings</span><span class="p">:</span> <span class="n">AppSettings</span><span class="p">,</span>
+</span><span data-line="229">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">TokenRefresh</span><span class="p">]:</span>
+</span><span data-line="230"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh access token using refresh token.</span>
+</span><span data-line="231">
+</span><span data-line="232"><span class="sd">        Implements token rotation - the old refresh token is revoked</span>
+</span><span data-line="233"><span class="sd">        and a new one is issued.</span>
+</span><span data-line="234">
+</span><span data-line="235"><span class="sd">        Args:</span>
+</span><span data-line="236"><span class="sd">            request: Request with refresh token cookie</span>
+</span><span data-line="237"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="238"><span class="sd">            users_service: User Service</span>
+</span><span data-line="239"><span class="sd">            settings: Application settings</span>
+</span><span data-line="240">
+</span><span data-line="241"><span class="sd">        Returns:</span>
+</span><span data-line="242"><span class="sd">            New access token with rotated refresh token</span>
+</span><span data-line="243">
+</span><span data-line="244"><span class="sd">        Raises:</span>
+</span><span data-line="245"><span class="sd">            NotAuthorizedException: If refresh token is invalid or expired</span>
+</span><span data-line="246"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="247">        <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+</span><span data-line="248">
+</span><span data-line="249">        <span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span>
+</span><span data-line="250">
+</span><span data-line="251">        <span class="n">raw_refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">)</span>
+</span><span data-line="252">        <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_refresh_token</span><span class="p">:</span>
+</span><span data-line="253">            <span class="k">raise</span> <span class="n">NotAuthorizedException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;No refresh token provided&quot;</span><span class="p">)</span>
+</span><span data-line="254">
+</span><span data-line="255">        <span class="n">device_info</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[:</span><span class="mi">255</span><span class="p">]</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="256">
+</span><span data-line="257">        <span class="n">new_raw_token</span><span class="p">,</span> <span class="n">new_token_model</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">rotate_refresh_token</span><span class="p">(</span>
+</span><span data-line="258">            <span class="n">raw_token</span><span class="o">=</span><span class="n">raw_refresh_token</span><span class="p">,</span>
+</span><span data-line="259">            <span class="n">device_info</span><span class="o">=</span><span class="n">device_info</span><span class="p">,</span>
+</span><span data-line="260">        <span class="p">)</span>
+</span><span data-line="261">
+</span><span data-line="262">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">users_service</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_token_model</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+</span><span data-line="263">        <span class="n">token_extras</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="264">            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span data-line="265">            <span class="s2">&quot;is_superuser&quot;</span><span class="p">:</span> <span class="n">users_service</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">(</span><span class="n">user</span><span class="p">),</span>
+</span><span data-line="266">            <span class="s2">&quot;is_verified&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">is_verified</span><span class="p">,</span>
+</span><span data-line="267">            <span class="s2">&quot;auth_method&quot;</span><span class="p">:</span> <span class="s2">&quot;refresh&quot;</span><span class="p">,</span>
+</span><span data-line="268">            <span class="s2">&quot;amr&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;refresh&quot;</span><span class="p">],</span>
+</span><span data-line="269">        <span class="p">}</span>
+</span><span data-line="270">        <span class="n">response</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
+</span><span data-line="271">            <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+</span><span data-line="272">            <span class="n">token_unique_jwt_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()),</span>
+</span><span data-line="273">            <span class="n">token_extras</span><span class="o">=</span><span class="n">token_extras</span><span class="p">,</span>
+</span><span data-line="274">        <span class="p">)</span>
+</span><span data-line="275">
+</span><span data-line="276">        <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span>
+</span><span data-line="277">            <span class="n">key</span><span class="o">=</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">,</span>
+</span><span data-line="278">            <span class="n">value</span><span class="o">=</span><span class="n">new_raw_token</span><span class="p">,</span>
+</span><span data-line="279">            <span class="n">max_age</span><span class="o">=</span><span class="n">REFRESH_TOKEN_MAX_AGE</span><span class="p">,</span>
+</span><span data-line="280">            <span class="n">httponly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="281">            <span class="n">secure</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">COOKIE_SECURE</span><span class="p">,</span>
+</span><span data-line="282">            <span class="n">samesite</span><span class="o">=</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span>
+</span><span data-line="283">            <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access&quot;</span><span class="p">,</span>
+</span><span data-line="284">        <span class="p">)</span>
+</span><span data-line="285">
+</span><span data-line="286">        <span class="k">return</span> <span class="n">response</span>
+</span><span data-line="287">
+</span><span data-line="288">    <span class="nd">@get</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;GetActiveSessions&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/sessions&quot;</span><span class="p">)</span>
+</span><span data-line="289">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_sessions</span><span class="p">(</span>
+</span><span data-line="290">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="291">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="292">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="293">        <span class="n">filters</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilterTypes</span><span class="p">],</span> <span class="n">Dependency</span><span class="p">(</span><span class="n">skip_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
+</span><span data-line="294">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OffsetPagination</span><span class="p">[</span><span class="n">ActiveSession</span><span class="p">]:</span>
+</span><span data-line="295"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all active sessions for the current user.</span>
+</span><span data-line="296">
+</span><span data-line="297"><span class="sd">        Args:</span>
+</span><span data-line="298"><span class="sd">            request: Request with authenticated user</span>
+</span><span data-line="299"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="300"><span class="sd">            filters: Filter and pagination parameters</span>
+</span><span data-line="301">
+</span><span data-line="302"><span class="sd">        Returns:</span>
+</span><span data-line="303"><span class="sd">            Paginated active sessions</span>
+</span><span data-line="304"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="305">        <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+</span><span data-line="306">
+</span><span data-line="307">        <span class="n">current_token_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="308">        <span class="n">raw_refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">)</span>
+</span><span data-line="309">        <span class="k">if</span> <span class="n">raw_refresh_token</span><span class="p">:</span>
+</span><span data-line="310">            <span class="n">current_token_hash</span> <span class="o">=</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">hash_token</span><span class="p">(</span><span class="n">raw_refresh_token</span><span class="p">)</span>
+</span><span data-line="311">
+</span><span data-line="312">        <span class="n">active_tokens</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">list_and_count</span><span class="p">(</span>
+</span><span data-line="313">            <span class="o">*</span><span class="n">filters</span><span class="p">,</span>
+</span><span data-line="314">            <span class="n">m</span><span class="o">.</span><span class="n">RefreshToken</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="315">            <span class="n">m</span><span class="o">.</span><span class="n">RefreshToken</span><span class="o">.</span><span class="n">revoked_at</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+</span><span data-line="316">            <span class="n">m</span><span class="o">.</span><span class="n">RefreshToken</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">),</span>
+</span><span data-line="317">        <span class="p">)</span>
+</span><span data-line="318">
+</span><span data-line="319">        <span class="k">return</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span>
+</span><span data-line="320">            <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+</span><span data-line="321">                <span class="p">{</span>
+</span><span data-line="322">                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">token</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="323">                    <span class="s2">&quot;device_info&quot;</span><span class="p">:</span> <span class="n">token</span><span class="o">.</span><span class="n">device_info</span><span class="p">,</span>
+</span><span data-line="324">                    <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="n">token</span><span class="o">.</span><span class="n">created_at</span><span class="p">,</span>
+</span><span data-line="325">                    <span class="s2">&quot;expires_at&quot;</span><span class="p">:</span> <span class="n">token</span><span class="o">.</span><span class="n">expires_at</span><span class="p">,</span>
+</span><span data-line="326">                    <span class="s2">&quot;is_current&quot;</span><span class="p">:</span> <span class="n">token</span><span class="o">.</span><span class="n">token_hash</span> <span class="o">==</span> <span class="n">current_token_hash</span><span class="p">,</span>
+</span><span data-line="327">                <span class="p">}</span>
+</span><span data-line="328">                <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">active_tokens</span>
+</span><span data-line="329">            <span class="p">],</span>
+</span><span data-line="330">            <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span>
+</span><span data-line="331">            <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+</span><span data-line="332">            <span class="n">schema_type</span><span class="o">=</span><span class="n">ActiveSession</span><span class="p">,</span>
+</span><span data-line="333">        <span class="p">)</span>
+</span><span data-line="334">
+</span><span data-line="335">    <span class="nd">@delete</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;RevokeSession&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/sessions/{session_id:uuid}&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span><span data-line="336">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">revoke_session</span><span class="p">(</span>
+</span><span data-line="337">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="338">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="339">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="340">        <span class="n">session_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span>
+</span><span data-line="341">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+</span><span data-line="342"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Revoke a specific session.</span>
+</span><span data-line="343">
+</span><span data-line="344"><span class="sd">        Args:</span>
+</span><span data-line="345"><span class="sd">            request: Request with authenticated user</span>
+</span><span data-line="346"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="347"><span class="sd">            session_id: ID of the session to revoke</span>
+</span><span data-line="348">
+</span><span data-line="349"><span class="sd">        Returns:</span>
+</span><span data-line="350"><span class="sd">            Success message</span>
+</span><span data-line="351">
+</span><span data-line="352"><span class="sd">        Raises:</span>
+</span><span data-line="353"><span class="sd">            ClientException: If session not found or doesn&#39;t belong to user</span>
+</span><span data-line="354"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="355">
+</span><span data-line="356">        <span class="n">token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+</span><span data-line="357">        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">user_id</span> <span class="o">!=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+</span><span data-line="358">            <span class="k">raise</span> <span class="n">ClientException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Session not found&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+</span><span data-line="359">
+</span><span data-line="360">        <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">revoke_token_family</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">family_id</span><span class="p">)</span>
+</span><span data-line="361">
+</span><span data-line="362">        <span class="k">return</span> <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Session revoked successfully&quot;</span><span class="p">)</span>
+</span><span data-line="363">
+</span><span data-line="364">    <span class="nd">@delete</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;RevokeAllSessions&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/sessions&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span><span data-line="365">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">revoke_all_sessions</span><span class="p">(</span>
+</span><span data-line="366">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="367">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="368">        <span class="n">refresh_token_service</span><span class="p">:</span> <span class="n">RefreshTokenService</span><span class="p">,</span>
+</span><span data-line="369">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+</span><span data-line="370"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Revoke all sessions except the current one.</span>
+</span><span data-line="371">
+</span><span data-line="372"><span class="sd">        Args:</span>
+</span><span data-line="373"><span class="sd">            request: Request with authenticated user</span>
+</span><span data-line="374"><span class="sd">            refresh_token_service: Refresh Token Service</span>
+</span><span data-line="375">
+</span><span data-line="376"><span class="sd">        Returns:</span>
+</span><span data-line="377"><span class="sd">            Success message</span>
+</span><span data-line="378"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="379">
+</span><span data-line="380">        <span class="n">current_token_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="381">        <span class="n">raw_refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REFRESH_COOKIE_NAME</span><span class="p">)</span>
+</span><span data-line="382">        <span class="k">if</span> <span class="n">raw_refresh_token</span><span class="p">:</span>
+</span><span data-line="383">            <span class="n">current_token_hash</span> <span class="o">=</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">hash_token</span><span class="p">(</span><span class="n">raw_refresh_token</span><span class="p">)</span>
+</span><span data-line="384">
+</span><span data-line="385">        <span class="n">active_tokens</span> <span class="o">=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">get_active_sessions</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span data-line="386">
+</span><span data-line="387">        <span class="n">revoked_count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="388">        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">active_tokens</span><span class="p">:</span>
+</span><span data-line="389">            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">token_hash</span> <span class="o">!=</span> <span class="n">current_token_hash</span><span class="p">:</span>
+</span><span data-line="390">                <span class="n">revoked_count</span> <span class="o">+=</span> <span class="k">await</span> <span class="n">refresh_token_service</span><span class="o">.</span><span class="n">revoke_token_family</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">family_id</span><span class="p">)</span>
+</span><span data-line="391">
+</span><span data-line="392">        <span class="k">return</span> <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Revoked </span><span class="si">{</span><span class="n">revoked_count</span><span class="si">}</span><span class="s2"> session(s)&quot;</span><span class="p">)</span>
+</span><span data-line="393">
+</span><span data-line="394">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;AccountRegister&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/signup&quot;</span><span class="p">)</span>
+</span><span data-line="395">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">signup</span><span class="p">(</span>
+</span><span data-line="396">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="397">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="398">        <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="399">        <span class="n">roles_service</span><span class="p">:</span> <span class="n">RoleService</span><span class="p">,</span>
+</span><span data-line="400">        <span class="n">verification_service</span><span class="p">:</span> <span class="n">EmailVerificationTokenService</span><span class="p">,</span>
+</span><span data-line="401">        <span class="n">app_email_service</span><span class="p">:</span> <span class="n">AppEmailService</span><span class="p">,</span>
+</span><span data-line="402">        <span class="n">data</span><span class="p">:</span> <span class="n">AccountRegister</span><span class="p">,</span>
+</span><span data-line="403">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+</span><span data-line="404"><span class="w">        </span><span class="sd">&quot;&quot;&quot;User Signup.</span>
+</span><span data-line="405">
+</span><span data-line="406"><span class="sd">        Args:</span>
+</span><span data-line="407"><span class="sd">            request: Request</span>
+</span><span data-line="408"><span class="sd">            users_service: User Service</span>
+</span><span data-line="409"><span class="sd">            roles_service: Role Service</span>
+</span><span data-line="410"><span class="sd">            verification_service: Email Verification Service</span>
+</span><span data-line="411"><span class="sd">            app_email_service: Email service for sending verification emails</span>
+</span><span data-line="412"><span class="sd">            data: Account Register Data</span>
+</span><span data-line="413">
+</span><span data-line="414"><span class="sd">        Returns:</span>
+</span><span data-line="415"><span class="sd">            User</span>
+</span><span data-line="416"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="417">        <span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</span><span data-line="418">
+</span><span data-line="419">        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;is_verified&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="420">
+</span><span data-line="421">        <span class="n">role_obj</span> <span class="o">=</span> <span class="k">await</span> <span class="n">roles_service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="n">slugify</span><span class="p">(</span><span class="n">users_service</span><span class="o">.</span><span class="n">default_role</span><span class="p">))</span>
+</span><span data-line="422">        <span class="k">if</span> <span class="n">role_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="423">            <span class="n">user_data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;role_id&quot;</span><span class="p">:</span> <span class="n">role_obj</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+</span><span data-line="424">
+</span><span data-line="425">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="426">            <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">users_service</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+</span><span data-line="427">        <span class="k">except</span> <span class="n">DuplicateKeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+</span><span data-line="428">            <span class="k">raise</span> <span class="n">ClientException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;User with this email already exists&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+</span><span data-line="429">        <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">event_id</span><span class="o">=</span><span class="s2">&quot;user_created&quot;</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span data-line="430">
+</span><span data-line="431">        <span class="n">_</span><span class="p">,</span> <span class="n">verification_token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">verification_service</span><span class="o">.</span><span class="n">create_verification_token</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+</span><span data-line="432">        <span class="k">await</span> <span class="n">app_email_service</span><span class="o">.</span><span class="n">send_verification_email</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UserProtocol&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span> <span class="n">verification_token</span><span class="p">)</span>
+</span><span data-line="433">
+</span><span data-line="434">        <span class="k">return</span> <span class="n">users_service</span><span class="o">.</span><span class="n">to_schema</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">schema_type</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+</span><span data-line="435">
+</span><span data-line="436">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;ForgotPassword&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/forgot-password&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="437">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">forgot_password</span><span class="p">(</span>
+</span><span data-line="438">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="439">        <span class="n">data</span><span class="p">:</span> <span class="n">ForgotPasswordRequest</span><span class="p">,</span>
+</span><span data-line="440">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span data-line="441">        <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="442">        <span class="n">password_reset_service</span><span class="p">:</span> <span class="n">PasswordResetService</span><span class="p">,</span>
+</span><span data-line="443">        <span class="n">app_email_service</span><span class="p">:</span> <span class="n">AppEmailService</span><span class="p">,</span>
+</span><span data-line="444">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasswordResetSent</span><span class="p">:</span>
+</span><span data-line="445"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initiate password reset flow.</span>
+</span><span data-line="446">
+</span><span data-line="447"><span class="sd">        Args:</span>
+</span><span data-line="448"><span class="sd">            data: Forgot password request data</span>
+</span><span data-line="449"><span class="sd">            request: HTTP request object</span>
+</span><span data-line="450"><span class="sd">            users_service: User service</span>
+</span><span data-line="451"><span class="sd">            password_reset_service: Password reset service</span>
+</span><span data-line="452"><span class="sd">            app_email_service: Email service for sending reset emails</span>
+</span><span data-line="453">
+</span><span data-line="454"><span class="sd">        Returns:</span>
+</span><span data-line="455"><span class="sd">            Response indicating reset email status</span>
+</span><span data-line="456"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="457">
+</span><span data-line="458">        <span class="n">ip_address</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span> <span class="k">else</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span data-line="459">        <span class="n">user_agent</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+</span><span data-line="460">
+</span><span data-line="461">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">users_service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+</span><span data-line="462">
+</span><span data-line="463">        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+</span><span data-line="464">            <span class="k">return</span> <span class="n">PasswordResetSent</span><span class="p">(</span>
+</span><span data-line="465">                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;If the email exists, a password reset link has been sent&quot;</span><span class="p">,</span> <span class="n">expires_in_minutes</span><span class="o">=</span><span class="mi">60</span>
+</span><span data-line="466">            <span class="p">)</span>
+</span><span data-line="467">
+</span><span data-line="468">        <span class="k">if</span> <span class="k">await</span> <span class="n">password_reset_service</span><span class="o">.</span><span class="n">check_rate_limit</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+</span><span data-line="469">            <span class="k">return</span> <span class="n">PasswordResetSent</span><span class="p">(</span>
+</span><span data-line="470">                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Too many password reset requests. Please try again later&quot;</span><span class="p">,</span> <span class="n">expires_in_minutes</span><span class="o">=</span><span class="mi">60</span>
+</span><span data-line="471">            <span class="p">)</span>
+</span><span data-line="472">
+</span><span data-line="473">        <span class="n">_</span><span class="p">,</span> <span class="n">reset_token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">password_reset_service</span><span class="o">.</span><span class="n">create_reset_token</span><span class="p">(</span>
+</span><span data-line="474">            <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ip_address</span><span class="o">=</span><span class="n">ip_address</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span>
+</span><span data-line="475">        <span class="p">)</span>
+</span><span data-line="476">
+</span><span data-line="477">        <span class="k">await</span> <span class="n">app_email_service</span><span class="o">.</span><span class="n">send_password_reset_email</span><span class="p">(</span>
+</span><span data-line="478">            <span class="n">user</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UserProtocol&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span>
+</span><span data-line="479">            <span class="n">reset_token</span><span class="o">=</span><span class="n">reset_token</span><span class="p">,</span>
+</span><span data-line="480">            <span class="n">expires_in_minutes</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+</span><span data-line="481">        <span class="p">)</span>
+</span><span data-line="482">
+</span><span data-line="483">        <span class="k">return</span> <span class="n">PasswordResetSent</span><span class="p">(</span>
+</span><span data-line="484">            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;If the email exists, a password reset link has been sent&quot;</span><span class="p">,</span> <span class="n">expires_in_minutes</span><span class="o">=</span><span class="mi">60</span>
+</span><span data-line="485">        <span class="p">)</span>
+</span><span data-line="486">
+</span><span data-line="487">    <span class="nd">@get</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;ValidateResetToken&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/reset-password&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="488">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validate_reset_token</span><span class="p">(</span>
+</span><span data-line="489">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="490">        <span class="n">token</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)],</span>
+</span><span data-line="491">        <span class="n">password_reset_service</span><span class="p">:</span> <span class="n">PasswordResetService</span><span class="p">,</span>
+</span><span data-line="492">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResetTokenValidation</span><span class="p">:</span>
+</span><span data-line="493"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate a password reset token.</span>
+</span><span data-line="494">
+</span><span data-line="495"><span class="sd">        Args:</span>
+</span><span data-line="496"><span class="sd">            token: Reset token from URL parameter</span>
+</span><span data-line="497"><span class="sd">            password_reset_service: Password reset service</span>
+</span><span data-line="498">
+</span><span data-line="499"><span class="sd">        Returns:</span>
+</span><span data-line="500"><span class="sd">            Token validation response</span>
+</span><span data-line="501"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="502">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="503">            <span class="n">reset_token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">password_reset_service</span><span class="o">.</span><span class="n">validate_reset_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+</span><span data-line="504">            <span class="k">if</span> <span class="n">reset_token</span><span class="p">:</span>
+</span><span data-line="505">                <span class="k">return</span> <span class="n">ResetTokenValidation</span><span class="p">(</span>
+</span><span data-line="506">                    <span class="n">valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">reset_token</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">expires_at</span><span class="o">=</span><span class="n">reset_token</span><span class="o">.</span><span class="n">expires_at</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</span><span data-line="507">                <span class="p">)</span>
+</span><span data-line="508">        <span class="k">except</span> <span class="n">ClientException</span><span class="p">:</span>
+</span><span data-line="509">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Failed to validate reset token&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="510">
+</span><span data-line="511">        <span class="k">return</span> <span class="n">ResetTokenValidation</span><span class="p">(</span><span class="n">valid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="512">
+</span><span data-line="513">    <span class="nd">@post</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;ResetPassword&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/access/reset-password&quot;</span><span class="p">,</span> <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">security</span><span class="o">=</span><span class="p">[])</span>
+</span><span data-line="514">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">reset_password_with_token</span><span class="p">(</span>
+</span><span data-line="515">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="516">        <span class="n">data</span><span class="p">:</span> <span class="n">ResetPasswordRequest</span><span class="p">,</span>
+</span><span data-line="517">        <span class="n">users_service</span><span class="p">:</span> <span class="n">UserService</span><span class="p">,</span>
+</span><span data-line="518">        <span class="n">password_reset_service</span><span class="p">:</span> <span class="n">PasswordResetService</span><span class="p">,</span>
+</span><span data-line="519">        <span class="n">app_email_service</span><span class="p">:</span> <span class="n">AppEmailService</span><span class="p">,</span>
+</span><span data-line="520">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasswordResetComplete</span><span class="p">:</span>
+</span><span data-line="521"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Complete password reset with token.</span>
+</span><span data-line="522">
+</span><span data-line="523"><span class="sd">        Args:</span>
+</span><span data-line="524"><span class="sd">            data: Password reset request data</span>
+</span><span data-line="525"><span class="sd">            users_service: User service</span>
+</span><span data-line="526"><span class="sd">            password_reset_service: Password reset service</span>
+</span><span data-line="527"><span class="sd">            app_email_service: Email service for sending confirmation emails</span>
+</span><span data-line="528">
+</span><span data-line="529"><span class="sd">        Returns:</span>
+</span><span data-line="530"><span class="sd">            Password reset confirmation</span>
+</span><span data-line="531">
+</span><span data-line="532"><span class="sd">        Raises:</span>
+</span><span data-line="533"><span class="sd">            ClientException: If token is invalid or passwords don&#39;t match</span>
+</span><span data-line="534"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="535">
+</span><span data-line="536">        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">password</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">password_confirm</span><span class="p">:</span>
+</span><span data-line="537">            <span class="k">raise</span> <span class="n">ClientException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Passwords do not match&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</span><span data-line="538">
+</span><span data-line="539">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="540">            <span class="n">validate_password_strength</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+</span><span data-line="541">        <span class="k">except</span> <span class="n">PasswordValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="542">            <span class="k">raise</span> <span class="n">ClientException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+</span><span data-line="543">
+</span><span data-line="544">        <span class="n">reset_token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">password_reset_service</span><span class="o">.</span><span class="n">use_reset_token</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+</span><span data-line="545">
+</span><span data-line="546">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">users_service</span><span class="o">.</span><span class="n">reset_password_with_token</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">reset_token</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">new_password</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+</span><span data-line="547">
+</span><span data-line="548">        <span class="k">await</span> <span class="n">app_email_service</span><span class="o">.</span><span class="n">send_password_reset_confirmation_email</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;UserProtocol&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">))</span>
+</span><span data-line="549">
+</span><span data-line="550">        <span class="k">return</span> <span class="n">PasswordResetComplete</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Password has been successfully reset&quot;</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../../../_static/shibuya.js?v=cac61aee"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script></body>
+</html>

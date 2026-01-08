@@ -25,7 +25,7 @@ Upgrade Project Dependencies
 This command will upgrade all components of the application at the same time. It automatically executes:
 
 - ``uv lock --upgrade``
-- ``npm update``
+- ``bun update``
 - ``pre-commit autoupdate``
 
 .. code-block:: shell
@@ -44,20 +44,20 @@ This command will automatically execute the pre-commit process for the project.
 Generate New Migrations
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-This command is a shorthand for executing ``app database make-migrations``.
+Create a new migration with the Litestar CLI:
 
 .. code-block:: shell
 
-    make migrations
+    uv run app database make-migrations
 
 Upgrade a Database to the Latest Revision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This command is a shorthand for executing ``app database upgrade``.
+Upgrade the database to the latest revision:
 
 .. code-block:: shell
 
-    make migrate
+    uv run app database upgrade
 
 Execute Full Test Suite
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,6 +67,15 @@ This command executes all tests for the project.
 .. code-block:: shell
 
     make test
+
+Generate TypeScript Types
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After backend schema changes, regenerate the TypeScript client:
+
+.. code-block:: shell
+
+    make types
 
 Full Makefile
 -------------

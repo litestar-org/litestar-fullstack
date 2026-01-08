@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>controllers - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="services" href="services.html" /><link rel="prev" title="tags" href="index.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="controllers"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -127,23 +127,11 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagDTO"><code class="docutils literal notranslate"><span class="pre">TagDTO</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagDTO.config"><code class="docutils literal notranslate">config</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagCreateDTO"><code class="docutils literal notranslate"><span class="pre">TagCreateDTO</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagCreateDTO.config"><code class="docutils literal notranslate">config</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagUpdateDTO"><code class="docutils literal notranslate"><span class="pre">TagUpdateDTO</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagUpdateDTO.config"><code class="docutils literal notranslate">config</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController"><code class="docutils literal notranslate"><span class="pre">TagController</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.tags.controllers.TagController.path"><code class="docutils literal notranslate">path</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.guards"><code class="docutils literal notranslate">guards</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagController.return_dto"><code class="docutils literal notranslate">return_dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
@@ -156,12 +144,12 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.opt"><code class="docutils literal notranslate">opt</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.owner"><code class="docutils literal notranslate">owner</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.parameters"><code class="docutils literal notranslate">parameters</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.controllers.TagController.path"><code class="docutils literal notranslate">path</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.request_class"><code class="docutils literal notranslate">request_class</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.request_max_body_size"><code class="docutils literal notranslate">request_max_body_size</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.response_class"><code class="docutils literal notranslate">response_class</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.response_cookies"><code class="docutils literal notranslate">response_cookies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.response_headers"><code class="docutils literal notranslate">response_headers</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.controllers.TagController.return_dto"><code class="docutils literal notranslate">return_dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.security"><code class="docutils literal notranslate">security</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.signature_namespace"><code class="docutils literal notranslate">signature_namespace</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.tags.controllers.TagController.signature_types"><code class="docutils literal notranslate">signature_types</span></code></a></li>
@@ -174,7 +162,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -209,72 +198,17 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="controllers">
 <h1>controllers<a class="headerlink" href="#controllers" title="Link to this heading">¶</a></h1>
 <p>Controllers for the tags domain.</p>
-<dl class="py class" id="module-app.domain.tags.controllers">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagDTO">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagDTO" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
-<p>Create an AbstractDTOFactory type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>asgi_connection</strong> – A <a class="reference external" href="https://docs.litestar.dev/latest/reference/connection.html#litestar.connection.ASGIConnection" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ASGIConnection</span></code></a> instance.</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'teams',</span> <span class="pre">'created_at',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagDTO.config" title="Link to this definition">¶</a></dt>
-<dd><p>Config objects to define properties of the DTO.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagCreateDTO">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagCreateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagCreateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
-<p>Create an AbstractDTOFactory type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>asgi_connection</strong> – A <a class="reference external" href="https://docs.litestar.dev/latest/reference/connection.html#litestar.connection.ASGIConnection" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ASGIConnection</span></code></a> instance.</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagCreateDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'teams',</span> <span class="pre">'id',</span> <span class="pre">'created_at',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=False,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagCreateDTO.config" title="Link to this definition">¶</a></dt>
-<dd><p>Config objects to define properties of the DTO.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagUpdateDTO">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagUpdateDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asgi_connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ASGIConnection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagUpdateDTO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag'&gt;]</span></code></p>
-<p>Create an AbstractDTOFactory type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>asgi_connection</strong> – A <a class="reference external" href="https://docs.litestar.dev/latest/reference/connection.html#litestar.connection.ASGIConnection" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ASGIConnection</span></code></a> instance.</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagUpdateDTO.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">SQLAlchemyDTOConfig</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">SQLAlchemyDTOConfig(exclude={'teams',</span> <span class="pre">'id',</span> <span class="pre">'created_at',</span> <span class="pre">'updated_at'},</span> <span class="pre">include=set(),</span> <span class="pre">rename_fields={},</span> <span class="pre">rename_strategy='camel',</span> <span class="pre">max_nested_depth=2,</span> <span class="pre">partial=True,</span> <span class="pre">underscore_fields_private=True,</span> <span class="pre">experimental_codegen_backend=None,</span> <span class="pre">forbid_unknown_fields=False,</span> <span class="pre">include_implicit_fields=True)</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagUpdateDTO.config" title="Link to this definition">¶</a></dt>
-<dd><p>Config objects to define properties of the DTO.</p>
-</dd></dl>
-
-</dd></dl>
-
+<p id="module-app.domain.tags.controllers">Tag domain controllers.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.controllers.</span></span><span class="sig-name descname"><span class="pre">TagController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/controllers.html#TagController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.controllers.TagController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
 <p>Handles the interactions within the Tag objects.</p>
-<p>We use a DTO in this controller purely as an example of how to integrate it with SQLAlchemy.</p>
-<p>You can use either pattern you see in this repository as an example.</p>
 <p>Initialize a controller.</p>
 <p>Should only be called by routers as part of controller registration.</p>
 <dl class="field-list simple">
@@ -282,6 +216,13 @@ data-aria-dark="Switch to auto color mode">
 <dd class="field-odd"><p><strong>owner</strong> – An instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Router</span></code></p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.path" title="Link to this definition">¶</a></dt>
+<dd><p>A path fragment for the controller.</p>
+<p>All route handlers under the controller will have the fragment appended to them. If not set it defaults to <code class="docutils literal notranslate"><span class="pre">/</span></code>.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.guards">
 <span class="sig-name descname"><span class="pre">guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Guard</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.guards" title="Link to this definition">¶</a></dt>
@@ -298,13 +239,6 @@ data-aria-dark="Switch to auto color mode">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.tags">
 <span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.tags" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.return_dto">
-<span class="sig-name descname"><span class="pre">return_dto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">AbstractDTO</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EmptyType</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.return_dto" title="Link to this definition">¶</a></dt>
-<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code> to use for serializing outbound response
-data.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -389,13 +323,6 @@ have access to <code class="xref py py-class docutils literal notranslate"><span
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.path">
-<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.path" title="Link to this definition">¶</a></dt>
-<dd><p>A path fragment for the controller.</p>
-<p>All route handlers under the controller will have the fragment appended to them. If not set it defaults to <code class="docutils literal notranslate"><span class="pre">/</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.request_class">
 <span class="sig-name descname"><span class="pre">request_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Request</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.request_class" title="Link to this definition">¶</a></dt>
 <dd><p>A custom subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> to be used as the default request for all route
@@ -429,6 +356,13 @@ handlers under the controller.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.return_dto">
+<span class="sig-name descname"><span class="pre">return_dto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">AbstractDTO</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EmptyType</span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.return_dto" title="Link to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDTO</span></code> to use for serializing outbound response
+data.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.security">
 <span class="sig-name descname"><span class="pre">security</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">SecurityRequirement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.security" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of dictionaries that to the schema of all route handlers under the controller.</p>
@@ -437,13 +371,13 @@ handlers under the controller.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_namespace">
 <span class="sig-name descname"><span class="pre">signature_namespace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_namespace" title="Link to this definition">¶</a></dt>
-<dd><p>A mapping of names to types for use in forward reference resolution during signature modeling.</p>
+<dd><p>A mapping of names to types for use in forward reference resolution during signature modelling.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.controllers.TagController.signature_types">
 <span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.tags.controllers.TagController.signature_types" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<dd><p>A sequence of types for use in forward reference resolution during signature modelling.</p>
 <p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
 </dd></dl>
 
@@ -510,11 +444,11 @@ handlers under the controller.</p>
     </div>
   </div>
 </footer>
-      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/documentation_options.js?v=e259d695"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=e2230717"></script></body>
+      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
 </html>

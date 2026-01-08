@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cli - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="app" href="asgi.html" /><link rel="prev" title="API Reference" href="index.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="cli"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -147,12 +147,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li><a class="reference internal" href="#database-cli">Database CLI</a><ul>
 <li><a class="reference internal" href="#app-database">app database</a><ul>
+<li><a class="reference internal" href="#app-database-branches">branches</a></li>
+<li><a class="reference internal" href="#app-database-check">check</a></li>
 <li><a class="reference internal" href="#app-database-downgrade">downgrade</a></li>
 <li><a class="reference internal" href="#app-database-drop-all">drop-all</a></li>
 <li><a class="reference internal" href="#app-database-dump-data">dump-data</a></li>
+<li><a class="reference internal" href="#app-database-edit">edit</a></li>
+<li><a class="reference internal" href="#app-database-ensure-version">ensure-version</a></li>
+<li><a class="reference internal" href="#app-database-heads">heads</a></li>
+<li><a class="reference internal" href="#app-database-history">history</a></li>
 <li><a class="reference internal" href="#app-database-init">init</a></li>
+<li><a class="reference internal" href="#app-database-list-templates">list-templates</a></li>
 <li><a class="reference internal" href="#app-database-make-migrations">make-migrations</a></li>
+<li><a class="reference internal" href="#app-database-merge">merge</a></li>
+<li><a class="reference internal" href="#app-database-show">show</a></li>
 <li><a class="reference internal" href="#app-database-show-current-revision">show-current-revision</a></li>
+<li><a class="reference internal" href="#app-database-stamp">stamp</a></li>
 <li><a class="reference internal" href="#app-database-upgrade">upgrade</a></li>
 </ul>
 </li>
@@ -173,7 +183,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -200,8 +211,8 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="cli">
 <h1>cli<a class="headerlink" href="#cli" title="Link to this heading">¶</a></h1>
 <p>Command line interface for the application.</p>
@@ -210,6 +221,15 @@ data-aria-dark="Switch to auto color mode">
 <section id="app">
 <h3>app<a class="headerlink" href="#app" title="Link to this heading">¶</a></h3>
 <p>Litestar CLI.</p>
+<p>The application to will be automatically discovered if it’s in one of these
+canonical paths: ‘app.py’, ‘asgi.py’, ‘application.py’ or ‘app/__init__.py’.
+When auto-discovering application factories, functions with the name ‘create_app’
+are considered, or functions that are annotated as returning a ‘Litestar’
+instance.</p>
+<p>Alternatively, the application can be specified explicitly via the ‘–app’ option
+(‘litestar –app=&lt;module name&gt;.&lt;submodule&gt;:&lt;app instance or factory&gt;’) or the
+‘LITESTAR_APP’ environment variable of the same name.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
@@ -229,6 +249,7 @@ data-aria-dark="Switch to auto color mode">
 <section id="app-info">
 <h4>info<a class="headerlink" href="#app-info" title="Link to this heading">¶</a></h4>
 <p>Show information about the detected Litestar app.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -236,6 +257,7 @@ data-aria-dark="Switch to auto color mode">
 <section id="app-routes">
 <h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">¶</a></h4>
 <p>Display information about the application’s routes.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -255,12 +277,11 @@ data-aria-dark="Switch to auto color mode">
 </section>
 <section id="app-run">
 <h4>run<a class="headerlink" href="#app-run" title="Link to this heading">¶</a></h4>
-<p>Run a Litestar app; requires <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code>.</p>
-<p>The app can be either passed as a module path in the form of <code class="docutils literal notranslate"><span class="pre">&lt;module</span> <span class="pre">name&gt;.&lt;submodule&gt;:&lt;app</span> <span class="pre">instance</span> <span class="pre">or</span> <span class="pre">factory&gt;</span></code>
-set as an environment variable <code class="docutils literal notranslate"><span class="pre">LITESTAR_APP</span></code> with the same format or automatically discovered from one of these
-canonical paths: <code class="docutils literal notranslate"><span class="pre">app.py</span></code>, <code class="docutils literal notranslate"><span class="pre">asgi.py</span></code>, <code class="docutils literal notranslate"><span class="pre">application.py</span></code> or <code class="docutils literal notranslate"><span class="pre">app/__init__.py</span></code>.
-When auto-discovering application factories, functions with the name <code class="docutils literal notranslate"><span class="pre">create_app</span></code> are considered,
-or functions that are annotated as returning a <code class="docutils literal notranslate"><span class="pre">Litestar</span></code> instance.</p>
+<p>Run a Litestar app. (requires ‘uvicorn’ to be installed).</p>
+<p>The application will be automatically discovered, or can be set as an option to the
+main ‘litestar’ command. Run ‘litestar –help’ for more information about app
+autodiscovery</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -481,12 +502,14 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-schema">
 <h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">¶</a></h4>
 <p>Manage server-side OpenAPI schemas.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-schema-openapi">
 <h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">¶</a></h5>
 <p>Generate an OpenAPI Schema.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>openapi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -506,6 +529,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-schema-typescript">
 <h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">¶</a></h5>
 <p>Generate TypeScript specs from the OpenAPI schema.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>typescript<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -532,12 +556,14 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-sessions">
 <h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">¶</a></h4>
 <p>Manage server-side sessions.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-sessions-clear">
 <h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">¶</a></h5>
 <p>Delete all sessions.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>clear<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -545,6 +571,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-sessions-delete">
 <h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">¶</a></h5>
 <p>Delete a specific session.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SESSION_ID
 </span></pre></div>
 </div>
@@ -560,6 +587,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-version">
 <h4>version<a class="headerlink" href="#app-version" title="Link to this heading">¶</a></h4>
 <p>Show the currently installed Litestar version.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -577,12 +605,50 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-database">
 <h4>app database<a class="headerlink" href="#app-database" title="Link to this heading">¶</a></h4>
 <p>Manage SQLAlchemy database components.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
+<section id="app-database-branches">
+<h5>branches<a class="headerlink" href="#app-database-branches" title="Link to this heading">¶</a></h5>
+<p>Show current branch points in the migration history</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>branches<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-branches-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-branches-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-branches-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-branches-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose output.</p>
+</dd></dl>
+
+</section>
+<section id="app-database-check">
+<h5>check<a class="headerlink" href="#app-database-check" title="Link to this heading">¶</a></h5>
+<p>Check if the target database is up to date</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>check<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-check-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-check-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+</section>
 <section id="app-database-downgrade">
 <h5>downgrade<a class="headerlink" href="#app-database-downgrade" title="Link to this heading">¶</a></h5>
 <p>Downgrade database to a specific revision.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>downgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -627,6 +693,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-database-drop-all">
 <h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">¶</a></h5>
 <p>Drop all tables from the database.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>drop-all<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -652,6 +719,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-database-dump-data">
 <h5>dump-data<a class="headerlink" href="#app-database-dump-data" title="Link to this heading">¶</a></h5>
 <p>Dump specified tables from the database to JSON files.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>dump-data<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -675,9 +743,113 @@ or functions that are annotated as returning a <code class="docutils literal not
 </dd></dl>
 
 </section>
+<section id="app-database-edit">
+<h5>edit<a class="headerlink" href="#app-database-edit" title="Link to this heading">¶</a></h5>
+<p>Edit a revision file using $EDITOR</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>edit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-edit-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-edit-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-edit-arg-REVISION">
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-edit-arg-REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="app-database-ensure-version">
+<h5>ensure-version<a class="headerlink" href="#app-database-ensure-version" title="Link to this heading">¶</a></h5>
+<p>Create the alembic version table if it doesn’t exist</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>ensure-version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-sql">
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-sql" title="Link to this definition">¶</a></dt>
+<dd><p>Generate SQL output instead of executing</p>
+</dd></dl>
+
+</section>
+<section id="app-database-heads">
+<h5>heads<a class="headerlink" href="#app-database-heads" title="Link to this heading">¶</a></h5>
+<p>Show current available heads in the script directory</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>heads<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-heads-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-heads-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-heads-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-heads-resolve-dependencies">
+<span class="sig-name descname"><span class="pre">--resolve-dependencies</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-resolve-dependencies" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve dependencies between heads</p>
+</dd></dl>
+
+</section>
+<section id="app-database-history">
+<h5>history<a class="headerlink" href="#app-database-history" title="Link to this heading">¶</a></h5>
+<p>List changeset scripts in chronological order</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span><span class="nb">history</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-rev-range">
+<span class="sig-name descname"><span class="pre">--rev-range</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_range&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-rev-range" title="Link to this definition">¶</a></dt>
+<dd><p>Revision range (e.g., ‘base:head’, ‘abc:def’)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-indicate-current">
+<span class="sig-name descname"><span class="pre">--indicate-current</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-indicate-current" title="Link to this definition">¶</a></dt>
+<dd><p>Indicate the current revision</p>
+</dd></dl>
+
+</section>
 <section id="app-database-init">
 <h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">¶</a></h5>
 <p>Initialize migrations for the project.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>DIRECTORY<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -719,9 +891,25 @@ or functions that are annotated as returning a <code class="docutils literal not
 </dd></dl>
 
 </section>
+<section id="app-database-list-templates">
+<h5>list-templates<a class="headerlink" href="#app-database-list-templates" title="Link to this heading">¶</a></h5>
+<p>List available Alembic migration templates</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>list-templates<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-list-templates-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-list-templates-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+</section>
 <section id="app-database-make-migrations">
 <h5>make-migrations<a class="headerlink" href="#app-database-make-migrations" title="Link to this heading">¶</a></h5>
 <p>Create a new migration revision.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>make-migrations<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -792,9 +980,83 @@ or functions that are annotated as returning a <code class="docutils literal not
 </dd></dl>
 
 </section>
+<section id="app-database-merge">
+<h5>merge<a class="headerlink" href="#app-database-merge" title="Link to this heading">¶</a></h5>
+<p>Merge two revisions together, creating a new migration file</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>merge<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISIONS
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-m">
+<span id="cmdoption-app-database-merge-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-m" title="Link to this definition">¶</a></dt>
+<dd><p>Merge message</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-branch-label">
+<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-branch-label" title="Link to this definition">¶</a></dt>
+<dd><p>Branch label for merge revision</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-rev-id">
+<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-rev-id" title="Link to this definition">¶</a></dt>
+<dd><p>Specify custom revision ID</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-no-prompt">
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-no-prompt" title="Link to this definition">¶</a></dt>
+<dd><p>Do not prompt for confirmation before executing the command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-arg-REVISIONS">
+<span class="sig-name descname"><span class="pre">REVISIONS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-arg-REVISIONS" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="app-database-show">
+<h5>show<a class="headerlink" href="#app-database-show" title="Link to this heading">¶</a></h5>
+<p>Show the revision denoted by the given symbol</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-arg-REVISION">
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-arg-REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
 <section id="app-database-show-current-revision">
 <h5>show-current-revision<a class="headerlink" href="#app-database-show-current-revision" title="Link to this heading">¶</a></h5>
 <p>Shows the current revision for the database.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show-current-revision<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -812,9 +1074,50 @@ or functions that are annotated as returning a <code class="docutils literal not
 </dd></dl>
 
 </section>
+<section id="app-database-stamp">
+<h5>stamp<a class="headerlink" href="#app-database-stamp" title="Link to this heading">¶</a></h5>
+<p>Stamp the revision table with the given revision; don’t run any migrations</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>stamp<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-bind-key" title="Link to this definition">¶</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-sql">
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-sql" title="Link to this definition">¶</a></dt>
+<dd><p>Generate SQL output for offline migrations</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-tag">
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-tag" title="Link to this definition">¶</a></dt>
+<dd><p>Arbitrary ‘tag’ that can be intercepted by custom env.py scripts</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-purge">
+<span class="sig-name descname"><span class="pre">--purge</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-purge" title="Link to this definition">¶</a></dt>
+<dd><p>Delete all entries in version table before stamping</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-arg-REVISION">
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-arg-REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
 <section id="app-database-upgrade">
 <h5>upgrade<a class="headerlink" href="#app-database-upgrade" title="Link to this heading">¶</a></h5>
 <p>Upgrade database to a specific revision.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>upgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -863,12 +1166,14 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-user">
 <h4>app user<a class="headerlink" href="#app-user" title="Link to this heading">¶</a></h4>
 <p>Manage application users and roles.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-user-create-roles">
 <h5>create-roles<a class="headerlink" href="#app-user-create-roles" title="Link to this heading">¶</a></h5>
 <p>Create pre-configured application roles and assign to users.</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-roles<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -876,6 +1181,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-user-create-user">
 <h5>create-user<a class="headerlink" href="#app-user-create-user" title="Link to this heading">¶</a></h5>
 <p>Create a user</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -908,6 +1214,7 @@ or functions that are annotated as returning a <code class="docutils literal not
 <section id="app-user-promote-to-superuser">
 <h5>promote-to-superuser<a class="headerlink" href="#app-user-promote-to-superuser" title="Link to this heading">¶</a></h5>
 <p>Promotes a user to application superuser</p>
+<p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>promote-to-superuser<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
@@ -964,11 +1271,11 @@ or functions that are annotated as returning a <code class="docutils literal not
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=e2230717"></script></body>
+      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
 </html>

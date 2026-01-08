@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>app.domain.accounts.guards - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="app.domain.accounts.guards"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -129,7 +129,8 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -156,133 +157,211 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <h1>Source code for app.domain.accounts.guards</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Account domain guards and authentication.&quot;&quot;&quot;</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="4">
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionDeniedException</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordBearerAuth</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 </span><span data-line="7">
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">app.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">app.config.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">alchemy</span>
-</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">app.config.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_settings</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionDeniedException</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordBearerAuth</span>
+</span><span data-line="10">
 </span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">app.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span> <span class="k">as</span> <span class="n">m</span>
-</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts</span><span class="w"> </span><span class="kn">import</span> <span class="n">urls</span>
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.deps</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_users_service</span>
-</span><span data-line="14">
-</span><span data-line="15"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="16">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGIConnection</span>
-</span><span data-line="17">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.handlers.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseRouteHandler</span>
-</span><span data-line="18">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Token</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts</span><span class="w"> </span><span class="kn">import</span> <span class="n">deps</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.deps</span><span class="w"> </span><span class="kn">import</span> <span class="n">provide_services</span>
+</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_settings</span>
+</span><span data-line="16">
+</span><span data-line="17"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span data-line="18">    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 </span><span data-line="19">
-</span><span data-line="20">
-</span><span data-line="21"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;auth&quot;</span><span class="p">,</span> <span class="s2">&quot;current_user_from_token&quot;</span><span class="p">,</span> <span class="s2">&quot;requires_active_user&quot;</span><span class="p">,</span> <span class="s2">&quot;requires_superuser&quot;</span><span class="p">,</span> <span class="s2">&quot;requires_verified_user&quot;</span><span class="p">)</span>
-</span><span data-line="22">
+</span><span data-line="20">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGIConnection</span><span class="p">,</span> <span class="n">Request</span>
+</span><span data-line="21">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.handlers.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseRouteHandler</span>
+</span><span data-line="22">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Token</span>
 </span><span data-line="23">
 </span><span data-line="24"><span class="n">settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
-</span><span data-line="25">
-</span><span data-line="26">
-<div class="viewcode-block" id="requires_active_user">
-<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.requires_active_user">[docs]</a>
-</span><span data-line="27"><span class="k">def</span><span class="w"> </span><span class="nf">requires_active_user</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="28"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Request requires active user.</span>
-</span><span data-line="29">
-</span><span data-line="30"><span class="sd">    Verifies the request user is active.</span>
+</span><span data-line="25"><span class="n">ACCESS_TOKEN_EXPIRATION</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</span><span data-line="26"><span class="n">AUTH_TOKEN_URL</span> <span class="o">=</span> <span class="s2">&quot;/api/access/login&quot;</span>  <span class="c1"># noqa: S105</span>
+</span><span data-line="27">
+</span><span data-line="28">
+<div class="viewcode-block" id="provide_user">
+<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.provide_user">[docs]</a>
+</span><span data-line="29"><span class="k">def</span><span class="w"> </span><span class="nf">provide_user</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">:</span>
+</span><span data-line="30"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the user from the connection.</span>
 </span><span data-line="31">
 </span><span data-line="32"><span class="sd">    Args:</span>
-</span><span data-line="33"><span class="sd">        connection (ASGIConnection): HTTP Request</span>
-</span><span data-line="34"><span class="sd">        _ (BaseRouteHandler): Route handler</span>
-</span><span data-line="35">
-</span><span data-line="36"><span class="sd">    Raises:</span>
-</span><span data-line="37"><span class="sd">        PermissionDeniedException: Permission denied exception</span>
-</span><span data-line="38"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="39">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
-</span><span data-line="40">        <span class="k">return</span>
-</span><span data-line="41">    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Inactive account&quot;</span>
-</span><span data-line="42">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</span><span data-line="33"><span class="sd">        request: current connection.</span>
+</span><span data-line="34">
+</span><span data-line="35"><span class="sd">    Returns:</span>
+</span><span data-line="36"><span class="sd">        User</span>
+</span><span data-line="37"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="38">    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span></div>
 
+</span><span data-line="39">
+</span><span data-line="40">
+<div class="viewcode-block" id="requires_active_user">
+<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.requires_active_user">[docs]</a>
+</span><span data-line="41"><span class="k">def</span><span class="w"> </span><span class="nf">requires_active_user</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="42"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Request requires active user.</span>
 </span><span data-line="43">
-</span><span data-line="44">
-<div class="viewcode-block" id="requires_superuser">
-<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.requires_superuser">[docs]</a>
-</span><span data-line="45"><span class="k">def</span><span class="w"> </span><span class="nf">requires_superuser</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="46"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Request requires active superuser.</span>
-</span><span data-line="47">
-</span><span data-line="48"><span class="sd">    Args:</span>
-</span><span data-line="49"><span class="sd">        connection (ASGIConnection): HTTP Request</span>
-</span><span data-line="50"><span class="sd">        _ (BaseRouteHandler): Route handler</span>
-</span><span data-line="51">
-</span><span data-line="52"><span class="sd">    Raises:</span>
-</span><span data-line="53"><span class="sd">        PermissionDeniedException: Permission denied exception</span>
-</span><span data-line="54">
-</span><span data-line="55"><span class="sd">    Returns:</span>
-</span><span data-line="56"><span class="sd">        None: Returns None when successful</span>
-</span><span data-line="57"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="58">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">:</span>
-</span><span data-line="59">        <span class="k">return</span>
-</span><span data-line="60">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Insufficient privileges&quot;</span><span class="p">)</span></div>
+</span><span data-line="44"><span class="sd">    Verifies the connection user is active.</span>
+</span><span data-line="45">
+</span><span data-line="46"><span class="sd">    Args:</span>
+</span><span data-line="47"><span class="sd">        connection (ASGIConnection): Request/Connection object.</span>
+</span><span data-line="48"><span class="sd">        _ (BaseRouteHandler): Route handler.</span>
+</span><span data-line="49">
+</span><span data-line="50"><span class="sd">    Raises:</span>
+</span><span data-line="51"><span class="sd">        PermissionDeniedException: Not authorized</span>
+</span><span data-line="52"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="53">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+</span><span data-line="54">        <span class="k">return</span>
+</span><span data-line="55">    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Inactive account&quot;</span>
+</span><span data-line="56">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</span><span data-line="61">
-</span><span data-line="62">
+</span><span data-line="57">
+</span><span data-line="58">
 <div class="viewcode-block" id="requires_verified_user">
 <a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.requires_verified_user">[docs]</a>
-</span><span data-line="63"><span class="k">def</span><span class="w"> </span><span class="nf">requires_verified_user</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="64"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify the connection user is a superuser.</span>
+</span><span data-line="59"><span class="k">def</span><span class="w"> </span><span class="nf">requires_verified_user</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="60"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify the connection user is verified.</span>
+</span><span data-line="61">
+</span><span data-line="62"><span class="sd">    Args:</span>
+</span><span data-line="63"><span class="sd">        connection (ASGIConnection): Request/Connection object.</span>
+</span><span data-line="64"><span class="sd">        _ (BaseRouteHandler): Route handler.</span>
 </span><span data-line="65">
-</span><span data-line="66"><span class="sd">    Args:</span>
-</span><span data-line="67"><span class="sd">        connection (ASGIConnection): Request/Connection object.</span>
-</span><span data-line="68"><span class="sd">        _ (BaseRouteHandler): Route handler.</span>
-</span><span data-line="69">
-</span><span data-line="70"><span class="sd">    Raises:</span>
-</span><span data-line="71"><span class="sd">        PermissionDeniedException: Not authorized</span>
-</span><span data-line="72">
-</span><span data-line="73"><span class="sd">    Returns:</span>
-</span><span data-line="74"><span class="sd">        None: Returns None when successful</span>
-</span><span data-line="75"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="76">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_verified</span><span class="p">:</span>
-</span><span data-line="77">        <span class="k">return</span>
-</span><span data-line="78">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;User account is not verified.&quot;</span><span class="p">)</span></div>
+</span><span data-line="66"><span class="sd">    Raises:</span>
+</span><span data-line="67"><span class="sd">        PermissionDeniedException: Not authorized</span>
+</span><span data-line="68"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="69">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_verified</span><span class="p">:</span>
+</span><span data-line="70">        <span class="k">return</span>
+</span><span data-line="71">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;User account is not verified.&quot;</span><span class="p">)</span></div>
 
-</span><span data-line="79">
+</span><span data-line="72">
+</span><span data-line="73">
+<div class="viewcode-block" id="requires_superuser">
+<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.requires_superuser">[docs]</a>
+</span><span data-line="74"><span class="k">def</span><span class="w"> </span><span class="nf">requires_superuser</span><span class="p">(</span><span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">BaseRouteHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="75"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify the connection user is a superuser.</span>
+</span><span data-line="76">
+</span><span data-line="77"><span class="sd">    Args:</span>
+</span><span data-line="78"><span class="sd">        connection (ASGIConnection): Request/Connection object.</span>
+</span><span data-line="79"><span class="sd">        _ (BaseRouteHandler): Route handler.</span>
 </span><span data-line="80">
+</span><span data-line="81"><span class="sd">    Raises:</span>
+</span><span data-line="82"><span class="sd">        PermissionDeniedException: Not authorized</span>
+</span><span data-line="83"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="84">    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">:</span>
+</span><span data-line="85">        <span class="k">return</span>
+</span><span data-line="86">    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+</span><span data-line="87">        <span class="n">assigned_role</span><span class="o">.</span><span class="n">role_name</span>
+</span><span data-line="88">        <span class="k">for</span> <span class="n">assigned_role</span> <span class="ow">in</span> <span class="n">connection</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">roles</span>
+</span><span data-line="89">        <span class="k">if</span> <span class="n">assigned_role</span><span class="o">.</span><span class="n">role_name</span> <span class="o">==</span> <span class="n">constants</span><span class="o">.</span><span class="n">SUPERUSER_ACCESS_ROLE</span>
+</span><span data-line="90">    <span class="p">):</span>
+</span><span data-line="91">        <span class="k">return</span>
+</span><span data-line="92">    <span class="k">raise</span> <span class="n">PermissionDeniedException</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Insufficient privileges&quot;</span><span class="p">)</span></div>
+
+</span><span data-line="93">
+</span><span data-line="94">
 <div class="viewcode-block" id="current_user_from_token">
 <a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.current_user_from_token">[docs]</a>
-</span><span data-line="81"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">current_user_from_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="82"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Lookup current user from local JWT token.</span>
-</span><span data-line="83">
-</span><span data-line="84"><span class="sd">    Fetches the user information from the database</span>
-</span><span data-line="85">
-</span><span data-line="86">
-</span><span data-line="87"><span class="sd">    Args:</span>
-</span><span data-line="88"><span class="sd">        token (str): JWT Token Object</span>
-</span><span data-line="89"><span class="sd">        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.</span>
-</span><span data-line="90">
-</span><span data-line="91">
-</span><span data-line="92"><span class="sd">    Returns:</span>
-</span><span data-line="93"><span class="sd">        User: User record mapped to the JWT identifier</span>
-</span><span data-line="94"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="95">    <span class="n">service</span> <span class="o">=</span> <span class="k">await</span> <span class="n">anext</span><span class="p">(</span><span class="n">provide_users_service</span><span class="p">(</span><span class="n">alchemy</span><span class="o">.</span><span class="n">provide_session</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">connection</span><span class="o">.</span><span class="n">scope</span><span class="p">)))</span>
-</span><span data-line="96">    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">token</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
-</span><span data-line="97">    <span class="k">return</span> <span class="n">user</span> <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span> <span class="k">else</span> <span class="kc">None</span></div>
-
-</span><span data-line="98">
+</span><span data-line="95"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">current_user_from_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">User</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="96"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Lookup current user from local JWT token.</span>
+</span><span data-line="97">
+</span><span data-line="98"><span class="sd">    Fetches the user information from the database</span>
 </span><span data-line="99">
-</span><span data-line="100"><span class="n">auth</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearerAuth</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">](</span>
-</span><span data-line="101">    <span class="n">retrieve_user_handler</span><span class="o">=</span><span class="n">current_user_from_token</span><span class="p">,</span>
-</span><span data-line="102">    <span class="n">token_secret</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span>
-</span><span data-line="103">    <span class="n">token_url</span><span class="o">=</span><span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_LOGIN</span><span class="p">,</span>
-</span><span data-line="104">    <span class="n">exclude</span><span class="o">=</span><span class="p">[</span>
-</span><span data-line="105">        <span class="n">constants</span><span class="o">.</span><span class="n">HEALTH_ENDPOINT</span><span class="p">,</span>
-</span><span data-line="106">        <span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_LOGIN</span><span class="p">,</span>
-</span><span data-line="107">        <span class="n">urls</span><span class="o">.</span><span class="n">ACCOUNT_REGISTER</span><span class="p">,</span>
-</span><span data-line="108">        <span class="s2">&quot;^/schema&quot;</span><span class="p">,</span>
-</span><span data-line="109">        <span class="s2">&quot;^/public/&quot;</span><span class="p">,</span>
-</span><span data-line="110">        <span class="s2">&quot;^/saq/static/&quot;</span><span class="p">,</span>
-</span><span data-line="111">    <span class="p">],</span>
-</span><span data-line="112"><span class="p">)</span>
+</span><span data-line="100"><span class="sd">    Args:</span>
+</span><span data-line="101"><span class="sd">        token (str): JWT Token Object</span>
+</span><span data-line="102"><span class="sd">        connection (ASGIConnection[Any, Any, Any, Any]): ASGI connection.</span>
+</span><span data-line="103">
+</span><span data-line="104"><span class="sd">    Returns:</span>
+</span><span data-line="105"><span class="sd">        User: User record mapped to the JWT identifier</span>
+</span><span data-line="106"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="107">    <span class="k">async</span> <span class="k">with</span> <span class="n">provide_services</span><span class="p">(</span><span class="n">deps</span><span class="o">.</span><span class="n">provide_users_service</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">service</span><span class="p">,):</span>
+</span><span data-line="108">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">service</span><span class="o">.</span><span class="n">get_one_or_none</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">token</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+</span><span data-line="109">        <span class="k">return</span> <span class="n">user</span> <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+</span><span data-line="110">
+</span><span data-line="111">
+<div class="viewcode-block" id="create_access_token">
+<a class="viewcode-back" href="../../../../api/domain/accounts/guards.html#app.domain.accounts.guards.create_access_token">[docs]</a>
+</span><span data-line="112"><span class="k">def</span><span class="w"> </span><span class="nf">create_access_token</span><span class="p">(</span>
+</span><span data-line="113">    <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="114">    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="115">    <span class="n">is_superuser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="116">    <span class="n">is_verified</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="117">    <span class="n">auth_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+</span><span data-line="118">    <span class="n">amr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="119"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="120"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a JWT access token.</span>
+</span><span data-line="121">
+</span><span data-line="122"><span class="sd">    Args:</span>
+</span><span data-line="123"><span class="sd">        user_id: User ID</span>
+</span><span data-line="124"><span class="sd">        email: User email</span>
+</span><span data-line="125"><span class="sd">        is_superuser: Whether user is superuser</span>
+</span><span data-line="126"><span class="sd">        is_verified: Whether user email is verified</span>
+</span><span data-line="127"><span class="sd">        auth_method: Authentication method used</span>
+</span><span data-line="128"><span class="sd">        amr: Authentication methods reference for the token</span>
+</span><span data-line="129">
+</span><span data-line="130"><span class="sd">    Returns:</span>
+</span><span data-line="131"><span class="sd">        JWT token string</span>
+</span><span data-line="132"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="133">    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+</span><span data-line="134">    <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+</span><span data-line="135">
+</span><span data-line="136">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.security.jwt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Token</span>
+</span><span data-line="137">
+</span><span data-line="138">    <span class="k">if</span> <span class="n">amr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="139">        <span class="n">amr</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pwd&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">auth_method</span> <span class="o">==</span> <span class="s2">&quot;password&quot;</span> <span class="k">else</span> <span class="p">[</span><span class="n">auth_method</span><span class="p">]</span>
+</span><span data-line="140">    <span class="n">token</span> <span class="o">=</span> <span class="n">Token</span><span class="p">(</span>
+</span><span data-line="141">        <span class="n">sub</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+</span><span data-line="142">        <span class="n">exp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span> <span class="o">+</span> <span class="n">ACCESS_TOKEN_EXPIRATION</span><span class="p">,</span>
+</span><span data-line="143">        <span class="n">jti</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()),</span>
+</span><span data-line="144">        <span class="n">extras</span><span class="o">=</span><span class="p">{</span>
+</span><span data-line="145">            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+</span><span data-line="146">            <span class="s2">&quot;is_superuser&quot;</span><span class="p">:</span> <span class="n">is_superuser</span><span class="p">,</span>
+</span><span data-line="147">            <span class="s2">&quot;is_verified&quot;</span><span class="p">:</span> <span class="n">is_verified</span><span class="p">,</span>
+</span><span data-line="148">            <span class="s2">&quot;auth_method&quot;</span><span class="p">:</span> <span class="n">auth_method</span><span class="p">,</span>
+</span><span data-line="149">            <span class="s2">&quot;amr&quot;</span><span class="p">:</span> <span class="n">amr</span><span class="p">,</span>
+</span><span data-line="150">        <span class="p">},</span>
+</span><span data-line="151">    <span class="p">)</span>
+</span><span data-line="152">    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">secret</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">JWT_ENCRYPTION_ALGORITHM</span><span class="p">)</span></div>
+
+</span><span data-line="153">
+</span><span data-line="154">
+</span><span data-line="155"><span class="n">auth</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearerAuth</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">](</span>
+</span><span data-line="156">    <span class="n">retrieve_user_handler</span><span class="o">=</span><span class="n">current_user_from_token</span><span class="p">,</span>
+</span><span data-line="157">    <span class="n">token_secret</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span>
+</span><span data-line="158">    <span class="n">token_url</span><span class="o">=</span><span class="n">AUTH_TOKEN_URL</span><span class="p">,</span>
+</span><span data-line="159">    <span class="n">default_token_expiration</span><span class="o">=</span><span class="n">ACCESS_TOKEN_EXPIRATION</span><span class="p">,</span>
+</span><span data-line="160">    <span class="n">exclude</span><span class="o">=</span><span class="p">[</span>
+</span><span data-line="161">        <span class="s2">&quot;/health&quot;</span><span class="p">,</span>
+</span><span data-line="162">        <span class="s2">&quot;/api/access/login&quot;</span><span class="p">,</span>
+</span><span data-line="163">        <span class="s2">&quot;/api/access/logout&quot;</span><span class="p">,</span>
+</span><span data-line="164">        <span class="s2">&quot;/api/access/signup&quot;</span><span class="p">,</span>
+</span><span data-line="165">        <span class="s2">&quot;/api/access/refresh&quot;</span><span class="p">,</span>
+</span><span data-line="166">        <span class="s2">&quot;/api/access/forgot-password&quot;</span><span class="p">,</span>
+</span><span data-line="167">        <span class="s2">&quot;/api/access/reset-password&quot;</span><span class="p">,</span>
+</span><span data-line="168">        <span class="s2">&quot;/api/email-verification/*&quot;</span><span class="p">,</span>
+</span><span data-line="169">        <span class="s2">&quot;/api/auth/oauth/*&quot;</span><span class="p">,</span>
+</span><span data-line="170">        <span class="s2">&quot;^/schema&quot;</span><span class="p">,</span>
+</span><span data-line="171">        <span class="s2">&quot;^/public/&quot;</span><span class="p">,</span>
+</span><span data-line="172">    <span class="p">],</span>
+</span><span data-line="173"><span class="p">)</span>
+</span><span data-line="174"><span class="sd">&quot;&quot;&quot;OAuth2 JWT Authentication.&quot;&quot;&quot;</span>
+</span><span data-line="175">
+</span><span data-line="176"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="177">    <span class="s2">&quot;auth&quot;</span><span class="p">,</span>
+</span><span data-line="178">    <span class="s2">&quot;create_access_token&quot;</span><span class="p">,</span>
+</span><span data-line="179">    <span class="s2">&quot;current_user_from_token&quot;</span><span class="p">,</span>
+</span><span data-line="180">    <span class="s2">&quot;provide_user&quot;</span><span class="p">,</span>
+</span><span data-line="181">    <span class="s2">&quot;requires_active_user&quot;</span><span class="p">,</span>
+</span><span data-line="182">    <span class="s2">&quot;requires_superuser&quot;</span><span class="p">,</span>
+</span><span data-line="183">    <span class="s2">&quot;requires_verified_user&quot;</span><span class="p">,</span>
+</span><span data-line="184"><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -310,19 +389,376 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../../_static/shibuya.js?v=e2230717"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="../../../../_static/shibuya.js?v=cac61aee"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-      <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script></body>
 </html>

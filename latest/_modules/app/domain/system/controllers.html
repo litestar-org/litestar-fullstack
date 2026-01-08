@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>app.domain.system.controllers - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="app.domain.system.controllers"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -129,7 +129,8 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -156,86 +157,104 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <h1>Source code for app.domain.system.controllers</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;System domain controllers.&quot;&quot;&quot;</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="4">
-</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">structlog</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">MediaType</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">get</span>
-</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">redis</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisError</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span>
-</span><span data-line="10">
-</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">app.config.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_settings</span>
-</span><span data-line="12">
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemHealth</span>
-</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">SYSTEM_HEALTH</span>
-</span><span data-line="15">
-</span><span data-line="16"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="17">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar_saq</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskQueues</span>
-</span><span data-line="18">    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
-</span><span data-line="19">
-</span><span data-line="20"><span class="n">logger</span> <span class="o">=</span> <span class="n">structlog</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
-</span><span data-line="21"><span class="n">OnlineOffline</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;OnlineOffline&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="s2">&quot;offline&quot;</span><span class="p">])</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">structlog</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">MediaType</span><span class="p">,</span> <span class="n">get</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.system</span><span class="w"> </span><span class="kn">import</span> <span class="n">schemas</span> <span class="k">as</span> <span class="n">s</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span data-line="15">    <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+</span><span data-line="16">
+</span><span data-line="17">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppSettings</span>
+</span><span data-line="18">
+</span><span data-line="19"><span class="n">logger</span> <span class="o">=</span> <span class="n">structlog</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
+</span><span data-line="20"><span class="n">OnlineOffline</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;OnlineOffline&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="s2">&quot;offline&quot;</span><span class="p">])</span>
+</span><span data-line="21">
 </span><span data-line="22">
-</span><span data-line="23">
 <div class="viewcode-block" id="SystemController">
 <a class="viewcode-back" href="../../../../api/domain/system/controllers.html#app.domain.system.controllers.SystemController">[docs]</a>
-</span><span data-line="24"><span class="k">class</span><span class="w"> </span><span class="nc">SystemController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
-</span><span data-line="25">    <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;System&quot;</span><span class="p">]</span>
-</span><span data-line="26">
-</span><span data-line="27">    <span class="nd">@get</span><span class="p">(</span>
-</span><span data-line="28">        <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;SystemHealth&quot;</span><span class="p">,</span>
-</span><span data-line="29">        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system:health&quot;</span><span class="p">,</span>
-</span><span data-line="30">        <span class="n">path</span><span class="o">=</span><span class="n">SYSTEM_HEALTH</span><span class="p">,</span>
-</span><span data-line="31">        <span class="n">media_type</span><span class="o">=</span><span class="n">MediaType</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
-</span><span data-line="32">        <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span data-line="33">        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;System&quot;</span><span class="p">],</span>
-</span><span data-line="34">        <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Health Check&quot;</span><span class="p">,</span>
-</span><span data-line="35">        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Execute a health check against backend components.  Returns system information including database and cache status.&quot;</span><span class="p">,</span>
+</span><span data-line="23"><span class="k">class</span><span class="w"> </span><span class="nc">SystemController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+</span><span data-line="24"><span class="w">    </span><span class="sd">&quot;&quot;&quot;System health and configuration.&quot;&quot;&quot;</span>
+</span><span data-line="25">
+</span><span data-line="26">    <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;System&quot;</span><span class="p">]</span>
+</span><span data-line="27">    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="28">
+</span><span data-line="29">    <span class="nd">@get</span><span class="p">(</span>
+</span><span data-line="30">        <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;SystemHealth&quot;</span><span class="p">,</span>
+</span><span data-line="31">        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system:health&quot;</span><span class="p">,</span>
+</span><span data-line="32">        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/health&quot;</span><span class="p">,</span>
+</span><span data-line="33">        <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Health Check&quot;</span><span class="p">,</span>
+</span><span data-line="34">        <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="35">        <span class="n">security</span><span class="o">=</span><span class="p">[],</span>  <span class="c1"># Public endpoint - no auth required</span>
 </span><span data-line="36">    <span class="p">)</span>
 </span><span data-line="37">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_system_health</span><span class="p">(</span>
 </span><span data-line="38">        <span class="bp">self</span><span class="p">,</span>
-</span><span data-line="39">        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span>
-</span><span data-line="40">        <span class="n">db_session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">,</span>
-</span><span data-line="41">        <span class="n">task_queues</span><span class="p">:</span> <span class="n">TaskQueues</span><span class="p">,</span>
-</span><span data-line="42">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">SystemHealth</span><span class="p">]:</span>
-</span><span data-line="43"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check database available and returns app config info.&quot;&quot;&quot;</span>
-</span><span data-line="44">        <span class="n">settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
-</span><span data-line="45">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="46">            <span class="k">await</span> <span class="n">db_session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;select 1&quot;</span><span class="p">))</span>
-</span><span data-line="47">            <span class="n">db_ping</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="48">        <span class="k">except</span> <span class="ne">ConnectionRefusedError</span><span class="p">:</span>
-</span><span data-line="49">            <span class="n">db_ping</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="50">
-</span><span data-line="51">        <span class="n">db_status</span> <span class="o">=</span> <span class="s2">&quot;online&quot;</span> <span class="k">if</span> <span class="n">db_ping</span> <span class="k">else</span> <span class="s2">&quot;offline&quot;</span>
+</span><span data-line="39">        <span class="n">db_session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">,</span>
+</span><span data-line="40">        <span class="n">settings</span><span class="p">:</span> <span class="n">AppSettings</span><span class="p">,</span>
+</span><span data-line="41">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">SystemHealth</span><span class="p">]:</span>
+</span><span data-line="42"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check database available and returns app config info.</span>
+</span><span data-line="43">
+</span><span data-line="44"><span class="sd">        Args:</span>
+</span><span data-line="45"><span class="sd">            db_session: The database session.</span>
+</span><span data-line="46"><span class="sd">            settings: Application settings.</span>
+</span><span data-line="47">
+</span><span data-line="48"><span class="sd">        Returns:</span>
+</span><span data-line="49"><span class="sd">            The response object.</span>
+</span><span data-line="50"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="51">        <span class="n">db_status</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="s2">&quot;offline&quot;</span><span class="p">]</span>
 </span><span data-line="52">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="53">            <span class="n">cache_ping</span> <span class="o">=</span> <span class="k">await</span> <span class="n">settings</span><span class="o">.</span><span class="n">redis</span><span class="o">.</span><span class="n">get_client</span><span class="p">()</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
-</span><span data-line="54">        <span class="k">except</span> <span class="n">RedisError</span><span class="p">:</span>
-</span><span data-line="55">            <span class="n">cache_ping</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="56">        <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;online&quot;</span> <span class="k">if</span> <span class="n">cache_ping</span> <span class="k">else</span> <span class="s2">&quot;offline&quot;</span>
-</span><span data-line="57">        <span class="n">healthy</span> <span class="o">=</span> <span class="n">cache_ping</span> <span class="ow">and</span> <span class="n">db_ping</span>
-</span><span data-line="58">        <span class="k">if</span> <span class="n">healthy</span><span class="p">:</span>
-</span><span data-line="59">            <span class="k">await</span> <span class="n">logger</span><span class="o">.</span><span class="n">adebug</span><span class="p">(</span>
-</span><span data-line="60">                <span class="s2">&quot;System Health&quot;</span><span class="p">,</span>
-</span><span data-line="61">                <span class="n">database_status</span><span class="o">=</span><span class="n">db_status</span><span class="p">,</span>
-</span><span data-line="62">                <span class="n">cache_status</span><span class="o">=</span><span class="n">cache_status</span><span class="p">,</span>
+</span><span data-line="53">            <span class="k">await</span> <span class="n">db_session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;select 1&quot;</span><span class="p">))</span>
+</span><span data-line="54">            <span class="n">db_status</span> <span class="o">=</span> <span class="s2">&quot;online&quot;</span>
+</span><span data-line="55">        <span class="k">except</span> <span class="ne">ConnectionRefusedError</span><span class="p">:</span>
+</span><span data-line="56">            <span class="n">db_status</span> <span class="o">=</span> <span class="s2">&quot;offline&quot;</span>
+</span><span data-line="57">
+</span><span data-line="58">        <span class="n">healthy</span> <span class="o">=</span> <span class="n">db_status</span> <span class="o">==</span> <span class="s2">&quot;online&quot;</span>
+</span><span data-line="59">        <span class="k">if</span> <span class="n">healthy</span><span class="p">:</span>
+</span><span data-line="60">            <span class="k">await</span> <span class="n">logger</span><span class="o">.</span><span class="n">adebug</span><span class="p">(</span>
+</span><span data-line="61">                <span class="s2">&quot;System Health&quot;</span><span class="p">,</span>
+</span><span data-line="62">                <span class="n">database_status</span><span class="o">=</span><span class="n">db_status</span><span class="p">,</span>
 </span><span data-line="63">            <span class="p">)</span>
 </span><span data-line="64">        <span class="k">else</span><span class="p">:</span>
 </span><span data-line="65">            <span class="k">await</span> <span class="n">logger</span><span class="o">.</span><span class="n">awarn</span><span class="p">(</span>
 </span><span data-line="66">                <span class="s2">&quot;System Health Check&quot;</span><span class="p">,</span>
 </span><span data-line="67">                <span class="n">database_status</span><span class="o">=</span><span class="n">db_status</span><span class="p">,</span>
-</span><span data-line="68">                <span class="n">cache_status</span><span class="o">=</span><span class="n">cache_status</span><span class="p">,</span>
-</span><span data-line="69">            <span class="p">)</span>
-</span><span data-line="70">
-</span><span data-line="71">        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span>
-</span><span data-line="72">            <span class="n">content</span><span class="o">=</span><span class="n">SystemHealth</span><span class="p">(</span><span class="n">database_status</span><span class="o">=</span><span class="n">db_status</span><span class="p">,</span> <span class="n">cache_status</span><span class="o">=</span><span class="n">cache_status</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
-</span><span data-line="73">            <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span> <span class="k">if</span> <span class="n">db_ping</span> <span class="ow">and</span> <span class="n">cache_ping</span> <span class="k">else</span> <span class="mi">500</span><span class="p">,</span>
-</span><span data-line="74">            <span class="n">media_type</span><span class="o">=</span><span class="n">MediaType</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
-</span><span data-line="75">        <span class="p">)</span></div>
+</span><span data-line="68">            <span class="p">)</span>
+</span><span data-line="69">
+</span><span data-line="70">        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span>
+</span><span data-line="71">            <span class="n">content</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">SystemHealth</span><span class="p">(</span><span class="n">database_status</span><span class="o">=</span><span class="n">db_status</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">NAME</span><span class="p">),</span>
+</span><span data-line="72">            <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span> <span class="k">if</span> <span class="n">healthy</span> <span class="k">else</span> <span class="mi">500</span><span class="p">,</span>
+</span><span data-line="73">            <span class="n">media_type</span><span class="o">=</span><span class="n">MediaType</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
+</span><span data-line="74">        <span class="p">)</span>
+</span><span data-line="75">
+</span><span data-line="76">    <span class="nd">@get</span><span class="p">(</span>
+</span><span data-line="77">        <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;OAuthConfig&quot;</span><span class="p">,</span>
+</span><span data-line="78">        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system:oauth-config&quot;</span><span class="p">,</span>
+</span><span data-line="79">        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;/api/config/oauth&quot;</span><span class="p">,</span>
+</span><span data-line="80">        <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Get OAuth Configuration&quot;</span><span class="p">,</span>
+</span><span data-line="81">        <span class="n">exclude_from_auth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="82">        <span class="n">security</span><span class="o">=</span><span class="p">[],</span>  <span class="c1"># Public endpoint - no auth required</span>
+</span><span data-line="83">    <span class="p">)</span>
+</span><span data-line="84">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_oauth_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">AppSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="n">OAuthConfig</span><span class="p">:</span>
+</span><span data-line="85"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get OAuth provider configuration for frontend.</span>
+</span><span data-line="86">
+</span><span data-line="87"><span class="sd">        Args:</span>
+</span><span data-line="88"><span class="sd">            settings: Application settings.</span>
+</span><span data-line="89">
+</span><span data-line="90"><span class="sd">        Returns:</span>
+</span><span data-line="91"><span class="sd">            OAuth configuration indicating which providers are enabled.</span>
+</span><span data-line="92"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="93">        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">OAuthConfig</span><span class="p">(</span><span class="n">google_enabled</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">google_oauth_enabled</span><span class="p">,</span> <span class="n">github_enabled</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_oauth_enabled</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -264,19 +283,376 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../../_static/shibuya.js?v=e2230717"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="../../../../_static/shibuya.js?v=cac61aee"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-      <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script></body>
 </html>

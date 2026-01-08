@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>controllers - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="tasks" href="tasks.html" /><link rel="prev" title="system" href="index.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="controllers"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -129,11 +129,11 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController"><code class="docutils literal notranslate"><span class="pre">SystemController</span></code></a><ul>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.tags"><code class="docutils literal notranslate">tags</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.system.controllers.SystemController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.after_request"><code class="docutils literal notranslate">after_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.after_response"><code class="docutils literal notranslate">after_response</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.before_request"><code class="docutils literal notranslate">before_request</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.cache_control"><code class="docutils literal notranslate">cache_control</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.system.controllers.SystemController.dependencies"><code class="docutils literal notranslate">dependencies</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.dto"><code class="docutils literal notranslate">dto</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.etag"><code class="docutils literal notranslate">etag</span></code></a></li>
 <li><a class="reference internal" href="#app.domain.system.controllers.SystemController.exception_handlers"><code class="docutils literal notranslate">exception_handlers</span></code></a></li>
@@ -162,7 +162,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -197,15 +198,17 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="controllers">
 <h1>controllers<a class="headerlink" href="#controllers" title="Link to this heading">¶</a></h1>
 <p>Controllers for the application system.</p>
-<dl class="py class" id="module-app.domain.system.controllers">
+<p id="module-app.domain.system.controllers">System domain controllers.</p>
+<dl class="py class">
 <dt class="sig sig-object py" id="app.domain.system.controllers.SystemController">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.system.controllers.</span></span><span class="sig-name descname"><span class="pre">SystemController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Router</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/system/controllers.html#SystemController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.system.controllers.SystemController" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/controller.html#litestar.controller.Controller" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a></p>
+<p>System health and configuration.</p>
 <p>Initialize a controller.</p>
 <p>Should only be called by routers as part of controller registration.</p>
 <dl class="field-list simple">
@@ -217,6 +220,12 @@ data-aria-dark="Switch to auto color mode">
 <dt class="sig sig-object py" id="app.domain.system.controllers.SystemController.tags">
 <span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.system.controllers.SystemController.tags" title="Link to this definition">¶</a></dt>
 <dd><p>A sequence of string tags that will be appended to the schema of all route handlers under the controller.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domain.system.controllers.SystemController.dependencies">
+<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.system.controllers.SystemController.dependencies" title="Link to this definition">¶</a></dt>
+<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -247,12 +256,6 @@ response, bypassing the route handler.</p>
 <dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CacheControlHeader</span></code> header to add to route handlers of this
 controller.</p>
 <p>Can be overridden by route handlers.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.system.controllers.SystemController.dependencies">
-<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dependencies</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#app.domain.system.controllers.SystemController.dependencies" title="Link to this definition">¶</a></dt>
-<dd><p>A string keyed dictionary of dependency <code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> instances.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -368,13 +371,13 @@ data.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.system.controllers.SystemController.signature_namespace">
 <span class="sig-name descname"><span class="pre">signature_namespace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.system.controllers.SystemController.signature_namespace" title="Link to this definition">¶</a></dt>
-<dd><p>A mapping of names to types for use in forward reference resolution during signature modeling.</p>
+<dd><p>A mapping of names to types for use in forward reference resolution during signature modelling.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.system.controllers.SystemController.signature_types">
 <span class="sig-name descname"><span class="pre">signature_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domain.system.controllers.SystemController.signature_types" title="Link to this definition">¶</a></dt>
-<dd><p>A sequence of types for use in forward reference resolution during signature modeling.</p>
+<dd><p>A sequence of types for use in forward reference resolution during signature modelling.</p>
 <p>These types will be added to the signature namespace using their <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p>
 </dd></dl>
 
@@ -441,11 +444,11 @@ handlers under the controller.</p>
     </div>
   </div>
 </footer>
-      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/documentation_options.js?v=e259d695"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=e2230717"></script></body>
+      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
 </html>

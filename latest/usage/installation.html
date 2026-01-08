@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Getting Started - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Development" href="development.html" /><link rel="prev" title="Usage" href="index.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
@@ -20,7 +20,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="Getting Started"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -30,7 +30,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -42,11 +42,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -136,7 +136,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -163,8 +164,8 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </div><div class="flex flex-col break-words justify-between">
-      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
-        <article class="yue" role="main">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
 <p>The following is a guide to help you get this repository running.</p>
@@ -178,19 +179,19 @@ To install an environment, with all development packages run:</p>
 <p>This command does the following:</p>
 <ul class="simple">
 <li><p>Install <code class="docutils literal notranslate"><span class="pre">uv</span></code> if it is not available in the path.</p></li>
-<li><p>Create a virtual environment with all dependencies configured</p></li>
-<li><p>Build assets to be hosted by production asset server</p></li>
+<li><p>Create a virtual environment with all dependencies configured.</p></li>
+<li><p>Install frontend dependencies with <code class="docutils literal notranslate"><span class="pre">bun</span></code>.</p></li>
 </ul>
 <section id="edit-env-configuration">
 <h3>Edit <code class="docutils literal notranslate"><span class="pre">.env</span></code> configuration<a class="headerlink" href="#edit-env-configuration" title="Link to this heading">¶</a></h3>
 <p>There is a sample <code class="docutils literal notranslate"><span class="pre">.env</span></code> file located in the root of the repository.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">cp<span class="w"> </span>.env.local.example<span class="w"> </span>.env
 </span></pre></div>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p><code class="docutils literal notranslate"><span class="pre">SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">DATABASE_URI</span></code>, and <code class="docutils literal notranslate"><span class="pre">REDIS_URL</span></code> are the most important config settings.
-Be sure to set this properly.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">DATABASE_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">APP_URL</span></code>, and <code class="docutils literal notranslate"><span class="pre">ALLOWED_CORS_ORIGINS</span></code> are the most important config settings.
+Be sure to set them properly.</p>
 </div>
 <p>You can generate a <code class="docutils literal notranslate"><span class="pre">SECRET_KEY</span></code> by running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">❯<span class="w"> </span>openssl<span class="w"> </span>rand<span class="w"> </span>-base64<span class="w"> </span><span class="m">32</span>
@@ -202,8 +203,8 @@ Be sure to set this properly.</p>
 <section id="deploy-database-migrations">
 <h3>Deploy Database Migrations<a class="headerlink" href="#deploy-database-migrations" title="Link to this heading">¶</a></h3>
 <p>You can run most of the database commands with the integrated CLI tool.</p>
-<p>To deploy migration to the database, execute:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">❯<span class="w"> </span>app<span class="w"> </span>database<span class="w"> </span>upgrade
+<p>To deploy migrations to the database, execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">❯<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>database<span class="w"> </span>upgrade
 </span><span data-line="2"><span class="m">2023</span>-06-16T16:55:17.048183Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Context<span class="w"> </span>impl<span class="w"> </span>PostgresqlImpl.
 </span><span data-line="3"><span class="m">2023</span>-06-16T16:55:17.048251Z<span class="w"> </span><span class="o">[</span>info<span class="w">     </span><span class="o">]</span><span class="w"> </span>Will<span class="w"> </span>assume<span class="w"> </span>transactional<span class="w"> </span>DDL.
 </span></pre></div>
@@ -252,11 +253,11 @@ Be sure to set this properly.</p>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=e2230717"></script></body>
+      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
 </html>

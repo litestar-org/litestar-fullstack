@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Index - Litestar Fullstack Docs</title><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=3b41e830" />
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=a318c5d4" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
@@ -28,7 +28,7 @@
       
       <strong>app</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
@@ -40,11 +40,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -64,10 +64,10 @@ data-aria-dark="Switch to auto color mode">
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
- | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -107,17 +107,37 @@ data-aria-dark="Switch to auto color mode">
     --bind-key
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-branches-bind-key">app-database-branches command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-check-bind-key">app-database-check command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-bind-key">app-database-downgrade command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-drop-all-bind-key">app-database-drop-all command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-dump-data-bind-key">app-database-dump-data command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-edit-bind-key">app-database-edit command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-ensure-version-bind-key">app-database-ensure-version command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-bind-key">app-database-heads command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-history-bind-key">app-database-history command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-init-bind-key">app-database-init command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-list-templates-bind-key">app-database-list-templates command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-bind-key">app-database-make-migrations command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-bind-key">app-database-merge command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-show-bind-key">app-database-show command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-bind-key">app-database-show-current-revision command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-bind-key">app-database-stamp command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-bind-key">app-database-upgrade command line option</a>
 </li>
@@ -127,6 +147,8 @@ data-aria-dark="Switch to auto color mode">
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-branch-label">app-database-make-migrations command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-branch-label">app-database-merge command line option</a>
 </li>
       </ul></li>
       <li>
@@ -195,10 +217,19 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
+    --indicate-current
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-history-indicate-current">app-database-history command line option</a>
+</li>
+      </ul></li>
+      <li>
     --message
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-m">app-database-make-migrations command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-m">app-database-merge command line option</a>
 </li>
       </ul></li>
       <li>
@@ -241,6 +272,8 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-no-prompt">app-database-make-migrations command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-no-prompt">app-database-merge command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-no-prompt">app-database-upgrade command line option</a>
 </li>
       </ul></li>
@@ -282,12 +315,21 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
+    --purge
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-purge">app-database-stamp command line option</a>
+</li>
+      </ul></li>
+      <li>
     --reload
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-run-r">app-run command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --reload-dir
 
@@ -295,8 +337,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-run-R">app-run command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --reload-exclude
 
@@ -312,10 +352,26 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
+    --resolve-dependencies
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-resolve-dependencies">app-database-heads command line option</a>
+</li>
+      </ul></li>
+      <li>
     --rev-id
 
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-rev-id">app-database-make-migrations command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-rev-id">app-database-merge command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --rev-range
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-history-rev-range">app-database-history command line option</a>
 </li>
       </ul></li>
       <li>
@@ -345,7 +401,11 @@ data-aria-dark="Switch to auto color mode">
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-sql">app-database-downgrade command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-ensure-version-sql">app-database-ensure-version command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-sql">app-database-make-migrations command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-sql">app-database-stamp command line option</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-sql">app-database-upgrade command line option</a>
 </li>
@@ -384,6 +444,8 @@ data-aria-dark="Switch to auto color mode">
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-tag">app-database-downgrade command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-tag">app-database-stamp command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-tag">app-database-upgrade command line option</a>
 </li>
       </ul></li>
@@ -412,6 +474,12 @@ data-aria-dark="Switch to auto color mode">
     --verbose
 
       <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-branches-verbose">app-database-branches command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-verbose">app-database-heads command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-history-verbose">app-database-history command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-verbose">app-database-show-current-revision command line option</a>
 </li>
       </ul></li>
@@ -477,6 +545,8 @@ data-aria-dark="Switch to auto color mode">
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-make-migrations-m">app-database-make-migrations command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-m">app-database-merge command line option</a>
+</li>
       </ul></li>
       <li>
     -P
@@ -533,16 +603,8 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/config.html#app.config.Settings.__init__">__init__() (app.config.Settings method)</a>
-
-      <ul>
-        <li><a href="api/lib/deps.html#app.lib.deps.DependencyCache.__init__">(app.lib.deps.DependencyCache method)</a>
+      <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError.__init__">__init__() (app.lib.exceptions.ApplicationError method)</a>
 </li>
-        <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.__init__">(app.lib.dto.DTOConfig method)</a>
-</li>
-        <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError.__init__">(app.lib.exceptions.ApplicationError method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -556,6 +618,18 @@ data-aria-dark="Switch to auto color mode">
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.after_request">after_request (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.after_request">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.after_request">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.after_request">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.after_request">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.after_request">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.after_request">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.after_request">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.after_request">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -566,18 +640,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.after_request">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.after_request">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.after_request">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.after_request">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.after_request">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.after_response">after_response (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.after_response">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.after_response">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.after_response">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.after_response">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.after_response">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.after_response">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.after_response">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.after_response">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -588,14 +666,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.after_response">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.after_response">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.after_response">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.after_response">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.after_response">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li>
     app command line option
@@ -604,6 +674,22 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-app">--app</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-app-dir">--app-dir</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-branches command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-branches-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-branches-verbose">--verbose</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-check command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-check-bind-key">--bind-key</a>
 </li>
       </ul></li>
       <li>
@@ -642,6 +728,48 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
+    app-database-edit command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-edit-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-edit-arg-REVISION">REVISION</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-ensure-version command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-ensure-version-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-ensure-version-sql">--sql</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-heads command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-resolve-dependencies">--resolve-dependencies</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-heads-verbose">--verbose</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-history command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-history-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-history-indicate-current">--indicate-current</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-history-rev-range">--rev-range</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-history-verbose">--verbose</a>
+</li>
+      </ul></li>
+      <li>
     app-database-init command line option
 
       <ul>
@@ -654,6 +782,13 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-database-init-package">--package</a>
 </li>
         <li><a href="api/cli.html#cmdoption-app-database-init-arg-DIRECTORY">DIRECTORY</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-list-templates command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-list-templates-bind-key">--bind-key</a>
 </li>
       </ul></li>
       <li>
@@ -686,6 +821,34 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
+    app-database-merge command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-branch-label">--branch-label</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-m">--message</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-no-prompt">--no-prompt</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-rev-id">--rev-id</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-m">-m</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-arg-REVISIONS">REVISIONS</a>
+</li>
+      </ul></li>
+      <li>
+    app-database-show command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-show-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-show-arg-REVISION">REVISION</a>
+</li>
+      </ul></li>
+      <li>
     app-database-show-current-revision command line option
 
       <ul>
@@ -694,6 +857,23 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-database-show-current-revision-verbose">--verbose</a>
 </li>
       </ul></li>
+      <li>
+    app-database-stamp command line option
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-bind-key">--bind-key</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-purge">--purge</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-sql">--sql</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-tag">--tag</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-arg-REVISION">REVISION</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     app-database-upgrade command line option
 
@@ -781,8 +961,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-run-W">-W</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     app-schema-openapi command line option
 
@@ -836,13 +1014,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
-    app.asgi
-
-      <ul>
-        <li><a href="api/asgi.html#module-app.asgi">module</a>
-</li>
-      </ul></li>
-      <li>
     app.config
 
       <ul>
@@ -892,13 +1063,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
-    app.domain.system.tasks
-
-      <ul>
-        <li><a href="api/domain/system/tasks.html#module-app.domain.system.tasks">module</a>
-</li>
-      </ul></li>
-      <li>
     app.domain.tags.controllers
 
       <ul>
@@ -910,27 +1074,6 @@ data-aria-dark="Switch to auto color mode">
 
       <ul>
         <li><a href="api/domain/tags/services.html#module-app.domain.tags.services">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.domain.teams.controllers.team_invitation
-
-      <ul>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#module-app.domain.teams.controllers.team_invitation">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.domain.teams.controllers.team_member
-
-      <ul>
-        <li><a href="api/domain/teams/controllers/team_member.html#module-app.domain.teams.controllers.team_member">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.domain.teams.controllers.teams
-
-      <ul>
-        <li><a href="api/domain/teams/controllers/teams.html#module-app.domain.teams.controllers.teams">module</a>
 </li>
       </ul></li>
       <li>
@@ -948,13 +1091,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
       </ul></li>
       <li>
-    app.domain.web.controllers
-
-      <ul>
-        <li><a href="api/domain/web/controllers.html#module-app.domain.web.controllers">module</a>
-</li>
-      </ul></li>
-      <li>
     app.lib.crypt
 
       <ul>
@@ -966,13 +1102,6 @@ data-aria-dark="Switch to auto color mode">
 
       <ul>
         <li><a href="api/lib/deps.html#module-app.lib.deps">module</a>
-</li>
-      </ul></li>
-      <li>
-    app.lib.dto
-
-      <ul>
-        <li><a href="api/lib/dto.html#module-app.lib.dto">module</a>
 </li>
       </ul></li>
       <li>
@@ -998,7 +1127,11 @@ data-aria-dark="Switch to auto color mode">
       </ul></li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.ApplicationError">ApplicationError</a>
 </li>
+      <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.auth">auth (in module app.domain.accounts.guards)</a>
+</li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.authenticate">authenticate() (app.domain.accounts.services.UserService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.authenticate_or_create_oauth_user">authenticate_or_create_oauth_user() (app.domain.accounts.services.UserService method)</a>
 </li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.AuthorizationError">AuthorizationError</a>
 </li>
@@ -1008,11 +1141,25 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/lib/schema.html#app.lib.schema.BaseSchema">BaseSchema (class in app.lib.schema)</a>
+</li>
       <li><a href="api/lib/schema.html#app.lib.schema.BaseStruct">BaseStruct (class in app.lib.schema)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.before_request">before_request (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.before_request">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.before_request">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.before_request">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.before_request">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.before_request">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.before_request">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.before_request">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.before_request">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1022,14 +1169,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.before_request">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.before_request">(app.domain.tags.controllers.TagController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.before_request">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.before_request">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.before_request">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.before_request">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1041,6 +1180,18 @@ data-aria-dark="Switch to auto color mode">
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.cache_control">cache_control (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.cache_control">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.cache_control">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.cache_control">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.cache_control">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.cache_control">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.cache_control">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.cache_control">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.cache_control">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1051,38 +1202,44 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.cache_control">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.cache_control">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.cache_control">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.cache_control">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.cache_control">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseSchema">CamelizedBaseSchema (class in app.lib.schema)</a>
+</li>
       <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseStruct">CamelizedBaseStruct (class in app.lib.schema)</a>
 </li>
-      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagCreateDTO.config">config (app.domain.tags.controllers.TagCreateDTO attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.can_unlink_oauth">can_unlink_oauth() (app.domain.accounts.services.UserOAuthAccountService method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.check_rate_limit">check_rate_limit() (app.domain.accounts.services.PasswordResetService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.cleanup_expired_tokens">cleanup_expired_tokens() (app.domain.accounts.services.EmailVerificationTokenService method)</a>
 
       <ul>
-        <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagDTO.config">(app.domain.tags.controllers.TagDTO attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.cleanup_expired_tokens">(app.domain.accounts.services.PasswordResetService method)</a>
 </li>
-        <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagUpdateDTO.config">(app.domain.tags.controllers.TagUpdateDTO attribute)</a>
-</li>
-        <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO.config">(app.lib.dto.SQLAlchemyDTO attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.cleanup_expired_tokens">(app.domain.accounts.services.RefreshTokenService method)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/dto.html#app.lib.dto.config">config() (in module app.lib.dto)</a>
+      <li><a href="api/lib/deps.html#app.lib.deps.CompositeServiceMixin">CompositeServiceMixin (class in app.lib.deps)</a>
 </li>
-      <li><a href="api/asgi.html#app.asgi.create_app">create_app() (in module app.asgi)</a>
+      <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.create_access_token">create_access_token() (in module app.domain.accounts.guards)</a>
 </li>
       <li><a href="api/lib/deps.html#app.lib.deps.create_filter_dependencies">create_filter_dependencies() (in module app.lib.deps)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.create_or_update_oauth_account">create_or_update_oauth_account() (app.domain.accounts.services.UserOAuthAccountService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.create_refresh_token">create_refresh_token() (app.domain.accounts.services.RefreshTokenService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.create_reset_token">create_reset_token() (app.domain.accounts.services.PasswordResetService method)</a>
 </li>
       <li><a href="api/lib/deps.html#app.lib.deps.create_service_dependencies">create_service_dependencies() (in module app.lib.deps)</a>
 </li>
       <li><a href="api/lib/deps.html#app.lib.deps.create_service_provider">create_service_provider() (in module app.lib.deps)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.create_user_from_oauth">create_user_from_oauth() (app.domain.accounts.services.UserService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.create_verification_token">create_verification_token() (app.domain.accounts.services.EmailVerificationTokenService method)</a>
 </li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.current_user_from_token">current_user_from_token() (in module app.domain.accounts.guards)</a>
 </li>
@@ -1092,11 +1249,21 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DataclassDTO">DataclassDTO (class in app.lib.dto)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.dependencies">dependencies (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.dependencies">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.dependencies">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.dependencies">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.dependencies">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.dependencies">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.dependencies">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.dependencies">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.dependencies">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1107,25 +1274,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.dependencies">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.dependencies">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.dependencies">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.dependencies">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.dependencies">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/lib/deps.html#app.lib.deps.DependencyCache">DependencyCache (class in app.lib.deps)</a>
-</li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DataclassDTO.detect_nested_field">detect_nested_field() (app.lib.dto.DataclassDTO class method)</a>
-
-      <ul>
-        <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO.detect_nested_field">(app.lib.dto.SQLAlchemyDTO class method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     DIRECTORY
 
@@ -1133,9 +1282,23 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-database-init-arg-DIRECTORY">app-database-init command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.dto">dto (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.dto">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.dto">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.dto">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.dto">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.dto">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.dto">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.dto">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.dto">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1146,28 +1309,34 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.dto">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.dto">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.dto">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.dto">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.dto">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/lib/dto.html#app.lib.dto.dto_field">dto_field() (in module app.lib.dto)</a>
-</li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig">DTOConfig (class in app.lib.dto)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController">EmailVerificationController (class in app.domain.accounts.controllers)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService">EmailVerificationTokenService (class in app.domain.accounts.services)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.Repo">EmailVerificationTokenService.Repo (class in app.domain.accounts.services)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.etag">etag (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.etag">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.etag">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.etag">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.etag">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.etag">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.etag">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.etag">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.etag">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1178,18 +1347,24 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.etag">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.etag">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.etag">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.etag">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.etag">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.exception_handlers">exception_handlers (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.exception_handlers">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.exception_handlers">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.exception_handlers">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.exception_handlers">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.exception_handlers">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.exception_handlers">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.exception_handlers">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.exception_handlers">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1200,48 +1375,48 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.exception_handlers">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.exception_handlers">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.exception_handlers">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.exception_handlers">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.exception_handlers">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.exclude">exclude (app.lib.dto.DTOConfig attribute)</a>
-</li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.experimental_codegen_backend">experimental_codegen_backend (app.lib.dto.DTOConfig attribute)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.forbid_unknown_fields">forbid_unknown_fields (app.lib.dto.DTOConfig attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DataclassDTO.generate_field_definitions">generate_field_definitions() (app.lib.dto.DataclassDTO class method)</a>
-
-      <ul>
-        <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO.generate_field_definitions">(app.lib.dto.SQLAlchemyDTO class method)</a>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.generate_backup_codes">generate_backup_codes() (in module app.lib.crypt)</a>
 </li>
-      </ul></li>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.generate_totp_qr_code">generate_totp_qr_code() (in module app.lib.crypt)</a>
+</li>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.generate_totp_secret">generate_totp_secret() (in module app.lib.crypt)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.get_active_sessions">get_active_sessions() (app.domain.accounts.services.RefreshTokenService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.get_by_provider_account_id">get_by_provider_account_id() (app.domain.accounts.services.UserOAuthAccountService method)</a>
+</li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.get_encryption_key">get_encryption_key() (in module app.lib.crypt)</a>
 </li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.get_password_hash">get_password_hash() (in module app.lib.crypt)</a>
 </li>
+      <li><a href="api/config.html#app.config.get_saq_config">get_saq_config() (in module app.config)</a>
+</li>
+      <li><a href="api/lib/deps.html#app.lib.deps.get_task_queue">get_task_queue() (in module app.lib.deps)</a>
+</li>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.get_totp_provisioning_uri">get_totp_provisioning_uri() (in module app.lib.crypt)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.guards">guards (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.guards">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.guards">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.guards">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.guards">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.guards">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.guards">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.guards">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.guards">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1252,14 +1427,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.guards">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.guards">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.guards">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.guards">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.guards">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -1269,9 +1436,11 @@ data-aria-dark="Switch to auto color mode">
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.has_role">has_role() (app.domain.accounts.services.UserService static method)</a>
 </li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.has_role_id">has_role_id() (app.domain.accounts.services.UserService static method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.has_role_id">has_role_id() (app.domain.accounts.services.UserService static method)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.hash_token">hash_token() (app.domain.accounts.services.RefreshTokenService static method)</a>
 </li>
       <li><a href="api/lib/exceptions.html#app.lib.exceptions.HealthCheckConfigurationError">HealthCheckConfigurationError</a>
 </li>
@@ -1281,11 +1450,21 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.include">include (app.lib.dto.DTOConfig attribute)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.include_in_schema">include_in_schema (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.include_in_schema">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.include_in_schema">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.include_in_schema">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.include_in_schema">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.include_in_schema">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.include_in_schema">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.include_in_schema">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.include_in_schema">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1296,24 +1475,44 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.include_in_schema">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.include_in_schema">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.increment_failed_reset_attempt">increment_failed_reset_attempt() (app.domain.accounts.services.UserService method)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.include_in_schema">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.include_in_schema">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.include_in_schema">(app.domain.web.controllers.WebController attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.invalidate_user_tokens">invalidate_user_tokens() (app.domain.accounts.services.EmailVerificationTokenService method)</a>
+
+      <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.invalidate_user_tokens">(app.domain.accounts.services.PasswordResetService method)</a>
 </li>
       </ul></li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.is_email_verified">is_email_verified() (app.domain.accounts.services.UserService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.is_reset_rate_limited">is_reset_rate_limited() (app.domain.accounts.services.UserService method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.link_or_update_oauth">link_or_update_oauth() (app.domain.accounts.services.UserOAuthAccountService method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.match_fields">match_fields (app.domain.accounts.services.RoleService attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.match_fields">match_fields (app.domain.accounts.services.EmailVerificationTokenService attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.match_fields">(app.domain.accounts.services.PasswordResetService attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.match_fields">(app.domain.accounts.services.RefreshTokenService attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.match_fields">(app.domain.accounts.services.RoleService attribute)</a>
+</li>
         <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.match_fields">(app.domain.accounts.services.UserService attribute)</a>
 </li>
         <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.match_fields">(app.domain.tags.services.TagService attribute)</a>
@@ -1321,13 +1520,27 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.match_fields">(app.domain.teams.services.TeamService attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.max_nested_depth">max_nested_depth (app.lib.dto.DTOConfig attribute)</a>
-</li>
       <li><a href="api/lib/schema.html#app.lib.schema.Message">Message (class in app.lib.schema)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController">MfaChallengeController (class in app.domain.accounts.controllers)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController">MfaController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.middleware">middleware (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.middleware">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.middleware">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.middleware">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.middleware">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.middleware">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.middleware">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.middleware">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.middleware">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1338,31 +1551,35 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.middleware">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.middleware">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.middleware">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.middleware">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.middleware">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repository.model_type">model_type (app.domain.accounts.services.RoleService.Repository attribute)</a>
+      <li><a href="api/lib/schema.html#app.lib.schema.BaseSchema.model_config">model_config (app.lib.schema.BaseSchema attribute)</a>
 
       <ul>
-        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repository.model_type">(app.domain.accounts.services.UserOAuthAccountService.Repository attribute)</a>
+        <li><a href="api/lib/schema.html#app.lib.schema.CamelizedBaseSchema.model_config">(app.lib.schema.CamelizedBaseSchema attribute)</a>
 </li>
-        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repository.model_type">(app.domain.accounts.services.UserRoleService.Repository attribute)</a>
+      </ul></li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.Repo.model_type">model_type (app.domain.accounts.services.EmailVerificationTokenService.Repo attribute)</a>
+
+      <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.Repo.model_type">(app.domain.accounts.services.PasswordResetService.Repo attribute)</a>
 </li>
-        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.UserRepository.model_type">(app.domain.accounts.services.UserService.UserRepository attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.Repo.model_type">(app.domain.accounts.services.RefreshTokenService.Repo attribute)</a>
 </li>
-        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repository.model_type">(app.domain.tags.services.TagService.Repository attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repo.model_type">(app.domain.accounts.services.RoleService.Repo attribute)</a>
 </li>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository.model_type">(app.domain.teams.services.TeamInvitationService.TeamInvitationRepository attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repo.model_type">(app.domain.accounts.services.UserOAuthAccountService.Repo attribute)</a>
 </li>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.TeamMemberRepository.model_type">(app.domain.teams.services.TeamMemberService.TeamMemberRepository attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repo.model_type">(app.domain.accounts.services.UserRoleService.Repo attribute)</a>
 </li>
-        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.TeamRepository.model_type">(app.domain.teams.services.TeamService.TeamRepository attribute)</a>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.Repo.model_type">(app.domain.accounts.services.UserService.Repo attribute)</a>
+</li>
+        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repo.model_type">(app.domain.tags.services.TagService.Repo attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.Repo.model_type">(app.domain.teams.services.TeamInvitationService.Repo attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.Repo.model_type">(app.domain.teams.services.TeamMemberService.Repo attribute)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.Repo.model_type">(app.domain.teams.services.TeamService.Repo attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1371,8 +1588,6 @@ data-aria-dark="Switch to auto color mode">
     module
 
       <ul>
-        <li><a href="api/asgi.html#module-app.asgi">app.asgi</a>
-</li>
         <li><a href="api/config.html#module-app.config">app.config</a>
 </li>
         <li><a href="api/db.html#module-app.db">app.db</a>
@@ -1387,29 +1602,17 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/system/controllers.html#module-app.domain.system.controllers">app.domain.system.controllers</a>
 </li>
-        <li><a href="api/domain/system/tasks.html#module-app.domain.system.tasks">app.domain.system.tasks</a>
-</li>
         <li><a href="api/domain/tags/controllers.html#module-app.domain.tags.controllers">app.domain.tags.controllers</a>
 </li>
         <li><a href="api/domain/tags/services.html#module-app.domain.tags.services">app.domain.tags.services</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#module-app.domain.teams.controllers.team_invitation">app.domain.teams.controllers.team_invitation</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#module-app.domain.teams.controllers.team_member">app.domain.teams.controllers.team_member</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#module-app.domain.teams.controllers.teams">app.domain.teams.controllers.teams</a>
 </li>
         <li><a href="api/domain/teams/guards.html#module-app.domain.teams.guards">app.domain.teams.guards</a>
 </li>
         <li><a href="api/domain/teams/services.html#module-app.domain.teams.services">app.domain.teams.services</a>
 </li>
-        <li><a href="api/domain/web/controllers.html#module-app.domain.web.controllers">app.domain.web.controllers</a>
-</li>
         <li><a href="api/lib/crypt.html#module-app.lib.crypt">app.lib.crypt</a>
 </li>
         <li><a href="api/lib/deps.html#module-app.lib.deps">app.lib.deps</a>
-</li>
-        <li><a href="api/lib/dto.html#module-app.lib.dto">app.lib.dto</a>
 </li>
         <li><a href="api/lib/exceptions.html#module-app.lib.exceptions">app.lib.exceptions</a>
 </li>
@@ -1424,9 +1627,27 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.oauth_accounts">oauth_accounts (app.domain.accounts.services.UserService property)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController">OAuthAccountController (class in app.domain.accounts.controllers)</a>
+</li>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController">OAuthController (class in app.domain.accounts.controllers)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.opt">opt (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.opt">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.opt">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.opt">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.opt">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.opt">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.opt">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.opt">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.opt">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1437,20 +1658,24 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.opt">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.opt">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.opt">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.opt">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.opt">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.owner">owner (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.owner">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.owner">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.owner">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.owner">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.owner">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.owner">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.owner">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.owner">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1460,14 +1685,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.owner">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.owner">(app.domain.tags.controllers.TagController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.owner">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.owner">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.owner">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.owner">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1479,6 +1696,18 @@ data-aria-dark="Switch to auto color mode">
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.parameters">parameters (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.parameters">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.parameters">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.parameters">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.parameters">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.parameters">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.parameters">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.parameters">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.parameters">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1489,22 +1718,28 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.parameters">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.parameters">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.parameters">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.parameters">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.parameters">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.partial">partial (app.lib.dto.DTOConfig attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService">PasswordResetService (class in app.domain.accounts.services)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.Repo">PasswordResetService.Repo (class in app.domain.accounts.services)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.path">path (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.path">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.path">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.path">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.path">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.path">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.path">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.path">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.path">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1515,16 +1750,12 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.path">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.path">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.path">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.path">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.path">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/domain/accounts/deps.html#app.domain.accounts.deps.provide_user">provide_user() (in module app.domain.accounts.deps)</a>
+      <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController">ProfileController (class in app.domain.accounts.controllers)</a>
+</li>
+      <li><a href="api/lib/deps.html#app.lib.deps.provide_services">provide_services() (in module app.lib.deps)</a>
+</li>
+      <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.provide_user">provide_user() (in module app.domain.accounts.guards)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1532,13 +1763,19 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.rename_fields">rename_fields (app.lib.dto.DTOConfig attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService">RefreshTokenService (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.rename_strategy">rename_strategy (app.lib.dto.DTOConfig attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.Repo">RefreshTokenService.Repo (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.repository_type">repository_type (app.domain.accounts.services.RoleService attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.repository_type">repository_type (app.domain.accounts.services.EmailVerificationTokenService attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.repository_type">(app.domain.accounts.services.PasswordResetService attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.repository_type">(app.domain.accounts.services.RefreshTokenService attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.repository_type">(app.domain.accounts.services.RoleService attribute)</a>
+</li>
         <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.repository_type">(app.domain.accounts.services.UserOAuthAccountService attribute)</a>
 </li>
         <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.repository_type">(app.domain.accounts.services.UserRoleService attribute)</a>
@@ -1557,6 +1794,18 @@ data-aria-dark="Switch to auto color mode">
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.request_class">request_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.request_class">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.request_class">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.request_class">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.request_class">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.request_class">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.request_class">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.request_class">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.request_class">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1567,18 +1816,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.request_class">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.request_class">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.request_class">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.request_class">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.request_class">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.request_max_body_size">request_max_body_size (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.request_max_body_size">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.request_max_body_size">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.request_max_body_size">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.request_max_body_size">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.request_max_body_size">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.request_max_body_size">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.request_max_body_size">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.request_max_body_size">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1589,15 +1842,9 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.request_max_body_size">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.request_max_body_size">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.request_max_body_size">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.request_max_body_size">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.request_max_body_size">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.require_verified_email">require_verified_email() (app.domain.accounts.services.UserService method)</a>
+</li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.requires_active_user">requires_active_user() (in module app.domain.accounts.guards)</a>
 </li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.requires_superuser">requires_superuser() (in module app.domain.accounts.guards)</a>
@@ -1610,9 +1857,23 @@ data-aria-dark="Switch to auto color mode">
 </li>
       <li><a href="api/domain/accounts/guards.html#app.domain.accounts.guards.requires_verified_user">requires_verified_user() (in module app.domain.accounts.guards)</a>
 </li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.reset_password_with_token">reset_password_with_token() (app.domain.accounts.services.UserService method)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_class">response_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.response_class">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.response_class">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.response_class">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.response_class">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.response_class">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.response_class">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_class">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_class">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1623,20 +1884,24 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_class">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.response_class">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.response_class">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.response_class">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.response_class">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_cookies">response_cookies (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.response_cookies">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.response_cookies">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.response_cookies">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.response_cookies">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.response_cookies">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.response_cookies">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_cookies">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_cookies">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1647,18 +1912,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_cookies">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.response_cookies">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.response_cookies">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.response_cookies">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.response_cookies">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.response_headers">response_headers (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.response_headers">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.response_headers">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.response_headers">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.response_headers">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.response_headers">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.response_headers">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.response_headers">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.response_headers">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1669,18 +1938,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.response_headers">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.response_headers">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.response_headers">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.response_headers">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.response_headers">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.return_dto">return_dto (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.return_dto">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.return_dto">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.return_dto">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.return_dto">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.return_dto">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.return_dto">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.return_dto">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.return_dto">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1691,14 +1964,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.return_dto">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.return_dto">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.return_dto">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.return_dto">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.return_dto">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li>
     REVISION
@@ -1706,14 +1971,33 @@ data-aria-dark="Switch to auto color mode">
       <ul>
         <li><a href="api/cli.html#cmdoption-app-database-downgrade-arg-REVISION">app-database-downgrade command line option</a>
 </li>
+        <li><a href="api/cli.html#cmdoption-app-database-edit-arg-REVISION">app-database-edit command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-show-arg-REVISION">app-database-show command line option</a>
+</li>
+        <li><a href="api/cli.html#cmdoption-app-database-stamp-arg-REVISION">app-database-stamp command line option</a>
+</li>
         <li><a href="api/cli.html#cmdoption-app-database-upgrade-arg-REVISION">app-database-upgrade command line option</a>
 </li>
       </ul></li>
+      <li>
+    REVISIONS
+
+      <ul>
+        <li><a href="api/cli.html#cmdoption-app-database-merge-arg-REVISIONS">app-database-merge command line option</a>
+</li>
+      </ul></li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.revoke_token_family">revoke_token_family() (app.domain.accounts.services.RefreshTokenService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.revoke_user_tokens">revoke_user_tokens() (app.domain.accounts.services.RefreshTokenService method)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController">RoleController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService">RoleService (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repository">RoleService.Repository (class in app.domain.accounts.services)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.Repo">RoleService.Repo (class in app.domain.accounts.services)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.rotate_refresh_token">rotate_refresh_token() (app.domain.accounts.services.RefreshTokenService method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1724,6 +2008,18 @@ data-aria-dark="Switch to auto color mode">
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.security">security (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.security">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.security">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.security">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.security">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.security">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.security">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.security">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.security">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1734,14 +2030,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.security">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.security">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.security">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.security">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.security">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li>
     SESSION_ID
@@ -1750,11 +2038,23 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/cli.html#cmdoption-app-sessions-delete-arg-SESSION_ID">app-sessions-delete command line option</a>
 </li>
       </ul></li>
-      <li><a href="api/config.html#app.config.Settings">Settings (class in app.config)</a>
+      <li><a href="api/config.html#app.config.setup_logging">setup_logging() (in module app.config)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.signature_namespace">signature_namespace (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.signature_namespace">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.signature_namespace">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.signature_namespace">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.signature_namespace">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.signature_namespace">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.signature_namespace">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.signature_namespace">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.signature_namespace">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1765,20 +2065,24 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.signature_namespace">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.signature_namespace">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.signature_namespace">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.signature_namespace">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.signature_namespace">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.signature_types">signature_types (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.signature_types">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.signature_types">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.signature_types">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.signature_types">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.signature_types">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.signature_types">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.signature_types">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.signature_types">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1789,17 +2093,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.signature_types">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.signature_types">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.signature_types">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.signature_types">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.signature_types">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
-      <li><a href="api/lib/dto.html#app.lib.dto.SQLAlchemyDTO">SQLAlchemyDTO (class in app.lib.dto)</a>
-</li>
       <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController">SystemController (class in app.domain.system.controllers)</a>
 </li>
   </ul></td>
@@ -1810,13 +2104,21 @@ data-aria-dark="Switch to auto color mode">
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController">TagController (class in app.domain.tags.controllers)</a>
 </li>
-      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagCreateDTO">TagCreateDTO (class in app.domain.tags.controllers)</a>
-</li>
-      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagDTO">TagDTO (class in app.domain.tags.controllers)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.tags">tags (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.tags">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.tags">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.tags">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.tags">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.tags">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.tags">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.tags">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.tags">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1827,66 +2129,82 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.tags">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.tags">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.tags">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.tags">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.tags">(app.domain.web.controllers.WebController attribute)</a>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.tags">(app.domain.teams.services.TeamService property)</a>
 </li>
       </ul></li>
       <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService">TagService (class in app.domain.tags.services)</a>
 </li>
-      <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repository">TagService.Repository (class in app.domain.tags.services)</a>
-</li>
-      <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagUpdateDTO">TagUpdateDTO (class in app.domain.tags.controllers)</a>
-</li>
-      <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController">TeamController (class in app.domain.teams.controllers.teams)</a>
-</li>
-      <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController">TeamInvitationController (class in app.domain.teams.controllers.team_invitation)</a>
+      <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.Repo">TagService.Repo (class in app.domain.tags.services)</a>
 </li>
       <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService">TeamInvitationService (class in app.domain.teams.services)</a>
 </li>
-      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.TeamInvitationRepository">TeamInvitationService.TeamInvitationRepository (class in app.domain.teams.services)</a>
-</li>
-      <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController">TeamMemberController (class in app.domain.teams.controllers.team_member)</a>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.Repo">TeamInvitationService.Repo (class in app.domain.teams.services)</a>
 </li>
       <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService">TeamMemberService (class in app.domain.teams.services)</a>
 </li>
-      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.TeamMemberRepository">TeamMemberService.TeamMemberRepository (class in app.domain.teams.services)</a>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamMemberService.Repo">TeamMemberService.Repo (class in app.domain.teams.services)</a>
 </li>
       <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService">TeamService (class in app.domain.teams.services)</a>
 </li>
-      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.TeamRepository">TeamService.TeamRepository (class in app.domain.teams.services)</a>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.Repo">TeamService.Repo (class in app.domain.teams.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model_on_create">to_model_on_create() (app.domain.accounts.services.RoleService method)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.to_model_on_create">to_model_on_create() (app.domain.accounts.services.EmailVerificationTokenService method)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.to_model_on_create">(app.domain.accounts.services.PasswordResetService method)</a>
+</li>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model_on_create">(app.domain.accounts.services.RoleService method)</a>
+</li>
         <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.to_model_on_create">(app.domain.accounts.services.UserService method)</a>
+</li>
+        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.to_model_on_create">(app.domain.tags.services.TagService method)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.to_model_on_create">(app.domain.teams.services.TeamInvitationService method)</a>
 </li>
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.to_model_on_create">(app.domain.teams.services.TeamService method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model_on_update">to_model_on_update() (app.domain.accounts.services.RoleService method)</a>
 
       <ul>
         <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.to_model_on_update">(app.domain.accounts.services.UserService method)</a>
 </li>
+        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.to_model_on_update">(app.domain.tags.services.TagService method)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.to_model_on_update">(app.domain.teams.services.TeamInvitationService method)</a>
+</li>
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.to_model_on_update">(app.domain.teams.services.TeamService method)</a>
 </li>
       </ul></li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.to_model_on_upsert">to_model_on_upsert() (app.domain.accounts.services.UserService method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RoleService.to_model_on_upsert">to_model_on_upsert() (app.domain.accounts.services.RoleService method)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.to_model_on_upsert">(app.domain.accounts.services.UserService method)</a>
+</li>
+        <li><a href="api/domain/tags/services.html#app.domain.tags.services.TagService.to_model_on_upsert">(app.domain.tags.services.TagService method)</a>
+</li>
+        <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamInvitationService.to_model_on_upsert">(app.domain.teams.services.TeamInvitationService method)</a>
+</li>
         <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.to_model_on_upsert">(app.domain.teams.services.TeamService method)</a>
 </li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.type_decoders">type_decoders (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.type_decoders">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.type_decoders">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.type_decoders">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.type_decoders">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.type_decoders">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.type_decoders">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.type_decoders">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.type_decoders">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1897,18 +2215,22 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.type_decoders">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.type_decoders">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.type_decoders">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.type_decoders">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.type_decoders">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.type_encoders">type_encoders (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.type_encoders">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.type_encoders">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.type_encoders">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.type_encoders">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.type_encoders">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.type_encoders">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.type_encoders">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.type_encoders">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1919,14 +2241,6 @@ data-aria-dark="Switch to auto color mode">
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.type_encoders">(app.domain.tags.controllers.TagController attribute)</a>
 </li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.type_encoders">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.type_encoders">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.type_encoders">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.type_encoders">(app.domain.web.controllers.WebController attribute)</a>
-</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -1934,27 +2248,31 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/lib/dto.html#app.lib.dto.DTOConfig.underscore_fields_private">underscore_fields_private (app.lib.dto.DTOConfig attribute)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.unlink_oauth_account">unlink_oauth_account() (app.domain.accounts.services.UserOAuthAccountService method)</a>
+</li>
+      <li><a href="api/domain/teams/services.html#app.domain.teams.services.TeamService.update">update() (app.domain.teams.services.TeamService method)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.update_password">update_password() (app.domain.accounts.services.UserService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.use_reset_token">use_reset_token() (app.domain.accounts.services.PasswordResetService method)</a>
 </li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController">UserController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService">UserOAuthAccountService (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repository">UserOAuthAccountService.Repository (class in app.domain.accounts.services)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserOAuthAccountService.Repo">UserOAuthAccountService.Repo (class in app.domain.accounts.services)</a>
+</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserRoleController">UserRoleController (class in app.domain.accounts.controllers)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService">UserRoleService (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repository">UserRoleService.Repository (class in app.domain.accounts.services)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserRoleService.Repo">UserRoleService.Repo (class in app.domain.accounts.services)</a>
 </li>
       <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService">UserService (class in app.domain.accounts.services)</a>
 </li>
-      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.UserRepository">UserService.UserRepository (class in app.domain.accounts.services)</a>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.Repo">UserService.Repo (class in app.domain.accounts.services)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1962,7 +2280,21 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.RefreshTokenService.validate_refresh_token">validate_refresh_token() (app.domain.accounts.services.RefreshTokenService method)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.PasswordResetService.validate_reset_token">validate_reset_token() (app.domain.accounts.services.PasswordResetService method)</a>
+</li>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.verify_backup_code">verify_backup_code() (in module app.lib.crypt)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.UserService.verify_email">verify_email() (app.domain.accounts.services.UserService method)</a>
+</li>
       <li><a href="api/lib/crypt.html#app.lib.crypt.verify_password">verify_password() (in module app.lib.crypt)</a>
+</li>
+      <li><a href="api/domain/accounts/services.html#app.domain.accounts.services.EmailVerificationTokenService.verify_token">verify_token() (app.domain.accounts.services.EmailVerificationTokenService method)</a>
+</li>
+      <li><a href="api/lib/crypt.html#app.lib.crypt.verify_totp_code">verify_totp_code() (in module app.lib.crypt)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1970,11 +2302,21 @@ data-aria-dark="Switch to auto color mode">
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController">WebController (class in app.domain.web.controllers)</a>
-</li>
       <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.AccessController.websocket_class">websocket_class (app.domain.accounts.controllers.AccessController attribute)</a>
 
       <ul>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.EmailVerificationController.websocket_class">(app.domain.accounts.controllers.EmailVerificationController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaChallengeController.websocket_class">(app.domain.accounts.controllers.MfaChallengeController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.MfaController.websocket_class">(app.domain.accounts.controllers.MfaController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthAccountController.websocket_class">(app.domain.accounts.controllers.OAuthAccountController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.OAuthController.websocket_class">(app.domain.accounts.controllers.OAuthController attribute)</a>
+</li>
+        <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.ProfileController.websocket_class">(app.domain.accounts.controllers.ProfileController attribute)</a>
+</li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.RoleController.websocket_class">(app.domain.accounts.controllers.RoleController attribute)</a>
 </li>
         <li><a href="api/domain/accounts/controllers/accounts.html#app.domain.accounts.controllers.UserController.websocket_class">(app.domain.accounts.controllers.UserController attribute)</a>
@@ -1984,14 +2326,6 @@ data-aria-dark="Switch to auto color mode">
         <li><a href="api/domain/system/controllers.html#app.domain.system.controllers.SystemController.websocket_class">(app.domain.system.controllers.SystemController attribute)</a>
 </li>
         <li><a href="api/domain/tags/controllers.html#app.domain.tags.controllers.TagController.websocket_class">(app.domain.tags.controllers.TagController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_invitation.html#app.domain.teams.controllers.team_invitation.TeamInvitationController.websocket_class">(app.domain.teams.controllers.team_invitation.TeamInvitationController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/team_member.html#app.domain.teams.controllers.team_member.TeamMemberController.websocket_class">(app.domain.teams.controllers.team_member.TeamMemberController attribute)</a>
-</li>
-        <li><a href="api/domain/teams/controllers/teams.html#app.domain.teams.controllers.teams.TeamController.websocket_class">(app.domain.teams.controllers.teams.TeamController attribute)</a>
-</li>
-        <li><a href="api/domain/web/controllers.html#app.domain.web.controllers.WebController.websocket_class">(app.domain.web.controllers.WebController attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2019,19 +2353,376 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script src="_static/design-tabs.js?v=f930bc37"></script>
-      <script src="_static/shibuya.js?v=e2230717"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="_static/shibuya.js?v=cac61aee"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-      <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script></body>
 </html>
