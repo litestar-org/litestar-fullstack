@@ -246,6 +246,24 @@ ensure_app_service() {
 }
 
 # -----------------------------------------------------------------------------
+# Worker Service Setup
+# -----------------------------------------------------------------------------
+
+ensure_worker_service() {
+    log_info "Checking background worker service..."
+    cd "${PROJECT_ROOT}"
+
+    if railway status --json 2>/dev/null | grep -qi '"worker"'; then
+        log_success "Worker service already exists"
+        return 0
+    fi
+
+    log_info "Creating background worker service..."
+    railway add --service "worker"
+    log_success "Worker service created"
+}
+
+# -----------------------------------------------------------------------------
 # Domain Generation
 # -----------------------------------------------------------------------------
 
@@ -329,20 +347,96 @@ ensure_environment() {
 }
 
 # -----------------------------------------------------------------------------
+# Service Configuration
+# -----------------------------------------------------------------------------
+
+configure_app_service() {
+    log_info "Configuring app service..."
+    cd "${PROJECT_ROOT}"
+    railway service link app
+
+    local current_vars
+    current_vars=$(railway variables --kv 2>/dev/null || echo "")
+
+    # Only update if not already configured
+    if ! echo "$current_vars" | grep -q "SAQ_USE_SERVER_LIFESPAN=false"; then
+        log_info "Setting app service configuration..."
+        railway variables \
+            --set "SAQ_USE_SERVER_LIFESPAN=false" \
+            --set "RAILWAY_RUN_COMMAND=app run --host 0.0.0.0" \
+            --set "RAILWAY_HEALTHCHECK_PATH=/health" \
+            --set "RAILWAY_HEALTHCHECK_TIMEOUT=300" \
+            --set "RAILWAY_PRE_DEPLOY_COMMAND=app database upgrade --no-prompt" \
+            --skip-deploys
+    fi
+
+    log_success "App service configured"
+}
+
+configure_worker_service() {
+    log_info "Configuring worker service..."
+    cd "${PROJECT_ROOT}"
+    railway service link worker
+
+    local current_vars
+    current_vars=$(railway variables --kv 2>/dev/null || echo "")
+
+    # Set worker-specific variables
+    if ! echo "$current_vars" | grep -q "RAILWAY_RUN_COMMAND=app workers run"; then
+        log_info "Setting worker service configuration..."
+        railway variables \
+            --set "SAQ_USE_SERVER_LIFESPAN=false" \
+            --set "RAILWAY_RUN_COMMAND=app workers run" \
+            --set "RAILWAY_HEALTHCHECK_DISABLED=true" \
+            --skip-deploys
+    fi
+
+    # Copy shared variables from app service if worker doesn't have them
+    if ! echo "$current_vars" | grep -q "SECRET_KEY="; then
+        log_info "Copying shared environment variables to worker..."
+
+        railway service link app
+        local secret_key
+        secret_key=$(railway variables --kv 2>/dev/null | grep "SECRET_KEY=" | cut -d'=' -f2-)
+
+        railway service link worker
+        railway variables \
+            --set "SECRET_KEY=${secret_key}" \
+            --set "LITESTAR_DEBUG=false" \
+            --set "DATABASE_ECHO=false" \
+            --set "SQLALCHEMY_LOG_LEVEL=30" \
+            --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
+            --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' \
+            --skip-deploys
+    fi
+
+    log_success "Worker service configured"
+}
+
+# -----------------------------------------------------------------------------
 # Metal Builds
 # -----------------------------------------------------------------------------
 
 enable_metal_builds() {
-    log_info "Checking metal builds..."
+    log_info "Enabling metal builds on all services..."
     cd "${PROJECT_ROOT}"
 
-    if railway variables --kv 2>/dev/null | grep -q "RAILWAY_USE_METAL_BUILDS=true"; then
-        log_success "Metal builds already enabled"
-        return 0
+    # Enable on app service
+    railway service link app
+    if ! railway variables --kv 2>/dev/null | grep -q "RAILWAY_USE_METAL_BUILDS=true"; then
+        railway variables --set "RAILWAY_USE_METAL_BUILDS=true" --skip-deploys
     fi
 
-    railway variables --set "RAILWAY_USE_METAL_BUILDS=true" --skip-deploys
-    log_success "Metal builds enabled"
+    # Enable on worker service
+    railway service link worker
+    if ! railway variables --kv 2>/dev/null | grep -q "RAILWAY_USE_METAL_BUILDS=true"; then
+        railway variables --set "RAILWAY_USE_METAL_BUILDS=true" --skip-deploys
+    fi
+
+    log_success "Metal builds enabled on all app services"
+    log_info "Note: Database metal builds and sizing must be configured in Railway dashboard"
+    log_info "  - Postgres: Set to 2 CPU / 2 GB RAM"
+    log_info "  - Redis: Set to smallest available instance"
 }
 
 # -----------------------------------------------------------------------------
@@ -378,14 +472,19 @@ deploy() {
 
     cd "${PROJECT_ROOT}"
 
-    if [ "${DETACH}" = true ]; then
-        railway up --detach
-        log_success "Deployment started (detached mode)"
-        log_info "Use 'railway logs' to monitor deployment"
-    else
-        railway up
-        log_success "Deployment complete"
-    fi
+    # Always use detached mode to avoid hanging on health checks
+    # Deploy app service
+    log_info "Deploying app service..."
+    railway service link app
+    railway up --detach
+
+    # Deploy worker service
+    log_info "Deploying worker service..."
+    railway service link worker
+    railway up --detach
+
+    log_success "Deployment started"
+    log_info "Use 'railway logs' to monitor deployment"
 }
 
 # -----------------------------------------------------------------------------
@@ -432,19 +531,27 @@ display_summary() {
     echo ""
     echo "Project: ${PROJECT_NAME:-$(railway status --json 2>/dev/null | grep -o '"name": *"[^"]*"' | head -1 | cut -d'"' -f4 || echo 'Unknown')}"
     echo ""
-    echo "Configuration:"
+    echo "Services:"
+    echo "  - App service: Litestar web server (1 CPU / 1 GB RAM)"
+    echo "  - Worker service: SAQ background tasks (1 CPU / 1 GB RAM)"
+    echo ""
+    echo "Infrastructure:"
     echo "  - PostgreSQL database (DATABASE_URL)"
     echo "  - Redis for SAQ background tasks (SAQ_REDIS_URL)"
     echo "  - Public domain (APP_URL auto-detected)"
-    echo "  - PORT/LITESTAR_PORT: 8080"
-    echo "  - Dockerfile.distroless builder"
-    echo "  - 2 CPU / 2 GB RAM limits"
+    echo "  - Serverless sleep enabled"
+    echo "  - Metal builds enabled"
     echo ""
     echo "Useful commands:"
-    echo "  railway open     - Open Railway dashboard"
-    echo "  railway logs     - View application logs"
-    echo "  railway status   - Check deployment status"
-    echo "  railway run bash - SSH into container"
+    echo "  railway open                      - Open Railway dashboard"
+    echo "  railway service link app && railway logs   - View app logs"
+    echo "  railway service link worker && railway logs - View worker logs"
+    echo "  railway status                    - Check deployment status"
+    echo ""
+    echo -e "${YELLOW}Manual step required:${NC}"
+    echo "  Configure database resources in Railway dashboard:"
+    echo "  - Postgres: 2 CPU / 2 GB RAM, enable Metal builds"
+    echo "  - Redis: Smallest instance, enable Metal builds"
     echo ""
     if [ "${CONFIGURE_EMAIL}" = false ]; then
         echo "To configure email:"
@@ -483,8 +590,11 @@ main() {
         ensure_database
         ensure_redis
         ensure_app_service
+        ensure_worker_service
         ensure_domain
         ensure_environment
+        configure_app_service
+        configure_worker_service
         enable_metal_builds
     fi
 
@@ -494,10 +604,7 @@ main() {
     # Deploy
     deploy
 
-    # Health check (if not detached)
-    if [ "${DETACH}" = false ]; then
-        health_check
-    fi
+    # Skip health check - deployments are async, check via 'railway status' or dashboard
 
     # Optional configs
     if [ "${CONFIGURE_EMAIL}" = true ]; then

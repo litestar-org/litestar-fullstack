@@ -8,26 +8,14 @@
 	"deploy": {
 		"runtime": "V2",
 		"numReplicas": 1,
-		"startCommand": "app run --host 0.0.0.0",
+		"sleepApplication": true,
 		"limitOverride": {
 			"containers": {
-				"cpu": 2,
-				"memoryBytes": 2000000000
-			}
-		},
-		"overlapSeconds": 0,
-		"drainingSeconds": 0,
-		"healthcheckPath": "/health",
-		"preDeployCommand": ["app database upgrade --no-prompt"],
-		"sleepApplication": true,
-		"useLegacyStacker": false,
-		"multiRegionConfig": {
-			"us-west2": {
-				"numReplicas": 1
+				"cpu": 1,
+				"memoryBytes": 1000000000
 			}
 		},
 		"restartPolicyType": "ON_FAILURE",
-		"healthcheckTimeout": 300,
 		"restartPolicyMaxRetries": 5
 	}
 }

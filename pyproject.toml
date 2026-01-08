@@ -34,7 +34,7 @@ license = { text = "MIT" }
 name = "app"
 readme = "README.md"
 requires-python = ">=3.11"
-version = "0.2.0"
+version = "0.3.0"
 
 [project.urls]
 Discord = "https://discord.gg/litestar"

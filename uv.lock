@@ -127,7 +127,7 @@ wheels = [
 
 [[package]]
 name = "app"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "advanced-alchemy", extra = ["obstore", "pwdlib", "uuid"] },
