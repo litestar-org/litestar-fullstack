@@ -300,10 +300,10 @@ ensure_environment() {
     if railway variables --kv 2>/dev/null | grep -q "SECRET_KEY="; then
         log_success "Environment variables already configured"
 
-        # Always ensure PORT is set (may need update)
-        if ! railway variables --kv 2>/dev/null | grep -q "PORT=8080"; then
-            log_info "Updating PORT configuration..."
-            railway variables --set "PORT=8080" --set "LITESTAR_PORT=8080" --skip-deploys
+        # Ensure LITESTAR_PORT references Railway's injected PORT
+        if ! railway variables --kv 2>/dev/null | grep -q 'LITESTAR_PORT=\${{PORT}}'; then
+            log_info "Setting LITESTAR_PORT to use Railway's PORT..."
+            railway variables --set 'LITESTAR_PORT=${{PORT}}' --skip-deploys
         fi
 
         # Ensure SQLAlchemy logs are quiet by default
@@ -330,6 +330,7 @@ ensure_environment() {
     SECRET_KEY=$(openssl rand -base64 32 | tr -d '=' | tr '+/' '-_')
 
     # Set essential variables
+    # Note: Railway injects PORT automatically, we reference it for LITESTAR_PORT
     railway variables --set "SECRET_KEY=${SECRET_KEY}" \
         --set "LITESTAR_DEBUG=false" \
         --set "VITE_DEV_MODE=false" \
@@ -338,8 +339,7 @@ ensure_environment() {
         --set "SQLALCHEMY_LOG_LEVEL=30" \
         --set "EMAIL_ENABLED=false" \
         --set "EMAIL_BACKEND=console" \
-        --set "PORT=8080" \
-        --set "LITESTAR_PORT=8080" \
+        --set 'LITESTAR_PORT=${{PORT}}' \
         --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
         --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' \
         --set 'APP_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}' \
@@ -349,7 +349,7 @@ ensure_environment() {
     log_info "  - DATABASE_URL: linked to Postgres service"
     log_info "  - SAQ_REDIS_URL: linked to Redis service"
     log_info "  - APP_URL: auto-configured from Railway domain"
-    log_info "  - PORT/LITESTAR_PORT: 8080"
+    log_info "  - LITESTAR_PORT: uses Railway's injected PORT"
 }
 
 # -----------------------------------------------------------------------------
