@@ -213,11 +213,12 @@ WORKDIR /workspace/app
 COPY --from=runtime-prep --chown=65532:65532 /workspace/app/.venv /workspace/app/.venv
 
 # Container configuration
+# Port is configured via LITESTAR_PORT env var (defaults to 8000)
 STOPSIGNAL SIGTERM
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/local/bin/tini", "--"]
-CMD ["app", "run", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["app", "run", "--host", "0.0.0.0"]
 
 # Labels for container metadata (OCI spec)
 LABEL org.opencontainers.image.title="Litestar Fullstack SPA" \
