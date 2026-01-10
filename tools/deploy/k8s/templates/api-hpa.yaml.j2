@@ -3,6 +3,10 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: api-hpa
   namespace: {{ namespace }}
+  labels:
+    app: api
+    app.kubernetes.io/name: api
+    app.kubernetes.io/component: autoscaling
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -25,3 +29,22 @@ spec:
           type: Utilization
           averageUtilization: {{ hpa_mem_target }}
 {% endif %}
+  behavior:
+    scaleDown:
+      # Prevent thrashing - stabilize for 5 minutes before scaling down
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 25
+          periodSeconds: 60
+    scaleUp:
+      # React quickly to load increases
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+        - type: Pods
+          value: 4
+          periodSeconds: 15
+      selectPolicy: Max

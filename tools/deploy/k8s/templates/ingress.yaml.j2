@@ -4,16 +4,29 @@ kind: Ingress
 metadata:
   name: app-ingress
   namespace: {{ namespace }}
+  labels:
+    app.kubernetes.io/name: litestar-app
+    app.kubernetes.io/component: ingress
   annotations:
-    # Use nginx ingress controller (adjust if different)
-    kubernetes.io/ingress.class: nginx
-    # Enable TLS termination using cert-manager
+    # TLS certificate management with cert-manager
     cert-manager.io/cluster-issuer: {{ cert_issuer | default('letsencrypt-prod') }}
-    # Redirect HTTP to HTTPS
+    # Force HTTPS redirect
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    # Optional: Add other annotations like proxy body size, timeouts etc.
-    # nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    # Proxy settings
+    nginx.ingress.kubernetes.io/proxy-body-size: "{{ proxy_body_size | default('50m') }}"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "{{ proxy_connect_timeout | default('60') }}"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "{{ proxy_read_timeout | default('60') }}"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "{{ proxy_send_timeout | default('60') }}"
+    # WebSocket support (for real-time features)
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri"
+    {% if rate_limit_enabled | default(false) %}
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "{{ rate_limit_rps | default('100') }}"
+    nginx.ingress.kubernetes.io/limit-connections: "{{ rate_limit_connections | default('10') }}"
+    {% endif %}
 spec:
+  ingressClassName: {{ ingress_class | default('nginx') }}
   tls:
     - hosts:
         - {{ ingress_host }}
@@ -22,6 +35,7 @@ spec:
     - host: {{ ingress_host }}
       http:
         paths:
+          # API routes
           - path: /api
             pathType: Prefix
             backend:
@@ -29,11 +43,28 @@ spec:
                 name: api-service
                 port:
                   number: 80
+          # Health check endpoint
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          # OAuth callback routes
+          - path: /api/auth/oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          # Static assets and SPA fallback (served by API)
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: web-service
+                name: api-service
                 port:
                   number: 80
 {% endif %}
