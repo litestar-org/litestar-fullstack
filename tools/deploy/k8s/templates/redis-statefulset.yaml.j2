@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: {{ namespace }}
+  labels:
+    app: redis
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: cache
+spec:
+  serviceName: redis-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/component: cache
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          command:
+            - redis-server
+            - --appendonly
+            - "yes"
+            - --maxmemory
+            - "{{ redis_max_memory | default('256mb') }}"
+            - --maxmemory-policy
+            - "allkeys-lru"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              memory: "{{ redis_mem_request | default('128Mi') }}"
+              cpu: "{{ redis_cpu_request | default('100m') }}"
+            limits:
+              memory: "{{ redis_mem_limit | default('512Mi') }}"
+              cpu: "{{ redis_cpu_limit | default('500m') }}"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ redis_storage | default('1Gi') }}
+        {% if storage_class_name %}
+        storageClassName: {{ storage_class_name }}
+        {% endif %}

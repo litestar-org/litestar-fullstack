@@ -30,6 +30,15 @@ REQUIRED_SECRETS = [
     "DATABASE_PASSWORD",
 ]
 
+# Optional secrets that will be included if present in .env
+OPTIONAL_SECRETS = [
+    "RESEND_API_KEY",
+    "GITHUB_OAUTH2_CLIENT_ID",
+    "GITHUB_OAUTH2_CLIENT_SECRET",
+    "GOOGLE_OAUTH2_CLIENT_ID",
+    "GOOGLE_OAUTH2_CLIENT_SECRET",
+]
+
 BASE_DIR = Path(__file__).parent
 TEMPLATE_DIR = BASE_DIR / "templates"
 KUBECTL_CMD = "kubectl"
@@ -39,7 +48,9 @@ KUBECTL_CMD = "kubectl"
 CONFIG: dict[str, dict[str, Any]] = {
     "dev": {
         "namespace": "litestar-dev",
+        "env": "dev",
         "image_tag": "latest",
+        # Compute resources
         "api_replicas": 1,
         "worker_replicas": 1,
         "web_replicas": 1,
@@ -55,22 +66,52 @@ CONFIG: dict[str, dict[str, Any]] = {
         "worker_mem_request": "256Mi",
         "worker_cpu_limit": "500m",
         "worker_mem_limit": "512Mi",
+        # Database
+        "db_name": "appdb",
+        "db_user": "appuser",
+        "db_host": "postgres-service",
+        "db_port": "5432",
         "db_storage": "5Gi",
+        "db_cpu_request": "100m",
+        "db_mem_request": "256Mi",
+        "db_cpu_limit": "500m",
+        "db_mem_limit": "512Mi",
+        "storage_class_name": None,  # Use default storage class
+        # Redis
+        "redis_host": "redis-service",
+        "redis_port": "6379",
+        "redis_storage": "1Gi",
+        "redis_max_memory": "256mb",
+        "redis_cpu_request": "50m",
+        "redis_mem_request": "128Mi",
+        "redis_cpu_limit": "200m",
+        "redis_mem_limit": "256Mi",
+        # Application
         "log_level": "DEBUG",
         "allowed_cors_origins": '["*"]',
         "api_workers": 1,
         "saq_concurrency": 10,
+        "saq_web_enabled": "false",
+        # HPA
         "hpa_cpu_target": 70,
         "hpa_mem_target": None,  # No memory target for dev HPA
+        # Ingress
         "ingress_enabled": False,
         "ingress_host": None,
         "ingress_tls_secret": None,
         "cert_issuer": None,
+        "ingress_class": "nginx",
+        # Security
+        "service_account_name": "litestar-app",
+        "gcp_service_account": None,  # Set for GKE Workload Identity
+        # Other
         "app_scratch_path": None,  # Optional scratch path for dev
     },
     "prod": {
         "namespace": "litestar-prod",
+        "env": "prod",
         "image_tag": "latest",  # Should be overridden with a specific tag for prod deploys
+        # Compute resources
         "api_replicas": 2,  # Start with minReplicas from HPA
         "worker_replicas": 2,  # Start with minReplicas from HPA
         "web_replicas": 2,  # Static content might need more replicas
@@ -86,37 +127,78 @@ CONFIG: dict[str, dict[str, Any]] = {
         "worker_mem_request": "512Mi",
         "worker_cpu_limit": "1000m",
         "worker_mem_limit": "1Gi",
+        # Database
+        "db_name": "appdb",
+        "db_user": "appuser",
+        "db_host": "postgres-service",
+        "db_port": "5432",
         "db_storage": "20Gi",  # More storage for prod
+        "db_cpu_request": "250m",
+        "db_mem_request": "512Mi",
+        "db_cpu_limit": "1000m",
+        "db_mem_limit": "1Gi",
+        "storage_class_name": None,  # Use default or set to 'premium-rwo' for GKE
+        # Redis
+        "redis_host": "redis-service",
+        "redis_port": "6379",
+        "redis_storage": "5Gi",
+        "redis_max_memory": "512mb",
+        "redis_cpu_request": "100m",
+        "redis_mem_request": "256Mi",
+        "redis_cpu_limit": "500m",
+        "redis_mem_limit": "512Mi",
+        # Application
         "log_level": "INFO",
         "allowed_cors_origins": '["https://your-frontend-domain.com"]',  # IMPORTANT: Change this!
         "api_workers": 4,  # Adjust based on prod instance size/cores
         "saq_concurrency": 20,  # Adjust based on expected load
+        "saq_web_enabled": "false",
+        # HPA
         "hpa_cpu_target": 60,  # Lower target for better responsiveness
         "hpa_mem_target": 75,  # Add memory scaling for prod
+        # Ingress
         "ingress_enabled": True,
         "ingress_host": "your-domain.com",  # IMPORTANT: Change this!
         "ingress_tls_secret": "your-domain-tls",  # cert-manager creates this
         "cert_issuer": "letsencrypt-prod",  # Adjust if needed
+        "ingress_class": "nginx",
+        "rate_limit_enabled": True,
+        "rate_limit_rps": "100",
+        "rate_limit_connections": "10",
+        # Security
+        "service_account_name": "litestar-app",
+        "gcp_service_account": None,  # Set for GKE Workload Identity, e.g., "app-sa@project.iam.gserviceaccount.com"
+        # Other
         "app_scratch_path": None,  # Optional scratch path for prod
     },
 }
 
 # Templates to render and apply (in order)
+# Order matters: secrets/configs before deployments, services before HPAs
 TEMPLATES_APPLY_ORDER = [
     "namespace.yaml.j2",
+    "serviceaccount.yaml.j2",  # ServiceAccount for Workload Identity
     "secrets.yaml.j2",
     "configmap.yaml.j2",
+    # Database
     "db-pvc.yaml.j2",
     "db-service.yaml.j2",
     "db-statefulset.yaml.j2",
+    # Redis (required for SAQ worker)
+    "redis-service.yaml.j2",
+    "redis-statefulset.yaml.j2",
+    # Services (must exist before deployments reference them)
     "api-service.yaml.j2",
     "web-service.yaml.j2",
     "nginx-config.yaml.j2",  # Nginx config needs to exist before deployment
+    # Deployments
     "api-deployment.yaml.j2",
     "worker-deployment.yaml.j2",
     "web-deployment.yaml.j2",
+    # Autoscaling and availability
     "api-hpa.yaml.j2",
     "worker-hpa.yaml.j2",
+    "pdb.yaml.j2",  # PodDisruptionBudgets (prod only)
     "ingress.yaml.j2",  # Apply last, only if enabled
 ]
 
@@ -228,6 +310,124 @@ def check_kubectl() -> None:
         sys.exit(1)
 
 
+# --- Config Building Helpers ---
+
+
+def build_deploy_config(
+    env: str,
+    api_image_repo: str,
+    worker_image_repo: str | None,
+    tag: str | None,
+    gcp_service_account: str | None,
+    scratch_path: str | None,
+) -> dict[str, Any]:
+    """Builds the deployment configuration from environment and CLI options."""
+    config = CONFIG[env].copy()
+
+    # Image configuration
+    config["api_image_repo"] = api_image_repo
+    config["worker_image_repo"] = worker_image_repo or api_image_repo
+    config["image_repo"] = api_image_repo  # Legacy compatibility
+
+    # Handle image tag
+    if tag:
+        config["image_tag"] = tag
+        console.print(f"[yellow]Using provided image tag:[/yellow] {tag}")
+    elif env == "prod":
+        console.print("[bold red]Error: --tag is required for production deployments.[/bold red]")
+        sys.exit(1)
+    else:
+        console.print(f"[yellow]Using default image tag for {env}:[/yellow] {config['image_tag']}")
+
+    # Add secrets to config
+    _add_secrets_to_config(config)
+
+    # GCP Workload Identity
+    if gcp_service_account:
+        config["gcp_service_account"] = gcp_service_account
+        console.print(f"[cyan]GKE Workload Identity enabled with GSA:[/cyan] {gcp_service_account}")
+
+    # Scratch path
+    if scratch_path:
+        config["APP_SCRATCH_PATH"] = scratch_path
+    elif config.get("app_scratch_path"):
+        config["APP_SCRATCH_PATH"] = config["app_scratch_path"]
+
+    return config
+
+
+def _add_secrets_to_config(config: dict[str, Any]) -> None:
+    """Adds base64-encoded secrets to the config dict."""
+    # Required secrets
+    config["secret_key_b64"] = base64.b64encode(os.environ["SECRET_KEY"].encode()).decode()
+    config["database_password_b64"] = base64.b64encode(os.environ["DATABASE_PASSWORD"].encode()).decode()
+
+    # Build full database URL
+    db_password = os.environ["DATABASE_PASSWORD"]
+    db_url = f"postgresql+asyncpg://{config['db_user']}:{db_password}@{config['db_host']}:{config['db_port']}/{config['db_name']}"
+    config["database_url_b64"] = base64.b64encode(db_url.encode()).decode()
+
+    # Optional secrets
+    for secret_key in OPTIONAL_SECRETS:
+        if os.environ.get(secret_key):
+            config_key = f"{secret_key.lower()}_b64"
+            config[config_key] = base64.b64encode(os.environ[secret_key].encode()).decode()
+
+
+# --- Manifest Helpers ---
+
+
+def apply_all_manifests(config: dict[str, Any]) -> None:
+    """Renders and applies all manifests in order."""
+    namespace = config["namespace"]
+    env = config["env"]
+
+    console.print(f"[cyan]Applying manifests for {env}...[/cyan]")
+    for template_name in TEMPLATES_APPLY_ORDER:
+        if template_name == "ingress.yaml.j2" and not config.get("ingress_enabled", False):
+            continue
+
+        console.print(f"\n[green]Processing template:[/green] {template_name}")
+        rendered_yaml = render_template(template_name, config)
+        apply_manifest(rendered_yaml, namespace)
+
+
+# --- Wait Helpers ---
+
+
+def wait_for_pod(namespace: str, app_label: str, timeout: str, resource_name: str) -> None:
+    """Waits for a pod with the given app label to be ready."""
+    console.print(f"\n[cyan]Waiting for {resource_name} pod in namespace '{namespace}'...[/cyan]")
+    try:
+        run_kubectl(
+            ["wait", "--for=condition=ready", "pod", "-l", f"app={app_label}", "-n", namespace, f"--timeout={timeout}"]
+        )
+        console.print(f"[green]{resource_name} pod is ready.[/green]")
+    except subprocess.CalledProcessError:
+        console.print(f"[yellow]Warning: {resource_name} pod readiness check timed out or failed.[/yellow]")
+
+
+def wait_for_deployments(namespace: str, deployments: list[str]) -> None:
+    """Waits for deployment rollouts to complete."""
+    for deployment_name in deployments:
+        console.print(f"\n[cyan]Waiting for rollout status of deployment '{deployment_name}'...[/cyan]")
+        try:
+            run_kubectl(["rollout", "status", f"deployment/{deployment_name}", "-n", namespace, "--timeout=300s"])
+            console.print(f"[green]Deployment '{deployment_name}' rollout complete.[/green]")
+        except subprocess.CalledProcessError:
+            console.print(f"[yellow]Warning: Rollout for '{deployment_name}' timed out or failed.[/yellow]")
+
+
+def show_deployment_status(namespace: str, ingress_enabled: bool) -> None:
+    """Shows the current deployment status."""
+    console.print("\n[blue]--- Current Status ---[/blue]")
+    run_kubectl(["get", "pods", "-n", namespace], check=False)
+    run_kubectl(["get", "svc", "-n", namespace], check=False)
+    if ingress_enabled:
+        run_kubectl(["get", "ingress", "-n", namespace], check=False)
+    console.print("[blue]--------------------[/blue]")
+
+
 # --- Click Command Group ---
 HELP_TEXT = """
 [bold blue]Litestar Kubernetes Deployment Tool[/bold blue]
@@ -241,13 +441,17 @@ HELP_TEXT = """
 
 [bold]EXAMPLES:[/bold]
   [dim]# Deploy to development[/dim]
-  python deploy.py deploy -e dev --env-file .env
+  python deploy.py deploy -e dev --env-file .env --api-image-repo gcr.io/my-project/app
 
-  [dim]# Deploy to production[/dim]
-  python deploy.py deploy -e prod --tag v1.2.3 --env-file .env
+  [dim]# Deploy to production with separate worker image[/dim]
+  python deploy.py deploy -e prod --tag v1.2.3 --env-file .env \\
+    --api-image-repo gcr.io/my-project/app \\
+    --worker-image-repo gcr.io/my-project/app-worker
 
-  [dim]# Deploy with a scratch path[/dim]
-  python deploy.py deploy -e dev --env-file .env --scratch-path /tmp/app
+  [dim]# Deploy to GKE with Workload Identity[/dim]
+  python deploy.py deploy -e prod --tag v1.2.3 --env-file .env \\
+    --api-image-repo gcr.io/my-project/app \\
+    --gcp-service-account app-sa@my-project.iam.gserviceaccount.com
 
   [dim]# Delete all resources from dev[/dim]
   python deploy.py delete -e dev --env-file .env
@@ -256,18 +460,28 @@ HELP_TEXT = """
   python deploy.py delete -e prod --delete-namespace --delete-pvc --env-file .env
 
 [bold]REQUIRED:[/bold]
-  --env-file         Path to a .env file containing all required secrets and configuration.
+  --env-file           Path to a .env file containing all required secrets and configuration.
+  --api-image-repo     Docker image repository for the API container.
 
 [bold]REQUIRED SECRETS IN .env:[/bold]
-  SECRET_KEY       The application secret key (will be base64 encoded in the secret).
-  DATABASE_PASSWORD The database password (will be base64 encoded in the secret).
+  SECRET_KEY         The application secret key (will be base64 encoded).
+  DATABASE_PASSWORD  The database password (will be base64 encoded).
+
+[bold]OPTIONAL SECRETS IN .env:[/bold]
+  RESEND_API_KEY              Email service API key.
+  GITHUB_OAUTH2_CLIENT_ID     GitHub OAuth client ID.
+  GITHUB_OAUTH2_CLIENT_SECRET GitHub OAuth client secret.
+  GOOGLE_OAUTH2_CLIENT_ID     Google OAuth client ID.
+  GOOGLE_OAUTH2_CLIENT_SECRET Google OAuth client secret.
+
+[bold]GKE WORKLOAD IDENTITY:[/bold]
+  Use --gcp-service-account to bind the Kubernetes ServiceAccount to a GCP
+  service account for secure access to GCP APIs without storing credentials.
 
 [bold]NOTES:[/bold]
-- All secrets and sensitive configuration must be provided via the [bold]--env-file[/bold] option (using a .env file, see [dim]python-dotenv[/dim]).
-- You may use [bold]--scratch-path[/bold] to enable a scratch volume at the given path (see templates).
-- You must have [bold]kubectl[/bold] installed and configured.
+- All secrets must be provided via the [bold]--env-file[/bold] option.
 - For production, always use a specific image tag (not 'latest').
-- The tool will prompt for confirmation before deleting a production namespace.
+- The tool deploys: API, Worker, Redis, PostgreSQL, and optional Ingress.
 - Database migrations are not handled by this tool.
 """
 
@@ -284,8 +498,15 @@ def cli() -> None:
 @cli.command()
 @click.option("-e", "--env", type=click.Choice(["dev", "prod"]), required=True, help="Deployment environment.")
 @click.option("-t", "--tag", type=str, default=None, help="Docker image tag to deploy (overrides default for env).")
-@click.option("--image-repo", type=str, default="your-repo/litestar-app", help="Docker image repository.")
+@click.option("--api-image-repo", type=str, default="your-repo/litestar-app", help="Docker image repository for API.")
+@click.option(
+    "--worker-image-repo",
+    type=str,
+    default=None,
+    help="Docker image repository for worker (defaults to api-image-repo if not set).",
+)
 @click.option("--skip-db-wait", is_flag=True, default=False, help="Skip waiting for the database pod to be ready.")
+@click.option("--skip-redis-wait", is_flag=True, default=False, help="Skip waiting for the Redis pod to be ready.")
 @click.option("--skip-rollout-wait", is_flag=True, default=False, help="Skip waiting for deployment rollouts.")
 @click.option(
     "--env-file",
@@ -299,113 +520,60 @@ def cli() -> None:
     default=None,
     help="Optional: Enable a scratch volume and mount it at this path (e.g. /tmp/app).",
 )
+@click.option(
+    "--gcp-service-account",
+    type=str,
+    default=None,
+    help="GCP service account email for GKE Workload Identity (e.g., app-sa@project.iam.gserviceaccount.com).",
+)
 def deploy(
     env: str,
     tag: str | None,
-    image_repo: str,
+    api_image_repo: str,
+    worker_image_repo: str | None,
     skip_db_wait: bool,
+    skip_redis_wait: bool,
     skip_rollout_wait: bool,
     env_file: str,
     scratch_path: str | None,
+    gcp_service_account: str | None,
 ) -> None:
     """Deploys the application to the specified environment."""
     check_kubectl()
+
+    # Load and validate environment
     console.print(f"[cyan]Loading environment variables from [bold]{env_file}[/bold]...[/cyan]")
     load_dotenv(env_file)
-    # Validate required secrets
     missing = [key for key in REQUIRED_SECRETS if key not in os.environ]
     if missing:
-        console.print(
-            f"[bold red]Error: The following required secrets are missing from the .env file: {', '.join(missing)}[/bold red]"
-        )
+        console.print(f"[bold red]Error: Missing required secrets: {', '.join(missing)}[/bold red]")
         sys.exit(1)
+
     console.print(Panel(f"🚀 Starting Deployment to [bold cyan]{env}[/bold cyan] Environment 🚀", expand=False))
-    config = CONFIG[env].copy()
-    config["image_repo"] = image_repo
-    if tag:
-        config["image_tag"] = tag
-        console.print(f"[yellow]Using provided image tag:[/yellow] {tag}")
-    elif env == "prod":
-        console.print("[bold red]Error: --tag is required for production deployments.[/bold red]")
-        sys.exit(1)
-    else:
-        console.print(f"[yellow]Using default image tag for {env}:[/yellow] {config['image_tag']}")
-    # Use only values from .env for secrets
-    config["secret_key_b64"] = base64.b64encode(os.environ["SECRET_KEY"].encode()).decode()
-    config["database_password_b64"] = base64.b64encode(os.environ["DATABASE_PASSWORD"].encode()).decode()
 
-    # Set APP_SCRATCH_PATH in context if provided
-    if scratch_path:
-        config["APP_SCRATCH_PATH"] = scratch_path
-    elif config.get("app_scratch_path"):
-        config["APP_SCRATCH_PATH"] = config["app_scratch_path"]
-    # else: do not set, so the template disables the feature
-
+    # Build configuration
+    config = build_deploy_config(env, api_image_repo, worker_image_repo, tag, gcp_service_account, scratch_path)
     namespace = config["namespace"]
 
-    # 1. Ensure Namespace exists
+    # Ensure namespace exists
     console.print(f"[cyan]Ensuring namespace '{namespace}' exists...[/cyan]")
-    run_kubectl(["create", "namespace", namespace], check=False)  # Ignore error if it already exists
+    run_kubectl(["create", "namespace", namespace], check=False)
 
-    # 2. Render and Apply manifests in order
-    console.print(f"[cyan]Applying manifests for {env}...[/cyan]")
-    for template_name in TEMPLATES_APPLY_ORDER:
-        # Skip ingress if not enabled for the environment
-        if template_name == "ingress.yaml.j2" and not config.get("ingress_enabled", False):
-            continue
+    # Apply all manifests
+    apply_all_manifests(config)
 
-        console.print(f"\n[green]Processing template:[/green] {template_name}")
-        rendered_yaml = render_template(template_name, config)
-        # console.print("[dim]--- Rendered YAML ---")
-        # console.print(f"{rendered_yaml}[/dim]")
-        # console.print("[dim]---------------------[/dim]")
-        apply_manifest(rendered_yaml, namespace)
-
-    # 3. Wait for Deployments (Optional)
+    # Wait for infrastructure
     if not skip_db_wait:
-        console.print(f"\n[cyan]Waiting for database pod in namespace '{namespace}'...[/cyan]")
-        try:
-            run_kubectl(
-                [
-                    "wait",
-                    "--for=condition=ready",
-                    "pod",
-                    "-l",
-                    "app=postgres",
-                    "-n",
-                    namespace,
-                    "--timeout=300s",
-                ]
-            )
-            console.print("[green]Database pod is ready.[/green]")
-        except subprocess.CalledProcessError:
-            console.print(
-                "[yellow]Warning: Database pod readiness check timed out or failed. Check pod status manually.[/yellow]"
-            )
-
+        wait_for_pod(namespace, "postgres", "300s", "Database")
+    if not skip_redis_wait:
+        wait_for_pod(namespace, "redis", "120s", "Redis")
     if not skip_rollout_wait:
-        deployments_to_check = ["api", "worker", "web"]
-        for deployment_name in deployments_to_check:
-            console.print(f"\n[cyan]Waiting for rollout status of deployment '{deployment_name}'...[/cyan]")
-            try:
-                run_kubectl(["rollout", "status", f"deployment/{deployment_name}", "-n", namespace, "--timeout=300s"])
-                console.print(f"[green]Deployment '{deployment_name}' rollout complete.[/green]")
-            except subprocess.CalledProcessError:
-                console.print(
-                    f"[yellow]Warning: Rollout status check for deployment '{deployment_name}' timed out or failed.[/yellow]"
-                )
+        wait_for_deployments(namespace, ["api", "worker", "web"])
 
     console.print(
         Panel(f"✅ [bold green]{env.capitalize()} Deployment Completed Successfully![/bold green] ✅", expand=False)
     )
-
-    # 4. Show Status (Optional)
-    console.print("\n[blue]--- Current Status ---[/blue]")
-    run_kubectl(["get", "pods", "-n", namespace], check=False)
-    run_kubectl(["get", "svc", "-n", namespace], check=False)
-    if config.get("ingress_enabled", False):
-        run_kubectl(["get", "ingress", "-n", namespace], check=False)
-    console.print("[blue]--------------------[/blue]")
+    show_deployment_status(namespace, config.get("ingress_enabled", False))
 
 
 # --- Delete Command ---
@@ -420,10 +588,19 @@ def deploy(
 @click.option(
     "--delete-namespace", is_flag=True, default=False, help="Also delete the entire namespace (USE WITH CAUTION)."
 )
-@click.option("--delete-pvc", is_flag=True, default=False, help="Also delete the PersistentVolumeClaim (DATA LOSS).")
+@click.option("--delete-pvc", is_flag=True, default=False, help="Also delete the PersistentVolumeClaims (DATA LOSS).")
 @click.option(
-    "--image-repo", type=str, default="your-repo/litestar-app", help="Docker image repository (needed for context)."
-)  # Needed for context rendering
+    "--api-image-repo",
+    type=str,
+    default="your-repo/litestar-app",
+    help="Docker image repository for API (for context).",
+)
+@click.option(
+    "--worker-image-repo",
+    type=str,
+    default=None,
+    help="Docker image repository for worker (defaults to api-image-repo).",
+)
 @click.option(
     "--env-file",
     type=click.Path(exists=True, dir_okay=False, readable=True, path_type=str),
@@ -440,7 +617,8 @@ def delete(
     env: str,
     delete_namespace: bool,
     delete_pvc: bool,
-    image_repo: str,
+    api_image_repo: str,
+    worker_image_repo: str | None,
     env_file: str,
     scratch_path: str | None,
 ) -> None:
@@ -456,12 +634,22 @@ def delete(
         )
     console.print(Panel(f"🗑️ Starting Deletion for [bold yellow]{env}[/bold yellow] Environment 🗑️", expand=False))
     config = CONFIG[env].copy()
-    config["image_repo"] = image_repo
+
+    # Image configuration
+    config["api_image_repo"] = api_image_repo
+    config["worker_image_repo"] = worker_image_repo or api_image_repo
+    config["image_repo"] = api_image_repo  # Legacy compatibility
     config["image_tag"] = "delete-context"  # Placeholder
+
+    # Secrets (use placeholders if not available - only needed for template rendering)
     db_password = os.environ.get("DATABASE_PASSWORD", "placeholder")
     secret_key = os.environ.get("SECRET_KEY", "placeholder")
-    config["database_password_b64"] = base64.b64encode(db_password.encode()).decode() if db_password else "placeholder"
-    config["secret_key_b64"] = base64.b64encode(secret_key.encode()).decode() if secret_key else "placeholder"
+    config["database_password_b64"] = base64.b64encode(db_password.encode()).decode()
+    config["secret_key_b64"] = base64.b64encode(secret_key.encode()).decode()
+
+    # Database URL placeholder for template rendering
+    db_url = f"postgresql+asyncpg://{config['db_user']}:{db_password}@{config['db_host']}:{config['db_port']}/{config['db_name']}"
+    config["database_url_b64"] = base64.b64encode(db_url.encode()).decode()
 
     # Set APP_SCRATCH_PATH in context if provided
     if scratch_path:

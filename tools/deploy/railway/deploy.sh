@@ -366,17 +366,19 @@ configure_app_service() {
 
     # Only update if not already configured
     if ! echo "$current_vars" | grep -q "SAQ_USE_SERVER_LIFESPAN=false"; then
-        log_info "Setting app service configuration..."
+        log_info "Setting app service environment variables..."
+        # NOTE: SAQ_USE_SERVER_LIFESPAN=false because worker runs separately
+        # Start command is defined in Dockerfile CMD or Railway dashboard settings
         railway variables \
             --set "SAQ_USE_SERVER_LIFESPAN=false" \
-            --set "RAILWAY_RUN_COMMAND=app run --host 0.0.0.0" \
-            --set "RAILWAY_HEALTHCHECK_PATH=/health" \
-            --set "RAILWAY_HEALTHCHECK_TIMEOUT=300" \
-            --set "RAILWAY_PRE_DEPLOY_COMMAND=app database upgrade --no-prompt" \
             --skip-deploys
     fi
 
     log_success "App service configured"
+    log_info "  NOTE: Verify in Railway dashboard that:"
+    log_info "    - Dockerfile: tools/deploy/docker/Dockerfile.distroless"
+    log_info "    - Config file: tools/deploy/railway/railway.app.json"
+    log_info "    - Health check: /health (timeout 300s)"
 }
 
 configure_worker_service() {
@@ -387,13 +389,12 @@ configure_worker_service() {
     local current_vars
     current_vars=$(railway variables --kv 2>/dev/null || echo "")
 
-    # Set worker-specific variables
-    if ! echo "$current_vars" | grep -q "RAILWAY_RUN_COMMAND=app workers run"; then
-        log_info "Setting worker service configuration..."
+    # Set worker-specific environment variables
+    if ! echo "$current_vars" | grep -q "SAQ_USE_SERVER_LIFESPAN=false"; then
+        log_info "Setting worker service environment variables..."
+        # NOTE: Worker runs independently, not tied to server lifespan
         railway variables \
             --set "SAQ_USE_SERVER_LIFESPAN=false" \
-            --set "RAILWAY_RUN_COMMAND=app workers run" \
-            --set "RAILWAY_HEALTHCHECK_DISABLED=true" \
             --skip-deploys
     fi
 
@@ -417,6 +418,11 @@ configure_worker_service() {
     fi
 
     log_success "Worker service configured"
+    log_warn "IMPORTANT: Configure worker service in Railway dashboard:"
+    log_info "  1. Settings → Deploy → Dockerfile Path: tools/deploy/docker/Dockerfile.worker"
+    log_info "  2. Settings → Deploy → Config file: tools/deploy/railway/railway.worker.json"
+    log_info "  3. Settings → Deploy → Serverless: DISABLED (worker cannot wake from HTTP)"
+    log_info "  4. Settings → Deploy → Health check: DISABLED (no HTTP endpoint)"
 }
 
 # -----------------------------------------------------------------------------
@@ -454,15 +460,25 @@ verify_build() {
 
     cd "${PROJECT_ROOT}"
 
-    # Check Dockerfile exists
+    # Check Dockerfiles exist
     if [ ! -f "tools/deploy/docker/Dockerfile.distroless" ]; then
         log_error "Dockerfile not found at tools/deploy/docker/Dockerfile.distroless"
         exit 1
     fi
 
-    # Check railway.json exists
-    if [ ! -f "railway.json" ]; then
-        log_error "railway.json not found in project root"
+    if [ ! -f "tools/deploy/docker/Dockerfile.worker" ]; then
+        log_error "Worker Dockerfile not found at tools/deploy/docker/Dockerfile.worker"
+        exit 1
+    fi
+
+    # Check Railway configs exist
+    if [ ! -f "tools/deploy/railway/railway.app.json" ]; then
+        log_error "railway.app.json not found at tools/deploy/railway/railway.app.json"
+        exit 1
+    fi
+
+    if [ ! -f "tools/deploy/railway/railway.worker.json" ]; then
+        log_error "railway.worker.json not found at tools/deploy/railway/railway.worker.json"
         exit 1
     fi
 
@@ -545,19 +561,30 @@ display_summary() {
     echo "  - PostgreSQL database (DATABASE_URL)"
     echo "  - Redis for SAQ background tasks (SAQ_REDIS_URL)"
     echo "  - Public domain (APP_URL auto-detected)"
-    echo "  - Serverless sleep enabled"
+    echo "  - Serverless: DISABLED (worker cannot wake from HTTP)"
     echo "  - Metal builds enabled"
     echo ""
     echo "Useful commands:"
     echo "  railway open                      - Open Railway dashboard"
-    echo "  railway service link app && railway logs   - View app logs"
-    echo "  railway service link worker && railway logs - View worker logs"
+    echo "  railway service link \"${APP_SERVICE_NAME}\" && railway logs   - View app logs"
+    echo "  railway service link \"${WORKER_SERVICE_NAME}\" && railway logs - View worker logs"
     echo "  railway status                    - Check deployment status"
     echo ""
-    echo -e "${YELLOW}Manual step required:${NC}"
-    echo "  Configure database resources in Railway dashboard:"
-    echo "  - Postgres: 2 CPU / 2 GB RAM, enable Metal builds"
-    echo "  - Redis: Smallest instance, enable Metal builds"
+    echo -e "${YELLOW}REQUIRED manual configuration in Railway dashboard:${NC}"
+    echo ""
+    echo "  1. App Service (${APP_SERVICE_NAME}):"
+    echo "     Settings → Deploy → Dockerfile Path: tools/deploy/docker/Dockerfile.distroless"
+    echo "     Settings → Deploy → Config file: tools/deploy/railway/railway.app.json"
+    echo ""
+    echo "  2. Worker Service (${WORKER_SERVICE_NAME}):"
+    echo "     Settings → Deploy → Dockerfile Path: tools/deploy/docker/Dockerfile.worker"
+    echo "     Settings → Deploy → Config file: tools/deploy/railway/railway.worker.json"
+    echo "     Settings → Deploy → Serverless: DISABLED"
+    echo "     Settings → Deploy → Health check: DISABLED"
+    echo ""
+    echo "  3. Database Resources:"
+    echo "     - Postgres: 2 CPU / 2 GB RAM, enable Metal builds"
+    echo "     - Redis: Smallest instance, enable Metal builds"
     echo ""
     if [ "${CONFIGURE_EMAIL}" = false ]; then
         echo "To configure email:"

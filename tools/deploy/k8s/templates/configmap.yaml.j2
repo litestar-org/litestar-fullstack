@@ -3,28 +3,51 @@ kind: ConfigMap
 metadata:
   name: app-config
   namespace: {{ namespace }}
+  labels:
+    app.kubernetes.io/name: litestar-app
+    app.kubernetes.io/component: config
 data:
-  # General App Settings
+  # Application Settings
   APP_NAME: "Litestar Fullstack SPA"
+  LITESTAR_DEBUG: "{{ 'true' if env == 'dev' else 'false' }}"
   LOG_LEVEL: "{{ log_level }}"
 
-  # API Settings
-  API_HOST: "0.0.0.0"
-  API_PORT: "8000"
-  API_WORKERS: "{{ api_workers | string }}"
+  # Server Settings
+  LITESTAR_HOST: "0.0.0.0"
+  LITESTAR_PORT: "8000"
 
-  # Worker Settings
+  # Database Settings (connection string built from components)
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "{{ db_name | default('appdb') }}"
+  DATABASE_USER: "{{ db_user | default('appuser') }}"
+  DATABASE_POOL_SIZE: "{{ db_pool_size | default('5') }}"
+  DATABASE_POOL_MAX_OVERFLOW: "{{ db_pool_max_overflow | default('10') }}"
+  DATABASE_ECHO: "false"
+
+  # Redis/SAQ Settings
+  SAQ_REDIS_URL: "redis://redis-service:6379/0"
   SAQ_CONCURRENCY: "{{ saq_concurrency | string }}"
-
-  # Database Settings
-  DB_HOST: "postgres-service" # Service name for the DB within the cluster
-  DB_PORT: "5432"
-  DB_NAME: "appdb"
-  DB_USER: "appuser" # User defined in secrets
+  SAQ_PROCESSES: "{{ saq_processes | default('1') | string }}"
+  SAQ_WEB_ENABLED: "false"
+  SAQ_USE_SERVER_LIFESPAN: "false"
 
   # CORS Settings
-  ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}' # Ensure this is properly quoted/formatted
+  ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}'
 
-  # Add other non-sensitive config values here if needed
-  # Example:
-  # SOME_FEATURE_FLAG: "{{ 'true' if env == 'dev' else 'false' }}"
+  # Vite Settings
+  VITE_DEV_MODE: "false"
+
+  # Email Settings (configure as needed)
+  EMAIL_BACKEND: "{{ email_backend | default('console') }}"
+  EMAIL_FROM_ADDRESS: "{{ email_from_address | default('noreply@localhost') }}"
+  EMAIL_FROM_NAME: "{{ email_from_name | default('Litestar App') }}"
+
+  # Feature Flags
+  REGISTRATION_ENABLED: "{{ 'true' if registration_enabled | default(true) else 'false' }}"
+  EMAIL_VERIFICATION_REQUIRED: "{{ 'true' if email_verification_required | default(false) else 'false' }}"
+  MFA_ENABLED: "{{ 'true' if mfa_enabled | default(false) else 'false' }}"
+
+  # Logging
+  SQLALCHEMY_LOG_LEVEL: "{{ sqlalchemy_log_level | default('30') }}"
+  SAQ_LOG_LEVEL: "{{ saq_log_level | default('30') }}"

@@ -1,0 +1,30 @@
+{% if env == 'prod' %}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-pdb
+  namespace: {{ namespace }}
+  labels:
+    app: api
+    app.kubernetes.io/name: api
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: api
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: worker-pdb
+  namespace: {{ namespace }}
+  labels:
+    app: worker
+    app.kubernetes.io/name: worker
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: worker
+{% endif %}

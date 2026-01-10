@@ -3,8 +3,12 @@ kind: StatefulSet
 metadata:
   name: postgres
   namespace: {{ namespace }}
+  labels:
+    app: postgres
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/component: database
 spec:
-  serviceName: "postgres-service"
+  serviceName: postgres-service
   replicas: 1
   selector:
     matchLabels:
@@ -13,33 +17,82 @@ spec:
     metadata:
       labels:
         app: postgres
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/component: database
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
-          image: postgres:16-alpine # Consider making image version configurable
+          image: postgres:16-alpine
           ports:
-            - containerPort: 5432
-              name: postgres
-          envFrom:
-            - configMapRef:
-                name: app-config
-            - secretRef:
-                name: app-secrets
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
           env:
-            # PGDATA might be needed depending on the image
+            - name: POSTGRES_DB
+              value: "{{ db_name | default('appdb') }}"
+            - name: POSTGRES_USER
+              value: "{{ db_user | default('appuser') }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DATABASE_PASSWORD
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              memory: "{{ db_mem_request | default('512Mi') }}"
+              cpu: "{{ db_cpu_request | default('250m') }}"
+            limits:
+              memory: "{{ db_mem_limit | default('1Gi') }}"
+              cpu: "{{ db_cpu_limit | default('1000m') }}"
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-          resources: # Add resource limits for the DB
-            requests:
-              memory: "512Mi"
-              cpu: "250m"
-            limits:
-              memory: "1Gi"
-              cpu: "500m"
-      volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - "{{ db_user | default('appuser') }}"
+                - -d
+                - "{{ db_name | default('appdb') }}"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - "{{ db_user | default('appuser') }}"
+                - -d
+                - "{{ db_name | default('appdb') }}"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ db_storage }}
+        {% if storage_class_name %}
+        storageClassName: {{ storage_class_name }}
+        {% endif %}

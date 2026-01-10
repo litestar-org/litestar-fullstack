@@ -3,30 +3,57 @@ kind: Deployment
 metadata:
   name: api
   namespace: {{ namespace }}
+  labels:
+    app: api
+    app.kubernetes.io/name: api
+    app.kubernetes.io/component: backend
 spec:
-  replicas: {{ api_replicas }} # Initial replicas, HPA takes over
+  replicas: {{ api_replicas }}
   selector:
     matchLabels:
       app: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
         app: api
+        app.kubernetes.io/name: api
+        app.kubernetes.io/component: backend
     spec:
+      serviceAccountName: {{ service_account_name | default('default') }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api
-          image: {{ image_repo }}:{{ image_tag }}
-          imagePullPolicy: Always # Use Always for prod/dev with rolling tags
+          image: {{ api_image_repo }}:{{ image_tag }}
+          imagePullPolicy: {{ image_pull_policy | default('IfNotPresent') }}
           ports:
-            - containerPort: 8000
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: SAQ_USE_SERVER_LIFESPAN
+              value: "false"
           envFrom:
             - configMapRef:
                 name: app-config
             - secretRef:
                 name: app-secrets
-          # env:
-          # - name: OTEL_SERVICE_NAME # Example for OpenTelemetry
-          #   value: "api-{{ env }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               memory: "{{ api_mem_request }}"
@@ -34,33 +61,51 @@ spec:
             limits:
               memory: "{{ api_mem_limit }}"
               cpu: "{{ api_cpu_limit }}"
-          {% if APP_SCRATCH_PATH %}
           volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            {% if app_scratch_path %}
             - name: scratch-volume
-              mountPath: {{ APP_SCRATCH_PATH }}
-          {% endif %}
+              mountPath: {{ app_scratch_path }}
+            {% endif %}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+            timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /health # Assuming /health exists
+              path: /health
               port: 8000
-            initialDelaySeconds: 20 # Give more time for potential migrations/setup
-            periodSeconds: 20
+            initialDelaySeconds: 0
+            periodSeconds: 15
             failureThreshold: 3
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 0
+            periodSeconds: 5
             failureThreshold: 3
-          terminationGracePeriodSeconds: 60 # Give time for graceful shutdown
-      {% if APP_SCRATCH_PATH %}
+            timeoutSeconds: 3
+      terminationGracePeriodSeconds: 60
       volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        {% if app_scratch_path %}
         - name: scratch-volume
-          emptyDir: {} # Uses default node storage medium
-      {% endif %}
-      # Optional: Add securityContext, nodeSelector, tolerations, affinity, etc.
-
-# ... existing code ...
-
-# ... existing code ...
+          emptyDir: {}
+        {% endif %}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: api
+                topologyKey: kubernetes.io/hostname

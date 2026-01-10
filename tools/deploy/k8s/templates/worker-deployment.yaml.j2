@@ -3,30 +3,55 @@ kind: Deployment
 metadata:
   name: worker
   namespace: {{ namespace }}
+  labels:
+    app: worker
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/component: background-worker
 spec:
-  replicas: {{ worker_replicas }} # Initial replicas, HPA takes over
+  replicas: {{ worker_replicas }}
   selector:
     matchLabels:
       app: worker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
         app: worker
+        app.kubernetes.io/name: worker
+        app.kubernetes.io/component: background-worker
     spec:
+      serviceAccountName: {{ service_account_name | default('default') }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: worker
-          image: {{ image_repo }}:{{ image_tag }}
-          imagePullPolicy: Always
-          # Adjust command if needed, or make it configurable
-          command: ["python", "manage.py", "run-worker"]
+          image: {{ worker_image_repo }}:{{ image_tag }}
+          imagePullPolicy: {{ image_pull_policy | default('IfNotPresent') }}
+          # Worker uses Dockerfile.worker which has CMD ["app", "workers", "run"]
+          # No command override needed - uses Dockerfile default
+          env:
+            - name: SAQ_USE_SERVER_LIFESPAN
+              value: "false"
           envFrom:
             - configMapRef:
                 name: app-config
             - secretRef:
                 name: app-secrets
-          # env:
-          # - name: OTEL_SERVICE_NAME
-          #   value: "worker-{{ env }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               memory: "{{ worker_mem_request }}"
@@ -34,17 +59,34 @@ spec:
             limits:
               memory: "{{ worker_mem_limit }}"
               cpu: "{{ worker_cpu_limit }}"
-          {% if APP_SCRATCH_PATH %}
           volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            {% if app_scratch_path %}
             - name: scratch-volume
-              mountPath: {{ APP_SCRATCH_PATH }}
-          {% endif %}
-          # Optional: Add liveness/readiness probes if your worker has them
+              mountPath: {{ app_scratch_path }}
+            {% endif %}
+          # Note: Workers using distroless images don't have shells for exec probes.
+          # Health is managed by Kubernetes restart policy and SAQ's internal error handling.
+          # If you need health checks, consider:
+          # 1. Adding a simple HTTP health endpoint to the worker
+          # 2. Using a non-distroless image with exec probes
+          # 3. Using external monitoring (e.g., Redis queue depth metrics)
       restartPolicy: Always
-      terminationGracePeriodSeconds: 60 # Give time for graceful shutdown
-      {% if APP_SCRATCH_PATH %}
+      terminationGracePeriodSeconds: 120
       volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        {% if app_scratch_path %}
         - name: scratch-volume
           emptyDir: {}
-      {% endif %}
-      # Optional: Add securityContext, nodeSelector, tolerations, affinity, etc.
+        {% endif %}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: worker
+                topologyKey: kubernetes.io/hostname
