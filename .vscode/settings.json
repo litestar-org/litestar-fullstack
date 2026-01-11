@@ -26,7 +26,7 @@
     ".static": true,
     "dist": false,
     ".dmypy.json": true,
-    ".claude": false,
+    ".claude": true,
     "htmlcov": true
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",

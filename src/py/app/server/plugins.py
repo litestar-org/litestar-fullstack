@@ -9,6 +9,7 @@ from litestar_saq import SAQPlugin
 from litestar_vite import VitePlugin
 
 from app import config
+from app.utils.domain import DomainPlugin
 from app.utils.oauth import OAuth2ProviderPlugin
 
 structlog = StructlogPlugin(config=config.log)
@@ -18,6 +19,7 @@ granian = GranianPlugin()
 problem_details = ProblemDetailsPlugin(config=config.problem_details)
 oauth2_provider = OAuth2ProviderPlugin()
 email = EmailPlugin(config=config.email)
+domain = DomainPlugin()
 
 
 @cache
