@@ -69,8 +69,8 @@ services:
       retries: 3
   app:
     build:
-      context: .
-      dockerfile: docker/run/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.distroless
     restart: always
     depends_on:
       db:
@@ -83,11 +83,11 @@ services:
       VITE_DEV_MODE: "false"
       SAQ_USE_SERVER_LIFESPAN: "false"
     env_file:
-      - ../../.env.local.example
+      - .env.docker
   worker:
     build:
-      context: .
-      dockerfile: docker/run/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.distroless
     command: litestar workers run
     restart: always
     depends_on:
@@ -96,15 +96,15 @@ services:
       cache:
         condition: service_healthy
     env_file:
-      - ../../.env.local.example
+      - .env.docker
   migrator:
     build:
-      context: .
-      dockerfile: docker/run/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.distroless
     restart: "no"
     command: litestar database upgrade --no-prompt
     env_file:
-      - ../../.env.local.example
+      - .env.docker
     depends_on:
       db:
         condition: service_healthy

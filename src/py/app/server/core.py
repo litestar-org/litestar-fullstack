@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-async def get_app_email_service_dependency(request: Request[Any, Any, Any]) -> AsyncGenerator[AppEmailService, None]:
+async def get_mailer_dependency(request: Request[Any, Any, Any]) -> AsyncGenerator[AppEmailService, None]:
     """Provide the app email service.
 
     Args:
@@ -146,7 +146,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             {
                 "current_user": Provide(provide_user, sync_to_thread=False),
                 "settings": Provide(provide_app_settings, sync_to_thread=False),
-                "app_email_service": Provide(get_app_email_service_dependency),
+                "mailer": Provide(get_mailer_dependency),
             }
         )
 

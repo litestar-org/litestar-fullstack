@@ -5,8 +5,8 @@ AppEmailService for template-based transactional emails.
 
 Example:
     # In a controller, inject via DI:
-    async def signup(app_email_service: AppEmailService, ...):
-        await app_email_service.send_verification_email(user, token)
+    async def signup(mailer: AppEmailService, ...):
+        await mailer.send_verification_email(user, token)
 
     # Or use the plugin's EmailService directly for simpler emails:
     async def send_notification(mailer: EmailService, ...):

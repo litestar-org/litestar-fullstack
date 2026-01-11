@@ -12,7 +12,9 @@ MAKEFLAGS += --no-print-directory
 COMPOSE_DIR := tools/deploy/docker
 COMPOSE_INFRA := $(COMPOSE_DIR)/docker-compose.infra.yml
 COMPOSE_APP := $(COMPOSE_DIR)/docker-compose.yml
-COMPOSE_DEV := $(COMPOSE_DIR)/docker-compose.dev.yml
+
+# Define project name for docker-compose
+COMPOSE_PROJECT_NAME := fullstack-spa
 
 # Define colors and formatting
 BLUE := $(shell printf "\033[1;34m")
@@ -295,28 +297,28 @@ docker-logs:                                       ## Tail production Docker sta
 .PHONY: start-all-docker-dev
 start-all-docker-dev:                              ## Start development Docker stack (with hot-reload)
 	@echo "${INFO} Building and starting development Docker stack... 🐳"
-	@docker compose -f $(COMPOSE_DEV) up -d --build --force-recreate
+	@docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml up -d --build --force-recreate
 	@echo "${OK} Development Docker stack is running"
 
 .PHONY: stop-all-docker-dev
 stop-all-docker-dev:                               ## Stop development Docker stack
 	@echo "${INFO} Stopping development Docker stack... 🛑"
-	@docker compose -f $(COMPOSE_DEV) down
+	@docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml down
 	@echo "${OK} Development Docker stack stopped"
 
 .PHONY: wipe-all-docker-dev
 wipe-all-docker-dev:                               ## Remove development Docker stack, images, and volumes
 	@echo "${INFO} Wiping development Docker stack... 🧹"
-	@docker compose -f $(COMPOSE_DEV) down -v --remove-orphans --rmi local
+	@docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml down -v --remove-orphans --rmi local
 	@echo "${OK} Development Docker stack wiped clean"
 
 .PHONY: docker-dev-logs
 docker-dev-logs:                                   ## Tail development Docker stack logs
-	@docker compose -f $(COMPOSE_DEV) logs -f
+	@docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml logs -f
 
 .PHONY: docker-shell
 docker-shell:                                      ## Open a shell in the app container
-	@docker compose -f $(COMPOSE_DEV) exec app /bin/bash || docker compose -f $(COMPOSE_DEV) exec app /bin/sh
+	@docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml exec app /bin/bash || docker compose -f $(COMPOSE_APP) -f $(COMPOSE_DIR)/docker-compose.override.yml exec app /bin/sh
 
 
 # =============================================================================

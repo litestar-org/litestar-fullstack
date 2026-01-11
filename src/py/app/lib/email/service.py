@@ -41,8 +41,8 @@ class AppEmailService:
 
     Example:
         # In a controller, inject via DI:
-        async def signup(app_email_service: AppEmailService, ...):
-            await app_email_service.send_verification_email(user, token)
+        async def signup(mailer: AppEmailService, ...):
+            await mailer.send_verification_email(user, token)
     """
 
     __slots__ = ("_mailer", "_settings", "_template_cache", "_template_dir")

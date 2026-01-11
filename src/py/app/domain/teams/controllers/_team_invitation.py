@@ -24,8 +24,6 @@ if TYPE_CHECKING:
     from advanced_alchemy.service import OffsetPagination
 
     from app.domain.teams.services import TeamMemberService, TeamService
-    from app.lib.email import AppEmailService
-    from app.lib.settings import AppSettings
 
 
 class TeamInvitationController(Controller):
@@ -60,8 +58,7 @@ class TeamInvitationController(Controller):
         current_user: m.User,
         team_invitations_service: TeamInvitationService,
         teams_service: TeamService,
-        app_email_service: AppEmailService,
-        settings: AppSettings,
+        request: Request[m.User, Token, Any],
         team_id: UUID,
         data: TeamInvitationCreate,
     ) -> TeamInvitation:
@@ -71,8 +68,7 @@ class TeamInvitationController(Controller):
             current_user: The current user sending the invitation.
             team_invitations_service: The team invitation service.
             teams_service: The teams service.
-            app_email_service: Email service for sending invitation emails.
-            settings: Application settings.
+            request: The request object.
             team_id: The team id.
             data: The data to create the team invitation with.
 
@@ -89,12 +85,7 @@ class TeamInvitationController(Controller):
         payload["team_id"] = team_id
         payload["invited_by"] = current_user
         db_obj = await team_invitations_service.create(payload)
-        await app_email_service.send_team_invitation_email(
-            invitee_email=db_obj.email,
-            inviter_name=current_user.name or current_user.email,
-            team_name=team.name,
-            invitation_url=f"{settings.URL}/teams/{team_id}/invitations/{db_obj.id}/accept",
-        )
+        request.app.emit(event_id="team_invitation_created", invitation_id=db_obj.id)
         return team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation)
 
     @get(operation_id="ListTeamInvitations", path="")
@@ -181,14 +172,12 @@ class TeamInvitationController(Controller):
         )
         if existing_membership is not None:
             raise HTTPException(status_code=400, detail="User is already a member of this team")
-        await team_members_service.create(
-            {
-                "team_id": team_id,
-                "user_id": current_user.id,
-                "role": db_obj.role,
-                "is_owner": False,
-            }
-        )
+        await team_members_service.create({
+            "team_id": team_id,
+            "user_id": current_user.id,
+            "role": db_obj.role,
+            "is_owner": False,
+        })
         await team_invitations_service.update(item_id=invitation_id, data={"is_accepted": True})
         return Message(message="Team invitation accepted")
 

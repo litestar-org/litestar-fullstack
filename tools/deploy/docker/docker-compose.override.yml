@@ -1,18 +1,18 @@
 x-development-volumes: &development-volumes
   volumes:
-    - ./docs:/workspace/app/docs/
-    - ./tools:/workspace/app/tools/
-    - ./src:/workspace/app/src/
-    - ./Makefile:/workspace/app/Makefile
-    - ./pyproject.toml:/workspace/app/pyproject.toml
-    - ./uv.lock:/workspace/app/uv.lock
-    - ../../.env.local.example:/workspace/app/.env
+    - ../../../docs:/workspace/app/docs/
+    - ../../../tools:/workspace/app/tools/
+    - ../../../src:/workspace/app/src/
+    - ../../../Makefile:/workspace/app/Makefile
+    - ../../../pyproject.toml:/workspace/app/pyproject.toml
+    - ../../../uv.lock:/workspace/app/uv.lock
+    - .env.docker:/workspace/app/.env
 
 services:
   app:
     build:
-      context: .
-      dockerfile: docker/dev/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.dev
     ports:
       - "8000:8000"
       - "3006:3006"
@@ -26,8 +26,8 @@ services:
     <<: *development-volumes
   worker:
     build:
-      context: .
-      dockerfile: docker/dev/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.dev
     command: litestar workers run
     tty: true
     restart: always
@@ -39,16 +39,16 @@ services:
         condition: service_healthy
 
     env_file:
-      - ../../.env.local.example
+      - .env.docker
   migrator:
     build:
-      context: .
-      dockerfile: docker/dev/Dockerfile
+      context: ../../..
+      dockerfile: tools/deploy/docker/Dockerfile.dev
     command: litestar database upgrade --no-prompt
     restart: "no"
     <<: *development-volumes
     env_file:
-      - ../../.env.local.example
+      - .env.docker
     depends_on:
       db:
         condition: service_healthy
