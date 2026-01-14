@@ -8,7 +8,7 @@ You should not have modify this module very often and should only be invoked und
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator, AsyncIterator, Callable
-from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from contextlib import AbstractAsyncContextManager, AsyncExitStack, aclosing, asynccontextmanager
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast, overload
 
 from advanced_alchemy.extensions.litestar.providers import (
@@ -43,15 +43,14 @@ class _ServiceWithSession(Protocol):
     def __init__(self, *, session: AsyncSession) -> None: ...
 
 
-# Type alias for cleaner overload signatures
 ServiceProvider = Callable[["AsyncSession"], AsyncGenerator[T, None]]
 
 
 async def get_task_queue() -> Queue:
-    """Get Queues
+    """Get the background task queue.
 
     Returns:
-        dict[str,Queue]: A list of queues
+        Queue: The connected background task queue.
     """
     from app.server import plugins
 
@@ -61,8 +60,6 @@ async def get_task_queue() -> Queue:
     return task_queues
 
 
-# Overloads for 1-5 providers - Python's type system requires this for proper inference
-# (Similar to how asyncio.gather handles variadic typing)
 @overload
 def provide_services(
     p1: ServiceProvider[T1],
@@ -176,7 +173,6 @@ async def provide_services(
     """
     from app.config import alchemy
 
-    # Validate inputs
     if session is not None and connection is not None:
         msg = "Cannot provide both 'session' and 'connection' - choose one"
         raise ValueError(msg)
@@ -185,25 +181,41 @@ async def provide_services(
         msg = "At least one service provider is required"
         raise ValueError(msg)
 
-    async def _collect_services(db_session: AsyncSession) -> tuple[object, ...]:
-        services: list[object] = [await anext(provider(db_session)) for provider in providers]
-        return tuple(services)
+    async def _collect_services(
+        db_session: AsyncSession,
+    ) -> tuple[tuple[object, ...], AsyncExitStack]:
+        services: list[object] = []
+        stack = AsyncExitStack()
+        await stack.__aenter__()
+        try:
+            for provider in providers:
+                generator = await stack.enter_async_context(aclosing(provider(db_session)))
+                services.append(await anext(generator))
+        except Exception:
+            await stack.aclose()
+            raise
+        return tuple(services), stack
 
-    # Route to appropriate session source
     if session is not None:
-        # External session provided - don't manage lifecycle
-        services = await _collect_services(session)
-        yield services
-    elif connection is not None:
-        # Request context - get session from connection scope (lifecycle managed by Litestar)
-        db_session = alchemy.provide_session(connection.app.state, connection.scope)
-        services = await _collect_services(db_session)
-        yield services
-    else:
-        # Standalone context - create and manage session lifecycle
-        async with alchemy.get_session() as db_session:
-            services = await _collect_services(db_session)
+        services, stack = await _collect_services(session)
+        try:
             yield services
+        finally:
+            await stack.aclose()
+    elif connection is not None:
+        db_session = alchemy.provide_session(connection.app.state, connection.scope)
+        services, stack = await _collect_services(db_session)
+        try:
+            yield services
+        finally:
+            await stack.aclose()
+    else:
+        async with alchemy.get_session() as db_session:
+            services, stack = await _collect_services(db_session)
+            try:
+                yield services
+            finally:
+                await stack.aclose()
 
 
 class CompositeServiceMixin:

@@ -29,7 +29,7 @@ logger = structlog.get_logger()
 
 
 async def on_shutdown(ctx: Context) -> None:
-    """Shutdown events for each worker.."""
+    """Shutdown events for each worker."""
     worker = cast("Any", ctx["worker"])
     await logger.ainfo("Stopping background workers for queue", queue=worker.queue.name)
 
@@ -51,12 +51,10 @@ async def before_process(ctx: Context) -> None:
 
 async def after_process(ctx: Context) -> None:
     """Parse log context and log it along with the contextvars context."""
-    # parse log context from `ctx`
     ctx_dict = cast("dict[str, Any]", ctx)
     job = cast("Job | None", ctx_dict.get("job"))
     if job:
         log_ctx = {k: getattr(job, k) for k in LOGGED_JOB_FIELDS}
-        # add duration measures
         log_ctx["pickup_time_ms"] = job.started - job.queued
         log_ctx["total_runtime_ms"] = job.completed - job.started
         log_ctx["total_time_ms"] = job.completed - job.queued

@@ -152,6 +152,5 @@ def exception_to_http_response(
         http_exc = InternalServerException
     if request.app.debug and http_exc not in {PermissionDeniedException, NotFoundError, AuthorizationError}:
         return create_debug_response(request, exc)
-    # Use the exception's detail if available (for ApplicationError subclasses), otherwise use __cause__ or str(exc)
     detail = getattr(exc, "detail", "") or (str(exc.__cause__) if exc.__cause__ else str(exc))
     return create_exception_response(request, http_exc(detail=detail))

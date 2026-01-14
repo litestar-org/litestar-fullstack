@@ -33,14 +33,10 @@ def setup_environment() -> None:
             self: The LitestarExtensionGroup instance
             ctx: The click Context
             formatter: The help formatter
-
-        Returns:
-            None
         """
-        self._prepare(ctx)  # Force plugin loading
+        self._prepare(ctx)
         return original_format_help(self, ctx, formatter)
 
-    # Type ignore needed for monkey-patching
     setattr(LitestarExtensionGroup, "format_help", fixed_format_help)
 
 
