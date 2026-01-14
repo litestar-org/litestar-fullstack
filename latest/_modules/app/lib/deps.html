@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=a318c5d4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
@@ -170,7 +170,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="9">
 </span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncGenerator</span><span class="p">,</span> <span class="n">AsyncIterator</span><span class="p">,</span> <span class="n">Callable</span>
-</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractAsyncContextManager</span><span class="p">,</span> <span class="n">asynccontextmanager</span>
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractAsyncContextManager</span><span class="p">,</span> <span class="n">AsyncExitStack</span><span class="p">,</span> <span class="n">aclosing</span><span class="p">,</span> <span class="n">asynccontextmanager</span>
 </span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
 </span><span data-line="13">
 </span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.extensions.litestar.providers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -205,216 +205,228 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="43">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span data-line="44">
 </span><span data-line="45">
-</span><span data-line="46"><span class="c1"># Type alias for cleaner overload signatures</span>
-</span><span data-line="47"><span class="n">ServiceProvider</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AsyncSession&quot;</span><span class="p">],</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+</span><span data-line="46"><span class="n">ServiceProvider</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AsyncSession&quot;</span><span class="p">],</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+</span><span data-line="47">
 </span><span data-line="48">
-</span><span data-line="49">
 <div class="viewcode-block" id="get_task_queue">
 <a class="viewcode-back" href="../../../api/lib/deps.html#app.lib.deps.get_task_queue">[docs]</a>
-</span><span data-line="50"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_task_queue</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Queue</span><span class="p">:</span>
-</span><span data-line="51"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get Queues</span>
-</span><span data-line="52">
-</span><span data-line="53"><span class="sd">    Returns:</span>
-</span><span data-line="54"><span class="sd">        dict[str,Queue]: A list of queues</span>
-</span><span data-line="55"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="56">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">plugins</span>
-</span><span data-line="57">
-</span><span data-line="58">    <span class="n">task_queues</span> <span class="o">=</span> <span class="n">plugins</span><span class="o">.</span><span class="n">get_saq_plugin</span><span class="p">()</span><span class="o">.</span><span class="n">get_queue</span><span class="p">(</span><span class="s2">&quot;background-tasks&quot;</span><span class="p">)</span>
-</span><span data-line="59">    <span class="k">await</span> <span class="n">task_queues</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-</span><span data-line="60">
-</span><span data-line="61">    <span class="k">return</span> <span class="n">task_queues</span></div>
+</span><span data-line="49"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_task_queue</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Queue</span><span class="p">:</span>
+</span><span data-line="50"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the background task queue.</span>
+</span><span data-line="51">
+</span><span data-line="52"><span class="sd">    Returns:</span>
+</span><span data-line="53"><span class="sd">        Queue: The connected background task queue.</span>
+</span><span data-line="54"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="55">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">plugins</span>
+</span><span data-line="56">
+</span><span data-line="57">    <span class="n">task_queues</span> <span class="o">=</span> <span class="n">plugins</span><span class="o">.</span><span class="n">get_saq_plugin</span><span class="p">()</span><span class="o">.</span><span class="n">get_queue</span><span class="p">(</span><span class="s2">&quot;background-tasks&quot;</span><span class="p">)</span>
+</span><span data-line="58">    <span class="k">await</span> <span class="n">task_queues</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</span><span data-line="59">
+</span><span data-line="60">    <span class="k">return</span> <span class="n">task_queues</span></div>
 
+</span><span data-line="61">
 </span><span data-line="62">
-</span><span data-line="63">
-</span><span data-line="64"><span class="c1"># Overloads for 1-5 providers - Python&#39;s type system requires this for proper inference</span>
-</span><span data-line="65"><span class="c1"># (Similar to how asyncio.gather handles variadic typing)</span>
-</span><span data-line="66"><span class="nd">@overload</span>
-</span><span data-line="67"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="68">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
-</span><span data-line="69">    <span class="o">/</span><span class="p">,</span>
-</span><span data-line="70">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="71">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="72">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="73"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="74"><span class="nd">@overload</span>
-</span><span data-line="75"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="76">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
-</span><span data-line="77">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
-</span><span data-line="78">    <span class="o">/</span><span class="p">,</span>
-</span><span data-line="79">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="80">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="81">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="82"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="83"><span class="nd">@overload</span>
-</span><span data-line="84"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="85">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
-</span><span data-line="86">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
-</span><span data-line="87">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
-</span><span data-line="88">    <span class="o">/</span><span class="p">,</span>
-</span><span data-line="89">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="90">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="91">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="92"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="93"><span class="nd">@overload</span>
-</span><span data-line="94"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="95">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
-</span><span data-line="96">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
-</span><span data-line="97">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
-</span><span data-line="98">    <span class="n">p4</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T4</span><span class="p">],</span>
-</span><span data-line="99">    <span class="o">/</span><span class="p">,</span>
-</span><span data-line="100">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="101">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="102">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="103"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">T4</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="104"><span class="nd">@overload</span>
-</span><span data-line="105"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="106">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
-</span><span data-line="107">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
-</span><span data-line="108">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
-</span><span data-line="109">    <span class="n">p4</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T4</span><span class="p">],</span>
-</span><span data-line="110">    <span class="n">p5</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T5</span><span class="p">],</span>
-</span><span data-line="111">    <span class="o">/</span><span class="p">,</span>
-</span><span data-line="112">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="113">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="114">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-</span><span data-line="115"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">T4</span><span class="p">,</span> <span class="n">T5</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="116">
-</span><span data-line="117">
+</span><span data-line="63"><span class="nd">@overload</span>
+</span><span data-line="64"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="65">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
+</span><span data-line="66">    <span class="o">/</span><span class="p">,</span>
+</span><span data-line="67">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="68">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="69">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="70"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">]]:</span> <span class="o">...</span>
+</span><span data-line="71"><span class="nd">@overload</span>
+</span><span data-line="72"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="73">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
+</span><span data-line="74">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
+</span><span data-line="75">    <span class="o">/</span><span class="p">,</span>
+</span><span data-line="76">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="77">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="78">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="79"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span> <span class="o">...</span>
+</span><span data-line="80"><span class="nd">@overload</span>
+</span><span data-line="81"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="82">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
+</span><span data-line="83">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
+</span><span data-line="84">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
+</span><span data-line="85">    <span class="o">/</span><span class="p">,</span>
+</span><span data-line="86">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="87">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="88">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="89"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">]]:</span> <span class="o">...</span>
+</span><span data-line="90"><span class="nd">@overload</span>
+</span><span data-line="91"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="92">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
+</span><span data-line="93">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
+</span><span data-line="94">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
+</span><span data-line="95">    <span class="n">p4</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T4</span><span class="p">],</span>
+</span><span data-line="96">    <span class="o">/</span><span class="p">,</span>
+</span><span data-line="97">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="98">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="99">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="100"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">T4</span><span class="p">]]:</span> <span class="o">...</span>
+</span><span data-line="101"><span class="nd">@overload</span>
+</span><span data-line="102"><span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="103">    <span class="n">p1</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T1</span><span class="p">],</span>
+</span><span data-line="104">    <span class="n">p2</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T2</span><span class="p">],</span>
+</span><span data-line="105">    <span class="n">p3</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T3</span><span class="p">],</span>
+</span><span data-line="106">    <span class="n">p4</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T4</span><span class="p">],</span>
+</span><span data-line="107">    <span class="n">p5</span><span class="p">:</span> <span class="n">ServiceProvider</span><span class="p">[</span><span class="n">T5</span><span class="p">],</span>
+</span><span data-line="108">    <span class="o">/</span><span class="p">,</span>
+</span><span data-line="109">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="110">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="111">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+</span><span data-line="112"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">T4</span><span class="p">,</span> <span class="n">T5</span><span class="p">]]:</span> <span class="o">...</span>
+</span><span data-line="113">
+</span><span data-line="114">
 <div class="viewcode-block" id="provide_services">
 <a class="viewcode-back" href="../../../api/lib/deps.html#app.lib.deps.provide_services">[docs]</a>
-</span><span data-line="118"><span class="nd">@asynccontextmanager</span>
-</span><span data-line="119"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
-</span><span data-line="120">    <span class="o">*</span><span class="n">providers</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AsyncSession</span><span class="p">],</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
-</span><span data-line="121">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="122">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="123"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-</span><span data-line="124"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide multiple services sharing the same database session.</span>
-</span><span data-line="125">
-</span><span data-line="126"><span class="sd">    This context manager simplifies acquiring services outside of Litestar&#39;s</span>
-</span><span data-line="127"><span class="sd">    dependency injection context (background jobs, CLI commands, event handlers,</span>
-</span><span data-line="128"><span class="sd">    and authentication guards).</span>
-</span><span data-line="129">
-</span><span data-line="130"><span class="sd">    Args:</span>
-</span><span data-line="131"><span class="sd">        *providers: One or more service provider functions created via</span>
-</span><span data-line="132"><span class="sd">            ``create_service_provider()``. Each provider should accept an</span>
-</span><span data-line="133"><span class="sd">            AsyncSession and yield a service instance.</span>
-</span><span data-line="134"><span class="sd">        session: Optional pre-existing database session. If provided, the</span>
-</span><span data-line="135"><span class="sd">            session lifecycle is NOT managed by this context manager. The</span>
-</span><span data-line="136"><span class="sd">            caller is responsible for session cleanup.</span>
-</span><span data-line="137"><span class="sd">        connection: Optional ASGI connection for request-scoped contexts.</span>
-</span><span data-line="138"><span class="sd">            Used in authentication guards to obtain the session from the</span>
-</span><span data-line="139"><span class="sd">            request scope via ``alchemy.provide_session()``.</span>
-</span><span data-line="140">
-</span><span data-line="141"><span class="sd">    Yields:</span>
-</span><span data-line="142"><span class="sd">        A tuple of instantiated services, matching the order of providers</span>
-</span><span data-line="143"><span class="sd">        passed as arguments.</span>
-</span><span data-line="144">
-</span><span data-line="145"><span class="sd">    Raises:</span>
-</span><span data-line="146"><span class="sd">        ValueError: If both ``session`` and ``connection`` are provided,</span>
-</span><span data-line="147"><span class="sd">            or if no providers are given.</span>
+</span><span data-line="115"><span class="nd">@asynccontextmanager</span>
+</span><span data-line="116"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">provide_services</span><span class="p">(</span>
+</span><span data-line="117">    <span class="o">*</span><span class="n">providers</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AsyncSession</span><span class="p">],</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+</span><span data-line="118">    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="119">    <span class="n">connection</span><span class="p">:</span> <span class="n">ASGIConnection</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="120"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+</span><span data-line="121"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide multiple services sharing the same database session.</span>
+</span><span data-line="122">
+</span><span data-line="123"><span class="sd">    This context manager simplifies acquiring services outside of Litestar&#39;s</span>
+</span><span data-line="124"><span class="sd">    dependency injection context (background jobs, CLI commands, event handlers,</span>
+</span><span data-line="125"><span class="sd">    and authentication guards).</span>
+</span><span data-line="126">
+</span><span data-line="127"><span class="sd">    Args:</span>
+</span><span data-line="128"><span class="sd">        *providers: One or more service provider functions created via</span>
+</span><span data-line="129"><span class="sd">            ``create_service_provider()``. Each provider should accept an</span>
+</span><span data-line="130"><span class="sd">            AsyncSession and yield a service instance.</span>
+</span><span data-line="131"><span class="sd">        session: Optional pre-existing database session. If provided, the</span>
+</span><span data-line="132"><span class="sd">            session lifecycle is NOT managed by this context manager. The</span>
+</span><span data-line="133"><span class="sd">            caller is responsible for session cleanup.</span>
+</span><span data-line="134"><span class="sd">        connection: Optional ASGI connection for request-scoped contexts.</span>
+</span><span data-line="135"><span class="sd">            Used in authentication guards to obtain the session from the</span>
+</span><span data-line="136"><span class="sd">            request scope via ``alchemy.provide_session()``.</span>
+</span><span data-line="137">
+</span><span data-line="138"><span class="sd">    Yields:</span>
+</span><span data-line="139"><span class="sd">        A tuple of instantiated services, matching the order of providers</span>
+</span><span data-line="140"><span class="sd">        passed as arguments.</span>
+</span><span data-line="141">
+</span><span data-line="142"><span class="sd">    Raises:</span>
+</span><span data-line="143"><span class="sd">        ValueError: If both ``session`` and ``connection`` are provided,</span>
+</span><span data-line="144"><span class="sd">            or if no providers are given.</span>
+</span><span data-line="145">
+</span><span data-line="146"><span class="sd">    Examples:</span>
+</span><span data-line="147"><span class="sd">        Standalone context (jobs, CLI, events) - auto-creates session::</span>
 </span><span data-line="148">
-</span><span data-line="149"><span class="sd">    Examples:</span>
-</span><span data-line="150"><span class="sd">        Standalone context (jobs, CLI, events) - auto-creates session::</span>
-</span><span data-line="151">
-</span><span data-line="152"><span class="sd">            async with provide_services(</span>
-</span><span data-line="153"><span class="sd">                provide_email_verification_service,</span>
-</span><span data-line="154"><span class="sd">                provide_password_reset_service,</span>
-</span><span data-line="155"><span class="sd">            ) as (verification_service, reset_service):</span>
-</span><span data-line="156"><span class="sd">                await verification_service.cleanup_expired_tokens()</span>
-</span><span data-line="157"><span class="sd">                await reset_service.cleanup_expired_tokens()</span>
-</span><span data-line="158">
-</span><span data-line="159"><span class="sd">        Request context (guards) - uses connection-scoped session::</span>
-</span><span data-line="160">
-</span><span data-line="161"><span class="sd">            async with provide_services(</span>
-</span><span data-line="162"><span class="sd">                provide_users_service,</span>
-</span><span data-line="163"><span class="sd">                connection=connection,</span>
-</span><span data-line="164"><span class="sd">            ) as (users_service,):</span>
-</span><span data-line="165"><span class="sd">                user = await users_service.get_one_or_none(email=token.sub)</span>
-</span><span data-line="166">
-</span><span data-line="167"><span class="sd">        Explicit session - caller manages lifecycle::</span>
-</span><span data-line="168">
-</span><span data-line="169"><span class="sd">            async with alchemy.get_session() as db_session:</span>
-</span><span data-line="170"><span class="sd">                async with provide_services(</span>
-</span><span data-line="171"><span class="sd">                    provide_users_service,</span>
-</span><span data-line="172"><span class="sd">                    session=db_session,</span>
-</span><span data-line="173"><span class="sd">                ) as (users_service,):</span>
-</span><span data-line="174"><span class="sd">                    await users_service.create(data=user_data)</span>
-</span><span data-line="175"><span class="sd">                # Additional operations with db_session...</span>
-</span><span data-line="176"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="177">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">alchemy</span>
-</span><span data-line="178">
-</span><span data-line="179">    <span class="c1"># Validate inputs</span>
-</span><span data-line="180">    <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="181">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot provide both &#39;session&#39; and &#39;connection&#39; - choose one&quot;</span>
+</span><span data-line="149"><span class="sd">            async with provide_services(</span>
+</span><span data-line="150"><span class="sd">                provide_email_verification_service,</span>
+</span><span data-line="151"><span class="sd">                provide_password_reset_service,</span>
+</span><span data-line="152"><span class="sd">            ) as (verification_service, reset_service):</span>
+</span><span data-line="153"><span class="sd">                await verification_service.cleanup_expired_tokens()</span>
+</span><span data-line="154"><span class="sd">                await reset_service.cleanup_expired_tokens()</span>
+</span><span data-line="155">
+</span><span data-line="156"><span class="sd">        Request context (guards) - uses connection-scoped session::</span>
+</span><span data-line="157">
+</span><span data-line="158"><span class="sd">            async with provide_services(</span>
+</span><span data-line="159"><span class="sd">                provide_users_service,</span>
+</span><span data-line="160"><span class="sd">                connection=connection,</span>
+</span><span data-line="161"><span class="sd">            ) as (users_service,):</span>
+</span><span data-line="162"><span class="sd">                user = await users_service.get_one_or_none(email=token.sub)</span>
+</span><span data-line="163">
+</span><span data-line="164"><span class="sd">        Explicit session - caller manages lifecycle::</span>
+</span><span data-line="165">
+</span><span data-line="166"><span class="sd">            async with alchemy.get_session() as db_session:</span>
+</span><span data-line="167"><span class="sd">                async with provide_services(</span>
+</span><span data-line="168"><span class="sd">                    provide_users_service,</span>
+</span><span data-line="169"><span class="sd">                    session=db_session,</span>
+</span><span data-line="170"><span class="sd">                ) as (users_service,):</span>
+</span><span data-line="171"><span class="sd">                    await users_service.create(data=user_data)</span>
+</span><span data-line="172"><span class="sd">                # Additional operations with db_session...</span>
+</span><span data-line="173"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="174">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">alchemy</span>
+</span><span data-line="175">
+</span><span data-line="176">    <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="177">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot provide both &#39;session&#39; and &#39;connection&#39; - choose one&quot;</span>
+</span><span data-line="178">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="179">
+</span><span data-line="180">    <span class="k">if</span> <span class="ow">not</span> <span class="n">providers</span><span class="p">:</span>
+</span><span data-line="181">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;At least one service provider is required&quot;</span>
 </span><span data-line="182">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span data-line="183">
-</span><span data-line="184">    <span class="k">if</span> <span class="ow">not</span> <span class="n">providers</span><span class="p">:</span>
-</span><span data-line="185">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;At least one service provider is required&quot;</span>
-</span><span data-line="186">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span data-line="187">
-</span><span data-line="188">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_collect_services</span><span class="p">(</span><span class="n">db_session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-</span><span data-line="189">        <span class="n">services</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="k">await</span> <span class="n">anext</span><span class="p">(</span><span class="n">provider</span><span class="p">(</span><span class="n">db_session</span><span class="p">))</span> <span class="k">for</span> <span class="n">provider</span> <span class="ow">in</span> <span class="n">providers</span><span class="p">]</span>
-</span><span data-line="190">        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">services</span><span class="p">)</span>
-</span><span data-line="191">
-</span><span data-line="192">    <span class="c1"># Route to appropriate session source</span>
-</span><span data-line="193">    <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="194">        <span class="c1"># External session provided - don&#39;t manage lifecycle</span>
-</span><span data-line="195">        <span class="n">services</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
-</span><span data-line="196">        <span class="k">yield</span> <span class="n">services</span>
-</span><span data-line="197">    <span class="k">elif</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="198">        <span class="c1"># Request context - get session from connection scope (lifecycle managed by Litestar)</span>
-</span><span data-line="199">        <span class="n">db_session</span> <span class="o">=</span> <span class="n">alchemy</span><span class="o">.</span><span class="n">provide_session</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">connection</span><span class="o">.</span><span class="n">scope</span><span class="p">)</span>
-</span><span data-line="200">        <span class="n">services</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">db_session</span><span class="p">)</span>
-</span><span data-line="201">        <span class="k">yield</span> <span class="n">services</span>
-</span><span data-line="202">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="203">        <span class="c1"># Standalone context - create and manage session lifecycle</span>
-</span><span data-line="204">        <span class="k">async</span> <span class="k">with</span> <span class="n">alchemy</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_session</span><span class="p">:</span>
-</span><span data-line="205">            <span class="n">services</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">db_session</span><span class="p">)</span>
-</span><span data-line="206">            <span class="k">yield</span> <span class="n">services</span></div>
+</span><span data-line="184">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_collect_services</span><span class="p">(</span>
+</span><span data-line="185">        <span class="n">db_session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">,</span>
+</span><span data-line="186">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">AsyncExitStack</span><span class="p">]:</span>
+</span><span data-line="187">        <span class="n">services</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="188">        <span class="n">stack</span> <span class="o">=</span> <span class="n">AsyncExitStack</span><span class="p">()</span>
+</span><span data-line="189">        <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="fm">__aenter__</span><span class="p">()</span>
+</span><span data-line="190">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="191">            <span class="k">for</span> <span class="n">provider</span> <span class="ow">in</span> <span class="n">providers</span><span class="p">:</span>
+</span><span data-line="192">                <span class="n">generator</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">aclosing</span><span class="p">(</span><span class="n">provider</span><span class="p">(</span><span class="n">db_session</span><span class="p">)))</span>
+</span><span data-line="193">                <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">await</span> <span class="n">anext</span><span class="p">(</span><span class="n">generator</span><span class="p">))</span>
+</span><span data-line="194">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span data-line="195">            <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+</span><span data-line="196">            <span class="k">raise</span>
+</span><span data-line="197">        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">services</span><span class="p">),</span> <span class="n">stack</span>
+</span><span data-line="198">
+</span><span data-line="199">    <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="200">        <span class="n">services</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+</span><span data-line="201">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="202">            <span class="k">yield</span> <span class="n">services</span>
+</span><span data-line="203">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="204">            <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+</span><span data-line="205">    <span class="k">elif</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="206">        <span class="n">db_session</span> <span class="o">=</span> <span class="n">alchemy</span><span class="o">.</span><span class="n">provide_session</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">connection</span><span class="o">.</span><span class="n">scope</span><span class="p">)</span>
+</span><span data-line="207">        <span class="n">services</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">db_session</span><span class="p">)</span>
+</span><span data-line="208">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="209">            <span class="k">yield</span> <span class="n">services</span>
+</span><span data-line="210">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="211">            <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+</span><span data-line="212">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="213">        <span class="k">async</span> <span class="k">with</span> <span class="n">alchemy</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_session</span><span class="p">:</span>
+</span><span data-line="214">            <span class="n">services</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect_services</span><span class="p">(</span><span class="n">db_session</span><span class="p">)</span>
+</span><span data-line="215">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="216">                <span class="k">yield</span> <span class="n">services</span>
+</span><span data-line="217">            <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="218">                <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span></div>
 
-</span><span data-line="207">
-</span><span data-line="208">
+</span><span data-line="219">
+</span><span data-line="220">
 <div class="viewcode-block" id="CompositeServiceMixin">
 <a class="viewcode-back" href="../../../api/lib/deps.html#app.lib.deps.CompositeServiceMixin">[docs]</a>
-</span><span data-line="209"><span class="k">class</span><span class="w"> </span><span class="nc">CompositeServiceMixin</span><span class="p">:</span>
-</span><span data-line="210"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin for services that orchestrate multiple repositories.</span>
-</span><span data-line="211">
-</span><span data-line="212"><span class="sd">    Provides lazy instantiation of dependent services that share</span>
-</span><span data-line="213"><span class="sd">    the parent service&#39;s database session.</span>
-</span><span data-line="214">
-</span><span data-line="215"><span class="sd">    Example:</span>
-</span><span data-line="216"><span class="sd">        ```python</span>
-</span><span data-line="217"><span class="sd">        from app.lib.deps import CompositeServiceMixin</span>
-</span><span data-line="218">
-</span><span data-line="219"><span class="sd">        class UserService(CompositeServiceMixin, SQLAlchemyAsyncRepositoryService[m.User]):</span>
-</span><span data-line="220"><span class="sd">            @property</span>
-</span><span data-line="221"><span class="sd">            def oauth_accounts(self) -&gt; UserOAuthAccountService:</span>
-</span><span data-line="222"><span class="sd">                return self._get_service(UserOAuthAccountService)</span>
+</span><span data-line="221"><span class="k">class</span><span class="w"> </span><span class="nc">CompositeServiceMixin</span><span class="p">:</span>
+</span><span data-line="222"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin for services that orchestrate multiple repositories.</span>
 </span><span data-line="223">
-</span><span data-line="224"><span class="sd">            async def authenticate_oauth_user(self, ...) -&gt; m.User:</span>
-</span><span data-line="225"><span class="sd">                await self.oauth_accounts.create_or_update_oauth_account(...)</span>
-</span><span data-line="226"><span class="sd">        ```</span>
-</span><span data-line="227"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="228">
-</span><span data-line="229">    <span class="n">_service_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</span><span data-line="224"><span class="sd">    Provides lazy instantiation of dependent services that share</span>
+</span><span data-line="225"><span class="sd">    the parent service&#39;s database session.</span>
+</span><span data-line="226">
+</span><span data-line="227"><span class="sd">    Example:</span>
+</span><span data-line="228"><span class="sd">        ```python</span>
+</span><span data-line="229"><span class="sd">        from app.lib.deps import CompositeServiceMixin</span>
 </span><span data-line="230">
-</span><span data-line="231">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">S</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">S</span><span class="p">:</span>
-</span><span data-line="232"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get or create a dependent service instance.</span>
-</span><span data-line="233">
-</span><span data-line="234"><span class="sd">        Args:</span>
-</span><span data-line="235"><span class="sd">            service_cls: The service class to instantiate.</span>
-</span><span data-line="236">
-</span><span data-line="237"><span class="sd">        Returns:</span>
-</span><span data-line="238"><span class="sd">            Cached service instance sharing this service&#39;s session.</span>
-</span><span data-line="239"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="240">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_service_cache&quot;</span><span class="p">):</span>
-</span><span data-line="241">            <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="231"><span class="sd">        class UserService(CompositeServiceMixin, SQLAlchemyAsyncRepositoryService[m.User]):</span>
+</span><span data-line="232"><span class="sd">            @property</span>
+</span><span data-line="233"><span class="sd">            def oauth_accounts(self) -&gt; UserOAuthAccountService:</span>
+</span><span data-line="234"><span class="sd">                return self._get_service(UserOAuthAccountService)</span>
+</span><span data-line="235">
+</span><span data-line="236"><span class="sd">            async def authenticate_oauth_user(self, ...) -&gt; m.User:</span>
+</span><span data-line="237"><span class="sd">                await self.oauth_accounts.create_or_update_oauth_account(...)</span>
+</span><span data-line="238"><span class="sd">        ```</span>
+</span><span data-line="239"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="240">
+</span><span data-line="241">    <span class="n">_service_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 </span><span data-line="242">
-</span><span data-line="243">        <span class="k">if</span> <span class="n">service_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">:</span>
-</span><span data-line="244">            <span class="n">repository</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Any&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">repository</span>
-</span><span data-line="245">            <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">[</span><span class="n">service_cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_cls</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">repository</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
-</span><span data-line="246">
-</span><span data-line="247">        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">[</span><span class="n">service_cls</span><span class="p">])</span></div>
+</span><span data-line="243">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">S</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">S</span><span class="p">:</span>
+</span><span data-line="244"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get or create a dependent service instance.</span>
+</span><span data-line="245">
+</span><span data-line="246"><span class="sd">        Args:</span>
+</span><span data-line="247"><span class="sd">            service_cls: The service class to instantiate.</span>
+</span><span data-line="248">
+</span><span data-line="249"><span class="sd">        Returns:</span>
+</span><span data-line="250"><span class="sd">            Cached service instance sharing this service&#39;s session.</span>
+</span><span data-line="251"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="252">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_service_cache&quot;</span><span class="p">):</span>
+</span><span data-line="253">            <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="254">
+</span><span data-line="255">        <span class="k">if</span> <span class="n">service_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">:</span>
+</span><span data-line="256">            <span class="n">repository</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Any&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">repository</span>
+</span><span data-line="257">            <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">[</span><span class="n">service_cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_cls</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">repository</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+</span><span data-line="258">
+</span><span data-line="259">        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_cache</span><span class="p">[</span><span class="n">service_cls</span><span class="p">])</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -450,14 +462,16 @@ data-aria-dark="Switch to auto color mode">
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
       <script src="../../../_static/shibuya.js?v=cac61aee"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
-      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
-      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
       <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
 
-const defaultStyle = document.createElement('style');
-defaultStyle.textContent = `pre.mermaid {
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = `pre.mermaid {
     /* Same as .mermaid-container > pre */
     display: block;
     width: 100%;
@@ -468,12 +482,11 @@ pre.mermaid > svg {
     height: 500px;
     width: 100%;
     max-width: 100% !important;
-}
-`;
-document.head.appendChild(defaultStyle);
+}`;
+    document.head.appendChild(defaultStyle);
 
-const fullscreenStyle = document.createElement('style');
-fullscreenStyle.textContent = `.mermaid-container {
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = `.mermaid-container {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -625,10 +638,32 @@ fullscreenStyle.textContent = `.mermaid-container {
 .mermaid-fullscreen-modal .mermaid-fullscreen-btn {
     display: none !important;
 }`;
-document.head.appendChild(fullscreenStyle);
+    document.head.appendChild(fullscreenStyle);
+}
 
 // Detect if page has dark background
 const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
     const bgColor = window.getComputedStyle(document.body).backgroundColor;
     const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
     if (match) {
@@ -636,15 +671,45 @@ const isDarkTheme = () => {
         const g = parseInt(match[2]);
         const b = parseInt(match[3]);
         const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
         return brightness < 128;
     }
+    // console.log("No dark or light theme detected, defaulting to light theme");
     return false;
 };
 
-const load = async () => {
-    await mermaid.run();
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
 
-    const all_mermaids = document.querySelectorAll(".mermaid");
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        all_mermaids.forEach((el) => {
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+        await mermaid.run();
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
     const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
 
     if ("False" === "True") {
@@ -652,10 +717,10 @@ const load = async () => {
         if(mermaids_to_add_zoom > 0) {
             var svgs = d3.selectAll("");
             if(all_mermaids.length !== mermaids_processed.length) {
-                setTimeout(load, 200);
+                setTimeout(() => runMermaid(false), 200);
                 return;
             } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(load, 200);
+                setTimeout(() => runMermaid(false), 200);
                 return;
             } else {
                 svgs.each(function() {
@@ -671,16 +736,21 @@ const load = async () => {
         }
     } else if(all_mermaids.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
-        setTimeout(load, 200);
+        setTimeout(() => runMermaid(false), 200);
         return;
     }
-
-    const darkTheme = isDarkTheme();
 
     // Stop here if not adding fullscreen capability
     if ("True" !== "True") return;
 
-    const modal = document.createElement('div');
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
     modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
@@ -691,10 +761,8 @@ const load = async () => {
     `;
     document.body.appendChild(modal);
 
-    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
-
-    let previousScrollOffset = [window.scrollX, window.scrollY];
 
     const closeModal = () => {
         modal.classList.remove('active');
@@ -713,11 +781,14 @@ const load = async () => {
         }
     });
 
-    const allButtons = [];
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
             return;
         }
 
@@ -775,44 +846,55 @@ const load = async () => {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
-
         container.appendChild(fullscreenBtn);
-        allButtons.push(fullscreenBtn);
-    });
-
-    // Update theme classes when theme changes
-    const updateTheme = () => {
-        const dark = isDarkTheme();
-        allButtons.forEach(btn => {
-            if (dark) {
-                btn.classList.add('dark-theme');
-            } else {
-                btn.classList.remove('dark-theme');
-            }
-        });
-        if (dark) {
-            modal.classList.add('dark-theme');
-            modalContent.classList.add('dark-theme');
-            closeBtn.classList.add('dark-theme');
-        } else {
-            modal.classList.remove('dark-theme');
-            modalContent.classList.remove('dark-theme');
-            closeBtn.classList.remove('dark-theme');
-        }
-    };
-
-    // Watch for theme changes
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class', 'style', 'data-theme']
-    });
-    observer.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['class', 'style']
     });
 };
 
-window.addEventListener("load", load);
-</script></body>
+const load = async () => {
+    initStyles();
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...JSON.parse(
+                    `{"startOnLoad": false}`
+                ),
+                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...JSON.parse(
+        `{"startOnLoad": false}`
+    ),
+    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    }
+);
+
+window.addEventListener("load", load);</script></body>
 </html>
