@@ -71,7 +71,6 @@ async def test_user_registration_sends_verification_email(client: AsyncTestClien
     # Verification request should work (meaning user exists and is unverified)
     assert verify_request_response.status_code == 201
     data = verify_request_response.json()
-    # assert "token" in data  # Token is no longer returned in API
     assert data["message"] == "Verification email sent"
 
     from litestar_email import InMemoryBackend
@@ -186,7 +185,7 @@ async def test_request_verification_already_verified(client: AsyncTestClient) ->
     # We need to get the token corresponding to the request.
     # InMemoryBackend.outbox should be cleared or we access last one.
 
-    email_content = InMemoryBackend.outbox[-1].html_body
+    email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     import re
 
     token_match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
@@ -228,7 +227,7 @@ async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
 
     from litestar_email import InMemoryBackend
 
-    first_email_content = InMemoryBackend.outbox[-1].html_body
+    first_email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     first_match = re.search(r"token=([A-Za-z0-9\-_]+)", first_email_content)
     assert first_match
     first_token = first_match.group(1)
@@ -237,7 +236,7 @@ async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
     second_request = await client.post("/api/email-verification/request", json=request_data)
     assert second_request.status_code == 201
 
-    second_email_content = InMemoryBackend.outbox[-1].html_body
+    second_email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     second_match = re.search(r"token=([A-Za-z0-9\-_]+)", second_email_content)
     assert second_match
     second_token = second_match.group(1)
@@ -286,7 +285,7 @@ async def test_verify_email_success(client: AsyncTestClient) -> None:
     from litestar_email import InMemoryBackend
 
     assert len(InMemoryBackend.outbox) >= 2  # One from signup, one from request
-    email_content = InMemoryBackend.outbox[1].html_body
+    email_content = InMemoryBackend.outbox[1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     # Extract token parameter from URL in email content
     import re
 
@@ -336,7 +335,7 @@ async def test_verify_email_token_reuse_prevention(client: AsyncTestClient) -> N
 
     from litestar_email import InMemoryBackend
 
-    email_content = InMemoryBackend.outbox[-1].html_body
+    email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
     assert match
     token = match.group(1)
@@ -372,15 +371,15 @@ async def test_get_verification_status_verified(client: AsyncTestClient) -> None
     user_id = user_info["id"]
 
     # Request and use verification token
-    # Request and use verification token
     request_data = {"email": "status@example.com"}
-    request_response = await client.post("/api/email-verification/request", json=request_data)
+    response = await client.post("/api/email-verification/request", json=request_data)
+    assert response.status_code == 201
 
     import re
 
     from litestar_email import InMemoryBackend
 
-    email_content = InMemoryBackend.outbox[-1].html_body
+    email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
     assert match
     token = match.group(1)
@@ -494,7 +493,7 @@ async def test_complete_registration_verification_flow(client: AsyncTestClient) 
 
     from litestar_email import InMemoryBackend
 
-    email_content = InMemoryBackend.outbox[-1].html_body
+    email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
     assert match
     token = match.group(1)

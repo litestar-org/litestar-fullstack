@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING
 import structlog
 from litestar.events import listener
 
+from app.domain.accounts.deps import provide_users_service
 from app.domain.teams import deps
 from app.lib.deps import provide_services
-from app.lib.email import AppEmailService
 
 if TYPE_CHECKING:
     from uuid import UUID
+
+    from app.lib.email import AppEmailService
 
 
 logger = structlog.get_logger()
@@ -44,7 +46,7 @@ async def team_invitation_created_event_handler(invitation_id: UUID, mailer: App
     """
     await logger.ainfo("Running post team invitation creation flow.")
     async with provide_services(
-        deps.provide_team_invitations_service, deps.provide_teams_service, deps.provide_users_service
+        deps.provide_team_invitations_service, deps.provide_teams_service, provide_users_service
     ) as (
         team_invitations_service,
         teams_service,

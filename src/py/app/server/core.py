@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
@@ -15,6 +14,7 @@ if TYPE_CHECKING:
 
     from click import Group
     from litestar.config.app import AppConfig
+    from litestar.datastructures import State
 
     from app.lib.email import AppEmailService
 
