@@ -17,6 +17,5 @@ async def wait_for_events(max_wait: float = 1.0, interval: float = 0.1) -> None:
     """
     elapsed = 0.0
     while elapsed < max_wait:
-        # Yield control to allow pending tasks to run
         await asyncio.sleep(interval)
         elapsed += interval
