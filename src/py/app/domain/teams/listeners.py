@@ -9,11 +9,11 @@ from litestar.events import listener
 
 from app.domain.teams import deps
 from app.lib.deps import provide_services
+from app.lib.email import AppEmailService
 
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from app.lib.email import AppEmailService
 
 logger = structlog.get_logger()
 
@@ -39,34 +39,39 @@ async def team_invitation_created_event_handler(invitation_id: UUID, mailer: App
     """Executes when a new team invitation is created.
 
     Args:
-        invitation_id: The primary key of the team invitation.
+        invitation_id: The team invitation ID.
         mailer: The application email service.
     """
     await logger.ainfo("Running post team invitation creation flow.")
     async with provide_services(
         deps.provide_team_invitations_service, deps.provide_teams_service, deps.provide_users_service
-    ) as (invitations_service, teams_service, users_service):
-        invitation = await invitations_service.get_one_or_none(id=invitation_id)
+    ) as (
+        team_invitations_service,
+        teams_service,
+        users_service,
+    ):
+        invitation = await team_invitations_service.get_one_or_none(id=invitation_id)
         if invitation is None:
             await logger.aerror("Could not locate the specified team invitation", id=invitation_id)
             return
 
-        team = await teams_service.get_one_or_none(id=invitation.team_id)
-        if team is None:
-            await logger.aerror("Could not locate the team for invitation", team_id=invitation.team_id)
+        inviter = await users_service.get_one_or_none(id=invitation.invited_by_id)
+        if inviter is None:
+            await logger.aerror("Could not locate the inviter", id=invitation.invited_by_id)
             return
 
-        inviter = await users_service.get_one_or_none(id=invitation.invited_by_id)
-        inviter_name = inviter.name or inviter.email if inviter else "Someone"
-
-        invitation_url = f"{mailer.base_url}/teams/{team.id}/invitations/{invitation.id}/accept"
+        team = await teams_service.get_one_or_none(id=invitation.team_id)
+        if team is None:
+            await logger.aerror("Could not locate the team", id=invitation.team_id)
+            return
 
         await mailer.send_team_invitation_email(
             invitee_email=invitation.email,
-            inviter_name=inviter_name,
+            inviter_name=inviter.name or inviter.email,
             team_name=team.name,
-            invitation_url=invitation_url,
+            invitation_url="https://example.com",  # Placeholder, should be configurable
         )
+
         await logger.ainfo("Sent team invitation email", invitation_id=invitation.id)
 
 

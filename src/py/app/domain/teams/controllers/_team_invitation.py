@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
-from litestar import Controller, delete, get, post
+from litestar import Controller, Request, delete, get, post
 from litestar.di import Provide
 from litestar.exceptions import HTTPException
 from litestar.params import Dependency
@@ -22,8 +22,10 @@ if TYPE_CHECKING:
 
     from advanced_alchemy.filters import FilterTypes
     from advanced_alchemy.service import OffsetPagination
+    from litestar.security.jwt import Token
 
     from app.domain.teams.services import TeamMemberService, TeamService
+    from app.lib.email import AppEmailService
 
 
 class TeamInvitationController(Controller):
@@ -58,6 +60,7 @@ class TeamInvitationController(Controller):
         current_user: m.User,
         team_invitations_service: TeamInvitationService,
         teams_service: TeamService,
+        app_mailer: AppEmailService,
         request: Request[m.User, Token, Any],
         team_id: UUID,
         data: TeamInvitationCreate,
@@ -68,6 +71,7 @@ class TeamInvitationController(Controller):
             current_user: The current user sending the invitation.
             team_invitations_service: The team invitation service.
             teams_service: The teams service.
+            app_mailer: Email service for sending notifications.
             request: The request object.
             team_id: The team id.
             data: The data to create the team invitation with.
@@ -85,7 +89,7 @@ class TeamInvitationController(Controller):
         payload["team_id"] = team_id
         payload["invited_by"] = current_user
         db_obj = await team_invitations_service.create(payload)
-        request.app.emit(event_id="team_invitation_created", invitation_id=db_obj.id)
+        request.app.emit(event_id="team_invitation_created", invitation_id=db_obj.id, mailer=app_mailer)
         return team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation)
 
     @get(operation_id="ListTeamInvitations", path="")
@@ -172,12 +176,14 @@ class TeamInvitationController(Controller):
         )
         if existing_membership is not None:
             raise HTTPException(status_code=400, detail="User is already a member of this team")
-        await team_members_service.create({
-            "team_id": team_id,
-            "user_id": current_user.id,
-            "role": db_obj.role,
-            "is_owner": False,
-        })
+        await team_members_service.create(
+            {
+                "team_id": team_id,
+                "user_id": current_user.id,
+                "role": db_obj.role,
+                "is_owner": False,
+            }
+        )
         await team_invitations_service.update(item_id=invitation_id, data={"is_accepted": True})
         return Message(message="Team invitation accepted")
 

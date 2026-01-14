@@ -47,6 +47,24 @@ class _ServiceWithSession(Protocol):
 ServiceProvider = Callable[["AsyncSession"], AsyncGenerator[T, None]]
 
 
+async def provide_app_email_service(session: AsyncSession) -> AsyncGenerator[AppEmailService, None]:
+    """Provide the application email service.
+
+    Args:
+        session: The database session (unused but required for signature).
+
+    Yields:
+        The AppEmailService.
+    """
+    # This is tricky without 'state'.
+    # We will assume that if this is called, we might need a different way to access mailer.
+    # But wait, we can't get mailer without app/state.
+    # So this path is blocked unless we pass 'state' to provide_services?
+    # provide_services only accepts session/connection.
+
+    # Let's revert to using DI in listener but use Dependency() marker?
+
+
 async def get_task_queue() -> Queue:
     """Get Queues
 

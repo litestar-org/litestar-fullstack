@@ -6,10 +6,8 @@ from typing import TYPE_CHECKING, Any
 
 from litestar import Controller, Request, get, post
 from litestar.di import Provide
-from litestar.security.jwt import Token
 from litestar.status_codes import HTTP_200_OK, HTTP_201_CREATED
 
-from app.db import models as m
 from app.domain.accounts.deps import provide_email_verification_service, provide_users_service
 from app.domain.accounts.schemas import (
     EmailVerificationConfirm,
@@ -22,7 +20,11 @@ from app.domain.accounts.schemas import (
 if TYPE_CHECKING:
     from uuid import UUID
 
+    from litestar.security.jwt import Token
+
+    from app.db import models as m
     from app.domain.accounts.services import EmailVerificationTokenService, UserService
+    from app.lib.email import AppEmailService
 
 
 class EmailVerificationController(Controller):
@@ -38,9 +40,10 @@ class EmailVerificationController(Controller):
     @post("/request", status_code=HTTP_201_CREATED)
     async def request_verification(
         self,
-        data: EmailVerificationRequest,
         users_service: UserService,
+        app_mailer: AppEmailService,
         request: Request[m.User, Token, Any],
+        data: EmailVerificationRequest,
     ) -> EmailVerificationSent:
         """Request email verification for a user."""
 
@@ -51,7 +54,7 @@ class EmailVerificationController(Controller):
         if user.is_verified:
             return EmailVerificationSent(message="Email is already verified")
 
-        request.app.emit(event_id="verification_requested", user_id=user.id)
+        request.app.emit(event_id="verification_requested", user_id=user.id, mailer=app_mailer)
 
         return EmailVerificationSent(message="Verification email sent")
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
+from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
@@ -11,10 +12,8 @@ from litestar.security.jwt import OAuth2Login
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
-    from typing import Any
 
     from click import Group
-    from litestar import Request
     from litestar.config.app import AppConfig
 
     from app.lib.email import AppEmailService
@@ -23,18 +22,18 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-async def get_mailer_dependency(request: Request[Any, Any, Any]) -> AsyncGenerator[AppEmailService, None]:
+async def get_mailer_dependency(state: State) -> AsyncGenerator[AppEmailService, None]:
     """Provide the app email service.
 
     Args:
-        request: The request instance.
+        state: The application state.
 
     Yields:
         The configured AppEmailService.
     """
     from app.lib.email import AppEmailService
 
-    email_config = request.app.state.mailer
+    email_config = state.mailer
     async with email_config.provide_service() as mailer:
         yield AppEmailService(mailer=mailer)
 
@@ -146,7 +145,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             {
                 "current_user": Provide(provide_user, sync_to_thread=False),
                 "settings": Provide(provide_app_settings, sync_to_thread=False),
-                "mailer": Provide(get_mailer_dependency),
+                "app_mailer": Provide(get_mailer_dependency),
             }
         )
 

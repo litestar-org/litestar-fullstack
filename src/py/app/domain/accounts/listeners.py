@@ -9,11 +9,11 @@ from litestar.events import listener
 
 from app.domain.accounts import deps
 from app.lib.deps import provide_services
+from app.lib.email import AppEmailService
 
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from app.lib.email import AppEmailService
     from app.lib.email.service import UserProtocol
 
 logger = structlog.get_logger()
@@ -44,6 +44,7 @@ async def user_created_event_handler(user_id: UUID, mailer: AppEmailService) -> 
                 user_id=user.id, email=user.email
             )
             await mailer.send_verification_email(cast("UserProtocol", user), verification_token)
+
             await logger.ainfo("Sent verification email for user", user_id=user.id)
 
 
