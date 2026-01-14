@@ -159,7 +159,7 @@ class OAuthController(Controller):
             client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
         )
 
-        frontend_callback = redirect_url or f"{settings.URL}/auth/google/callback"
+        frontend_callback = redirect_url or "/auth/google/callback"
 
         state = create_oauth_state(
             provider="google",
@@ -192,7 +192,7 @@ class OAuthController(Controller):
         oauth_error: str | None = Parameter(query="error", required=False),
     ) -> Redirect:
         """Handle Google OAuth callback for login and account linking."""
-        default_callback = f"{settings.URL}/auth/google/callback"
+        default_callback = "/auth/google/callback"
         redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
         if not oauth_state:
@@ -302,7 +302,7 @@ class OAuthController(Controller):
             client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
         )
 
-        frontend_callback = redirect_url or f"{settings.URL}/auth/github/callback"
+        frontend_callback = redirect_url or "/auth/github/callback"
 
         state = create_oauth_state(
             provider="github",
@@ -336,7 +336,7 @@ class OAuthController(Controller):
         oauth_error_description: str | None = Parameter(query="error_description", required=False),
     ) -> Redirect:
         """Handle GitHub OAuth callback for login and account linking."""
-        default_callback = f"{settings.URL}/auth/github/callback"
+        default_callback = "/auth/github/callback"
         redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
         if not oauth_state:

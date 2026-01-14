@@ -9,18 +9,28 @@ This module combines tests for:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import re
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import msgspec
 import pytest
+from litestar_email import InMemoryBackend
 
 from app.domain.accounts.schemas import User
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
+
     from litestar.testing import AsyncTestClient
 
 pytestmark = pytest.mark.anyio
+
+
+@pytest.fixture(autouse=True)
+def clear_email_outbox() -> None:
+    """Clear email outbox before each test."""
+    InMemoryBackend.clear()
 
 
 def _unique_email(prefix: str = "user") -> str:
@@ -50,7 +60,10 @@ async def test_user_registration_creates_unverified_user(client: AsyncTestClient
     assert user.is_active is True
 
 
-async def test_user_registration_sends_verification_email(client: AsyncTestClient) -> None:
+async def test_user_registration_sends_verification_email(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test that user registration triggers verification email sending."""
     email = _unique_email("emailtest")
     user_data = {
@@ -62,6 +75,7 @@ async def test_user_registration_sends_verification_email(client: AsyncTestClien
     # Register user
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
     # Verify that a verification token was created by requesting verification
     # (This indirectly tests that the email sending was triggered)
@@ -70,10 +84,9 @@ async def test_user_registration_sends_verification_email(client: AsyncTestClien
 
     # Verification request should work (meaning user exists and is unverified)
     assert verify_request_response.status_code == 201
+    await await_events()
     data = verify_request_response.json()
     assert data["message"] == "Verification email sent"
-
-    from litestar_email import InMemoryBackend
 
     assert len(InMemoryBackend.outbox) > 0
 
@@ -154,7 +167,10 @@ async def test_request_verification_nonexistent_email(client: AsyncTestClient) -
     assert data["message"] == "If the email exists, a verification link has been sent"
 
 
-async def test_request_verification_already_verified(client: AsyncTestClient) -> None:
+async def test_request_verification_already_verified(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test verification request for already verified email."""
     # Create and verify a user
     user_data = {
@@ -165,28 +181,15 @@ async def test_request_verification_already_verified(client: AsyncTestClient) ->
 
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
     # Get the verification token from signup and verify
     request_data = {"email": "verified@example.com"}
     request_response = await client.post("/api/email-verification/request", json=request_data)
     assert request_response.status_code == 201
-
-    from litestar_email import InMemoryBackend
-    # Check outbox for the token. Since we have signup email + request email, handle appropriately.
-    # Actually, signup sends verification email implicitly.
-    # The 'verified@example.com' user is created via signup, which sends an email.
-
-    # Let's just use the token from the signup email?
-    # Wait, the test does:
-    # 1. Signup (sends email 1)
-    # 2. Request verification (sends email 2)
-    # 3. Verify using token from Request?
-
-    # We need to get the token corresponding to the request.
-    # InMemoryBackend.outbox should be cleared or we access last one.
+    await await_events()
 
     email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
-    import re
 
     token_match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
     assert token_match
@@ -205,7 +208,10 @@ async def test_request_verification_already_verified(client: AsyncTestClient) ->
     assert data["message"] == "Email is already verified"
 
 
-async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
+async def test_multiple_verification_requests(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test that multiple verification requests invalidate previous tokens."""
     email = _unique_email("multiple")
     user_data = {
@@ -216,16 +222,14 @@ async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
 
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
     request_data = {"email": email}
 
     # Request first verification token
     first_request = await client.post("/api/email-verification/request", json=request_data)
     assert first_request.status_code == 201
-
-    import re
-
-    from litestar_email import InMemoryBackend
+    await await_events()
 
     first_email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     first_match = re.search(r"token=([A-Za-z0-9\-_]+)", first_email_content)
@@ -235,6 +239,7 @@ async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
     # Request second verification token (should invalidate first)
     second_request = await client.post("/api/email-verification/request", json=request_data)
     assert second_request.status_code == 201
+    await await_events()
 
     second_email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     second_match = re.search(r"token=([A-Za-z0-9\-_]+)", second_email_content)
@@ -255,7 +260,10 @@ async def test_multiple_verification_requests(client: AsyncTestClient) -> None:
 # --- Email Verification Tests ---
 
 
-async def test_verify_email_success(client: AsyncTestClient) -> None:
+async def test_verify_email_success(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test successful email verification."""
     user_data = {
         "email": "verifyemail@example.com",
@@ -265,29 +273,16 @@ async def test_verify_email_success(client: AsyncTestClient) -> None:
 
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
-    # Request verification token
     # Request verification token
     request_data = {"email": "verifyemail@example.com"}
     request_response = await client.post("/api/email-verification/request", json=request_data)
     assert request_response.status_code == 201
-
-    # Extract token from the sent email
-    # It seems litestar_email.testing does not exist in some versions or is not exposed?
-    # Typically, InMemoryBackend is available if we import it from where it's defined?
-    # No, it should be in .testing if installed with [testing]?
-    # Or maybe it is just not imported?
-    # Let's try importing from 'litestar_email.backends.memory'? Wait, documentation says it's stored in the config?
-    # But usually tests access `InMemoryBackend.outbox`.
-    # Let's try importing `from litestar_email.backends.memory import InMemoryBackend`? UNVERIFIED.
-    # But previous tests used it? 'src/py/tests/integration/lib/test_email_service.py' exists.
-    # Let's check that file first.
-    from litestar_email import InMemoryBackend
+    await await_events()
 
     assert len(InMemoryBackend.outbox) >= 2  # One from signup, one from request
     email_content = InMemoryBackend.outbox[1].html_body  # pyright: ignore[reportAttributeAccessIssue]
-    # Extract token parameter from URL in email content
-    import re
 
     token_match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
     assert token_match, "Token not found in email"
@@ -314,7 +309,10 @@ async def test_verify_email_invalid_token(client: AsyncTestClient) -> None:
     assert "detail" in data
 
 
-async def test_verify_email_token_reuse_prevention(client: AsyncTestClient) -> None:
+async def test_verify_email_token_reuse_prevention(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test that tokens cannot be reused."""
     user_data = {
         "email": "reuse@example.com",
@@ -324,16 +322,13 @@ async def test_verify_email_token_reuse_prevention(client: AsyncTestClient) -> N
 
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
-    # Request verification token
     # Request verification token
     request_data = {"email": "reuse@example.com"}
     request_response = await client.post("/api/email-verification/request", json=request_data)
     assert request_response.status_code == 201
-
-    import re
-
-    from litestar_email import InMemoryBackend
+    await await_events()
 
     email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
@@ -356,7 +351,10 @@ async def test_verify_email_token_reuse_prevention(client: AsyncTestClient) -> N
 # --- Verification Status Tests ---
 
 
-async def test_get_verification_status_verified(client: AsyncTestClient) -> None:
+async def test_get_verification_status_verified(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test getting verification status for verified user."""
     user_data = {
         "email": "status@example.com",
@@ -366,6 +364,7 @@ async def test_get_verification_status_verified(client: AsyncTestClient) -> None
 
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
     user_info = signup_response.json()
     user_id = user_info["id"]
@@ -374,10 +373,7 @@ async def test_get_verification_status_verified(client: AsyncTestClient) -> None
     request_data = {"email": "status@example.com"}
     response = await client.post("/api/email-verification/request", json=request_data)
     assert response.status_code == 201
-
-    import re
-
-    from litestar_email import InMemoryBackend
+    await await_events()
 
     email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)
@@ -462,7 +458,10 @@ async def test_login_before_email_verification(client: AsyncTestClient) -> None:
 # --- Complete Flow Tests ---
 
 
-async def test_complete_registration_verification_flow(client: AsyncTestClient) -> None:
+async def test_complete_registration_verification_flow(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test complete flow from registration to email verification."""
     email = _unique_email("complete")
     user_data = {
@@ -474,6 +473,7 @@ async def test_complete_registration_verification_flow(client: AsyncTestClient) 
     # Step 1 - Register user
     signup_response = await client.post("/api/access/signup", json=user_data)
     assert signup_response.status_code == 201
+    await await_events()
 
     user_info = signup_response.json()
     user_id = user_info["id"]
@@ -484,14 +484,10 @@ async def test_complete_registration_verification_flow(client: AsyncTestClient) 
     assert status_response.json()["isVerified"] is False
 
     # Step 2 - Request verification email
-    # Step 2 - Request verification email
     request_data = {"email": email}
     request_response = await client.post("/api/email-verification/request", json=request_data)
     assert request_response.status_code == 201
-
-    import re
-
-    from litestar_email import InMemoryBackend
+    await await_events()
 
     email_content = InMemoryBackend.outbox[-1].html_body  # pyright: ignore[reportAttributeAccessIssue]
     match = re.search(r"token=([A-Za-z0-9\-_]+)", email_content)

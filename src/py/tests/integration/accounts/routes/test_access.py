@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import pytest
@@ -22,6 +22,8 @@ from app.lib.crypt import get_password_hash
 from tests.factories import PasswordResetTokenFactory, UserFactory, get_raw_token
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
+
     from httpx import AsyncClient
     from litestar.testing import AsyncTestClient
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -334,7 +336,10 @@ async def test_signup_success(
 
 
 @pytest.mark.anyio
-async def test_signup_with_email_verification(client: AsyncTestClient) -> None:
+async def test_signup_with_email_verification(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test successful user registration sends verification email."""
     signup_data = {
         "email": "newuser@example.com",
@@ -352,6 +357,7 @@ async def test_signup_with_email_verification(client: AsyncTestClient) -> None:
     assert data["isVerified"] is False
     assert "hashedPassword" not in data
 
+    await await_events()
     assert len(InMemoryBackend.outbox) == 1
     assert "newuser@example.com" in InMemoryBackend.outbox[0].to
 
@@ -727,6 +733,7 @@ async def test_refresh_token(authenticated_client: AsyncTestClient) -> None:
 async def test_forgot_password_success(
     client: AsyncClient,
     session: AsyncSession,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test successful forgot password request."""
     unique_email = f"reset-{uuid4().hex[:8]}@example.com"
@@ -741,6 +748,10 @@ async def test_forgot_password_success(
     assert "password reset link has been sent" in response_data["message"]
     assert response_data["expiresInMinutes"] == 60
 
+    await await_events()
+
+    # Refresh the session to see the committed token from the listener
+    await session.commit()  # End current transaction
     result = await session.execute(select(m.PasswordResetToken).where(m.PasswordResetToken.user_id == user.id))
     token = result.scalar_one_or_none()
     assert token is not None
@@ -776,13 +787,18 @@ async def test_forgot_password_inactive_user(
 
 
 @pytest.mark.anyio
-async def test_request_password_reset_fixture(client: AsyncTestClient, test_user: m.User) -> None:
+async def test_request_password_reset_fixture(
+    client: AsyncTestClient,
+    test_user: m.User,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test requesting password reset with fixture."""
     request_data = {"email": test_user.email}
 
     response = await client.post("/api/access/forgot-password", json=request_data)
 
     assert response.status_code in {200, 201}
+    await await_events()
     assert len(InMemoryBackend.outbox) == 1
     assert test_user.email in InMemoryBackend.outbox[0].to
 
@@ -1003,7 +1019,11 @@ async def test_password_reset_token_single_use(
 
 
 @pytest.mark.anyio
-async def test_request_verification_email(client: AsyncTestClient, unverified_user: m.User) -> None:
+async def test_request_verification_email(
+    client: AsyncTestClient,
+    unverified_user: m.User,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
     """Test requesting email verification."""
     request_data = {"email": unverified_user.email}
 
@@ -1013,6 +1033,7 @@ async def test_request_verification_email(client: AsyncTestClient, unverified_us
     data = response.json()
     assert "verification" in data["message"].lower()
 
+    await await_events()
     assert len(InMemoryBackend.outbox) == 1
     assert unverified_user.email in InMemoryBackend.outbox[0].to
 

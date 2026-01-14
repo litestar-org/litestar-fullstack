@@ -7,7 +7,7 @@ This module combines tests from:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import pytest
@@ -19,6 +19,8 @@ from app.lib.crypt import get_password_hash
 from tests.factories import TeamFactory, TeamMemberFactory, UserFactory, create_team_with_members, create_user_with_team
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
+
     from httpx import AsyncClient
     from litestar.testing import AsyncTestClient
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -677,6 +679,7 @@ async def test_update_member_role(
 async def test_invite_team_member(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test inviting a team member."""
     invitation_data = {
@@ -695,6 +698,7 @@ async def test_invite_team_member(
     assert invitation["role"] == m.TeamRoles.MEMBER.value
     assert invitation["isAccepted"] is False
 
+    await await_events()
     assert len(InMemoryBackend.outbox) == 1
     assert "newmember@example.com" in InMemoryBackend.outbox[0].to
 

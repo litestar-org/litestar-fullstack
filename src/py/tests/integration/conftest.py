@@ -14,9 +14,10 @@ from app.domain.accounts.guards import create_access_token
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
+from tests.utils.events import wait_for_events
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator, AsyncIterator
+    from collections.abc import AsyncGenerator, AsyncIterator, Callable, Coroutine
 
     from httpx import AsyncClient
     from litestar import Litestar
@@ -401,3 +402,19 @@ async def fx_test_team_invitation(
     await session.commit()
     await session.refresh(invitation)
     return invitation
+
+
+@pytest.fixture
+def await_events() -> Callable[[], Coroutine[Any, Any, None]]:
+    """Fixture providing a coroutine to await all pending events.
+
+    This fixture yields control to the event loop to allow async
+    event listeners to complete processing.
+
+    Usage:
+        async def test_something(client, await_events):
+            response = await client.post(...)
+            await await_events()
+            assert len(InMemoryBackend.outbox) == 1
+    """
+    return wait_for_events

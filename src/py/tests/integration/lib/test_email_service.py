@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import pytest
 from litestar_email import EmailMultiAlternatives, InMemoryBackend
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
+
     from litestar.testing import AsyncTestClient
 
 pytestmark = pytest.mark.anyio
@@ -22,6 +24,7 @@ def clear_email_outbox() -> None:
 
 async def test_user_registration_triggers_verification_email(
     client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test that registering a user triggers the email service."""
     unique_email = f"newuser_{uuid4().hex[:8]}@example.com"
@@ -38,6 +41,9 @@ async def test_user_registration_triggers_verification_email(
     data = response.json()
     assert data["email"] == unique_email
 
+    # Wait for async event listeners to complete
+    await await_events()
+
     # Check that verification email was sent
     assert len(InMemoryBackend.outbox) == 1
     message = InMemoryBackend.outbox[0]
@@ -47,6 +53,7 @@ async def test_user_registration_triggers_verification_email(
 
 async def test_resend_verification_triggers_email_service(
     client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test resending verification email triggers the email service."""
     unique_email = f"resendtest_{uuid4().hex[:8]}@example.com"
@@ -60,6 +67,7 @@ async def test_resend_verification_triggers_email_service(
         },
     )
     assert response.status_code == 201
+    await await_events()
 
     # Clear the outbox after signup
     InMemoryBackend.clear()
@@ -67,6 +75,7 @@ async def test_resend_verification_triggers_email_service(
     # Request resend
     response = await client.post("/api/email-verification/request", json={"email": unique_email})
     assert response.status_code == 201
+    await await_events()
 
     # Check that email was sent
     assert len(InMemoryBackend.outbox) == 1
@@ -76,6 +85,7 @@ async def test_resend_verification_triggers_email_service(
 
 async def test_password_reset_request_triggers_email_service(
     client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test that requesting password reset triggers the email service."""
     unique_email = f"resettest_{uuid4().hex[:8]}@example.com"
@@ -89,6 +99,7 @@ async def test_password_reset_request_triggers_email_service(
         },
     )
     assert response.status_code == 201
+    await await_events()
 
     # Clear the outbox after signup
     InMemoryBackend.clear()
@@ -97,6 +108,7 @@ async def test_password_reset_request_triggers_email_service(
     response = await client.post("/api/access/forgot-password", json={"email": unique_email})
 
     assert response.status_code == 201
+    await await_events()
     data = response.json()
     assert "reset" in data["message"].lower() or "password" in data["message"].lower()
 
@@ -109,6 +121,7 @@ async def test_password_reset_request_triggers_email_service(
 
 async def test_registration_sends_verification_email_with_correct_content(
     client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test that registration sends a proper verification email."""
     unique_email = f"content_test_{uuid4().hex[:8]}@example.com"
@@ -122,6 +135,7 @@ async def test_registration_sends_verification_email_with_correct_content(
     )
 
     assert response.status_code == 201
+    await await_events()
 
     # Check email content
     assert len(InMemoryBackend.outbox) == 1
@@ -136,6 +150,7 @@ async def test_registration_sends_verification_email_with_correct_content(
 
 async def test_multiple_signups_send_multiple_emails(
     client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
     """Test that multiple signups each send their own verification email."""
     unique_suffix = uuid4().hex[:8]
@@ -155,6 +170,7 @@ async def test_multiple_signups_send_multiple_emails(
             },
         )
         assert response.status_code == 201
+        await await_events()
 
     # Check that all emails were sent
     assert len(InMemoryBackend.outbox) == 3

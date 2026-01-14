@@ -64,7 +64,7 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             "expires_at": m.EmailVerificationToken.create_expires_at(hours=24),
         }
 
-        obj = await self.create(verification_token)
+        obj = await self.create(verification_token, auto_commit=True)
         return obj, token
 
     async def verify_token(self, token: str) -> m.EmailVerificationToken:

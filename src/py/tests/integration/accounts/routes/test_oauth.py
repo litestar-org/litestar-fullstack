@@ -21,7 +21,7 @@ def _create_valid_state(provider: str, redirect_url: str | None = None) -> str:
     settings = get_settings()
     return create_oauth_state(
         provider=provider,
-        redirect_url=redirect_url or f"{settings.app.URL}/auth/{provider}/callback",
+        redirect_url=redirect_url or f"/auth/{provider}/callback",
         secret_key=settings.app.SECRET_KEY,
     )
 

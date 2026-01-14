@@ -62,7 +62,8 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
                 "expires_at": m.PasswordResetToken.create_expires_at(hours=1),
                 "ip_address": ip_address,
                 "user_agent": user_agent,
-            }
+            },
+            auto_commit=True,
         )
         return created, token
 
