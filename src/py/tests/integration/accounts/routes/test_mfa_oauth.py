@@ -5,12 +5,16 @@ from uuid import uuid4
 from httpx import AsyncClient
 from httpx_oauth.oauth2 import OAuth2Token
 from litestar.status_codes import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+import pytest
 from pytest import MonkeyPatch
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.accounts.guards import create_access_token
 from app.lib.settings import get_settings
 from tests.factories import UserFactory, UserOauthAccountFactory
+
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.endpoints]
 
 
 async def test_initiate_mfa_disable_oauth_success(
@@ -189,6 +193,7 @@ async def test_callback_mfa_disable_success(
             assert "error=oauth_failed" not in response.headers["location"]
 
             # Verify MFA is disabled
-            await session.refresh(user)
+            session.expire(user)
+            await session.refresh(user, attribute_names=["totp_secret", "is_two_factor_enabled"])
             assert user.is_two_factor_enabled is False
             assert user.totp_secret is None

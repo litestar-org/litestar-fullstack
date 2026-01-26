@@ -13,7 +13,7 @@ from app.utils.oauth import create_oauth_state
 if TYPE_CHECKING:
     from httpx import AsyncClient
 
-pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.endpoints]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.endpoints]
 
 
 def _create_valid_state(provider: str, redirect_url: str | None = None) -> str:

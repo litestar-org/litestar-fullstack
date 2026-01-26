@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urlencode
 from uuid import UUID
@@ -16,11 +17,13 @@ from litestar.exceptions import HTTPException
 from litestar.params import Parameter
 from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST
+from sqlalchemy.orm import undefer_group
 
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.guards import create_access_token
 from app.domain.accounts.schemas import OAuthAuthorization
 from app.domain.accounts.services import UserOAuthAccountService
+from app.domain.admin.deps import provide_audit_log_service
 from app.lib.deps import create_service_dependencies
 from app.utils.oauth import OAuth2AuthorizeCallback, build_oauth_error_redirect, create_oauth_state, verify_oauth_state
 
@@ -28,7 +31,10 @@ if TYPE_CHECKING:
     from litestar import Request
 
     from app.domain.accounts.services import UserService
+    from app.domain.admin.services import AuditLogService
     from app.lib.settings import AppSettings
+
+logger = logging.getLogger(__name__)
 
 OAUTH_DEFAULT_SCOPES: dict[str, list[str]] = {
     "google": ["openid", "email", "profile"],
@@ -51,6 +57,7 @@ class OAuthController(Controller):
     tags = ["OAuth Authentication"]
     dependencies = create_service_dependencies(UserOAuthAccountService, key="oauth_account_service") | {
         "user_service": Provide(provide_users_service),
+        "audit_service": Provide(provide_audit_log_service),
     }
 
     @get("/google", name="oauth:google:authorize")
@@ -112,6 +119,7 @@ class OAuthController(Controller):
         settings: AppSettings,
         user_service: UserService,
         oauth_account_service: UserOAuthAccountService,
+        audit_service: AuditLogService,
         code: str | None = Parameter(query="code", required=False),
         oauth_state: str | None = Parameter(query="state", required=False),
         oauth_error: str | None = Parameter(query="error", required=False),
@@ -143,6 +151,7 @@ class OAuthController(Controller):
                 settings,
                 user_service,
                 oauth_account_service,
+                audit_service,
                 code,
                 oauth_state,
                 frontend_callback,
@@ -158,6 +167,7 @@ class OAuthController(Controller):
         settings: AppSettings,
         user_service: UserService,
         oauth_account_service: UserOAuthAccountService,
+        audit_service: AuditLogService,
         code: str,
         oauth_state: str,
         frontend_callback: str,
@@ -176,6 +186,25 @@ class OAuthController(Controller):
             account_id, account_email = await client.get_id_email(token_data["access_token"])
         except GetIdEmailError:
             return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get user info from Google")
+
+        if action == "mfa_disable":
+            state_user_id = payload.get("user_id")
+            if not state_user_id:
+                return build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Invalid OAuth session - missing user"
+                )
+            return await _handle_mfa_disable(
+                user_service,
+                oauth_account_service,
+                audit_service,
+                "google",
+                account_id,
+                account_email,
+                state_user_id,
+                frontend_callback,
+                request,
+            )
+
         if action in {"link", "upgrade"}:
             state_user_id = payload.get("user_id")
             if not state_user_id:
@@ -248,6 +277,7 @@ class OAuthController(Controller):
         settings: AppSettings,
         user_service: UserService,
         oauth_account_service: UserOAuthAccountService,
+        audit_service: AuditLogService,
         code: str | None = Parameter(query="code", required=False),
         oauth_state: str | None = Parameter(query="state", required=False),
         oauth_error: str | None = Parameter(query="error", required=False),
@@ -281,6 +311,7 @@ class OAuthController(Controller):
                 settings,
                 user_service,
                 oauth_account_service,
+                audit_service,
                 code,
                 oauth_state,
                 frontend_callback,
@@ -296,6 +327,7 @@ class OAuthController(Controller):
         settings: AppSettings,
         user_service: UserService,
         oauth_account_service: UserOAuthAccountService,
+        audit_service: AuditLogService,
         code: str,
         oauth_state: str,
         frontend_callback: str,
@@ -316,6 +348,24 @@ class OAuthController(Controller):
             account_id, account_email = await client.get_id_email(token_data["access_token"])
         except GetIdEmailError:
             return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get user info from GitHub")
+
+        if action == "mfa_disable":
+            state_user_id = payload.get("user_id")
+            if not state_user_id:
+                return build_oauth_error_redirect(
+                    frontend_callback, "oauth_failed", "Invalid OAuth session - missing user"
+                )
+            return await _handle_mfa_disable(
+                user_service,
+                oauth_account_service,
+                audit_service,
+                "github",
+                account_id,
+                account_email,
+                state_user_id,
+                frontend_callback,
+                request,
+            )
 
         if action in ("link", "upgrade"):
             state_user_id = payload.get("user_id")
@@ -425,5 +475,95 @@ async def _handle_oauth_login(
         auth_method="oauth",
     )
     params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
+    separator = "&" if "?" in frontend_callback else "?"
+    return f"{frontend_callback}{separator}{params}"
+
+
+async def _handle_mfa_disable(
+    user_service: UserService,
+    oauth_account_service: UserOAuthAccountService,
+    audit_service: AuditLogService,
+    provider: str,
+    account_id: str,
+    account_email: str | None,
+    state_user_id: str,
+    frontend_callback: str,
+    request: Request[Any, Any, Any],
+) -> str:
+    """Handle MFA disable via OAuth verification.
+
+    Args:
+        user_service: User service
+        oauth_account_service: OAuth account service
+        audit_service: Audit log service
+        provider: OAuth provider name
+        account_id: Provider account ID
+        account_email: Provider account email
+        state_user_id: User ID from state
+        frontend_callback: Callback URL
+        request: Request object
+
+    Returns:
+        The redirect path for the response.
+    """
+    # 1. Verify OAuth account belongs to user
+    oauth_account = await oauth_account_service.get_one_or_none(
+        user_id=UUID(state_user_id),
+        oauth_name=provider,
+        account_id=account_id,
+    )
+
+    if not oauth_account:
+        return build_oauth_error_redirect(
+            frontend_callback, "oauth_failed", f"This {provider.title()} account is not linked to your user"
+        )
+
+    # 2. Get user and verify no password (double check)
+    user = await user_service.get(UUID(state_user_id), load=[undefer_group("security_sensitive")])
+    if user.hashed_password:
+        return build_oauth_error_redirect(
+            frontend_callback, "oauth_failed", "Password verification required for users with passwords"
+        )
+
+    # 3. Disable MFA
+    logger.info("Disabling MFA via OAuth for user %s", user.id)
+    await user_service.update(
+        {
+            "is_two_factor_enabled": False,
+            "totp_secret": None,
+            "two_factor_confirmed_at": None,
+            "backup_codes": None,
+        },
+        item_id=user.id,
+    )
+    # Explicitly commit to ensure changes are persisted immediately
+    await user_service.repository.session.commit()
+
+    # 4. Log audit event
+    await audit_service.log_action(
+        action="mfa.disabled.oauth",
+        actor_id=user.id,
+        actor_email=user.email,
+        target_type="user",
+        target_id=str(user.id),
+        request=request,
+        details={"provider": provider},
+    )
+
+    # 5. Log user in (create token)
+    access_token = create_access_token(
+        user_id=str(user.id),
+        email=user.email,
+        is_superuser=user_service.is_superuser(user),
+        is_verified=user.is_verified,
+        auth_method="oauth_mfa_disable",
+    )
+
+    params = urlencode({
+        "token": access_token,
+        "message": "MFA disabled successfully",
+        "action": "mfa_disable",
+        "success": "true",
+    })
     separator = "&" if "?" in frontend_callback else "?"
     return f"{frontend_callback}{separator}{params}"
