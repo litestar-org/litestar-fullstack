@@ -25,11 +25,19 @@ class DiscoveryCache:
         self.packages.clear()
 
     def is_cached(self, domain_packages: list[str]) -> bool:
-        """Check if results for these packages are cached."""
+        """Check if results for these packages are cached.
+
+        Returns:
+            True if cached, False otherwise.
+        """
         return self.controllers is not None and frozenset(domain_packages) <= self.packages
 
     def get(self) -> list[type[Controller]] | None:
-        """Get cached controllers."""
+        """Get cached controllers.
+
+        Returns:
+            The cached list of controllers, or None.
+        """
         return self.controllers
 
     def set(self, controllers: list[type[Controller]], packages: list[str]) -> None:
@@ -38,14 +46,12 @@ class DiscoveryCache:
         self.packages.update(packages)
 
 
-# Global cache instance
 cache = DiscoveryCache()
 
 
 class DiscoveryState:
     """Store discovery results for deferred logging during lifespan startup."""
 
-    # Discovery results (populated during on_app_init)
     controller_count: int = 0
     controllers_by_domain: dict[str, list[str]] = {}
     signal_count: int = 0
@@ -53,7 +59,6 @@ class DiscoveryState:
     service_count: int = 0
     repository_count: int = 0
 
-    # Logging flags (prevent duplicate logs across app creations)
     logged_controllers: bool = False
 
     @classmethod

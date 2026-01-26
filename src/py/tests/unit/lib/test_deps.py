@@ -1,4 +1,5 @@
 from collections.abc import AsyncGenerator
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -8,7 +9,6 @@ from app.lib import deps
 from app.lib.deps import CompositeServiceMixin, provide_services
 
 
-@pytest.mark.anyio
 async def test_get_task_queue() -> None:
     """Test that get_task_queue retrieves and connects the correct queue."""
     # Mock the queue object that get_queue should return
@@ -45,7 +45,6 @@ async def mock_provider(session: AsyncSession) -> AsyncGenerator[MockService, No
     yield MockService(session=session)
 
 
-@pytest.mark.anyio
 async def test_provide_services_raises_on_no_providers() -> None:
     """Test that provide_services raises ValueError when no providers given."""
     with pytest.raises(ValueError, match="At least one service provider is required"):
@@ -53,7 +52,6 @@ async def test_provide_services_raises_on_no_providers() -> None:
             pass
 
 
-@pytest.mark.anyio
 async def test_provide_services_raises_on_both_session_and_connection() -> None:
     """Test that provide_services raises ValueError when both session and connection provided."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -68,7 +66,6 @@ async def test_provide_services_raises_on_both_session_and_connection() -> None:
             pass
 
 
-@pytest.mark.anyio
 async def test_provide_services_with_explicit_session() -> None:
     """Test provide_services uses provided session without managing lifecycle."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -78,7 +75,6 @@ async def test_provide_services_with_explicit_session() -> None:
         assert service.session is mock_session
 
 
-@pytest.mark.anyio
 async def test_provide_services_standalone_mode() -> None:
     """Test provide_services creates and manages session in standalone mode."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -88,7 +84,7 @@ async def test_provide_services_standalone_mode() -> None:
     mock_alchemy.get_session = MagicMock()
 
     # Create an async context manager mock
-    async def mock_get_session():
+    async def mock_get_session() -> AsyncGenerator[MagicMock, None]:
         yield mock_session
 
     from contextlib import asynccontextmanager
@@ -104,7 +100,6 @@ async def test_provide_services_standalone_mode() -> None:
             assert service.session is mock_session
 
 
-@pytest.mark.anyio
 async def test_provide_services_with_connection() -> None:
     """Test provide_services uses session from connection scope."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -125,7 +120,6 @@ async def test_provide_services_with_connection() -> None:
             )
 
 
-@pytest.mark.anyio
 async def test_provide_services_multiple_providers() -> None:
     """Test provide_services with multiple providers sharing same session."""
     mock_session = MagicMock(spec=AsyncSession)
@@ -227,7 +221,7 @@ def test_composite_service_mixin_caches_multiple_services() -> None:
     # Different types, different instances
     assert isinstance(dependent, DependentService)
     assert isinstance(another, AnotherService)
-    assert dependent is not another
+    assert cast("Any", dependent) is not another
 
     # Both share the same session
     assert dependent.session is mock_session

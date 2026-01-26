@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import binascii
 import json
+import logging
 import os
 import sys
 from dataclasses import dataclass, field
@@ -15,25 +16,28 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Final, cast
 
+import structlog
+from advanced_alchemy.extensions.litestar import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
 from advanced_alchemy.utils.text import slugify
-from litestar.data_extractors import RequestExtractorField
+from dotenv import load_dotenv
+from litestar.cli._utils import console
+from litestar.config.compression import CompressionConfig
+from litestar.config.cors import CORSConfig
+from litestar.data_extractors import RequestExtractorField, ResponseExtractorField
+from litestar.exceptions import NotAuthorizedException, PermissionDeniedException
+from litestar.logging.config import LoggingConfig, StructLoggingConfig, default_logger_factory
+from litestar.middleware.logging import LoggingMiddlewareConfig
+from litestar.plugins.problem_details import ProblemDetailsConfig
+from litestar.plugins.structlog import StructlogConfig
 from litestar.utils.module_loader import module_to_os_path
+from litestar_email import EmailConfig, ResendConfig, SMTPConfig
+from litestar_saq import CronJob, QueueConfig, SAQConfig
 from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
 from app.__metadata__ import __version__ as current_version
 from app.utils.env import get_env
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
-    from litestar.config.compression import CompressionConfig
-    from litestar.config.cors import CORSConfig
-    from litestar.data_extractors import ResponseExtractorField
-    from litestar.plugins.problem_details import ProblemDetailsConfig
-    from litestar.plugins.structlog import StructlogConfig
-    from litestar_email import EmailConfig
-    from litestar_saq import SAQConfig
     from sqlalchemy.ext.asyncio import AsyncEngine
 
 DEFAULT_MODULE_NAME = "app"
@@ -89,8 +93,11 @@ class DatabaseSettings:
         return self._engine_instance
 
     def get_config(self) -> SQLAlchemyAsyncConfig:
-        from advanced_alchemy.extensions.litestar import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
+        """Get SQLAlchemy configuration.
 
+        Returns:
+            The SQLAlchemy async configuration.
+        """
         return SQLAlchemyAsyncConfig(
             engine_instance=self.get_engine(),
             before_send_handler="autocommit",
@@ -117,6 +124,14 @@ class ViteSettings:
     """Trust X-Forwarded-* headers from these proxies. Use "*" to trust all."""
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
+        """Get Vite configuration.
+
+        Args:
+            base_dir: Base directory for resolving paths.
+
+        Returns:
+            The Vite configuration.
+        """
         js_home = base_dir / "js" / "web"
         return ViteConfig(
             mode="spa",
@@ -171,8 +186,11 @@ class SaqSettings:
     """Auto start and stop `saq` processes when starting the Litestar application."""
 
     def get_config(self) -> SAQConfig:
-        from litestar_saq import CronJob, QueueConfig, SAQConfig
+        """Get SAQ configuration.
 
+        Returns:
+            The SAQ configuration.
+        """
         from app.domain.accounts import jobs as account_jobs
         from app.domain.system import jobs as system_jobs
         from app.lib.worker import after_process, before_process, on_shutdown, on_startup
@@ -252,9 +270,10 @@ class EmailSettings:
         As of litestar-email v0.3.0, the backend parameter accepts either
         a string ("console", "memory") or a config object (SMTPConfig,
         ResendConfig).
-        """
-        from litestar_email import EmailConfig, ResendConfig, SMTPConfig
 
+        Returns:
+            The email configuration.
+        """
         backend: str | SMTPConfig | ResendConfig = self.BACKEND
         if self.BACKEND == "smtp":
             backend = SMTPConfig(
@@ -268,7 +287,6 @@ class EmailSettings:
             )
         elif self.BACKEND == "resend":
             backend = ResendConfig(api_key=self.RESEND_API_KEY)
-
         return EmailConfig(
             backend=backend,
             from_email=self.FROM_EMAIL,
@@ -325,12 +343,20 @@ class AppSettings:
 
     @property
     def google_oauth_enabled(self) -> bool:
-        """Check if Google OAuth is configured."""
+        """Check if Google OAuth is configured.
+
+        Returns:
+            True if Google OAuth credentials are set.
+        """
         return bool(self.GOOGLE_OAUTH2_CLIENT_ID and self.GOOGLE_OAUTH2_CLIENT_SECRET)
 
     @property
     def github_oauth_enabled(self) -> bool:
-        """Check if GitHub OAuth is configured."""
+        """Check if GitHub OAuth is configured.
+
+        Returns:
+            True if GitHub OAuth credentials are set.
+        """
         return bool(self.GITHUB_OAUTH2_CLIENT_ID and self.GITHUB_OAUTH2_CLIENT_SECRET)
 
     @property
@@ -343,18 +369,12 @@ class AppSettings:
         return slugify(self.NAME)
 
     def get_compression_config(self) -> CompressionConfig:
-        from litestar.config.compression import CompressionConfig
-
         return CompressionConfig(backend="gzip")
 
     def get_cors_config(self) -> CORSConfig:
-        from litestar.config.cors import CORSConfig
-
         return CORSConfig(allow_origins=cast("list[str]", self.ALLOWED_CORS_ORIGINS))
 
     def get_problem_details_config(self) -> ProblemDetailsConfig:
-        from litestar.plugins.problem_details import ProblemDetailsConfig
-
         return ProblemDetailsConfig(enable_for_all_http_exceptions=True)
 
     def __post_init__(self) -> None:
@@ -407,12 +427,10 @@ class LogSettings:
     """Attributes of the [Request][litestar.connection.request.Request] to be
     logged."""
     RESPONSE_FIELDS: list[ResponseExtractorField] = field(
-        default_factory=cast(
-            "Callable[[],list[ResponseExtractorField]]",
-            get_env(
-                "LOG_RESPONSE_FIELDS",
-                ["status_code"],
-            ),
+        default_factory=get_env(
+            "LOG_RESPONSE_FIELDS",
+            ["status_code"],
+            type_hint=list[ResponseExtractorField],
         )
     )
     """Attributes of the [Response][litestar.response.Response] to be
@@ -427,14 +445,6 @@ class LogSettings:
     """Level to log uvicorn error logs."""
 
     def get_structlog_config(self) -> StructlogConfig:
-        import logging
-
-        import structlog
-        from litestar.exceptions import NotAuthorizedException, PermissionDeniedException
-        from litestar.logging.config import LoggingConfig, StructLoggingConfig, default_logger_factory
-        from litestar.middleware.logging import LoggingMiddlewareConfig
-        from litestar.plugins.structlog import StructlogConfig
-
         from app.lib import log as log_conf
 
         return StructlogConfig(
@@ -523,10 +533,6 @@ class Settings:
     @classmethod
     @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
-        import structlog
-        from dotenv import load_dotenv
-        from litestar.cli._utils import console
-
         logger = structlog.get_logger()
         _secret_id = os.environ.get("ENV_SECRETS", None)  # use this to load secrets in a container
         env_file = Path(f"{os.curdir}/{dotenv_filename}")
@@ -552,5 +558,9 @@ def get_settings(dotenv_filename: str = ".env") -> Settings:
 
 
 def provide_app_settings() -> AppSettings:
-    """Return application settings for dependency injection."""
+    """Return application settings for dependency injection.
+
+    Returns:
+        The application settings instance.
+    """
     return get_settings().app

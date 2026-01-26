@@ -29,7 +29,6 @@ def _create_valid_state(provider: str, redirect_url: str | None = None) -> str:
 # --- Google OAuth Authorization Tests ---
 
 
-@pytest.mark.anyio
 async def test_google_authorize_not_configured(
     client: AsyncClient,
 ) -> None:
@@ -47,7 +46,6 @@ async def test_google_authorize_not_configured(
         assert "not configured" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_google_authorize_success(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -68,7 +66,6 @@ async def test_google_authorize_success(
     assert "test-client-id" in data["authorizationUrl"]
 
 
-@pytest.mark.anyio
 async def test_google_authorize_with_redirect_url(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -90,7 +87,6 @@ async def test_google_authorize_with_redirect_url(
 # --- Google OAuth Callback Tests ---
 
 
-@pytest.mark.anyio
 async def test_google_callback_missing_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -108,7 +104,6 @@ async def test_google_callback_missing_state(
     assert "Missing" in location or "state" in location.lower()
 
 
-@pytest.mark.anyio
 async def test_google_callback_invalid_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -128,7 +123,6 @@ async def test_google_callback_invalid_state(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_google_callback_missing_code(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -151,7 +145,6 @@ async def test_google_callback_missing_code(
     assert "code" in location.lower()
 
 
-@pytest.mark.anyio
 async def test_google_callback_oauth_error(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -173,7 +166,6 @@ async def test_google_callback_oauth_error(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_google_callback_token_exchange_failure(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -204,7 +196,6 @@ async def test_google_callback_token_exchange_failure(
     assert "token" in location.lower() or "exchange" in location.lower()
 
 
-@pytest.mark.anyio
 async def test_google_callback_get_user_info_failure(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -249,7 +240,6 @@ async def test_google_callback_get_user_info_failure(
 # --- GitHub OAuth Authorization Tests ---
 
 
-@pytest.mark.anyio
 async def test_github_authorize_not_configured(
     client: AsyncClient,
 ) -> None:
@@ -262,7 +252,6 @@ async def test_github_authorize_not_configured(
         assert "not configured" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_github_authorize_success(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -281,7 +270,6 @@ async def test_github_authorize_success(
     assert "github.com" in data["authorizationUrl"]
 
 
-@pytest.mark.anyio
 async def test_github_authorize_with_redirect_url(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -302,7 +290,6 @@ async def test_github_authorize_with_redirect_url(
 # --- GitHub OAuth Callback Tests ---
 
 
-@pytest.mark.anyio
 async def test_github_callback_missing_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -319,7 +306,6 @@ async def test_github_callback_missing_state(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_invalid_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -339,7 +325,6 @@ async def test_github_callback_invalid_state(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_missing_code(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -361,7 +346,6 @@ async def test_github_callback_missing_code(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_oauth_error(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -383,7 +367,6 @@ async def test_github_callback_oauth_error(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_token_exchange_failure(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -412,7 +395,6 @@ async def test_github_callback_token_exchange_failure(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_get_user_info_failure(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -456,7 +438,6 @@ async def test_github_callback_get_user_info_failure(
 # --- State Token Validation Tests ---
 
 
-@pytest.mark.anyio
 async def test_google_callback_wrong_provider_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -479,7 +460,6 @@ async def test_google_callback_wrong_provider_state(
     assert "error=oauth_failed" in location
 
 
-@pytest.mark.anyio
 async def test_github_callback_wrong_provider_state(
     client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,

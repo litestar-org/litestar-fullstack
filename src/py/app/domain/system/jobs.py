@@ -18,7 +18,11 @@ logger = get_logger()
 
 
 async def cleanup_auth_tokens(_: Context) -> dict[str, int]:
-    """Remove expired auth tokens and return cleanup totals."""
+    """Remove expired auth tokens and return cleanup totals.
+
+    Returns:
+        Dictionary of cleanup counts by token type.
+    """
     async with provide_services(
         account_deps.provide_email_verification_service,
         account_deps.provide_password_reset_service,

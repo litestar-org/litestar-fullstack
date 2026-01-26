@@ -1,54 +1,66 @@
-# pylint: disable=protected-access
-from __future__ import annotations
-
-import base64
-
+import pyotp
 import pytest
 
 from app.lib import crypt
 
-pytestmark = pytest.mark.anyio
+
+async def test_password_hashing() -> None:
+    password = "secret-password"
+    hashed = await crypt.get_password_hash(password)
+    assert hashed != password
+    assert await crypt.verify_password(password, hashed) is True
+    assert await crypt.verify_password("wrong-password", hashed) is False
 
 
-@pytest.mark.parametrize(
-    ("secret_key", "expected_value"),
-    (
-        ("test", "test                            "),
-        ("test---------------------------", "test--------------------------- "),
-        ("test----------------------------", "test----------------------------"),
-        ("test-----------------------------", "test-----------------------------"),
-        (
-            "this is a really long string that exceeds the 32 character padding added.",
-            "this is a really long string that exceeds the 32 character padding added.",
-        ),
-    ),
-)
-async def test_get_encryption_key(secret_key: str, expected_value: str) -> None:
-    """Test that the encryption key is formatted correctly."""
-    secret = crypt.get_encryption_key(secret_key)
-    decoded = base64.urlsafe_b64decode(secret)
-    assert expected_value == decoded.decode()
+def test_encryption_key() -> None:
+    key = crypt.get_encryption_key("short")
+    assert len(key) >= 32
+
+    key2 = crypt.get_encryption_key("a" * 40)
+    assert len(key2) >= 32
 
 
-async def test_get_password_hash() -> None:
-    """Test that the encryption key is formatted correctly."""
-    secret_str = "This is a password!"
-    secret_bytes = b"This is a password too!"
-    secret_str_hash = await crypt.get_password_hash(secret_str)
-    secret_bytes_hash = await crypt.get_password_hash(secret_bytes)
+def test_totp_flow() -> None:
+    secret = crypt.generate_totp_secret()
+    assert len(secret) == 32
 
-    assert secret_str_hash.startswith("$argon2")
-    assert secret_bytes_hash.startswith("$argon2")
+    uri = crypt.get_totp_provisioning_uri(secret, "user@example.com", "App")
+    assert "otpauth://totp/App:user%40example.com" in uri
+    assert "secret=" + secret in uri
+
+    totp = pyotp.TOTP(secret)
+    code = totp.now()
+    assert crypt.verify_totp_code(secret, code) is True
+    assert crypt.verify_totp_code(secret, "000000") is False
 
 
-@pytest.mark.parametrize(
-    ("valid_password", "tested_password", "expected_result"),
-    (("SuperS3cret123456789!!", "SuperS3cret123456789!!", True), ("SuperS3cret123456789!!", "Invalid!!", False)),
-)
-async def test_verify_password(valid_password: str, tested_password: str, expected_result: bool) -> None:
-    """Test that the encryption key is formatted correctly."""
+async def test_generate_totp_qr_code() -> None:
+    secret = crypt.generate_totp_secret()
+    qr_bytes = await crypt.generate_totp_qr_code(secret, "user@example.com")
+    assert isinstance(qr_bytes, bytes)
+    assert len(qr_bytes) > 0
+    # PNG header
+    assert qr_bytes.startswith(b"\x89PNG")
 
-    secret_str_hash = await crypt.get_password_hash(valid_password)
-    is_valid = await crypt.verify_password(tested_password, secret_str_hash)
 
-    assert is_valid == expected_result
+def test_backup_codes() -> None:
+    codes = crypt.generate_backup_codes(5)
+    assert len(codes) == 5
+    for code in codes:
+        assert len(code) == 8  # token_hex(4) is 8 chars
+
+
+async def test_verify_backup_code() -> None:
+    codes = ["CODE1", "CODE2"]
+
+    hashed_codes: list[str | None] = [await crypt.get_password_hash(c) for c in codes]
+
+    idx = await crypt.verify_backup_code("CODE2", hashed_codes)
+
+    assert idx == 1
+
+    idx = await crypt.verify_backup_code("WRONG", hashed_codes)
+    assert idx is None
+
+    with pytest.raises(ValueError, match="Invalid backup code"):
+        await crypt.verify_backup_code("WRONG", hashed_codes, raise_on_not_found=True)

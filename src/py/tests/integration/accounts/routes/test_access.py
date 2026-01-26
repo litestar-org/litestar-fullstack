@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
 import pytest
@@ -45,7 +45,7 @@ async def _login_user(client: AsyncClient, user: m.User, password: str = "testPa
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 201
-    return response.json()["access_token"]
+    return cast("str", response.json()["access_token"])
 
 
 # =============================================================================
@@ -53,7 +53,6 @@ async def _login_user(client: AsyncClient, user: m.User, password: str = "testPa
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_login_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -81,7 +80,6 @@ async def test_login_success(
     assert response_data["token_type"].lower() == "bearer"
 
 
-@pytest.mark.anyio
 async def test_login_invalid_credentials(
     client: AsyncClient,
     session: AsyncSession,
@@ -106,7 +104,6 @@ async def test_login_invalid_credentials(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_login_inactive_user(
     client: AsyncClient,
     session: AsyncSession,
@@ -131,7 +128,6 @@ async def test_login_inactive_user(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_login_unverified_user(
     client: AsyncClient,
     session: AsyncSession,
@@ -158,7 +154,6 @@ async def test_login_unverified_user(
     assert "access_token" in response_data
 
 
-@pytest.mark.anyio
 async def test_login_nonexistent_user(
     client: AsyncClient,
 ) -> None:
@@ -172,7 +167,6 @@ async def test_login_nonexistent_user(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_login_invalid_email_format(
     client: AsyncClient,
 ) -> None:
@@ -186,7 +180,6 @@ async def test_login_invalid_email_format(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_login_with_fixture_user(client: AsyncTestClient, test_user: m.User) -> None:
     """Test successful login using fixture user."""
     login_data = {
@@ -202,7 +195,6 @@ async def test_login_with_fixture_user(client: AsyncTestClient, test_user: m.Use
     assert token_data["token_type"] == "bearer"
 
 
-@pytest.mark.anyio
 async def test_login_wrong_password_fixture(client: AsyncTestClient, test_user: m.User) -> None:
     """Test login with wrong password fails."""
     login_data = {
@@ -215,7 +207,6 @@ async def test_login_wrong_password_fixture(client: AsyncTestClient, test_user: 
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_login_inactive_user_fixture(client: AsyncTestClient, inactive_user: m.User) -> None:
     """Test login with inactive user fails."""
     login_data = {
@@ -239,7 +230,6 @@ async def test_login_inactive_user_fixture(client: AsyncTestClient, inactive_use
         ("inactive@example.com", "Old_Password3!", 403),
     ),
 )
-@pytest.mark.anyio
 async def test_login_seeded_users(
     seeded_client: AsyncTestClient,
     username: str,
@@ -255,7 +245,6 @@ async def test_login_seeded_users(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_logout_success(
     client: AsyncClient,
 ) -> None:
@@ -267,7 +256,6 @@ async def test_logout_success(
     assert response_data["message"] == "OK"
 
 
-@pytest.mark.anyio
 async def test_logout_authenticated(authenticated_client: AsyncTestClient) -> None:
     """Test successful logout when authenticated."""
     response = await authenticated_client.post("/api/access/logout")
@@ -281,7 +269,6 @@ async def test_logout_authenticated(authenticated_client: AsyncTestClient) -> No
     ("username", "password"),
     (("superuser@example.com", "Test_Password1!"),),
 )
-@pytest.mark.anyio
 async def test_logout_seeded_user(seeded_client: AsyncTestClient, username: str, password: str) -> None:
     response = await seeded_client.post("/api/access/login", data={"username": username, "password": password})
     assert response.status_code == 201
@@ -304,7 +291,6 @@ async def test_logout_seeded_user(seeded_client: AsyncTestClient, username: str,
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_signup_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -335,7 +321,6 @@ async def test_signup_success(
     assert user.is_verified is False
 
 
-@pytest.mark.anyio
 async def test_signup_with_email_verification(
     client: AsyncTestClient,
     await_events: Callable[[], Coroutine[Any, Any, None]],
@@ -362,7 +347,6 @@ async def test_signup_with_email_verification(
     assert "newuser@example.com" in InMemoryBackend.outbox[0].to
 
 
-@pytest.mark.anyio
 async def test_signup_duplicate_email(
     client: AsyncClient,
     session: AsyncSession,
@@ -381,7 +365,6 @@ async def test_signup_duplicate_email(
     assert response.status_code == 409
 
 
-@pytest.mark.anyio
 async def test_signup_duplicate_email_fixture(client: AsyncTestClient, test_user: m.User) -> None:
     """Test registration with duplicate email fails using fixture."""
     signup_data = {
@@ -398,7 +381,6 @@ async def test_signup_duplicate_email_fixture(client: AsyncTestClient, test_user
     assert "conflict" in detail or "already exists" in detail or "duplicate" in detail
 
 
-@pytest.mark.anyio
 async def test_signup_invalid_password(
     client: AsyncClient,
 ) -> None:
@@ -415,7 +397,6 @@ async def test_signup_invalid_password(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_signup_weak_password_variations(client: AsyncTestClient) -> None:
     """Test registration with various weak passwords fails."""
     weak_passwords = [
@@ -437,7 +418,6 @@ async def test_signup_weak_password_variations(client: AsyncTestClient) -> None:
         assert response.status_code == 400, f"Password '{password}' should be rejected"
 
 
-@pytest.mark.anyio
 async def test_signup_invalid_email(
     client: AsyncClient,
 ) -> None:
@@ -450,7 +430,6 @@ async def test_signup_invalid_email(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_signup_invalid_email_variations(client: AsyncTestClient) -> None:
     """Test registration with various invalid email formats fails."""
     invalid_emails = [
@@ -472,7 +451,6 @@ async def test_signup_invalid_email_variations(client: AsyncTestClient) -> None:
         assert response.status_code == 400, f"Email {email} should be rejected"
 
 
-@pytest.mark.anyio
 async def test_signup_minimal_data(
     client: AsyncClient,
     session: AsyncSession,
@@ -493,7 +471,6 @@ async def test_signup_minimal_data(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_get_profile_authenticated(
     client: AsyncClient,
     session: AsyncSession,
@@ -521,7 +498,6 @@ async def test_get_profile_authenticated(
     assert response_data["name"] == "Profile User"
 
 
-@pytest.mark.anyio
 async def test_get_profile_unauthenticated(
     client: AsyncClient,
 ) -> None:
@@ -531,7 +507,6 @@ async def test_get_profile_unauthenticated(
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_get_current_user_fixture(authenticated_client: AsyncTestClient, test_user: m.User) -> None:
     """Test getting current user profile with fixture."""
     response = await authenticated_client.get("/api/me")
@@ -544,7 +519,6 @@ async def test_get_current_user_fixture(authenticated_client: AsyncTestClient, t
     assert "hashedPassword" not in user_data
 
 
-@pytest.mark.anyio
 async def test_update_profile_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -583,7 +557,6 @@ async def test_update_profile_success(
     assert user.phone == "+1234567890"
 
 
-@pytest.mark.anyio
 async def test_update_profile_fixture(authenticated_client: AsyncTestClient, test_user: m.User) -> None:
     """Test updating user profile with fixture."""
     update_data = {
@@ -598,7 +571,6 @@ async def test_update_profile_fixture(authenticated_client: AsyncTestClient, tes
     assert user_data["email"] == test_user.email
 
 
-@pytest.mark.anyio
 async def test_update_profile_unauthenticated(client: AsyncTestClient) -> None:
     """Test updating profile without authentication fails."""
     update_data = {"name": "Updated Name"}
@@ -613,7 +585,6 @@ async def test_update_profile_unauthenticated(client: AsyncTestClient) -> None:
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_update_password_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -642,7 +613,6 @@ async def test_update_password_success(
     assert response_data["message"] == "Your password was successfully modified."
 
 
-@pytest.mark.anyio
 async def test_update_password_wrong_current(
     client: AsyncClient,
     session: AsyncSession,
@@ -669,7 +639,6 @@ async def test_update_password_wrong_current(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_change_password_fixture(authenticated_client: AsyncTestClient, test_user: m.User) -> None:
     """Test successful password change with fixture."""
     password_data = {
@@ -685,7 +654,6 @@ async def test_change_password_fixture(authenticated_client: AsyncTestClient, te
     assert "password" in data["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_change_password_wrong_current_fixture(authenticated_client: AsyncTestClient) -> None:
     """Test password change with wrong current password fails."""
     password_data = {
@@ -698,7 +666,6 @@ async def test_change_password_wrong_current_fixture(authenticated_client: Async
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_change_password_weak_new(authenticated_client: AsyncTestClient) -> None:
     """Test password change with weak new password fails."""
     password_data = {
@@ -716,7 +683,6 @@ async def test_change_password_weak_new(authenticated_client: AsyncTestClient) -
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_refresh_token(authenticated_client: AsyncTestClient) -> None:
     """Test token refresh."""
     response = await authenticated_client.post("/api/access/refresh")
@@ -729,7 +695,6 @@ async def test_refresh_token(authenticated_client: AsyncTestClient) -> None:
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_forgot_password_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -758,7 +723,6 @@ async def test_forgot_password_success(
     assert token.is_valid is True
 
 
-@pytest.mark.anyio
 async def test_forgot_password_nonexistent_user(
     client: AsyncClient,
 ) -> None:
@@ -770,7 +734,6 @@ async def test_forgot_password_nonexistent_user(
     assert "password reset link has been sent" in response_data["message"]
 
 
-@pytest.mark.anyio
 async def test_forgot_password_inactive_user(
     client: AsyncClient,
     session: AsyncSession,
@@ -786,7 +749,6 @@ async def test_forgot_password_inactive_user(
     assert response.status_code == 201
 
 
-@pytest.mark.anyio
 async def test_request_password_reset_fixture(
     client: AsyncTestClient,
     test_user: m.User,
@@ -803,7 +765,6 @@ async def test_request_password_reset_fixture(
     assert test_user.email in InMemoryBackend.outbox[0].to
 
 
-@pytest.mark.anyio
 async def test_validate_reset_token_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -830,7 +791,6 @@ async def test_validate_reset_token_success(
     assert response_data["userId"] == str(user.id)
 
 
-@pytest.mark.anyio
 async def test_validate_reset_token_invalid(
     client: AsyncClient,
 ) -> None:
@@ -845,7 +805,6 @@ async def test_validate_reset_token_invalid(
     assert response_data["valid"] is False
 
 
-@pytest.mark.anyio
 async def test_reset_password_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -879,7 +838,6 @@ async def test_reset_password_success(
     assert reset_token.is_used is True
 
 
-@pytest.mark.anyio
 async def test_reset_password_fixture(
     client: AsyncTestClient,
     test_password_reset_token: m.PasswordResetToken,
@@ -899,7 +857,6 @@ async def test_reset_password_fixture(
     assert data is not None
 
 
-@pytest.mark.anyio
 async def test_reset_password_passwords_mismatch(
     client: AsyncClient,
     session: AsyncSession,
@@ -931,7 +888,6 @@ async def test_reset_password_passwords_mismatch(
     assert "do not match" in response.text
 
 
-@pytest.mark.anyio
 async def test_reset_password_weak_password(
     client: AsyncClient,
     session: AsyncSession,
@@ -958,7 +914,6 @@ async def test_reset_password_weak_password(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_reset_password_invalid_token(
     client: AsyncClient,
 ) -> None:
@@ -976,7 +931,6 @@ async def test_reset_password_invalid_token(
     assert "Invalid reset token" in response.text
 
 
-@pytest.mark.anyio
 async def test_password_reset_token_single_use(
     client: AsyncClient,
     session: AsyncSession,
@@ -1018,7 +972,6 @@ async def test_password_reset_token_single_use(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_request_verification_email(
     client: AsyncTestClient,
     unverified_user: m.User,
@@ -1038,7 +991,6 @@ async def test_request_verification_email(
     assert unverified_user.email in InMemoryBackend.outbox[0].to
 
 
-@pytest.mark.anyio
 async def test_request_verification_nonexistent_user(client: AsyncTestClient) -> None:
     """Test requesting verification for non-existent user returns success (email enumeration protection)."""
     request_data = {"email": "nonexistent@example.com"}
@@ -1048,7 +1000,6 @@ async def test_request_verification_nonexistent_user(client: AsyncTestClient) ->
     assert response.status_code == 201
 
 
-@pytest.mark.anyio
 async def test_verify_email_success(
     client: AsyncTestClient,
     unverified_user: m.User,
@@ -1065,7 +1016,6 @@ async def test_verify_email_success(
     assert data["email"] == unverified_user.email
 
 
-@pytest.mark.anyio
 async def test_verify_email_invalid_token(client: AsyncTestClient) -> None:
     """Test email verification with invalid token."""
     verify_data = {"token": "invalid_token"}
@@ -1075,7 +1025,6 @@ async def test_verify_email_invalid_token(client: AsyncTestClient) -> None:
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_verify_email_already_verified(client: AsyncTestClient, test_user: m.User) -> None:
     """Test email verification for already verified user."""
     raw_token = uuid4().hex
@@ -1099,7 +1048,6 @@ async def test_verify_email_already_verified(client: AsyncTestClient, test_user:
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_sql_injection_protection(client: AsyncTestClient) -> None:
     """Test that SQL injection attempts are blocked."""
     sql_injection_attempts = [
@@ -1119,7 +1067,6 @@ async def test_sql_injection_protection(client: AsyncTestClient) -> None:
         assert response.status_code in {400, 409}, f"SQL injection attempt should be blocked: {malicious_email}"
 
 
-@pytest.mark.anyio
 async def test_sql_injection_in_login(
     client: AsyncClient,
     session: AsyncSession,
@@ -1154,7 +1101,6 @@ async def test_sql_injection_in_login(
         )
 
 
-@pytest.mark.anyio
 async def test_xss_protection(client: AsyncTestClient) -> None:
     """Test XSS protection in user inputs."""
     xss_attempts = [
@@ -1178,7 +1124,6 @@ async def test_xss_protection(client: AsyncTestClient) -> None:
             assert xss_payload not in user_data["name"] or response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_jwt_token_validation(
     client: AsyncClient,
 ) -> None:
@@ -1196,7 +1141,6 @@ async def test_jwt_token_validation(
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_sensitive_data_exposure(
     client: AsyncClient,
     session: AsyncSession,
@@ -1226,7 +1170,6 @@ async def test_sensitive_data_exposure(
     assert "secret" not in response_text
 
 
-@pytest.mark.anyio
 async def test_error_message_security(
     client: AsyncClient,
 ) -> None:
@@ -1249,7 +1192,6 @@ async def test_error_message_security(
     assert "if the email exists" in response_data["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_unauthorized_access_prevention(
     client: AsyncClient,
 ) -> None:
@@ -1263,7 +1205,7 @@ async def test_unauthorized_access_prevention(
     ]
 
     for method, endpoint in protected_endpoints:
-        payload = {} if method in {"POST", "PATCH"} else None
+        payload: dict[str, Any] | None = {} if method in {"POST", "PATCH"} else None
         if payload is None:
             response = await client.request(method, endpoint)
         else:
@@ -1272,7 +1214,6 @@ async def test_unauthorized_access_prevention(
         assert response.status_code in [401, 403], f"{method} {endpoint} should require authentication"
 
 
-@pytest.mark.anyio
 async def test_inactive_user_access_denial(
     client: AsyncClient,
     session: AsyncSession,
@@ -1296,7 +1237,6 @@ async def test_inactive_user_access_denial(
     assert response.status_code in [401, 403]
 
 
-@pytest.mark.anyio
 async def test_superuser_access_control(
     client: AsyncClient,
     session: AsyncSession,
@@ -1335,7 +1275,6 @@ async def test_superuser_access_control(
     assert response.status_code == 200
 
 
-@pytest.mark.anyio
 async def test_security_headers_present(
     client: AsyncClient,
 ) -> None:
@@ -1344,7 +1283,7 @@ async def test_security_headers_present(
 
     headers = response.headers
 
-    security_header_checks = [
+    security_header_checks: list[Callable[[Any], bool]] = [
         lambda h: "content-type" in h,
         lambda h: "access-control-allow-origin" not in h or h["access-control-allow-origin"] != "*",
     ]
@@ -1358,7 +1297,6 @@ async def test_security_headers_present(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_email_validation_registration(
     client: AsyncClient,
 ) -> None:
@@ -1380,7 +1318,6 @@ async def test_email_validation_registration(
         assert response.status_code == 400, f"Email {invalid_email} should be invalid"
 
 
-@pytest.mark.anyio
 async def test_password_strength_validation(
     client: AsyncClient,
 ) -> None:
@@ -1404,7 +1341,6 @@ async def test_password_strength_validation(
         assert response.status_code == 400, f"Password '{weak_password}' should be invalid"
 
 
-@pytest.mark.anyio
 async def test_username_validation(
     client: AsyncClient,
 ) -> None:
@@ -1433,7 +1369,6 @@ async def test_username_validation(
         assert response.status_code == 400, f"Username '{invalid_username}' should be invalid"
 
 
-@pytest.mark.anyio
 async def test_name_validation(
     client: AsyncClient,
 ) -> None:
@@ -1459,7 +1394,6 @@ async def test_name_validation(
         assert response.status_code == 400, f"Name '{invalid_name}' should be invalid"
 
 
-@pytest.mark.anyio
 async def test_json_payload_validation(
     client: AsyncClient,
 ) -> None:
@@ -1491,7 +1425,6 @@ async def test_json_payload_validation(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_complete_registration_and_login_flow(
     client: AsyncClient,
     session: AsyncSession,
@@ -1528,7 +1461,6 @@ async def test_complete_registration_and_login_flow(
     assert profile_data["name"] == "Complete User"
 
 
-@pytest.mark.anyio
 async def test_complete_password_reset_flow(
     client: AsyncClient,
     session: AsyncSession,

@@ -8,6 +8,7 @@ from uuid import UUID
 from litestar import Controller, delete, get, patch
 from litestar.di import Provide
 from litestar.params import Dependency
+from msgspec import UNSET
 from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import models as m
@@ -55,14 +56,12 @@ class AdminTeamsController(Controller):
     @get(operation_id="AdminListTeams", path="/")
     async def list_teams(
         self,
-        request: Request[m.User, Token, Any],
         teams_service: TeamService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[AdminTeamSummary]:
         """List all teams with pagination.
 
         Args:
-            request: Request with authenticated superuser
             teams_service: Team service
             filters: Filter and pagination parameters
 
@@ -70,35 +69,17 @@ class AdminTeamsController(Controller):
             Paginated team list
         """
         results, total = await teams_service.list_and_count(*filters)
-        items = [
-            {
-                "id": t.id,
-                "name": t.name,
-                "slug": t.slug,
-                "member_count": len(t.members) if t.members else 0,
-                "is_active": t.is_active,
-                "created_at": t.created_at,
-            }
-            for t in results
-        ]
-        return teams_service.to_schema(
-            data=items,
-            total=total,
-            filters=filters,
-            schema_type=AdminTeamSummary,
-        )
+        return teams_service.to_schema(results, total, filters, schema_type=AdminTeamSummary)
 
     @get(operation_id="AdminGetTeam", path="/{team_id:uuid}")
     async def get_team(
         self,
-        request: Request[m.User, Token, Any],
         teams_service: TeamService,
         team_id: UUID,
     ) -> AdminTeamDetail:
         """Get detailed team information.
 
         Args:
-            request: Request with authenticated superuser
             teams_service: Team service
             team_id: ID of team to retrieve
 
@@ -106,26 +87,7 @@ class AdminTeamsController(Controller):
             Detailed team information
         """
         team = await teams_service.get(team_id)
-
-        return teams_service.to_schema(
-            data={
-                "id": team.id,
-                "name": team.name,
-                "slug": team.slug,
-                "description": team.description,
-                "is_active": team.is_active,
-                "member_count": len(team.members) if team.members else 0,
-                "owner_email": next(
-                    (member.user.email for member in team.members if member.is_owner and member.user),
-                    None,
-                )
-                if team.members
-                else None,
-                "created_at": team.created_at,
-                "updated_at": team.updated_at,
-            },
-            schema_type=AdminTeamDetail,
-        )
+        return teams_service.to_schema(team, schema_type=AdminTeamDetail)
 
     @patch(operation_id="AdminUpdateTeam", path="/{team_id:uuid}")
     async def update_team(
@@ -148,16 +110,13 @@ class AdminTeamsController(Controller):
         Returns:
             Updated team details
         """
-        import msgspec
 
         update_data: dict[str, Any] = {}
         for field in ("name", "description", "is_active"):
             value = getattr(data, field)
-            if value is not msgspec.UNSET:
+            if value is not UNSET:
                 update_data[field] = value
-
         team = await teams_service.update(item_id=team_id, data=update_data, auto_commit=True)
-
         await audit_service.log_admin_team_update(
             actor_id=request.user.id,
             actor_email=request.user.email,
@@ -166,26 +125,7 @@ class AdminTeamsController(Controller):
             changes=list(update_data.keys()),
             request=request,
         )
-
-        return teams_service.to_schema(
-            data={
-                "id": team.id,
-                "name": team.name,
-                "slug": team.slug,
-                "description": team.description,
-                "is_active": team.is_active,
-                "member_count": len(team.members) if team.members else 0,
-                "owner_email": next(
-                    (member.user.email for member in team.members if member.is_owner and member.user),
-                    None,
-                )
-                if team.members
-                else None,
-                "created_at": team.created_at,
-                "updated_at": team.updated_at,
-            },
-            schema_type=AdminTeamDetail,
-        )
+        return teams_service.to_schema(team, schema_type=AdminTeamDetail)
 
     @delete(operation_id="AdminDeleteTeam", path="/{team_id:uuid}", status_code=200)
     async def delete_team(
@@ -208,9 +148,7 @@ class AdminTeamsController(Controller):
         """
         team = await teams_service.get(team_id)
         team_name = team.name
-
-        await teams_service.delete(team_id)
-
+        await teams_service.delete(team.id)
         await audit_service.log_admin_team_delete(
             actor_id=request.user.id,
             actor_email=request.user.email,
@@ -218,5 +156,4 @@ class AdminTeamsController(Controller):
             team_name=team_name,
             request=request,
         )
-
         return Message(message=f"Team {team_name} deleted successfully")

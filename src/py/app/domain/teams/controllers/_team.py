@@ -8,6 +8,7 @@ from uuid import UUID
 from litestar import Controller, delete, get, patch, post
 from litestar.params import Dependency, Parameter
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.db import models as m
 from app.domain.teams.guards import requires_team_admin, requires_team_membership, requires_team_ownership
@@ -27,7 +28,7 @@ class TeamController(Controller):
     dependencies = create_service_dependencies(
         TeamService,
         key="teams_service",
-        load=[m.Team.tags, m.Team.members],
+        load=[selectinload(m.Team.tags), selectinload(m.Team.members)],
         filters={
             "id_filter": UUID,
             "search": "name",

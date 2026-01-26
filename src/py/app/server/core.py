@@ -1,13 +1,34 @@
 # pylint: disable=[invalid-name,import-outside-toplevel]
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING, TypeVar
+from uuid import UUID
 
+from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
+from httpx_oauth.oauth2 import OAuth2Token
 from litestar.di import Provide
+from litestar.enums import RequestEncodingType
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
+from litestar.params import Body
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
-from litestar.security.jwt import OAuth2Login
+from litestar.security.jwt import OAuth2Login, Token
+from litestar_email import EmailService
+
+from app import config
+from app.__metadata__ import __version__
+from app.db import models as m
+from app.domain.accounts.guards import auth, provide_user
+from app.lib.email import AppEmailService
+from app.lib.exceptions import (
+    ApplicationClientError,
+    ApplicationError,
+    exception_to_http_response,
+)
+from app.lib.settings import AppSettings, get_settings, provide_app_settings
+from app.lib.validation import ValidationError
+from app.server import plugins
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -16,26 +37,8 @@ if TYPE_CHECKING:
     from litestar.config.app import AppConfig
     from litestar.datastructures import State
 
-    from app.lib.email import AppEmailService
-
 
 T = TypeVar("T")
-
-
-async def get_mailer_dependency(state: State) -> AsyncGenerator[AppEmailService, None]:
-    """Provide the app email service.
-
-    Args:
-        state: The application state.
-
-    Yields:
-        The configured AppEmailService.
-    """
-    from app.lib.email import AppEmailService
-
-    email_config = state.mailer
-    async with email_config.provide_service() as mailer:
-        yield AppEmailService(mailer=mailer)
 
 
 class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
@@ -50,7 +53,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
     def on_cli_init(self, cli: Group) -> None:
         from app.cli.commands import user_management_group
-        from app.lib.settings import get_settings
 
         settings = get_settings()
         self.app_slug = settings.app.slug
@@ -65,31 +67,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         Returns:
             The configured app config.
         """
-
-        from datetime import datetime
-        from uuid import UUID
-
-        from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
-        from httpx_oauth.oauth2 import OAuth2Token
-        from litestar.enums import RequestEncodingType
-        from litestar.params import Body
-        from litestar.security.jwt import Token
-        from litestar_email import EmailService
-
-        from app import config
-        from app.__metadata__ import __version__
-        from app.db import models as m
-        from app.domain.accounts.guards import auth, provide_user
-        from app.lib.email import AppEmailService
-        from app.lib.exceptions import (
-            ApplicationClientError,
-            ApplicationError,
-            exception_to_http_response,
-        )
-        from app.lib.settings import AppSettings, get_settings, provide_app_settings
-        from app.lib.validation import ValidationError
-        from app.server import plugins
-
         settings = get_settings()
         self.app_slug = settings.app.slug
         app_config.debug = settings.app.DEBUG
@@ -150,3 +127,17 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         )
 
         return app_config
+
+
+async def get_mailer_dependency(state: State) -> AsyncGenerator[AppEmailService, None]:
+    """Provide the app email service.
+
+    Args:
+        state: The application state.
+
+    Yields:
+        The configured AppEmailService.
+    """
+    email_config = state.mailer
+    async with email_config.provide_service() as mailer:
+        yield AppEmailService(mailer=mailer)

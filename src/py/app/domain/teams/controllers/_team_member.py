@@ -103,7 +103,7 @@ class TeamMemberController(Controller):
         if membership is None:
             msg = "User is not a member of this team."
             raise IntegrityError(msg)
-        _ = await team_members_service.delete(membership.id)
+        await team_members_service.delete(membership.id)
         team_obj = await teams_service.get(team_id)
         return teams_service.to_schema(team_obj, schema_type=Team)
 
@@ -119,6 +119,9 @@ class TeamMemberController(Controller):
 
         Raises:
             IntegrityError: If the user is not a member of the team.
+
+        Returns:
+            The updated team member.
         """
         membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_id)
         if membership is None:

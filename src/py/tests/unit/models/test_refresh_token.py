@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from typing import Any, cast
 from uuid import uuid4
 
 import pytest
@@ -220,7 +221,7 @@ def test_valid_to_expired_transition() -> None:
 
     # Simulate expiration by changing expires_at
     token.expires_at = datetime.now(UTC) - timedelta(hours=1)
-    assert token.is_valid is False
+    assert cast("Any", token).is_valid is False
     assert token.is_expired is True
 
 
@@ -235,5 +236,5 @@ def test_valid_to_revoked_transition() -> None:
 
     # Revoke the token
     token.revoked_at = datetime.now(UTC)
-    assert token.is_valid is False
+    assert cast("Any", token).is_valid is False
     assert token.is_revoked is True

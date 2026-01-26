@@ -35,29 +35,6 @@ OAUTH_DEFAULT_SCOPES: dict[str, list[str]] = {
 }
 
 
-def _get_oauth_client(provider: str, settings: AppSettings) -> GoogleOAuth2 | GitHubOAuth2:
-    """Return an OAuth client for the requested provider.
-
-    Raises:
-        HTTPException: If the provider is unsupported or not configured.
-    """
-    if provider == "google":
-        if not settings.GOOGLE_OAUTH2_CLIENT_ID or not settings.GOOGLE_OAUTH2_CLIENT_SECRET:
-            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Google OAuth is not configured")
-        return GoogleOAuth2(
-            client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
-            client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
-        )
-    if provider == "github":
-        if not settings.GITHUB_OAUTH2_CLIENT_ID or not settings.GITHUB_OAUTH2_CLIENT_SECRET:
-            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="GitHub OAuth is not configured")
-        return GitHubOAuth2(
-            client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
-            client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
-        )
-    raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=f"Unknown OAuth provider: {provider}")
-
-
 class OAuthAccountController(Controller):
     """OAuth account management for profile settings."""
 
@@ -110,12 +87,7 @@ class OAuthAccountController(Controller):
             }
             for account in accounts
         ]
-        return oauth_account_service.to_schema(
-            data=items,
-            total=total,
-            filters=filters,
-            schema_type=OAuthAccountInfo,
-        )
+        return oauth_account_service.to_schema(items, total, filters, schema_type=OAuthAccountInfo)
 
     @post(operation_id="ProfileOAuthLink", path="/{provider:str}/link")
     async def start_link(
@@ -150,8 +122,6 @@ class OAuthAccountController(Controller):
             action="link",
             user_id=str(current_user.id),
         )
-        # Use the main auth callback URL (same as login flow)
-        # The 'link' action in state tells the callback to link instead of login
         callback_url = str(request.url_for(f"oauth:{provider}:callback"))
         authorization_url = await client.get_authorization_url(
             redirect_uri=callback_url,
@@ -186,14 +156,12 @@ class OAuthAccountController(Controller):
         can_unlink, reason = await oauth_account_service.can_unlink_oauth(user_with_password)
         if not can_unlink:
             raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=reason)
-
         success = await oauth_account_service.unlink_oauth_account(user_id=current_user.id, provider=provider)
         if not success:
             raise HTTPException(
                 status_code=HTTP_404_NOT_FOUND,
                 detail=f"No {provider} account linked to your profile",
             )
-
         return Message(message=f"Successfully unlinked {provider} account")
 
     @post(operation_id="ProfileOAuthUpgradeScopes", path="/{provider:str}/upgrade-scopes")
@@ -226,7 +194,6 @@ class OAuthAccountController(Controller):
             action="upgrade",
             user_id=str(current_user.id),
         )
-        # Use the main auth callback URL (same as login flow)
         callback_url = str(request.url_for(f"oauth:{provider}:callback"))
         authorization_url = await client.get_authorization_url(
             redirect_uri=callback_url,
@@ -234,6 +201,36 @@ class OAuthAccountController(Controller):
             scope=OAUTH_DEFAULT_SCOPES.get(provider, []),
         )
         return OAuthAuthorization(authorization_url=authorization_url, state=state)
+
+
+def _get_oauth_client(provider: str, settings: AppSettings) -> GoogleOAuth2 | GitHubOAuth2:
+    """Return an OAuth client for the requested provider.
+
+    Args:
+        provider: OAuth provider name (google, github)
+        settings: Application settings
+
+    Returns:
+        The OAuth client instance.
+
+    Raises:
+        HTTPException: If the provider is unsupported or not configured.
+    """
+    if provider == "google":
+        if not settings.GOOGLE_OAUTH2_CLIENT_ID or not settings.GOOGLE_OAUTH2_CLIENT_SECRET:
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Google OAuth is not configured")
+        return GoogleOAuth2(
+            client_id=settings.GOOGLE_OAUTH2_CLIENT_ID,
+            client_secret=settings.GOOGLE_OAUTH2_CLIENT_SECRET,
+        )
+    if provider == "github":
+        if not settings.GITHUB_OAUTH2_CLIENT_ID or not settings.GITHUB_OAUTH2_CLIENT_SECRET:
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="GitHub OAuth is not configured")
+        return GitHubOAuth2(
+            client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
+            client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
+        )
+    raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=f"Unknown OAuth provider: {provider}")
 
 
 __all__ = ("OAuthAccountController",)

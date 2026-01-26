@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Annotated, Any
+from uuid import uuid4
 
-from advanced_alchemy.exceptions import DuplicateKeyError
 from advanced_alchemy.utils.text import slugify
 from litestar import Controller, Request, Response, delete, get, post
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import ClientException, NotAuthorizedException
 from litestar.params import Body, Dependency, Parameter
+from litestar.security.jwt import Token as JWTToken
 from sqlalchemy.orm import selectinload
 
 from app.db import models as m
@@ -21,6 +23,7 @@ from app.domain.accounts.deps import (
     provide_roles_service,
     provide_users_service,
 )
+from app.domain.accounts.guards import auth
 from app.domain.accounts.schemas import (
     AccountLogin,
     AccountRegister,
@@ -110,13 +113,6 @@ class AccessController(Controller):
         Returns:
             OAuth2 Login Response with refresh token cookie, or MFA challenge
         """
-        from datetime import UTC, datetime, timedelta
-        from uuid import uuid4
-
-        from litestar.security.jwt import Token as JWTToken
-
-        from app.domain.accounts.guards import auth
-
         user = await users_service.authenticate(data.username, data.password)
 
         if user.is_two_factor_enabled and user.totp_secret:
@@ -190,7 +186,7 @@ class AccessController(Controller):
         request: Request[m.User, Token, Any],
         refresh_token_service: RefreshTokenService,
     ) -> Response[Message]:
-        """Account Logout
+        """Account Logout.
 
         Revokes the current refresh token family and clears cookies.
 
@@ -201,13 +197,9 @@ class AccessController(Controller):
         Returns:
             Logout Response
         """
-        from app.domain.accounts.guards import auth
-
-        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
-        if raw_refresh_token:
+        if raw_refresh_token := request.cookies.get(REFRESH_COOKIE_NAME):
             token_hash = refresh_token_service.hash_token(raw_refresh_token)
-            refresh_token = await refresh_token_service.get_one_or_none(token_hash=token_hash)
-            if refresh_token:
+            if refresh_token := await refresh_token_service.get_one_or_none(token_hash=token_hash):
                 await refresh_token_service.revoke_token_family(refresh_token.family_id)
 
         request.cookies.pop(auth.key, None)
@@ -242,12 +234,7 @@ class AccessController(Controller):
         Raises:
             NotAuthorizedException: If refresh token is invalid or expired
         """
-        from uuid import uuid4
-
-        from app.domain.accounts.guards import auth
-
-        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
-        if not raw_refresh_token:
+        if not (raw_refresh_token := request.cookies.get(REFRESH_COOKIE_NAME)):
             raise NotAuthorizedException(detail="No refresh token provided")
 
         device_info = request.headers.get("user-agent", "")[:255] if request.headers.get("user-agent") else None
@@ -300,13 +287,9 @@ class AccessController(Controller):
         Returns:
             Paginated active sessions
         """
-        from datetime import UTC, datetime
-
         current_token_hash = None
-        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
-        if raw_refresh_token:
+        if raw_refresh_token := request.cookies.get(REFRESH_COOKIE_NAME):
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
-
         active_tokens, total = await refresh_token_service.list_and_count(
             *filters,
             m.RefreshToken.user_id == request.user.id,
@@ -314,21 +297,17 @@ class AccessController(Controller):
             m.RefreshToken.expires_at > datetime.now(UTC),
         )
 
-        return refresh_token_service.to_schema(
-            data=[
-                {
-                    "id": token.id,
-                    "device_info": token.device_info,
-                    "created_at": token.created_at,
-                    "expires_at": token.expires_at,
-                    "is_current": token.token_hash == current_token_hash,
-                }
-                for token in active_tokens
-            ],
-            total=total,
-            filters=filters,
-            schema_type=ActiveSession,
-        )
+        items = [
+            {
+                "id": token.id,
+                "device_info": token.device_info,
+                "created_at": token.created_at,
+                "expires_at": token.expires_at,
+                "is_current": token.token_hash == current_token_hash,
+            }
+            for token in active_tokens
+        ]
+        return refresh_token_service.to_schema(items, total, filters, schema_type=ActiveSession)
 
     @delete(operation_id="RevokeSession", path="/api/access/sessions/{session_id:uuid}", status_code=200)
     async def revoke_session(
@@ -348,15 +327,12 @@ class AccessController(Controller):
             Success message
 
         Raises:
-            ClientException: If session not found or doesn't belong to user
+            ClientException: If session not found or does not belong to user
         """
-
         token = await refresh_token_service.get_one_or_none(id=session_id)
         if not token or token.user_id != request.user.id:
             raise ClientException(detail="Session not found", status_code=404)
-
         await refresh_token_service.revoke_token_family(token.family_id)
-
         return Message(message="Session revoked successfully")
 
     @delete(operation_id="RevokeAllSessions", path="/api/access/sessions", status_code=200)
@@ -376,17 +352,13 @@ class AccessController(Controller):
         """
 
         current_token_hash = None
-        raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
-        if raw_refresh_token:
+        if raw_refresh_token := request.cookies.get(REFRESH_COOKIE_NAME):
             current_token_hash = refresh_token_service.hash_token(raw_refresh_token)
-
         active_tokens = await refresh_token_service.get_active_sessions(request.user.id)
-
         revoked_count = 0
         for token in active_tokens:
             if token.token_hash != current_token_hash:
                 revoked_count += await refresh_token_service.revoke_token_family(token.family_id)
-
         return Message(message=f"Revoked {revoked_count} session(s)")
 
     @post(operation_id="AccountRegister", path="/api/access/signup")
@@ -407,26 +379,18 @@ class AccessController(Controller):
             data: Account Register Data
             app_mailer: Email service for sending notifications
 
-        Raises:
-            ClientException: If user with this email already exists
-
         Returns:
             User
         """
         user_data = data.to_dict()
 
-        user_data["is_verified"] = False
-
         role_obj = await roles_service.get_one_or_none(slug=slugify(users_service.default_role))
+
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
 
-        try:
-            user = await users_service.create(user_data)
-        except DuplicateKeyError as exc:
-            raise ClientException(detail="User with this email already exists", status_code=409) from exc
+        user = await users_service.create(user_data)
         request.app.emit(event_id="user_created", user_id=user.id, mailer=app_mailer)
-
         return users_service.to_schema(user, schema_type=User)
 
     @post(operation_id="ForgotPassword", path="/api/access/forgot-password", exclude_from_auth=True, security=[])
@@ -451,19 +415,15 @@ class AccessController(Controller):
             Response indicating reset email status
         """
         user = await users_service.get_one_or_none(email=data.email)
-
         if user is None or not user.is_active:
             return PasswordResetSent(
                 message="If the email exists, a password reset link has been sent", expires_in_minutes=60
             )
-
         if await password_reset_service.check_rate_limit(user.id):
             return PasswordResetSent(
                 message="Too many password reset requests. Please try again later", expires_in_minutes=60
             )
-
         request.app.emit(event_id="password_reset_requested", user_id=user.id, mailer=app_mailer)
-
         return PasswordResetSent(
             message="If the email exists, a password reset link has been sent", expires_in_minutes=60
         )
@@ -516,7 +476,7 @@ class AccessController(Controller):
             Password reset confirmation
 
         Raises:
-            ClientException: If token is invalid or passwords don't match
+            ClientException: If token is invalid or passwords do not match
         """
 
         if data.password != data.password_confirm:
@@ -526,11 +486,7 @@ class AccessController(Controller):
             validate_password_strength(data.password)
         except PasswordValidationError as e:
             raise ClientException(detail=str(e), status_code=400) from e
-
         reset_token = await password_reset_service.use_reset_token(data.token)
-
         user = await users_service.reset_password_with_token(user_id=reset_token.user_id, new_password=data.password)
-
         request.app.emit(event_id="password_reset_completed", user_id=user.id, mailer=app_mailer)
-
         return PasswordResetComplete(message="Password has been successfully reset", user_id=user.id)

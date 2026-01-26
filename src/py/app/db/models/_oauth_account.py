@@ -40,10 +40,10 @@ class UserOAuthAccount(UUIDv7AuditBase):
     refresh_token: Mapped[str | None] = mapped_column(EncryptedText(key=settings.app.SECRET_KEY), nullable=True)
     account_id: Mapped[str] = mapped_column(String(length=320), index=True, nullable=False)
     account_email: Mapped[str] = mapped_column(String(length=320), nullable=False)
-    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     scope: Mapped[str | None] = mapped_column(Text, nullable=True)
     provider_user_data: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
-    last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     user_name: AssociationProxy[str] = association_proxy("user", "name")
     user_email: AssociationProxy[str] = association_proxy("user", "email")

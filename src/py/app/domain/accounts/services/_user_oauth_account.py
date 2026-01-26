@@ -48,7 +48,11 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         oauth_data: dict[str, Any],
         token_data: OAuth2Token,
     ) -> m.UserOAuthAccount:
-        """Create or update OAuth account with token data."""
+        """Create or update OAuth account with token data.
+
+        Returns:
+            The created or updated OAuth account.
+        """
         account_id = oauth_data.get("id", oauth_data.get("sub", ""))
         account_email = oauth_data.get("email", "")
         return await self.link_or_update_oauth(
@@ -77,7 +81,11 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         provider_user_data: dict[str, Any] | None = None,
         last_login_at: datetime | None = None,
     ) -> m.UserOAuthAccount:
-        """Link a new OAuth account or update existing one."""
+        """Link a new OAuth account or update existing one.
+
+        Returns:
+            The linked or updated OAuth account.
+        """
         scope_value = " ".join(scopes) if isinstance(scopes, list) else scopes
         token_expires_at = datetime.fromtimestamp(expires_at, tz=UTC) if expires_at else None
         account_data: dict[str, Any] = {
@@ -108,16 +116,18 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         user_id: UUID,
         provider: str,
     ) -> bool:
-        """Unlink OAuth account from user."""
+        """Unlink OAuth account from user.
+
+        Returns:
+            True if unlinked, False if account not found.
+        """
         oauth_account = await self.get_one_or_none(
             user_id=user_id,
             oauth_name=provider,
         )
-
         if oauth_account:
             await self.delete(item_id=oauth_account.id, auto_commit=True)
             return True
-
         return False
 
     async def get_by_provider_account_id(
@@ -125,5 +135,9 @@ class UserOAuthAccountService(SQLAlchemyAsyncRepositoryService[m.UserOAuthAccoun
         provider: str,
         account_id: str,
     ) -> m.UserOAuthAccount | None:
-        """Get an OAuth account by provider and account ID."""
+        """Get an OAuth account by provider and account ID.
+
+        Returns:
+            The OAuth account if found, None otherwise.
+        """
         return await self.get_one_or_none(oauth_name=provider, account_id=account_id)

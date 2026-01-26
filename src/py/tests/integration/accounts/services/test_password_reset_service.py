@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services, pytest.mark.security]
 
 
-@pytest.mark.anyio
 async def test_create_reset_token_success(
     session: AsyncSession,
 ) -> None:
@@ -41,7 +40,6 @@ async def test_create_reset_token_success(
         assert token.is_valid is True
 
 
-@pytest.mark.anyio
 async def test_create_reset_token_without_metadata(
     session: AsyncSession,
 ) -> None:
@@ -60,7 +58,6 @@ async def test_create_reset_token_without_metadata(
         assert token.is_valid is True
 
 
-@pytest.mark.anyio
 async def test_create_reset_token_invalidates_existing(
     session: AsyncSession,
 ) -> None:
@@ -86,7 +83,6 @@ async def test_create_reset_token_invalidates_existing(
         assert second_token.id != first_token.id
 
 
-@pytest.mark.anyio
 async def test_create_reset_token_short_expiration(
     session: AsyncSession,
 ) -> None:
@@ -107,7 +103,6 @@ async def test_create_reset_token_short_expiration(
         assert expected_min_expiry <= token.expires_at <= expected_max_expiry
 
 
-@pytest.mark.anyio
 async def test_create_reset_token_unique_tokens(
     session: AsyncSession,
 ) -> None:
@@ -125,7 +120,6 @@ async def test_create_reset_token_unique_tokens(
         assert token1.user_id != token2.user_id
 
 
-@pytest.mark.anyio
 async def test_validate_reset_token_success(
     session: AsyncSession,
 ) -> None:
@@ -147,7 +141,6 @@ async def test_validate_reset_token_success(
         assert validated_token.is_used is False
 
 
-@pytest.mark.anyio
 async def test_validate_invalid_token(
     session: AsyncSession,
 ) -> None:
@@ -160,7 +153,6 @@ async def test_validate_invalid_token(
         assert "Invalid reset token" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_validate_expired_token(
     session: AsyncSession,
 ) -> None:
@@ -185,7 +177,6 @@ async def test_validate_expired_token(
         assert "Reset token has expired" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_validate_used_token(
     session: AsyncSession,
 ) -> None:
@@ -207,7 +198,6 @@ async def test_validate_used_token(
         assert "Reset token has already been used" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_use_reset_token_success(
     session: AsyncSession,
 ) -> None:
@@ -230,7 +220,6 @@ async def test_use_reset_token_success(
         assert before_use <= used_token.used_at <= after_use
 
 
-@pytest.mark.anyio
 async def test_use_invalid_token(
     session: AsyncSession,
 ) -> None:
@@ -243,7 +232,6 @@ async def test_use_invalid_token(
         assert "Invalid reset token" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_use_expired_token(
     session: AsyncSession,
 ) -> None:
@@ -264,7 +252,6 @@ async def test_use_expired_token(
         assert "Reset token has expired" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_use_already_used_token(
     session: AsyncSession,
 ) -> None:
@@ -287,7 +274,6 @@ async def test_use_already_used_token(
         assert "Reset token has already been used" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens(
     session: AsyncSession,
 ) -> None:
@@ -319,7 +305,6 @@ async def test_invalidate_user_tokens(
         assert user2_token_refreshed.is_used is False  # Should not be affected
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_no_tokens(
     session: AsyncSession,
 ) -> None:
@@ -331,7 +316,6 @@ async def test_invalidate_user_tokens_no_tokens(
         await service.invalidate_user_tokens(uuid4())
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_already_used(
     session: AsyncSession,
 ) -> None:
@@ -361,7 +345,6 @@ async def test_invalidate_user_tokens_already_used(
         assert token2_refreshed.is_used is True
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_success(
     session: AsyncSession,
 ) -> None:
@@ -400,7 +383,6 @@ async def test_cleanup_expired_tokens_success(
         assert valid_token_check is not None
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_no_expired(
     session: AsyncSession,
 ) -> None:
@@ -429,7 +411,6 @@ async def test_cleanup_expired_tokens_no_expired(
         assert valid_token2_check is not None
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_empty_database(
     session: AsyncSession,
 ) -> None:
@@ -439,7 +420,6 @@ async def test_cleanup_expired_tokens_empty_database(
         assert cleanup_count == 0
 
 
-@pytest.mark.anyio
 async def test_check_rate_limit_not_exceeded(
     session: AsyncSession,
 ) -> None:
@@ -457,7 +437,6 @@ async def test_check_rate_limit_not_exceeded(
         assert is_rate_limited is False
 
 
-@pytest.mark.anyio
 async def test_check_rate_limit_exceeded(
     session: AsyncSession,
 ) -> None:
@@ -476,7 +455,6 @@ async def test_check_rate_limit_exceeded(
         assert is_rate_limited is True
 
 
-@pytest.mark.anyio
 async def test_check_rate_limit_old_tokens_ignored(
     session: AsyncSession,
 ) -> None:
@@ -500,7 +478,6 @@ async def test_check_rate_limit_old_tokens_ignored(
         assert is_rate_limited is False
 
 
-@pytest.mark.anyio
 async def test_check_rate_limit_custom_hours(
     session: AsyncSession,
 ) -> None:
@@ -524,7 +501,6 @@ async def test_check_rate_limit_custom_hours(
         assert is_rate_limited_15m is False  # Token is outside 15-minute window
 
 
-@pytest.mark.anyio
 async def test_check_rate_limit_no_tokens(
     session: AsyncSession,
 ) -> None:
@@ -536,7 +512,6 @@ async def test_check_rate_limit_no_tokens(
         assert is_rate_limited is False
 
 
-@pytest.mark.anyio
 async def test_full_password_reset_workflow(
     session: AsyncSession,
 ) -> None:
@@ -563,7 +538,6 @@ async def test_full_password_reset_workflow(
             await service.use_reset_token(raw_token)
 
 
-@pytest.mark.anyio
 async def test_security_features_integration(
     session: AsyncSession,
 ) -> None:
@@ -591,7 +565,6 @@ async def test_security_features_integration(
         assert len(used_tokens) >= 3  # Previous tokens should be invalidated
 
 
-@pytest.mark.anyio
 async def test_token_security_properties(
     session: AsyncSession,
 ) -> None:
@@ -621,7 +594,6 @@ async def test_token_security_properties(
             assert all(c in allowed_chars for c in token_str)
 
 
-@pytest.mark.anyio
 async def test_concurrent_reset_requests(
     session: AsyncSession,
 ) -> None:

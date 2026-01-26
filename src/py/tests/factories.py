@@ -6,7 +6,7 @@ import hashlib
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, Protocol, cast, overload
 from unittest.mock import AsyncMock, Mock, create_autospec
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from polyfactory import Ignore, Use
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
@@ -48,14 +48,14 @@ class UserFactory(SQLAlchemyFactory[m.User]):
     verified_at = Use(date.today)
     joined_at = Use(date.today)
     login_count = 0
-    password_reset_at = None
+    password_reset_at: datetime | None = None
     failed_reset_attempts = 0
-    reset_locked_until = None
+    reset_locked_until: datetime | None = None
     # MFA fields - explicit None to avoid polyfactory generating naive datetimes
-    totp_secret = None
+    totp_secret: str | None = None
     is_two_factor_enabled = False
-    two_factor_confirmed_at = None
-    backup_codes = None
+    two_factor_confirmed_at: datetime | None = None
+    backup_codes: list[str] | None = None
 
     # Ignore relationships to avoid circular dependencies
     roles = Ignore()
@@ -106,8 +106,8 @@ class TeamMemberFactory(SQLAlchemyFactory[m.TeamMember]):
     is_owner = False
 
     # These will be set by the caller
-    team_id = None
-    user_id = None
+    team_id: UUID | None = None
+    user_id: UUID | None = None
 
     # Ignore relationships and association proxies
     team = Ignore()
@@ -127,10 +127,10 @@ class EmailVerificationTokenFactory(SQLAlchemyFactory[m.EmailVerificationToken])
     token_hash = Ignore()
     email = Use(lambda: f"user{uuid4().hex[:8]}@example.com")
     expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
-    used_at = None
+    used_at: datetime | None = None
 
     # These will be set by the caller
-    user_id = None
+    user_id: UUID | None = None
 
     # Ignore relationships
     user = Ignore()
@@ -155,12 +155,12 @@ class PasswordResetTokenFactory(SQLAlchemyFactory[m.PasswordResetToken]):
     id = Use(uuid4)
     token_hash = Ignore()
     expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
-    used_at = None
+    used_at: datetime | None = None
     ip_address = "127.0.0.1"
     user_agent = "Test User Agent"
 
     # These will be set by the caller
-    user_id = None
+    user_id: UUID | None = None
 
     # Ignore relationships
     user = Ignore()
@@ -186,11 +186,11 @@ class RefreshTokenFactory(SQLAlchemyFactory[m.RefreshToken]):
     token_hash = Ignore()
     family_id = Use(uuid4)
     expires_at = Use(lambda: datetime.now(UTC) + timedelta(days=7))
-    revoked_at = None
+    revoked_at: datetime | None = None
     device_info = "Mozilla/5.0 (Test Device) TestBrowser/1.0"
 
     # These will be set by the caller
-    user_id = None
+    user_id: UUID | None = None
 
     # Ignore relationships
     user = Ignore()
@@ -219,7 +219,7 @@ class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     account_email = Use(lambda: f"oauth{uuid4().hex[:8]}@gmail.com")
     access_token = Use(lambda: f"access_token_{uuid4().hex}")
     refresh_token = Use(lambda: f"refresh_token_{uuid4().hex}")
-    expires_at = None
+    expires_at: datetime | None = None
     token_expires_at = Use(lambda: datetime.now(UTC).replace(hour=23, minute=59, second=59))
     scope = "openid email profile"
     provider_user_data = Use(
@@ -232,7 +232,7 @@ class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     last_login_at = Use(lambda: datetime.now(UTC))
 
     # These will be set by the caller
-    user_id = None
+    user_id: UUID | None = None
 
     # Ignore relationships and association proxies
     user = Ignore()
@@ -250,11 +250,11 @@ class TeamInvitationFactory(SQLAlchemyFactory[m.TeamInvitation]):
     email = Use(lambda: f"invite{uuid4().hex[:8]}@example.com")
     role = m.TeamRoles.MEMBER
     is_accepted = False
-    invited_by_id = None
+    invited_by_id: UUID | None = None
     invited_by_email = Use(lambda: f"inviter{uuid4().hex[:8]}@example.com")
 
     # These will be set by the caller
-    team_id = None
+    team_id: UUID | None = None
 
     # Ignore relationships
     team = Ignore()
@@ -287,8 +287,8 @@ class UserRoleFactory(SQLAlchemyFactory[m.UserRole]):
     assigned_at = Use(lambda: datetime.now(UTC))
 
     # These will be set by the caller
-    user_id = None
-    role_id = None
+    user_id: UUID | None = None
+    role_id: UUID | None = None
 
     # Ignore relationships and association proxies
     user = Ignore()
@@ -434,7 +434,7 @@ class EmailServiceFactory:
         mock_service.send_password_reset_confirmation_email = AsyncMock(return_value=send_email_result)
         mock_service.send_team_invitation_email = AsyncMock(return_value=send_email_result)
 
-        return mock_service
+        return cast("Mock", mock_service)
 
     @staticmethod
     def create_failing_service() -> Mock:
@@ -456,7 +456,7 @@ class UnverifiedUserFactory(UserFactory):
     """Factory for unverified users."""
 
     is_verified = False
-    verified_at = None
+    verified_at: Any = None
 
 
 class VerifiedUserFactory(UserFactory):
@@ -470,7 +470,7 @@ class PendingVerificationUserFactory(UserFactory):
     """Factory for users with pending email verification."""
 
     is_verified = False
-    verified_at = None
+    verified_at: Any = None
     is_active = False
 
 
@@ -478,50 +478,50 @@ class ExpiredTokenUserFactory(UserFactory):
     """Factory for users with expired verification tokens."""
 
     is_verified = False
-    verified_at = None
+    verified_at: Any = None
 
 
 # Enhanced Token Factories
 class ValidEmailVerificationTokenFactory(EmailVerificationTokenFactory):
     """Factory for valid (unexpired, unused) email verification tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=24))
-    used_at = None
+    expires_at: Any = Use(lambda: datetime.now(UTC) + timedelta(hours=24))
+    used_at: datetime | None = None
 
 
 class ExpiredEmailVerificationTokenFactory(EmailVerificationTokenFactory):
     """Factory for expired email verification tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) - timedelta(hours=1))
-    used_at = None
+    expires_at: Any = Use(lambda: datetime.now(UTC) - timedelta(hours=1))
+    used_at: datetime | None = None
 
 
 class UsedEmailVerificationTokenFactory(EmailVerificationTokenFactory):
     """Factory for used email verification tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=24))
-    used_at = Use(lambda: datetime.now(UTC))
+    expires_at: Any = Use(lambda: datetime.now(UTC) + timedelta(hours=24))
+    used_at: Any = Use(lambda: datetime.now(UTC))
 
 
 class ValidPasswordResetTokenFactory(PasswordResetTokenFactory):
     """Factory for valid password reset tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=1))
-    used_at = None
+    expires_at: Any = Use(lambda: datetime.now(UTC) + timedelta(hours=1))
+    used_at: datetime | None = None
 
 
 class ExpiredPasswordResetTokenFactory(PasswordResetTokenFactory):
     """Factory for expired password reset tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) - timedelta(minutes=30))
-    used_at = None
+    expires_at: Any = Use(lambda: datetime.now(UTC) - timedelta(minutes=30))
+    used_at: datetime | None = None
 
 
 class UsedPasswordResetTokenFactory(PasswordResetTokenFactory):
     """Factory for used password reset tokens."""
 
-    expires_at = Use(lambda: datetime.now(UTC) + timedelta(hours=1))
-    used_at = Use(lambda: datetime.now(UTC))
+    expires_at: Any = Use(lambda: datetime.now(UTC) + timedelta(hours=1))
+    used_at: Any = Use(lambda: datetime.now(UTC))
 
 
 # Enhanced convenience functions for email verification scenarios
@@ -540,6 +540,8 @@ def create_user_with_verification_token(
     Returns:
         Tuple of (User, EmailVerificationToken)
     """
+    token_factory: type[EmailVerificationTokenFactory]
+
     # Create user based on token state
     if token_state == "valid":
         user = PendingVerificationUserFactory.build(**user_kwargs)
@@ -577,6 +579,8 @@ def create_user_with_password_reset_token(
     Returns:
         Tuple of (User, PasswordResetToken)
     """
+    token_factory: type[PasswordResetTokenFactory]
+
     user = VerifiedUserFactory.build(**user_kwargs)
     session.add(user)
     session.flush()
@@ -647,7 +651,7 @@ def create_email_verification_scenario(
     session.add(user)
     session.flush()
 
-    result = {
+    result: dict[str, Any] = {
         "user": user,
         "token": None,
         "scenario": scenario,
@@ -688,7 +692,7 @@ def create_bulk_users_with_verification_states(
     pending_count = int(count * pending_ratio)
     unverified_count = count - verified_count - pending_count
 
-    result = {
+    result: dict[str, list[m.User]] = {
         "verified": [],
         "pending": [],
         "unverified": [],

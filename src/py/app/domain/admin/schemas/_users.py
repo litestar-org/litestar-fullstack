@@ -3,8 +3,9 @@
 from datetime import date, datetime
 from uuid import UUID
 
-import msgspec
+from msgspec import UNSET, UnsetType
 
+from app.domain.accounts.schemas import OauthAccount, UserRole, UserTeam
 from app.lib.schema import CamelizedBaseStruct
 
 
@@ -40,17 +41,17 @@ class AdminUserDetail(CamelizedBaseStruct, kw_only=True):
     login_count: int = 0
     is_two_factor_enabled: bool = False
     has_password: bool = True
-    roles: list[str] = []
-    teams: list[str] = []
-    oauth_providers: list[str] = []
+    roles: list[UserRole] = []
+    teams: list[UserTeam] = []
+    oauth_accounts: list[OauthAccount] = []
 
 
-class AdminUserUpdate(msgspec.Struct, gc=False, omit_defaults=True):
+class AdminUserUpdate(CamelizedBaseStruct, gc=False, omit_defaults=True):
     """Update payload for admin user management."""
 
-    name: str | None | msgspec.UnsetType = msgspec.UNSET
-    username: str | None | msgspec.UnsetType = msgspec.UNSET
-    phone: str | None | msgspec.UnsetType = msgspec.UNSET
-    is_active: bool | msgspec.UnsetType = msgspec.UNSET
-    is_superuser: bool | msgspec.UnsetType = msgspec.UNSET
-    is_verified: bool | msgspec.UnsetType = msgspec.UNSET
+    name: str | UnsetType | None = UNSET
+    username: str | UnsetType | None = UNSET
+    phone: str | UnsetType | None = UNSET
+    is_active: bool | UnsetType = UNSET
+    is_superuser: bool | UnsetType = UNSET
+    is_verified: bool | UnsetType = UNSET

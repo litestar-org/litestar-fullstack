@@ -42,6 +42,8 @@ pytest_plugins = [
     "pytest_databases.docker.postgres",
 ]
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture(scope="session")
 def anyio_backend() -> str:

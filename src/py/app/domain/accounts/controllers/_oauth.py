@@ -18,6 +18,7 @@ from litestar.response import Redirect
 from litestar.status_codes import HTTP_302_FOUND, HTTP_400_BAD_REQUEST
 
 from app.domain.accounts.deps import provide_users_service
+from app.domain.accounts.guards import create_access_token
 from app.domain.accounts.schemas import OAuthAuthorization
 from app.domain.accounts.services import UserOAuthAccountService
 from app.lib.deps import create_service_dependencies
@@ -29,86 +30,10 @@ if TYPE_CHECKING:
     from app.domain.accounts.services import UserService
     from app.lib.settings import AppSettings
 
-# Default scopes for OAuth providers
 OAUTH_DEFAULT_SCOPES: dict[str, list[str]] = {
     "google": ["openid", "email", "profile"],
     "github": ["read:user", "user:email"],
 }
-
-
-async def _handle_oauth_link(
-    oauth_account_service: UserOAuthAccountService,
-    provider: str,
-    account_id: str,
-    account_email: str | None,
-    token_data: OAuth2Token,
-    state_user_id: str,
-    frontend_callback: str,
-    action: str,
-) -> str:
-    """Handle OAuth account linking flow.
-
-    Returns the redirect path for the response.
-    """
-    # Check if this OAuth account is already linked to another user
-    existing = await oauth_account_service.get_by_provider_account_id(provider, account_id)
-    if existing and str(existing.user_id) != state_user_id:
-        return build_oauth_error_redirect(
-            frontend_callback, "oauth_failed", f"This {provider.title()} account is already linked to another user"
-        )
-
-    scopes = token_data.get("scope", "")
-    scope_list = scopes.split() if scopes else OAUTH_DEFAULT_SCOPES.get(provider)
-
-    await oauth_account_service.link_or_update_oauth(
-        user_id=UUID(state_user_id),
-        provider=provider,
-        account_id=account_id,
-        account_email=account_email,
-        access_token=token_data["access_token"],
-        refresh_token=token_data.get("refresh_token"),
-        expires_at=token_data.get("expires_at"),
-        scopes=scope_list,
-        provider_user_data={"id": account_id, "email": account_email},
-    )
-
-    params = urlencode({"provider": provider, "action": action, "linked": "true"})
-    separator = "&" if "?" in frontend_callback else "?"
-    return f"{frontend_callback}{separator}{params}"
-
-
-async def _handle_oauth_login(
-    user_service: UserService,
-    provider: str,
-    account_id: str,
-    account_email: str | None,
-    token_data: OAuth2Token,
-    frontend_callback: str,
-) -> str:
-    """Handle OAuth login/signup flow.
-
-    Returns the redirect path for the response.
-    """
-    from app.domain.accounts.guards import create_access_token
-
-    user_data = {"id": account_id, "email": account_email}
-    user, is_new = await user_service.authenticate_or_create_oauth_user(
-        provider=provider,
-        oauth_data=user_data,
-        token_data=token_data,
-    )
-
-    access_token = create_access_token(
-        user_id=str(user.id),
-        email=user.email,
-        is_superuser=user_service.is_superuser(user),
-        is_verified=user.is_verified,
-        auth_method="oauth",
-    )
-
-    params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
-    separator = "&" if "?" in frontend_callback else "?"
-    return f"{frontend_callback}{separator}{params}"
 
 
 class OAuthController(Controller):
@@ -191,7 +116,11 @@ class OAuthController(Controller):
         oauth_state: str | None = Parameter(query="state", required=False),
         oauth_error: str | None = Parameter(query="error", required=False),
     ) -> Redirect:
-        """Handle Google OAuth callback for login and account linking."""
+        """Handle Google OAuth callback for login and account linking.
+
+        Returns:
+            Redirect response to the frontend.
+        """
         default_callback = "/auth/google/callback"
         redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
@@ -235,7 +164,6 @@ class OAuthController(Controller):
         action: str,
         payload: dict[str, Any],
     ) -> str:
-        """Process Google OAuth callback after validation."""
         client = GoogleOAuth2(settings.GOOGLE_OAUTH2_CLIENT_ID, settings.GOOGLE_OAUTH2_CLIENT_SECRET)
         callback_url = str(request.url_for("oauth:google:callback"))
         oauth2_callback = OAuth2AuthorizeCallback(cast("BaseOAuth2[OAuth2Token]", client), redirect_url=callback_url)
@@ -244,13 +172,11 @@ class OAuthController(Controller):
             token_data, _ = await oauth2_callback(request, code=code, callback_state=oauth_state)
         except GetAccessTokenError:
             return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to exchange code for token")
-
         try:
             account_id, account_email = await client.get_id_email(token_data["access_token"])
         except GetIdEmailError:
             return build_oauth_error_redirect(frontend_callback, "oauth_failed", "Failed to get user info from Google")
-
-        if action in ("link", "upgrade"):
+        if action in {"link", "upgrade"}:
             state_user_id = payload.get("user_id")
             if not state_user_id:
                 return build_oauth_error_redirect(
@@ -266,7 +192,6 @@ class OAuthController(Controller):
                 frontend_callback,
                 action,
             )
-
         return await _handle_oauth_login(
             user_service, "google", account_id, account_email, token_data, frontend_callback
         )
@@ -296,24 +221,17 @@ class OAuthController(Controller):
                 status_code=HTTP_400_BAD_REQUEST,
                 detail="GitHub OAuth is not configured",
             )
-
         client = GitHubOAuth2(
             client_id=settings.GITHUB_OAUTH2_CLIENT_ID,
             client_secret=settings.GITHUB_OAUTH2_CLIENT_SECRET,
         )
-
-        frontend_callback = redirect_url or "/auth/github/callback"
-
         state = create_oauth_state(
             provider="github",
-            redirect_url=frontend_callback,
+            redirect_url=redirect_url or "/auth/github/callback",
             secret_key=settings.SECRET_KEY,
         )
-
-        callback_url = str(request.url_for("oauth:github:callback"))
-
         authorization_url = await client.get_authorization_url(
-            redirect_uri=callback_url,
+            redirect_uri=str(request.url_for("oauth:github:callback")),
             state=state,
             scope=["user:email", "read:user"],
         )
@@ -335,7 +253,11 @@ class OAuthController(Controller):
         oauth_error: str | None = Parameter(query="error", required=False),
         oauth_error_description: str | None = Parameter(query="error_description", required=False),
     ) -> Redirect:
-        """Handle GitHub OAuth callback for login and account linking."""
+        """Handle GitHub OAuth callback for login and account linking.
+
+        Returns:
+            Redirect response to the frontend.
+        """
         default_callback = "/auth/github/callback"
         redirect_path = build_oauth_error_redirect(default_callback, "oauth_failed", "Missing state parameter")
 
@@ -415,3 +337,93 @@ class OAuthController(Controller):
         return await _handle_oauth_login(
             user_service, "github", account_id, account_email, token_data, frontend_callback
         )
+
+
+async def _handle_oauth_link(
+    oauth_account_service: UserOAuthAccountService,
+    provider: str,
+    account_id: str,
+    account_email: str | None,
+    token_data: OAuth2Token,
+    state_user_id: str,
+    frontend_callback: str,
+    action: str,
+) -> str:
+    """Handle OAuth account linking flow.
+
+    Args:
+        oauth_account_service: OAuth account service
+        provider: OAuth provider name
+        account_id: Provider account ID
+        account_email: Provider account email
+        token_data: OAuth token data
+        state_user_id: User ID from state
+        frontend_callback: Callback URL
+        action: Action to perform (link)
+
+    Returns:
+        The redirect path for the response.
+    """
+    existing = await oauth_account_service.get_by_provider_account_id(provider, account_id)
+    if existing and str(existing.user_id) != state_user_id:
+        return build_oauth_error_redirect(
+            frontend_callback, "oauth_failed", f"This {provider.title()} account is already linked to another user"
+        )
+
+    scopes = token_data.get("scope", "")
+    scope_list = scopes.split() if scopes else OAUTH_DEFAULT_SCOPES.get(provider)
+
+    await oauth_account_service.link_or_update_oauth(
+        user_id=UUID(state_user_id),
+        provider=provider,
+        account_id=account_id,
+        account_email=account_email,
+        access_token=token_data["access_token"],
+        refresh_token=token_data.get("refresh_token"),
+        expires_at=token_data.get("expires_at"),
+        scopes=scope_list,
+        provider_user_data={"id": account_id, "email": account_email},
+    )
+
+    params = urlencode({"provider": provider, "action": action, "linked": "true"})
+    separator = "&" if "?" in frontend_callback else "?"
+    return f"{frontend_callback}{separator}{params}"
+
+
+async def _handle_oauth_login(
+    user_service: UserService,
+    provider: str,
+    account_id: str,
+    account_email: str | None,
+    token_data: OAuth2Token,
+    frontend_callback: str,
+) -> str:
+    """Handle OAuth login/signup flow.
+
+    Args:
+        user_service: User service
+        provider: OAuth provider name
+        account_id: Provider account ID
+        account_email: Provider account email
+        token_data: OAuth token data
+        frontend_callback: Callback URL
+
+    Returns:
+        The redirect path for the response.
+    """
+    user_data = {"id": account_id, "email": account_email}
+    user, is_new = await user_service.authenticate_or_create_oauth_user(
+        provider=provider,
+        oauth_data=user_data,
+        token_data=token_data,
+    )
+    access_token = create_access_token(
+        user_id=str(user.id),
+        email=user.email,
+        is_superuser=user_service.is_superuser(user),
+        is_verified=user.is_verified,
+        auth_method="oauth",
+    )
+    params = urlencode({"token": access_token, "is_new": str(is_new).lower()})
+    separator = "&" if "?" in frontend_callback else "?"
+    return f"{frontend_callback}{separator}{params}"

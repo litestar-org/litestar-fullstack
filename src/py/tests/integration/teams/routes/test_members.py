@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 import pytest
@@ -26,7 +26,7 @@ async def _login_user(client: AsyncClient, user: m.User) -> str:
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 201
-    return response.json()["access_token"]
+    return cast("str", response.json()["access_token"])
 
 
 async def _create_team_with_owner(session: AsyncSession, email_prefix: str = "owner") -> tuple[m.User, m.Team]:
@@ -72,7 +72,6 @@ async def _create_user(session: AsyncSession, email_prefix: str = "user") -> m.U
 # --- Add Member Tests ---
 
 
-@pytest.mark.anyio
 async def test_add_member_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -98,7 +97,6 @@ async def test_add_member_success(
     assert new_member.email in member_emails
 
 
-@pytest.mark.anyio
 async def test_add_member_already_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -118,7 +116,6 @@ async def test_add_member_already_member(
     assert "already a member" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_add_member_user_not_found(
     client: AsyncClient,
     session: AsyncSession,
@@ -136,7 +133,6 @@ async def test_add_member_user_not_found(
     assert response.status_code == 404
 
 
-@pytest.mark.anyio
 async def test_add_member_unauthenticated(
     client: AsyncClient,
     session: AsyncSession,
@@ -155,7 +151,6 @@ async def test_add_member_unauthenticated(
 # --- Remove Member Tests ---
 
 
-@pytest.mark.anyio
 async def test_remove_member_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -190,7 +185,6 @@ async def test_remove_member_success(
     assert member.email not in member_emails
 
 
-@pytest.mark.anyio
 async def test_remove_member_not_a_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -213,7 +207,6 @@ async def test_remove_member_not_a_member(
     assert "not a member" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_remove_member_user_not_found(
     client: AsyncClient,
     session: AsyncSession,
@@ -232,7 +225,6 @@ async def test_remove_member_user_not_found(
     assert response.status_code == 404
 
 
-@pytest.mark.anyio
 async def test_remove_member_unauthenticated(
     client: AsyncClient,
     session: AsyncSession,
@@ -252,7 +244,6 @@ async def test_remove_member_unauthenticated(
 # --- Update Member Role Tests ---
 
 
-@pytest.mark.anyio
 async def test_update_member_role_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -285,7 +276,6 @@ async def test_update_member_role_success(
     assert data["role"] == "ADMIN"
 
 
-@pytest.mark.anyio
 async def test_update_member_role_not_a_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -307,7 +297,6 @@ async def test_update_member_role_not_a_member(
     assert "not a member" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_update_member_role_unauthenticated(
     client: AsyncClient,
     session: AsyncSession,
@@ -324,7 +313,6 @@ async def test_update_member_role_unauthenticated(
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_update_member_role_invalid_role(
     client: AsyncClient,
     session: AsyncSession,
@@ -354,7 +342,6 @@ async def test_update_member_role_invalid_role(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_update_member_to_member_role(
     client: AsyncClient,
     session: AsyncSession,

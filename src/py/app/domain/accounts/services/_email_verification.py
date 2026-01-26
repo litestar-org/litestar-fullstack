@@ -80,16 +80,12 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
             ClientException: If token is invalid, expired, or already used
         """
         verification_token = await self.get_one_or_none(token_hash=self._hash_token(token))
-
         if verification_token is None:
             raise ClientException(detail="Invalid verification token", status_code=400)
-
         if verification_token.is_expired:
             raise ClientException(detail="Verification token has expired", status_code=400)
-
         if verification_token.is_used:
             raise ClientException(detail="Verification token has already been used", status_code=400)
-
         verification_token.used_at = datetime.now(UTC)
         return await self.update(verification_token)
 
@@ -122,9 +118,7 @@ class EmailVerificationTokenService(service.SQLAlchemyAsyncRepositoryService[m.E
         """
         current_time = datetime.now(UTC)
         expired_tokens = await self.list(m.EmailVerificationToken.expires_at < current_time)
-
         if expired_tokens:
-            # Pass IDs explicitly to delete_many, not model objects
             token_ids = [token.id for token in expired_tokens]
             await self.delete_many(token_ids)
 

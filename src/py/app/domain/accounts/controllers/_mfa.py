@@ -7,18 +7,21 @@ import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
+from httpx_oauth.clients.github import GitHubOAuth2
+from httpx_oauth.clients.google import GoogleOAuth2
 from litestar import Controller, delete, get, post
 from litestar.di import Provide
 from litestar.exceptions import ClientException
 from sqlalchemy.orm import undefer_group
 
-from app.domain.accounts.deps import provide_users_service
+from app.domain.accounts.deps import provide_user_oauth_service, provide_users_service
 from app.domain.accounts.schemas import (
     MfaBackupCodes,
     MfaConfirm,
     MfaDisable,
     MfaSetup,
     MfaStatus,
+    OAuthAuthorization,
 )
 from app.domain.admin.deps import provide_audit_log_service
 from app.lib.crypt import (
@@ -30,13 +33,14 @@ from app.lib.crypt import (
     verify_totp_code,
 )
 from app.lib.schema import Message
+from app.utils.oauth import create_oauth_state
 
 if TYPE_CHECKING:
     from litestar import Request
     from litestar.security.jwt import Token
 
     from app.db import models as m
-    from app.domain.accounts.services import UserService
+    from app.domain.accounts.services import UserOAuthAccountService, UserService
     from app.domain.admin.services import AuditLogService
     from app.lib.settings import AppSettings
 
@@ -54,6 +58,7 @@ class MfaController(Controller):
     dependencies = {
         "users_service": Provide(provide_users_service),
         "audit_service": Provide(provide_audit_log_service),
+        "oauth_account_service": Provide(provide_user_oauth_service),
     }
 
     @get(operation_id="GetMfaStatus", path="/status")
@@ -83,6 +88,68 @@ class MfaController(Controller):
             backup_codes_remaining=backup_codes_remaining,
         )
 
+    @get(operation_id="InitiateDisableMfaOAuth", path="/disable/oauth/{provider:str}")
+    async def initiate_disable_mfa_oauth(
+        self,
+        request: Request[m.User, Token, Any],
+        users_service: UserService,
+        oauth_account_service: UserOAuthAccountService,
+        settings: AppSettings,
+        provider: str,
+    ) -> OAuthAuthorization:
+        """Initiate OAuth flow to disable MFA for passwordless users.
+
+        Args:
+            request: Request with authenticated user.
+            users_service: User service.
+            oauth_account_service: OAuth account service.
+            settings: App settings.
+            provider: OAuth provider name (e.g., 'github', 'google').
+
+        Returns:
+            OAuth authorization URL and state.
+
+        Raises:
+            ClientException: If user has password or no linked account.
+        """
+        user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
+        if user.has_password:
+            raise ClientException(detail="Password verification required", status_code=400)
+        oauth_account = await oauth_account_service.get_one_or_none(user_id=user.id, oauth_name=provider)
+        if not oauth_account:
+            raise ClientException(detail=f"No linked {provider} account", status_code=400)
+        client_id = None
+        if provider == "github":
+            if not settings.github_oauth_enabled:
+                raise ClientException(detail="GitHub OAuth is not configured", status_code=400)
+            client_id = settings.GITHUB_OAUTH2_CLIENT_ID
+        elif provider == "google":
+            if not settings.google_oauth_enabled:
+                raise ClientException(detail="Google OAuth is not configured", status_code=400)
+            client_id = settings.GOOGLE_OAUTH2_CLIENT_ID
+        else:
+            raise ClientException(detail=f"Unsupported provider: {provider}", status_code=400)
+
+        redirect_url = str(request.url_for(f"oauth:{provider}:callback"))
+        state = create_oauth_state(
+            provider=provider,
+            redirect_url=redirect_url,
+            secret_key=settings.SECRET_KEY,
+            action="mfa_disable",
+            user_id=str(user.id),
+        )
+        client: GitHubOAuth2 | GoogleOAuth2
+        if provider == "github":
+            client = GitHubOAuth2(client_id, settings.GITHUB_OAUTH2_CLIENT_SECRET)
+        else:
+            client = GoogleOAuth2(client_id, settings.GOOGLE_OAUTH2_CLIENT_SECRET)
+        authorization_url = await client.get_authorization_url(
+            redirect_uri=redirect_url,
+            state=state,
+            extras_params={"prompt": "login"},  # type: ignore[arg-type]
+        )
+        return OAuthAuthorization(authorization_url=authorization_url, state=state)
+
     @post(operation_id="InitiateMfaSetup", path="/enable")
     async def initiate_setup(
         self,
@@ -106,23 +173,16 @@ class MfaController(Controller):
             ClientException: If MFA is already enabled
         """
         user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
-
         if user.is_two_factor_enabled:
             raise ClientException(detail="MFA is already enabled", status_code=400)
-
         secret = generate_totp_secret()
-
         await users_service.update({"totp_secret": secret}, item_id=user.id)
-        issuer = settings.slug
-        qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer=issuer)
+        qr_code_bytes = await generate_totp_qr_code(secret, user.email, issuer=settings.slug)
         qr_code_base64 = base64.b64encode(qr_code_bytes).decode("utf-8")
-
-        provisioning_uri = get_totp_provisioning_uri(secret, user.email, issuer=issuer)
-
         return MfaSetup(
             secret=secret,
             qr_code=f"data:image/png;base64,{qr_code_base64}",
-            provisioning_uri=provisioning_uri,
+            provisioning_uri=get_totp_provisioning_uri(secret, user.email, issuer=settings.slug),
         )
 
     @post(operation_id="ConfirmMfaSetup", path="/confirm")
@@ -150,21 +210,15 @@ class MfaController(Controller):
             ClientException: If code is invalid or no setup in progress
         """
         user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
-
         failed_attempts = await audit_service.count_recent_actions(
-            action="mfa.setup.failed",
-            actor_id=user.id,
-            window_minutes=MFA_RATE_LIMIT_WINDOW_MINUTES,
+            action="mfa.setup.failed", actor_id=user.id, window_minutes=MFA_RATE_LIMIT_WINDOW_MINUTES
         )
         if failed_attempts >= MFA_RATE_LIMIT_MAX_ATTEMPTS:
             raise ClientException(detail="Too many verification attempts. Please try again later.", status_code=429)
-
         if user.is_two_factor_enabled:
             raise ClientException(detail="MFA is already enabled", status_code=400)
-
         if not user.totp_secret:
             raise ClientException(detail="No MFA setup in progress. Call /enable first.", status_code=400)
-
         if not verify_totp_code(user.totp_secret, data.code):
             await audit_service.log_action(
                 action="mfa.setup.failed",
@@ -175,9 +229,7 @@ class MfaController(Controller):
                 request=request,
             )
             raise ClientException(detail="Invalid verification code", status_code=400)
-
         plaintext_codes = generate_backup_codes(count=8)
-
         await users_service.update(
             {
                 "is_two_factor_enabled": True,
@@ -186,7 +238,6 @@ class MfaController(Controller):
             },
             item_id=user.id,
         )
-
         await audit_service.log_action(
             action="mfa.setup.confirmed",
             actor_id=user.id,
@@ -195,7 +246,6 @@ class MfaController(Controller):
             target_id=str(user.id),
             request=request,
         )
-
         return MfaBackupCodes(codes=plaintext_codes)
 
     @delete(operation_id="DisableMfa", path="/disable", status_code=200)
@@ -221,13 +271,10 @@ class MfaController(Controller):
             ClientException: If password is incorrect or MFA not enabled
         """
         user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
-
         if not user.is_two_factor_enabled:
             raise ClientException(detail="MFA is not enabled", status_code=400)
-
         if not user.hashed_password or not await verify_password(data.password, user.hashed_password):
             raise ClientException(detail="Invalid password", status_code=400)
-
         await users_service.update(
             {
                 "is_two_factor_enabled": False,
@@ -237,9 +284,7 @@ class MfaController(Controller):
             },
             item_id=user.id,
         )
-
         logger.info("MFA disabled for user %s", user.email)
-
         return Message(message="MFA has been disabled")
 
     @post(operation_id="RegenerateMfaBackupCodes", path="/regenerate-codes")
@@ -265,17 +310,12 @@ class MfaController(Controller):
             ClientException: If password is incorrect or MFA not enabled
         """
         user = await users_service.get(request.user.id, load=[undefer_group("security_sensitive")])
-
         if not user.is_two_factor_enabled:
             raise ClientException(detail="MFA is not enabled", status_code=400)
 
         if not user.hashed_password or not await verify_password(data.password, user.hashed_password):
             raise ClientException(detail="Invalid password", status_code=400)
-
         plaintext_codes = generate_backup_codes(count=8)
-
         await users_service.update({"backup_codes": plaintext_codes}, item_id=user.id)
-
         logger.info("Backup codes regenerated for user %s", user.email)
-
         return MfaBackupCodes(codes=plaintext_codes)

@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services]
 
 
-@pytest.mark.anyio
 async def test_create_verification_token_success(
     session: AsyncSession,
 ) -> None:
@@ -39,7 +38,6 @@ async def test_create_verification_token_success(
         assert token.is_valid is True
 
 
-@pytest.mark.anyio
 async def test_create_verification_token_invalidates_existing(
     session: AsyncSession,
 ) -> None:
@@ -66,7 +64,6 @@ async def test_create_verification_token_invalidates_existing(
         assert second_token.id != first_token.id
 
 
-@pytest.mark.anyio
 async def test_create_verification_token_different_emails(
     session: AsyncSession,
 ) -> None:
@@ -89,7 +86,6 @@ async def test_create_verification_token_different_emails(
         assert token1.email != token2.email
 
 
-@pytest.mark.anyio
 async def test_create_verification_token_unique_tokens(
     session: AsyncSession,
 ) -> None:
@@ -108,7 +104,6 @@ async def test_create_verification_token_unique_tokens(
         assert token1.user_id != token2.user_id
 
 
-@pytest.mark.anyio
 async def test_verify_token_success(
     session: AsyncSession,
 ) -> None:
@@ -129,7 +124,6 @@ async def test_verify_token_success(
         assert verified_token.used_at is not None
 
 
-@pytest.mark.anyio
 async def test_verify_invalid_token(
     session: AsyncSession,
 ) -> None:
@@ -142,7 +136,6 @@ async def test_verify_invalid_token(
         assert "Invalid verification token" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_verify_expired_token(
     session: AsyncSession,
 ) -> None:
@@ -169,7 +162,6 @@ async def test_verify_expired_token(
         assert "Verification token has expired" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_verify_already_used_token(
     session: AsyncSession,
 ) -> None:
@@ -192,7 +184,6 @@ async def test_verify_already_used_token(
         assert "Verification token has already been used" in str(exc_info.value)
 
 
-@pytest.mark.anyio
 async def test_verify_token_marks_as_used(
     session: AsyncSession,
 ) -> None:
@@ -220,7 +211,6 @@ async def test_verify_token_marks_as_used(
         assert before_verify <= verified_token.used_at <= after_verify
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_by_user_id(
     session: AsyncSession,
 ) -> None:
@@ -250,7 +240,6 @@ async def test_invalidate_user_tokens_by_user_id(
         assert user2_token_refreshed.is_used is False  # Should not be affected
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_by_email(
     session: AsyncSession,
 ) -> None:
@@ -276,7 +265,6 @@ async def test_invalidate_user_tokens_by_email(
         assert alt_token_refreshed.is_used is False
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_no_tokens(
     session: AsyncSession,
 ) -> None:
@@ -288,7 +276,6 @@ async def test_invalidate_user_tokens_no_tokens(
         await service.invalidate_user_tokens(uuid4())
 
 
-@pytest.mark.anyio
 async def test_invalidate_user_tokens_already_used(
     session: AsyncSession,
 ) -> None:
@@ -317,7 +304,6 @@ async def test_invalidate_user_tokens_already_used(
         assert token2_refreshed.is_used is True
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_success(
     session: AsyncSession,
 ) -> None:
@@ -360,7 +346,6 @@ async def test_cleanup_expired_tokens_success(
         assert valid_token_check is not None
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_no_expired(
     session: AsyncSession,
 ) -> None:
@@ -394,7 +379,6 @@ async def test_cleanup_expired_tokens_no_expired(
         assert valid_token2_check is not None
 
 
-@pytest.mark.anyio
 async def test_cleanup_expired_tokens_empty_database(
     session: AsyncSession,
 ) -> None:
@@ -404,7 +388,6 @@ async def test_cleanup_expired_tokens_empty_database(
         assert cleanup_count == 0
 
 
-@pytest.mark.anyio
 async def test_full_verification_workflow(
     session: AsyncSession,
 ) -> None:
@@ -428,7 +411,6 @@ async def test_full_verification_workflow(
             await service.verify_token(raw_token)
 
 
-@pytest.mark.anyio
 async def test_multiple_email_verification_workflow(
     session: AsyncSession,
 ) -> None:
@@ -454,7 +436,6 @@ async def test_multiple_email_verification_workflow(
         await service.verify_token(alt_raw)
 
 
-@pytest.mark.anyio
 async def test_token_security_properties(
     session: AsyncSession,
 ) -> None:

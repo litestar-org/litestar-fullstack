@@ -76,12 +76,7 @@ class AuditController(Controller):
         if end_date:
             conditions.append(m.AuditLog.created_at <= end_date)
         results, total = await audit_service.list_and_count(*filters, *conditions)
-        return audit_service.to_schema(
-            data=results,
-            total=total,
-            filters=filters,
-            schema_type=AuditLogEntry,
-        )
+        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetAuditLog", path="/{log_id:uuid}")
     async def get_log(
@@ -110,7 +105,11 @@ class AuditController(Controller):
         action: str | None = Parameter(query="action", required=False),
         end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
-        """Get audit logs for a specific user."""
+        """Get audit logs for a specific user.
+
+        Returns:
+            Paginated list of audit logs for the user.
+        """
         conditions: list[Any] = [m.AuditLog.actor_id == user_id]
         if action:
             conditions.append(m.AuditLog.action == action)
@@ -120,12 +119,7 @@ class AuditController(Controller):
             *filters,
             *conditions,
         )
-        return audit_service.to_schema(
-            data=results,
-            total=total,
-            filters=filters,
-            schema_type=AuditLogEntry,
-        )
+        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetTargetAuditLogs", path="/target/{target_type:str}/{target_id:str}")
     async def get_target_logs(
@@ -137,7 +131,11 @@ class AuditController(Controller):
         action: str | None = Parameter(query="action", required=False),
         end_date: datetime | None = Parameter(query="end_date", required=False),  # noqa: B008
     ) -> OffsetPagination[AuditLogEntry]:
-        """Get audit logs for a specific target."""
+        """Get audit logs for a specific target.
+
+        Returns:
+            Paginated list of audit logs for the target.
+        """
         conditions = [
             m.AuditLog.target_type == target_type,
             m.AuditLog.target_id == target_id,
@@ -147,9 +145,4 @@ class AuditController(Controller):
         if end_date:
             conditions.append(m.AuditLog.created_at <= end_date)
         results, total = await audit_service.list_and_count(*filters, *conditions)
-        return audit_service.to_schema(
-            data=results,
-            total=total,
-            filters=filters,
-            schema_type=AuditLogEntry,
-        )
+        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)

@@ -15,6 +15,7 @@ from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from litestar.utils.empty import value_or_default
 from litestar.utils.scope.state import ScopeState
 from structlog.contextvars import bind_contextvars
+from structlog.dev import RichTracebackFormatter
 
 from app.lib.exceptions import ApplicationError
 from app.lib.settings import get_settings
@@ -110,7 +111,6 @@ class EventFilter:
         return event_dict
 
 
-# This is so that it shows up properly in the litestar ui.  instead of reading `middleware_factory`, we use something that make sense.
 def StructlogMiddleware(app: ASGIApp) -> ASGIApp:  # noqa: N802
     """Middleware to ensure that every request has a clean structlog context.
 
@@ -310,29 +310,23 @@ def structlog_processors(as_json: bool) -> list[Processor]:
     Returns:
         An optional list of processors.
     """
-    try:
-        import structlog
-        from structlog.dev import RichTracebackFormatter
-
-        if as_json:
-            return [
-                structlog.contextvars.merge_contextvars,
-                structlog.processors.add_log_level,
-                structlog.processors.format_exc_info,
-                add_google_cloud_attributes,
-                structlog.processors.TimeStamper(fmt="iso"),
-                structlog.processors.JSONRenderer(serializer=structlog_json_serializer),
-            ]
+    if as_json:
         return [
             structlog.contextvars.merge_contextvars,
             structlog.processors.add_log_level,
+            structlog.processors.format_exc_info,
+            add_google_cloud_attributes,
             structlog.processors.TimeStamper(fmt="iso"),
-            structlog.dev.ConsoleRenderer(
-                colors=True, exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80)
-            ),
+            structlog.processors.JSONRenderer(serializer=structlog_json_serializer),
         ]
-    except ImportError:
-        return []
+    return [
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.dev.ConsoleRenderer(
+            colors=True, exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80)
+        ),
+    ]
 
 
 def stdlib_logger_processors(as_json: bool) -> list[Processor]:
@@ -341,31 +335,25 @@ def stdlib_logger_processors(as_json: bool) -> list[Processor]:
     Returns:
         An optional list of processors.
     """
-    try:
-        import structlog
-        from structlog.dev import RichTracebackFormatter
-
-        if as_json:
-            return [
-                structlog.processors.TimeStamper(fmt="iso"),
-                structlog.stdlib.add_log_level,
-                structlog.stdlib.ExtraAdder(),
-                EventFilter(["color_message"]),
-                structlog.processors.EventRenamer("message"),
-                add_google_cloud_attributes,
-                structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-                structlog.processors.JSONRenderer(serializer=stdlib_json_serializer),
-            ]
+    if as_json:
         return [
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.stdlib.add_log_level,
             structlog.stdlib.ExtraAdder(),
             EventFilter(["color_message"]),
-            EventFilter(["message"]),
+            structlog.processors.EventRenamer("message"),
+            add_google_cloud_attributes,
             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-            structlog.dev.ConsoleRenderer(
-                colors=True, exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80)
-            ),
+            structlog.processors.JSONRenderer(serializer=stdlib_json_serializer),
         ]
-    except ImportError:
-        return []
+    return [
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.ExtraAdder(),
+        EventFilter(["color_message"]),
+        EventFilter(["message"]),
+        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+        structlog.dev.ConsoleRenderer(
+            colors=True, exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80)
+        ),
+    ]

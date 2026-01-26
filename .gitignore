@@ -193,3 +193,5 @@ CLAUDE.md
 GEMINI.md
 .gemini/
 .claude/
+.agent/
+.geminiignore

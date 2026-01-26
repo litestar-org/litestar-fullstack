@@ -512,7 +512,7 @@ async def test_create_user_from_oauth(session: AsyncSession, user_service: UserS
     assert user.is_active is True
 
 
-@patch("app.domain.accounts.services._user_oauth_account.UserOAuthAccountService")
+@patch("app.domain.accounts.services._user.UserOAuthAccountService")
 async def test_authenticate_or_create_oauth_user_existing(
     mock_oauth_service_class: AsyncMock, session: AsyncSession, user_service: UserService
 ) -> None:
@@ -547,7 +547,7 @@ async def test_authenticate_or_create_oauth_user_existing(
     mock_oauth_service.create_or_update_oauth_account.assert_called_once()
 
 
-@patch("app.domain.accounts.services._user_oauth_account.UserOAuthAccountService")
+@patch("app.domain.accounts.services._user.UserOAuthAccountService")
 async def test_authenticate_or_create_oauth_user_new(
     mock_oauth_service_class: AsyncMock, session: AsyncSession, user_service: UserService
 ) -> None:

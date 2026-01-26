@@ -7,7 +7,7 @@ This module combines tests from:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
 import pytest
@@ -42,7 +42,7 @@ async def _login_user(client: AsyncClient, user: m.User, password: str = "testPa
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 201
-    return response.json()["access_token"]
+    return cast("str", response.json()["access_token"])
 
 
 # =============================================================================
@@ -50,7 +50,6 @@ async def _login_user(client: AsyncClient, user: m.User, password: str = "testPa
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_create_team_success(authenticated_client: AsyncTestClient) -> None:
     """Test successful team creation."""
     team_data = {
@@ -68,7 +67,6 @@ async def test_create_team_success(authenticated_client: AsyncTestClient) -> Non
     assert team["isActive"] is True
 
 
-@pytest.mark.anyio
 async def test_create_team_with_session(
     client: AsyncClient,
     session: AsyncSession,
@@ -112,7 +110,6 @@ async def test_create_team_with_session(
     assert membership.role == m.TeamRoles.ADMIN
 
 
-@pytest.mark.anyio
 async def test_create_team_unauthenticated(client: AsyncTestClient) -> None:
     """Test team creation without authentication fails."""
     team_data = {
@@ -125,7 +122,6 @@ async def test_create_team_unauthenticated(client: AsyncTestClient) -> None:
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_create_team_invalid_data(authenticated_client: AsyncTestClient) -> None:
     """Test team creation with invalid data."""
     team_data = {
@@ -137,7 +133,6 @@ async def test_create_team_invalid_data(authenticated_client: AsyncTestClient) -
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_get_user_teams(
     authenticated_client: AsyncTestClient,
     test_user: m.User,
@@ -154,7 +149,6 @@ async def test_get_user_teams(
     assert str(test_team.id) in team_ids
 
 
-@pytest.mark.anyio
 async def test_get_user_teams_unauthenticated(client: AsyncTestClient) -> None:
     """Test getting teams without authentication fails."""
     response = await client.get("/api/teams")
@@ -162,7 +156,6 @@ async def test_get_user_teams_unauthenticated(client: AsyncTestClient) -> None:
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_list_teams_as_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -195,7 +188,6 @@ async def test_list_teams_as_member(
     assert str(other_team.id) not in team_ids
 
 
-@pytest.mark.anyio
 async def test_get_team_details(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -210,7 +202,6 @@ async def test_get_team_details(
     assert team["description"] == test_team.description
 
 
-@pytest.mark.anyio
 async def test_get_team_details_not_member(
     client: AsyncTestClient,
     test_team: m.Team,
@@ -241,7 +232,6 @@ async def test_get_team_details_not_member(
         assert response.status_code in [403, 404]
 
 
-@pytest.mark.anyio
 async def test_get_team_details_nonexistent(authenticated_client: AsyncTestClient) -> None:
     """Test getting details for non-existent team."""
     response = await authenticated_client.get(f"/api/teams/{uuid4()}")
@@ -249,7 +239,6 @@ async def test_get_team_details_nonexistent(authenticated_client: AsyncTestClien
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_update_team(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -268,7 +257,6 @@ async def test_update_team(
     assert team["description"] == "Updated description"
 
 
-@pytest.mark.anyio
 async def test_update_team_as_admin(
     client: AsyncClient,
     session: AsyncSession,
@@ -296,7 +284,6 @@ async def test_update_team_as_admin(
     assert team.description == "Updated description"
 
 
-@pytest.mark.anyio
 async def test_update_team_as_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -325,7 +312,6 @@ async def test_update_team_as_member(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_update_team_not_authorized(
     client: AsyncTestClient,
     test_team: m.Team,
@@ -358,7 +344,6 @@ async def test_update_team_not_authorized(
         assert response.status_code in [403, 404]
 
 
-@pytest.mark.anyio
 async def test_delete_team(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -369,7 +354,6 @@ async def test_delete_team(
     assert response.status_code in [200, 204]
 
 
-@pytest.mark.anyio
 async def test_delete_team_as_admin(
     client: AsyncClient,
     session: AsyncSession,
@@ -391,7 +375,6 @@ async def test_delete_team_as_admin(
     assert deleted_team is None
 
 
-@pytest.mark.anyio
 async def test_delete_team_not_owner(
     client: AsyncTestClient,
     test_team: m.Team,
@@ -436,7 +419,6 @@ async def test_delete_team_not_owner(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_get_team_members(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -450,7 +432,6 @@ async def test_get_team_members(
     assert len(members) >= 1
 
 
-@pytest.mark.anyio
 async def test_add_team_member(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -481,7 +462,6 @@ async def test_add_team_member(
     assert new_member.email in member_emails
 
 
-@pytest.mark.anyio
 async def test_add_member_to_team_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -518,7 +498,6 @@ async def test_add_member_to_team_success(
     assert membership.role == m.TeamRoles.MEMBER
 
 
-@pytest.mark.anyio
 async def test_add_member_already_exists(
     client: AsyncClient,
     session: AsyncSession,
@@ -542,7 +521,6 @@ async def test_add_member_already_exists(
     assert response.status_code in {409, 500}
 
 
-@pytest.mark.anyio
 async def test_add_member_nonexistent_user(
     client: AsyncClient,
     session: AsyncSession,
@@ -563,7 +541,6 @@ async def test_add_member_nonexistent_user(
     assert response.status_code in {404, 500}
 
 
-@pytest.mark.anyio
 async def test_remove_team_member(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -599,7 +576,6 @@ async def test_remove_team_member(
     assert response.status_code == 202
 
 
-@pytest.mark.anyio
 async def test_remove_member_from_team_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -634,7 +610,6 @@ async def test_remove_member_from_team_success(
     assert membership is None
 
 
-@pytest.mark.anyio
 async def test_update_member_role(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -675,7 +650,6 @@ async def test_update_member_role(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_invite_team_member(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -703,7 +677,6 @@ async def test_invite_team_member(
     assert "newmember@example.com" in InMemoryBackend.outbox[0].to
 
 
-@pytest.mark.anyio
 async def test_invite_existing_member(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -720,7 +693,6 @@ async def test_invite_existing_member(
     assert response.status_code == 400
 
 
-@pytest.mark.anyio
 async def test_get_team_invitations(
     authenticated_client: AsyncTestClient,
     test_team: m.Team,
@@ -737,7 +709,6 @@ async def test_get_team_invitations(
     assert test_team_invitation.email in invitation_emails
 
 
-@pytest.mark.anyio
 async def test_accept_team_invitation(
     client: AsyncTestClient,
     test_team_invitation: m.TeamInvitation,
@@ -772,7 +743,6 @@ async def test_accept_team_invitation(
     assert "accepted" in result["message"].lower() or "joined" in result["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_reject_team_invitation(
     client: AsyncTestClient,
     test_team_invitation: m.TeamInvitation,
@@ -808,7 +778,6 @@ async def test_reject_team_invitation(
     assert "rejected" in result["message"].lower() or "declined" in result["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_cancel_team_invitation(
     authenticated_client: AsyncTestClient,
     test_team_invitation: m.TeamInvitation,
@@ -826,7 +795,6 @@ async def test_cancel_team_invitation(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_team_owner_permissions(
     client: AsyncClient,
     session: AsyncSession,
@@ -850,7 +818,6 @@ async def test_team_owner_permissions(
     assert response.status_code == 204
 
 
-@pytest.mark.anyio
 async def test_team_admin_permissions(
     client: AsyncClient,
     session: AsyncSession,
@@ -884,7 +851,6 @@ async def test_team_admin_permissions(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_team_member_permissions(
     client: AsyncClient,
     session: AsyncSession,
@@ -920,7 +886,6 @@ async def test_team_member_permissions(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_non_member_permissions(
     client: AsyncClient,
     session: AsyncSession,
@@ -955,7 +920,6 @@ async def test_non_member_permissions(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_teams_with_no_auth(client: AsyncTestClient) -> None:
     response = await client.patch("/api/teams/97108ac1-ffcb-411d-8b1e-d9183399f63b", json={"name": "TEST UPDATE"})
     assert response.status_code == 401
@@ -972,7 +936,6 @@ async def test_teams_with_no_auth(client: AsyncTestClient) -> None:
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_teams_with_incorrect_role(
     client: AsyncTestClient,
     user_token_headers: dict[str, str],
@@ -998,7 +961,6 @@ async def test_teams_with_incorrect_role(
     assert response.status_code == 403
 
 
-@pytest.mark.anyio
 async def test_teams_list(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1009,7 +971,6 @@ async def test_teams_list(
     assert int(response.json()["total"]) > 0
 
 
-@pytest.mark.anyio
 async def test_teams_get(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1020,7 +981,6 @@ async def test_teams_get(
     assert response.json()["name"] == "Test Team"
 
 
-@pytest.mark.anyio
 async def test_teams_create(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1034,7 +994,6 @@ async def test_teams_create(
     assert response.status_code == 201
 
 
-@pytest.mark.anyio
 async def test_teams_update(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1048,7 +1007,6 @@ async def test_teams_update(
     assert response.status_code == 200
 
 
-@pytest.mark.anyio
 async def test_teams_delete(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1066,7 +1024,6 @@ async def test_teams_delete(
     assert response.status_code == 200
 
 
-@pytest.mark.anyio
 async def test_teams_add_remove_member(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1090,7 +1047,6 @@ async def test_teams_add_remove_member(
     assert "user@example.com" not in [e["email"] for e in response.json()["members"]]
 
 
-@pytest.mark.anyio
 async def test_tags_list(
     client: AsyncTestClient,
     superuser_token_headers: dict[str, str],
@@ -1107,7 +1063,6 @@ async def test_tags_list(
 # =============================================================================
 
 
-@pytest.mark.anyio
 async def test_complete_team_lifecycle(
     client: AsyncClient,
     session: AsyncSession,
@@ -1183,7 +1138,6 @@ async def test_complete_team_lifecycle(
     assert response.status_code in {403, 404}
 
 
-@pytest.mark.anyio
 async def test_team_security_isolation(
     client: AsyncClient,
     session: AsyncSession,

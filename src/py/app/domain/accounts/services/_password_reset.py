@@ -132,13 +132,10 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         """
         current_time = datetime.now(UTC)
         expired_tokens = await self.list(m.PasswordResetToken.expires_at < current_time)
-
         if not expired_tokens:
             return 0
 
-        # Pass IDs explicitly to delete_many, not model objects
-        token_ids = [token.id for token in expired_tokens]
-        await self.delete_many(token_ids)
+        await self.delete_many([token.id for token in expired_tokens])
         return len(expired_tokens)
 
     async def check_rate_limit(self, user_id: UUID, hours: float = 1) -> bool:
@@ -155,6 +152,5 @@ class PasswordResetService(service.SQLAlchemyAsyncRepositoryService[m.PasswordRe
         recent_tokens = await self.list(
             m.PasswordResetToken.user_id == user_id, m.PasswordResetToken.created_at >= cutoff_time
         )
-
         max_reset_requests_per_hour = 3
         return len(recent_tokens) >= max_reset_requests_per_hour

@@ -107,6 +107,24 @@ def _iter_submodules(domain_packages: list[str], submodules: list[str]) -> Gener
                 yield f"{domain_module_path}.{submodule_name}"
 
 
+def _discover_modules_exports(
+    domain_packages: list[str], submodules: list[str]
+) -> Generator[tuple[str, object], None, None]:
+    """Helper to discover exported objects from submodules.
+
+    Yields:
+        Tuple of (name, object).
+    """
+    for path in _iter_submodules(domain_packages, submodules):
+        try:
+            module = importlib.import_module(path)
+            if hasattr(module, "__all__"):
+                for name in module.__all__:
+                    yield name, getattr(module, name)
+        except ImportError:
+            continue
+
+
 def _discover_controllers_in_submodule(controller_module_path: str) -> list[type[Controller]]:
     """Discover controllers in a single submodule path.
 
@@ -197,18 +215,7 @@ def discover_domain_signals(
     if signal_submodules is None:
         signal_submodules = ["signals", "events", "listeners"]
 
-    all_signals: list[EventListener] = []
-
-    for signal_path in _iter_submodules(domain_packages, signal_submodules):
-        try:
-            module = importlib.import_module(signal_path)
-            if hasattr(module, "__all__"):
-                for name in module.__all__:
-                    obj = getattr(module, name)
-                    all_signals.append(obj)
-        except ImportError:
-            continue
-    return all_signals
+    return [obj for _, obj in _discover_modules_exports(domain_packages, signal_submodules)]  # type: ignore[misc]
 
 
 def discover_domain_schemas(
@@ -226,18 +233,7 @@ def discover_domain_schemas(
     if schema_submodules is None:
         schema_submodules = ["schemas", "models", "dtos"]
 
-    all_schemas: dict[str, object] = {}
-
-    for schema_path in _iter_submodules(domain_packages, schema_submodules):
-        try:
-            module = importlib.import_module(schema_path)
-            if hasattr(module, "__all__"):
-                for name in module.__all__:
-                    obj = getattr(module, name)
-                    all_schemas[name] = obj
-        except ImportError:
-            continue
-    return all_schemas
+    return dict(_discover_modules_exports(domain_packages, schema_submodules))
 
 
 def discover_domain_services(
@@ -255,18 +251,7 @@ def discover_domain_services(
     if service_submodules is None:
         service_submodules = ["services"]
 
-    all_services: dict[str, object] = {}
-
-    for service_path in _iter_submodules(domain_packages, service_submodules):
-        try:
-            module = importlib.import_module(service_path)
-            if hasattr(module, "__all__"):
-                for name in module.__all__:
-                    obj = getattr(module, name)
-                    all_services[name] = obj
-        except ImportError:
-            continue
-    return all_services
+    return dict(_discover_modules_exports(domain_packages, service_submodules))
 
 
 def discover_domain_repositories(
@@ -284,15 +269,4 @@ def discover_domain_repositories(
     if repository_submodules is None:
         repository_submodules = ["repositories", "repos"]
 
-    all_repositories: dict[str, object] = {}
-
-    for repo_path in _iter_submodules(domain_packages, repository_submodules):
-        try:
-            module = importlib.import_module(repo_path)
-            if hasattr(module, "__all__"):
-                for name in module.__all__:
-                    obj = getattr(module, name)
-                    all_repositories[name] = obj
-        except ImportError:
-            continue
-    return all_repositories
+    return dict(_discover_modules_exports(domain_packages, repository_submodules))

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 import pytest
@@ -26,7 +26,7 @@ async def _login_user(client: AsyncClient, user: m.User) -> str:
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 201
-    return response.json()["access_token"]
+    return cast("str", response.json()["access_token"])
 
 
 async def _create_team_with_owner(session: AsyncSession, email_prefix: str = "owner") -> tuple[m.User, m.Team]:
@@ -59,7 +59,6 @@ async def _create_team_with_owner(session: AsyncSession, email_prefix: str = "ow
 # --- Create Invitation Tests ---
 
 
-@pytest.mark.anyio
 async def test_create_invitation_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -82,7 +81,6 @@ async def test_create_invitation_success(
     assert data["isAccepted"] is False
 
 
-@pytest.mark.anyio
 async def test_create_invitation_already_member(
     client: AsyncClient,
     session: AsyncSession,
@@ -102,7 +100,6 @@ async def test_create_invitation_already_member(
     assert "already a member" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_create_invitation_unauthenticated(
     client: AsyncClient,
     session: AsyncSession,
@@ -121,7 +118,6 @@ async def test_create_invitation_unauthenticated(
 # --- List Invitations Tests ---
 
 
-@pytest.mark.anyio
 async def test_list_invitations_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -152,7 +148,6 @@ async def test_list_invitations_success(
     assert invitee_email in emails
 
 
-@pytest.mark.anyio
 async def test_list_invitations_empty(
     client: AsyncClient,
     session: AsyncSession,
@@ -175,7 +170,6 @@ async def test_list_invitations_empty(
 # --- Delete Invitation Tests ---
 
 
-@pytest.mark.anyio
 async def test_delete_invitation_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -210,7 +204,6 @@ async def test_delete_invitation_success(
     assert invitee_email not in emails
 
 
-@pytest.mark.anyio
 async def test_delete_invitation_wrong_team(
     client: AsyncClient,
     session: AsyncSession,
@@ -242,7 +235,6 @@ async def test_delete_invitation_wrong_team(
 # --- Accept Invitation Tests ---
 
 
-@pytest.mark.anyio
 async def test_accept_invitation_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -281,7 +273,6 @@ async def test_accept_invitation_success(
     assert "accepted" in data["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_accept_invitation_already_accepted(
     client: AsyncClient,
     session: AsyncSession,
@@ -324,7 +315,6 @@ async def test_accept_invitation_already_accepted(
     assert "already" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_accept_invitation_not_authorized(
     client: AsyncClient,
     session: AsyncSession,
@@ -361,7 +351,6 @@ async def test_accept_invitation_not_authorized(
     assert "not authorized" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_accept_invitation_wrong_team(
     client: AsyncClient,
     session: AsyncSession,
@@ -403,7 +392,6 @@ async def test_accept_invitation_wrong_team(
 # --- Reject Invitation Tests ---
 
 
-@pytest.mark.anyio
 async def test_reject_invitation_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -442,7 +430,6 @@ async def test_reject_invitation_success(
     assert "rejected" in data["message"].lower()
 
 
-@pytest.mark.anyio
 async def test_reject_invitation_not_authorized(
     client: AsyncClient,
     session: AsyncSession,
@@ -479,7 +466,6 @@ async def test_reject_invitation_not_authorized(
     assert "not authorized" in response.text.lower()
 
 
-@pytest.mark.anyio
 async def test_reject_invitation_wrong_team(
     client: AsyncClient,
     session: AsyncSession,

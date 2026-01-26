@@ -1181,7 +1181,7 @@ export const SystemHealthSchema = {
       type: "string",
     },
     version: {
-      default: "0.2.0",
+      default: "0.3.0",
       type: "string",
     },
   },

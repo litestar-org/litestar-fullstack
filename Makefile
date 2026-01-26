@@ -106,10 +106,29 @@ release:                                           ## Bump version and create re
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================
+.PHONY: ruff
+ruff:                                              ## Run ruff
+	@echo "${INFO} Running ruff... 🔍"
+	@uv run ruff check --fix src/py/app src/py/tests tools
+	@uv run ruff format src/py/app src/py/tests tools
+	@echo "${OK} Ruff checks passed ✨"
+
+.PHONY: biome
+biome:                                             ## Run biome
+	@echo "${INFO} Running biome... 🔍"
+	@cd src/js/web && bun run lint
+	@echo "${OK} Biome checks passed ✨"
+
+.PHONY: codespell
+codespell:                                         ## Run codespell
+	@echo "${INFO} Running codespell... 🔍"
+	@uv run codespell
+	@echo "${OK} Codespell checks passed ✨"
+
 .PHONY: mypy
 mypy:                                              ## Run mypy
 	@echo "${INFO} Running mypy... 🔍"
-	@uv run dmypy run src/py/app
+	@uv run dmypy run src/py/app src/py/tests tools
 	@echo "${OK} Mypy checks passed ✨"
 
 .PHONY: pyright
@@ -141,7 +160,7 @@ fix:                                               ## Run formatting scripts
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint
-lint: pre-commit type-check slotscheck             ## Run all linting
+lint: ruff type-check slotscheck biome codespell   ## Run all linting
 
 .PHONY: coverage
 coverage:                                          ## Run the tests and generate coverage report

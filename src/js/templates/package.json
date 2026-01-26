@@ -8,15 +8,15 @@
     "dev": "bun run build-emails.ts --watch"
   },
   "dependencies": {
-    "@react-email/components": "^0.0.31",
-    "@react-email/render": "^1.0.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@react-email/components": "^1.0.6",
+    "@react-email/render": "^2.0.4",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.2",
-    "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "typescript": "^5.7.3"
+    "@types/bun": "^1.3.6",
+    "@types/node": "^25.0.10",
+    "@types/react": "^19.2.9",
+    "typescript": "^5.9.3"
   }
 }

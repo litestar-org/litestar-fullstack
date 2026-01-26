@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from litestar import Controller, get
 from litestar.di import Provide
@@ -99,22 +99,22 @@ class DashboardController(Controller):
         Returns:
             Recent activity list
         """
-        recent_logs = await audit_service.get_recent_activity(hours=hours, limit=limit)
-
-        activities = audit_service.to_schema(
-            data=[
-                {
-                    "id": log.id,
-                    "action": log.action,
-                    "actor_email": log.actor_email,
-                    "target_label": log.target_label,
-                    "created_at": log.created_at,
-                    "ip_address": log.ip_address,
-                }
-                for log in recent_logs
-            ],
-            schema_type=ActivityLogEntry,
+        cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
+        results, total = await audit_service.list_and_count(
+            m.AuditLog.created_at >= cutoff_time,
+            order_by=[m.AuditLog.created_at.desc()],
+            limit=limit,
         )
 
-        activity_list = cast("list[ActivityLogEntry]", activities)
-        return RecentActivity(activities=activity_list, total=len(activity_list))
+        items = [
+            ActivityLogEntry(
+                id=log.id,
+                action=log.action,
+                actor_email=log.actor_email,
+                target_label=log.target_label,
+                created_at=log.created_at,
+            )
+            for log in results
+        ]
+
+        return RecentActivity(activities=items, total=total)

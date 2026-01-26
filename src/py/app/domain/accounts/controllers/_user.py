@@ -7,6 +7,7 @@ from uuid import UUID
 
 from litestar import Controller, delete, get, patch, post
 from litestar.params import Dependency, Parameter
+from sqlalchemy.orm import joinedload, load_only, selectinload
 
 from app.db import models as m
 from app.domain.accounts.guards import requires_superuser
@@ -28,16 +29,22 @@ class UserController(Controller):
     dependencies = create_service_dependencies(
         UserService,
         key="users_service",
-        load=[m.User.roles, m.User.teams, m.User.oauth_accounts],
+        load=[
+            selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
+            selectinload(m.User.teams).options(
+                joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
+            ),
+            selectinload(m.User.oauth_accounts),
+        ],
         filters={
             "id_filter": UUID,
             "search": "name,email",
             "pagination_type": "limit_offset",
-            "pagination_size": 20,
+            "pagination_size": 25,
             "created_at": True,
             "updated_at": True,
-            "sort_field": "name",
-            "sort_order": "asc",
+            "sort_field": "created_at",
+            "sort_order": "desc",
         },
     )
 

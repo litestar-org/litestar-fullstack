@@ -61,7 +61,7 @@ class RoleController(Controller):
             The list of roles.
         """
         results, total = await roles_service.list_and_count(*filters)
-        return roles_service.to_schema(data=results, total=total, filters=filters, schema_type=Role)
+        return roles_service.to_schema(results, total, filters, schema_type=Role)
 
     @get(operation_id="GetRole", path="/{role_id:uuid}")
     async def get_role(

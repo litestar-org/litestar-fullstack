@@ -142,6 +142,18 @@ class MfaChallengeController(Controller):
         return response
 
     def _decode_mfa_challenge_token(self, token: str, settings: AppSettings) -> tuple[str, str]:
+        """Decode and validate MFA challenge token.
+
+        Args:
+            token: The encoded JWT token
+            settings: Application settings
+
+        Returns:
+            Tuple of (user_email, user_id)
+
+        Raises:
+            NotAuthorizedException: If token is invalid or expired
+        """
         try:
             decoded = JWTToken.decode(
                 encoded_token=token,
@@ -164,6 +176,19 @@ class MfaChallengeController(Controller):
         return user_email, user_id
 
     async def _load_mfa_user(self, users_service: UserService, user_email: str, user_id: str) -> m.User:
+        """Load user for MFA verification.
+
+        Args:
+            users_service: User service
+            user_email: Email from token
+            user_id: ID from token
+
+        Returns:
+            The user object
+
+        Raises:
+            NotAuthorizedException: If user not found or MFA not enabled
+        """
         user = await users_service.get_one_or_none(email=user_email, load=[undefer_group("security_sensitive")])
         if not user or str(user.id) != user_id:
             raise NotAuthorizedException(detail="Invalid challenge token")
@@ -172,6 +197,15 @@ class MfaChallengeController(Controller):
         return user
 
     async def _enforce_rate_limit(self, audit_service: AuditLogService, user_id: UUID) -> None:
+        """Check MFA verification rate limit.
+
+        Args:
+            audit_service: Audit log service
+            user_id: User ID to check
+
+        Raises:
+            ClientException: If rate limited
+        """
         failed_attempts = await audit_service.count_recent_actions(
             action="mfa.challenge.failed",
             actor_id=user_id,
@@ -189,6 +223,21 @@ class MfaChallengeController(Controller):
         audit_service: AuditLogService,
         request: Request[m.User, Token, Any],
     ) -> tuple[bool, int | None]:
+        """Verify TOTP or backup code.
+
+        Args:
+            data: Challenge data (code or recovery_code)
+            user: User object
+            users_service: User service
+            audit_service: Audit log service
+            request: The request object
+
+        Returns:
+            Tuple of (is_backup_code, remaining_backup_codes)
+
+        Raises:
+            NotAuthorizedException: If verification fails
+        """
         if data.code:
             totp_secret = user.totp_secret
             if not totp_secret:
@@ -204,13 +253,10 @@ class MfaChallengeController(Controller):
                 request=request,
             )
             raise NotAuthorizedException(detail="Invalid verification code")
-
         if not data.recovery_code:
             raise NotAuthorizedException(detail="Verification failed")
-
         if not user.backup_codes:
             raise NotAuthorizedException(detail="No backup codes available")
-
         code_index = await verify_backup_code(data.recovery_code.upper(), user.backup_codes)
         if code_index is None:
             await audit_service.log_action(
@@ -222,13 +268,10 @@ class MfaChallengeController(Controller):
                 request=request,
             )
             raise NotAuthorizedException(detail="Invalid backup code")
-
         updated_codes = user.backup_codes.copy()
         updated_codes[code_index] = None
         await users_service.update({"backup_codes": updated_codes}, item_id=user.id)
-
         remaining_backup_codes = sum(1 for code in updated_codes if code)
         if remaining_backup_codes <= LOW_BACKUP_CODE_THRESHOLD:
             logger.warning("User %s has only %d backup codes remaining", user.email, remaining_backup_codes)
-
         return True, remaining_backup_codes

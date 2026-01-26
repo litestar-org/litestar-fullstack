@@ -8,6 +8,7 @@ from litestar.exceptions import ClientException, PermissionDeniedException
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
+from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
 from app.lib import constants, crypt
 from app.lib.deps import CompositeServiceMixin
 from app.lib.validation import PasswordValidationError, validate_password_strength
@@ -18,8 +19,6 @@ if TYPE_CHECKING:
     from uuid import UUID
 
     from httpx_oauth.oauth2 import OAuth2Token
-
-    from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
 
 
 class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.User]):
@@ -36,9 +35,11 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
 
     @property
     def oauth_accounts(self) -> UserOAuthAccountService:
-        """Lazy-loaded OAuth account service sharing this session."""
-        from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
+        """Lazy-loaded OAuth account service sharing this session.
 
+        Returns:
+            The OAuth account service instance.
+        """
         return self._get_service(UserOAuthAccountService)
 
     async def to_model_on_create(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
@@ -148,12 +149,20 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
 
     @staticmethod
     async def has_role_id(db_obj: m.User, role_id: UUID) -> bool:
-        """Return true if user has specified role ID"""
+        """Check if user has specified role ID.
+
+        Returns:
+            True if user has the role, False otherwise.
+        """
         return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_id == role_id)
 
     @staticmethod
     async def has_role(db_obj: m.User, role_name: str) -> bool:
-        """Return true if user has specified role ID"""
+        """Check if user has specified role name.
+
+        Returns:
+            True if user has the role, False otherwise.
+        """
         return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_name == role_name)
 
     @staticmethod
@@ -250,23 +259,23 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         return data
 
     async def _populate_with_backup_codes(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        if not service.is_dict(data):
+        if not service.is_dict_with_field(data, "backup_codes"):
             return data
-        if "backup_codes" not in data:
-            return data
+
         codes = data.get("backup_codes")
         if not isinstance(codes, list):
             return data
+
         typed_codes = cast("list[object]", codes)
         if not all(code is None or isinstance(code, str) for code in typed_codes):
             return data
+
         validated_codes = cast("list[str | None]", typed_codes)
         non_null_codes = [code for code in validated_codes if code is not None]
-        if not non_null_codes or all(code.startswith("$") for code in non_null_codes):
-            return data
-        data["backup_codes"] = [
-            None if code is None else await crypt.get_password_hash(code) for code in validated_codes
-        ]
+        if non_null_codes and not all(code.startswith("$") for code in non_null_codes):
+            data["backup_codes"] = [
+                None if code is None else await crypt.get_password_hash(code) for code in validated_codes
+            ]
         return data
 
     async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
@@ -292,18 +301,15 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
             The created user object
         """
 
-        email = oauth_data.get("email", "")
-        name = oauth_data.get("name", "")
-
-        user_data = {
-            "email": email,
-            "name": name,
-            "is_verified": True,
-            "verified_at": datetime.now(UTC).date(),
-            "is_active": True,
-        }
-
-        return await self.create(data=user_data)
+        return await self.create(
+            data={
+                "email": oauth_data.get("email", ""),
+                "name": oauth_data.get("name", ""),
+                "is_verified": True,
+                "verified_at": datetime.now(UTC).date(),
+                "is_active": True,
+            }
+        )
 
     async def authenticate_or_create_oauth_user(
         self,

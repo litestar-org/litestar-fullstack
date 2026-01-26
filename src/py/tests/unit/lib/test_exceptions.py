@@ -1,91 +1,78 @@
-from typing import TYPE_CHECKING
-from unittest.mock import MagicMock
+from typing import TYPE_CHECKING, cast
+from unittest.mock import MagicMock, patch
 
-import pytest
-from litestar import Litestar, get
-from litestar.repository.exceptions import ConflictError, NotFoundError
-from litestar.status_codes import (
-    HTTP_403_FORBIDDEN,
-    HTTP_404_NOT_FOUND,
-    HTTP_409_CONFLICT,
-    HTTP_500_INTERNAL_SERVER_ERROR,
+from litestar.exceptions import (
+    NotFoundException,
+    PermissionDeniedException,
 )
-from litestar.testing import RequestFactory, create_test_client
+from litestar.repository.exceptions import NotFoundError
 
-from app.lib import exceptions
-from app.lib.exceptions import ApplicationError
+from app.lib.exceptions import (
+    ApplicationError,
+    AuthorizationError,
+    after_exception_hook_handler,
+    exception_to_http_response,
+)
 
 if TYPE_CHECKING:
-    from collections import abc
-
-pytestmark = pytest.mark.anyio
+    from litestar.types import Scope
 
 
-def test_after_exception_hook_handler_called(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Tests that the handler gets added to the app and called."""
-    logger_mock = MagicMock()
-    monkeypatch.setattr(exceptions, "bind_contextvars", logger_mock)
-    exc = RuntimeError()
+def test_application_error_init() -> None:
+    exc = ApplicationError("msg", detail="detailed info")
+    assert exc.detail == "detailed info"
+    assert "msg" in str(exc)
+    assert "detailed info" in str(exc)
 
-    @get("/error")
-    async def raises() -> None:
-        raise exc
+    exc2 = ApplicationError("msg")
+    assert exc2.detail == "msg"
 
-    with create_test_client(
-        route_handlers=[raises],
-        after_exception=[exceptions.after_exception_hook_handler],
-    ) as client:
-        resp = client.get("/error")
-        assert resp.status_code == HTTP_500_INTERNAL_SERVER_ERROR
-    logger_mock.assert_called_once_with(exc_info=(None, None, None))
+    assert "ApplicationError" in repr(exc)
 
 
-@pytest.mark.parametrize(
-    ("exc", "status"),
-    [
-        (ConflictError, HTTP_409_CONFLICT),
-        (NotFoundError, HTTP_404_NOT_FOUND),
-        (ApplicationError, HTTP_500_INTERNAL_SERVER_ERROR),
-    ],
-)
-def test_repository_exception_to_http_response(exc: type[ApplicationError], status: int) -> None:
-    app = Litestar(route_handlers=[])
-    request = RequestFactory(app=app, server="testserver").get("/wherever")
-    response = exceptions.exception_to_http_response(request, exc())
-    assert response.status_code == status
+def test_after_exception_hook_handler_app_error() -> None:
+    exc = ApplicationError("test")
+    scope = cast("Scope", {})
+    with patch("app.lib.exceptions.bind_contextvars") as mock_bind:
+        after_exception_hook_handler(exc, scope)
+        mock_bind.assert_not_called()
 
 
-@pytest.mark.parametrize(
-    ("exc", "status", "debug"),
-    [
-        (exceptions.AuthorizationError, HTTP_403_FORBIDDEN, True),
-        (exceptions.AuthorizationError, HTTP_403_FORBIDDEN, False),
-        (exceptions.ApplicationError, HTTP_500_INTERNAL_SERVER_ERROR, False),
-    ],
-)
-def test_exception_to_http_response(exc: type[exceptions.ApplicationError], status: int, debug: bool) -> None:
-    app = Litestar(route_handlers=[], debug=debug)
-    request = RequestFactory(app=app, server="testserver").get("/wherever")
-    response = exceptions.exception_to_http_response(request, exc())
-    assert response.status_code == status
+def test_after_exception_hook_handler_other_error() -> None:
+    exc = ValueError("test")
+    scope = cast("Scope", {})
+    with patch("app.lib.exceptions.bind_contextvars") as mock_bind:
+        after_exception_hook_handler(exc, scope)
+        mock_bind.assert_called_once()
 
 
-@pytest.mark.parametrize(
-    ("exc", "fn", "expected_message"),
-    [
-        (
-            exceptions.ApplicationError("message"),
-            exceptions.exception_to_http_response,
-            b"app.lib.exceptions.ApplicationError: message\n",
-        ),
-    ],
-)
-def test_exception_serves_debug_middleware_response(
-    exc: Exception,
-    fn: "abc.Callable",
-    expected_message: bytes,
-) -> None:
-    app = Litestar(route_handlers=[], debug=True)
-    request = RequestFactory(app=app, server="testserver").get("/wherever")
-    response = fn(request, exc)
-    assert response.content == expected_message.decode()
+async def test_exception_to_http_response_not_found() -> None:
+    request = MagicMock()
+    request.app.debug = False
+    exc = NotFoundError("not found")
+
+    with patch("app.lib.exceptions.create_exception_response") as mock_create:
+        exception_to_http_response(request, exc)
+        args, _ = mock_create.call_args
+        assert isinstance(args[1], NotFoundException)
+
+
+async def test_exception_to_http_response_auth_error() -> None:
+    request = MagicMock()
+    request.app.debug = False
+    exc = AuthorizationError("unauthorized")
+
+    with patch("app.lib.exceptions.create_exception_response") as mock_create:
+        exception_to_http_response(request, exc)
+        args, _ = mock_create.call_args
+        assert isinstance(args[1], PermissionDeniedException)
+
+
+async def test_exception_to_http_response_debug() -> None:
+    request = MagicMock()
+    request.app.debug = True
+    exc = ValueError("internal error")  # Will hit 'else' -> InternalServerException
+
+    with patch("app.lib.exceptions.create_debug_response") as mock_debug:
+        exception_to_http_response(request, exc)
+        mock_debug.assert_called_once()

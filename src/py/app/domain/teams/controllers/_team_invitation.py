@@ -65,7 +65,7 @@ class TeamInvitationController(Controller):
         team_id: UUID,
         data: TeamInvitationCreate,
     ) -> TeamInvitation:
-        """Create a team invitation.
+        """Create a new team invitation.
 
         Args:
             current_user: The current user sending the invitation.
@@ -110,21 +110,13 @@ class TeamInvitationController(Controller):
             The list of team invitations.
         """
         db_objs, total = await team_invitations_service.list_and_count(*filters, m.TeamInvitation.team_id == team_id)
-        return team_invitations_service.to_schema(
-            data=db_objs,
-            total=total,
-            filters=filters,
-            schema_type=TeamInvitation,
-        )
+        return team_invitations_service.to_schema(db_objs, total, filters, schema_type=TeamInvitation)
 
     @delete(operation_id="DeleteTeamInvitation", path="/{invitation_id:uuid}")
     async def delete_team_invitation(
-        self,
-        team_invitations_service: TeamInvitationService,
-        team_id: UUID,
-        invitation_id: UUID,
+        self, team_invitations_service: TeamInvitationService, team_id: UUID, invitation_id: UUID
     ) -> None:
-        """Delete a team invitation.
+        """Delete an invitation.
 
         Args:
             team_id: The ID of the team to delete the invitation for.
@@ -148,7 +140,7 @@ class TeamInvitationController(Controller):
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Accept a team invitation.
+        """Accept an invitation.
 
         Args:
             team_id: The ID of the team to accept the invitation for.
@@ -176,7 +168,7 @@ class TeamInvitationController(Controller):
         )
         if existing_membership is not None:
             raise HTTPException(status_code=400, detail="User is already a member of this team")
-        await team_members_service.create(
+        _ = await team_members_service.create(
             {
                 "team_id": team_id,
                 "user_id": current_user.id,
@@ -195,10 +187,13 @@ class TeamInvitationController(Controller):
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Reject a team invitation.
+        """Reject an invitation.
 
         Raises:
             HTTPException: If the invitation is invalid or the user cannot reject it
+
+        Returns:
+            A message indicating that the team invitation has been rejected.
         """
         db_obj = await team_invitations_service.get(item_id=invitation_id)
         if db_obj.team_id != team_id:

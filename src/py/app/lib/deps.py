@@ -1,8 +1,6 @@
 """Application dependency providers generators.
 
 This module contains functions to create dependency providers for services and filters.
-
-You should not have modify this module very often and should only be invoked under normal usage.
 """
 
 from __future__ import annotations
@@ -50,7 +48,7 @@ async def get_task_queue() -> Queue:
     """Get the background task queue.
 
     Returns:
-        Queue: The connected background task queue.
+        The background task queue.
     """
     from app.server import plugins
 
@@ -120,56 +118,19 @@ async def provide_services(
 ) -> AsyncIterator[tuple[Any, ...]]:
     """Provide multiple services sharing the same database session.
 
-    This context manager simplifies acquiring services outside of Litestar's
-    dependency injection context (background jobs, CLI commands, event handlers,
-    and authentication guards).
+    Simplifies acquiring services outside of Litestar's DI context (background jobs,
+    CLI commands, etc.).
 
     Args:
-        *providers: One or more service provider functions created via
-            ``create_service_provider()``. Each provider should accept an
-            AsyncSession and yield a service instance.
-        session: Optional pre-existing database session. If provided, the
-            session lifecycle is NOT managed by this context manager. The
-            caller is responsible for session cleanup.
+        *providers: Service provider functions.
+        session: Optional pre-existing database session.
         connection: Optional ASGI connection for request-scoped contexts.
-            Used in authentication guards to obtain the session from the
-            request scope via ``alchemy.provide_session()``.
-
-    Yields:
-        A tuple of instantiated services, matching the order of providers
-        passed as arguments.
 
     Raises:
-        ValueError: If both ``session`` and ``connection`` are provided,
-            or if no providers are given.
+        ValueError: If both 'session' and 'connection' are provided,
 
-    Examples:
-        Standalone context (jobs, CLI, events) - auto-creates session::
-
-            async with provide_services(
-                provide_email_verification_service,
-                provide_password_reset_service,
-            ) as (verification_service, reset_service):
-                await verification_service.cleanup_expired_tokens()
-                await reset_service.cleanup_expired_tokens()
-
-        Request context (guards) - uses connection-scoped session::
-
-            async with provide_services(
-                provide_users_service,
-                connection=connection,
-            ) as (users_service,):
-                user = await users_service.get_one_or_none(email=token.sub)
-
-        Explicit session - caller manages lifecycle::
-
-            async with alchemy.get_session() as db_session:
-                async with provide_services(
-                    provide_users_service,
-                    session=db_session,
-                ) as (users_service,):
-                    await users_service.create(data=user_data)
-                # Additional operations with db_session...
+    Yields:
+        A tuple of instantiated services.
     """
     from app.config import alchemy
 

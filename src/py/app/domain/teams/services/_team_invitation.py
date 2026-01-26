@@ -38,8 +38,7 @@ class TeamInvitationService(service.SQLAlchemyAsyncRepositoryService[m.TeamInvit
     ) -> service.ModelDictT[m.TeamInvitation]:
         if not service.is_dict(data):
             return data
-        inviter = data.pop("invited_by", None)
-        if inviter is None:
+        if (inviter := data.pop("invited_by", None)) is None:
             return data
         if service.is_dict_without_field(data, "invited_by_id"):
             data["invited_by_id"] = inviter.id

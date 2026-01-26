@@ -5,8 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Any
 from uuid import UUID
 
+import msgspec
 from litestar import Controller, delete, get, patch
 from litestar.di import Provide
+from litestar.exceptions import NotAuthorizedException
 from litestar.params import Dependency
 from sqlalchemy.orm import joinedload, load_only, selectinload, undefer_group
 
@@ -77,12 +79,7 @@ class AdminUsersController(Controller):
             Paginated user list
         """
         results, total = await users_service.list_and_count(*filters)
-        return users_service.to_schema(
-            data=results,
-            total=total,
-            filters=filters,
-            schema_type=AdminUserSummary,
-        )
+        return users_service.to_schema(results, total, filters, schema_type=AdminUserSummary)
 
     @get(operation_id="AdminGetUser", path="/{user_id:uuid}")
     async def get_user(
@@ -103,29 +100,7 @@ class AdminUsersController(Controller):
         """
         user = await users_service.get(user_id, load=[undefer_group("security_sensitive")])
 
-        return users_service.to_schema(
-            data={
-                "id": user.id,
-                "email": user.email,
-                "name": user.name,
-                "username": user.username,
-                "phone": user.phone,
-                "isActive": user.is_active,
-                "isSuperuser": user.is_superuser,
-                "isVerified": user.is_verified,
-                "verifiedAt": user.verified_at,
-                "joinedAt": user.joined_at,
-                "loginCount": user.login_count,
-                "isTwoFactorEnabled": user.is_two_factor_enabled,
-                "hasPassword": user.hashed_password is not None,
-                "roles": [r.role.name for r in user.roles if r.role] if user.roles else [],
-                "teams": [t.team.name for t in user.teams if t.team] if user.teams else [],
-                "oauthProviders": [a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
-                "createdAt": user.created_at,
-                "updatedAt": user.updated_at,
-            },
-            schema_type=AdminUserDetail,
-        )
+        return users_service.to_schema(user, schema_type=AdminUserDetail)
 
     @patch(operation_id="AdminUpdateUser", path="/{user_id:uuid}")
     async def update_user(
@@ -148,8 +123,6 @@ class AdminUsersController(Controller):
         Returns:
             Updated user details
         """
-        import msgspec
-
         update_data: dict[str, Any] = {}
         for field in ("name", "username", "phone", "is_active", "is_superuser", "is_verified"):
             value = getattr(data, field)
@@ -167,29 +140,7 @@ class AdminUsersController(Controller):
             request=request,
         )
 
-        return users_service.to_schema(
-            data={
-                "id": user.id,
-                "email": user.email,
-                "name": user.name,
-                "username": user.username,
-                "phone": user.phone,
-                "isActive": user.is_active,
-                "isSuperuser": user.is_superuser,
-                "isVerified": user.is_verified,
-                "verifiedAt": user.verified_at,
-                "joinedAt": user.joined_at,
-                "loginCount": user.login_count,
-                "isTwoFactorEnabled": user.is_two_factor_enabled,
-                "hasPassword": user.hashed_password is not None,
-                "roles": [r.role.name for r in user.roles if r.role] if user.roles else [],
-                "teams": [t.team.name for t in user.teams if t.team] if user.teams else [],
-                "oauthProviders": [a.oauth_name for a in user.oauth_accounts] if user.oauth_accounts else [],
-                "createdAt": user.created_at,
-                "updatedAt": user.updated_at,
-            },
-            schema_type=AdminUserDetail,
-        )
+        return users_service.to_schema(user, schema_type=AdminUserDetail)
 
     @delete(operation_id="AdminDeleteUser", path="/{user_id:uuid}", status_code=200)
     async def delete_user(
@@ -214,15 +165,10 @@ class AdminUsersController(Controller):
             NotAuthorizedException: If attempting to delete the current user
         """
         user = await users_service.get(user_id)
-
         if user.id == request.user.id:
-            from litestar.exceptions import NotAuthorizedException
-
             raise NotAuthorizedException(detail="Cannot delete your own account")
-
         user_email = user.email
         await users_service.delete(user_id)
-
         await audit_service.log_admin_user_delete(
             actor_id=request.user.id,
             actor_email=request.user.email,
@@ -230,5 +176,4 @@ class AdminUsersController(Controller):
             user_email=user_email,
             request=request,
         )
-
         return Message(message=f"User {user_email} deleted successfully")

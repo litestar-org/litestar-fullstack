@@ -212,14 +212,14 @@ export interface FileRoutesByFullPath {
   '/teams/$teamId': typeof AppTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AppTeamsNewRoute
   '/admin/': typeof AppAdminIndexRoute
-  '/profile': typeof AppProfileIndexRoute
+  '/profile/': typeof AppProfileIndexRoute
   '/teams/': typeof AppTeamsIndexRoute
   '/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
   '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
   '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
   '/auth/google/callback': typeof PublicAuthGoogleCallbackRoute
-  '/admin/teams': typeof AppAdminTeamsIndexRoute
-  '/admin/users': typeof AppAdminUsersIndexRoute
+  '/admin/teams/': typeof AppAdminTeamsIndexRoute
+  '/admin/users/': typeof AppAdminUsersIndexRoute
   '/teams/$teamId/invitations/$invitationId/accept': typeof AppTeamsTeamIdInvitationsInvitationIdAcceptRoute
 }
 export interface FileRoutesByTo {
@@ -305,14 +305,14 @@ export interface FileRouteTypes {
     | '/teams/$teamId'
     | '/teams/new'
     | '/admin/'
-    | '/profile'
+    | '/profile/'
     | '/teams/'
     | '/admin/teams/$teamId'
     | '/admin/users/$userId'
     | '/auth/github/callback'
     | '/auth/google/callback'
-    | '/admin/teams'
-    | '/admin/users'
+    | '/admin/teams/'
+    | '/admin/users/'
     | '/teams/$teamId/invitations/$invitationId/accept'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -388,14 +388,14 @@ declare module '@tanstack/react-router' {
     '/_public': {
       id: '/_public'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
       id: '/_app'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -514,7 +514,7 @@ declare module '@tanstack/react-router' {
     '/_app/profile/': {
       id: '/_app/profile/'
       path: '/profile'
-      fullPath: '/profile'
+      fullPath: '/profile/'
       preLoaderRoute: typeof AppProfileIndexRouteImport
       parentRoute: typeof AppRoute
     }
@@ -549,14 +549,14 @@ declare module '@tanstack/react-router' {
     '/_app/admin/users/': {
       id: '/_app/admin/users/'
       path: '/users'
-      fullPath: '/admin/users'
+      fullPath: '/admin/users/'
       preLoaderRoute: typeof AppAdminUsersIndexRouteImport
       parentRoute: typeof AppAdminRoute
     }
     '/_app/admin/teams/': {
       id: '/_app/admin/teams/'
       path: '/teams'
-      fullPath: '/admin/teams'
+      fullPath: '/admin/teams/'
       preLoaderRoute: typeof AppAdminTeamsIndexRouteImport
       parentRoute: typeof AppAdminRoute
     }

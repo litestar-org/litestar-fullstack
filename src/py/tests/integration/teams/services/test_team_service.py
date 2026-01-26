@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 pytestmark = [pytest.mark.integration, pytest.mark.services]
 
 
-@pytest.mark.anyio
 async def test_create_team_basic(session: AsyncSession, team_service: TeamService) -> None:
     """Test basic team creation."""
     # Create owner user first (required by TeamService)
@@ -39,7 +38,6 @@ async def test_create_team_basic(session: AsyncSession, team_service: TeamServic
     assert team.id is not None
 
 
-@pytest.mark.anyio
 async def test_create_team_with_owner(session: AsyncSession, team_service: TeamService) -> None:
     """Test team creation with owner."""
     # Create owner user
@@ -61,7 +59,6 @@ async def test_create_team_with_owner(session: AsyncSession, team_service: TeamS
     assert owner_member.is_owner is True
 
 
-@pytest.mark.anyio
 async def test_create_team_with_tags(session: AsyncSession, team_service: TeamService) -> None:
     """Test team creation with tags."""
     # Create owner user first (required by TeamService)
@@ -89,7 +86,6 @@ async def test_create_team_with_tags(session: AsyncSession, team_service: TeamSe
     assert "api" in tag_names
 
 
-@pytest.mark.anyio
 async def test_create_team_slug_generation(session: AsyncSession, team_service: TeamService) -> None:
     """Test automatic slug generation."""
     # Create owner user first (required by TeamService)
@@ -106,7 +102,6 @@ async def test_create_team_slug_generation(session: AsyncSession, team_service: 
     assert team.slug.islower()
 
 
-@pytest.mark.anyio
 async def test_create_team_duplicate_name_different_slugs(session: AsyncSession, team_service: TeamService) -> None:
     """Test that duplicate team names get different slugs."""
     # Create owner user first (required by TeamService)
@@ -125,7 +120,6 @@ async def test_create_team_duplicate_name_different_slugs(session: AsyncSession,
     assert team1.id != team2.id
 
 
-@pytest.mark.anyio
 async def test_get_team_by_id(session: AsyncSession, team_service: TeamService) -> None:
     """Test getting team by ID."""
     team = TeamFactory.build()
@@ -138,7 +132,6 @@ async def test_get_team_by_id(session: AsyncSession, team_service: TeamService) 
     assert found_team.name == team.name
 
 
-@pytest.mark.anyio
 async def test_get_team_by_slug(session: AsyncSession, team_service: TeamService) -> None:
     """Test getting team by slug."""
     team = TeamFactory.build(slug="test-team-slug")
@@ -151,7 +144,6 @@ async def test_get_team_by_slug(session: AsyncSession, team_service: TeamService
     assert found_team.slug == "test-team-slug"
 
 
-@pytest.mark.anyio
 async def test_update_team(session: AsyncSession, team_service: TeamService) -> None:
     """Test updating team information."""
     team = TeamFactory.build(name="Original Name")
@@ -167,7 +159,6 @@ async def test_update_team(session: AsyncSession, team_service: TeamService) -> 
     assert updated_team.id == team.id
 
 
-@pytest.mark.anyio
 async def test_update_team_with_new_tags(session: AsyncSession, team_service: TeamService) -> None:
     """Test updating team with new tags."""
     # Create owner user first (required by TeamService)
@@ -195,7 +186,6 @@ async def test_update_team_with_new_tags(session: AsyncSession, team_service: Te
     assert len(updated_team.tags) == 3
 
 
-@pytest.mark.anyio
 async def test_delete_team(session: AsyncSession, team_service: TeamService) -> None:
     """Test deleting team."""
     team = TeamFactory.build()
@@ -209,7 +199,6 @@ async def test_delete_team(session: AsyncSession, team_service: TeamService) -> 
     assert deleted_team is None
 
 
-@pytest.mark.anyio
 async def test_list_teams(session: AsyncSession, team_service: TeamService) -> None:
     """Test listing teams."""
     teams = [TeamFactory.build() for _ in range(3)]
@@ -221,7 +210,6 @@ async def test_list_teams(session: AsyncSession, team_service: TeamService) -> N
     assert len(result) >= 3  # At least the 3 we created
 
 
-@pytest.mark.anyio
 async def test_create_team_with_owner_user_object(session: AsyncSession, team_service: TeamService) -> None:
     """Test team creation with owner as User object."""
     owner = UserFactory.build()
@@ -240,7 +228,6 @@ async def test_create_team_with_owner_user_object(session: AsyncSession, team_se
     assert owner_member.role == m.TeamRoles.ADMIN
 
 
-@pytest.mark.anyio
 async def test_update_team_change_owner(session: AsyncSession, team_service: TeamService) -> None:
     """Test changing team owner."""
     # Create team with initial owner
@@ -268,7 +255,6 @@ async def test_update_team_change_owner(session: AsyncSession, team_service: Tea
     assert new_owner_member.role == m.TeamRoles.ADMIN
 
 
-@pytest.mark.anyio
 async def test_populate_slug_when_missing(session: AsyncSession, team_service: TeamService) -> None:
     """Test slug population when not provided."""
     team_data = {"name": "Team Without Slug"}
@@ -281,7 +267,6 @@ async def test_populate_slug_when_missing(session: AsyncSession, team_service: T
     assert result["slug"] is not None
 
 
-@pytest.mark.anyio
 async def test_populate_slug_when_provided(session: AsyncSession, team_service: TeamService) -> None:
     """Test slug is preserved when provided."""
     team_data = {"name": "Team With Slug", "slug": "custom-slug"}
@@ -292,7 +277,6 @@ async def test_populate_slug_when_provided(session: AsyncSession, team_service: 
     assert result["slug"] == "custom-slug"
 
 
-@pytest.mark.anyio
 async def test_populate_slug_without_name(session: AsyncSession, team_service: TeamService) -> None:
     """Test slug population when name is missing."""
     team_data = {"description": "Team without name"}
@@ -304,7 +288,6 @@ async def test_populate_slug_without_name(session: AsyncSession, team_service: T
     assert "slug" not in result
 
 
-@pytest.mark.anyio
 async def test_populate_with_new_tags(session: AsyncSession, team_service: TeamService) -> None:
     """Test adding new tags to team."""
     # Create owner user first (required by TeamService for "create" operation)
@@ -322,7 +305,6 @@ async def test_populate_with_new_tags(session: AsyncSession, team_service: TeamS
     assert len(team_obj.tags) == 2
 
 
-@pytest.mark.anyio
 async def test_populate_with_existing_tags(session: AsyncSession, team_service: TeamService) -> None:
     """Test handling existing tags."""
     # Create owner user first (required by TeamService for "create" operation)
@@ -346,7 +328,6 @@ async def test_populate_with_existing_tags(session: AsyncSession, team_service: 
     assert "new-tag" in tag_names
 
 
-@pytest.mark.anyio
 async def test_remove_tags_from_team(session: AsyncSession, team_service: TeamService) -> None:
     """Test removing tags from existing team."""
     # Create owner user first (required by TeamService)
@@ -373,28 +354,24 @@ async def test_remove_tags_from_team(session: AsyncSession, team_service: TeamSe
     assert len(updated_team.tags) == 2
 
 
-@pytest.mark.anyio
 async def test_get_nonexistent_team(team_service: TeamService) -> None:
     """Test getting non-existent team returns None."""
     result = await team_service.get_one_or_none(id=uuid4())
     assert result is None
 
 
-@pytest.mark.anyio
 async def test_update_nonexistent_team(team_service: TeamService) -> None:
     """Test updating non-existent team raises error."""
     with pytest.raises(RepositoryError):
         await team_service.update(item_id=uuid4(), data={"name": "Updated"})
 
 
-@pytest.mark.anyio
 async def test_delete_nonexistent_team(team_service: TeamService) -> None:
     """Test deleting non-existent team raises error."""
     with pytest.raises(RepositoryError):
         await team_service.delete(item_id=uuid4())
 
 
-@pytest.mark.anyio
 async def test_create_team_empty_name(session: AsyncSession, team_service: TeamService) -> None:
     """Test creating team with empty name."""
     # Create owner user first (required by TeamService)
@@ -413,7 +390,6 @@ async def test_create_team_empty_name(session: AsyncSession, team_service: TeamS
     assert team.name == ""
 
 
-@pytest.mark.anyio
 async def test_create_team_with_nonexistent_owner(session: AsyncSession, team_service: TeamService) -> None:
     """Test creating team with non-existent owner ID."""
     team_data = {
@@ -429,7 +405,6 @@ async def test_create_team_with_nonexistent_owner(session: AsyncSession, team_se
     assert len(team.members) == 0
 
 
-@pytest.mark.anyio
 async def test_full_team_lifecycle(session: AsyncSession, team_service: TeamService) -> None:
     """Test complete team lifecycle: create, update, add members, delete."""
     # Create owner
@@ -475,7 +450,6 @@ async def test_full_team_lifecycle(session: AsyncSession, team_service: TeamServ
     assert deleted_team is None
 
 
-@pytest.mark.anyio
 async def test_team_with_multiple_members_and_tags(session: AsyncSession, team_service: TeamService) -> None:
     """Test team with complex member and tag relationships."""
     # Create users

@@ -60,16 +60,23 @@ class AppEmailService:
 
     @property
     def app_name(self) -> str:
-        """Get application name from settings."""
+        """Get application name from settings.
+
+        Returns:
+            The configured application name.
+        """
         return self._settings.app.NAME
 
     @property
     def base_url(self) -> str:
-        """Get base URL from settings."""
+        """Get base URL from settings.
+
+        Returns:
+            The configured base URL.
+        """
         return self._settings.app.URL
 
     def _resolve_user_details(self, user: UserProtocol) -> tuple[str, str]:
-        """Normalize user details for templating and delivery."""
         user_name = user.name or "there"
         return user.email, user_name
 

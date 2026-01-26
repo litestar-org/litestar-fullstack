@@ -26,7 +26,7 @@ provide_users_service = create_service_provider(
         ),
     ],
     uniquify=True,
-    error_messages={"duplicate_key": "This user already exists.", "integrity": "User operation failed."},
+    error_messages={"duplicate_key": "User with this email already exists.", "integrity": "User operation failed."},
 )
 
 provide_email_verification_service = create_service_provider(

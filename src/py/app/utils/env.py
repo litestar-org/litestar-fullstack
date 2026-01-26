@@ -233,7 +233,6 @@ def _parse_list(key: str, value: str, item_constructor: Callable[[str], T]) -> l
 
 
 def _parse_dict(key: str, value: str) -> dict[str, Any]:
-    # Try JSON first
     if value.strip().startswith("{"):
         return _parse_dict_json(key, value)
 
@@ -260,9 +259,7 @@ def _parse_dict_json(key: str, value: str, key_type: type = str) -> dict[str, An
     return result
 
 
-def _parse_dict_comma(
-    key: str, value: str, key_type: type = str
-) -> dict[str, Any]:  # Fallback: comma-separated key=val pairs
+def _parse_dict_comma(key: str, value: str, key_type: type = str) -> dict[str, Any]:
     result: dict[str, Any] = {}
 
     for item in value.split(","):

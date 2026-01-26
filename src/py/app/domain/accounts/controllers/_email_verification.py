@@ -45,17 +45,17 @@ class EmailVerificationController(Controller):
         request: Request[m.User, Token, Any],
         data: EmailVerificationRequest,
     ) -> EmailVerificationSent:
-        """Request email verification for a user."""
+        """Request email verification for a user.
 
+        Returns:
+            Response indicating the verification email has been sent.
+        """
         user = await users_service.get_one_or_none(email=data.email)
         if user is None:
             return EmailVerificationSent(message="If the email exists, a verification link has been sent")
-
         if user.is_verified:
             return EmailVerificationSent(message="Email is already verified")
-
         request.app.emit(event_id="verification_requested", user_id=user.id, mailer=app_mailer)
-
         return EmailVerificationSent(message="Verification email sent")
 
     @post("/verify", status_code=HTTP_200_OK)
@@ -65,12 +65,13 @@ class EmailVerificationController(Controller):
         users_service: UserService,
         verification_service: EmailVerificationTokenService,
     ) -> User:
-        """Verify email using verification token."""
+        """Verify email using verification token.
 
+        Returns:
+            The verified user object.
+        """
         verification_token = await verification_service.verify_token(data.token)
-
         user = await users_service.verify_email(user_id=verification_token.user_id, email=verification_token.email)
-
         return users_service.to_schema(user, schema_type=User)
 
     @get("/status/{user_id:uuid}")
@@ -79,6 +80,10 @@ class EmailVerificationController(Controller):
         user_id: UUID,
         users_service: UserService,
     ) -> EmailVerificationStatus:
-        """Get email verification status for a user."""
+        """Get email verification status for a user.
+
+        Returns:
+            Status object indicating if the email is verified.
+        """
         is_verified = await users_service.is_email_verified(user_id)
         return EmailVerificationStatus(is_verified=is_verified)

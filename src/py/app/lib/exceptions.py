@@ -126,10 +126,7 @@ def create_exception_response(request: Request[Any, Any, Any], exc: HTTPExceptio
     return cast("Response[Any]", _create_exception_response_typed(request, exc))
 
 
-def exception_to_http_response(
-    request: Request[Any, Any, Any],
-    exc: ApplicationError | RepositoryError,
-) -> Response[Any]:
+def exception_to_http_response(request: Request[Any, Any, Any], exc: Exception) -> Response[Any]:
     """Transform repository exceptions to HTTP exceptions.
 
     Args:

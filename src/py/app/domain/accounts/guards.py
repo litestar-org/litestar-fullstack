@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
 from litestar.exceptions import PermissionDeniedException
-from litestar.security.jwt import OAuth2PasswordBearerAuth
+from litestar.security.jwt import OAuth2PasswordBearerAuth, Token
+from uuid_utils import uuid4
 
 from app.db import models as m
 from app.domain.accounts import deps
@@ -19,7 +20,6 @@ if TYPE_CHECKING:
 
     from litestar.connection import ASGIConnection, Request
     from litestar.handlers.base import BaseRouteHandler
-    from litestar.security.jwt import Token
 
 settings = get_settings()
 ACCESS_TOKEN_EXPIRATION = timedelta(minutes=15)
@@ -130,11 +130,6 @@ def create_access_token(
     Returns:
         JWT token string
     """
-    from datetime import UTC, datetime
-    from uuid import uuid4
-
-    from litestar.security.jwt import Token
-
     if amr is None:
         amr = ["pwd"] if auth_method == "password" else [auth_method]
     token = Token(

@@ -110,7 +110,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         changes: list[str],
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin user update event."""
+        """Log an admin user update event.
+
+        Returns:
+            The created audit log entry.
+        """
         return await self.log_action(
             action="admin.user.update",
             actor_id=actor_id,
@@ -131,7 +135,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         user_email: str,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin user deletion event."""
+        """Log an admin user deletion event.
+
+        Returns:
+            The created audit log entry.
+        """
         return await self.log_action(
             action="admin.user.delete",
             actor_id=actor_id,
@@ -152,7 +160,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         changes: list[str],
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team update event."""
+        """Log an admin team update event.
+
+        Returns:
+            The created audit log entry.
+        """
         return await self.log_action(
             action="admin.team.update",
             actor_id=actor_id,
@@ -173,7 +185,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         team_name: str,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team deletion event."""
+        """Log an admin team deletion event.
+
+        Returns:
+            The created audit log entry.
+        """
         return await self.log_action(
             action="admin.team.delete",
             actor_id=actor_id,
@@ -200,35 +216,6 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         """
         results = await self.list(
             m.AuditLog.actor_id == user_id,
-            order_by=[m.AuditLog.created_at.desc()],
-            limit=limit,
-        )
-        return list(results)
-
-    async def get_recent_activity(
-        self,
-        hours: int = 24,
-        limit: int = 100,
-        action_filter: str | None = None,
-    ) -> list[m.AuditLog]:
-        """Get recent system activity.
-
-        Args:
-            hours: Number of hours to look back
-            limit: Maximum number of entries to return
-            action_filter: Optional action prefix to filter by (e.g., 'user.')
-
-        Returns:
-            List of recent audit log entries
-        """
-        cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
-
-        conditions = [m.AuditLog.created_at >= cutoff_time]
-        if action_filter:
-            conditions.append(m.AuditLog.action.startswith(action_filter))
-
-        results = await self.list(
-            *conditions,
             order_by=[m.AuditLog.created_at.desc()],
             limit=limit,
         )

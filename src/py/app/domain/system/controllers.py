@@ -8,6 +8,7 @@ import structlog
 from litestar import Controller, MediaType, get
 from litestar.response import Response
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.domain.system import schemas as s
 
@@ -52,7 +53,7 @@ class SystemController(Controller):
         try:
             await db_session.execute(text("select 1"))
             db_status = "online"
-        except ConnectionRefusedError:
+        except SQLAlchemyError:
             db_status = "offline"
 
         healthy = db_status == "online"

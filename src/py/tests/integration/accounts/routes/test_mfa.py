@@ -47,7 +47,7 @@ async def _login_user(client: AsyncClient, email: str, password: str = "testPass
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 201
-    return response.json()["access_token"]
+    return cast("str", response.json()["access_token"])
 
 
 def _create_mfa_challenge_token(email: str, user_id: str) -> str:
@@ -81,7 +81,6 @@ async def _login_mfa_user(client: AsyncClient, email: str, password: str = "test
 # --- MFA Status Tests ---
 
 
-@pytest.mark.anyio
 async def test_get_mfa_status_disabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -108,7 +107,6 @@ async def test_get_mfa_status_disabled(
     assert data["backupCodesRemaining"] is None
 
 
-@pytest.mark.anyio
 async def test_get_mfa_status_enabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -149,7 +147,6 @@ async def test_get_mfa_status_enabled(
     assert data["backupCodesRemaining"] == 8
 
 
-@pytest.mark.anyio
 async def test_get_mfa_status_unauthenticated(client: AsyncClient) -> None:
     """Test getting MFA status without authentication."""
     response = await client.get("/api/mfa/status")
@@ -159,7 +156,6 @@ async def test_get_mfa_status_unauthenticated(client: AsyncClient) -> None:
 # --- MFA Setup Initiation Tests ---
 
 
-@pytest.mark.anyio
 async def test_initiate_mfa_setup_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -189,7 +185,6 @@ async def test_initiate_mfa_setup_success(
     assert "otpauth://totp/" in data["provisioningUri"]
 
 
-@pytest.mark.anyio
 async def test_initiate_mfa_setup_already_enabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -222,7 +217,6 @@ async def test_initiate_mfa_setup_already_enabled(
 # --- MFA Setup Confirmation Tests ---
 
 
-@pytest.mark.anyio
 async def test_confirm_mfa_setup_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -262,7 +256,6 @@ async def test_confirm_mfa_setup_success(
     assert user.two_factor_confirmed_at is not None
 
 
-@pytest.mark.anyio
 async def test_confirm_mfa_setup_invalid_code(
     client: AsyncClient,
     session: AsyncSession,
@@ -292,7 +285,6 @@ async def test_confirm_mfa_setup_invalid_code(
     assert "Invalid verification code" in response.text
 
 
-@pytest.mark.anyio
 async def test_confirm_mfa_setup_no_setup_in_progress(
     client: AsyncClient,
     session: AsyncSession,
@@ -321,7 +313,6 @@ async def test_confirm_mfa_setup_no_setup_in_progress(
     assert "No MFA setup in progress" in response.text
 
 
-@pytest.mark.anyio
 async def test_confirm_mfa_setup_already_enabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -357,7 +348,6 @@ async def test_confirm_mfa_setup_already_enabled(
 # --- MFA Disable Tests ---
 
 
-@pytest.mark.anyio
 async def test_disable_mfa_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -395,7 +385,6 @@ async def test_disable_mfa_success(
     # The service clears totp_secret, backup_codes, and is_two_factor_enabled internally
 
 
-@pytest.mark.anyio
 async def test_disable_mfa_wrong_password(
     client: AsyncClient,
     session: AsyncSession,
@@ -429,7 +418,6 @@ async def test_disable_mfa_wrong_password(
     assert "Invalid password" in response.text
 
 
-@pytest.mark.anyio
 async def test_disable_mfa_not_enabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -461,7 +449,6 @@ async def test_disable_mfa_not_enabled(
 # --- Backup Code Regeneration Tests ---
 
 
-@pytest.mark.anyio
 async def test_regenerate_backup_codes_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -502,7 +489,6 @@ async def test_regenerate_backup_codes_success(
     assert set(new_codes) != set(old_codes)
 
 
-@pytest.mark.anyio
 async def test_regenerate_backup_codes_wrong_password(
     client: AsyncClient,
     session: AsyncSession,
@@ -536,7 +522,6 @@ async def test_regenerate_backup_codes_wrong_password(
     assert "Invalid password" in response.text
 
 
-@pytest.mark.anyio
 async def test_regenerate_backup_codes_mfa_not_enabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -567,7 +552,6 @@ async def test_regenerate_backup_codes_mfa_not_enabled(
 # --- MFA Challenge Tests ---
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_verify_totp_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -605,7 +589,6 @@ async def test_mfa_challenge_verify_totp_success(
     assert data["token_type"].lower() == "bearer"
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_verify_backup_code_success(
     client: AsyncClient,
     session: AsyncSession,
@@ -644,7 +627,6 @@ async def test_mfa_challenge_verify_backup_code_success(
     # The service marks the used code as None internally
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_no_token(client: AsyncClient) -> None:
     """Test MFA challenge without challenge token."""
     response = await client.post(
@@ -656,7 +638,6 @@ async def test_mfa_challenge_no_token(client: AsyncClient) -> None:
     assert "No MFA challenge" in response.text
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_invalid_token(
     client: AsyncClient,
     session: AsyncSession,
@@ -671,7 +652,6 @@ async def test_mfa_challenge_invalid_token(
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_invalid_totp_code(
     client: AsyncClient,
     session: AsyncSession,
@@ -703,7 +683,6 @@ async def test_mfa_challenge_invalid_totp_code(
     assert "Invalid verification code" in response.text
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_invalid_backup_code(
     client: AsyncClient,
     session: AsyncSession,
@@ -735,7 +714,6 @@ async def test_mfa_challenge_invalid_backup_code(
     assert "Invalid backup code" in response.text
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_user_not_found(
     client: AsyncClient,
     session: AsyncSession,
@@ -752,7 +730,6 @@ async def test_mfa_challenge_user_not_found(
     assert response.status_code == 401
 
 
-@pytest.mark.anyio
 async def test_mfa_challenge_mfa_disabled(
     client: AsyncClient,
     session: AsyncSession,
@@ -784,7 +761,6 @@ async def test_mfa_challenge_mfa_disabled(
 # --- Complete MFA Flow Tests ---
 
 
-@pytest.mark.anyio
 async def test_complete_mfa_setup_flow(
     client: AsyncClient,
     session: AsyncSession,
@@ -827,7 +803,6 @@ async def test_complete_mfa_setup_flow(
     assert status_data["backupCodesRemaining"] == 8
 
 
-@pytest.mark.anyio
 async def test_complete_mfa_disable_flow(
     client: AsyncClient,
     session: AsyncSession,
