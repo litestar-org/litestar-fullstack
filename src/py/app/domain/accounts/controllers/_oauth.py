@@ -161,7 +161,7 @@ class OAuthController(Controller):
 
         return Redirect(path=redirect_path, status_code=HTTP_302_FOUND)
 
-    async def _process_google_callback(
+    async def _process_google_callback(  # noqa: PLR0911
         self,
         request: Request[Any, Any, Any],
         settings: AppSettings,
@@ -321,7 +321,7 @@ class OAuthController(Controller):
 
         return Redirect(path=redirect_path, status_code=HTTP_302_FOUND)
 
-    async def _process_github_callback(
+    async def _process_github_callback(  # noqa: PLR0911
         self,
         request: Request[Any, Any, Any],
         settings: AppSettings,
@@ -334,7 +334,24 @@ class OAuthController(Controller):
         action: str,
         payload: dict[str, Any],
     ) -> str:
-        """Process GitHub OAuth callback after validation."""
+        """Process GitHub OAuth callback after validation.
+
+        Args:
+            request: The request object
+            settings: Application settings
+            user_service: User service
+            oauth_account_service: OAuth account service
+            audit_service: Audit log service
+            code: Authorization code from GitHub
+            oauth_state: State parameter from OAuth flow
+            frontend_callback: Frontend callback URL
+            action: Action to perform (login, link, upgrade, mfa_disable)
+            payload: Decoded state payload
+
+        Returns:
+            The redirect path for the response.
+
+        """
         client = GitHubOAuth2(settings.GITHUB_OAUTH2_CLIENT_ID, settings.GITHUB_OAUTH2_CLIENT_SECRET)
         callback_url = str(request.url_for("oauth:github:callback"))
         oauth2_callback = OAuth2AuthorizeCallback(cast("BaseOAuth2[OAuth2Token]", client), redirect_url=callback_url)
@@ -367,7 +384,7 @@ class OAuthController(Controller):
                 request,
             )
 
-        if action in ("link", "upgrade"):
+        if action in {"link", "upgrade"}:
             state_user_id = payload.get("user_id")
             if not state_user_id:
                 return build_oauth_error_redirect(
@@ -485,7 +502,7 @@ async def _handle_mfa_disable(
     audit_service: AuditLogService,
     provider: str,
     account_id: str,
-    account_email: str | None,
+    _account_email: str | None,
     state_user_id: str,
     frontend_callback: str,
     request: Request[Any, Any, Any],
@@ -498,7 +515,7 @@ async def _handle_mfa_disable(
         audit_service: Audit log service
         provider: OAuth provider name
         account_id: Provider account ID
-        account_email: Provider account email
+        _account_email: Provider account email (unused, kept for API consistency)
         state_user_id: User ID from state
         frontend_callback: Callback URL
         request: Request object

@@ -318,7 +318,7 @@ strict-imports = false
 
 [tool.codespell]
 ignore-words-list = "alog,selectin,selectinload,asend"
-skip = 'uv.lock,package-lock.json,*/bun.lock,node_modules,.venv,.agent,./src/py/app/server/static/*,*.txt,*.js,*.css,*.map,*.json'
+skip = 'uv.lock,package-lock.json,*/bun.lock,node_modules,.venv,.agent,./src/py/app/server/static/*,*.txt,*.js,*.css,*.map,*.json,htmlcov'
 
 [tool.mypy]
 disallow_any_generics = false
