@@ -165,6 +165,10 @@ export const AdminTeamDetailSchema = {
       default: true,
       type: "boolean",
     },
+    memberCount: {
+      default: 0,
+      type: "integer",
+    },
     members: {
       items: {
         $ref: "#/components/schemas/AdminTeamMember",
@@ -173,6 +177,16 @@ export const AdminTeamDetailSchema = {
     },
     name: {
       type: "string",
+    },
+    ownerEmail: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
     },
     slug: {
       type: "string",

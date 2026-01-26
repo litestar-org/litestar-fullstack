@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { confirmMfaSetup, disableMfa, initiateMfaSetup, profileOAuthLink, profileOAuthUnlink, regenerateMfaBackupCodes, verifyMfaChallenge } from "@/lib/generated/api"
+import {
+  confirmMfaSetup,
+  disableMfa,
+  initiateDisableMfaOAuth,
+  initiateMfaSetup,
+  profileOAuthLink,
+  profileOAuthUnlink,
+  regenerateMfaBackupCodes,
+  verifyMfaChallenge,
+} from "@/lib/generated/api"
 import { getMfaStatusOptions, profileOAuthAccountsOptions, profileOAuthAccountsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function useMfaStatus() {
@@ -45,6 +54,18 @@ export function useDisableMfa() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getMfaStatus"] })
       toast.success("MFA disabled")
+    },
+  })
+}
+
+export function useInitiateDisableMfaOAuth() {
+  return useMutation({
+    mutationFn: async (provider: string) => {
+      const { data } = await initiateDisableMfaOAuth({
+        path: { provider },
+        throwOnError: true,
+      })
+      return data
     },
   })
 }

@@ -39,19 +39,18 @@ class AdminTeamDetail(CamelizedBaseStruct, kw_only=True):
     description: str | None = None
     is_active: bool = True
     members: list[AdminTeamMember] = []
+    member_count: int = 0
+    owner_email: str | None = None
 
-    @property
-    def member_count(self) -> int:
-        """Return the number of members in the team."""
-        return len(self.members)
-
-    @property
-    def owner_email(self) -> str | None:
-        """Return the email of the team owner, if any."""
+    def __post_init__(self) -> None:
+        """Compute derived fields from members."""
+        object.__setattr__(self, "member_count", len(self.members))
+        owner_email = None
         for member in self.members:
             if member.is_owner:
-                return member.user.email
-        return None
+                owner_email = member.user.email
+                break
+        object.__setattr__(self, "owner_email", owner_email)
 
 
 class AdminTeamUpdate(msgspec.Struct, gc=False, omit_defaults=True):

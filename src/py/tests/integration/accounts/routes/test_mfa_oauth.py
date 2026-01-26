@@ -2,12 +2,11 @@ from typing import Any
 from unittest.mock import patch
 from uuid import uuid4
 
+import pytest
 from httpx import AsyncClient
 from httpx_oauth.oauth2 import OAuth2Token
 from litestar.status_codes import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-import pytest
 from pytest import MonkeyPatch
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.accounts.guards import create_access_token

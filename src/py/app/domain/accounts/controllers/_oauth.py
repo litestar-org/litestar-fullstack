@@ -559,11 +559,13 @@ async def _handle_mfa_disable(
         auth_method="oauth_mfa_disable",
     )
 
-    params = urlencode({
-        "token": access_token,
-        "message": "MFA disabled successfully",
-        "action": "mfa_disable",
-        "success": "true",
-    })
+    params = urlencode(
+        {
+            "token": access_token,
+            "message": "MFA disabled successfully",
+            "action": "mfa_disable",
+            "success": "true",
+        }
+    )
     separator = "&" if "?" in frontend_callback else "?"
     return f"{frontend_callback}{separator}{params}"
