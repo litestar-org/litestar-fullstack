@@ -59,6 +59,7 @@ import {
   getTag,
   getTeam,
   getUser,
+  initiateDisableMfaOAuth,
   initiateMfaSetup,
   listRoles,
   listTags,
@@ -235,6 +236,9 @@ import type {
   GetUserData,
   GetUserError,
   GetUserResponse,
+  InitiateDisableMfaOAuthData,
+  InitiateDisableMfaOAuthError,
+  InitiateDisableMfaOAuthResponse,
   InitiateMfaSetupData,
   InitiateMfaSetupResponse,
   ListRolesData,
@@ -1421,6 +1425,34 @@ export const disableMfaMutation = (
   };
   return mutationOptions;
 };
+
+export const initiateDisableMfaOAuthQueryKey = (
+  options: Options<InitiateDisableMfaOAuthData>,
+) => createQueryKey("initiateDisableMfaOAuth", options);
+
+/**
+ * InitiateDisableMfaOauth
+ */
+export const initiateDisableMfaOAuthOptions = (
+  options: Options<InitiateDisableMfaOAuthData>,
+) =>
+  queryOptions<
+    InitiateDisableMfaOAuthResponse,
+    InitiateDisableMfaOAuthError,
+    InitiateDisableMfaOAuthResponse,
+    ReturnType<typeof initiateDisableMfaOAuthQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await initiateDisableMfaOAuth({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: initiateDisableMfaOAuthQueryKey(options),
+  });
 
 /**
  * InitiateSetup

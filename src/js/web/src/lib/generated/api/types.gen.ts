@@ -54,11 +54,19 @@ export type AdminTeamDetail = {
   description?: string | null;
   id: string;
   isActive?: boolean;
-  memberCount?: number;
+  members?: Array<AdminTeamMember>;
   name: string;
-  ownerEmail?: string | null;
   slug: string;
   updatedAt: string;
+};
+
+/**
+ * AdminTeamMember
+ */
+export type AdminTeamMember = {
+  isOwner: boolean;
+  role: string;
+  user: User;
 };
 
 /**
@@ -97,10 +105,10 @@ export type AdminUserDetail = {
   joinedAt?: string | null;
   loginCount?: number;
   name?: string | null;
-  oauthProviders?: Array<string>;
+  oauthAccounts?: Array<OauthAccount>;
   phone?: string | null;
-  roles?: Array<string>;
-  teams?: Array<string>;
+  roles?: Array<UserRole>;
+  teams?: Array<UserTeam>;
   updatedAt: string;
   username?: string | null;
   verifiedAt?: string | null;
@@ -125,9 +133,9 @@ export type AdminUserSummary = {
  * AdminUserUpdate
  */
 export type AdminUserUpdate = {
-  is_active?: boolean;
-  is_superuser?: boolean;
-  is_verified?: boolean;
+  isActive?: boolean;
+  isSuperuser?: boolean;
+  isVerified?: boolean;
   name?: string | null;
   phone?: string | null;
   username?: string | null;
@@ -956,10 +964,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1037,10 +1045,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1117,10 +1125,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -2127,6 +2135,44 @@ export type DisableMfaResponses = {
 };
 
 export type DisableMfaResponse = DisableMfaResponses[keyof DisableMfaResponses];
+
+export type InitiateDisableMfaOAuthData = {
+  body?: never;
+  path: {
+    provider: string;
+  };
+  query?: never;
+  url: "/api/mfa/disable/oauth/{provider}";
+};
+
+export type InitiateDisableMfaOAuthErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type InitiateDisableMfaOAuthError =
+  InitiateDisableMfaOAuthErrors[keyof InitiateDisableMfaOAuthErrors];
+
+export type InitiateDisableMfaOAuthResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: OAuthAuthorization;
+};
+
+export type InitiateDisableMfaOAuthResponse =
+  InitiateDisableMfaOAuthResponses[keyof InitiateDisableMfaOAuthResponses];
 
 export type InitiateMfaSetupData = {
   body?: never;

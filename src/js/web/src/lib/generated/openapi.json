@@ -176,22 +176,14 @@
             "default": true,
             "type": "boolean"
           },
-          "memberCount": {
-            "default": 0,
-            "type": "integer"
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/AdminTeamMember"
+            },
+            "type": "array"
           },
           "name": {
             "type": "string"
-          },
-          "ownerEmail": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
           },
           "slug": {
             "type": "string"
@@ -209,6 +201,26 @@
           "updatedAt"
         ],
         "title": "AdminTeamDetail",
+        "type": "object"
+      },
+      "AdminTeamMember": {
+        "properties": {
+          "isOwner": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "isOwner",
+          "role",
+          "user"
+        ],
+        "title": "AdminTeamMember",
         "type": "object"
       },
       "AdminTeamSummary": {
@@ -337,9 +349,9 @@
               }
             ]
           },
-          "oauthProviders": {
+          "oauthAccounts": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/OauthAccount"
             },
             "type": "array"
           },
@@ -355,13 +367,13 @@
           },
           "roles": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/UserRole"
             },
             "type": "array"
           },
           "teams": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/UserTeam"
             },
             "type": "array"
           },
@@ -460,21 +472,21 @@
       },
       "AdminUserUpdate": {
         "properties": {
-          "is_active": {
+          "isActive": {
             "oneOf": [
               {
                 "type": "boolean"
               }
             ]
           },
-          "is_superuser": {
+          "isSuperuser": {
             "oneOf": [
               {
                 "type": "boolean"
               }
             ]
           },
-          "is_verified": {
+          "isVerified": {
             "oneOf": [
               {
                 "type": "boolean"
@@ -2798,7 +2810,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -2861,7 +2873,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "actorIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3187,7 +3199,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3250,7 +3262,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "actorIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3568,7 +3580,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actorIdIn",
+            "name": "actionIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -3631,7 +3643,7 @@
             "allowReserved": false,
             "deprecated": false,
             "in": "query",
-            "name": "actionIn",
+            "name": "actorIdIn",
             "required": false,
             "schema": {
               "oneOf": [
@@ -6013,6 +6025,78 @@
           }
         },
         "summary": "DisableMfa",
+        "tags": [
+          "MFA"
+        ]
+      }
+    },
+    "/api/mfa/disable/oauth/{provider}": {
+      "get": {
+        "deprecated": false,
+        "operationId": "InitiateDisableMfaOAuth",
+        "parameters": [
+          {
+            "deprecated": false,
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthAuthorization"
+                }
+              }
+            },
+            "description": "Request fulfilled, document follows",
+            "headers": {}
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "detail": "Bad Request",
+                      "extra": {},
+                      "status_code": 400
+                    }
+                  ],
+                  "properties": {
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad request syntax or unsupported method"
+          }
+        },
+        "summary": "InitiateDisableMfaOauth",
         "tags": [
           "MFA"
         ]

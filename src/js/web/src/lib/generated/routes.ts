@@ -52,6 +52,7 @@ export type RouteName =
   | 'get_user_api_users_user_id:uuid'
   | 'get_user_logs'
   | 'get_verification_status'
+  | 'initiate_disable_mfa_oauth'
   | 'initiate_setup'
   | 'list_accounts'
   | 'list_logs'
@@ -192,6 +193,9 @@ export interface RoutePathParams {
   };
   'get_verification_status': {
     user_id: UUID;
+  };
+  'initiate_disable_mfa_oauth': {
+    provider: string;
   };
   'initiate_setup': Record<string, never>;
   'list_accounts': Record<string, never>;
@@ -388,6 +392,7 @@ export interface RouteQueryParams {
     targetTypeIn?: string[];
   };
   'get_verification_status': Record<string, never>;
+  'initiate_disable_mfa_oauth': Record<string, never>;
   'initiate_setup': Record<string, never>;
   'list_accounts': {
     createdAfter?: DateTime;
@@ -815,6 +820,13 @@ export const routeDefinitions = {
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['user_id'] as const,
+    queryParams: [] as const,
+  },
+  'initiate_disable_mfa_oauth': {
+    path: '/api/mfa/disable/oauth/{provider}',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: ['provider'] as const,
     queryParams: [] as const,
   },
   'initiate_setup': {

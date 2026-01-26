@@ -420,6 +420,19 @@
       ],
       "uri": "/api/email-verification/status/{user_id}"
     },
+    "initiate_disable_mfa_oauth": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "provider": "string"
+      },
+      "parameters": [
+        "provider"
+      ],
+      "uri": "/api/mfa/disable/oauth/{provider}"
+    },
     "initiate_setup": {
       "method": "post",
       "methods": [

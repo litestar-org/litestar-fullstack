@@ -156,6 +156,9 @@ import type {
   GetUserData,
   GetUserErrors,
   GetUserResponses,
+  InitiateDisableMfaOAuthData,
+  InitiateDisableMfaOAuthErrors,
+  InitiateDisableMfaOAuthResponses,
   InitiateMfaSetupData,
   InitiateMfaSetupResponses,
   ListRolesData,
@@ -947,6 +950,22 @@ export const disableMfa = <ThrowOnError extends boolean = false>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+
+/**
+ * InitiateDisableMfaOauth
+ */
+export const initiateDisableMfaOAuth = <ThrowOnError extends boolean = false>(
+  options: Options<InitiateDisableMfaOAuthData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    InitiateDisableMfaOAuthResponses,
+    InitiateDisableMfaOAuthErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/mfa/disable/oauth/{provider}",
+    ...options,
   });
 
 /**
