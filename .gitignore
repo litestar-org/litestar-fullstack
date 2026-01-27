@@ -191,7 +191,9 @@ src/js/py/app/server/static/
 # AI agent symlinks (AGENTS.md is tracked, tool-specific symlinks are not)
 CLAUDE.md
 GEMINI.md
+AGENT.md
 .gemini/
 .claude/
 .agent/
 .geminiignore
+specs/
