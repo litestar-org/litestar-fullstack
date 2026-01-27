@@ -16,7 +16,7 @@ from app.domain.teams.guards import (
 )
 from app.lib import constants
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.security, pytest.mark.teams]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.auth, pytest.mark.security, pytest.mark.teams]
 
 
 def test_membership_superuser_flag_passes() -> None:

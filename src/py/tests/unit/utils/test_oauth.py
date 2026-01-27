@@ -19,7 +19,7 @@ from app.utils.oauth import (
     verify_oauth_state,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.oauth, pytest.mark.security]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.oauth, pytest.mark.security]
 
 
 def test_create_basic_state() -> None:

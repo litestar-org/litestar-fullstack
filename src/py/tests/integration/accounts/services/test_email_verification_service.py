@@ -14,7 +14,7 @@ from tests.factories import EmailVerificationTokenFactory, UserFactory, get_raw_
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.services]
 
 
 async def test_create_verification_token_success(

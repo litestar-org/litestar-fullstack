@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
     from litestar.types import HTTPResponseBodyEvent, HTTPResponseStartEvent, HTTPScope
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture(name="client")
 async def fx_client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:

@@ -23,6 +23,8 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture
 async def seeded_db(
@@ -59,7 +61,7 @@ async def seeded_db(
 
 
 @pytest.fixture
-async def _patch_db(
+def _patch_db(
     app: Litestar,
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],

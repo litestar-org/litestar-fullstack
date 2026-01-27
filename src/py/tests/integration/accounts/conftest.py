@@ -25,6 +25,8 @@ if TYPE_CHECKING:
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture
 async def user_service(session: AsyncSession) -> AsyncGenerator[UserService, None]:

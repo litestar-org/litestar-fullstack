@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from litestar.testing import AsyncTestClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.integration, pytest.mark.teams, pytest.mark.endpoints]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.teams, pytest.mark.endpoints]
 
 
 @pytest.fixture(autouse=True)

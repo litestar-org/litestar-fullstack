@@ -29,7 +29,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.pool import NullPool
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
+    from collections.abc import AsyncGenerator, Generator
 
     from litestar import Litestar
     from pytest_databases.docker.postgres import PostgresService
@@ -61,15 +61,20 @@ def anyio_backend_options() -> dict[str, bool]:
 
 
 @pytest.fixture(name="engine", scope="session")
-async def fx_engine(postgres_service: PostgresService) -> AsyncGenerator[AsyncEngine, None]:
+def fx_engine(postgres_service: PostgresService) -> Generator[AsyncEngine, None, None]:
     """PostgreSQL instance for testing.
 
     Uses asyncpg driver (native async) instead of psycopg (greenlet-based)
     to avoid MissingGreenlet errors in tests.
 
+    Note: This is a sync fixture that yields an async engine. The engine creation
+    and disposal are sync operations, but engine usage is async.
+
     Returns:
         Async SQLAlchemy engine instance.
     """
+    import asyncio
+
     # Set DATABASE_URL for the app to use
     db_url = URL(
         drivername="postgresql+asyncpg",
@@ -90,7 +95,11 @@ async def fx_engine(postgres_service: PostgresService) -> AsyncGenerator[AsyncEn
 
     yield engine
 
-    await engine.dispose()
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(engine.dispose())
+    finally:
+        loop.close()
 
 
 @pytest.fixture(name="sessionmaker", scope="session")
@@ -100,18 +109,31 @@ def fx_sessionmaker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
 
 
 @pytest.fixture(name="db_schema", scope="session")
-async def fx_db_schema(engine: AsyncEngine) -> AsyncGenerator[None, None]:
+def fx_db_schema(engine: AsyncEngine) -> Generator[None, None, None]:
     """Create schema once per test session.
 
     Note: Schema is created once and not dropped until session ends.
     Individual tests use db_cleanup for per-test isolation.
     """
-    metadata = UUIDAuditBase.registry.metadata
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.create_all)
-    yield
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
+    import asyncio
+
+    async def create_schema() -> None:
+        metadata = UUIDAuditBase.registry.metadata
+        async with engine.begin() as conn:
+            await conn.run_sync(metadata.create_all)
+
+    async def drop_schema() -> None:
+        metadata = UUIDAuditBase.registry.metadata
+        async with engine.begin() as conn:
+            await conn.run_sync(metadata.drop_all)
+
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(create_schema())
+        yield
+        loop.run_until_complete(drop_schema())
+    finally:
+        loop.close()
 
 
 @pytest.fixture

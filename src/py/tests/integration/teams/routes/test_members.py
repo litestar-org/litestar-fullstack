@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from httpx import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.integration, pytest.mark.endpoints, pytest.mark.auth]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.endpoints, pytest.mark.auth]
 
 
 async def _login_user(client: AsyncClient, user: m.User) -> str:

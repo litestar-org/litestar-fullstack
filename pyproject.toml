@@ -16,7 +16,7 @@ classifiers = [
 ]
 dependencies = [
   "litestar[jinja,jwt,structlog,cryptography,pydantic]",
-  "advanced-alchemy[uuid,obstore,pwdlib] @ git+https://github.com/litestar-org/advanced-alchemy.git@main",
+  "advanced-alchemy[uuid,obstore,pwdlib]",
   "redis",
   "psycopg[pool,binary]",
   "python-dotenv",
@@ -81,6 +81,8 @@ test = [
   "polyfactory",
   "aiosqlite",
   "asyncpg",
+  "anyio",
+  "pytest-anyio",
 ]
 
 

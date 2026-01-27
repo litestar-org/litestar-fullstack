@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture
 async def team_service(session: AsyncSession) -> AsyncGenerator[TeamService, None]:

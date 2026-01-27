@@ -15,7 +15,7 @@ from tests.factories import PasswordResetTokenFactory, UserFactory, get_raw_toke
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.integration, pytest.mark.auth, pytest.mark.services, pytest.mark.security]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.services, pytest.mark.security]
 
 
 async def test_create_reset_token_success(

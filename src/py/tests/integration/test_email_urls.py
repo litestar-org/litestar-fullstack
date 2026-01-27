@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from litestar.testing import AsyncTestClient
 
-pytestmark = [pytest.mark.integration, pytest.mark.teams, pytest.mark.email]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.teams, pytest.mark.email]
 
 
 @pytest.fixture(autouse=True)

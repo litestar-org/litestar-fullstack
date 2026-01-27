@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from app.domain.teams.services import TeamService
 
-pytestmark = [pytest.mark.integration, pytest.mark.services]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.services]
 
 
 async def test_create_team_basic(session: AsyncSession, team_service: TeamService) -> None:

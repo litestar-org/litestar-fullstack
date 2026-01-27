@@ -11,7 +11,7 @@ import pytest
 from app.db import models as m
 from tests.factories import RefreshTokenFactory
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.models]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.auth, pytest.mark.models]
 
 
 def test_is_expired_property_true() -> None:

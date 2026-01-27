@@ -12,7 +12,7 @@ import pytest
 from app.db import models as m
 from tests.factories import EmailVerificationTokenFactory, PasswordResetTokenFactory
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.auth]
 
 
 # -----------------------------------------------------------------------------

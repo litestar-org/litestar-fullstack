@@ -11,7 +11,7 @@ from app.domain.teams.services import TeamService
 from app.lib import constants
 from tests.factories import RoleFactory, UserFactory, UserRoleFactory
 
-pytestmark = [pytest.mark.unit, pytest.mark.services]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.services]
 
 
 def test_can_view_all_superuser_flag() -> None:

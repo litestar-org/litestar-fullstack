@@ -21,7 +21,7 @@ from app.lib import constants
 from app.lib.settings import get_settings
 from tests.factories import UserFactory
 
-pytestmark = [pytest.mark.unit, pytest.mark.auth, pytest.mark.security]
+pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.auth, pytest.mark.security]
 
 settings = get_settings()
 

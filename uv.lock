@@ -11,12 +11,16 @@ resolution-markers = [
 [[package]]
 name = "advanced-alchemy"
 version = "1.8.2"
-source = { git = "https://github.com/litestar-org/advanced-alchemy.git?rev=main#ebc1c2a99f1599d6db44f6ee2508549f908a0a4b" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "alembic" },
     { name = "greenlet" },
     { name = "sqlalchemy" },
     { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/19/db/85cc9777dbd23d1193ae68d27a373358b2c67b7929d860ac9a9c1b42f9d5/advanced_alchemy-1.8.2.tar.gz", hash = "sha256:858c60430558306fb0550e247f1afd473afd49a50b17e84f9cb1cdb7987d57ec", size = 920316, upload-time = "2025-12-13T01:05:47.286Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/d6/483192bcf2d9d6addf1fa5df334f5e85c31361fcffae49a20629471dedc9/advanced_alchemy-1.8.2-py3-none-any.whl", hash = "sha256:37d476ba6db4ffea9fea8e0bc3c6356926c0e49291b8508c96bc2c0e6b27ea3f", size = 259812, upload-time = "2025-12-13T01:05:45.359Z" },
 ]
 
 [package.optional-dependencies]
@@ -143,6 +147,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "aiosqlite" },
+    { name = "anyio" },
     { name = "asyncpg" },
     { name = "bump-my-version" },
     { name = "codespell" },
@@ -152,6 +157,7 @@ dev = [
     { name = "pre-commit" },
     { name = "pyright" },
     { name = "pytest" },
+    { name = "pytest-anyio" },
     { name = "pytest-cov" },
     { name = "pytest-databases", extra = ["postgres"] },
     { name = "pytest-mock" },
@@ -196,11 +202,13 @@ linting = [
 ]
 test = [
     { name = "aiosqlite" },
+    { name = "anyio" },
     { name = "asyncpg" },
     { name = "bump-my-version" },
     { name = "coverage", extra = ["toml"] },
     { name = "polyfactory" },
     { name = "pytest" },
+    { name = "pytest-anyio" },
     { name = "pytest-cov" },
     { name = "pytest-databases", extra = ["postgres"] },
     { name = "pytest-mock" },
@@ -210,7 +218,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "advanced-alchemy", extras = ["uuid", "obstore", "pwdlib"], git = "https://github.com/litestar-org/advanced-alchemy.git?rev=main" },
+    { name = "advanced-alchemy", extras = ["uuid", "obstore", "pwdlib"] },
     { name = "httpx-oauth" },
     { name = "litestar", extras = ["jinja", "jwt", "structlog", "cryptography", "pydantic"] },
     { name = "litestar-email", extras = ["smtp"], specifier = ">=0.3.0" },
@@ -227,6 +235,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "aiosqlite" },
+    { name = "anyio" },
     { name = "asyncpg" },
     { name = "bump-my-version" },
     { name = "codespell", specifier = ">=2.4.1" },
@@ -236,6 +245,7 @@ dev = [
     { name = "pre-commit", specifier = ">=3.4.0" },
     { name = "pyright" },
     { name = "pytest" },
+    { name = "pytest-anyio" },
     { name = "pytest-cov" },
     { name = "pytest-databases", extras = ["postgres"], specifier = ">=0.1.0" },
     { name = "pytest-mock" },
@@ -278,11 +288,13 @@ linting = [
 ]
 test = [
     { name = "aiosqlite" },
+    { name = "anyio" },
     { name = "asyncpg" },
     { name = "bump-my-version" },
     { name = "coverage", extras = ["toml"] },
     { name = "polyfactory" },
     { name = "pytest" },
+    { name = "pytest-anyio" },
     { name = "pytest-cov" },
     { name = "pytest-databases", extras = ["postgres"], specifier = ">=0.1.0" },
     { name = "pytest-mock" },
@@ -2441,6 +2453,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d1/db/7ef3487e0fb0049ddb5ce41d3a49c235bf9ad299b6a25d5780a89f19230f/pytest-9.0.2.tar.gz", hash = "sha256:75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11", size = 1568901, upload-time = "2025-12-06T21:30:51.014Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3b/ab/b3226f0bd7cdcf710fbede2b3548584366da3b19b5021e74f5bde2a8fa3f/pytest-9.0.2-py3-none-any.whl", hash = "sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b", size = 374801, upload-time = "2025-12-06T21:30:49.154Z" },
+]
+
+[[package]]
+name = "pytest-anyio"
+version = "0.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/44/a02e5877a671b0940f21a7a0d9704c22097b123ed5cdbcca9cab39f17acc/pytest-anyio-0.0.0.tar.gz", hash = "sha256:b41234e9e9ad7ea1dbfefcc1d6891b23d5ef7c9f07ccf804c13a9cc338571fd3", size = 1560, upload-time = "2021-06-29T22:57:30.846Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c6/25/bd6493ae85d0a281b6a0f248d0fdb1d9aa2b31f18bcd4a8800cf397d8209/pytest_anyio-0.0.0-py2.py3-none-any.whl", hash = "sha256:dc8b5c4741cb16ff90be37fddd585ca943ed12bbeb563de7ace6cd94441d8746", size = 1999, upload-time = "2021-06-29T22:57:29.158Z" },
 ]
 
 [[package]]
