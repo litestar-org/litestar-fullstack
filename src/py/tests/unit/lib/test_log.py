@@ -1,6 +1,10 @@
 from typing import TYPE_CHECKING, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
+pytestmark = pytest.mark.anyio
+
 if TYPE_CHECKING:
     from litestar.types import Scope
 

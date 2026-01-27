@@ -1,6 +1,10 @@
 from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+pytestmark = pytest.mark.anyio
+
 from litestar.exceptions import (
     NotFoundException,
     PermissionDeniedException,
