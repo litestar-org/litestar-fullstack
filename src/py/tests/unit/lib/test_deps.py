@@ -3,12 +3,12 @@ from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-pytestmark = pytest.mark.anyio
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.lib import deps
 from app.lib.deps import CompositeServiceMixin, provide_services
+
+pytestmark = pytest.mark.anyio
 
 
 async def test_get_task_queue() -> None:

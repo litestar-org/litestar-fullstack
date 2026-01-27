@@ -1,9 +1,9 @@
 import pyotp
 import pytest
 
-pytestmark = pytest.mark.anyio
-
 from app.lib import crypt
+
+pytestmark = pytest.mark.anyio
 
 
 async def test_password_hashing() -> None:
