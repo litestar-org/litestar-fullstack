@@ -3,11 +3,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-pytestmark = pytest.mark.anyio
-
-if TYPE_CHECKING:
-    from litestar.types import Scope
-
 from app.lib.log import (
     EventFilter,
     StructlogMiddleware,
@@ -18,6 +13,11 @@ from app.lib.log import (
     structlog_json_serializer,
     structlog_processors,
 )
+
+pytestmark = pytest.mark.anyio
+
+if TYPE_CHECKING:
+    from litestar.types import Scope
 
 
 def test_is_tty() -> None:

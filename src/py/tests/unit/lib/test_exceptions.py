@@ -2,9 +2,6 @@ from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-pytestmark = pytest.mark.anyio
-
 from litestar.exceptions import (
     NotFoundException,
     PermissionDeniedException,
@@ -20,6 +17,8 @@ from app.lib.exceptions import (
 
 if TYPE_CHECKING:
     from litestar.types import Scope
+
+pytestmark = pytest.mark.anyio
 
 
 def test_application_error_init() -> None:
