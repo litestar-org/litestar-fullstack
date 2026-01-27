@@ -238,7 +238,8 @@ async def test_verification_email_security_considerations(
 
     # Note: HTML escapes apostrophes as &#x27; and may have line breaks in text
     assert "didn't create an account" in html.lower() or "didn&#x27;t create an account" in html.lower()
-    assert "safely ignore" in html.lower()
+    # Template may have whitespace/newlines between words
+    assert "safely" in html.lower() and "ignore" in html.lower()
     assert "expire" in html.lower()
 
 
