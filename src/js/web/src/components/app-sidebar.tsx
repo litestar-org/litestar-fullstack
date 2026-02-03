@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { Home, ShieldCheck, Users } from "lucide-react"
+import { Home, ShieldCheck, Users, LayoutDashboard } from "lucide-react"
 import type * as React from "react"
 import { useEffect, useMemo } from "react"
 import { NavMain } from "@/components/nav-main"
@@ -52,6 +52,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           { title: "All teams", to: "/teams" },
           { title: "Create new", to: "/teams/new" },
         ],
+      },
+      {
+        title: "Workspaces",
+        to: "/workspaces",
+        icon: LayoutDashboard,
       },
     ]
 

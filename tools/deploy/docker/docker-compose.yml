@@ -78,10 +78,12 @@ services:
       cache:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "8005:8000"
     environment:
       VITE_DEV_MODE: "false"
       SAQ_USE_SERVER_LIFESPAN: "false"
+      APP_URL: "http://localhost:8005"
+      ALLOWED_CORS_ORIGINS: '["localhost:3006","localhost:8080","localhost:8000","localhost:8005"]'
     env_file:
       - .env.docker
   worker:

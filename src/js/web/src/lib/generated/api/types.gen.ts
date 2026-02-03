@@ -432,6 +432,55 @@ export type TagUpdate = {
 };
 
 /**
+ * Task
+ */
+export type Task = {
+  assignee?: User | null;
+  assigneeId?: string | null;
+  createdAt: string;
+  description?: string | null;
+  id: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  title: string;
+  updatedAt: string;
+  workspaceId: string;
+};
+
+/**
+ * TaskCreate
+ */
+export type TaskCreate = {
+  assigneeId?: string | null;
+  description?: string | null;
+  priority?: TaskPriority;
+  status?: TaskStatus;
+  title: string;
+  workspaceId: string;
+};
+
+/**
+ * TaskPriority
+ */
+export type TaskPriority = "low" | "medium" | "high";
+
+/**
+ * TaskStatus
+ */
+export type TaskStatus = "todo" | "in-progress" | "done";
+
+/**
+ * TaskUpdate
+ */
+export type TaskUpdate = {
+  assigneeId?: string | null;
+  description?: string | null;
+  priority?: TaskPriority | null;
+  status?: TaskStatus | null;
+  title?: string | null;
+};
+
+/**
  * Team
  */
 export type Team = {
@@ -611,6 +660,37 @@ export type UserUpdate = {
   password?: string | null;
   phone?: string | null;
   username?: string | null;
+};
+
+/**
+ * Workspace
+ */
+export type Workspace = {
+  createdAt: string;
+  description?: string | null;
+  id: string;
+  name: string;
+  slug: string;
+  tasks?: Array<Task>;
+  teamId: string;
+  updatedAt: string;
+};
+
+/**
+ * WorkspaceCreate
+ */
+export type WorkspaceCreate = {
+  description?: string | null;
+  name: string;
+  teamId: string;
+};
+
+/**
+ * WorkspaceUpdate
+ */
+export type WorkspaceUpdate = {
+  description?: string | null;
+  name?: string | null;
 };
 
 export type ForgotPasswordData = {
@@ -966,10 +1046,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1047,10 +1127,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1127,10 +1207,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    targetTypeIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
-    actorIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
+    targetTypeIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -2963,6 +3043,122 @@ export type UpdateTagResponses = {
 
 export type UpdateTagResponse = UpdateTagResponses[keyof UpdateTagResponses];
 
+export type CreateTaskData = {
+  body: TaskCreate;
+  path?: never;
+  query?: never;
+  url: "/api/tasks";
+};
+
+export type CreateTaskErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type CreateTaskError = CreateTaskErrors[keyof CreateTaskErrors];
+
+export type CreateTaskResponses = {
+  /**
+   * Document created, URL follows
+   */
+  201: Task;
+};
+
+export type CreateTaskResponse = CreateTaskResponses[keyof CreateTaskResponses];
+
+export type DeleteTaskData = {
+  body?: never;
+  path: {
+    /**
+     * Task ID
+     *
+     * The task to delete.
+     */
+    task_id: string;
+  };
+  query?: never;
+  url: "/api/tasks/{task_id}";
+};
+
+export type DeleteTaskErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type DeleteTaskError = DeleteTaskErrors[keyof DeleteTaskErrors];
+
+export type DeleteTaskResponses = {
+  /**
+   * Request fulfilled, nothing follows
+   */
+  204: void;
+};
+
+export type DeleteTaskResponse = DeleteTaskResponses[keyof DeleteTaskResponses];
+
+export type UpdateTaskData = {
+  body: TaskUpdate;
+  path: {
+    /**
+     * Task ID
+     *
+     * The task to update.
+     */
+    task_id: string;
+  };
+  query?: never;
+  url: "/api/tasks/{task_id}";
+};
+
+export type UpdateTaskErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type UpdateTaskError = UpdateTaskErrors[keyof UpdateTaskErrors];
+
+export type UpdateTaskResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: Task;
+};
+
+export type UpdateTaskResponse = UpdateTaskResponses[keyof UpdateTaskResponses];
+
 export type ListTeamsData = {
   body?: never;
   path?: never;
@@ -3863,6 +4059,244 @@ export type UpdateUserResponses = {
 };
 
 export type UpdateUserResponse = UpdateUserResponses[keyof UpdateUserResponses];
+
+export type ListWorkspacesData = {
+  body?: never;
+  path?: never;
+  query?: {
+    ids?: Array<string> | null;
+    createdBefore?: string | null;
+    createdAfter?: string | null;
+    updatedBefore?: string | null;
+    updatedAfter?: string | null;
+    /**
+     * Field to search
+     */
+    searchString?: string | null;
+    /**
+     * Search should be case sensitive
+     */
+    searchIgnoreCase?: boolean | null;
+    currentPage?: number;
+    pageSize?: number;
+    /**
+     * Order by field
+     */
+    orderBy?: string | null;
+    /**
+     * Field to search
+     */
+    sortOrder?: "asc" | "desc" | null;
+  };
+  url: "/api/workspaces";
+};
+
+export type ListWorkspacesErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type ListWorkspacesError =
+  ListWorkspacesErrors[keyof ListWorkspacesErrors];
+
+export type ListWorkspacesResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: {
+    items?: Array<Workspace>;
+    /**
+     * Maximal number of items to send.
+     */
+    limit?: number;
+    /**
+     * Offset from the beginning of the query.
+     */
+    offset?: number;
+    /**
+     * Total number of items.
+     */
+    total?: number;
+  };
+};
+
+export type ListWorkspacesResponse =
+  ListWorkspacesResponses[keyof ListWorkspacesResponses];
+
+export type CreateWorkspaceData = {
+  body: WorkspaceCreate;
+  path?: never;
+  query?: never;
+  url: "/api/workspaces";
+};
+
+export type CreateWorkspaceErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type CreateWorkspaceError =
+  CreateWorkspaceErrors[keyof CreateWorkspaceErrors];
+
+export type CreateWorkspaceResponses = {
+  /**
+   * Document created, URL follows
+   */
+  201: Workspace;
+};
+
+export type CreateWorkspaceResponse =
+  CreateWorkspaceResponses[keyof CreateWorkspaceResponses];
+
+export type DeleteWorkspaceData = {
+  body?: never;
+  path: {
+    /**
+     * Workspace ID
+     *
+     * The workspace to retrieve.
+     */
+    workspace_id: string;
+  };
+  query?: never;
+  url: "/api/workspaces/{workspace_id}";
+};
+
+export type DeleteWorkspaceErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type DeleteWorkspaceError =
+  DeleteWorkspaceErrors[keyof DeleteWorkspaceErrors];
+
+export type DeleteWorkspaceResponses = {
+  /**
+   * Request fulfilled, nothing follows
+   */
+  204: void;
+};
+
+export type DeleteWorkspaceResponse =
+  DeleteWorkspaceResponses[keyof DeleteWorkspaceResponses];
+
+export type GetWorkspaceData = {
+  body?: never;
+  path: {
+    /**
+     * Workspace ID
+     *
+     * The workspace to retrieve.
+     */
+    workspace_id: string;
+  };
+  query?: never;
+  url: "/api/workspaces/{workspace_id}";
+};
+
+export type GetWorkspaceErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type GetWorkspaceError = GetWorkspaceErrors[keyof GetWorkspaceErrors];
+
+export type GetWorkspaceResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: Workspace;
+};
+
+export type GetWorkspaceResponse =
+  GetWorkspaceResponses[keyof GetWorkspaceResponses];
+
+export type UpdateWorkspaceData = {
+  body: WorkspaceUpdate;
+  path: {
+    /**
+     * Workspace ID
+     *
+     * The workspace to retrieve.
+     */
+    workspace_id: string;
+  };
+  query?: never;
+  url: "/api/workspaces/{workspace_id}";
+};
+
+export type UpdateWorkspaceErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type UpdateWorkspaceError =
+  UpdateWorkspaceErrors[keyof UpdateWorkspaceErrors];
+
+export type UpdateWorkspaceResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: Workspace;
+};
+
+export type UpdateWorkspaceResponse =
+  UpdateWorkspaceResponses[keyof UpdateWorkspaceResponses];
 
 export type SystemHealthData = {
   body?: never;

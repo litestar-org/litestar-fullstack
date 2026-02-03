@@ -12,6 +12,7 @@ from app.db.models._team_roles import TeamRoles
 from app.db.models._team_tag import team_tag
 from app.db.models._user import User
 from app.db.models._user_role import UserRole
+from app.db.models._workspace import Task, TaskPriority, TaskStatus, Workspace
 
 __all__ = (
     "AuditLog",
@@ -28,4 +29,8 @@ __all__ = (
     "UserOAuthAccount",
     "UserRole",
     "team_tag",
+    "Workspace",
+    "Task",
+    "TaskStatus",
+    "TaskPriority",
 )

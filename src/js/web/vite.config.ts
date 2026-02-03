@@ -10,6 +10,7 @@ export default defineConfig({
   base: process.env.ASSET_URL ?? "/static/web/",
   publicDir: "public",
   server: {
+    host: "0.0.0.0",
     cors: true,
     port: Number(process.env.VITE_PORT ?? 3006),
   },

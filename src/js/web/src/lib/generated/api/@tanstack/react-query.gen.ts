@@ -41,14 +41,18 @@ import {
   confirmMfaSetup,
   createRole,
   createTag,
+  createTask,
   createTeam,
   createTeamInvitation,
   createUser,
+  createWorkspace,
   deleteRole,
   deleteTag,
+  deleteTask,
   deleteTeam,
   deleteTeamInvitation,
   deleteUser,
+  deleteWorkspace,
   disableMfa,
   forgotPassword,
   getActiveSessions,
@@ -59,6 +63,7 @@ import {
   getTag,
   getTeam,
   getUser,
+  getWorkspace,
   initiateDisableMfaOAuth,
   initiateMfaSetup,
   listRoles,
@@ -66,6 +71,7 @@ import {
   listTeamInvitations,
   listTeams,
   listUsers,
+  listWorkspaces,
   oAuthConfig,
   type Options,
   profileOAuthAccounts,
@@ -84,9 +90,11 @@ import {
   tokenRefresh,
   updateRole,
   updateTag,
+  updateTask,
   updateTeam,
   updateTeamMember,
   updateUser,
+  updateWorkspace,
   validateResetToken,
   verifyMfaChallenge,
 } from "../sdk.gen";
@@ -184,6 +192,9 @@ import type {
   CreateTagData,
   CreateTagError,
   CreateTagResponse,
+  CreateTaskData,
+  CreateTaskError,
+  CreateTaskResponse,
   CreateTeamData,
   CreateTeamError,
   CreateTeamInvitationData,
@@ -193,12 +204,18 @@ import type {
   CreateUserData,
   CreateUserError,
   CreateUserResponse,
+  CreateWorkspaceData,
+  CreateWorkspaceError,
+  CreateWorkspaceResponse,
   DeleteRoleData,
   DeleteRoleError,
   DeleteRoleResponse,
   DeleteTagData,
   DeleteTagError,
   DeleteTagResponse,
+  DeleteTaskData,
+  DeleteTaskError,
+  DeleteTaskResponse,
   DeleteTeamData,
   DeleteTeamError,
   DeleteTeamInvitationData,
@@ -208,6 +225,9 @@ import type {
   DeleteUserData,
   DeleteUserError,
   DeleteUserResponse,
+  DeleteWorkspaceData,
+  DeleteWorkspaceError,
+  DeleteWorkspaceResponse,
   DisableMfaData,
   DisableMfaError,
   DisableMfaResponse,
@@ -236,6 +256,9 @@ import type {
   GetUserData,
   GetUserError,
   GetUserResponse,
+  GetWorkspaceData,
+  GetWorkspaceError,
+  GetWorkspaceResponse,
   InitiateDisableMfaOAuthData,
   InitiateDisableMfaOAuthError,
   InitiateDisableMfaOAuthResponse,
@@ -256,6 +279,9 @@ import type {
   ListUsersData,
   ListUsersError,
   ListUsersResponse,
+  ListWorkspacesData,
+  ListWorkspacesError,
+  ListWorkspacesResponse,
   OAuthConfigData,
   OAuthConfigResponse,
   ProfileOAuthAccountsData,
@@ -303,6 +329,9 @@ import type {
   UpdateTagData,
   UpdateTagError,
   UpdateTagResponse,
+  UpdateTaskData,
+  UpdateTaskError,
+  UpdateTaskResponse,
   UpdateTeamData,
   UpdateTeamError,
   UpdateTeamMemberData,
@@ -312,6 +341,9 @@ import type {
   UpdateUserData,
   UpdateUserError,
   UpdateUserResponse,
+  UpdateWorkspaceData,
+  UpdateWorkspaceError,
+  UpdateWorkspaceResponse,
   ValidateResetTokenData,
   ValidateResetTokenError,
   ValidateResetTokenResponse,
@@ -1958,6 +1990,87 @@ export const updateTagMutation = (
   return mutationOptions;
 };
 
+/**
+ * CreateTask
+ */
+export const createTaskMutation = (
+  options?: Partial<Options<CreateTaskData>>,
+): UseMutationOptions<
+  CreateTaskResponse,
+  CreateTaskError,
+  Options<CreateTaskData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CreateTaskResponse,
+    CreateTaskError,
+    Options<CreateTaskData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createTask({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * DeleteTask
+ */
+export const deleteTaskMutation = (
+  options?: Partial<Options<DeleteTaskData>>,
+): UseMutationOptions<
+  DeleteTaskResponse,
+  DeleteTaskError,
+  Options<DeleteTaskData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteTaskResponse,
+    DeleteTaskError,
+    Options<DeleteTaskData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteTask({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * UpdateTask
+ */
+export const updateTaskMutation = (
+  options?: Partial<Options<UpdateTaskData>>,
+): UseMutationOptions<
+  UpdateTaskResponse,
+  UpdateTaskError,
+  Options<UpdateTaskData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    UpdateTaskResponse,
+    UpdateTaskError,
+    Options<UpdateTaskData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await updateTask({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const listTeamsQueryKey = (options?: Options<ListTeamsData>) =>
   createQueryKey("listTeams", options);
 
@@ -2481,6 +2594,137 @@ export const updateUserMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await updateUser({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const listWorkspacesQueryKey = (options?: Options<ListWorkspacesData>) =>
+  createQueryKey("listWorkspaces", options);
+
+/**
+ * ListWorkspaces
+ */
+export const listWorkspacesOptions = (options?: Options<ListWorkspacesData>) =>
+  queryOptions<
+    ListWorkspacesResponse,
+    ListWorkspacesError,
+    ListWorkspacesResponse,
+    ReturnType<typeof listWorkspacesQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await listWorkspaces({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: listWorkspacesQueryKey(options),
+  });
+
+/**
+ * CreateWorkspace
+ */
+export const createWorkspaceMutation = (
+  options?: Partial<Options<CreateWorkspaceData>>,
+): UseMutationOptions<
+  CreateWorkspaceResponse,
+  CreateWorkspaceError,
+  Options<CreateWorkspaceData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CreateWorkspaceResponse,
+    CreateWorkspaceError,
+    Options<CreateWorkspaceData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createWorkspace({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * DeleteWorkspace
+ */
+export const deleteWorkspaceMutation = (
+  options?: Partial<Options<DeleteWorkspaceData>>,
+): UseMutationOptions<
+  DeleteWorkspaceResponse,
+  DeleteWorkspaceError,
+  Options<DeleteWorkspaceData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteWorkspaceResponse,
+    DeleteWorkspaceError,
+    Options<DeleteWorkspaceData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteWorkspace({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const getWorkspaceQueryKey = (options: Options<GetWorkspaceData>) =>
+  createQueryKey("getWorkspace", options);
+
+/**
+ * GetWorkspace
+ */
+export const getWorkspaceOptions = (options: Options<GetWorkspaceData>) =>
+  queryOptions<
+    GetWorkspaceResponse,
+    GetWorkspaceError,
+    GetWorkspaceResponse,
+    ReturnType<typeof getWorkspaceQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getWorkspace({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getWorkspaceQueryKey(options),
+  });
+
+/**
+ * UpdateWorkspace
+ */
+export const updateWorkspaceMutation = (
+  options?: Partial<Options<UpdateWorkspaceData>>,
+): UseMutationOptions<
+  UpdateWorkspaceResponse,
+  UpdateWorkspaceError,
+  Options<UpdateWorkspaceData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    UpdateWorkspaceResponse,
+    UpdateWorkspaceError,
+    Options<UpdateWorkspaceData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await updateWorkspace({
         ...options,
         ...fnOptions,
         throwOnError: true,

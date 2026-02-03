@@ -26,9 +26,11 @@ import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as AppTeamsRouteImport } from './routes/_app/teams'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as AppWorkspacesIndexRouteImport } from './routes/_app/workspaces/index'
 import { Route as AppTeamsIndexRouteImport } from './routes/_app/teams/index'
 import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
+import { Route as AppWorkspacesWorkspaceIdRouteImport } from './routes/_app/workspaces/$workspaceId'
 import { Route as AppTeamsNewRouteImport } from './routes/_app/teams/new'
 import { Route as AppTeamsTeamIdRouteImport } from './routes/_app/teams/$teamId'
 import { Route as AppAdminAuditRouteImport } from './routes/_app/admin/audit'
@@ -123,6 +125,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWorkspacesIndexRoute = AppWorkspacesIndexRouteImport.update({
+  id: '/workspaces/',
+  path: '/workspaces/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTeamsIndexRoute = AppTeamsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -138,6 +145,12 @@ const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppWorkspacesWorkspaceIdRoute =
+  AppWorkspacesWorkspaceIdRouteImport.update({
+    id: '/workspaces/$workspaceId',
+    path: '/workspaces/$workspaceId',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppTeamsNewRoute = AppTeamsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -211,9 +224,11 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AppAdminAuditRoute
   '/teams/$teamId': typeof AppTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AppTeamsNewRoute
+  '/workspaces/$workspaceId': typeof AppWorkspacesWorkspaceIdRoute
   '/admin/': typeof AppAdminIndexRoute
   '/profile/': typeof AppProfileIndexRoute
   '/teams/': typeof AppTeamsIndexRoute
+  '/workspaces/': typeof AppWorkspacesIndexRoute
   '/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
   '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
   '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
@@ -239,9 +254,11 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AppAdminAuditRoute
   '/teams/$teamId': typeof AppTeamsTeamIdRouteWithChildren
   '/teams/new': typeof AppTeamsNewRoute
+  '/workspaces/$workspaceId': typeof AppWorkspacesWorkspaceIdRoute
   '/admin': typeof AppAdminIndexRoute
   '/profile': typeof AppProfileIndexRoute
   '/teams': typeof AppTeamsIndexRoute
+  '/workspaces': typeof AppWorkspacesIndexRoute
   '/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
   '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
   '/auth/github/callback': typeof PublicAuthGithubCallbackRoute
@@ -272,9 +289,11 @@ export interface FileRoutesById {
   '/_app/admin/audit': typeof AppAdminAuditRoute
   '/_app/teams/$teamId': typeof AppTeamsTeamIdRouteWithChildren
   '/_app/teams/new': typeof AppTeamsNewRoute
+  '/_app/workspaces/$workspaceId': typeof AppWorkspacesWorkspaceIdRoute
   '/_app/admin/': typeof AppAdminIndexRoute
   '/_app/profile/': typeof AppProfileIndexRoute
   '/_app/teams/': typeof AppTeamsIndexRoute
+  '/_app/workspaces/': typeof AppWorkspacesIndexRoute
   '/_app/admin/teams/$teamId': typeof AppAdminTeamsTeamIdRoute
   '/_app/admin/users/$userId': typeof AppAdminUsersUserIdRoute
   '/_public/auth/github/callback': typeof PublicAuthGithubCallbackRoute
@@ -304,9 +323,11 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/workspaces/$workspaceId'
     | '/admin/'
     | '/profile/'
     | '/teams/'
+    | '/workspaces/'
     | '/admin/teams/$teamId'
     | '/admin/users/$userId'
     | '/auth/github/callback'
@@ -332,9 +353,11 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/teams/$teamId'
     | '/teams/new'
+    | '/workspaces/$workspaceId'
     | '/admin'
     | '/profile'
     | '/teams'
+    | '/workspaces'
     | '/admin/teams/$teamId'
     | '/admin/users/$userId'
     | '/auth/github/callback'
@@ -364,9 +387,11 @@ export interface FileRouteTypes {
     | '/_app/admin/audit'
     | '/_app/teams/$teamId'
     | '/_app/teams/new'
+    | '/_app/workspaces/$workspaceId'
     | '/_app/admin/'
     | '/_app/profile/'
     | '/_app/teams/'
+    | '/_app/workspaces/'
     | '/_app/admin/teams/$teamId'
     | '/_app/admin/users/$userId'
     | '/_public/auth/github/callback'
@@ -504,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/workspaces/': {
+      id: '/_app/workspaces/'
+      path: '/workspaces'
+      fullPath: '/workspaces/'
+      preLoaderRoute: typeof AppWorkspacesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/teams/': {
       id: '/_app/teams/'
       path: '/'
@@ -524,6 +556,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AppAdminIndexRouteImport
       parentRoute: typeof AppAdminRoute
+    }
+    '/_app/workspaces/$workspaceId': {
+      id: '/_app/workspaces/$workspaceId'
+      path: '/workspaces/$workspaceId'
+      fullPath: '/workspaces/$workspaceId'
+      preLoaderRoute: typeof AppWorkspacesWorkspaceIdRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/teams/new': {
       id: '/_app/teams/new'
@@ -653,14 +692,18 @@ interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
   AppHomeRoute: typeof AppHomeRoute
   AppTeamsRoute: typeof AppTeamsRouteWithChildren
+  AppWorkspacesWorkspaceIdRoute: typeof AppWorkspacesWorkspaceIdRoute
   AppProfileIndexRoute: typeof AppProfileIndexRoute
+  AppWorkspacesIndexRoute: typeof AppWorkspacesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
   AppHomeRoute: AppHomeRoute,
   AppTeamsRoute: AppTeamsRouteWithChildren,
+  AppWorkspacesWorkspaceIdRoute: AppWorkspacesWorkspaceIdRoute,
   AppProfileIndexRoute: AppProfileIndexRoute,
+  AppWorkspacesIndexRoute: AppWorkspacesIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

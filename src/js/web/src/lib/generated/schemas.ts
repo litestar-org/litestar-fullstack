@@ -35,12 +35,18 @@ import type {
   CreateTagData,
   CreateTagErrors,
   CreateTagResponses,
+  CreateTaskData,
+  CreateTaskErrors,
+  CreateTaskResponses,
   CreateTeamData,
   CreateTeamErrors,
   CreateTeamResponses,
   CreateUserData,
   CreateUserErrors,
   CreateUserResponses,
+  CreateWorkspaceData,
+  CreateWorkspaceErrors,
+  CreateWorkspaceResponses,
   DisableMfaData,
   DisableMfaErrors,
   DisableMfaResponses,
@@ -88,8 +94,10 @@ export type OperationName =
   | 'confirm_setup'
   | 'create_role'
   | 'create_tag'
+  | 'create_task'
   | 'create_team'
   | 'create_user'
+  | 'create_workspace'
   | 'disable_mfa'
   | 'forgot_password'
   | 'get_mfa_status'
@@ -101,6 +109,7 @@ export type OperationName =
   | 'list_tags'
   | 'list_teams_api_teams'
   | 'list_users_api_users'
+  | 'list_workspaces'
   | 'login'
   | 'logout'
   | 'refresh_token'
@@ -126,8 +135,10 @@ export interface OperationDataTypes {
   'confirm_setup': ConfirmMfaSetupData
   'create_role': CreateRoleData
   'create_tag': CreateTagData
+  'create_task': CreateTaskData
   'create_team': CreateTeamData
   'create_user': CreateUserData
+  'create_workspace': CreateWorkspaceData
   'disable_mfa': DisableMfaData
   'forgot_password': ForgotPasswordData
   'get_mfa_status': GetMfaStatusData
@@ -139,6 +150,7 @@ export interface OperationDataTypes {
   'list_tags': CreateTagData
   'list_teams_api_teams': CreateTeamData
   'list_users_api_users': CreateUserData
+  'list_workspaces': CreateWorkspaceData
   'login': AccountLoginData
   'logout': AccountLogoutData
   'refresh_token': TokenRefreshData
@@ -165,8 +177,10 @@ export interface OperationResponseTypes {
   'confirm_setup': ConfirmMfaSetupResponses
   'create_role': CreateRoleResponses
   'create_tag': CreateTagResponses
+  'create_task': CreateTaskResponses
   'create_team': CreateTeamResponses
   'create_user': CreateUserResponses
+  'create_workspace': CreateWorkspaceResponses
   'disable_mfa': DisableMfaResponses
   'forgot_password': ForgotPasswordResponses
   'get_mfa_status': GetMfaStatusResponses
@@ -178,6 +192,7 @@ export interface OperationResponseTypes {
   'list_tags': CreateTagResponses
   'list_teams_api_teams': CreateTeamResponses
   'list_users_api_users': CreateUserResponses
+  'list_workspaces': CreateWorkspaceResponses
   'login': AccountLoginResponses
   'logout': AccountLogoutResponses
   'refresh_token': TokenRefreshResponses
@@ -204,8 +219,10 @@ export interface OperationErrorTypes {
   'confirm_setup': ConfirmMfaSetupErrors
   'create_role': CreateRoleErrors
   'create_tag': CreateTagErrors
+  'create_task': CreateTaskErrors
   'create_team': CreateTeamErrors
   'create_user': CreateUserErrors
+  'create_workspace': CreateWorkspaceErrors
   'disable_mfa': DisableMfaErrors
   'forgot_password': ForgotPasswordErrors
   'get_mfa_status': never
@@ -217,6 +234,7 @@ export interface OperationErrorTypes {
   'list_tags': CreateTagErrors
   'list_teams_api_teams': CreateTeamErrors
   'list_users_api_users': CreateUserErrors
+  'list_workspaces': CreateWorkspaceErrors
   'login': AccountLoginErrors
   'logout': never
   'refresh_token': never

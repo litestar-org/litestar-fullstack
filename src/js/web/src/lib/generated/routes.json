@@ -73,6 +73,13 @@
       ],
       "uri": "/api/tags"
     },
+    "create_task": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/tasks"
+    },
     "create_team": {
       "method": "post",
       "methods": [
@@ -100,6 +107,13 @@
       ],
       "uri": "/api/users"
     },
+    "create_workspace": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/workspaces"
+    },
     "delete_role": {
       "method": "delete",
       "methods": [
@@ -125,6 +139,19 @@
         "tag_id"
       ],
       "uri": "/api/tags/{tag_id}"
+    },
+    "delete_task": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "task_id": "UUID"
+      },
+      "parameters": [
+        "task_id"
+      ],
+      "uri": "/api/tasks/{task_id}"
     },
     "delete_team": {
       "method": "delete",
@@ -192,6 +219,19 @@
         "user_id"
       ],
       "uri": "/api/users/{user_id}"
+    },
+    "delete_workspace": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "workspace_id": "UUID"
+      },
+      "parameters": [
+        "workspace_id"
+      ],
+      "uri": "/api/workspaces/{workspace_id}"
     },
     "disable_mfa": {
       "method": "delete",
@@ -420,6 +460,19 @@
       ],
       "uri": "/api/email-verification/status/{user_id}"
     },
+    "get_workspace": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "workspace_id": "UUID"
+      },
+      "parameters": [
+        "workspace_id"
+      ],
+      "uri": "/api/workspaces/{workspace_id}"
+    },
     "initiate_disable_mfa_oauth": {
       "method": "get",
       "methods": [
@@ -618,6 +671,26 @@
         "updatedBefore": "DateTime | undefined"
       },
       "uri": "/api/users"
+    },
+    "list_workspaces": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/workspaces"
     },
     "login": {
       "method": "post",
@@ -894,6 +967,19 @@
       ],
       "uri": "/api/tags/{tag_id}"
     },
+    "update_task": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "task_id": "UUID"
+      },
+      "parameters": [
+        "task_id"
+      ],
+      "uri": "/api/tasks/{task_id}"
+    },
     "update_team": {
       "method": "patch",
       "methods": [
@@ -960,6 +1046,19 @@
         "user_id"
       ],
       "uri": "/api/users/{user_id}"
+    },
+    "update_workspace": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "workspace_id": "UUID"
+      },
+      "parameters": [
+        "workspace_id"
+      ],
+      "uri": "/api/workspaces/{workspace_id}"
     },
     "upgrade_scopes": {
       "method": "post",

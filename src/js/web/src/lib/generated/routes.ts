@@ -25,16 +25,20 @@ export type RouteName =
   | 'confirm_setup'
   | 'create_role'
   | 'create_tag'
+  | 'create_task'
   | 'create_team'
   | 'create_team_invitation'
   | 'create_user'
+  | 'create_workspace'
   | 'delete_role'
   | 'delete_tag'
+  | 'delete_task'
   | 'delete_team'
   | 'delete_team_api_teams_team_id:uuid'
   | 'delete_team_invitation'
   | 'delete_user'
   | 'delete_user_api_users_user_id:uuid'
+  | 'delete_workspace'
   | 'disable_mfa'
   | 'forgot_password'
   | 'get_activity'
@@ -52,6 +56,7 @@ export type RouteName =
   | 'get_user_api_users_user_id:uuid'
   | 'get_user_logs'
   | 'get_verification_status'
+  | 'get_workspace'
   | 'initiate_disable_mfa_oauth'
   | 'initiate_setup'
   | 'list_accounts'
@@ -63,6 +68,7 @@ export type RouteName =
   | 'list_teams_api_teams'
   | 'list_users'
   | 'list_users_api_users'
+  | 'list_workspaces'
   | 'login'
   | 'logout'
   | 'oauth:github:authorize'
@@ -91,11 +97,13 @@ export type RouteName =
   | 'update_profile'
   | 'update_role'
   | 'update_tag'
+  | 'update_task'
   | 'update_team'
   | 'update_team_api_teams_team_id:uuid'
   | 'update_team_member'
   | 'update_user'
   | 'update_user_api_users_user_id:uuid'
+  | 'update_workspace'
   | 'upgrade_scopes'
   | 'validate_reset_token'
   | 'verify_challenge'
@@ -129,16 +137,21 @@ export interface RoutePathParams {
   'confirm_setup': Record<string, never>;
   'create_role': Record<string, never>;
   'create_tag': Record<string, never>;
+  'create_task': Record<string, never>;
   'create_team': Record<string, never>;
   'create_team_invitation': {
     team_id: UUID;
   };
   'create_user': Record<string, never>;
+  'create_workspace': Record<string, never>;
   'delete_role': {
     role_id: UUID;
   };
   'delete_tag': {
     tag_id: UUID;
+  };
+  'delete_task': {
+    task_id: UUID;
   };
   'delete_team': {
     team_id: UUID;
@@ -155,6 +168,9 @@ export interface RoutePathParams {
   };
   'delete_user_api_users_user_id:uuid': {
     user_id: UUID;
+  };
+  'delete_workspace': {
+    workspace_id: UUID;
   };
   'disable_mfa': Record<string, never>;
   'forgot_password': Record<string, never>;
@@ -194,6 +210,9 @@ export interface RoutePathParams {
   'get_verification_status': {
     user_id: UUID;
   };
+  'get_workspace': {
+    workspace_id: UUID;
+  };
   'initiate_disable_mfa_oauth': {
     provider: string;
   };
@@ -209,6 +228,7 @@ export interface RoutePathParams {
   'list_teams_api_teams': Record<string, never>;
   'list_users': Record<string, never>;
   'list_users_api_users': Record<string, never>;
+  'list_workspaces': Record<string, never>;
   'login': Record<string, never>;
   'logout': Record<string, never>;
   'oauth:github:authorize': Record<string, never>;
@@ -256,6 +276,9 @@ export interface RoutePathParams {
   'update_tag': {
     tag_id: UUID;
   };
+  'update_task': {
+    task_id: UUID;
+  };
   'update_team': {
     team_id: UUID;
   };
@@ -271,6 +294,9 @@ export interface RoutePathParams {
   };
   'update_user_api_users_user_id:uuid': {
     user_id: UUID;
+  };
+  'update_workspace': {
+    workspace_id: UUID;
   };
   'upgrade_scopes': {
     provider: string;
@@ -323,16 +349,20 @@ export interface RouteQueryParams {
   'confirm_setup': Record<string, never>;
   'create_role': Record<string, never>;
   'create_tag': Record<string, never>;
+  'create_task': Record<string, never>;
   'create_team': Record<string, never>;
   'create_team_invitation': Record<string, never>;
   'create_user': Record<string, never>;
+  'create_workspace': Record<string, never>;
   'delete_role': Record<string, never>;
   'delete_tag': Record<string, never>;
+  'delete_task': Record<string, never>;
   'delete_team': Record<string, never>;
   'delete_team_api_teams_team_id:uuid': Record<string, never>;
   'delete_team_invitation': Record<string, never>;
   'delete_user': Record<string, never>;
   'delete_user_api_users_user_id:uuid': Record<string, never>;
+  'delete_workspace': Record<string, never>;
   'disable_mfa': Record<string, never>;
   'forgot_password': Record<string, never>;
   'get_activity': {
@@ -392,6 +422,7 @@ export interface RouteQueryParams {
     targetTypeIn?: string[];
   };
   'get_verification_status': Record<string, never>;
+  'get_workspace': Record<string, never>;
   'initiate_disable_mfa_oauth': Record<string, never>;
   'initiate_setup': Record<string, never>;
   'list_accounts': {
@@ -503,6 +534,19 @@ export interface RouteQueryParams {
     updatedAfter?: DateTime;
     updatedBefore?: DateTime;
   };
+  'list_workspaces': {
+    createdAfter?: DateTime;
+    createdBefore?: DateTime;
+    currentPage?: number;
+    ids?: string[];
+    orderBy?: string;
+    pageSize?: number;
+    searchIgnoreCase?: boolean;
+    searchString?: string;
+    sortOrder?: "asc" | "desc";
+    updatedAfter?: DateTime;
+    updatedBefore?: DateTime;
+  };
   'login': Record<string, never>;
   'logout': Record<string, never>;
   'oauth:github:authorize': {
@@ -548,11 +592,13 @@ export interface RouteQueryParams {
   'update_profile': Record<string, never>;
   'update_role': Record<string, never>;
   'update_tag': Record<string, never>;
+  'update_task': Record<string, never>;
   'update_team': Record<string, never>;
   'update_team_api_teams_team_id:uuid': Record<string, never>;
   'update_team_member': Record<string, never>;
   'update_user': Record<string, never>;
   'update_user_api_users_user_id:uuid': Record<string, never>;
+  'update_workspace': Record<string, never>;
   'upgrade_scopes': {
     redirect_url?: string;
   };
@@ -633,6 +679,13 @@ export const routeDefinitions = {
     pathParams: [] as const,
     queryParams: [] as const,
   },
+  'create_task': {
+    path: '/api/tasks',
+    methods: ['POST'] as const,
+    method: 'post',
+    pathParams: [] as const,
+    queryParams: [] as const,
+  },
   'create_team': {
     path: '/api/teams',
     methods: ['POST'] as const,
@@ -654,6 +707,13 @@ export const routeDefinitions = {
     pathParams: [] as const,
     queryParams: [] as const,
   },
+  'create_workspace': {
+    path: '/api/workspaces',
+    methods: ['POST'] as const,
+    method: 'post',
+    pathParams: [] as const,
+    queryParams: [] as const,
+  },
   'delete_role': {
     path: '/api/roles/{role_id}',
     methods: ['DELETE'] as const,
@@ -666,6 +726,13 @@ export const routeDefinitions = {
     methods: ['DELETE'] as const,
     method: 'delete',
     pathParams: ['tag_id'] as const,
+    queryParams: [] as const,
+  },
+  'delete_task': {
+    path: '/api/tasks/{task_id}',
+    methods: ['DELETE'] as const,
+    method: 'delete',
+    pathParams: ['task_id'] as const,
     queryParams: [] as const,
   },
   'delete_team': {
@@ -701,6 +768,13 @@ export const routeDefinitions = {
     methods: ['DELETE'] as const,
     method: 'delete',
     pathParams: ['user_id'] as const,
+    queryParams: [] as const,
+  },
+  'delete_workspace': {
+    path: '/api/workspaces/{workspace_id}',
+    methods: ['DELETE'] as const,
+    method: 'delete',
+    pathParams: ['workspace_id'] as const,
     queryParams: [] as const,
   },
   'disable_mfa': {
@@ -822,6 +896,13 @@ export const routeDefinitions = {
     pathParams: ['user_id'] as const,
     queryParams: [] as const,
   },
+  'get_workspace': {
+    path: '/api/workspaces/{workspace_id}',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: ['workspace_id'] as const,
+    queryParams: [] as const,
+  },
   'initiate_disable_mfa_oauth': {
     path: '/api/mfa/disable/oauth/{provider}',
     methods: ['GET'] as const,
@@ -895,6 +976,13 @@ export const routeDefinitions = {
   },
   'list_users_api_users': {
     path: '/api/users',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: [] as const,
+    queryParams: ['createdAfter', 'createdBefore', 'currentPage', 'ids', 'orderBy', 'pageSize', 'searchIgnoreCase', 'searchString', 'sortOrder', 'updatedAfter', 'updatedBefore'] as const,
+  },
+  'list_workspaces': {
+    path: '/api/workspaces',
     methods: ['GET'] as const,
     method: 'get',
     pathParams: [] as const,
@@ -1096,6 +1184,13 @@ export const routeDefinitions = {
     pathParams: ['tag_id'] as const,
     queryParams: [] as const,
   },
+  'update_task': {
+    path: '/api/tasks/{task_id}',
+    methods: ['PATCH'] as const,
+    method: 'patch',
+    pathParams: ['task_id'] as const,
+    queryParams: [] as const,
+  },
   'update_team': {
     path: '/api/admin/teams/{team_id}',
     methods: ['PATCH'] as const,
@@ -1129,6 +1224,13 @@ export const routeDefinitions = {
     methods: ['PATCH'] as const,
     method: 'patch',
     pathParams: ['user_id'] as const,
+    queryParams: [] as const,
+  },
+  'update_workspace': {
+    path: '/api/workspaces/{workspace_id}',
+    methods: ['PATCH'] as const,
+    method: 'patch',
+    pathParams: ['workspace_id'] as const,
     queryParams: [] as const,
   },
   'upgrade_scopes': {

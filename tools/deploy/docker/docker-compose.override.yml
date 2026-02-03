@@ -7,6 +7,8 @@ x-development-volumes: &development-volumes
     - ../../../pyproject.toml:/workspace/app/pyproject.toml
     - ../../../uv.lock:/workspace/app/uv.lock
     - .env.docker:/workspace/app/.env
+    - /workspace/app/src/js/web/node_modules
+    - /workspace/app/src/js/templates/node_modules
 
 services:
   app:
@@ -14,13 +16,15 @@ services:
       context: ../../..
       dockerfile: tools/deploy/docker/Dockerfile.dev
     ports:
-      - "8000:8000"
+      - "8005:8000"
       - "3006:3006"
     tty: true
     environment:
       VITE_DEV_MODE: "true"
       VITE_PORT: "3006"
       SAQ_USE_SERVER_LIFESPAN: "false"
+      APP_URL: "http://localhost:8005"
+      ALLOWED_CORS_ORIGINS: '["localhost:3006","localhost:8080","localhost:8000","localhost:8005"]'
     command: litestar run --reload --host 0.0.0.0 --port 8000
     restart: always
     <<: *development-volumes

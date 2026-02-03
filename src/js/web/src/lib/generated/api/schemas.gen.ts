@@ -1260,6 +1260,193 @@ export const TagUpdateSchema = {
   type: "object",
 } as const;
 
+export const TaskSchema = {
+  properties: {
+    assignee: {
+      oneOf: [
+        {
+          $ref: "#/components/schemas/User",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    assigneeId: {
+      oneOf: [
+        {
+          format: "uuid",
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    createdAt: {
+      format: "date-time",
+      type: "string",
+    },
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    id: {
+      format: "uuid",
+      type: "string",
+    },
+    priority: {
+      $ref: "#/components/schemas/TaskPriority",
+    },
+    status: {
+      $ref: "#/components/schemas/TaskStatus",
+    },
+    title: {
+      type: "string",
+    },
+    updatedAt: {
+      format: "date-time",
+      type: "string",
+    },
+    workspaceId: {
+      format: "uuid",
+      type: "string",
+    },
+  },
+  required: [
+    "createdAt",
+    "id",
+    "priority",
+    "status",
+    "title",
+    "updatedAt",
+    "workspaceId",
+  ],
+  title: "Task",
+  type: "object",
+} as const;
+
+export const TaskCreateSchema = {
+  properties: {
+    assigneeId: {
+      oneOf: [
+        {
+          format: "uuid",
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    priority: {
+      $ref: "#/components/schemas/TaskPriority",
+    },
+    status: {
+      $ref: "#/components/schemas/TaskStatus",
+    },
+    title: {
+      type: "string",
+    },
+    workspaceId: {
+      format: "uuid",
+      type: "string",
+    },
+  },
+  required: ["title", "workspaceId"],
+  title: "TaskCreate",
+  type: "object",
+} as const;
+
+export const TaskPrioritySchema = {
+  default: "medium",
+  enum: ["low", "medium", "high"],
+  title: "TaskPriority",
+  type: "string",
+} as const;
+
+export const TaskStatusSchema = {
+  default: "todo",
+  enum: ["todo", "in-progress", "done"],
+  title: "TaskStatus",
+  type: "string",
+} as const;
+
+export const TaskUpdateSchema = {
+  properties: {
+    assigneeId: {
+      oneOf: [
+        {
+          format: "uuid",
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    priority: {
+      oneOf: [
+        {
+          $ref: "#/components/schemas/TaskPriority",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    status: {
+      oneOf: [
+        {
+          $ref: "#/components/schemas/TaskStatus",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    title: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+  },
+  required: [],
+  title: "TaskUpdate",
+  type: "object",
+} as const;
+
 export const TeamSchema = {
   properties: {
     description: {
@@ -1833,5 +2020,104 @@ export const UserUpdateSchema = {
   },
   required: [],
   title: "UserUpdate",
+  type: "object",
+} as const;
+
+export const WorkspaceSchema = {
+  properties: {
+    createdAt: {
+      format: "date-time",
+      type: "string",
+    },
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    id: {
+      format: "uuid",
+      type: "string",
+    },
+    name: {
+      type: "string",
+    },
+    slug: {
+      type: "string",
+    },
+    tasks: {
+      items: {
+        $ref: "#/components/schemas/Task",
+      },
+      type: "array",
+    },
+    teamId: {
+      format: "uuid",
+      type: "string",
+    },
+    updatedAt: {
+      format: "date-time",
+      type: "string",
+    },
+  },
+  required: ["createdAt", "id", "name", "slug", "teamId", "updatedAt"],
+  title: "Workspace",
+  type: "object",
+} as const;
+
+export const WorkspaceCreateSchema = {
+  properties: {
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    name: {
+      type: "string",
+    },
+    teamId: {
+      format: "uuid",
+      type: "string",
+    },
+  },
+  required: ["name", "teamId"],
+  title: "WorkspaceCreate",
+  type: "object",
+} as const;
+
+export const WorkspaceUpdateSchema = {
+  properties: {
+    description: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    name: {
+      oneOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+  },
+  required: [],
+  title: "WorkspaceUpdate",
   type: "object",
 } as const;

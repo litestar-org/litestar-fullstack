@@ -104,6 +104,9 @@ import type {
   CreateTagData,
   CreateTagErrors,
   CreateTagResponses,
+  CreateTaskData,
+  CreateTaskErrors,
+  CreateTaskResponses,
   CreateTeamData,
   CreateTeamErrors,
   CreateTeamInvitationData,
@@ -113,12 +116,18 @@ import type {
   CreateUserData,
   CreateUserErrors,
   CreateUserResponses,
+  CreateWorkspaceData,
+  CreateWorkspaceErrors,
+  CreateWorkspaceResponses,
   DeleteRoleData,
   DeleteRoleErrors,
   DeleteRoleResponses,
   DeleteTagData,
   DeleteTagErrors,
   DeleteTagResponses,
+  DeleteTaskData,
+  DeleteTaskErrors,
+  DeleteTaskResponses,
   DeleteTeamData,
   DeleteTeamErrors,
   DeleteTeamInvitationData,
@@ -128,6 +137,9 @@ import type {
   DeleteUserData,
   DeleteUserErrors,
   DeleteUserResponses,
+  DeleteWorkspaceData,
+  DeleteWorkspaceErrors,
+  DeleteWorkspaceResponses,
   DisableMfaData,
   DisableMfaErrors,
   DisableMfaResponses,
@@ -156,6 +168,9 @@ import type {
   GetUserData,
   GetUserErrors,
   GetUserResponses,
+  GetWorkspaceData,
+  GetWorkspaceErrors,
+  GetWorkspaceResponses,
   InitiateDisableMfaOAuthData,
   InitiateDisableMfaOAuthErrors,
   InitiateDisableMfaOAuthResponses,
@@ -176,6 +191,9 @@ import type {
   ListUsersData,
   ListUsersErrors,
   ListUsersResponses,
+  ListWorkspacesData,
+  ListWorkspacesErrors,
+  ListWorkspacesResponses,
   OAuthConfigData,
   OAuthConfigResponses,
   ProfileOAuthAccountsData,
@@ -223,6 +241,9 @@ import type {
   UpdateTagData,
   UpdateTagErrors,
   UpdateTagResponses,
+  UpdateTaskData,
+  UpdateTaskErrors,
+  UpdateTaskResponses,
   UpdateTeamData,
   UpdateTeamErrors,
   UpdateTeamMemberData,
@@ -232,6 +253,9 @@ import type {
   UpdateUserData,
   UpdateUserErrors,
   UpdateUserResponses,
+  UpdateWorkspaceData,
+  UpdateWorkspaceErrors,
+  UpdateWorkspaceResponses,
   ValidateResetTokenData,
   ValidateResetTokenErrors,
   ValidateResetTokenResponses,
@@ -1293,6 +1317,62 @@ export const updateTag = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * CreateTask
+ */
+export const createTask = <ThrowOnError extends boolean = false>(
+  options: Options<CreateTaskData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    CreateTaskResponses,
+    CreateTaskErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/tasks",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * DeleteTask
+ */
+export const deleteTask = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteTaskData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteTaskResponses,
+    DeleteTaskErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/tasks/{task_id}",
+    ...options,
+  });
+
+/**
+ * UpdateTask
+ */
+export const updateTask = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateTaskData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    UpdateTaskResponses,
+    UpdateTaskErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/tasks/{task_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
  * ListTeams
  */
 export const listTeams = <ThrowOnError extends boolean = false>(
@@ -1641,6 +1721,94 @@ export const updateUser = <ThrowOnError extends boolean = false>(
   >({
     security: [{ scheme: "bearer", type: "http" }],
     url: "/api/users/{user_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * ListWorkspaces
+ */
+export const listWorkspaces = <ThrowOnError extends boolean = false>(
+  options?: Options<ListWorkspacesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    ListWorkspacesResponses,
+    ListWorkspacesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/workspaces",
+    ...options,
+  });
+
+/**
+ * CreateWorkspace
+ */
+export const createWorkspace = <ThrowOnError extends boolean = false>(
+  options: Options<CreateWorkspaceData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    CreateWorkspaceResponses,
+    CreateWorkspaceErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/workspaces",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * DeleteWorkspace
+ */
+export const deleteWorkspace = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteWorkspaceData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteWorkspaceResponses,
+    DeleteWorkspaceErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/workspaces/{workspace_id}",
+    ...options,
+  });
+
+/**
+ * GetWorkspace
+ */
+export const getWorkspace = <ThrowOnError extends boolean = false>(
+  options: Options<GetWorkspaceData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetWorkspaceResponses,
+    GetWorkspaceErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/workspaces/{workspace_id}",
+    ...options,
+  });
+
+/**
+ * UpdateWorkspace
+ */
+export const updateWorkspace = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateWorkspaceData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    UpdateWorkspaceResponses,
+    UpdateWorkspaceErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/workspaces/{workspace_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",
