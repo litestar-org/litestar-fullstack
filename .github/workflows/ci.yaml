@@ -72,7 +72,7 @@ jobs:
         run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
 
       - if: matrix.python-version == '3.13'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-xml
           path: coverage.xml
@@ -108,7 +108,7 @@ jobs:
         run: echo $PR_NUMBER > .pr_number
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: docs-preview
           path: |
