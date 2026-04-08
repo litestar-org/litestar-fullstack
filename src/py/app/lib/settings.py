@@ -295,6 +295,22 @@ class EmailSettings:
 
 
 @dataclass
+class StorageSettings:
+    S3_ENDPOINT: str = field(default_factory=get_env("STORAGE_S3_ENDPOINT", "http://localhost:19000"))
+    """S3-compatible storage endpoint URL."""
+    S3_ACCESS_KEY: str = field(default_factory=get_env("STORAGE_S3_ACCESS_KEY", "app"))
+    """S3 access key."""
+    S3_SECRET_KEY: str = field(default_factory=get_env("STORAGE_S3_SECRET_KEY", "app"))
+    """S3 secret key."""
+    S3_BUCKET: str = field(default_factory=get_env("STORAGE_S3_BUCKET", "uploads"))
+    """S3 bucket name."""
+    S3_REGION: str = field(default_factory=get_env("STORAGE_S3_REGION", "us-east-1"))
+    """S3 region."""
+    S3_ALLOW_HTTP: bool = field(default_factory=get_env("STORAGE_S3_ALLOW_HTTP", True))
+    """Allow HTTP connections (needed for local development with rustfs)."""
+
+
+@dataclass
 class AppSettings:
     """Application configuration"""
 
@@ -529,6 +545,7 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
     email: EmailSettings = field(default_factory=EmailSettings)
+    storage: StorageSettings = field(default_factory=StorageSettings)
 
     @classmethod
     @lru_cache(maxsize=1, typed=True)
@@ -547,10 +564,11 @@ class Settings:
             vite: ViteSettings = ViteSettings()
             app: AppSettings = AppSettings()
             log: LogSettings = LogSettings()
+            storage: StorageSettings = StorageSettings()
         except Exception as e:  # noqa: BLE001
             logger.fatal("Could not load settings. %s", e)
             sys.exit(1)
-        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log)
+        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log, storage=storage)
 
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:
