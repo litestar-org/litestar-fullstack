@@ -189,5 +189,7 @@ class ProfileController(Controller):
         Returns:
             Confirmation message.
         """
+        if current_user.avatar is None:
+            raise NotFoundException("No avatar set.")
         _ = await users_service.remove_avatar(db_obj=current_user)
         return Message(message="Avatar removed successfully.")
