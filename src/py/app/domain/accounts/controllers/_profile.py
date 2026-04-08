@@ -5,8 +5,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import structlog
-from litestar import Controller, delete, get, patch
+from litestar import Controller, delete, get, patch, post
+from litestar.datastructures import UploadFile
 from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.exceptions import ClientException, NotFoundException, ValidationException
+from litestar.params import Body
+from litestar.response import Response
 
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
@@ -17,6 +22,9 @@ if TYPE_CHECKING:
     from app.domain.accounts.services import UserService
 
 logger = structlog.get_logger()
+
+ALLOWED_AVATAR_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
 
 
 class ProfileController(Controller):
@@ -95,3 +103,91 @@ class ProfileController(Controller):
 
         """
         _ = await users_service.delete(current_user.id)
+
+    @post(
+        operation_id="AccountAvatarUpload",
+        path="/api/me/avatar",
+        summary="Upload Avatar",
+        description="Upload or replace the current user's profile picture.",
+    )
+    async def upload_avatar(
+        self,
+        current_user: m.User,
+        users_service: UserService,
+        data: UploadFile = Body(media_type=RequestEncodingType.MULTI_PART),
+    ) -> User:
+        """Upload or replace the user's avatar.
+
+        Args:
+            current_user: The current user.
+            data: The uploaded file.
+            users_service: The users service.
+
+        Returns:
+            The updated user profile.
+        """
+        content_type = data.content_type
+        if content_type not in ALLOWED_AVATAR_TYPES:
+            msg = f"Invalid file type '{content_type}'. Allowed: {', '.join(sorted(ALLOWED_AVATAR_TYPES))}"
+            raise ValidationException(msg)
+
+        file_data = await data.read()
+        if len(file_data) > MAX_AVATAR_SIZE:
+            msg = f"File too large. Maximum size is {MAX_AVATAR_SIZE // (1024 * 1024)}MB."
+            raise ClientException(msg)
+
+        filename = data.filename or "avatar"
+        db_obj = await users_service.upload_avatar(
+            db_obj=current_user,
+            data=file_data,
+            filename=filename,
+            content_type=content_type,
+        )
+        return users_service.to_schema(db_obj, schema_type=User)
+
+    @get(
+        operation_id="AccountAvatarGet",
+        path="/api/me/avatar",
+        summary="Get Avatar",
+        description="Retrieve the current user's profile picture.",
+    )
+    async def get_avatar(self, current_user: m.User) -> Response:
+        """Get the current user's avatar image.
+
+        Args:
+            current_user: The current user.
+
+        Returns:
+            The avatar image bytes.
+        """
+        if current_user.avatar is None:
+            raise NotFoundException("No avatar set.")
+
+        content = await current_user.avatar.get_content_async()
+        return Response(
+            content=content,
+            media_type=current_user.avatar.content_type or "application/octet-stream",
+        )
+
+    @delete(
+        operation_id="AccountAvatarDelete",
+        path="/api/me/avatar",
+        summary="Delete Avatar",
+        description="Remove the current user's profile picture.",
+    )
+    async def delete_avatar(
+        self,
+        current_user: m.User,
+        users_service: UserService,
+    ) -> Message:
+        """Remove the user's avatar.
+
+        Args:
+            current_user: The current user.
+            users_service: The users service.
+
+        Returns:
+            Confirmation message.
+        """
+        _ = await users_service.remove_avatar(db_obj=current_user)
+        return Message(message="Avatar removed successfully.")

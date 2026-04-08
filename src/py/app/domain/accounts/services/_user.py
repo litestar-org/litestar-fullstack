@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy.extensions.litestar import repository, service
+from advanced_alchemy.types.file_object import FileObject
 from litestar.exceptions import ClientException, PermissionDeniedException
 from sqlalchemy.orm import undefer_group
 
@@ -175,6 +176,47 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
                 if assigned_role.role_name == constants.SUPERUSER_ACCESS_ROLE
             ),
         )
+
+    async def upload_avatar(
+        self,
+        *,
+        db_obj: m.User,
+        data: bytes,
+        filename: str,
+        content_type: str,
+    ) -> m.User:
+        """Upload or replace the user's avatar.
+
+        Args:
+            db_obj: The user model instance.
+            data: The raw file bytes.
+            filename: Original filename.
+            content_type: MIME type of the file.
+
+        Returns:
+            The updated user.
+        """
+        storage_path = f"avatars/{db_obj.id}/{filename}"
+        file_object = FileObject(
+            backend="s3",
+            filename=storage_path,
+            content_type=content_type,
+            content=data,
+        )
+        db_obj.avatar = file_object
+        return await self.update(db_obj, auto_commit=True, attribute_names={"avatar"})
+
+    async def remove_avatar(self, *, db_obj: m.User) -> m.User:
+        """Remove the user's avatar.
+
+        Args:
+            db_obj: The user model instance.
+
+        Returns:
+            The updated user.
+        """
+        db_obj.avatar = None
+        return await self.update(db_obj, auto_commit=True, attribute_names={"avatar"})
 
     async def reset_password_with_token(self, user_id: UUID, new_password: str) -> m.User:
         """Reset user's password using a validated token.
