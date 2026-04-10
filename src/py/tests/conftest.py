@@ -60,6 +60,27 @@ def anyio_backend_options() -> dict[str, bool]:
     return {"use_uvloop": True}
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _override_storage_backend() -> None:
+    """Replace the production S3 storage backend with an in-memory store for tests.
+
+    The production code registers an S3Store-backed ObstoreBackend at module import
+    time (in app.server.plugins). This fixture replaces it with a MemoryStore so
+    tests don't require a running S3-compatible service.
+
+    We import ``app.server.plugins`` first to ensure its module-level
+    ``register_storage_backend()`` call has already run, then re-register the
+    ``"s3"`` key with an in-memory store so it survives subsequent imports.
+    """
+    import app.server.plugins  # noqa: F401  # ensure production registration runs first
+    from advanced_alchemy.types.file_object import storages
+    from advanced_alchemy.types.file_object.backends.obstore import ObstoreBackend
+    from obstore.store import MemoryStore
+
+    # Re-register the "s3" backend with an in-memory store (overrides production S3Store)
+    storages.register_backend(ObstoreBackend(key="s3", fs=MemoryStore()))
+
+
 @pytest.fixture(name="engine", scope="session")
 def fx_engine(postgres_service: PostgresService) -> Generator[AsyncEngine, None, None]:
     """PostgreSQL instance for testing.

@@ -174,6 +174,7 @@ class ProfileController(Controller):
         path="/api/me/avatar",
         summary="Delete Avatar",
         description="Remove the current user's profile picture.",
+        status_code=200,
     )
     async def delete_avatar(
         self,
