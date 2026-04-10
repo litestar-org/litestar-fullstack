@@ -6,16 +6,10 @@ Create Date: 2026-04-08 13:45:00.000000
 
 """
 import warnings
-from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence  # pyright: ignore
-
-__all__ = ("downgrade", "upgrade", "schema_upgrades", "schema_downgrades", "data_upgrades", "data_downgrades")
 
 # revision identifiers, used by Alembic.
 revision = '75cc19aa927c'
@@ -49,7 +43,7 @@ def schema_downgrades() -> None:
         batch_op.add_column(sa.Column('avatar_url', sa.String(length=500), nullable=True))
 
 def data_upgrades() -> None:
-    pass
+    """No data migration needed — column change only."""
 
 def data_downgrades() -> None:
-    pass
+    """No data migration needed — column change only."""
