@@ -14,7 +14,7 @@ import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, cast
+from typing import TYPE_CHECKING, ClassVar, Final, cast
 
 import structlog
 from advanced_alchemy.extensions.litestar import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
@@ -296,11 +296,13 @@ class EmailSettings:
 
 @dataclass
 class StorageSettings:
+    BACKEND_KEY: ClassVar[str] = "s3"
+    """Key used to register and look up the file-object storage backend."""
     S3_ENDPOINT: str = field(default_factory=get_env("STORAGE_S3_ENDPOINT", "http://localhost:19000"))
     """S3-compatible storage endpoint URL."""
     S3_ACCESS_KEY: str = field(default_factory=get_env("STORAGE_S3_ACCESS_KEY", "app"))
     """S3 access key."""
-    S3_SECRET_KEY: str = field(default_factory=get_env("STORAGE_S3_SECRET_KEY", "app"))
+    S3_SECRET_KEY: str = field(default_factory=get_env("STORAGE_S3_SECRET_KEY", "app"), repr=False)
     """S3 secret key."""
     S3_BUCKET: str = field(default_factory=get_env("STORAGE_S3_BUCKET", "uploads"))
     """S3 bucket name."""

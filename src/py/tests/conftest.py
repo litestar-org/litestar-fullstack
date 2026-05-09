@@ -62,23 +62,20 @@ def anyio_backend_options() -> dict[str, bool]:
 
 @pytest.fixture(scope="session", autouse=True)
 def _override_storage_backend() -> None:
-    """Replace the production S3 storage backend with an in-memory store for tests.
+    """Install an in-memory file-object storage backend for tests.
 
-    The production code registers an S3Store-backed ObstoreBackend at module import
-    time (in app.server.plugins). This fixture replaces it with a MemoryStore so
-    tests don't require a running S3-compatible service.
-
-    We import ``app.server.plugins`` first to ensure its module-level
-    ``register_storage_backend()`` call has already run, then re-register the
-    ``"s3"`` key with an in-memory store so it survives subsequent imports.
+    Registers the in-memory backend before the application initializes.
+    ``register_storage_backend()`` (called from ApplicationCore.on_app_init)
+    is idempotent and skips when the key is already registered, so this stub
+    survives application startup.
     """
-    import app.server.plugins  # noqa: F401  # ensure production registration runs first
     from advanced_alchemy.types.file_object import storages
     from advanced_alchemy.types.file_object.backends.obstore import ObstoreBackend
     from obstore.store import MemoryStore
 
-    # Re-register the "s3" backend with an in-memory store (overrides production S3Store)
-    storages.register_backend(ObstoreBackend(key="s3", fs=MemoryStore()))
+    from app.lib.settings import StorageSettings
+
+    storages.register_backend(ObstoreBackend(key=StorageSettings.BACKEND_KEY, fs=MemoryStore()))
 
 
 @pytest.fixture(name="engine", scope="session")

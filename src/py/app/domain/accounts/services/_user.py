@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast
 
@@ -12,9 +13,17 @@ from app.db import models as m
 from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
 from app.lib import constants, crypt
 from app.lib.deps import CompositeServiceMixin
+from app.lib.settings import StorageSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
 MAX_FAILED_RESET_ATTEMPTS = 5
+MAX_AVATAR_BYTES = 5 * 1024 * 1024
+AVATAR_CONTENT_TYPE_EXTENSIONS: dict[str, str] = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+}
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -182,7 +191,6 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         *,
         db_obj: m.User,
         data: bytes,
-        filename: str,
         content_type: str,
     ) -> m.User:
         """Upload or replace the user's avatar.
@@ -190,15 +198,28 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         Args:
             db_obj: The user model instance.
             data: The raw file bytes.
-            filename: Original filename.
             content_type: MIME type of the file.
 
         Returns:
             The updated user.
+
+        Raises:
+            ClientException: If the content type is unsupported or the file exceeds the size limit.
         """
-        storage_path = f"avatars/{db_obj.id}/{filename}"
+        if content_type not in AVATAR_CONTENT_TYPE_EXTENSIONS:
+            allowed = ", ".join(sorted(AVATAR_CONTENT_TYPE_EXTENSIONS))
+            raise ClientException(detail=f"Unsupported avatar content type '{content_type}'. Allowed: {allowed}", status_code=400)
+        if len(data) > MAX_AVATAR_BYTES:
+            raise ClientException(
+                detail=f"Avatar exceeds {MAX_AVATAR_BYTES // (1024 * 1024)}MB limit.",
+                status_code=413,
+            )
+        # Filename is generated server-side to avoid path traversal / key pollution
+        # from caller-supplied names.
+        ext = AVATAR_CONTENT_TYPE_EXTENSIONS[content_type]
+        storage_path = f"avatars/{db_obj.id}/{uuid.uuid4().hex}.{ext}"
         file_object = FileObject(
-            backend="s3",
+            backend=StorageSettings.BACKEND_KEY,
             filename=storage_path,
             content_type=content_type,
             content=data,

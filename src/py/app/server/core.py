@@ -70,6 +70,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         """
         settings = get_settings()
         self.app_slug = settings.app.slug
+        plugins.register_storage_backend()
         app_config.debug = settings.app.DEBUG
         app_config.openapi_config = OpenAPIConfig(
             title=settings.app.NAME,

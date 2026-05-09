@@ -12,6 +12,7 @@ from litestar_vite import VitePlugin
 from obstore.store import S3Store
 
 from app import config
+from app.lib.settings import StorageSettings
 from app.utils.domain import DomainPlugin
 from app.utils.oauth import OAuth2ProviderPlugin
 
@@ -26,8 +27,16 @@ domain = DomainPlugin()
 
 
 def register_storage_backend() -> None:
-    """Register the S3-compatible storage backend for file objects."""
+    """Register the S3-compatible storage backend for file objects.
+
+    Idempotent: if a backend is already registered under the configured key
+    (e.g. an in-memory store installed by the test suite) the registration is
+    skipped so test overrides survive application init.
+    """
     import structlog as _structlog
+
+    if storages.is_registered(StorageSettings.BACKEND_KEY):
+        return
 
     logger = _structlog.get_logger()
     storage_settings = config.storage
@@ -38,15 +47,16 @@ def register_storage_backend() -> None:
             "secret_access_key": storage_settings.S3_SECRET_KEY,
             "endpoint": storage_settings.S3_ENDPOINT,
             "region": storage_settings.S3_REGION,
-            "allow_http": str(storage_settings.S3_ALLOW_HTTP).lower(),
+            "allow_http": storage_settings.S3_ALLOW_HTTP,
         },
     )
-    backend = ObstoreBackend(key="s3", fs=s3_store)
+    backend = ObstoreBackend(key=StorageSettings.BACKEND_KEY, fs=s3_store)
     storages.register_backend(backend)
-    logger.info("Registered S3 storage backend", bucket=storage_settings.S3_BUCKET, endpoint=storage_settings.S3_ENDPOINT)
-
-
-register_storage_backend()
+    logger.info(
+        "Registered S3 storage backend",
+        bucket=storage_settings.S3_BUCKET,
+        endpoint=storage_settings.S3_ENDPOINT,
+    )
 
 
 @cache

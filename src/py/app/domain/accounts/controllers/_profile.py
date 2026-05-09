@@ -9,7 +9,7 @@ from litestar import Controller, delete, get, patch, post
 from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
-from litestar.exceptions import ClientException, NotFoundException, ValidationException
+from litestar.exceptions import NotFoundException, ValidationException
 from litestar.params import Body
 from litestar.response import Response
 
@@ -25,6 +25,22 @@ logger = structlog.get_logger()
 
 ALLOWED_AVATAR_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
+
+
+def _detect_image_mime(data: bytes) -> str | None:
+    """Sniff magic bytes to identify common image formats.
+
+    Avoids trusting client-supplied Content-Type when storing/serving uploads.
+    """
+    if data[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 class ProfileController(Controller):
@@ -109,6 +125,7 @@ class ProfileController(Controller):
         path="/api/me/avatar",
         summary="Upload Avatar",
         description="Upload or replace the current user's profile picture.",
+        request_max_body_size=MAX_AVATAR_SIZE,
     )
     async def upload_avatar(
         self,
@@ -125,23 +142,21 @@ class ProfileController(Controller):
 
         Returns:
             The updated user profile.
+
+        Raises:
+            ValidationException: If the uploaded bytes do not match a supported image format.
         """
-        content_type = data.content_type
-        if content_type not in ALLOWED_AVATAR_TYPES:
-            msg = f"Invalid file type '{content_type}'. Allowed: {', '.join(sorted(ALLOWED_AVATAR_TYPES))}"
+        file_data = await data.read()
+        detected = _detect_image_mime(file_data)
+        if detected is None or detected not in ALLOWED_AVATAR_TYPES:
+            allowed = ", ".join(sorted(ALLOWED_AVATAR_TYPES))
+            msg = f"Invalid image. Allowed: {allowed}."
             raise ValidationException(msg)
 
-        file_data = await data.read()
-        if len(file_data) > MAX_AVATAR_SIZE:
-            msg = f"File too large. Maximum size is {MAX_AVATAR_SIZE // (1024 * 1024)}MB."
-            raise ClientException(msg)
-
-        filename = data.filename or "avatar"
         db_obj = await users_service.upload_avatar(
             db_obj=current_user,
             data=file_data,
-            filename=filename,
-            content_type=content_type,
+            content_type=detected,
         )
         return users_service.to_schema(db_obj, schema_type=User)
 
@@ -174,23 +189,21 @@ class ProfileController(Controller):
         path="/api/me/avatar",
         summary="Delete Avatar",
         description="Remove the current user's profile picture.",
-        status_code=200,
     )
     async def delete_avatar(
         self,
         current_user: m.User,
         users_service: UserService,
-    ) -> Message:
+    ) -> None:
         """Remove the user's avatar.
 
         Args:
             current_user: The current user.
             users_service: The users service.
 
-        Returns:
-            Confirmation message.
+        Raises:
+            NotFoundException: If the user has no avatar set.
         """
         if current_user.avatar is None:
             raise NotFoundException("No avatar set.")
         _ = await users_service.remove_avatar(db_obj=current_user)
-        return Message(message="Avatar removed successfully.")
