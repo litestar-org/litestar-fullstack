@@ -22,13 +22,13 @@ function AcceptInvitationPage() {
   const [status, setStatus] = useState<"pending" | "accepting" | "declining" | "accepted" | "declined" | "error">("pending")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Optionally fetch team info for display
   const { data: team, isLoading: isTeamLoading } = useQuery({
     queryKey: ["team", teamId],
     queryFn: async () => {
       const response = await getTeam({ path: { team_id: teamId } })
       return response.data
     },
+    retry: false,
   })
 
   const acceptMutation = useMutation({
