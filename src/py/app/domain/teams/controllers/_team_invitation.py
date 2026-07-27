@@ -88,7 +88,7 @@ class TeamInvitationController(Controller):
         payload = data.to_dict()
         payload["team_id"] = team_id
         payload["invited_by"] = current_user
-        db_obj = await team_invitations_service.create(payload)
+        db_obj = await team_invitations_service.create(payload, auto_commit=True)
         request.app.emit(event_id="team_invitation_created", invitation_id=db_obj.id, mailer=app_mailer)
         return team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation)
 
