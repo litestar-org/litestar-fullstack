@@ -60,6 +60,24 @@ def anyio_backend_options() -> dict[str, bool]:
     return {"use_uvloop": True}
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _override_storage_backend() -> None:
+    """Install an in-memory file-object storage backend for tests.
+
+    Registers the in-memory backend before the application initializes.
+    ``register_storage_backend()`` (called from ApplicationCore.on_app_init)
+    is idempotent and skips when the key is already registered, so this stub
+    survives application startup.
+    """
+    from advanced_alchemy.types.file_object import storages
+    from advanced_alchemy.types.file_object.backends.obstore import ObstoreBackend
+    from obstore.store import MemoryStore
+
+    from app.lib.settings import StorageSettings
+
+    storages.register_backend(ObstoreBackend(key=StorageSettings.BACKEND_KEY, fs=MemoryStore()))
+
+
 @pytest.fixture(name="engine", scope="session")
 def fx_engine(postgres_service: PostgresService) -> Generator[AsyncEngine, None, None]:
     """PostgreSQL instance for testing.

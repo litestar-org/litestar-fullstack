@@ -5,18 +5,43 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import structlog
-from litestar import Controller, delete, get, patch
+from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.exceptions import NotFoundException, ValidationException
+from litestar.params import Body
+from litestar.response import Response
 
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
 from app.lib.schema import Message
 
 if TYPE_CHECKING:
+    from litestar.datastructures import UploadFile
+
     from app.db import models as m
     from app.domain.accounts.services import UserService
 
 logger = structlog.get_logger()
+
+ALLOWED_AVATAR_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
+
+
+def _detect_image_mime(data: bytes) -> str | None:
+    """Sniff magic bytes to identify common image formats.
+
+    Avoids trusting client-supplied Content-Type when storing/serving uploads.
+    """
+    if data[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 class ProfileController(Controller):
@@ -95,3 +120,93 @@ class ProfileController(Controller):
 
         """
         _ = await users_service.delete(current_user.id)
+
+    @post(
+        operation_id="AccountAvatarUpload",
+        path="/api/me/avatar",
+        summary="Upload Avatar",
+        description="Upload or replace the current user's profile picture.",
+        request_max_body_size=MAX_AVATAR_SIZE,
+    )
+    async def upload_avatar(
+        self,
+        current_user: m.User,
+        users_service: UserService,
+        data: UploadFile = Body(media_type=RequestEncodingType.MULTI_PART),  # noqa: B008
+    ) -> User:
+        """Upload or replace the user's avatar.
+
+        Args:
+            current_user: The current user.
+            data: The uploaded file.
+            users_service: The users service.
+
+        Returns:
+            The updated user profile.
+
+        Raises:
+            ValidationException: If the uploaded bytes do not match a supported image format.
+        """
+        file_data = await data.read()
+        detected = _detect_image_mime(file_data)
+        if detected is None or detected not in ALLOWED_AVATAR_TYPES:
+            allowed = ", ".join(sorted(ALLOWED_AVATAR_TYPES))
+            msg = f"Invalid image. Allowed: {allowed}."
+            raise ValidationException(msg)
+
+        db_obj = await users_service.upload_avatar(
+            db_obj=current_user,
+            data=file_data,
+            content_type=detected,
+        )
+        return users_service.to_schema(db_obj, schema_type=User)
+
+    @get(
+        operation_id="AccountAvatarGet",
+        path="/api/me/avatar",
+        summary="Get Avatar",
+        description="Retrieve the current user's profile picture.",
+    )
+    async def get_avatar(self, current_user: m.User) -> Response:
+        """Get the current user's avatar image.
+
+        Args:
+            current_user: The current user.
+
+        Returns:
+            The avatar image bytes.
+        """
+        if current_user.avatar is None:
+            msg = "No avatar set."
+            raise NotFoundException(msg)
+
+        content = await current_user.avatar.get_content_async()
+        return Response(
+            content=content,
+            media_type=current_user.avatar.content_type or "application/octet-stream",
+        )
+
+    @delete(
+        operation_id="AccountAvatarDelete",
+        path="/api/me/avatar",
+        summary="Delete Avatar",
+        description="Remove the current user's profile picture.",
+    )
+    async def delete_avatar(
+        self,
+        current_user: m.User,
+        users_service: UserService,
+    ) -> None:
+        """Remove the user's avatar.
+
+        Args:
+            current_user: The current user.
+            users_service: The users service.
+
+        Raises:
+            NotFoundException: If the user has no avatar set.
+        """
+        if current_user.avatar is None:
+            msg = "No avatar set."
+            raise NotFoundException(msg)
+        _ = await users_service.remove_avatar(db_obj=current_user)

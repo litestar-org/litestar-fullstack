@@ -9,6 +9,9 @@ import {
 import { client } from "../client.gen";
 import {
   acceptTeamInvitation,
+  accountAvatarDelete,
+  accountAvatarGet,
+  accountAvatarUpload,
   accountDelete,
   accountLogin,
   accountLogout,
@@ -94,6 +97,13 @@ import type {
   AcceptTeamInvitationData,
   AcceptTeamInvitationError,
   AcceptTeamInvitationResponse,
+  AccountAvatarDeleteData,
+  AccountAvatarDeleteResponse,
+  AccountAvatarGetData,
+  AccountAvatarGetResponse,
+  AccountAvatarUploadData,
+  AccountAvatarUploadError,
+  AccountAvatarUploadResponse,
   AccountDeleteData,
   AccountDeleteResponse,
   AccountLoginData,
@@ -1308,6 +1318,94 @@ export const accountProfileUpdateMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await accountProfileUpdate({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * Delete Avatar
+ *
+ * Remove the current user's profile picture.
+ */
+export const accountAvatarDeleteMutation = (
+  options?: Partial<Options<AccountAvatarDeleteData>>,
+): UseMutationOptions<
+  AccountAvatarDeleteResponse,
+  DefaultError,
+  Options<AccountAvatarDeleteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AccountAvatarDeleteResponse,
+    DefaultError,
+    Options<AccountAvatarDeleteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await accountAvatarDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const accountAvatarGetQueryKey = (
+  options?: Options<AccountAvatarGetData>,
+) => createQueryKey("accountAvatarGet", options);
+
+/**
+ * Get Avatar
+ *
+ * Retrieve the current user's profile picture.
+ */
+export const accountAvatarGetOptions = (
+  options?: Options<AccountAvatarGetData>,
+) =>
+  queryOptions<
+    AccountAvatarGetResponse,
+    DefaultError,
+    AccountAvatarGetResponse,
+    ReturnType<typeof accountAvatarGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await accountAvatarGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: accountAvatarGetQueryKey(options),
+  });
+
+/**
+ * Upload Avatar
+ *
+ * Upload or replace the current user's profile picture.
+ */
+export const accountAvatarUploadMutation = (
+  options?: Partial<Options<AccountAvatarUploadData>>,
+): UseMutationOptions<
+  AccountAvatarUploadResponse,
+  AccountAvatarUploadError,
+  Options<AccountAvatarUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AccountAvatarUploadResponse,
+    AccountAvatarUploadError,
+    Options<AccountAvatarUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await accountAvatarUpload({
         ...options,
         ...fnOptions,
         throwOnError: true,

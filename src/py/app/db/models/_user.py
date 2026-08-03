@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.types import EncryptedString
+from advanced_alchemy.types.file_object import FileObject, StoredObject
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.lib.settings import get_settings
+from app.lib.settings import StorageSettings, get_settings
 
 if TYPE_CHECKING:
     from app.db.models._email_verification_token import EmailVerificationToken
@@ -27,7 +28,7 @@ settings = get_settings()
 class User(UUIDv7AuditBase):
     __tablename__ = "user_account"
     __table_args__ = {"comment": "User accounts for application access"}
-    __pii_columns__ = {"name", "email", "username", "phone", "avatar_url", "totp_secret"}
+    __pii_columns__ = {"name", "email", "username", "phone", "avatar", "totp_secret"}
 
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     name: Mapped[str | None] = mapped_column(nullable=True, default=None)
@@ -42,7 +43,9 @@ class User(UUIDv7AuditBase):
         deferred=True,
         deferred_group="security_sensitive",
     )
-    avatar_url: Mapped[str | None] = mapped_column(String(length=500), nullable=True, default=None)
+    avatar: Mapped[FileObject | None] = mapped_column(
+        StoredObject(backend=StorageSettings.BACKEND_KEY), nullable=True, default=None
+    )
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
@@ -120,3 +123,7 @@ class User(UUIDv7AuditBase):
     @hybrid_property
     def has_mfa(self) -> bool:
         return self.is_two_factor_enabled
+
+    @hybrid_property
+    def avatar_url(self) -> str | None:
+        return "/api/me/avatar" if self.avatar is not None else None

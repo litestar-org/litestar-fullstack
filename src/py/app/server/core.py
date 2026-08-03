@@ -7,6 +7,7 @@ from uuid import UUID
 
 from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
 from httpx_oauth.oauth2 import OAuth2Token
+from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.openapi.config import OpenAPIConfig
@@ -69,6 +70,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         """
         settings = get_settings()
         self.app_slug = settings.app.slug
+        plugins.register_storage_backend()
         app_config.debug = settings.app.DEBUG
         app_config.openapi_config = OpenAPIConfig(
             title=settings.app.NAME,
@@ -108,6 +110,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "User": m.User,
                 "AppEmailService": AppEmailService,
                 "EmailService": EmailService,
+                "UploadFile": UploadFile,
             },
         )
         app_config.exception_handlers = {

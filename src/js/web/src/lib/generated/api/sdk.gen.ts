@@ -2,6 +2,7 @@
 
 import {
   type Client,
+  formDataBodySerializer,
   type Options as Options2,
   type TDataShape,
   urlSearchParamsBodySerializer,
@@ -11,6 +12,13 @@ import type {
   AcceptTeamInvitationData,
   AcceptTeamInvitationErrors,
   AcceptTeamInvitationResponses,
+  AccountAvatarDeleteData,
+  AccountAvatarDeleteResponses,
+  AccountAvatarGetData,
+  AccountAvatarGetResponses,
+  AccountAvatarUploadData,
+  AccountAvatarUploadErrors,
+  AccountAvatarUploadResponses,
   AccountDeleteData,
   AccountDeleteResponses,
   AccountLoginData,
@@ -868,6 +876,65 @@ export const accountProfileUpdate = <ThrowOnError extends boolean = false>(
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Delete Avatar
+ *
+ * Remove the current user's profile picture.
+ */
+export const accountAvatarDelete = <ThrowOnError extends boolean = false>(
+  options?: Options<AccountAvatarDeleteData, ThrowOnError>,
+) =>
+  (options?.client ?? client).delete<
+    AccountAvatarDeleteResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/me/avatar",
+    ...options,
+  });
+
+/**
+ * Get Avatar
+ *
+ * Retrieve the current user's profile picture.
+ */
+export const accountAvatarGet = <ThrowOnError extends boolean = false>(
+  options?: Options<AccountAvatarGetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    AccountAvatarGetResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/me/avatar",
+    ...options,
+  });
+
+/**
+ * Upload Avatar
+ *
+ * Upload or replace the current user's profile picture.
+ */
+export const accountAvatarUpload = <ThrowOnError extends boolean = false>(
+  options: Options<AccountAvatarUploadData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    AccountAvatarUploadResponses,
+    AccountAvatarUploadErrors,
+    ThrowOnError
+  >({
+    ...formDataBodySerializer,
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/me/avatar",
+    ...options,
+    headers: {
+      "Content-Type": null,
       ...options.headers,
     },
   });

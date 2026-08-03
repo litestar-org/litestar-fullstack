@@ -8,3 +8,4 @@ Usage
     installation
     development
     startup
+    object-storage
