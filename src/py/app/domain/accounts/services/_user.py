@@ -208,7 +208,9 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         """
         if content_type not in AVATAR_CONTENT_TYPE_EXTENSIONS:
             allowed = ", ".join(sorted(AVATAR_CONTENT_TYPE_EXTENSIONS))
-            raise ClientException(detail=f"Unsupported avatar content type '{content_type}'. Allowed: {allowed}", status_code=400)
+            raise ClientException(
+                detail=f"Unsupported avatar content type '{content_type}'. Allowed: {allowed}", status_code=400
+            )
         if len(data) > MAX_AVATAR_BYTES:
             raise ClientException(
                 detail=f"Avatar exceeds {MAX_AVATAR_BYTES // (1024 * 1024)}MB limit.",

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 import structlog
 from litestar import Controller, delete, get, patch, post
-from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import NotFoundException, ValidationException
@@ -18,6 +17,8 @@ from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
 from app.lib.schema import Message
 
 if TYPE_CHECKING:
+    from litestar.datastructures import UploadFile
+
     from app.db import models as m
     from app.domain.accounts.services import UserService
 
@@ -131,7 +132,7 @@ class ProfileController(Controller):
         self,
         current_user: m.User,
         users_service: UserService,
-        data: UploadFile = Body(media_type=RequestEncodingType.MULTI_PART),
+        data: UploadFile = Body(media_type=RequestEncodingType.MULTI_PART),  # noqa: B008
     ) -> User:
         """Upload or replace the user's avatar.
 
@@ -176,7 +177,8 @@ class ProfileController(Controller):
             The avatar image bytes.
         """
         if current_user.avatar is None:
-            raise NotFoundException("No avatar set.")
+            msg = "No avatar set."
+            raise NotFoundException(msg)
 
         content = await current_user.avatar.get_content_async()
         return Response(
@@ -205,5 +207,6 @@ class ProfileController(Controller):
             NotFoundException: If the user has no avatar set.
         """
         if current_user.avatar is None:
-            raise NotFoundException("No avatar set.")
+            msg = "No avatar set."
+            raise NotFoundException(msg)
         _ = await users_service.remove_avatar(db_obj=current_user)
