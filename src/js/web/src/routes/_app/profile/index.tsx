@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
+import { AvatarSection } from "@/components/profile/avatar-section"
 import { ConnectedAccounts } from "@/components/profile/connected-accounts"
 import { MfaSection } from "@/components/profile/mfa-section"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
@@ -47,6 +48,9 @@ function ProfilePage() {
   return (
     <PageContainer className="flex-1 space-y-8">
       <PageHeader eyebrow="Account" title="Profile settings" description="Manage security, connected accounts, and authentication options." />
+      <PageSection>
+        <AvatarSection />
+      </PageSection>
       <PageSection>
         <div className="grid gap-6 lg:grid-cols-2">
           <MfaSection />

@@ -23,10 +23,16 @@ interface AuthState {
   teams: Team[]
   isLoading: boolean
   isAuthenticated: boolean
+  // Bumped whenever the avatar changes. The avatar lives at a stable URL
+  // (`/api/me/avatar`), so we append this as a cache-busting query param to
+  // force the browser to refetch a replaced or removed image.
+  avatarVersion: number
   login: (email: string, password: string) => Promise<{ mfaRequired: boolean }>
   completeMfaLogin: (accessToken: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
+  setUser: (user: User | null) => void
+  bumpAvatarVersion: () => void
   setCurrentTeam: (team: Team) => void
   setTeams: (teams: Team[]) => void
 }
@@ -39,6 +45,7 @@ export const useAuthStore = create<AuthState>()(
       teams: [],
       isLoading: false,
       isAuthenticated: false,
+      avatarVersion: 0,
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
@@ -121,6 +128,8 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false })
         }
       },
+      setUser: (user: User | null) => set({ user }),
+      bumpAvatarVersion: () => set((state) => ({ avatarVersion: state.avatarVersion + 1 })),
       setCurrentTeam: (team: Team) => set({ currentTeam: team }),
       setTeams: (teams: Team[]) =>
         set((state) => {
