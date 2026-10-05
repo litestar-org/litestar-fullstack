@@ -27,6 +27,7 @@ interface AuthState {
   completeMfaLogin: (accessToken: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
+  setUser: (user: User | null) => void
   setCurrentTeam: (team: Team) => void
   setTeams: (teams: Team[]) => void
 }
@@ -121,6 +122,7 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false })
         }
       },
+      setUser: (user: User | null) => set({ user }),
       setCurrentTeam: (team: Team) => set({ currentTeam: team }),
       setTeams: (teams: Team[]) =>
         set((state) => {

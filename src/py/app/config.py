@@ -14,6 +14,7 @@ vite = _settings.vite.get_config()
 problem_details = _settings.app.get_problem_details_config()
 log = _settings.log.get_structlog_config()
 email = _settings.email.get_config()
+storage = _settings.storage
 
 
 @cache

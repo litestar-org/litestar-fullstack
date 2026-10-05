@@ -56,6 +56,8 @@ class UserFactory(SQLAlchemyFactory[m.User]):
     is_two_factor_enabled = False
     two_factor_confirmed_at: datetime | None = None
     backup_codes: list[str] | None = None
+    # Avatar is a FileObject column — polyfactory has no provider for it.
+    avatar = None
 
     # Ignore relationships to avoid circular dependencies
     roles = Ignore()

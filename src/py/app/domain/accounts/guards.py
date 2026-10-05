@@ -81,15 +81,23 @@ def requires_superuser(connection: ASGIConnection[Any, m.User, Token, Any], _: B
     Raises:
         PermissionDeniedException: Not authorized
     """
-    if connection.user.is_superuser:
-        return
-    if any(
-        assigned_role.role_name
-        for assigned_role in connection.user.roles
-        if assigned_role.role_name == constants.SUPERUSER_ACCESS_ROLE
-    ):
+    if is_superuser(connection.user):
         return
     raise PermissionDeniedException(detail="Insufficient privileges")
+
+
+def is_superuser(user: m.User) -> bool:
+    """Check whether a user has superuser privileges.
+
+    Args:
+        user: The user to check.
+
+    Returns:
+        True if the user is flagged as a superuser or holds the superuser role.
+    """
+    return user.is_superuser or any(
+        assigned_role.role_name == constants.SUPERUSER_ACCESS_ROLE for assigned_role in user.roles
+    )
 
 
 async def current_user_from_token(token: Token, connection: ASGIConnection[Any, Any, Any, Any]) -> m.User | None:

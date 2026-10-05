@@ -14,7 +14,7 @@ import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, cast
+from typing import TYPE_CHECKING, ClassVar, Final, cast
 
 import structlog
 from advanced_alchemy.extensions.litestar import AlembicAsyncConfig, AsyncSessionConfig, SQLAlchemyAsyncConfig
@@ -295,6 +295,24 @@ class EmailSettings:
 
 
 @dataclass
+class StorageSettings:
+    BACKEND_KEY: ClassVar[str] = "s3"
+    """Key used to register and look up the file-object storage backend."""
+    S3_ENDPOINT: str = field(default_factory=get_env("STORAGE_S3_ENDPOINT", "http://localhost:19000"))
+    """S3-compatible storage endpoint URL."""
+    S3_ACCESS_KEY: str = field(default_factory=get_env("STORAGE_S3_ACCESS_KEY", "app"))
+    """S3 access key."""
+    S3_SECRET_KEY: str = field(default_factory=get_env("STORAGE_S3_SECRET_KEY", "app"), repr=False)
+    """S3 secret key."""
+    S3_BUCKET: str = field(default_factory=get_env("STORAGE_S3_BUCKET", "uploads"))
+    """S3 bucket name."""
+    S3_REGION: str = field(default_factory=get_env("STORAGE_S3_REGION", "us-east-1"))
+    """S3 region."""
+    S3_ALLOW_HTTP: bool = field(default_factory=get_env("STORAGE_S3_ALLOW_HTTP", True))
+    """Allow HTTP connections (needed for local development with rustfs)."""
+
+
+@dataclass
 class AppSettings:
     """Application configuration"""
 
@@ -529,6 +547,7 @@ class Settings:
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
     email: EmailSettings = field(default_factory=EmailSettings)
+    storage: StorageSettings = field(default_factory=StorageSettings)
 
     @classmethod
     @lru_cache(maxsize=1, typed=True)
@@ -547,10 +566,11 @@ class Settings:
             vite: ViteSettings = ViteSettings()
             app: AppSettings = AppSettings()
             log: LogSettings = LogSettings()
+            storage: StorageSettings = StorageSettings()
         except Exception as e:  # noqa: BLE001
             logger.fatal("Could not load settings. %s", e)
             sys.exit(1)
-        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log)
+        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log, storage=storage)
 
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:

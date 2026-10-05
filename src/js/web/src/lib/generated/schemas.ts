@@ -6,6 +6,8 @@ export * from "./api/types.gen"
 
 // Import specific operation types for mapping
 import type {
+  AccountAvatarGetData,
+  AccountAvatarGetResponses,
   AccountLoginData,
   AccountLoginErrors,
   AccountLoginResponses,
@@ -90,8 +92,10 @@ export type OperationName =
   | 'create_tag'
   | 'create_team'
   | 'create_user'
+  | 'delete_avatar'
   | 'disable_mfa'
   | 'forgot_password'
+  | 'get_avatar'
   | 'get_mfa_status'
   | 'get_profile'
   | 'get_sessions'
@@ -114,6 +118,7 @@ export type OperationName =
   | 'system:oauth-config'
   | 'update_password'
   | 'update_profile'
+  | 'upload_avatar'
   | 'validate_reset_token'
   | 'verify_challenge'
   | 'verify_email'
@@ -128,8 +133,10 @@ export interface OperationDataTypes {
   'create_tag': CreateTagData
   'create_team': CreateTeamData
   'create_user': CreateUserData
+  'delete_avatar': AccountAvatarGetData
   'disable_mfa': DisableMfaData
   'forgot_password': ForgotPasswordData
+  'get_avatar': AccountAvatarGetData
   'get_mfa_status': GetMfaStatusData
   'get_profile': AccountProfileUpdateData
   'get_sessions': RevokeAllSessionsData
@@ -152,6 +159,7 @@ export interface OperationDataTypes {
   'system:oauth-config': OAuthConfigData
   'update_password': AccountPasswordUpdateData
   'update_profile': AccountProfileUpdateData
+  'upload_avatar': AccountAvatarGetData
   'validate_reset_token': ResetPasswordData
   'verify_challenge': VerifyMfaChallengeData
   'verify_email': ApiEmailVerificationVerifyVerifyEmailData
@@ -167,8 +175,10 @@ export interface OperationResponseTypes {
   'create_tag': CreateTagResponses
   'create_team': CreateTeamResponses
   'create_user': CreateUserResponses
+  'delete_avatar': AccountAvatarGetResponses
   'disable_mfa': DisableMfaResponses
   'forgot_password': ForgotPasswordResponses
+  'get_avatar': AccountAvatarGetResponses
   'get_mfa_status': GetMfaStatusResponses
   'get_profile': AccountProfileUpdateResponses
   'get_sessions': RevokeAllSessionsResponses
@@ -191,6 +201,7 @@ export interface OperationResponseTypes {
   'system:oauth-config': OAuthConfigResponses
   'update_password': AccountPasswordUpdateResponses
   'update_profile': AccountProfileUpdateResponses
+  'upload_avatar': AccountAvatarGetResponses
   'validate_reset_token': ResetPasswordResponses
   'verify_challenge': VerifyMfaChallengeResponses
   'verify_email': ApiEmailVerificationVerifyVerifyEmailResponses
@@ -206,8 +217,10 @@ export interface OperationErrorTypes {
   'create_tag': CreateTagErrors
   'create_team': CreateTeamErrors
   'create_user': CreateUserErrors
+  'delete_avatar': never
   'disable_mfa': DisableMfaErrors
   'forgot_password': ForgotPasswordErrors
+  'get_avatar': never
   'get_mfa_status': never
   'get_profile': AccountProfileUpdateErrors
   'get_sessions': never
@@ -230,6 +243,7 @@ export interface OperationErrorTypes {
   'system:oauth-config': never
   'update_password': AccountPasswordUpdateErrors
   'update_profile': AccountProfileUpdateErrors
+  'upload_avatar': never
   'validate_reset_token': ResetPasswordErrors
   'verify_challenge': VerifyMfaChallengeErrors
   'verify_email': ApiEmailVerificationVerifyVerifyEmailErrors
