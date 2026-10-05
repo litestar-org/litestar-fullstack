@@ -90,6 +90,7 @@ import {
   updateTeam,
   updateTeamMember,
   updateUser,
+  userAvatarGet,
   validateResetToken,
   verifyMfaChallenge,
 } from "../sdk.gen";
@@ -322,6 +323,9 @@ import type {
   UpdateUserData,
   UpdateUserError,
   UpdateUserResponse,
+  UserAvatarGetData,
+  UserAvatarGetError,
+  UserAvatarGetResponse,
   ValidateResetTokenData,
   ValidateResetTokenError,
   ValidateResetTokenResponse,
@@ -2588,6 +2592,33 @@ export const updateUserMutation = (
   };
   return mutationOptions;
 };
+
+export const userAvatarGetQueryKey = (options: Options<UserAvatarGetData>) =>
+  createQueryKey("userAvatarGet", options);
+
+/**
+ * Get User Avatar
+ *
+ * Retrieve a user's profile picture. Available to the user themselves and to superusers.
+ */
+export const userAvatarGetOptions = (options: Options<UserAvatarGetData>) =>
+  queryOptions<
+    UserAvatarGetResponse,
+    UserAvatarGetError,
+    UserAvatarGetResponse,
+    ReturnType<typeof userAvatarGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await userAvatarGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: userAvatarGetQueryKey(options),
+  });
 
 export const systemHealthQueryKey = (options?: Options<SystemHealthData>) =>
   createQueryKey("systemHealth", options);

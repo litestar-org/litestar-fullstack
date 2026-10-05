@@ -966,10 +966,10 @@ export type AdminListAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1047,10 +1047,10 @@ export type AdminGetTargetAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1127,10 +1127,10 @@ export type AdminGetUserAuditLogsData = {
      * Field to search
      */
     sortOrder?: "asc" | "desc" | null;
-    actorIdIn?: Array<string> | null;
     targetTypeIn?: Array<string> | null;
-    targetIdIn?: Array<string> | null;
     actionIn?: Array<string> | null;
+    targetIdIn?: Array<string> | null;
+    actorIdIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -2024,9 +2024,7 @@ export type AccountAvatarGetResponses = {
   /**
    * Request fulfilled, document follows
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: string;
 };
 
 export type AccountAvatarGetResponse =
@@ -3937,6 +3935,43 @@ export type UpdateUserResponses = {
 };
 
 export type UpdateUserResponse = UpdateUserResponses[keyof UpdateUserResponses];
+
+export type UserAvatarGetData = {
+  body?: never;
+  path: {
+    user_id: string;
+  };
+  query?: never;
+  url: "/api/users/{user_id}/avatar";
+};
+
+export type UserAvatarGetErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type UserAvatarGetError = UserAvatarGetErrors[keyof UserAvatarGetErrors];
+
+export type UserAvatarGetResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: string;
+};
+
+export type UserAvatarGetResponse =
+  UserAvatarGetResponses[keyof UserAvatarGetResponses];
 
 export type SystemHealthData = {
   body?: never;

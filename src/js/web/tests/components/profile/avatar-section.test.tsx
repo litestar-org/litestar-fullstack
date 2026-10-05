@@ -43,7 +43,7 @@ describe("AvatarSection", () => {
   })
 
   it("shows change and remove actions when an avatar is set", () => {
-    mockUser.mockReturnValue({ name: "Ada Lovelace", username: "ada", avatarUrl: "/api/me/avatar" })
+    mockUser.mockReturnValue({ name: "Ada Lovelace", username: "ada", avatarUrl: "/api/users/1/avatar?v=abc" })
     render(<AvatarSection />)
 
     expect(screen.getByRole("button", { name: /change picture/i })).toBeInTheDocument()
@@ -51,7 +51,7 @@ describe("AvatarSection", () => {
   })
 
   it("calls the delete mutation when remove is clicked", async () => {
-    mockUser.mockReturnValue({ name: "Ada Lovelace", username: "ada", avatarUrl: "/api/me/avatar" })
+    mockUser.mockReturnValue({ name: "Ada Lovelace", username: "ada", avatarUrl: "/api/users/1/avatar?v=abc" })
     const user = userEvent.setup()
     render(<AvatarSection />)
 

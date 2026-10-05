@@ -52,6 +52,7 @@ export type RouteName =
   | 'get_team_api_teams_team_id:uuid'
   | 'get_user'
   | 'get_user_api_users_user_id:uuid'
+  | 'get_user_avatar'
   | 'get_user_logs'
   | 'get_verification_status'
   | 'initiate_disable_mfa_oauth'
@@ -191,6 +192,9 @@ export interface RoutePathParams {
     user_id: UUID;
   };
   'get_user_api_users_user_id:uuid': {
+    user_id: UUID;
+  };
+  'get_user_avatar': {
     user_id: UUID;
   };
   'get_user_logs': {
@@ -382,6 +386,7 @@ export interface RouteQueryParams {
   'get_team_api_teams_team_id:uuid': Record<string, never>;
   'get_user': Record<string, never>;
   'get_user_api_users_user_id:uuid': Record<string, never>;
+  'get_user_avatar': Record<string, never>;
   'get_user_logs': {
     action?: string;
     actionIn?: string[];
@@ -826,6 +831,13 @@ export const routeDefinitions = {
   },
   'get_user_api_users_user_id:uuid': {
     path: '/api/users/{user_id}',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: ['user_id'] as const,
+    queryParams: [] as const,
+  },
+  'get_user_avatar': {
+    path: '/api/users/{user_id}/avatar',
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['user_id'] as const,

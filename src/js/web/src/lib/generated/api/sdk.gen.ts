@@ -240,6 +240,9 @@ import type {
   UpdateUserData,
   UpdateUserErrors,
   UpdateUserResponses,
+  UserAvatarGetData,
+  UserAvatarGetErrors,
+  UserAvatarGetResponses,
   ValidateResetTokenData,
   ValidateResetTokenErrors,
   ValidateResetTokenResponses,
@@ -1713,6 +1716,24 @@ export const updateUser = <ThrowOnError extends boolean = false>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+
+/**
+ * Get User Avatar
+ *
+ * Retrieve a user's profile picture. Available to the user themselves and to superusers.
+ */
+export const userAvatarGet = <ThrowOnError extends boolean = false>(
+  options: Options<UserAvatarGetData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    UserAvatarGetResponses,
+    UserAvatarGetErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/users/{user_id}/avatar",
+    ...options,
   });
 
 /**

@@ -17,7 +17,6 @@ from app.lib.settings import StorageSettings
 from app.lib.validation import PasswordValidationError, validate_password_strength
 
 MAX_FAILED_RESET_ATTEMPTS = 5
-MAX_AVATAR_BYTES = 5 * 1024 * 1024
 AVATAR_CONTENT_TYPE_EXTENSIONS: dict[str, str] = {
     "image/jpeg": "jpg",
     "image/png": "png",
@@ -211,9 +210,9 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
             raise ClientException(
                 detail=f"Unsupported avatar content type '{content_type}'. Allowed: {allowed}", status_code=400
             )
-        if len(data) > MAX_AVATAR_BYTES:
+        if len(data) > constants.MAX_AVATAR_BYTES:
             raise ClientException(
-                detail=f"Avatar exceeds {MAX_AVATAR_BYTES // (1024 * 1024)}MB limit.",
+                detail=f"Avatar exceeds {constants.MAX_AVATAR_BYTES // (1024 * 1024)}MB limit.",
                 status_code=413,
             )
         # Filename is generated server-side to avoid path traversal / key pollution

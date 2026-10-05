@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from uuid import UUID  # noqa: TC003
 
 import structlog
 from litestar import Controller, delete, get, patch, post
@@ -13,7 +14,9 @@ from litestar.params import Body
 from litestar.response import Response
 
 from app.domain.accounts.deps import provide_users_service
+from app.domain.accounts.guards import is_superuser
 from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
+from app.lib import constants
 from app.lib.schema import Message
 
 if TYPE_CHECKING:
@@ -25,7 +28,9 @@ if TYPE_CHECKING:
 logger = structlog.get_logger()
 
 ALLOWED_AVATAR_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
-MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
+# Headroom over the file cap for the multipart boundary and part headers, so a
+# file just under the cap reaches the service-level size check.
+AVATAR_REQUEST_OVERHEAD = 64 * 1024
 
 
 def _detect_image_mime(data: bytes) -> str | None:
@@ -42,6 +47,34 @@ def _detect_image_mime(data: bytes) -> str | None:
     if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
         return "image/webp"
     return None
+
+
+async def _avatar_response(user: m.User | None) -> Response[bytes]:
+    """Build the image response for a user's avatar.
+
+    Args:
+        user: The user whose avatar to serve.
+
+    Returns:
+        The avatar image bytes.
+
+    Raises:
+        NotFoundException: If the user has no avatar or its stored object is missing.
+    """
+    if user is None or user.avatar is None:
+        msg = "No avatar set."
+        raise NotFoundException(msg)
+    try:
+        content = await user.avatar.get_content_async()
+    except FileNotFoundError as e:
+        # The row can outlive its object: storage writes happen after the DB commit.
+        msg = "No avatar set."
+        raise NotFoundException(msg) from e
+    return Response(
+        content=content,
+        media_type=user.avatar.content_type or "application/octet-stream",
+        headers={"Cache-Control": "private, no-cache"},
+    )
 
 
 class ProfileController(Controller):
@@ -126,7 +159,7 @@ class ProfileController(Controller):
         path="/api/me/avatar",
         summary="Upload Avatar",
         description="Upload or replace the current user's profile picture.",
-        request_max_body_size=MAX_AVATAR_SIZE,
+        request_max_body_size=constants.MAX_AVATAR_BYTES + AVATAR_REQUEST_OVERHEAD,
     )
     async def upload_avatar(
         self,
@@ -167,7 +200,7 @@ class ProfileController(Controller):
         summary="Get Avatar",
         description="Retrieve the current user's profile picture.",
     )
-    async def get_avatar(self, current_user: m.User) -> Response:
+    async def get_avatar(self, current_user: m.User) -> Response[bytes]:
         """Get the current user's avatar image.
 
         Args:
@@ -176,15 +209,40 @@ class ProfileController(Controller):
         Returns:
             The avatar image bytes.
         """
-        if current_user.avatar is None:
+        return await _avatar_response(current_user)
+
+    @get(
+        operation_id="UserAvatarGet",
+        path="/api/users/{user_id:uuid}/avatar",
+        summary="Get User Avatar",
+        description="Retrieve a user's profile picture. Available to the user themselves and to superusers.",
+    )
+    async def get_user_avatar(
+        self,
+        current_user: m.User,
+        users_service: UserService,
+        user_id: UUID,
+    ) -> Response[bytes]:
+        """Get a user's avatar image.
+
+        Args:
+            current_user: The current user.
+            users_service: The users service.
+            user_id: The user whose avatar to fetch.
+
+        Returns:
+            The avatar image bytes.
+
+        Raises:
+            NotFoundException: If the avatar is missing or the caller may not view it.
+        """
+        if user_id == current_user.id:
+            return await _avatar_response(current_user)
+        if not is_superuser(current_user):
+            # 404 rather than 403 so the route doesn't reveal which users have avatars.
             msg = "No avatar set."
             raise NotFoundException(msg)
-
-        content = await current_user.avatar.get_content_async()
-        return Response(
-            content=content,
-            media_type=current_user.avatar.content_type or "application/octet-stream",
-        )
+        return await _avatar_response(await users_service.get_one_or_none(id=user_id))
 
     @delete(
         operation_id="AccountAvatarDelete",

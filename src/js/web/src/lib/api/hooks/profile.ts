@@ -6,12 +6,11 @@ import { accountAvatarDelete, accountAvatarUpload } from "@/lib/generated/api"
 /**
  * Upload (or replace) the current user's avatar.
  *
- * The backend returns the updated `User`, so we push it straight into the auth
- * store and bump the avatar version to defeat image caching at the stable URL.
+ * The backend returns the updated `User` (with a freshly versioned `avatarUrl`),
+ * so we push it straight into the auth store.
  */
 export function useUploadAvatar() {
   const setUser = useAuthStore((state) => state.setUser)
-  const bumpAvatarVersion = useAuthStore((state) => state.bumpAvatarVersion)
 
   return useMutation({
     mutationFn: async (file: File) => {
@@ -23,7 +22,6 @@ export function useUploadAvatar() {
     },
     onSuccess: (user) => {
       setUser(user)
-      bumpAvatarVersion()
       toast.success("Avatar updated")
     },
     onError: (error) => {
@@ -42,7 +40,6 @@ export function useUploadAvatar() {
  */
 export function useDeleteAvatar() {
   const setUser = useAuthStore((state) => state.setUser)
-  const bumpAvatarVersion = useAuthStore((state) => state.bumpAvatarVersion)
 
   return useMutation({
     mutationFn: async () => {
@@ -53,7 +50,6 @@ export function useDeleteAvatar() {
       if (currentUser) {
         setUser({ ...currentUser, avatarUrl: null })
       }
-      bumpAvatarVersion()
       toast.success("Avatar removed")
     },
     onError: (error) => {

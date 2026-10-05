@@ -391,6 +391,19 @@
       ],
       "uri": "/api/users/{user_id}"
     },
+    "get_user_avatar": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/users/{user_id}/avatar"
+    },
     "get_user_logs": {
       "method": "get",
       "methods": [

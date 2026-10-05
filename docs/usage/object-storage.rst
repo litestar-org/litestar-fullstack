@@ -15,8 +15,10 @@ types, backed by `obstore`'s ``S3Store``:
 
 - The ``User.avatar`` column is a ``StoredObject`` (stored as JSONB). It holds
   the object key, content type and size — never the bytes themselves.
-- ``User.avatar_url`` is a hybrid property that returns ``/api/me/avatar`` when
-  an avatar is set, so the API response schema stays stable.
+- ``User.avatar_url`` is a hybrid property that returns
+  ``/api/users/{user_id}/avatar?v={upload_id}`` when an avatar is set. The
+  version comes from the per-upload object key, so the URL changes whenever the
+  image does.
 - A single storage backend is registered once at application start by
   ``register_storage_backend()`` (see ``app/server/plugins.py``) and looked up by
   ``StorageSettings.BACKEND_KEY`` (``"s3"``). Registration is idempotent, so the
@@ -79,7 +81,7 @@ required for avatars to work end to end.
 Using the avatar endpoints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The current user's avatar is managed through three authenticated endpoints on
+Avatars are managed through these authenticated endpoints on
 ``ProfileController``:
 
 .. list-table::
@@ -98,19 +100,23 @@ The current user's avatar is managed through three authenticated endpoints on
    * - ``DELETE``
      - ``/api/me/avatar``
      - Removes the avatar (``204 No Content``).
+   * - ``GET``
+     - ``/api/users/{user_id}/avatar``
+     - The URL returned as ``avatarUrl``. Serves a user's avatar to that user or
+       to a superuser; anyone else gets ``404``.
 
 The server is the security boundary: the stored content type is derived from
 **magic-byte sniffing** of the upload (not the client ``Content-Type`` header),
 the object key is generated server-side as ``avatars/{user_id}/{uuid4}.{ext}``
-(so the client filename can never cause path traversal), and the request body is
-capped at 5 MB by ``request_max_body_size`` so oversize uploads are rejected
-before buffering. Replacing or deleting an avatar cleans up the previous object
+(so the client filename can never cause path traversal), and files are limited
+to 5 MB. ``request_max_body_size`` caps the request slightly above that, leaving
+room for multipart overhead, so oversize uploads are rejected before buffering. Replacing or deleting an avatar cleans up the previous object
 automatically via advanced-alchemy's session tracker.
 
 The single-page app wires these into the profile page (**Profile settings →
 Profile picture**), with the avatar also shown in the sidebar user menu. Because
-the avatar lives at a stable URL, the frontend appends a cache-busting version
-query parameter so a replaced image refreshes immediately.
+``avatarUrl`` is versioned per upload, a replaced image refreshes immediately;
+avatar responses also send ``Cache-Control: private, no-cache``.
 
 Production deployment
 ^^^^^^^^^^^^^^^^^^^^^

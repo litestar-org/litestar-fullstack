@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
+from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDv7AuditBase
@@ -126,4 +127,8 @@ class User(UUIDv7AuditBase):
 
     @hybrid_property
     def avatar_url(self) -> str | None:
-        return "/api/me/avatar" if self.avatar is not None else None
+        if self.avatar is None:
+            return None
+        # The stored filename is a fresh uuid per upload, so the URL changes
+        # whenever the image does and browsers never show a stale one.
+        return f"/api/users/{self.id}/avatar?v={PurePosixPath(self.avatar.filename).stem}"

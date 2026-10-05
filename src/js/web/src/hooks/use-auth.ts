@@ -13,18 +13,12 @@ export function useAuth() {
 }
 
 /**
- * Resolve the current user's avatar URL with a cache-busting version param.
+ * Resolve the current user's avatar URL for an `<img src>`.
  *
- * The avatar is served from a stable URL, so without the version suffix the
- * browser would keep showing a stale image after the user replaces it.
- * Returns `undefined` when no avatar is set so consumers fall back to initials.
+ * The backend versions the URL per upload, so a replaced image gets a new URL
+ * and is never served stale from cache. Returns `undefined` when no avatar is
+ * set so consumers fall back to initials.
  */
 export function useAvatarSrc(): string | undefined {
-  const avatarUrl = useAuthStore((state) => state.user?.avatarUrl)
-  const avatarVersion = useAuthStore((state) => state.avatarVersion)
-
-  if (!avatarUrl) {
-    return undefined
-  }
-  return `${avatarUrl}?v=${avatarVersion}`
+  return useAuthStore((state) => state.user?.avatarUrl) ?? undefined
 }
