@@ -8,7 +8,6 @@ metadata:
     app.kubernetes.io/component: config
 data:
   # Application Settings
-  APP_NAME: "Litestar Fullstack SPA"
   LITESTAR_DEBUG: "{{ 'true' if env == 'dev' else 'false' }}"
   LOG_LEVEL: "{{ log_level }}"
 
@@ -16,13 +15,9 @@ data:
   LITESTAR_HOST: "0.0.0.0"
   LITESTAR_PORT: "8000"
 
-  # Database Settings (connection string built from components)
-  DATABASE_HOST: "postgres-service"
-  DATABASE_PORT: "5432"
-  DATABASE_NAME: "{{ db_name | default('appdb') }}"
-  DATABASE_USER: "{{ db_user | default('appuser') }}"
+  # Database pool settings
   DATABASE_POOL_SIZE: "{{ db_pool_size | default('5') }}"
-  DATABASE_POOL_MAX_OVERFLOW: "{{ db_pool_max_overflow | default('10') }}"
+  DATABASE_MAX_POOL_OVERFLOW: "{{ db_pool_max_overflow | default('10') }}"
   DATABASE_ECHO: "false"
 
   # Redis/SAQ Settings
@@ -42,11 +37,6 @@ data:
   EMAIL_BACKEND: "{{ email_backend | default('console') }}"
   EMAIL_FROM_ADDRESS: "{{ email_from_address | default('noreply@localhost') }}"
   EMAIL_FROM_NAME: "{{ email_from_name | default('Litestar App') }}"
-
-  # Feature Flags
-  REGISTRATION_ENABLED: "{{ 'true' if registration_enabled | default(true) else 'false' }}"
-  EMAIL_VERIFICATION_REQUIRED: "{{ 'true' if email_verification_required | default(false) else 'false' }}"
-  MFA_ENABLED: "{{ 'true' if mfa_enabled | default(false) else 'false' }}"
 
   # Logging
   SQLALCHEMY_LOG_LEVEL: "{{ sqlalchemy_log_level | default('30') }}"
