@@ -169,8 +169,7 @@ configure_email() {
 
     cd "${PROJECT_ROOT}"
 
-    railway variables --set "EMAIL_ENABLED=true" \
-        --set "EMAIL_BACKEND=resend" \
+    railway variables --set "EMAIL_BACKEND=resend" \
         --set "EMAIL_FROM_ADDRESS=${EMAIL_FROM_ADDRESS}" \
         --set "EMAIL_FROM_NAME=${EMAIL_FROM_NAME}" \
         --set "RESEND_API_KEY=${RESEND_API_KEY}"
