@@ -32,6 +32,15 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      # The biome pre-commit hook runs `npx @biomejs/biome`; without the locked
+      # local install, npx fetches the latest release, whose rules can drift.
+      - name: Install web dependencies
+        working-directory: src/js/web
+        run: bun install --frozen-lockfile
+
       - name: Run pre-commit
         run: uv run pre-commit run --all-files
 
