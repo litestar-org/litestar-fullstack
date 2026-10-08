@@ -129,15 +129,13 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         return app_config
 
 
-async def get_mailer_dependency(state: State) -> AsyncGenerator[AppEmailService, None]:
+def get_mailer_dependency(state: State) -> AppEmailService:
     """Provide the app email service.
 
     Args:
         state: The application state.
 
-    Yields:
+    Returns:
         The configured AppEmailService.
     """
-    email_config = state.mailer
-    async with email_config.provide_service() as mailer:
-        yield AppEmailService(mailer=mailer)
+    return AppEmailService(mailer=state.mailer)
