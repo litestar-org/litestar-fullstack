@@ -1,0 +1,13 @@
+[Unit]
+Description=Litestar Fullstack App
+After=network.target
+
+[Service]
+User=some-user
+Group=some-group
+WorkingDirectory=/opt/litestar-app/
+Environment="PATH=/opt/litestar-app/.venv/bin"
+ExecStart=/opt/litestar-app/.venv/bin/app run-all --host 127.0.0.1 --port 8000 --http-workers 2
+
+[Install]
+WantedBy=multi-user.target
