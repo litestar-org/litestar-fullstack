@@ -16,7 +16,7 @@ from litestar_email import EmailMultiAlternatives
 from app.lib.settings import BASE_DIR, get_settings
 
 if TYPE_CHECKING:
-    from litestar_email import EmailService
+    from litestar_email import EmailConfig, EmailService
 
 logger = logging.getLogger(__name__)
 
@@ -47,11 +47,11 @@ class AppEmailService:
 
     __slots__ = ("_mailer", "_settings", "_template_cache", "_template_dir")
 
-    def __init__(self, mailer: EmailService) -> None:
+    def __init__(self, mailer: EmailService | EmailConfig) -> None:
         """Initialize the email service.
 
         Args:
-            mailer: The litestar-email plugin's EmailService instance.
+            mailer: The litestar-email plugin's EmailService or EmailConfig instance.
         """
         self._mailer = mailer
         self._settings = get_settings()
@@ -132,7 +132,11 @@ class AppEmailService:
         )
 
         try:
-            num_sent = await self._mailer.send_message(message)
+            if hasattr(self._mailer, "provide_service"):
+                async with self._mailer.provide_service() as mailer:
+                    num_sent = await mailer.send_message(message)
+            else:
+                num_sent = await self._mailer.send_message(message)
         except Exception:
             logger.exception("Failed to send email to %s", to_email)
             raise
