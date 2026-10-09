@@ -338,6 +338,7 @@ class AppSettings:
     """GitHub Client ID"""
     GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_SECRET", ""))
     """GitHub Client Secret"""
+
     @property
     def google_oauth_enabled(self) -> bool:
         """Check if Google OAuth is configured.
