@@ -71,7 +71,7 @@ async def team_invitation_created_event_handler(invitation_id: UUID, mailer: App
             invitee_email=invitation.email,
             inviter_name=inviter.name or inviter.email,
             team_name=team.name,
-            invitation_url=f"{mailer.base_url}/teams/{team.id}/invitations/{invitation.id}",
+            invitation_url=f"{mailer.base_url}/teams/{team.id}/invitations/{invitation.id}/accept",
         )
 
         await logger.ainfo("Sent team invitation email", invitation_id=invitation.id)
