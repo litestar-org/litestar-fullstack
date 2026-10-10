@@ -40,6 +40,7 @@ async def test_team_invitation_email_url(
         json=invitation_data,
     )
     assert response.status_code == 201
+    invitation_id = response.json()["id"]
 
     # Wait for background tasks/events to complete
     await await_events()
@@ -55,6 +56,11 @@ async def test_team_invitation_email_url(
     assert message.html_body is not None
     assert "/teams/" in message.html_body
     assert "/invitations/" in message.html_body
+
+    # The invitation URL must point at the frontend accept route:
+    # /teams/{team_id}/invitations/{invitation_id}/accept
+    expected_path = f"/teams/{test_team.id}/invitations/{invitation_id}/accept"
+    assert expected_path in message.html_body
 
     # This should FAIL currently because it's hardcoded to https://example.com in listeners.py
     assert "example.com" not in message.html_body
