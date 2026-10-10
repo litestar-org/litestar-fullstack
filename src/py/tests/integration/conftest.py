@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -7,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 from advanced_alchemy.utils.fixtures import open_fixture_async
 from litestar.testing import AsyncTestClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import config
 from app.db.models import EmailVerificationToken, PasswordResetToken, Team, TeamInvitation, User
@@ -21,7 +23,7 @@ if TYPE_CHECKING:
 
     from httpx import AsyncClient
     from litestar import Litestar
-    from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
+    from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
 pytestmark = pytest.mark.anyio
 
@@ -420,3 +422,21 @@ def await_events() -> Callable[[], Coroutine[Any, Any, None]]:
             assert len(InMemoryBackend.outbox) == 1
     """
     return wait_for_events
+
+
+@pytest.fixture
+def slow_commit(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Delay every session commit so event listeners run before the request commits.
+
+    Listeners open their own session, so they only see rows the request has
+    already committed. Under normal timing the commit almost always wins, which
+    hides missing commits before ``app.emit()``. This fixture forces the losing
+    ordering.
+    """
+    original_commit = AsyncSession.commit
+
+    async def _slow_commit(self: AsyncSession) -> None:
+        await asyncio.sleep(0.3)
+        await original_commit(self)
+
+    monkeypatch.setattr(AsyncSession, "commit", _slow_commit)
