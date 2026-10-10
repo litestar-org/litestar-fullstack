@@ -389,7 +389,7 @@ class AccessController(Controller):
         if role_obj is not None:
             user_data.update({"role_id": role_obj.id})
 
-        user = await users_service.create(user_data)
+        user = await users_service.create(user_data, auto_commit=True)
         request.app.emit(event_id="user_created", user_id=user.id, mailer=app_mailer)
         return users_service.to_schema(user, schema_type=User)
 
