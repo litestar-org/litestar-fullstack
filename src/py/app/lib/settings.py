@@ -338,8 +338,6 @@ class AppSettings:
     """GitHub Client ID"""
     GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_SECRET", ""))
     """GitHub Client Secret"""
-    ENV_SECRETS: str = field(default_factory=get_env("ENV_SECRETS", "runtime-secrets"))
-    """Path to environment secrets."""
 
     @property
     def google_oauth_enabled(self) -> bool:
@@ -534,7 +532,6 @@ class Settings:
     @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
         logger = structlog.get_logger()
-        _secret_id = os.environ.get("ENV_SECRETS", None)  # use this to load secrets in a container
         env_file = Path(f"{os.curdir}/{dotenv_filename}")
         env_file_exists = env_file.is_file()
         if env_file_exists:
