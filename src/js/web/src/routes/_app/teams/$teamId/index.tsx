@@ -95,7 +95,9 @@ function TeamDetail() {
   const canManageMembers = isOwner || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
 
   const canRemoveMember = (member: TeamMember) => {
+    // Cannot remove the owner (they must transfer ownership first)
     if (member.isOwner) return false
+    // Cannot remove yourself unless you're superuser
     if (member.userId === user?.id && !user?.isSuperuser) return false
     return canManageMembers
   }
@@ -159,6 +161,7 @@ function TeamDetail() {
               })}
               {members.length === 0 && <div className="text-muted-foreground text-sm">No members yet.</div>}
 
+              {/* Pending Invitations */}
               {pendingInvitations.length > 0 && (
                 <>
                   <Separator className="my-4" />
