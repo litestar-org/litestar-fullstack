@@ -64,3 +64,22 @@ async def test_team_invitation_email_url(
 
     # This should FAIL currently because it's hardcoded to https://example.com in listeners.py
     assert "example.com" not in message.html_body
+
+
+@pytest.mark.usefixtures("slow_commit")
+async def test_team_invitation_commits_before_emitting_event(
+    authenticated_client: AsyncTestClient,
+    test_team: m.Team,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
+    """Test that the invitation listener can see the new invitation when commits are slow."""
+    response = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/invitations",
+        json={"email": "slowcommit@example.com", "role": m.TeamRoles.MEMBER.value},
+    )
+    assert response.status_code == 201
+
+    await await_events()
+
+    assert len(InMemoryBackend.outbox) == 1
+    assert "slowcommit@example.com" in InMemoryBackend.outbox[0].to

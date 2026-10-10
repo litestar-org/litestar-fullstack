@@ -51,6 +51,30 @@ async def test_user_registration_triggers_verification_email(
     assert "verify" in message.subject.lower()
 
 
+@pytest.mark.usefixtures("slow_commit")
+async def test_registration_commits_user_before_emitting_event(
+    client: AsyncTestClient,
+    await_events: Callable[[], Coroutine[Any, Any, None]],
+) -> None:
+    """Test that the signup listener can see the new user when commits are slow."""
+    unique_email = f"slowcommit_{uuid4().hex[:8]}@example.com"
+    response = await client.post(
+        "/api/access/signup",
+        json={
+            "email": unique_email,
+            "password": "TestPassword123!",
+            "name": "Slow Commit User",
+        },
+    )
+
+    assert response.status_code == 201
+
+    await await_events()
+
+    assert len(InMemoryBackend.outbox) == 1
+    assert unique_email in InMemoryBackend.outbox[0].to
+
+
 async def test_resend_verification_triggers_email_service(
     client: AsyncTestClient,
     await_events: Callable[[], Coroutine[Any, Any, None]],
