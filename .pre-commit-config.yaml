@@ -10,7 +10,7 @@ repos:
     hooks:
       - id: local-biome-check
         name: biome check
-        entry: bash -c 'cd src/js/web && npx @biomejs/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched --config-path biome.json'
+        entry: bash -c 'cd src/js/web && ./node_modules/.bin/biome check --write --files-ignore-unknown=true --no-errors-on-unmatched --config-path biome.json'
         language: system
         types: [text]
         pass_filenames: false
