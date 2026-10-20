@@ -28,6 +28,7 @@ export type RouteName =
   | 'create_team'
   | 'create_team_invitation'
   | 'create_user'
+  | 'delete_avatar'
   | 'delete_role'
   | 'delete_tag'
   | 'delete_team'
@@ -38,6 +39,7 @@ export type RouteName =
   | 'disable_mfa'
   | 'forgot_password'
   | 'get_activity'
+  | 'get_avatar'
   | 'get_log'
   | 'get_mfa_status'
   | 'get_profile'
@@ -50,6 +52,7 @@ export type RouteName =
   | 'get_team_api_teams_team_id:uuid'
   | 'get_user'
   | 'get_user_api_users_user_id:uuid'
+  | 'get_user_avatar'
   | 'get_user_logs'
   | 'get_verification_status'
   | 'initiate_disable_mfa_oauth'
@@ -97,6 +100,7 @@ export type RouteName =
   | 'update_user'
   | 'update_user_api_users_user_id:uuid'
   | 'upgrade_scopes'
+  | 'upload_avatar'
   | 'validate_reset_token'
   | 'verify_challenge'
   | 'verify_email'
@@ -134,6 +138,7 @@ export interface RoutePathParams {
     team_id: UUID;
   };
   'create_user': Record<string, never>;
+  'delete_avatar': Record<string, never>;
   'delete_role': {
     role_id: UUID;
   };
@@ -159,6 +164,7 @@ export interface RoutePathParams {
   'disable_mfa': Record<string, never>;
   'forgot_password': Record<string, never>;
   'get_activity': Record<string, never>;
+  'get_avatar': Record<string, never>;
   'get_log': {
     log_id: UUID;
   };
@@ -186,6 +192,9 @@ export interface RoutePathParams {
     user_id: UUID;
   };
   'get_user_api_users_user_id:uuid': {
+    user_id: UUID;
+  };
+  'get_user_avatar': {
     user_id: UUID;
   };
   'get_user_logs': {
@@ -275,6 +284,7 @@ export interface RoutePathParams {
   'upgrade_scopes': {
     provider: string;
   };
+  'upload_avatar': Record<string, never>;
   'validate_reset_token': Record<string, never>;
   'verify_challenge': Record<string, never>;
   'verify_email': Record<string, never>;
@@ -326,6 +336,7 @@ export interface RouteQueryParams {
   'create_team': Record<string, never>;
   'create_team_invitation': Record<string, never>;
   'create_user': Record<string, never>;
+  'delete_avatar': Record<string, never>;
   'delete_role': Record<string, never>;
   'delete_tag': Record<string, never>;
   'delete_team': Record<string, never>;
@@ -339,6 +350,7 @@ export interface RouteQueryParams {
     hours?: number;
     limit?: number;
   };
+  'get_avatar': Record<string, never>;
   'get_log': Record<string, never>;
   'get_mfa_status': Record<string, never>;
   'get_profile': Record<string, never>;
@@ -374,6 +386,7 @@ export interface RouteQueryParams {
   'get_team_api_teams_team_id:uuid': Record<string, never>;
   'get_user': Record<string, never>;
   'get_user_api_users_user_id:uuid': Record<string, never>;
+  'get_user_avatar': Record<string, never>;
   'get_user_logs': {
     action?: string;
     actionIn?: string[];
@@ -556,6 +569,7 @@ export interface RouteQueryParams {
   'upgrade_scopes': {
     redirect_url?: string;
   };
+  'upload_avatar': Record<string, never>;
   'validate_reset_token': {
     token: string;
   };
@@ -654,6 +668,13 @@ export const routeDefinitions = {
     pathParams: [] as const,
     queryParams: [] as const,
   },
+  'delete_avatar': {
+    path: '/api/me/avatar',
+    methods: ['DELETE'] as const,
+    method: 'delete',
+    pathParams: [] as const,
+    queryParams: [] as const,
+  },
   'delete_role': {
     path: '/api/roles/{role_id}',
     methods: ['DELETE'] as const,
@@ -723,6 +744,13 @@ export const routeDefinitions = {
     method: 'get',
     pathParams: [] as const,
     queryParams: ['hours', 'limit'] as const,
+  },
+  'get_avatar': {
+    path: '/api/me/avatar',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: [] as const,
+    queryParams: [] as const,
   },
   'get_log': {
     path: '/api/admin/audit/{log_id}',
@@ -803,6 +831,13 @@ export const routeDefinitions = {
   },
   'get_user_api_users_user_id:uuid': {
     path: '/api/users/{user_id}',
+    methods: ['GET'] as const,
+    method: 'get',
+    pathParams: ['user_id'] as const,
+    queryParams: [] as const,
+  },
+  'get_user_avatar': {
+    path: '/api/users/{user_id}/avatar',
     methods: ['GET'] as const,
     method: 'get',
     pathParams: ['user_id'] as const,
@@ -1137,6 +1172,13 @@ export const routeDefinitions = {
     method: 'post',
     pathParams: ['provider'] as const,
     queryParams: ['redirect_url'] as const,
+  },
+  'upload_avatar': {
+    path: '/api/me/avatar',
+    methods: ['POST'] as const,
+    method: 'post',
+    pathParams: [] as const,
+    queryParams: [] as const,
   },
   'validate_reset_token': {
     path: '/api/access/reset-password',

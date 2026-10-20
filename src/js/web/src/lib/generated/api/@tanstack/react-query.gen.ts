@@ -9,6 +9,9 @@ import {
 import { client } from "../client.gen";
 import {
   acceptTeamInvitation,
+  accountAvatarDelete,
+  accountAvatarGet,
+  accountAvatarUpload,
   accountDelete,
   accountLogin,
   accountLogout,
@@ -87,6 +90,7 @@ import {
   updateTeam,
   updateTeamMember,
   updateUser,
+  userAvatarGet,
   validateResetToken,
   verifyMfaChallenge,
 } from "../sdk.gen";
@@ -94,6 +98,13 @@ import type {
   AcceptTeamInvitationData,
   AcceptTeamInvitationError,
   AcceptTeamInvitationResponse,
+  AccountAvatarDeleteData,
+  AccountAvatarDeleteResponse,
+  AccountAvatarGetData,
+  AccountAvatarGetResponse,
+  AccountAvatarUploadData,
+  AccountAvatarUploadError,
+  AccountAvatarUploadResponse,
   AccountDeleteData,
   AccountDeleteResponse,
   AccountLoginData,
@@ -312,6 +323,9 @@ import type {
   UpdateUserData,
   UpdateUserError,
   UpdateUserResponse,
+  UserAvatarGetData,
+  UserAvatarGetError,
+  UserAvatarGetResponse,
   ValidateResetTokenData,
   ValidateResetTokenError,
   ValidateResetTokenResponse,
@@ -1308,6 +1322,94 @@ export const accountProfileUpdateMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await accountProfileUpdate({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * Delete Avatar
+ *
+ * Remove the current user's profile picture.
+ */
+export const accountAvatarDeleteMutation = (
+  options?: Partial<Options<AccountAvatarDeleteData>>,
+): UseMutationOptions<
+  AccountAvatarDeleteResponse,
+  DefaultError,
+  Options<AccountAvatarDeleteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AccountAvatarDeleteResponse,
+    DefaultError,
+    Options<AccountAvatarDeleteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await accountAvatarDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const accountAvatarGetQueryKey = (
+  options?: Options<AccountAvatarGetData>,
+) => createQueryKey("accountAvatarGet", options);
+
+/**
+ * Get Avatar
+ *
+ * Retrieve the current user's profile picture.
+ */
+export const accountAvatarGetOptions = (
+  options?: Options<AccountAvatarGetData>,
+) =>
+  queryOptions<
+    AccountAvatarGetResponse,
+    DefaultError,
+    AccountAvatarGetResponse,
+    ReturnType<typeof accountAvatarGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await accountAvatarGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: accountAvatarGetQueryKey(options),
+  });
+
+/**
+ * Upload Avatar
+ *
+ * Upload or replace the current user's profile picture.
+ */
+export const accountAvatarUploadMutation = (
+  options?: Partial<Options<AccountAvatarUploadData>>,
+): UseMutationOptions<
+  AccountAvatarUploadResponse,
+  AccountAvatarUploadError,
+  Options<AccountAvatarUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AccountAvatarUploadResponse,
+    AccountAvatarUploadError,
+    Options<AccountAvatarUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await accountAvatarUpload({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -2490,6 +2592,33 @@ export const updateUserMutation = (
   };
   return mutationOptions;
 };
+
+export const userAvatarGetQueryKey = (options: Options<UserAvatarGetData>) =>
+  createQueryKey("userAvatarGet", options);
+
+/**
+ * Get User Avatar
+ *
+ * Retrieve a user's profile picture. Available to the user themselves and to superusers.
+ */
+export const userAvatarGetOptions = (options: Options<UserAvatarGetData>) =>
+  queryOptions<
+    UserAvatarGetResponse,
+    UserAvatarGetError,
+    UserAvatarGetResponse,
+    ReturnType<typeof userAvatarGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await userAvatarGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: userAvatarGetQueryKey(options),
+  });
 
 export const systemHealthQueryKey = (options?: Options<SystemHealthData>) =>
   createQueryKey("systemHealth", options);

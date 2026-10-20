@@ -100,6 +100,13 @@
       ],
       "uri": "/api/users"
     },
+    "delete_avatar": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "uri": "/api/me/avatar"
+    },
     "delete_role": {
       "method": "delete",
       "methods": [
@@ -217,6 +224,13 @@
         "limit": "number | undefined"
       },
       "uri": "/api/admin/dashboard/activity"
+    },
+    "get_avatar": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/me/avatar"
     },
     "get_log": {
       "method": "get",
@@ -376,6 +390,19 @@
         "user_id"
       ],
       "uri": "/api/users/{user_id}"
+    },
+    "get_user_avatar": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/users/{user_id}/avatar"
     },
     "get_user_logs": {
       "method": "get",
@@ -976,6 +1003,13 @@
         "redirect_url": "string | undefined"
       },
       "uri": "/api/profile/oauth/{provider}/upgrade-scopes"
+    },
+    "upload_avatar": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/me/avatar"
     },
     "validate_reset_token": {
       "method": "get",

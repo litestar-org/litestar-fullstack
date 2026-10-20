@@ -967,9 +967,9 @@ export type AdminListAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     targetTypeIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1048,9 +1048,9 @@ export type AdminGetTargetAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     targetTypeIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1128,9 +1128,9 @@ export type AdminGetUserAuditLogsData = {
      */
     sortOrder?: "asc" | "desc" | null;
     targetTypeIn?: Array<string> | null;
+    actionIn?: Array<string> | null;
     targetIdIn?: Array<string> | null;
     actorIdIn?: Array<string> | null;
-    actionIn?: Array<string> | null;
     action?: string | null;
     end_date?: string | null;
   };
@@ -1995,6 +1995,78 @@ export type AccountProfileUpdateResponses = {
 
 export type AccountProfileUpdateResponse =
   AccountProfileUpdateResponses[keyof AccountProfileUpdateResponses];
+
+export type AccountAvatarDeleteData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/me/avatar";
+};
+
+export type AccountAvatarDeleteResponses = {
+  /**
+   * Request fulfilled, nothing follows
+   */
+  204: void;
+};
+
+export type AccountAvatarDeleteResponse =
+  AccountAvatarDeleteResponses[keyof AccountAvatarDeleteResponses];
+
+export type AccountAvatarGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/me/avatar";
+};
+
+export type AccountAvatarGetResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: string;
+};
+
+export type AccountAvatarGetResponse =
+  AccountAvatarGetResponses[keyof AccountAvatarGetResponses];
+
+export type AccountAvatarUploadData = {
+  body: {
+    file?: Blob | File;
+  };
+  path?: never;
+  query?: never;
+  url: "/api/me/avatar";
+};
+
+export type AccountAvatarUploadErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type AccountAvatarUploadError =
+  AccountAvatarUploadErrors[keyof AccountAvatarUploadErrors];
+
+export type AccountAvatarUploadResponses = {
+  /**
+   * Document created, URL follows
+   */
+  201: User;
+};
+
+export type AccountAvatarUploadResponse =
+  AccountAvatarUploadResponses[keyof AccountAvatarUploadResponses];
 
 export type AccountPasswordUpdateData = {
   body: PasswordUpdate;
@@ -3863,6 +3935,43 @@ export type UpdateUserResponses = {
 };
 
 export type UpdateUserResponse = UpdateUserResponses[keyof UpdateUserResponses];
+
+export type UserAvatarGetData = {
+  body?: never;
+  path: {
+    user_id: string;
+  };
+  query?: never;
+  url: "/api/users/{user_id}/avatar";
+};
+
+export type UserAvatarGetErrors = {
+  /**
+   * Validation Exception
+   */
+  400: {
+    detail: string;
+    extra?:
+      | null
+      | {
+          [key: string]: unknown;
+        }
+      | Array<unknown>;
+    status_code: number;
+  };
+};
+
+export type UserAvatarGetError = UserAvatarGetErrors[keyof UserAvatarGetErrors];
+
+export type UserAvatarGetResponses = {
+  /**
+   * Request fulfilled, document follows
+   */
+  200: string;
+};
+
+export type UserAvatarGetResponse =
+  UserAvatarGetResponses[keyof UserAvatarGetResponses];
 
 export type SystemHealthData = {
   body?: never;
