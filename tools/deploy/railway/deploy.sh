@@ -337,7 +337,6 @@ ensure_environment() {
         --set "LITESTAR_TRUSTED_PROXIES=*" \
         --set "DATABASE_ECHO=false" \
         --set "SQLALCHEMY_LOG_LEVEL=30" \
-        --set "EMAIL_ENABLED=false" \
         --set "EMAIL_BACKEND=console" \
         --set 'LITESTAR_PORT=${{PORT}}' \
         --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
