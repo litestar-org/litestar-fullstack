@@ -82,6 +82,16 @@ async def test_app_email_service_initialization(mailer: EmailService) -> None:
     assert service.app_name is not None
 
 
+async def test_app_email_service_with_email_config(user: m.User, verification_token: str) -> None:
+    """Test AppEmailService initialized with EmailConfig handles provide_service context."""
+    config = EmailConfig(backend="memory")
+    service = AppEmailService(mailer=config)
+
+    result = await service.send_verification_email(cast("UserProtocol", user), verification_token)
+    assert result is True
+    assert len(InMemoryBackend.outbox) == 1
+
+
 async def test_app_email_service_settings_integration(app_email_service: AppEmailService) -> None:
     """Test AppEmailService gets settings correctly."""
     assert isinstance(app_email_service.base_url, str)
