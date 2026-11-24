@@ -18,6 +18,7 @@ from litestar_autowire import AutowireConfig, clear_autowire_cache
 from litestar_email import EmailConfig
 from litestar_email.backends.memory import InMemoryBackend
 from litestar_granian import GranianPlugin
+from litestar_mcp import LitestarMCP
 from litestar_queues import QueueConfig, WorkerConfig
 from litestar_security import SecurityPlugin
 from litestar_vite import TypeGenConfig
@@ -41,6 +42,7 @@ from app.lib.secrets import (
 from app.lib.settings import (
     DatabaseSettings,
     LogSettings,
+    MCPSettings,
     QueueSettings,
     ServerSettings,
     Settings,
@@ -215,13 +217,30 @@ def test_initial_alembic_migration_upgrade_downgrade_upgrade(tmp_path: Path) -> 
     assert "refresh_token" not in table_names
 
 
-def test_build_plugins_order_and_granian_static() -> None:
+def test_blank_env_strings_do_not_produce_empty_entries(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LITESTAR_TRUSTED_PROXIES", "")
+    monkeypatch.setenv("MCP_ALLOWED_ORIGINS", "")
+    monkeypatch.setenv("QUEUES_POLL_INTERVAL", "")
+
+    assert ServerSettings().LITESTAR_TRUSTED_PROXIES == []
+    assert MCPSettings().ALLOWED_ORIGINS is None
+    assert QueueSettings().POLL_INTERVAL == 0.25
+
+
+def test_build_plugins_order_and_granian_static(monkeypatch: pytest.MonkeyPatch) -> None:
     built = build_plugins()
     assert len(built) == 11
     assert isinstance(built[-1], SecurityPlugin)
+    assert any(isinstance(plugin, LitestarMCP) for plugin in built)
     granian_plugins = [plugin for plugin in built if isinstance(plugin, GranianPlugin)]
     assert len(granian_plugins) == 1
     assert getattr(granian_plugins[0], "static", getattr(granian_plugins[0], "_static", None)) == "auto"
+
+    monkeypatch.setattr(get_settings().mcp, "ENABLED", False)
+    built_without_mcp = build_plugins()
+    assert len(built_without_mcp) == 10
+    assert not any(isinstance(plugin, LitestarMCP) for plugin in built_without_mcp)
+    assert isinstance(built_without_mcp[-1], SecurityPlugin)
 
 
 @pytest.mark.anyio

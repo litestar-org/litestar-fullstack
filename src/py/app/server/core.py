@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from functools import partial
 from importlib import import_module
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID
 
 from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
@@ -149,12 +149,15 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             }
         )
 
-        app_config.exception_handlers = {
-            ApplicationError: exception_to_http_response,
-            ApplicationClientError: exception_to_http_response,
-            ValidationError: exception_to_http_response,
-            RepositoryError: exception_to_http_response,
-            DuplicateKeyError: exception_to_http_response,
-        }
+        handlers: dict[Any, Any] = cast("Any", app_config).exception_handlers
+        handlers.update(
+            {
+                ApplicationError: exception_to_http_response,
+                ApplicationClientError: exception_to_http_response,
+                ValidationError: exception_to_http_response,
+                RepositoryError: exception_to_http_response,
+                DuplicateKeyError: exception_to_http_response,
+            }
+        )
 
         return app_config

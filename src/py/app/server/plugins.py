@@ -18,6 +18,7 @@ from litestar_security import SecurityPlugin
 from litestar_vite import VitePlugin
 
 from app import config
+from app.lib.settings import get_settings
 
 if TYPE_CHECKING:
     from litestar.plugins import PluginProtocol
@@ -47,7 +48,7 @@ def build_plugins(
     resolved_email = email_config or config.email
     if resolved_email.email_service_dependency_key == "mailer":
         resolved_email = replace(resolved_email, email_service_dependency_key="email_service_provider")
-    return [
+    plugin_list: list[PluginProtocol] = [
         StructlogPlugin(config=config.log),
         GranianPlugin(static="auto"),
         SQLAlchemyPlugin(config=config.alchemy),
@@ -55,8 +56,14 @@ def build_plugins(
         QueuePlugin(config=queue_config or config.queues),
         AsyncAPIPlugin(config=config.asyncapi),
         VitePlugin(config=config.vite),
-        LitestarMCP(config=mcp_config or config.mcp),
-        AutowirePlugin(config=autowire_config or config.autowire),
-        ProblemDetailsPlugin(config=config.problem_details),
-        SecurityPlugin(config=security_config or config.security),
     ]
+    if mcp_config is not None or get_settings().mcp.ENABLED:
+        plugin_list.append(LitestarMCP(config=mcp_config or config.mcp))
+    plugin_list.extend(
+        [
+            AutowirePlugin(config=autowire_config or config.autowire),
+            ProblemDetailsPlugin(config=config.problem_details),
+            SecurityPlugin(config=security_config or config.security),
+        ]
+    )
+    return plugin_list

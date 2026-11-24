@@ -74,7 +74,7 @@ def _encode_json_str(value: Any) -> str:
 def _get_float_env(key: str, default: float) -> Callable[[], float]:
     def _factory() -> float:
         raw = os.getenv(key)
-        return float(raw) if raw is not None else default
+        return float(raw) if raw else default
 
     return _factory
 
@@ -95,12 +95,27 @@ def _get_optional_bool_env(key: str) -> Callable[[], bool | None]:
     return _factory
 
 
+def _get_list_env(key: str, default: list[str]) -> Callable[[], list[str]]:
+    def _factory() -> list[str]:
+        raw = os.getenv(key)
+        if raw is None:
+            return list(default)
+        if not raw.strip():
+            return []
+        parsed = get_config_val(key, list(default), list[str])
+        return [item for item in parsed if item]
+
+    return _factory
+
+
 def _get_optional_list_env(key: str) -> Callable[[], list[str] | None]:
     def _factory() -> list[str] | None:
-        if os.getenv(key) is None:
+        raw = os.getenv(key)
+        if raw is None or not raw.strip():
             return None
         parsed = get_config_val(key, [], list[str])
-        return parsed or None
+        cleaned = [item for item in parsed if item]
+        return cleaned or None
 
     return _factory
 
@@ -373,7 +388,7 @@ class ServerSettings:
     KEEPALIVE: int = field(default_factory=get_env("LITESTAR_KEEPALIVE", 65))
     RELOAD: bool = field(default_factory=get_env("LITESTAR_RELOAD", False))
     RELOAD_DIRS: list[str] = field(default_factory=get_env("LITESTAR_RELOAD_DIRS", [f"{BASE_DIR}"]))
-    LITESTAR_TRUSTED_PROXIES: list[str] = field(default_factory=get_env("LITESTAR_TRUSTED_PROXIES", [], list[str]))
+    LITESTAR_TRUSTED_PROXIES: list[str] = field(default_factory=_get_list_env("LITESTAR_TRUSTED_PROXIES", []))
 
 
 @dataclass
