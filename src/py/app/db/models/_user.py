@@ -94,7 +94,9 @@ class User(UUIDv7AuditBase):
 
     @hybrid_property
     def has_password(self) -> bool:
-        """Return whether the user has a password credential set."""
+        """Return whether the user has a password credential set without triggering lazy I/O."""
+        if "hashed_password" in inspect(self).unloaded:
+            return False
         return self.hashed_password is not None
 
     @property
@@ -108,3 +110,24 @@ class User(UUIDv7AuditBase):
     def is_two_factor_enabled(self) -> bool:
         """Compatibility alias returning whether the user has confirmed MFA enabled."""
         return self.has_mfa
+
+    def __eq__(self, other: object) -> bool:
+        """Compare persisted user records by primary key and core account state."""
+        if isinstance(other, User):
+            self_id = inspect(self).identity
+            other_id = inspect(other).identity
+            if self_id is not None and other_id is not None:
+                return (
+                    self_id == other_id
+                    and self.email == other.email
+                    and self.name == other.name
+                    and self.is_active == other.is_active
+                    and self.is_verified == other.is_verified
+                    and self.security_epoch == other.security_epoch
+                )
+        return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        """Hash persisted users stably by SQLAlchemy identity key."""
+        identity = inspect(self).identity
+        return hash(identity) if identity is not None else super().__hash__()

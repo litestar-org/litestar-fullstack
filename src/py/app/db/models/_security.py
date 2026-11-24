@@ -61,12 +61,14 @@ class PurposeToken(UUIDv7AuditBase):
     token_id: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     token_hash: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     purpose: Mapped[str] = mapped_column(String(length=64), index=True, nullable=False)
-    user_id: Mapped[UUID] = mapped_column(
+    user_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("user_account.id", ondelete="cascade"),
         index=True,
-        nullable=False,
+        nullable=True,
+        default=None,
     )
-    issued_security_epoch: Mapped[int] = mapped_column(Integer, nullable=False)
+    account_ref: Mapped[str | None] = mapped_column(String(length=128), nullable=True, default=None)
+    issued_security_epoch: Mapped[int | None] = mapped_column(Integer, nullable=True, default=None)
     attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     maximum_attempts: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTimeUTC(timezone=True), index=True, nullable=False)
@@ -262,7 +264,7 @@ class APIKey(UUIDv7AuditBase):
     )
     name: Mapped[str] = mapped_column(String(length=120), nullable=False)
     key_prefix: Mapped[str] = mapped_column(String(length=32), nullable=False)
-    key_hash: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(length=128), index=True, nullable=False)
     scopes: Mapped[list[str]] = mapped_column(JsonB, default=list, nullable=False)
     restrictions: Mapped[dict[str, Any] | None] = mapped_column(JsonB, nullable=True, default=None)
     rotated_from_id: Mapped[UUID | None] = mapped_column(

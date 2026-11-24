@@ -1,73 +1,64 @@
+"""User account database service."""
+
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any, cast
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Any
 
-from advanced_alchemy.extensions.litestar import repository, service
+from advanced_alchemy.extensions.litestar import service
 from litestar.exceptions import ClientException, PermissionDeniedException
+from litestar_security.accounts import Argon2PasswordHasher
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
-from app.domain.accounts.services._user_oauth_account import UserOAuthAccountService
-from app.lib import constants, crypt
-from app.lib.deps import CompositeServiceMixin
+from app.lib import constants
 from app.lib.validation import PasswordValidationError, validate_password_strength
-
-MAX_FAILED_RESET_ATTEMPTS = 5
 
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from httpx_oauth.oauth2 import OAuth2Token
+    from advanced_alchemy.service import ModelDictT
+
+_PASSWORD_HASHER = Argon2PasswordHasher()
 
 
-class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.User]):
-    """Handles database operations for users."""
+class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
+    """Handles database operations for user accounts using Argon2 password hashing."""
 
-    class Repo(repository.SQLAlchemyAsyncRepository[m.User]):
-        """User SQLAlchemy Repository."""
-
-        model_type = m.User
-
-    repository_type = Repo
     default_role = constants.DEFAULT_ACCESS_ROLE
     match_fields = ["email"]
 
-    @property
-    def oauth_accounts(self) -> UserOAuthAccountService:
-        """Lazy-loaded OAuth account service sharing this session.
+    async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        """Hash plaintext passwords and attach initial role assignments before creation."""
+        return await self._populate_model(data)
+
+    async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        """Hash plaintext passwords when updating a user record."""
+        return await self._populate_model(data)
+
+    async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        """Hash plaintext passwords when upserting a user record."""
+        return await self._populate_model(data)
+
+    async def authenticate(self, username: str, password: str) -> m.User:
+        """Verify email and password against the stored Argon2 hash.
+
+        Args:
+            username: User email address.
+            password: Candidate plaintext password.
 
         Returns:
-            The OAuth account service instance.
-        """
-        return self._get_service(UserOAuthAccountService)
-
-    async def to_model_on_create(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        return await self._populate_model(data)
-
-    async def to_model_on_update(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        return await self._populate_model(data)
-
-    async def to_model_on_upsert(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        return await self._populate_model(data)
-
-    async def authenticate(self, username: str, password: bytes | str) -> m.User:
-        """Authenticate a user against the stored hashed password.
-
-        Returns:
-            The user object if authentication is successful.
+            The authenticated active user record.
 
         Raises:
-            PermissionDeniedException: If the user is not found, the password is invalid, or the account is inactive.
+            PermissionDeniedException: If credentials are invalid or the account is inactive.
         """
         db_obj = await self.get_one_or_none(email=username, load=[undefer_group("security_sensitive")])
-        if db_obj is None:
+        if db_obj is None or db_obj.hashed_password is None:
             msg = "User not found or password invalid"
             raise PermissionDeniedException(detail=msg)
-        if db_obj.hashed_password is None:
-            msg = "User not found or password invalid."
-            raise PermissionDeniedException(detail=msg)
-        if not await crypt.verify_password(password, db_obj.hashed_password):
+        outcome = await _PASSWORD_HASHER.verify(db_obj.hashed_password, password)
+        if not outcome.verified:
             msg = "User not found or password invalid"
             raise PermissionDeniedException(detail=msg)
         if not db_obj.is_active:
@@ -76,280 +67,92 @@ class UserService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryServic
         return db_obj
 
     async def verify_email(self, user_id: UUID, email: str) -> m.User:
-        """Mark user's email as verified.
+        """Mark a user's email address as verified.
 
         Args:
-            user_id: The user's UUID
-            email: The email address that was verified
+            user_id: Target user UUID.
+            email: Verified email address expected to match the account.
 
         Returns:
-            The updated user object
+            The updated user record.
 
         Raises:
-            ClientException: If user not found or email doesn't match
+            ClientException: If the user does not exist or the email does not match.
         """
         db_obj = await self.get_one_or_none(id=user_id)
         if db_obj is None:
             raise ClientException(detail="User not found", status_code=404)
-
         if db_obj.email != email:
             raise ClientException(detail="Email address does not match user account", status_code=400)
-
         db_obj.is_verified = True
         db_obj.verified_at = datetime.now(UTC).date()
         return await self.update(data=db_obj)
 
-    async def is_email_verified(self, user_id: UUID) -> bool:
-        """Check if user's email is verified.
-
-        Args:
-            user_id: The user's UUID
-
-        Returns:
-            True if email is verified, False otherwise
-        """
-        db_obj = await self.get_one_or_none(id=user_id)
-        return db_obj.is_verified if db_obj else False
-
-    async def require_verified_email(self, user: m.User) -> None:
-        """Raise exception if user's email is not verified.
-
-        Args:
-            user: The user object to check
-
-        Raises:
-            PermissionDeniedException: If email is not verified
-        """
-        if not user.is_verified:
-            msg = "Email verification required"
-            raise PermissionDeniedException(detail=msg)
-
     async def update_password(self, data: dict[str, Any], db_obj: m.User) -> None:
-        """Modify stored user password.
+        """Verify current password and store a new Argon2 password hash.
+
+        Args:
+            data: Mapping containing ``current_password`` and ``new_password``.
+            db_obj: Target user record.
 
         Raises:
-            PermissionDeniedException: If the user is not found, the password is invalid, or the account is inactive.
+            ClientException: If the new password fails strength validation.
+            PermissionDeniedException: If current password verification fails or the account is inactive.
         """
-        db_obj = await self.get(db_obj.id, load=[undefer_group("security_sensitive")])
-        if db_obj.hashed_password is None:
+        try:
+            validate_password_strength(str(data["new_password"]))
+        except PasswordValidationError as exc:
+            raise ClientException(detail=str(exc), status_code=400) from exc
+
+        loaded = await self.get(db_obj.id, load=[undefer_group("security_sensitive")])
+        if loaded.hashed_password is None:
             msg = "User not found or password invalid."
             raise PermissionDeniedException(detail=msg)
-        if not await crypt.verify_password(data["current_password"], db_obj.hashed_password):
+        outcome = await _PASSWORD_HASHER.verify(loaded.hashed_password, str(data["current_password"]))
+        if not outcome.verified:
             msg = "User not found or password invalid."
             raise PermissionDeniedException(detail=msg)
-        if not db_obj.is_active:
+        if not loaded.is_active:
             msg = "User account is not active"
             raise PermissionDeniedException(detail=msg)
-        db_obj.hashed_password = await crypt.get_password_hash(data["new_password"])
+        new_hash = await _PASSWORD_HASHER.hash(str(data["new_password"]))
         await self.update(
-            item_id=db_obj.id,
-            data={"hashed_password": db_obj.hashed_password},
+            item_id=loaded.id,
+            data={"hashed_password": new_hash, "security_epoch": loaded.security_epoch + 1},
             auto_commit=True,
         )
 
     @staticmethod
     async def has_role_id(db_obj: m.User, role_id: UUID) -> bool:
-        """Check if user has specified role ID.
-
-        Returns:
-            True if user has the role, False otherwise.
-        """
-        return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_id == role_id)
+        """Return whether the user holds the role identified by ``role_id``."""
+        return any(assigned.role_id == role_id for assigned in db_obj.roles)
 
     @staticmethod
     async def has_role(db_obj: m.User, role_name: str) -> bool:
-        """Check if user has specified role name.
-
-        Returns:
-            True if user has the role, False otherwise.
-        """
-        return any(assigned_role.role_id for assigned_role in db_obj.roles if assigned_role.role_name == role_name)
+        """Return whether the user holds the named role."""
+        return any(assigned.role_name == role_name for assigned in db_obj.roles)
 
     @staticmethod
     def is_superuser(user: m.User) -> bool:
+        """Return whether the user is a superuser via flag or role assignment."""
         return bool(
             user.is_superuser
-            or any(
-                assigned_role.role_name
-                for assigned_role in user.roles
-                if assigned_role.role_name == constants.SUPERUSER_ACCESS_ROLE
-            ),
+            or any(assigned.role_name == constants.SUPERUSER_ACCESS_ROLE for assigned in user.roles),
         )
 
-    async def reset_password_with_token(self, user_id: UUID, new_password: str) -> m.User:
-        """Reset user's password using a validated token.
+    async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        dumped = service.schema_dump(data)
+        dumped = await self._populate_with_hashed_password(dumped)
+        return await self._populate_with_role(dumped)
 
-        Args:
-            user_id: The user's UUID
-            new_password: The new password
-
-        Returns:
-            The updated user object
-
-        Raises:
-            ClientException: If user not found or password validation fails
-        """
-        try:
-            validate_password_strength(new_password)
-        except PasswordValidationError as e:
-            raise ClientException(detail=str(e), status_code=400) from e
-
-        db_obj = await self.get_one_or_none(id=user_id)
-        if db_obj is None:
-            raise ClientException(detail="User not found", status_code=404)
-
-        if not db_obj.is_active:
-            raise ClientException(detail="User account is inactive", status_code=403)
-
-        db_obj.hashed_password = await crypt.get_password_hash(new_password)
-        db_obj.password_reset_at = datetime.now(UTC)
-        db_obj.failed_reset_attempts = 0
-        db_obj.reset_locked_until = None
-
-        return await self.update(db_obj)
-
-    async def is_reset_rate_limited(self, user_id: UUID) -> bool:
-        """Check if user is rate limited for password resets.
-
-        Args:
-            user_id: The user's UUID
-
-        Returns:
-            True if user is rate limited, False otherwise
-        """
-        db_obj = await self.get_one_or_none(id=user_id)
-        if db_obj is None:
-            return False
-
-        return bool(db_obj.reset_locked_until and db_obj.reset_locked_until > datetime.now(UTC))
-
-    async def increment_failed_reset_attempt(self, user_id: UUID) -> None:
-        """Increment failed reset attempts counter.
-
-        Args:
-            user_id: The user's UUID
-        """
-        db_obj = await self.get_one_or_none(id=user_id)
-        if db_obj is None:
-            return
-
-        db_obj.failed_reset_attempts += 1
-
-        if db_obj.failed_reset_attempts >= MAX_FAILED_RESET_ATTEMPTS:
-            db_obj.reset_locked_until = datetime.now(UTC) + timedelta(hours=1)
-
-        await self.update(
-            item_id=db_obj.id,
-            data={
-                "failed_reset_attempts": db_obj.failed_reset_attempts,
-                "reset_locked_until": db_obj.reset_locked_until,
-            },
-            auto_commit=True,
-        )
-
-    async def _populate_model(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        data = service.schema_dump(data)
-        data = await self._populate_with_hashed_password(data)
-        data = await self._populate_with_backup_codes(data)
-        return await self._populate_with_role(data)
-
-    async def _populate_with_hashed_password(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+    async def _populate_with_hashed_password(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
         if service.is_dict(data) and (password := data.pop("password", None)) is not None:
-            data["hashed_password"] = await crypt.get_password_hash(password)
+            data["hashed_password"] = await _PASSWORD_HASHER.hash(str(password))
         return data
 
-    async def _populate_with_backup_codes(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
-        if not service.is_dict_with_field(data, "backup_codes"):
-            return data
-
-        codes = data.get("backup_codes")
-        if not isinstance(codes, list):
-            return data
-
-        typed_codes = cast("list[object]", codes)
-        if not all(code is None or isinstance(code, str) for code in typed_codes):
-            return data
-
-        validated_codes = cast("list[str | None]", typed_codes)
-        non_null_codes = [code for code in validated_codes if code is not None]
-        if non_null_codes and not all(code.startswith("$") for code in non_null_codes):
-            data["backup_codes"] = [
-                None if code is None else await crypt.get_password_hash(code) for code in validated_codes
-            ]
-        return data
-
-    async def _populate_with_role(self, data: service.ModelDictT[m.User]) -> service.ModelDictT[m.User]:
+    async def _populate_with_role(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
         if service.is_dict(data) and (role_id := data.pop("role_id", None)) is not None:
-            data = await self.to_model(data)
-            data.roles.append(m.UserRole(role_id=role_id, assigned_at=datetime.now(UTC)))
+            model = await self.to_model(data)
+            model.roles.append(m.UserRole(role_id=role_id, assigned_at=datetime.now(UTC)))
+            return model
         return data
-
-    async def create_user_from_oauth(
-        self,
-        oauth_data: dict[str, Any],
-        provider: str,
-        token_data: OAuth2Token,
-    ) -> m.User:
-        """Create new user from OAuth data.
-
-        Args:
-            oauth_data: User data from OAuth provider
-            provider: OAuth provider name (e.g., 'google')
-            token_data: OAuth token data
-
-        Returns:
-            The created user object
-        """
-
-        return await self.create(
-            data={
-                "email": oauth_data.get("email", ""),
-                "name": oauth_data.get("name", ""),
-                "is_verified": True,
-                "verified_at": datetime.now(UTC).date(),
-                "is_active": True,
-            }
-        )
-
-    async def authenticate_or_create_oauth_user(
-        self,
-        provider: str,
-        oauth_data: dict[str, Any],
-        token_data: OAuth2Token,
-    ) -> tuple[m.User, bool]:
-        """Authenticate existing OAuth user or create new one.
-
-        Args:
-            provider: OAuth provider name
-            oauth_data: User data from OAuth provider
-            token_data: OAuth token data
-
-        Returns:
-            Tuple of (user, is_new_user)
-        """
-        email = oauth_data.get("email", "")
-        existing_user = await self.get_one_or_none(email=email) if email else None
-
-        if existing_user:
-            await self.oauth_accounts.create_or_update_oauth_account(
-                user_id=existing_user.id,
-                provider=provider,
-                oauth_data=oauth_data,
-                token_data=token_data,
-            )
-            return existing_user, False
-
-        new_user = await self.create_user_from_oauth(
-            oauth_data=oauth_data,
-            provider=provider,
-            token_data=token_data,
-        )
-
-        await self.oauth_accounts.create_or_update_oauth_account(
-            user_id=new_user.id,
-            provider=provider,
-            oauth_data=oauth_data,
-            token_data=token_data,
-        )
-
-        return new_user, True

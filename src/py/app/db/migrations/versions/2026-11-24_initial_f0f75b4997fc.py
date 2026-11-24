@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: aa05dc764c60
+Revision ID: f0f75b4997fc
 Revises: 
-Create Date: 2026-11-24 18:13:02.936870
+Create Date: 2026-11-24 18:34:52.302029
 
 """
 import warnings
@@ -41,7 +41,7 @@ sa.EncryptedText = EncryptedText  # pyright: ignore
 sa.StoredObject = StoredObject  # pyright: ignore
 sa.PasswordHash = PasswordHash  # pyright: ignore
 
-revision = 'aa05dc764c60'
+revision = 'f0f75b4997fc'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -325,7 +325,7 @@ def schema_upgrades() -> None:
     )
     with op.batch_alter_table('auth_api_key', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_auth_api_key_expires_at'), ['expires_at'], unique=False)
-        batch_op.create_index(batch_op.f('ix_auth_api_key_key_hash'), ['key_hash'], unique=True)
+        batch_op.create_index(batch_op.f('ix_auth_api_key_key_hash'), ['key_hash'], unique=False)
         batch_op.create_index(batch_op.f('ix_auth_api_key_key_id'), ['key_id'], unique=True)
         batch_op.create_index(batch_op.f('ix_auth_api_key_user_id'), ['user_id'], unique=False)
         batch_op.create_index('ix_auth_api_key_user_revoked', ['user_id', 'revoked_at'], unique=False)
@@ -487,8 +487,9 @@ def schema_upgrades() -> None:
     sa.Column('token_id', sa.String(length=128), nullable=False),
     sa.Column('token_hash', sa.String(length=128), nullable=False),
     sa.Column('purpose', sa.String(length=64), nullable=False),
-    sa.Column('user_id', sa.GUID(length=16), nullable=False),
-    sa.Column('issued_security_epoch', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.GUID(length=16), nullable=True),
+    sa.Column('account_ref', sa.String(length=128), nullable=True),
+    sa.Column('issued_security_epoch', sa.Integer(), nullable=True),
     sa.Column('attempts', sa.Integer(), nullable=False),
     sa.Column('maximum_attempts', sa.Integer(), nullable=False),
     sa.Column('expires_at', sa.DateTimeUTC(timezone=True), nullable=False),

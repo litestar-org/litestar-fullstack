@@ -1,7 +1,9 @@
 """Role-related schemas."""
 
-from datetime import datetime
-from uuid import UUID
+from __future__ import annotations
+
+from datetime import datetime  # noqa: TC003
+from uuid import UUID  # noqa: TC003
 
 import msgspec
 
@@ -9,22 +11,19 @@ from app.lib.schema import CamelizedBaseStruct
 
 
 class UserRoleAdd(CamelizedBaseStruct):
-    """User role add ."""
+    """Payload identifying a user by email for role assignment."""
 
     user_name: str
 
 
 class UserRoleRevoke(CamelizedBaseStruct):
-    """User role revoke ."""
+    """Payload identifying a user by email for role revocation."""
 
     user_name: str
 
 
 class Role(CamelizedBaseStruct):
-    """Holds role details for a user.
-
-    This is nested in the User Model for 'roles'
-    """
+    """Serialized role response payload."""
 
     id: UUID
     slug: str
@@ -34,8 +33,12 @@ class Role(CamelizedBaseStruct):
 
 
 class RoleCreate(CamelizedBaseStruct):
+    """Request payload for creating a role."""
+
     name: str
 
 
-class RoleUpdate(CamelizedBaseStruct):
+class RoleUpdate(CamelizedBaseStruct, omit_defaults=True):
+    """Request payload for updating a role."""
+
     name: str | msgspec.UnsetType | None = msgspec.UNSET

@@ -108,6 +108,12 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             )
         )
 
+        active_security = self.security_config or config.security
+        if active_security.local_auth is not None:
+            app_config.middleware.append(config.session_middleware)
+            if app_config.csrf_config is None:
+                app_config.csrf_config = config.csrf
+
         if settings.server.LITESTAR_TRUSTED_PROXIES:
             proxy_wrapper: Any = vars(import_module("granian.utils.proxies"))["wrap_asgi_with_proxy_headers"]
             app_config.middleware.append(

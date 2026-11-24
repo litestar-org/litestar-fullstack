@@ -7,6 +7,11 @@ from litestar_asyncapi import AsyncAPIConfig
 from litestar_autowire import AutowireConfig
 from litestar_security import required
 
+from app.domain.accounts.security.config import (
+    build_csrf_config,
+    build_security_config,
+    build_session_middleware,
+)
 from app.lib.settings import get_settings
 
 _settings = get_settings()
@@ -33,10 +38,10 @@ autowire = AutowireConfig(
     domain_packages=["app.domain"],
     integrations=["queues"],
 )
-security = _settings.security.get_config(_settings.app)
-mcp = _settings.mcp.get_config(
-    auth=required("api-key") if security.api_key is not None else None,
-)
+csrf = build_csrf_config(_settings)
+session_middleware = build_session_middleware(_settings)
+security = build_security_config(_settings, alchemy)
+mcp = _settings.mcp.get_config(auth=required("api-key"))
 
 __all__ = (
     "alchemy",
@@ -44,12 +49,14 @@ __all__ = (
     "autowire",
     "compression",
     "cors",
+    "csrf",
     "email",
     "log",
     "mcp",
     "problem_details",
     "queues",
     "security",
+    "session_middleware",
     "setup_logging",
     "vite",
 )
