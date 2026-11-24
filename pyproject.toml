@@ -88,6 +88,9 @@ test = [
 build-backend = "uv_build"
 requires = ["uv_build>=0.13.0,<0.14.0"]
 
+[tool.uv]
+constraint-dependencies = ["pyotp>=2.10.0,<2.11"]
+
 [tool.uv.build-backend]
 module-name = "app"
 module-root = "src/py"

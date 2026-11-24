@@ -31,9 +31,11 @@ from litestar_security.providers.oauth import (
     UnlinkStatus,
 )
 from sqlalchemy import delete, func, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
+from app.lib.constants import DEFAULT_ACCESS_ROLE
 from app.lib.secrets import OAUTH_PROTECTOR_INFO, derive_subkey
 
 if TYPE_CHECKING:
@@ -374,7 +376,15 @@ class SQLAlchemyOAuthAccountStore:
                 security_epoch=1,
             )
             session.add(user)
-            await session.flush()
+            try:
+                await session.flush()
+            except IntegrityError as exc:
+                await session.rollback()
+                raise AccountLinkError from exc
+
+            default_role = await session.scalar(select(m.Role).where(m.Role.name == DEFAULT_ACCESS_ROLE))
+            if default_role is not None:
+                session.add(m.UserRole(user_id=user.id, role_id=default_role.id, assigned_at=now_utc))
 
             row = m.UserOAuthAccount(
                 user_id=user.id,

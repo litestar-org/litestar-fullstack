@@ -24,6 +24,7 @@ from litestar_security.accounts import (
 from sqlalchemy import delete, or_, select, update
 
 from app.db import models as m
+from app.domain.accounts.security.backend import persist_login_method
 from app.lib.secrets import TOTP_PROTECTOR_INFO, derive_subkey
 
 if TYPE_CHECKING:
@@ -161,9 +162,16 @@ class SQLAlchemyMFAService:
         event: SecurityEvent,
         now: datetime,
     ) -> TOTPMethod | None:
-        """Atomically confirm a pending TOTP enrollment."""
-        del login_method, event
-        return await self._activate(account_id, enrollment_id, accepted_counter=accepted_counter, now=now, codes=None)
+        """Atomically confirm a pending TOTP enrollment and register its login method."""
+        del event
+        return await self._activate(
+            account_id,
+            enrollment_id,
+            accepted_counter=accepted_counter,
+            login_method=login_method,
+            now=now,
+            codes=None,
+        )
 
     async def activate_totp_with_recovery_codes(
         self,
@@ -176,9 +184,16 @@ class SQLAlchemyMFAService:
         event: SecurityEvent,
         now: datetime,
     ) -> TOTPMethod | None:
-        """Atomically confirm a pending TOTP enrollment and replace recovery codes."""
-        del login_method, event
-        return await self._activate(account_id, enrollment_id, accepted_counter=accepted_counter, now=now, codes=codes)
+        """Atomically confirm a pending TOTP enrollment, register its login method, and replace recovery codes."""
+        del event
+        return await self._activate(
+            account_id,
+            enrollment_id,
+            accepted_counter=accepted_counter,
+            login_method=login_method,
+            now=now,
+            codes=codes,
+        )
 
     async def _activate(
         self,
@@ -186,6 +201,7 @@ class SQLAlchemyMFAService:
         enrollment_id: str,
         *,
         accepted_counter: int,
+        login_method: LoginMethod,
         now: datetime,
         codes: tuple[RecoveryCodeDigest, ...] | None,
     ) -> TOTPMethod | None:
@@ -222,6 +238,7 @@ class SQLAlchemyMFAService:
             if int(getattr(result, "rowcount", 0) or 0) != 1:
                 await session.rollback()
                 return None
+            await persist_login_method(session, account_id, login_method)
             if codes is not None:
                 await session.execute(delete(m.UserMFARecoveryCode).where(m.UserMFARecoveryCode.user_id == uid))
                 for code in codes:

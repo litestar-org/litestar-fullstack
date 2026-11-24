@@ -28,6 +28,7 @@ from app.domain.accounts.security import (
     build_csrf_config,
     build_security_config,
     build_session_middleware,
+    build_session_store,
 )
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
 
@@ -64,6 +65,7 @@ async def _build_accounts_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLA
         plugins=[SQLAlchemyPlugin(config=db_cfg), SecurityPlugin(sec_cfg)],
         middleware=[build_session_middleware(settings)],
         csrf_config=build_csrf_config(settings),
+        stores={"sessions": build_session_store(db_cfg)},
     )
     return app, db_cfg, clock_box
 
@@ -280,3 +282,97 @@ async def test_api_key_lifecycle_step_up_and_cross_user_isolation(tmp_path: Path
         bob_csrf = await _login(bob_client, "bob@example.com")
         assert (await bob_client.delete(f"/api/me/api-keys/{rotated_id}", headers={"X-XSRF-TOKEN": bob_csrf})).status_code == 404
         assert (await bob_client.post(f"/api/me/api-keys/{rotated_id}/rotate", headers={"X-XSRF-TOKEN": bob_csrf})).status_code == 404
+
+
+async def test_mfa_enrollment_enforces_login_challenge_and_expired_key_rotation_rejected(tmp_path: Path) -> None:
+    import pyotp
+    from sqlalchemy import select, update
+
+    app, db_cfg, _ = await _build_accounts_app(tmp_path, "mfa_and_expired.sqlite3")
+    alice = await _seed_user(db_cfg, email="mfa-alice@example.com", name="MFA Alice")
+
+    async with AsyncTestClient(app=app) as client:
+        csrf = await _login(client, "mfa-alice@example.com")
+
+        expired_key = await client.post(
+            "/api/me/api-keys",
+            json={"name": "Soon Expired", "scopes": ["read"], "expiresInDays": 1},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert expired_key.status_code == 201
+        expired_id = expired_key.json()["id"]
+        async with db_cfg.get_session() as session:
+            await session.execute(
+                update(m.APIKey)
+                .where(m.APIKey.key_id == expired_id)
+                .values(expires_at=datetime.now(UTC) - timedelta(hours=1))
+            )
+            await session.commit()
+        assert (
+            await client.post(f"/api/me/api-keys/{expired_id}/rotate", headers={"X-XSRF-TOKEN": csrf})
+        ).status_code == 409
+
+        step_up = await client.post(
+            "/api/access/step-up/totp-enroll",
+            json={"method": "password", "credential": "StrongPassword!123"},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert step_up.status_code in {200, 201}, step_up.text
+        step_up_grant = step_up.json()["grant"]
+
+        enroll = await client.post(
+            "/api/access/mfa/totp/enroll",
+            json={"label": "mfa-alice@example.com", "step_up_grant": step_up_grant},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert enroll.status_code in {200, 201}, enroll.text
+        enroll_data = enroll.json()
+        uri = enroll_data["provisioning_uri"]
+        totp = pyotp.parse_uri(uri)
+        assert isinstance(totp, pyotp.TOTP)
+        confirm = await client.post(
+            "/api/access/mfa/totp/verify",
+            json={"enrollment_id": enroll_data["enrollment_id"], "code": totp.now()},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert confirm.status_code in {200, 201}, confirm.text
+        assert len(confirm.json()["codes"]) >= 1
+
+    async with AsyncTestClient(app=app) as second_client:
+        boot = await second_client.get("/api/csrf")
+        assert boot.status_code == 200
+        csrf2 = second_client.cookies.get("XSRF-TOKEN") or ""
+        login_resp = await second_client.post(
+            "/api/access/login",
+            json={"identifier": "mfa-alice@example.com", "password": "StrongPassword!123"},
+            headers={"X-XSRF-TOKEN": csrf2},
+        )
+        assert login_resp.status_code == 403, login_resp.text
+
+    plugin = app.plugins.get(SecurityPlugin)
+    assert plugin.config.local_auth is not None
+    assert plugin.config.mfa is not None
+    assert plugin.config.mfa.login_methods is not None
+    methods = await plugin.config.mfa.login_methods.list_methods(str(alice.id))
+    totp_method = next(item for item in methods if item.kind == "totp")
+    from litestar_security.accounts import SecurityEvent
+
+    outcome = await plugin.config.mfa.login_methods.revoke_login_method(
+        str(alice.id),
+        totp_method.method_id,
+        require_remaining=False,
+        event=SecurityEvent(
+            event_id="evt-remove-totp",
+            occurred_at=datetime.now(UTC),
+            operation="mfa.totp.remove",
+            outcome="success",
+            account_id=str(alice.id),
+            mechanism="mfa",
+        ),
+    )
+    assert outcome.status.value == "revoked"
+    async with db_cfg.get_session() as session:
+        remaining = (
+            await session.scalars(select(m.UserMFAFactor).where(m.UserMFAFactor.user_id == alice.id))
+        ).all()
+        assert remaining == []

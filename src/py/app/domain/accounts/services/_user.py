@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from advanced_alchemy.extensions.litestar import service
 from litestar.exceptions import ClientException, PermissionDeniedException
 from litestar_security.accounts import Argon2PasswordHasher
+from sqlalchemy import update as sa_update
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
@@ -116,6 +117,12 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             msg = "User account is not active"
             raise PermissionDeniedException(detail=msg)
         new_hash = await _PASSWORD_HASHER.hash(str(data["new_password"]))
+        now = datetime.now(UTC)
+        await self.repository.session.execute(
+            sa_update(m.UserSession)
+            .where(m.UserSession.user_id == loaded.id, m.UserSession.revoked_at.is_(None))
+            .values(revoked_at=now)
+        )
         await self.update(
             item_id=loaded.id,
             data={"hashed_password": new_hash, "security_epoch": loaded.security_epoch + 1},

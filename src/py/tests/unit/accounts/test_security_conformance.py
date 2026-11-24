@@ -50,6 +50,7 @@ from app.domain.accounts.security import (
     build_secret_protector,
     build_security_config,
     build_session_middleware,
+    build_session_store,
 )
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
 
@@ -178,6 +179,7 @@ def test_security_routes_posture_and_cli_inspection(tmp_path: Path) -> None:
             plugins=[SQLAlchemyPlugin(config=db_cfg), security_plugin],
             middleware=[build_session_middleware(settings)],
             csrf_config=build_csrf_config(settings),
+            stores={"sessions": build_session_store(db_cfg)},
             openapi_config=OpenAPIConfig(title="Accounts Posture Test", version="0.1.0"),
         )
 

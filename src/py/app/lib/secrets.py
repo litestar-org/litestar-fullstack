@@ -12,6 +12,7 @@ PURPOSE_TOKEN_PEPPER_INFO: Final[bytes] = b"app.auth.purpose-token-pepper.v1"
 RECOVERY_CODE_PEPPER_INFO: Final[bytes] = b"app.auth.recovery-code-pepper.v1"
 TOTP_PROTECTOR_INFO: Final[bytes] = b"app.auth.totp-protector.v1"
 OAUTH_PROTECTOR_INFO: Final[bytes] = b"app.auth.oauth-protector.v1"
+OAUTH_TRANSACTION_PEPPER_INFO: Final[bytes] = b"app.auth.oauth-transaction-pepper.v1"
 SESSION_BINDING_PEPPER_INFO: Final[bytes] = b"app.auth.session-binding-pepper.v1"
 API_KEY_PEPPER_INFO: Final[bytes] = b"app.auth.api-key-pepper.v1"
 CSRF_SECRET_INFO: Final[bytes] = b"app.auth.csrf-secret.v1"
@@ -25,6 +26,7 @@ __all__ = (
     "CURSOR_SECRET_INFO",
     "MIN_SUBKEY_LENGTH",
     "OAUTH_PROTECTOR_INFO",
+    "OAUTH_TRANSACTION_PEPPER_INFO",
     "PURPOSE_TOKEN_PEPPER_INFO",
     "RECOVERY_CODE_PEPPER_INFO",
     "SESSION_BINDING_PEPPER_INFO",

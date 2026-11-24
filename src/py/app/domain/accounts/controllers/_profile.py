@@ -1,15 +1,16 @@
 """User profile SecureController."""
 
 from datetime import timedelta
-from typing import ClassVar
+from typing import Any, ClassVar, cast
 
-from litestar import delete, get, patch
+from litestar import Request, delete, get, patch
 from litestar.di import NamedDependency, Provide
 from litestar_security import (
     AuthenticationPolicy,
     CurrentUser,
     SecureController,
     SecurityContext,
+    SecurityPlugin,
     any_of,
     required,
     requires_assurance,
@@ -83,8 +84,12 @@ class ProfileController(SecureController):
     )
     async def remove_account(
         self,
+        request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         users_service: UserService,
     ) -> None:
-        """Delete the authenticated user's account and cascade-revoke active sessions."""
+        """Delete the authenticated user's account, revoke sessions, and clear browser cookies."""
+        plugin = cast("SecurityPlugin[m.User]", request.app.plugins.get(SecurityPlugin))
+        if plugin.config.local_auth is not None and plugin.config.local_auth.session_auth is not None:
+            await plugin.config.local_auth.session_auth.logout(request)
         _ = await users_service.delete(current_user.id, auto_commit=True)

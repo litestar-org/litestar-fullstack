@@ -114,9 +114,17 @@ class ApiKeyController(SecureController):
             raise HTTPException(status_code=404, detail="API key not found.")
         if existing.revoked_at is not None:
             raise HTTPException(status_code=409, detail="API key has already been revoked or rotated.")
+        now = datetime.now(UTC)
+        existing_expires = (
+            existing.expires_at.replace(tzinfo=UTC)
+            if existing.expires_at is not None and existing.expires_at.tzinfo is None
+            else existing.expires_at
+        )
+        if existing_expires is not None and existing_expires <= now:
+            raise HTTPException(status_code=409, detail="API key has expired and cannot be rotated.")
         state = await store.get(key_id)
         restrictions = state.restrictions if state is not None else None
-        expires_at = existing.expires_at
+        expires_at = existing_expires
         try:
             issued = await service.rotate(
                 current_key_id=key_id,

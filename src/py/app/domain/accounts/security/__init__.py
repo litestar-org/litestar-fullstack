@@ -11,6 +11,7 @@ from app.domain.accounts.security.config import (
     build_notification_handler,
     build_security_config,
     build_session_middleware,
+    build_session_store,
 )
 from app.domain.accounts.security.events import AuditSecurityEventSink, sanitize_event_details
 from app.domain.accounts.security.mfa import (
@@ -56,6 +57,7 @@ __all__ = (
     "build_secret_protector",
     "build_security_config",
     "build_session_middleware",
+    "build_session_store",
     "requires_self_or_superuser",
     "requires_team_role",
     "sanitize_event_details",

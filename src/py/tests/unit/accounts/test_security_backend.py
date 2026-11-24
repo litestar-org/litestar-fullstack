@@ -62,21 +62,7 @@ async def _seed_user(cfg: SQLAlchemyAsyncConfig, account_id: str) -> None:
 
 
 async def test_local_account_and_session_conformance(tmp_path: Path) -> None:
-    counter = 0
     configs: list[SQLAlchemyAsyncConfig] = []
-
-    def make_backend() -> SQLAlchemySecurityBackend:
-        nonlocal counter
-        counter += 1
-        db_file = tmp_path / f"backend_{counter}.sqlite3"
-        cfg = DatabaseSettings(URL=f"sqlite+aiosqlite:///{db_file}").get_config()
-        configs.append(cfg)
-        return SQLAlchemySecurityBackend(cfg, clock=lambda: DEFAULT_NOW)
-
-    async def init_all_tables(cfg: SQLAlchemyAsyncConfig) -> None:
-        async with cfg.get_engine().begin() as conn:
-            await conn.run_sync(orm_registry.metadata.create_all)
-
     ready_backends: list[SQLAlchemySecurityBackend] = []
     for index in range(1, 5):
         cfg = await _make_sqlite_config(tmp_path, f"conf_backend_{index}")

@@ -178,6 +178,8 @@ class SQLAlchemyAPIKeyStore:
                 if overlap_until is not None and current_expires is not None
                 else (_ensure_utc(overlap_until) if overlap_until is not None else None)
             )
+            if bounded_overlap is not None and bounded_overlap < now_utc:
+                bounded_overlap = None
             result = await session.execute(
                 update(m.APIKey)
                 .where(m.APIKey.id == current.id, m.APIKey.revoked_at.is_(None))

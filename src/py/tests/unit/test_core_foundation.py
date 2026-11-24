@@ -12,6 +12,7 @@ from advanced_alchemy.alembic.commands import AlembicCommands
 from advanced_alchemy.base import orm_registry
 from litestar import Litestar
 from litestar.config.app import AppConfig
+from litestar.stores.memory import MemoryStore
 from litestar.testing import AsyncTestClient
 from litestar_asyncapi import AsyncAPIConfig
 from litestar_autowire import AutowireConfig, clear_autowire_cache
@@ -329,7 +330,7 @@ async def echo_task(value: str) -> str:
         }
         assert reserved_security_keys.isdisjoint(probe_config.dependencies.keys())
 
-        app = Litestar(plugins=[core])
+        app = Litestar(plugins=[core], stores={"sessions": MemoryStore()})
 
         middleware_before = list(app.middleware)
         assert not any(

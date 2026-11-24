@@ -110,6 +110,17 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
         active_security = self.security_config or config.security
         if active_security.local_auth is not None:
+            from contextlib import suppress
+
+            from app.domain.accounts.security import build_session_store
+
+            if isinstance(app_config.stores, dict):
+                app_config.stores.setdefault("sessions", build_session_store(config.alchemy))
+            elif app_config.stores is not None:
+                with suppress(KeyError):
+                    app_config.stores.register("sessions", build_session_store(config.alchemy), allow_override=False)
+            else:
+                app_config.stores = {"sessions": build_session_store(config.alchemy)}
             app_config.middleware.append(config.session_middleware)
             if app_config.csrf_config is None:
                 app_config.csrf_config = config.csrf

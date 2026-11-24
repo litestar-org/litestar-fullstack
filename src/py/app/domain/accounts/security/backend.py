@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from datetime import UTC, datetime
 from hmac import compare_digest
 from typing import TYPE_CHECKING, Any
@@ -46,13 +47,60 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
 
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = structlog.get_logger(__name__)
 
 _LOGIN_METHODS_NAMESPACE = "login_methods"
 _PERMANENT_STORE_EXPIRY = datetime(9999, 12, 31, tzinfo=UTC)
 
-__all__ = ("SQLAlchemySecurityBackend",)
+__all__ = ("SQLAlchemySecurityBackend", "persist_login_method")
+
+
+async def persist_login_method(session: AsyncSession, account_id: str, method: LoginMethod) -> None:
+    """Upsert a ``LoginMethod`` projection inside the caller's open SQLAlchemy transaction."""
+    key = f"{account_id}:{method.method_id}"
+    payload = json.dumps(
+        {
+            "method_id": method.method_id,
+            "kind": method.kind,
+            "created_at": _ensure_utc(method.created_at).isoformat(),
+            "display_name": method.display_name,
+        }
+    ).encode("utf-8")
+    existing = await session.scalar(
+        select(m.AppStore).where(
+            m.AppStore.namespace == _LOGIN_METHODS_NAMESPACE,
+            m.AppStore.key == key,
+        )
+    )
+    if existing is not None:
+        existing.value = payload
+    else:
+        session.add(
+            m.AppStore(
+                namespace=_LOGIN_METHODS_NAMESPACE,
+                key=key,
+                value=payload,
+                expires_at=_PERMANENT_STORE_EXPIRY,
+            )
+        )
+
+
+def _passkey_method_id_from_hex(credential_hex: str) -> str:
+    raw = bytes.fromhex(credential_hex)
+    return "pk_" + urlsafe_b64encode(raw).rstrip(b"=").decode("ascii")
+
+
+def _credential_hex_from_passkey_method_id(method_id: str) -> str | None:
+    if not method_id.startswith("pk_"):
+        return None
+    encoded = method_id[3:]
+    padded = encoded + "=" * ((4 - len(encoded) % 4) % 4)
+    try:
+        return urlsafe_b64decode(padded.encode("ascii")).hex()
+    except (ValueError, UnicodeEncodeError):
+        return None
 
 
 def _ensure_utc(value: datetime) -> datetime:
@@ -214,26 +262,53 @@ class SQLAlchemySecurityBackend:
             return PasswordChangeOutcome(PasswordChangeStatus.CHANGED, next_epoch)
 
     async def list_methods(self, account_id: str) -> tuple[LoginMethod, ...]:
-        """List registered login methods for an account."""
+        """List registered login methods for an account across AppStore, confirmed MFA factors, and passkeys."""
         prefix = f"{account_id}:"
+        uid = _parse_uuid(account_id)
         async with self._alchemy_config.get_session() as session:
             stmt = select(m.AppStore).where(
                 m.AppStore.namespace == _LOGIN_METHODS_NAMESPACE,
                 m.AppStore.key.startswith(prefix),
             )
             rows = (await session.scalars(stmt)).all()
-            methods: list[LoginMethod] = []
+            methods_by_id: dict[str, LoginMethod] = {}
             for row in rows:
                 data = json.loads(row.value.decode("utf-8"))
-                methods.append(
-                    LoginMethod(
-                        method_id=data["method_id"],
-                        kind=data["kind"],
-                        created_at=_ensure_utc(datetime.fromisoformat(data["created_at"])),
-                        display_name=data.get("display_name"),
-                    )
+                methods_by_id[data["method_id"]] = LoginMethod(
+                    method_id=data["method_id"],
+                    kind=data["kind"],
+                    created_at=_ensure_utc(datetime.fromisoformat(data["created_at"])),
+                    display_name=data.get("display_name"),
                 )
-            return tuple(methods)
+            if uid is not None:
+                mfa_rows = (
+                    await session.scalars(
+                        select(m.UserMFAFactor).where(
+                            m.UserMFAFactor.user_id == uid,
+                            m.UserMFAFactor.is_confirmed.is_(True),
+                        )
+                    )
+                ).all()
+                for factor in mfa_rows:
+                    if factor.method_id not in methods_by_id:
+                        methods_by_id[factor.method_id] = LoginMethod(
+                            method_id=factor.method_id,
+                            kind=factor.kind,
+                            created_at=_ensure_utc(factor.created_at),
+                        )
+                passkey_rows = (
+                    await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == uid))
+                ).all()
+                for pk_row in passkey_rows:
+                    pk_method_id = _passkey_method_id_from_hex(pk_row.credential_id)
+                    if pk_method_id not in methods_by_id:
+                        methods_by_id[pk_method_id] = LoginMethod(
+                            method_id=pk_method_id,
+                            kind="passkey",
+                            created_at=_ensure_utc(pk_row.created_at),
+                            display_name=pk_row.display_name,
+                        )
+            return tuple(methods_by_id.values())
 
     async def register_login_method(
         self,
@@ -244,33 +319,8 @@ class SQLAlchemySecurityBackend:
     ) -> None:
         """Persist a login method record for an account."""
         del event
-        key = f"{account_id}:{method.method_id}"
-        payload = json.dumps(
-            {
-                "method_id": method.method_id,
-                "kind": method.kind,
-                "created_at": _ensure_utc(method.created_at).isoformat(),
-                "display_name": method.display_name,
-            }
-        ).encode("utf-8")
         async with self._lock, self._alchemy_config.get_session() as session:
-            existing = await session.scalar(
-                select(m.AppStore).where(
-                    m.AppStore.namespace == _LOGIN_METHODS_NAMESPACE,
-                    m.AppStore.key == key,
-                )
-            )
-            if existing is not None:
-                existing.value = payload
-            else:
-                session.add(
-                    m.AppStore(
-                        namespace=_LOGIN_METHODS_NAMESPACE,
-                        key=key,
-                        value=payload,
-                        expires_at=_PERMANENT_STORE_EXPIRY,
-                    )
-                )
+            await persist_login_method(session, account_id, method)
             await session.commit()
 
     async def revoke_login_method(
@@ -281,10 +331,12 @@ class SQLAlchemySecurityBackend:
         require_remaining: bool = True,
         event: SecurityEvent,
     ) -> RevokeLoginMethodOutcome:
-        """Revoke one login method while enforcing ownership and optional final-method protection."""
+        """Revoke one login method and its underlying MFA/passkey row atomically."""
         del event
         prefix = f"{account_id}:"
         target_key = f"{account_id}:{method_id}"
+        uid = _parse_uuid(account_id)
+        cred_hex = _credential_hex_from_passkey_method_id(method_id)
         async with self._lock, self._alchemy_config.get_session() as session:
             rows = (
                 await session.scalars(
@@ -294,12 +346,42 @@ class SQLAlchemySecurityBackend:
                     )
                 )
             ).all()
-            target = next((row for row in rows if row.key == target_key), None)
-            if target is None:
+            existing_ids = {row.key.removeprefix(prefix) for row in rows}
+            target_store = next((row for row in rows if row.key == target_key), None)
+
+            mfa_target: m.UserMFAFactor | None = None
+            passkey_target: m.UserPasskey | None = None
+            if uid is not None:
+                mfa_rows = (
+                    await session.scalars(
+                        select(m.UserMFAFactor).where(
+                            m.UserMFAFactor.user_id == uid,
+                            m.UserMFAFactor.is_confirmed.is_(True),
+                        )
+                    )
+                ).all()
+                for factor in mfa_rows:
+                    existing_ids.add(factor.method_id)
+                    if factor.method_id == method_id:
+                        mfa_target = factor
+                pk_rows = (await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == uid))).all()
+                for pk_row in pk_rows:
+                    pk_id = _passkey_method_id_from_hex(pk_row.credential_id)
+                    existing_ids.add(pk_id)
+                    if cred_hex is not None and pk_row.credential_id == cred_hex:
+                        passkey_target = pk_row
+
+            if target_store is None and mfa_target is None and passkey_target is None:
                 return RevokeLoginMethodOutcome(RevokeLoginMethodStatus.NOT_FOUND)
-            if require_remaining and len(rows) <= 1:
+            if require_remaining and len(existing_ids) <= 1:
                 return RevokeLoginMethodOutcome(RevokeLoginMethodStatus.FINAL_METHOD)
-            await session.execute(delete(m.AppStore).where(m.AppStore.id == target.id))
+
+            if target_store is not None:
+                await session.execute(delete(m.AppStore).where(m.AppStore.id == target_store.id))
+            if mfa_target is not None:
+                await session.execute(delete(m.UserMFAFactor).where(m.UserMFAFactor.id == mfa_target.id))
+            if passkey_target is not None:
+                await session.execute(delete(m.UserPasskey).where(m.UserPasskey.id == passkey_target.id))
             await session.commit()
             return RevokeLoginMethodOutcome(RevokeLoginMethodStatus.REVOKED)
 

@@ -20,6 +20,7 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 
 from app.db import models as m
+from app.domain.accounts.security.backend import persist_login_method
 
 if TYPE_CHECKING:
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
@@ -79,8 +80,8 @@ class SQLAlchemyPasskeyStore:
         login_method: LoginMethod,
         event: SecurityEvent,
     ) -> bool:
-        """Persist a new WebAuthn passkey credential if its identifier is not already registered."""
-        del login_method, event
+        """Persist a new WebAuthn passkey credential and its login method atomically."""
+        del event
         uid = _parse_uuid(credential.account_id)
         if uid is None:
             return False
@@ -105,6 +106,7 @@ class SQLAlchemyPasskeyStore:
         )
         async with self._lock, self._alchemy_config.get_session() as session:
             session.add(row)
+            await persist_login_method(session, credential.account_id, login_method)
             try:
                 await session.commit()
             except IntegrityError:
