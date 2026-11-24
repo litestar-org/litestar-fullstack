@@ -8,6 +8,7 @@ import { TotpInput } from "@/components/mfa/totp-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import { localSessionMfaLoginMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { getSafeRedirectUrl } from "@/lib/redirect-utils"
@@ -46,6 +47,7 @@ function MfaChallengePage() {
           account_id: mfaChallenge.accountId,
           challenge: mfaChallenge.challenge,
           method: tab === "totp" ? "totp" : "recovery-code",
+          method_id: tab === "totp" ? "__active__" : undefined,
           code: tab === "totp" ? code : recoveryCode.trim().toUpperCase(),
         },
       })
@@ -54,7 +56,7 @@ function MfaChallengePage() {
       navigate({ to: finalRedirect })
     } catch (error) {
       toast.error("Verification failed", {
-        description: error instanceof Error ? error.message : "Try again",
+        description: extractApiErrorMessage(error, "Try again"),
       })
     }
   }

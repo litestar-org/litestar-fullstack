@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { createApiKeyMutation, listApiKeysOptions, listApiKeysQueryKey, revokeApiKeyMutation, rotateApiKeyMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function ApiKeysSection() {
@@ -50,7 +51,7 @@ export function ApiKeysSection() {
       toast.success("API key created")
     } catch (error) {
       toast.error("Unable to create API key", {
-        description: error instanceof Error ? error.message : "Re-authenticate if step-up verification is required",
+        description: extractApiErrorMessage(error, "Re-authenticate if step-up verification is required"),
       })
     }
   }
@@ -63,7 +64,7 @@ export function ApiKeysSection() {
       toast.success("API key rotated")
     } catch (error) {
       toast.error("Unable to rotate API key", {
-        description: error instanceof Error ? error.message : "Please try again",
+        description: extractApiErrorMessage(error, "Please try again"),
       })
     }
   }
@@ -75,7 +76,7 @@ export function ApiKeysSection() {
       toast.success("API key revoked")
     } catch (error) {
       toast.error("Unable to revoke API key", {
-        description: error instanceof Error ? error.message : "Please try again",
+        description: extractApiErrorMessage(error, "Please try again"),
       })
     }
   }

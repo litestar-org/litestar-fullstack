@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { validatePassword } from "@/hooks/use-validation"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { localPasswordResetMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_public/reset-password")({
@@ -73,8 +74,8 @@ function ResetPasswordPage() {
       }, 3000)
     },
     onError: (error) => {
-      const msg = error instanceof Error ? error.message : "Failed to reset password"
-      if (msg.includes("expired") || msg.includes("invalid")) {
+      const msg = extractApiErrorMessage(error, "Failed to reset password")
+      if (msg.toLowerCase().includes("expired") || msg.toLowerCase().includes("invalid")) {
         toast.error("This reset link has expired or is invalid. Please request a new one.")
       } else {
         toast.error(msg)

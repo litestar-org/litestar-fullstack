@@ -387,7 +387,9 @@ def _build_oauth_config(
     tx_pepper = derive_subkey(settings.app.SECRET_KEY, OAUTH_TRANSACTION_PEPPER_INFO)
     redirects = OAuthRedirectPolicy(
         callback_uris=callback_uris,
-        return_to=frozenset({"/", "/dashboard", "/auth/github/callback", "/auth/google/callback"}),
+        return_to=frozenset(
+            {"/", "/home", "/dashboard", "/settings/security", "/auth/github/callback", "/auth/google/callback"}
+        ),
         allow_insecure_localhost=not cookie_secure,
     )
     tx_service = OAuthTransactionService(
@@ -423,7 +425,7 @@ def _build_oauth_config(
     return (
         OAuthConfig(
             oauth_service=lifecycle,
-            route_prefix="/api/auth/oauth",
+            route_prefix="/api/auth",
             register_routes=True,
         ),
         tuple(jwks_providers),

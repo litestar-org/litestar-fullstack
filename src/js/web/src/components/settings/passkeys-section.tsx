@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import {
   passkeyListOptions,
@@ -77,7 +78,7 @@ export function PasskeysSection() {
         return
       }
       toast.error("Unable to register passkey", {
-        description: error instanceof Error ? error.message : "Please try again",
+        description: extractApiErrorMessage(error, "Please try again"),
       })
     }
   }
@@ -99,7 +100,7 @@ export function PasskeysSection() {
       setPassword("")
     } catch (error) {
       toast.error("Unable to remove passkey", {
-        description: error instanceof Error ? error.message : "Please try again",
+        description: extractApiErrorMessage(error, "Please try again"),
       })
     }
   }

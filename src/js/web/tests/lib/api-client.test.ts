@@ -73,5 +73,10 @@ describe("configureApiClient", () => {
     window.history.pushState({}, "", "/login")
     await client.get({ url: "/api/me" })
     expect(onUnauthorized).not.toHaveBeenCalled()
+
+    onUnauthorized.mockClear()
+    window.history.pushState({}, "", "/settings/security")
+    await client.post({ url: "/api/access/step-up/totp-enroll", body: { method: "password", credential: "wrong" } })
+    expect(onUnauthorized).not.toHaveBeenCalled()
   })
 })

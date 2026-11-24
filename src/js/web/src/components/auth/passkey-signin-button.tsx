@@ -8,22 +8,29 @@ import { useAuthStore } from "@/lib/auth"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 
 interface PasskeySignInButtonProps {
-  accountIdentifier?: string
+  accountId?: string
   authRedirect?: string
   className?: string
 }
 
-export function PasskeySignInButton({ accountIdentifier, authRedirect, className }: PasskeySignInButtonProps) {
+export function PasskeySignInButton({ accountId, authRedirect, className }: PasskeySignInButtonProps) {
   const navigate = useNavigate()
   const loginWithPasskey = useAuthStore((state) => state.loginWithPasskey)
+  const storedAccountId = useAuthStore((state) => state.passkeyAccountId)
   const isLoading = useAuthStore((state) => state.isLoading)
 
   if (!browserSupportsWebAuthn()) {
     return null
   }
 
+  const effectiveAccountId = accountId?.trim() || storedAccountId || undefined
+  const isDisabled = isLoading || !effectiveAccountId
+
   const handleClick = async () => {
-    const ok = await loginWithPasskey(accountIdentifier?.trim() || undefined)
+    if (!effectiveAccountId) {
+      return
+    }
+    const ok = await loginWithPasskey(effectiveAccountId)
     if (ok) {
       toast.success("Signed in with passkey")
       navigate({ to: authRedirect || DEFAULT_AUTH_REDIRECT })
@@ -31,7 +38,14 @@ export function PasskeySignInButton({ accountIdentifier, authRedirect, className
   }
 
   return (
-    <Button type="button" variant="outline" onClick={handleClick} disabled={isLoading} className={className}>
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleClick}
+      disabled={isDisabled}
+      title={effectiveAccountId ? undefined : "Sign in once on this device to enable passkey sign-in"}
+      className={className}
+    >
       {isLoading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <KeyRound className="mr-2 h-4 w-4" />}
       Sign in with Passkey
     </Button>

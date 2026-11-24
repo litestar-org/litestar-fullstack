@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { ApiKeysSection } from "@/components/settings/api-keys-section"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
 import type { ApiKeyItem } from "@/lib/generated/api"
+import { CSRF_COOKIE_NAME } from "@/lib/generated/routes"
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -30,7 +31,7 @@ describe("ApiKeysSection", () => {
   beforeEach(() => {
     resetApiClientForTest()
     configureApiClient({ baseUrl: "http://localhost" })
-    document.cookie = "csrftoken=test-csrf-token; path=/"
+    document.cookie = `${CSRF_COOKIE_NAME}=test-csrf-token; path=/`
   })
 
   afterEach(() => {

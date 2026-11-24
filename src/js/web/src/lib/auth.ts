@@ -2,8 +2,11 @@ import { startAuthentication } from "@simplewebauthn/browser"
 import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import type { LocalMfaChallenge, Team, User } from "@/lib/generated/api"
 import { accountProfile, localSessionLogin, localSessionLogout, passkeyAuthenticationOptions, passkeyAuthenticationVerify } from "@/lib/generated/api"
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export interface LoginResult {
   authenticated: boolean
@@ -25,9 +28,10 @@ export interface AuthState {
   teams: Team[]
   isLoading: boolean
   isAuthenticated: boolean
+  passkeyAccountId: string | null
   mfaChallenge: PendingMfaChallenge | null
   login: (email: string, password: string) => Promise<LoginResult>
-  loginWithPasskey: (accountIdentifier?: string) => Promise<boolean>
+  loginWithPasskey: (accountId?: string) => Promise<boolean>
   completeMfaLogin: () => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<boolean>
@@ -47,16 +51,6 @@ function isMfaChallengePayload(error: unknown): error is LocalMfaChallenge {
   )
 }
 
-function extractErrorDetail(error: unknown, fallback: string): string {
-  if (typeof error === "object" && error !== null && "detail" in error) {
-    const detail = (error as { detail?: unknown }).detail
-    if (typeof detail === "string" && detail.length > 0) {
-      return detail
-    }
-  }
-  return fallback
-}
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -65,6 +59,7 @@ export const useAuthStore = create<AuthState>()(
       teams: [],
       isLoading: false,
       isAuthenticated: false,
+      passkeyAccountId: null,
       mfaChallenge: null,
       clearSession: () =>
         set({
@@ -104,32 +99,43 @@ export const useAuthStore = create<AuthState>()(
           if (response.data) {
             const profileRes = await accountProfile()
             if (profileRes.data) {
-              set({ user: profileRes.data, isAuthenticated: true, mfaChallenge: null })
+              set({
+                user: profileRes.data,
+                isAuthenticated: true,
+                passkeyAccountId: profileRes.data.id,
+                mfaChallenge: null,
+              })
               return { authenticated: true, mfaRequired: false }
             }
           }
 
           get().clearSession()
-          toast.error(extractErrorDetail(response.error, "Invalid email or password"))
+          toast.error(extractApiErrorMessage(response.error, "Invalid email or password"))
           return { authenticated: false, mfaRequired: false }
         } catch (error) {
           get().clearSession()
           toast.error("Sign in failed", {
-            description: error instanceof Error ? error.message : "Unknown error",
+            description: extractApiErrorMessage(error, "Unknown error"),
           })
           return { authenticated: false, mfaRequired: false }
         } finally {
           set({ isLoading: false })
         }
       },
-      loginWithPasskey: async (accountIdentifier?: string) => {
+      loginWithPasskey: async (accountId?: string) => {
+        const resolvedAccountId = accountId?.trim() || get().passkeyAccountId || ""
+        if (!UUID_PATTERN.test(resolvedAccountId)) {
+          toast.error("Passkey sign-in requires a recognized account on this device. Sign in with your password first.")
+          return false
+        }
+
         set({ isLoading: true })
         try {
           const optionsRes = await passkeyAuthenticationOptions({
-            body: { account_id: accountIdentifier ?? "" },
+            body: { account_id: resolvedAccountId },
           })
           if (!optionsRes.data) {
-            toast.error(extractErrorDetail(optionsRes.error, "Unable to start passkey sign-in"))
+            toast.error(extractApiErrorMessage(optionsRes.error, "Unable to start passkey sign-in"))
             return false
           }
 
@@ -137,14 +143,14 @@ export const useAuthStore = create<AuthState>()(
           const assertion = await startAuthentication({ optionsJSON })
           const verifyRes = await passkeyAuthenticationVerify({
             body: {
-              account_id: accountIdentifier ?? "",
+              account_id: resolvedAccountId,
               binding: optionsRes.data.binding ?? undefined,
               response: JSON.stringify(assertion),
             },
           })
 
           if (verifyRes.error) {
-            toast.error(extractErrorDetail(verifyRes.error, "Passkey authentication failed"))
+            toast.error(extractApiErrorMessage(verifyRes.error, "Passkey authentication failed"))
             return false
           }
 
@@ -155,7 +161,7 @@ export const useAuthStore = create<AuthState>()(
             return false
           }
           toast.error("Passkey sign-in failed", {
-            description: error instanceof Error ? error.message : "Unknown error",
+            description: extractApiErrorMessage(error, "Unknown error"),
           })
           return false
         } finally {
@@ -167,11 +173,16 @@ export const useAuthStore = create<AuthState>()(
         try {
           const profileRes = await accountProfile()
           if (profileRes.data) {
-            set({ user: profileRes.data, isAuthenticated: true, mfaChallenge: null })
+            set({
+              user: profileRes.data,
+              isAuthenticated: true,
+              passkeyAccountId: profileRes.data.id,
+              mfaChallenge: null,
+            })
             return
           }
           get().clearSession()
-          throw new Error(extractErrorDetail(profileRes.error, "Unable to complete MFA sign-in"))
+          throw new Error(extractApiErrorMessage(profileRes.error, "Unable to complete MFA sign-in"))
         } finally {
           set({ isLoading: false })
         }
@@ -192,12 +203,12 @@ export const useAuthStore = create<AuthState>()(
           const status = response.response?.status
 
           if (response.data) {
-            set({ user: response.data, isAuthenticated: true })
+            set({ user: response.data, isAuthenticated: true, passkeyAccountId: response.data.id })
             return true
           }
 
           if (status !== undefined && status >= 500) {
-            throw new Error(extractErrorDetail(response.error, `Authentication service unavailable (${status})`))
+            throw new Error(extractApiErrorMessage(response.error, `Authentication service unavailable (${status})`))
           }
 
           get().clearSession()
@@ -217,6 +228,7 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
+        passkeyAccountId: state.passkeyAccountId,
       }),
     },
   ),

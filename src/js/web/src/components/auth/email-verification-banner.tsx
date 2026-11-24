@@ -4,6 +4,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import { localVerificationResendMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
@@ -24,7 +25,7 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
       toast.success("Verification email sent! Please check your inbox.")
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to send verification email")
+      toast.error(extractApiErrorMessage(error, "Failed to send verification email"))
     },
   })
 

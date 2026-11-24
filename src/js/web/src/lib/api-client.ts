@@ -6,6 +6,15 @@ export const UNSAFE_HTTP_METHODS: ReadonlySet<string> = new Set(["POST", "PUT", 
 
 const PUBLIC_AUTH_PREFIXES = ["/login", "/signup", "/mfa-challenge", "/forgot-password", "/reset-password", "/verify-email", "/auth/"]
 
+const CREDENTIAL_CHECK_PATH_FRAGMENTS = [
+  "/api/access/login",
+  "/api/access/step-up/",
+  "/api/access/mfa/",
+  "/api/access/passkeys/",
+  "/api/access/password/change",
+  "/api/me/password",
+]
+
 export interface ApiClientConfigOptions {
   baseUrl?: string
   onUnauthorized?: () => void
@@ -18,6 +27,34 @@ let activeOnUnauthorized: (() => void) | undefined
 
 function isPublicAuthPath(pathname: string): boolean {
   return PUBLIC_AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+}
+
+function isCredentialCheckRequest(requestUrl: string): boolean {
+  return CREDENTIAL_CHECK_PATH_FRAGMENTS.some((fragment) => requestUrl.includes(fragment))
+}
+
+export function extractApiErrorMessage(error: unknown, fallback: string): string {
+  if (typeof error === "string" && error.trim().length > 0) {
+    return error
+  }
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message
+  }
+  if (typeof error === "object" && error !== null) {
+    if ("detail" in error && typeof (error as { detail?: unknown }).detail === "string") {
+      const detail = (error as { detail: string }).detail.trim()
+      if (detail.length > 0) {
+        return detail
+      }
+    }
+    if ("message" in error && typeof (error as { message?: unknown }).message === "string") {
+      const message = (error as { message: string }).message.trim()
+      if (message.length > 0) {
+        return message
+      }
+    }
+  }
+  return fallback
 }
 
 export function configureApiClient(options?: ApiClientConfigOptions): void {
@@ -48,9 +85,8 @@ export function configureApiClient(options?: ApiClientConfigOptions): void {
   errorInterceptorId = client.interceptors.error.use((error, response, request) => {
     if (response?.status === 401) {
       const requestUrl = request?.url ?? ""
-      const isLoginRequest = requestUrl.includes("/api/access/login")
       const pathname = typeof window !== "undefined" ? window.location.pathname : "/"
-      if (!isLoginRequest && !isPublicAuthPath(pathname)) {
+      if (!isCredentialCheckRequest(requestUrl) && !isPublicAuthPath(pathname)) {
         activeOnUnauthorized?.()
       }
     }

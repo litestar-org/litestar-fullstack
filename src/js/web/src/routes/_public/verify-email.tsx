@@ -8,6 +8,7 @@ import { AuthHeroPanel } from "@/components/auth/auth-hero-panel"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import { localVerificationConfirmMutation, localVerificationResendMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
@@ -41,7 +42,7 @@ function VerifyEmailPage() {
       }, 3000)
     },
     onError: (error) => {
-      const msg = error instanceof Error ? error.message : "Verification failed"
+      const msg = extractApiErrorMessage(error, "Verification failed")
       setStatus("error")
       setErrorMessage(msg)
       toast.error(msg)
@@ -141,7 +142,7 @@ export function ResendVerificationPage() {
       toast.success("Verification email sent! Please check your inbox.")
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to send verification email")
+      toast.error(extractApiErrorMessage(error, "Failed to send verification email"))
     },
   })
 

@@ -56,6 +56,7 @@ class User(CamelizedBaseStruct):
     is_active: bool = False
     is_verified: bool = False
     is_two_factor_enabled: bool = False
+    totp_method_id: str | None = None
     has_password: bool = False
     teams: list[UserTeam] = []
     roles: list[UserRole] = []

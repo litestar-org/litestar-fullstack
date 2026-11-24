@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SkeletonTable } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { adminCancelQueueTaskMutation, adminListQueueTasksOptions, adminListQueueTasksQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 import type { QueueTaskEventPayload } from "@/lib/generated/channels"
 
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/_app/admin/queues")({
 })
 
 const PAGE_LIMIT = 25
+const QUEUE_STATUS_OPTIONS = ["pending", "scheduled", "running", "completed", "failed", "cancelled", "expired"] as const
 const TERMINAL_STATUSES = new Set(["completed", "succeeded", "failed", "cancelled", "canceled"])
 const CANCELLABLE_STATUSES = new Set(["pending", "queued", "scheduled", "running", "in_progress"])
 
@@ -50,7 +53,7 @@ function AdminQueuesPage() {
     },
     onError: (error) => {
       toast.error("Unable to cancel task", {
-        description: error instanceof Error ? error.message : "Try again later",
+        description: extractApiErrorMessage(error, "Try again later"),
       })
     },
   })
@@ -88,14 +91,25 @@ function AdminQueuesPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3 md:grid-cols-3">
-              <Input
-                placeholder="Filter by status (e.g. pending, failed)"
-                value={statusFilter}
-                onChange={(event) => {
-                  setStatusFilter(event.target.value)
+              <Select
+                value={statusFilter || "all"}
+                onValueChange={(value) => {
+                  setStatusFilter(value === "all" ? "" : value)
                   setOffset(0)
                 }}
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  {QUEUE_STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status} value={status} className="capitalize">
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input
                 placeholder="Filter by queue (e.g. default, emails)"
                 value={queueFilter}

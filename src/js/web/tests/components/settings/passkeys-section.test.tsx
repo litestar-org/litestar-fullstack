@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PasskeysSection } from "@/components/settings/passkeys-section"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
+import { CSRF_COOKIE_NAME } from "@/lib/generated/routes"
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -54,7 +55,7 @@ describe("PasskeysSection", () => {
   beforeEach(() => {
     resetApiClientForTest()
     configureApiClient({ baseUrl: "http://localhost" })
-    document.cookie = "csrftoken=test-csrf-token; path=/"
+    document.cookie = `${CSRF_COOKIE_NAME}=test-csrf-token; path=/`
     useAuthStore.setState({
       user: { id: "user-1", email: "alice@example.com", hasPassword: true },
       teams: [],

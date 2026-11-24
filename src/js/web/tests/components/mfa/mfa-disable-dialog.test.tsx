@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { MfaDisableDialog } from "@/components/mfa/mfa-disable-dialog"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
+import { CSRF_COOKIE_NAME } from "@/lib/generated/routes"
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -30,7 +31,7 @@ describe("MfaDisableDialog", () => {
   beforeEach(() => {
     resetApiClientForTest()
     configureApiClient({ baseUrl: "http://localhost" })
-    document.cookie = "csrftoken=test-csrf-token; path=/"
+    document.cookie = `${CSRF_COOKIE_NAME}=test-csrf-token; path=/`
     useAuthStore.setState({
       user: null,
       teams: [],
@@ -55,6 +56,7 @@ describe("MfaDisableDialog", () => {
           email: "test@example.com",
           hasPassword: true,
           isTwoFactorEnabled: true,
+          totpMethodId: "totp-factor-1",
           oauthAccounts: [],
         },
       })
@@ -67,25 +69,24 @@ describe("MfaDisableDialog", () => {
       await user.click(screen.getByRole("button", { name: /disable mfa/i }))
 
       expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument()
-      expect(screen.queryByRole("button", { name: /verify with/i })).not.toBeInTheDocument()
     })
 
-    it("requests a step-up grant and disables TOTP via the API", async () => {
+    it("requests a totp-remove step-up grant and disables the enrolled TOTP factor via the API", async () => {
       const requests: Array<{ url: string; method: string; body: string | null }> = []
       globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
         const request = input instanceof Request ? input : new Request(input, init)
         const body = request.method === "GET" ? null : await request.clone().text()
         requests.push({ url: request.url, method: request.method, body })
 
-        if (request.url.endsWith("/api/access/step-up/mfa-remove")) {
+        if (request.url.endsWith("/api/access/step-up/totp-remove")) {
           return jsonResponse({
             grant: "step-up-grant-123",
-            action: "mfa-remove",
+            purpose: "totp-remove",
             expires_at: "2099-01-01T00:00:00Z",
           })
         }
-        if (request.url.endsWith("/api/access/mfa/totp/totp/remove")) {
-          return jsonResponse({ removed: true })
+        if (request.url.endsWith("/api/access/mfa/totp/totp-factor-1/remove")) {
+          return jsonResponse({ detail: "Login method removed." })
         }
         if (request.url.endsWith("/api/me")) {
           return jsonResponse({
@@ -93,6 +94,7 @@ describe("MfaDisableDialog", () => {
             email: "test@example.com",
             hasPassword: true,
             isTwoFactorEnabled: false,
+            totpMethodId: null,
             oauthAccounts: [],
           })
         }
@@ -108,8 +110,8 @@ describe("MfaDisableDialog", () => {
 
       await waitFor(() => {
         expect(requests.map((r) => `${r.method} ${new URL(r.url).pathname}`)).toEqual([
-          "POST /api/access/step-up/mfa-remove",
-          "POST /api/access/mfa/totp/totp/remove",
+          "POST /api/access/step-up/totp-remove",
+          "POST /api/access/mfa/totp/totp-factor-1/remove",
           "GET /api/me",
         ])
       })
@@ -133,72 +135,20 @@ describe("MfaDisableDialog", () => {
           email: "test@example.com",
           hasPassword: false,
           isTwoFactorEnabled: true,
+          totpMethodId: "totp-factor-1",
           oauthAccounts: [{ id: "oauth-1", oauthName: "github", accountId: "gh-123", accountEmail: "test@github.com" }],
         },
       })
     })
 
-    it("renders OAuth re-authentication button instead of password input", async () => {
+    it("explains that password step-up verification is required before disabling MFA", async () => {
       const user = userEvent.setup()
       render(<MfaDisableDialog />, { wrapper: createWrapper() })
 
       await user.click(screen.getByRole("button", { name: /disable mfa/i }))
 
       expect(screen.queryByPlaceholderText(/password/i)).not.toBeInTheDocument()
-      expect(screen.getByText(/re-authenticate/i)).toBeInTheDocument()
-      expect(screen.getByRole("button", { name: /verify with github/i })).toBeInTheDocument()
-    })
-
-    it("redirects to the OAuth login flow when verify button is clicked", async () => {
-      const user = userEvent.setup()
-      const assignSpy = vi.fn()
-      const originalLocation = window.location
-      Object.defineProperty(window, "location", {
-        value: { ...originalLocation, assign: assignSpy },
-        writable: true,
-        configurable: true,
-      })
-
-      try {
-        render(<MfaDisableDialog />, { wrapper: createWrapper() })
-
-        await user.click(screen.getByRole("button", { name: /disable mfa/i }))
-        await user.click(screen.getByRole("button", { name: /verify with github/i }))
-
-        expect(assignSpy).toHaveBeenCalledWith("/api/auth/oauth/github/login?return_to=%2Fsettings%2Fsecurity")
-      } finally {
-        Object.defineProperty(window, "location", {
-          value: originalLocation,
-          writable: true,
-          configurable: true,
-        })
-      }
-    })
-  })
-
-  describe("when user has multiple OAuth providers", () => {
-    beforeEach(() => {
-      useAuthStore.setState({
-        user: {
-          id: "user-1",
-          email: "test@example.com",
-          hasPassword: false,
-          isTwoFactorEnabled: true,
-          oauthAccounts: [
-            { id: "oauth-1", oauthName: "github", accountId: "gh-123", accountEmail: "test@github.com" },
-            { id: "oauth-2", oauthName: "google", accountId: "g-456", accountEmail: "test@gmail.com" },
-          ],
-        },
-      })
-    })
-
-    it("shows the first OAuth provider as the verification option", async () => {
-      const user = userEvent.setup()
-      render(<MfaDisableDialog />, { wrapper: createWrapper() })
-
-      await user.click(screen.getByRole("button", { name: /disable mfa/i }))
-
-      expect(screen.getByRole("button", { name: /verify with github/i })).toBeInTheDocument()
+      expect(screen.getByText(/set a password in your profile settings/i)).toBeInTheDocument()
     })
   })
 })

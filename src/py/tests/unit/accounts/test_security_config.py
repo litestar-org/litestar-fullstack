@@ -76,7 +76,7 @@ def test_security_config_cookie_flags_and_exclusions(tmp_path: Path) -> None:
     assert prod_cfg.local_auth.binding.cookie_name == "__Host-app-binding"
     assert prod_cfg.local_auth.binding.allow_insecure is False
     assert prod_cfg.oauth is not None
-    assert prod_cfg.oauth.route_prefix == "/api/auth/oauth"
+    assert prod_cfg.oauth.route_prefix == "/api/auth"
     oauth_service = prod_cfg.oauth.oauth_service
     assert isinstance(oauth_service, OAuthLifecycleService)
     assert set(oauth_service.provider_names) == {"github", "google"}

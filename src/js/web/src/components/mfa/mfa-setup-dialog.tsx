@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import type { TotpProvisioning } from "@/lib/generated/api"
 import { mfaEnrollTotpMutation, mfaVerifyTotpEnrollmentMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
@@ -58,7 +59,7 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
       return
     }
     try {
-      const grant = await requestGrant("mfa-enroll", password)
+      const grant = await requestGrant("totp-enroll", password)
       const provisioned = await enroll.mutateAsync({
         body: {
           label: label.trim() || "Authenticator",
@@ -69,7 +70,7 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
       setPassword("")
     } catch (error) {
       toast.error("Unable to start MFA setup", {
-        description: error instanceof Error ? error.message : "Check your password and try again",
+        description: extractApiErrorMessage(error, "Check your password and try again"),
       })
     }
   }
@@ -92,7 +93,7 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
       toast.success("MFA enabled")
     } catch (error) {
       toast.error("Verification failed", {
-        description: error instanceof Error ? error.message : "Check the code and try again",
+        description: extractApiErrorMessage(error, "Check the code and try again"),
       })
     }
   }

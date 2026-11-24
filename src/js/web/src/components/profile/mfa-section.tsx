@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import { mfaReplaceRecoveryCodesMutation, publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
@@ -21,7 +22,7 @@ export function MfaSection() {
   })
   const { requestGrant, isPending: stepUpPending } = useStepUpGrant()
   const regenerate = useMutation(mfaReplaceRecoveryCodesMutation())
-  const [enrolledMethodId, setEnrolledMethodId] = useState<string>("totp")
+  const [enrolledMethodId, setEnrolledMethodId] = useState<string | null>(null)
   const [regenOpen, setRegenOpen] = useState(false)
   const [regenPassword, setRegenPassword] = useState("")
   const [regenCodes, setRegenCodes] = useState<string[] | null>(null)
@@ -31,6 +32,7 @@ export function MfaSection() {
   }
 
   const mfaEnabled = user?.isTwoFactorEnabled ?? false
+  const activeMethodId = user?.totpMethodId ?? enrolledMethodId
   const isRegenPending = stepUpPending || regenerate.isPending
 
   const handleRegenOpenChange = (nextOpen: boolean) => {
@@ -47,14 +49,14 @@ export function MfaSection() {
       return
     }
     try {
-      const grant = await requestGrant("mfa-recovery-codes", regenPassword)
+      const grant = await requestGrant("recovery-codes", regenPassword)
       const result = await regenerate.mutateAsync({ body: { step_up_grant: grant } })
       setRegenCodes(result.codes ?? [])
       setRegenPassword("")
       toast.success("Recovery codes regenerated")
     } catch (error) {
       toast.error("Unable to regenerate codes", {
-        description: error instanceof Error ? error.message : "Try again later",
+        description: extractApiErrorMessage(error, "Try again later"),
       })
     }
   }
@@ -68,7 +70,7 @@ export function MfaSection() {
       <CardContent className="space-y-4">
         {mfaEnabled ? (
           <div className="flex flex-wrap gap-2">
-            <MfaDisableDialog methodId={enrolledMethodId} />
+            <MfaDisableDialog methodId={activeMethodId} />
             <Button variant="outline" onClick={() => setRegenOpen(true)}>
               Regenerate recovery codes
             </Button>

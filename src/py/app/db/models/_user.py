@@ -111,6 +111,16 @@ class User(UUIDv7AuditBase):
         """Compatibility alias returning whether the user has confirmed MFA enabled."""
         return self.has_mfa
 
+    @property
+    def totp_method_id(self) -> str | None:
+        """Return the active confirmed TOTP factor identifier when MFA factors are loaded."""
+        if "mfa_factors" in inspect(self).unloaded:
+            return None
+        for factor in self.mfa_factors:
+            if factor.is_confirmed and factor.kind == "totp":
+                return factor.method_id
+        return None
+
     def __eq__(self, other: object) -> bool:
         """Compare persisted user records by primary key and core account state."""
         if isinstance(other, User):

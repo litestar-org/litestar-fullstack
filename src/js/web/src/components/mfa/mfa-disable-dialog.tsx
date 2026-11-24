@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import { mfaRemoveTotpMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 interface MfaDisableDialogProps {
   disabled?: boolean
-  methodId?: string
+  methodId?: string | null
 }
 
-export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDialogProps) {
+export function MfaDisableDialog({ disabled, methodId }: MfaDisableDialogProps) {
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
   const user = useAuthStore((state) => state.user)
@@ -22,7 +23,7 @@ export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDial
   const removeTotp = useMutation(mfaRemoveTotpMutation())
 
   const hasPassword = user?.hasPassword ?? true
-  const oauthProvider = user?.oauthAccounts?.[0]?.oauthName
+  const resolvedMethodId = methodId ?? user?.totpMethodId ?? null
   const isPending = stepUpPending || removeTotp.isPending
 
   const handlePasswordDisable = async () => {
@@ -30,10 +31,14 @@ export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDial
       toast.error("Enter your password to disable MFA")
       return
     }
+    if (!resolvedMethodId) {
+      toast.error("Unable to identify active MFA factor. Reload and try again.")
+      return
+    }
     try {
-      const grant = await requestGrant("mfa-remove", password)
+      const grant = await requestGrant("totp-remove", password)
       await removeTotp.mutateAsync({
-        path: { method_id: methodId },
+        path: { method_id: resolvedMethodId },
         body: { step_up_grant: grant },
       })
       await checkAuth()
@@ -42,20 +47,10 @@ export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDial
       setPassword("")
     } catch (error) {
       toast.error("Unable to disable MFA", {
-        description: error instanceof Error ? error.message : "Check your password and try again",
+        description: extractApiErrorMessage(error, "Check your password and try again"),
       })
     }
   }
-
-  const handleOAuthDisable = () => {
-    if (!oauthProvider) {
-      toast.error("No linked OAuth account found")
-      return
-    }
-    window.location.assign(`/api/auth/oauth/${encodeURIComponent(oauthProvider)}/login?return_to=${encodeURIComponent("/settings/security")}`)
-  }
-
-  const formatProviderName = (provider: string) => provider.charAt(0).toUpperCase() + provider.slice(1)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,7 +62,11 @@ export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDial
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Disable multi-factor authentication</DialogTitle>
-          <DialogDescription>{hasPassword ? "Confirm your password to turn off MFA." : "Re-authenticate with your linked account to turn off MFA."}</DialogDescription>
+          <DialogDescription>
+            {hasPassword
+              ? "Confirm your password to turn off MFA."
+              : "Disabling MFA requires password step-up verification. Set a password in your profile settings before disabling MFA."}
+          </DialogDescription>
         </DialogHeader>
 
         {hasPassword ? (
@@ -81,8 +80,8 @@ export function MfaDisableDialog({ disabled, methodId = "totp" }: MfaDisableDial
           </>
         ) : (
           <DialogFooter>
-            <Button onClick={handleOAuthDisable} disabled={isPending}>
-              Verify with {oauthProvider ? formatProviderName(oauthProvider) : "OAuth"}
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Close
             </Button>
           </DialogFooter>
         )}

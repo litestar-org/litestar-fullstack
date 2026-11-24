@@ -45,8 +45,6 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
     reValidateMode: "onBlur",
   })
 
-  const emailValue = form.watch("username")
-
   const onSubmit = async (data: LoginFormData) => {
     const result = await login(data.username, data.password)
     if (result.mfaRequired) {
@@ -117,7 +115,7 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
               </div>
             </div>
             <div className="grid gap-2">
-              {passkeysEnabled && <PasskeySignInButton accountIdentifier={emailValue} authRedirect={finalRedirect} className="w-full" />}
+              {passkeysEnabled && <PasskeySignInButton authRedirect={finalRedirect} className="w-full" />}
               {githubOAuthEnabled && <GitHubSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
               {googleOAuthEnabled && <GoogleSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
             </div>

@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { validatePassword } from "@/hooks/use-validation"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { localRegisterMutation, publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 
@@ -81,7 +82,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
       const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
       navigate({ to: "/login", search: loginSearch })
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Signup failed")
+      toast.error(extractApiErrorMessage(error, "Signup failed"))
     }
   }
 

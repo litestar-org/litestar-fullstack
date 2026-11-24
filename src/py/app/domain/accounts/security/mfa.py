@@ -260,13 +260,15 @@ class SQLAlchemyMFAService:
         if uid is None:
             return None
         async with self._alchemy_config.get_session() as session:
-            row = await session.scalar(
-                select(m.UserMFAFactor).where(
-                    m.UserMFAFactor.user_id == uid,
-                    m.UserMFAFactor.method_id == method_id,
-                    m.UserMFAFactor.is_confirmed.is_(True),
-                )
+            stmt = select(m.UserMFAFactor).where(
+                m.UserMFAFactor.user_id == uid,
+                m.UserMFAFactor.is_confirmed.is_(True),
             )
+            if method_id == "__active__":
+                stmt = stmt.where(m.UserMFAFactor.kind == "totp").order_by(m.UserMFAFactor.created_at.desc()).limit(1)
+            else:
+                stmt = stmt.where(m.UserMFAFactor.method_id == method_id)
+            row = await session.scalar(stmt)
             return _row_to_totp_method(row) if row is not None else None
 
     async def advance_totp_counter(self, method_id: str, *, accepted_counter: int, now: datetime) -> bool:

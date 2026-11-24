@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { SkeletonCard } from "@/components/ui/skeleton"
+import { extractApiErrorMessage } from "@/lib/api-client"
 import { adminGetUserOptions, adminGetUserQueryKey, adminListUsersQueryKey, adminUpdateUserMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/admin/users/$userId")({
@@ -29,7 +30,7 @@ function AdminUserDetailPage() {
     },
     onError: (error) => {
       toast.error("Unable to update user", {
-        description: error instanceof Error ? error.message : "Try again later",
+        description: extractApiErrorMessage(error, "Try again later"),
       })
     },
   })
