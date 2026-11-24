@@ -207,14 +207,16 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
 
-        resolved_mcp = self.mcp_config or config.mcp
-        if resolved_mcp.before_tool_call is None and resolved_mcp.after_tool_call is None:
-            before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
-            resolved_mcp = replace(
-                resolved_mcp,
-                before_tool_call=before_hook,
-                after_tool_call=after_hook,
-            )
+        resolved_mcp: MCPConfig | None = None
+        if self.mcp_config is not None or settings.mcp.ENABLED:
+            resolved_mcp = self.mcp_config or config.mcp
+            if resolved_mcp.before_tool_call is None and resolved_mcp.after_tool_call is None:
+                before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
+                resolved_mcp = replace(
+                    resolved_mcp,
+                    before_tool_call=before_hook,
+                    after_tool_call=after_hook,
+                )
 
         app_config.plugins.extend(
             plugins.build_plugins(

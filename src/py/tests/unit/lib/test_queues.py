@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any, cast
 
+import pytest
 from litestar import Litestar
 from litestar_asyncapi import AsyncAPIPlugin
 from litestar_autowire import AutowireConfig, AutowirePlugin, clear_autowire_cache
@@ -109,3 +110,70 @@ def test_asyncapi_channel_contract_and_autowire_queue_discovery() -> None:
         "email.send_team_invitation",
     ):
         assert expected in registry
+
+
+@pytest.mark.anyio
+async def test_queue_stream_channel_authorizer_enforces_superuser_and_task_owner(tmp_path: Any) -> None:
+    from types import SimpleNamespace
+    from uuid import uuid4
+
+    from advanced_alchemy.base import orm_registry
+    from litestar_queues import QueueService
+    from litestar_security.context import Principal
+
+    from app.domain.system.jobs import export_team_summary
+
+    db_settings = DatabaseSettings(URL=f"sqlite+aiosqlite:///{tmp_path / 'stream_auth.sqlite3'}")
+    db_cfg = db_settings.get_config()
+    async with db_cfg.get_engine().begin() as conn:
+        await conn.run_sync(orm_registry.metadata.create_all)
+
+    owner_id = str(uuid4())
+    other_id = str(uuid4())
+    q_cfg = QueueSettings(PLACEMENT="external").get_config(
+        alchemy_config=db_cfg,
+        db_settings=db_settings,
+        app_settings=AppSettings(SECRET_KEY="stream-auth-secret"),
+    )
+    queue_svc = QueueService(config=q_cfg)
+    await queue_svc.open()
+    try:
+        enqueued = await queue_svc.enqueue(
+            export_team_summary,
+            team_id=str(uuid4()),
+            requested_by_id=owner_id,
+            metadata={"requested_by_id": owner_id},
+        )
+        task_id = enqueued.id
+    finally:
+        await queue_svc.close()
+
+    assert q_cfg.events is not None
+    assert q_cfg.events.stream is not None
+    authorizer = q_cfg.events.stream.channel_authorizer
+    assert authorizer is not None
+
+    import inspect
+
+    async def _check(conn: Any, scope: Any, target: str | None) -> bool:
+        outcome = authorizer(cast("Any", conn), scope, target)
+        return bool(await outcome) if inspect.isawaitable(outcome) else bool(outcome)
+
+    unauth_conn = SimpleNamespace(scope={})
+    assert await _check(unauth_conn, "global", None) is False
+
+    regular_conn = SimpleNamespace(
+        scope={"user": Principal(id=owner_id, user=SimpleNamespace(is_superuser=False))}
+    )
+    other_conn = SimpleNamespace(
+        scope={"user": Principal(id=other_id, user=SimpleNamespace(is_superuser=False))}
+    )
+    admin_conn = SimpleNamespace(
+        scope={"user": Principal(id=str(uuid4()), user=SimpleNamespace(is_superuser=True))}
+    )
+
+    assert await _check(regular_conn, "global", None) is False
+    assert await _check(regular_conn, "task", str(task_id)) is True
+    assert await _check(other_conn, "task", str(task_id)) is False
+    assert await _check(admin_conn, "global", None) is True
+    assert await _check(admin_conn, "task", str(task_id)) is True

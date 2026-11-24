@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
@@ -13,7 +12,12 @@ from litestar_security.providers.oauth import ProtectedOAuthSecret, ProviderToke
 from sqlalchemy import select
 
 from app.db import models as m
-from app.domain.accounts.security.oauth import build_oauth_protector
+from app.domain.accounts.security.oauth import (
+    build_oauth_protector,
+    deserialize_oauth_tokens,
+    oauth_account_aad,
+    serialize_oauth_tokens,
+)
 from app.lib.settings import Settings, get_settings
 
 if TYPE_CHECKING:
@@ -53,15 +57,14 @@ async def _refresh_single_account(
     if provider_creds is None or endpoint is None or row.protected_tokens is None or row.key_version is None:
         return "skipped"
 
-    aad = f"oauth-account:{row.oauth_name}:{row.account_id}".encode()
+    aad = oauth_account_aad(row.oauth_name, row.account_id)
     try:
         raw_blob = await protector.unprotect(
             ProtectedOAuthSecret(key_version=row.key_version, ciphertext=row.protected_tokens),
             associated_data=aad,
         )
-        stored: dict[str, Any] = json.loads(raw_blob.decode("utf-8"))
-        refresh_token = stored.get("refresh_token")
-        if not isinstance(refresh_token, str) or not refresh_token:
+        stored = deserialize_oauth_tokens(raw_blob)
+        if stored.refresh_token is None or not stored.refresh_token.get_secret_value():
             return "skipped"
 
         client_id, client_secret = provider_creds
@@ -70,7 +73,7 @@ async def _refresh_single_account(
             headers={"Accept": "application/json"},
             data={
                 "grant_type": "refresh_token",
-                "refresh_token": refresh_token,
+                "refresh_token": stored.refresh_token.get_secret_value(),
                 "client_id": client_id,
                 "client_secret": client_secret,
             },
@@ -81,35 +84,39 @@ async def _refresh_single_account(
         if not isinstance(new_access, str) or not new_access:
             return "failed"
 
-        new_refresh = payload.get("refresh_token") or refresh_token
+        new_refresh_raw = payload.get("refresh_token")
+        new_refresh = (
+            SecretStr(new_refresh_raw)
+            if isinstance(new_refresh_raw, str) and new_refresh_raw
+            else stored.refresh_token
+        )
+        new_id_token_raw = payload.get("id_token")
+        new_id_token = (
+            SecretStr(new_id_token_raw)
+            if isinstance(new_id_token_raw, str) and new_id_token_raw
+            else stored.id_token
+        )
         expires_in = payload.get("expires_in")
         new_expires_at = (
             now + timedelta(seconds=int(expires_in))
             if isinstance(expires_in, (int, float)) and expires_in > 0
-            else row.token_expires_at
+            else (row.token_expires_at or now + timedelta(hours=1))
         )
         scopes_raw = payload.get("scope")
         scopes = (
             frozenset(scopes_raw.split())
             if isinstance(scopes_raw, str) and scopes_raw.strip()
-            else frozenset(row.scopes or [])
+            else stored.scopes
         )
         tokens = ProviderTokenSet(
             access_token=SecretStr(new_access),
-            token_type="Bearer",  # noqa: S106
+            token_type=stored.token_type,
             scopes=scopes,
-            refresh_token=SecretStr(str(new_refresh)) if new_refresh else None,
-            expires_at=new_expires_at or (now + timedelta(hours=1)),
+            refresh_token=new_refresh,
+            id_token=new_id_token,
+            expires_at=new_expires_at,
         )
-        serialized = json.dumps(
-            {
-                "access_token": tokens.access_token.get_secret_value(),
-                "refresh_token": tokens.refresh_token.get_secret_value() if tokens.refresh_token is not None else None,
-                "token_type": tokens.token_type,
-                "scopes": sorted(tokens.scopes),
-            }
-        ).encode("utf-8")
-        re_protected = await protector.protect(serialized, associated_data=aad)
+        re_protected = await protector.protect(serialize_oauth_tokens(tokens), associated_data=aad)
         row.protected_tokens = re_protected.ciphertext
         row.key_version = re_protected.key_version
         row.token_version += 1
@@ -160,7 +167,11 @@ async def run_refresh_oauth_tokens(
             for idx, row in enumerate(rows, start=1):
                 counts["processed"] += 1
                 if context is not None:
-                    await context.progress(current=idx, total=max(1, total), message=f"Refreshing {row.oauth_name} token")
+                    await context.progress(
+                        current=idx,
+                        total=max(1, total),
+                        message=f"Refreshing {row.oauth_name} token",
+                    )
                 outcome = await _refresh_single_account(
                     row,
                     client=client,

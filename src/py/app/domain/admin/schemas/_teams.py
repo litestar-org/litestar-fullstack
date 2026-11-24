@@ -53,7 +53,7 @@ class AdminTeamDetail(CamelizedBaseStruct, kw_only=True):
         object.__setattr__(self, "owner_email", owner_email)
 
 
-class AdminTeamUpdate(msgspec.Struct, gc=False, omit_defaults=True):
+class AdminTeamUpdate(CamelizedBaseStruct, gc=False, omit_defaults=True):
     """Update payload for admin team management."""
 
     name: str | msgspec.UnsetType | None = msgspec.UNSET

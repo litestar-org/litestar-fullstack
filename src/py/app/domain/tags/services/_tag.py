@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.extensions.litestar import repository, service
 
@@ -22,6 +22,18 @@ class TagService(service.SQLAlchemyAsyncRepositoryService[m.Tag]):
 
     repository_type = Repo
     match_fields = ["name"]
+
+    async def update(self, data: ModelDictT[m.Tag], item_id: Any | None = None, **kwargs: Any) -> m.Tag:
+        """Preserve the existing slug when updating a tag without changing its name."""
+        if (
+            item_id is not None
+            and service.is_dict_with_field(data, "name")
+            and service.is_dict_without_field(data, "slug")
+        ):
+            existing = await self.get(item_id)
+            if existing.name == data["name"]:
+                data["slug"] = existing.slug
+        return await super().update(data, item_id=item_id, **kwargs)
 
     async def to_model_on_create(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:
         """Populate a unique slug from ``name`` when creating a tag."""

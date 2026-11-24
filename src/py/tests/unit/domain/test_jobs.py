@@ -168,3 +168,78 @@ async def test_refresh_oauth_tokens_with_no_configured_providers(tmp_path: Path)
     settings = Settings(app=AppSettings(SECRET_KEY="refresh-test-secret"))
     result = await run_refresh_oauth_tokens(db_cfg, settings=settings)
     assert result == {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
+
+
+async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(tmp_path: Path) -> None:
+    import httpx
+    from litestar_security.providers.oauth import ProviderGrant, ProviderIdentity, ProviderTokenSet, SecretStr
+
+    from app.domain.accounts.security.oauth import SQLAlchemyOAuthAccountStore, build_oauth_protector
+
+    db_cfg = await _make_db(tmp_path, "oauth_refresh_roundtrip.sqlite3")
+    settings = Settings(
+        app=AppSettings(
+            SECRET_KEY="refresh-roundtrip-secret",
+            GOOGLE_OAUTH2_CLIENT_ID="google-client-id",
+            GOOGLE_OAUTH2_CLIENT_SECRET="google-client-secret",
+        )
+    )
+    now = datetime.now(UTC)
+    async with db_cfg.get_session() as session:
+        user = m.User(email="oauth-user@example.com", name="OAuth User", is_active=True, is_verified=True)
+        session.add(user)
+        await session.commit()
+        user_id = str(user.id)
+
+    store = SQLAlchemyOAuthAccountStore(db_cfg, build_oauth_protector(settings))
+    linked = await store.link(
+        account_id=user_id,
+        identity=ProviderIdentity(
+            provider="google",
+            issuer="https://accounts.google.com",
+            subject="sub-123",
+            email="oauth-user@example.com",
+            email_verified=True,
+            display_name="OAuth User",
+            raw_claims={},
+        ),
+        grant=ProviderGrant(scopes=frozenset({"openid", "email"}), expires_at=now + timedelta(minutes=2)),
+        tokens=ProviderTokenSet(
+            access_token=SecretStr("old-access"),
+            token_type="Bearer",
+            scopes=frozenset({"openid", "email"}),
+            expires_at=now + timedelta(minutes=2),
+            refresh_token=SecretStr("old-refresh"),
+            id_token=SecretStr("old-id-token"),
+        ),
+        retain_tokens=True,
+        now=now,
+    )
+
+    def _mock_handler(request: httpx.Request) -> httpx.Response:
+        assert str(request.url) == "https://oauth2.googleapis.com/token"
+        return httpx.Response(
+            200,
+            json={
+                "access_token": "new-access-token",
+                "refresh_token": "new-refresh-token",
+                "expires_in": 3600,
+                "scope": "openid email profile",
+            },
+        )
+
+    counts = await run_refresh_oauth_tokens(
+        db_cfg,
+        settings=settings,
+        transport=httpx.MockTransport(_mock_handler),
+    )
+    assert counts == {"processed": 1, "refreshed": 1, "skipped": 0, "failed": 0}
+
+    refreshed = await store.get_tokens(provider_account_id=linked.provider_account_id, now=now)
+    assert refreshed is not None
+    assert refreshed.tokens.access_token.get_secret_value() == "new-access-token"
+    assert refreshed.tokens.refresh_token is not None
+    assert refreshed.tokens.refresh_token.get_secret_value() == "new-refresh-token"
+    assert refreshed.tokens.id_token is not None
+    assert refreshed.tokens.id_token.get_secret_value() == "old-id-token"
+    assert "profile" in refreshed.tokens.scopes

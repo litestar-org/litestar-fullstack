@@ -49,7 +49,15 @@ __all__ = (
     "SQLAlchemyOAuthAccountStore",
     "SQLAlchemyOAuthTransactionStore",
     "build_oauth_protector",
+    "deserialize_oauth_tokens",
+    "oauth_account_aad",
+    "serialize_oauth_tokens",
 )
+
+
+def oauth_account_aad(provider: str, subject: str) -> bytes:
+    """Build canonical AEAD associated data for persisted ``UserOAuthAccount`` tokens."""
+    return f"oauth_account|{provider}|{subject}".encode()
 
 
 def _ensure_utc(value: datetime) -> datetime:
@@ -81,7 +89,8 @@ def build_oauth_protector(
     return AESGCMOAuthTransactionProtector(active_key=active, retained_keys=tuple(retained_keys))
 
 
-def _serialize_tokens(tokens: ProviderTokenSet) -> bytes:
+def serialize_oauth_tokens(tokens: ProviderTokenSet) -> bytes:
+    """Serialize a ``ProviderTokenSet`` into canonical JSON bytes for AEAD encryption."""
     payload: dict[str, Any] = {
         "access_token": tokens.access_token.get_secret_value(),
         "token_type": tokens.token_type,
@@ -93,7 +102,8 @@ def _serialize_tokens(tokens: ProviderTokenSet) -> bytes:
     return json.dumps(payload).encode("utf-8")
 
 
-def _deserialize_tokens(raw: bytes) -> ProviderTokenSet:
+def deserialize_oauth_tokens(raw: bytes) -> ProviderTokenSet:
+    """Deserialize canonical JSON bytes back into a ``ProviderTokenSet``."""
     data = json.loads(raw.decode("utf-8"))
     expires_raw = data.get("expires_at")
     return ProviderTokenSet(
@@ -254,8 +264,8 @@ class SQLAlchemyOAuthAccountStore:
         subject: str,
         tokens: ProviderTokenSet,
     ) -> ProtectedOAuthSecret:
-        aad = f"oauth_account|{provider}|{subject}".encode()
-        return await self._protector.protect(_serialize_tokens(tokens), associated_data=aad)
+        aad = oauth_account_aad(provider, subject)
+        return await self._protector.protect(serialize_oauth_tokens(tokens), associated_data=aad)
 
     async def _unprotect_tokens(
         self,
@@ -263,12 +273,12 @@ class SQLAlchemyOAuthAccountStore:
     ) -> ProviderTokenSet | None:
         if row.protected_tokens is None or row.key_version is None:
             return None
-        aad = f"oauth_account|{row.oauth_name}|{row.account_id}".encode()
+        aad = oauth_account_aad(row.oauth_name, row.account_id)
         raw = await self._protector.unprotect(
             ProtectedOAuthSecret(ciphertext=row.protected_tokens, key_version=row.key_version),
             associated_data=aad,
         )
-        return _deserialize_tokens(raw)
+        return deserialize_oauth_tokens(raw)
 
     async def link(
         self,

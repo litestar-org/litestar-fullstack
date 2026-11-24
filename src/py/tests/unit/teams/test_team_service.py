@@ -63,18 +63,35 @@ async def test_team_services_group_slugs_tags_and_ownership_transfer(tmp_path: P
         )
         await svc.teams.update(item_id=team1.id, data={"owner_id": successor_id}, auto_commit=True)
 
-        members = await svc.members.get_many(m.TeamMember.team_id == team1.id)
-        by_user = {member.user_id: member for member in members}
-        assert by_user[successor_id].is_owner is True
-        assert by_user[successor_id].role == m.TeamRoles.ADMIN
-        assert by_user[owner_id].is_owner is False
-
         listed, total = await svc.teams.get_many_and_count(
             LimitOffsetFilter(limit=10, offset=0),
             OrderByFilter(field_name="name", sort_order="asc"),
         )
         assert total == 2
         assert len(listed) == 2
+        team1_id = team1.id
+
+    async with TeamServices.new(config=db_cfg) as fresh_svc:
+        members = await fresh_svc.members.get_many(m.TeamMember.team_id == team1_id)
+        by_user = {member.user_id: member for member in members}
+        assert by_user[successor_id].is_owner is True
+        assert by_user[successor_id].role == m.TeamRoles.ADMIN
+        assert by_user[owner_id].is_owner is False
+
+        from uuid import uuid4
+
+        from advanced_alchemy.exceptions import RepositoryError
+
+        with pytest.raises(RepositoryError):
+            await fresh_svc.teams.update(item_id=team1_id, data={"owner_id": uuid4()}, auto_commit=True)
+        await fresh_svc.session.rollback()
+
+        unchanged = await fresh_svc.teams.update(
+            item_id=team1_id,
+            data={"name": "Core Engineering"},
+            auto_commit=True,
+        )
+        assert unchanged.slug == "core-engineering"
 
 
 async def test_queued_background_task_executes_team_invitation_email(monkeypatch: pytest.MonkeyPatch) -> None:

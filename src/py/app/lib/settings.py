@@ -210,7 +210,7 @@ class DatabaseSettings:
 class QueueSettings:
     """PostgreSQL-backed ``litestar-queues`` configuration settings."""
 
-    PLACEMENT: str = field(default_factory=get_env("QUEUES_PLACEMENT", "server"))
+    PLACEMENT: str = field(default_factory=get_env("QUEUES_PLACEMENT", "asgi"))
     EXECUTION_BACKEND: str = field(default_factory=get_env("QUEUES_EXECUTION_BACKEND", "local"))
     MAX_CONCURRENCY: int = field(default_factory=get_env("QUEUES_MAX_CONCURRENCY", 8))
     BATCH_SIZE: int = field(default_factory=get_env("QUEUES_BATCH_SIZE", 10))
@@ -285,14 +285,46 @@ class QueueSettings:
             enable_prometheus=self.ENABLE_PROMETHEUS,
             enable_sqlcommenter=True,
         )
-        from litestar.exceptions import NotAuthorizedException
+        from uuid import UUID
+
         from litestar_security import any_of
         from litestar_security.context import Principal
+        from sqlalchemy import select
 
         def _require_authenticated_stream(connection: Any, _: Any) -> None:
             principal: object = connection.scope.get("user")
             if not isinstance(principal, Principal) or not principal.is_authenticated:
                 raise NotAuthorizedException
+
+        async def _authorize_stream_channel(
+            connection: Any,
+            scope: str,
+            target: str | None,
+        ) -> bool:
+            raw_principal: object = connection.scope.get("user")
+            if not isinstance(raw_principal, Principal) or not raw_principal.is_authenticated or raw_principal.id is None:
+                return False
+            principal = cast("Principal[Any]", raw_principal)
+            user_obj: Any = principal.user
+            if bool(getattr(user_obj, "is_superuser", False)):
+                return True
+            if scope != "task" or not target:
+                return False
+            try:
+                task_uuid = UUID(target)
+            except ValueError:
+                return False
+            async with alchemy_config.get_session() as session:
+                row = await session.scalar(select(QueueTaskModel).where(QueueTaskModel.id == task_uuid))
+                raw_meta: Any = row.metadata_json if row is not None else None
+                if isinstance(raw_meta, str):
+                    try:
+                        raw_meta = json.loads(raw_meta)
+                    except ValueError:
+                        return False
+                return isinstance(raw_meta, dict) and bool(
+                    cast("dict[str, Any]", raw_meta).get("requested_by_id") == str(principal.id)
+                )
 
         events = QueueEventsConfig(
             channels=MemoryChannelsBackend(history=100),
@@ -305,6 +337,7 @@ class QueueSettings:
                     path=self.STREAM_PATH,
                     transports={"sse", "websocket"},
                     guards=[_require_authenticated_stream],
+                    channel_authorizer=_authorize_stream_channel,
                     opt={"auth": any_of("session", "api-key")},
                 )
                 if self.STREAM_ENABLED

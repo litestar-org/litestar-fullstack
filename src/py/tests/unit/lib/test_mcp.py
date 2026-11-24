@@ -248,3 +248,28 @@ async def test_mcp_audit_hook_errors_are_swallowed(tmp_path: Path) -> None:
         )
         assert resp.status_code == 200, resp.text
         assert "error" not in resp.json()
+
+
+def test_application_core_respects_mcp_enabled_false(monkeypatch: pytest.MonkeyPatch) -> None:
+    from litestar_autowire import AutowireConfig
+
+    from app.lib.settings import get_settings
+    from app.server.core import ApplicationCore
+
+    settings = get_settings()
+    monkeypatch.setattr(settings.mcp, "ENABLED", False)
+    app = Litestar(
+        plugins=[
+            ApplicationCore(
+                autowire_config=AutowireConfig(domain_packages=[], integrations=[]),
+                queue_config=QueueConfig(
+                    queue_backend="memory",
+                    execution_backend="local",
+                    worker=WorkerConfig(placement="external"),
+                ),
+            )
+        ]
+    )
+    with pytest.raises(KeyError):
+        app.plugins.get(LitestarMCP)
+    assert not any(route.path.startswith("/mcp") for route in app.routes)

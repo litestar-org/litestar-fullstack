@@ -102,6 +102,8 @@ class TeamMemberController(SecureController):
         if membership is None:
             msg = "User is not a member of this team."
             raise IntegrityError(msg)
+        if membership.is_owner and data.role != m.TeamRoles.ADMIN:
+            raise HTTPException(status_code=400, detail="Cannot demote a team owner from ADMIN role")
         updated = await team_members_service.update(
             item_id=membership.id,
             data={"role": data.role},

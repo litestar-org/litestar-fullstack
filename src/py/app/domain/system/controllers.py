@@ -8,7 +8,7 @@ from litestar import MediaType, get, post
 from litestar.di import NamedDependency
 from litestar.params import Parameter
 from litestar.response import Response
-from litestar_queues import QueueService
+from litestar_queues import QueuedTaskRecord, QueueService
 from litestar_security import (
     CSRF_REQUIRED_OPT_KEY,
     AuthenticationPolicy,
@@ -35,6 +35,7 @@ logger = structlog.get_logger(__name__)
 class SystemController(PublicController):
     """Public system health and frontend authentication configuration endpoints."""
 
+    path = ""
     tags = ["System"]
     dependencies = {}
 
@@ -121,9 +122,16 @@ class UserQueueController(SecureController):
         offset: Annotated[int, Parameter(ge=0, description="Pagination offset.")] = 0,
     ) -> QueueTaskListResponse:
         """List recent background queue tasks owned by the authenticated user."""
-        page = await queue_service.list_tasks(limit=max(limit * 4, 200), offset=0)
         owner_id = str(current_user.id)
-        owned = [item for item in page.items if (item.metadata or {}).get("requested_by_id") == owner_id]
+        owned: list[QueuedTaskRecord] = []
+        batch_size = 200
+        scan_offset = 0
+        while True:
+            page = await queue_service.list_tasks(queue="reports", limit=batch_size, offset=scan_offset)
+            owned.extend(item for item in page.items if (item.metadata or {}).get("requested_by_id") == owner_id)
+            scan_offset += len(page.items)
+            if len(page.items) < batch_size or scan_offset >= page.total:
+                break
         sliced = owned[offset : offset + limit]
         return QueueTaskListResponse(
             items=[serialize_task_record(item) for item in sliced],

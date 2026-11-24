@@ -87,13 +87,31 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
         pending_owner_id: UUID | None = None
         if service.is_dict_with_field(data, "owner_id"):
             pending_owner_id = data.get("owner_id")
-        team = await super().update(data, item_id=item_id, **kwargs)
-        if pending_owner_id is not None:
-            await self._transfer_ownership(team, pending_owner_id)
+        if (
+            item_id is not None
+            and service.is_dict_with_field(data, "name")
+            and service.is_dict_without_field(data, "slug")
+        ):
+            existing = await self.get(item_id)
+            if existing.name == data["name"]:
+                data["slug"] = existing.slug
+
+        if pending_owner_id is None:
+            return await super().update(data, item_id=item_id, **kwargs)
+
+        requested_commit = bool(kwargs.pop("auto_commit", False))
+        team = await super().update(data, item_id=item_id, auto_commit=False, **kwargs)
+        await self._transfer_ownership(team, pending_owner_id)
+        if requested_commit:
+            await self.repository.session.commit()
         return team
 
     async def _transfer_ownership(self, team: m.Team, new_owner_id: UUID) -> None:
         await self.repository.session.refresh(team, ["members"])
+        target = next((member for member in team.members if member.user_id == new_owner_id), None)
+        if target is None:
+            msg = "Target user is not a member of this team."
+            raise RepositoryError(msg)
         for member in team.members:
             if member.user_id == new_owner_id:
                 member.is_owner = True

@@ -236,9 +236,7 @@ async def test_verification_email_security_considerations(
         },
     )
 
-    # Note: HTML escapes apostrophes as &#x27; and may have line breaks in text
     assert "didn't create an account" in html.lower() or "didn&#x27;t create an account" in html.lower()
-    # Template may have whitespace/newlines between words
     assert "safely" in html.lower() and "ignore" in html.lower()
     assert "expire" in html.lower()
 
@@ -276,22 +274,32 @@ async def test_template_caching(
     app_email_service: AppEmailService,
 ) -> None:
     """Test that templates are cached after first load."""
-    # First render loads the template
     app_email_service._render_template(
         "welcome.html",
         {"USER_NAME": "User1", "LOGIN_URL": "https://example.com/login"},
     )
-
-    # Verify cache contains the template
     assert "welcome.html" in app_email_service._template_cache
-
-    # Second render should use cached version
     html2 = app_email_service._render_template(
         "welcome.html",
         {"USER_NAME": "User2", "LOGIN_URL": "https://example.com/login"},
     )
-
     assert "User2" in html2
+
+
+async def test_template_url_scheme_validation_and_escaping(app_email_service: AppEmailService) -> None:
+    """Reject non-HTTP(S) URLs and HTML-escape special characters in URL placeholders."""
+    with pytest.raises(ValueError, match="http or https"):
+        app_email_service._render_template(
+            "welcome.html",
+            {"USER_NAME": "User", "LOGIN_URL": "javascript:alert(1)"},
+        )
+
+    rendered = app_email_service._render_template(
+        "welcome.html",
+        {"USER_NAME": "User", "LOGIN_URL": 'https://example.com/login?a=1&b="x"'},
+    )
+    assert "&quot;" in rendered
+    assert "&amp;" in rendered
 
 
 async def test_email_service_litestar_di_route_and_exception_specificity() -> None:

@@ -6,6 +6,7 @@ import html as html_lib
 import re
 from pathlib import Path
 from typing import Protocol
+from urllib.parse import urlsplit
 
 import structlog
 from litestar_email import EmailMultiAlternatives, EmailService
@@ -21,7 +22,16 @@ from app.lib.settings import BASE_DIR, get_settings
 logger = structlog.get_logger(__name__)
 
 HTML_TAG_PATTERN = re.compile(r"<[^<]+?>")
-_RAW_URL_KEYS = frozenset({"VERIFICATION_URL", "RESET_URL", "LOGIN_URL", "INVITATION_URL"})
+_URL_KEYS = frozenset({"VERIFICATION_URL", "RESET_URL", "LOGIN_URL", "INVITATION_URL"})
+_ALLOWED_URL_SCHEMES = frozenset({"http", "https"})
+
+
+def _validate_http_url(url: str) -> str:
+    parsed = urlsplit(url.strip())
+    if parsed.scheme.lower() not in _ALLOWED_URL_SCHEMES or not parsed.netloc:
+        msg = "Template URL must use http or https scheme with a valid host"
+        raise ValueError(msg)
+    return url.strip()
 
 
 class UserProtocol(Protocol):
@@ -75,8 +85,8 @@ class AppEmailService:
         content = self._load_template(template_name)
         merged = {"APP_NAME": self.app_name, **context}
         for key, value in merged.items():
-            text_value = str(value)
-            substituted = text_value if key in _RAW_URL_KEYS else html_lib.escape(text_value, quote=True)
+            text_value = _validate_http_url(str(value)) if key in _URL_KEYS else str(value)
+            substituted = html_lib.escape(text_value, quote=True)
             content = content.replace(f"{{{{{key}}}}}", substituted)
         return content
 
