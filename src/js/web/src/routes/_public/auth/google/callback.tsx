@@ -7,16 +7,13 @@ import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuthStore } from "@/lib/auth"
 import { getSafeRedirectUrl } from "@/lib/redirect-utils"
 
 export const Route = createFileRoute("/_public/auth/google/callback")({
   validateSearch: (search) =>
     z
       .object({
-        token: z.string().optional(),
-        // TanStack Router parses "true"/"false" as booleans, coerce to string
-        is_new: z.coerce.string().optional(),
         error: z.string().optional(),
         message: z.string().optional(),
       })
@@ -27,10 +24,9 @@ export const Route = createFileRoute("/_public/auth/google/callback")({
 function GoogleCallbackPage() {
   const navigate = useNavigate()
   const searchParams = useSearch({ from: "/_public/auth/google/callback" })
-  const { refetch: refetchUser } = useAuth()
+  const checkAuth = useAuthStore((state) => state.checkAuth)
   const [error, setError] = useState<string | null>(null)
 
-  const token = searchParams.token
   const errorParam = searchParams.error
   const message = searchParams.message
 
@@ -43,27 +39,28 @@ function GoogleCallbackPage() {
         return
       }
 
-      if (!token) {
-        const errorMessage = message || "Invalid OAuth callback - missing token"
+      try {
+        const authenticated = await checkAuth()
+        if (!authenticated) {
+          const errorMessage = message || "Could not verify your Google sign-in session. Please try again."
+          setError(errorMessage)
+          toast.error(errorMessage)
+          return
+        }
+
+        toast.success("Successfully signed in with Google!")
+        const storedRedirect = sessionStorage.getItem(GOOGLE_AUTH_REDIRECT_KEY)
+        sessionStorage.removeItem(GOOGLE_AUTH_REDIRECT_KEY)
+        navigate({ to: getSafeRedirectUrl(storedRedirect) })
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Unable to complete Google sign-in"
         setError(errorMessage)
         toast.error(errorMessage)
-        return
       }
-
-      localStorage.setItem("access_token", token)
-      await refetchUser()
-      toast.success("Successfully signed in with Google!")
-
-      // Get and clear stored redirect destination
-      const storedRedirect = sessionStorage.getItem(GOOGLE_AUTH_REDIRECT_KEY)
-      sessionStorage.removeItem(GOOGLE_AUTH_REDIRECT_KEY)
-      const finalRedirect = getSafeRedirectUrl(storedRedirect)
-
-      navigate({ to: finalRedirect })
     }
 
     run()
-  }, [errorParam, message, navigate, refetchUser, token])
+  }, [checkAuth, errorParam, message, navigate])
 
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4 py-12">

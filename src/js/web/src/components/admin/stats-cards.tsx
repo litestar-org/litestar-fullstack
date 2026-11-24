@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SkeletonCard } from "@/components/ui/skeleton"
-import { useAdminDashboardStats } from "@/lib/api/hooks/admin"
+import { getDashboardStatsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function StatsCards() {
-  const { data, isLoading, isError } = useAdminDashboardStats()
+  const { data, isLoading, isError } = useQuery(getDashboardStatsOptions())
 
   if (isLoading) {
     return (

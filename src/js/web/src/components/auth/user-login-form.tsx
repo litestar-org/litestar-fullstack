@@ -1,14 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { browserSupportsWebAuthn } from "@simplewebauthn/browser"
+import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { GitHubSignInButton } from "@/components/auth/github-signin-button"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
+import { PasskeySignInButton } from "@/components/auth/passkey-signin-button"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { useAuthStore } from "@/lib/auth"
+import { publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 import { type LoginFormData, loginFormSchema } from "@/lib/validation"
 
@@ -19,13 +22,17 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
 export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFormProps) {
   const navigate = useNavigate()
   const { login, isLoading } = useAuthStore()
-  const { data: oauthConfig } = useOAuthConfig()
+  const { data: authConfig } = useQuery({
+    ...publicAuthConfigOptions(),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
 
-  const googleOAuthEnabled = oauthConfig?.googleEnabled ?? false
-  const githubOAuthEnabled = oauthConfig?.githubEnabled ?? false
-  const hasOAuthProviders = googleOAuthEnabled || githubOAuthEnabled
+  const googleOAuthEnabled = authConfig?.googleEnabled ?? false
+  const githubOAuthEnabled = authConfig?.githubEnabled ?? false
+  const passkeysEnabled = (authConfig?.passkeysEnabled ?? false) && browserSupportsWebAuthn()
+  const hasAlternativeMethods = googleOAuthEnabled || githubOAuthEnabled || passkeysEnabled
 
-  // Use redirect URL or default to /home
   const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
 
   const form = useForm<LoginFormData>({
@@ -38,17 +45,16 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
     reValidateMode: "onBlur",
   })
 
+  const emailValue = form.watch("username")
+
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      const result = await login(data.username, data.password)
-      if (result.mfaRequired) {
-        // Preserve redirect through MFA flow
-        navigate({ to: "/mfa-challenge", search: { redirect: finalRedirect } })
-        return
-      }
+    const result = await login(data.username, data.password)
+    if (result.mfaRequired) {
+      navigate({ to: "/mfa-challenge", search: { redirect: finalRedirect } })
+      return
+    }
+    if (result.authenticated) {
       navigate({ to: finalRedirect })
-    } catch (_error) {
-      // Error is handled by useAuthStore
     }
   }
 
@@ -100,7 +106,7 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
           </form>
         </Form>
 
-        {hasOAuthProviders && (
+        {hasAlternativeMethods && (
           <>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -111,6 +117,7 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
               </div>
             </div>
             <div className="grid gap-2">
+              {passkeysEnabled && <PasskeySignInButton accountIdentifier={emailValue} authRedirect={finalRedirect} className="w-full" />}
               {githubOAuthEnabled && <GitHubSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
               {googleOAuthEnabled && <GoogleSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
             </div>

@@ -38,4 +38,4 @@ function TooltipContent({ className, sideOffset = 0, children, ...props }: React
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }

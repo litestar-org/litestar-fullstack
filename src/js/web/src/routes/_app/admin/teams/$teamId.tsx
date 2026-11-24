@@ -1,11 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
 import { AdminNav } from "@/components/admin/admin-nav"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { SkeletonCard } from "@/components/ui/skeleton"
-import { useAdminTeam, useAdminUpdateTeam } from "@/lib/api/hooks/admin"
+import { adminGetTeamOptions, adminGetTeamQueryKey, adminListTeamsQueryKey, adminUpdateTeamMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/admin/teams/$teamId")({
   component: AdminTeamDetailPage,
@@ -13,8 +15,24 @@ export const Route = createFileRoute("/_app/admin/teams/$teamId")({
 
 function AdminTeamDetailPage() {
   const { teamId } = Route.useParams()
-  const { data, isLoading, isError } = useAdminTeam(teamId)
-  const updateTeam = useAdminUpdateTeam(teamId)
+  const queryClient = useQueryClient()
+  const { data, isLoading, isError } = useQuery({
+    ...adminGetTeamOptions({ path: { team_id: teamId } }),
+    enabled: Boolean(teamId),
+  })
+  const updateTeam = useMutation({
+    ...adminUpdateTeamMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminListTeamsQueryKey() })
+      queryClient.invalidateQueries({ queryKey: adminGetTeamQueryKey({ path: { team_id: teamId } }) })
+      toast.success("Team updated")
+    },
+    onError: (error) => {
+      toast.error("Unable to update team", {
+        description: error instanceof Error ? error.message : "Try again later",
+      })
+    },
+  })
 
   if (isLoading) {
     return (
@@ -92,7 +110,7 @@ function AdminTeamDetailPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => updateTeam.mutate({ is_active: !data.isActive })} disabled={updateTeam.isPending}>
+              <Button variant="outline" onClick={() => updateTeam.mutate({ path: { team_id: teamId }, body: { isActive: !data.isActive } })} disabled={updateTeam.isPending}>
                 {data.isActive ? "Deactivate" : "Activate"}
               </Button>
             </div>

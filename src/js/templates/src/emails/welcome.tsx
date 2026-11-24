@@ -56,7 +56,7 @@ export default function Welcome() {
 
       <ul style={{ margin: "0 0 24px 0", paddingLeft: "20px", color: "#d1d5db" }}>
         <li style={{ marginBottom: "8px", fontSize: "14px" }}>Complete your profile settings</li>
-        <li style={{ marginBottom: "8px", fontSize: "14px" }}>Enable two-factor authentication for extra security</li>
+        <li style={{ marginBottom: "8px", fontSize: "14px" }}>Enable two-factor authentication or register a passkey for extra security</li>
         <li style={{ marginBottom: "8px", fontSize: "14px" }}>Create or join a team</li>
       </ul>
 

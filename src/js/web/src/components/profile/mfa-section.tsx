@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 import { BackupCodesDisplay } from "@/components/mfa/backup-codes-display"
@@ -7,29 +8,37 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { SkeletonCard } from "@/components/ui/skeleton"
-import { useMfaStatus, useRegenerateBackupCodes } from "@/lib/api/hooks/auth"
+import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { useAuthStore } from "@/lib/auth"
+import { mfaReplaceRecoveryCodesMutation, publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function MfaSection() {
-  const { data, isLoading, isError } = useMfaStatus()
-  const regenerate = useRegenerateBackupCodes()
+  const user = useAuthStore((state) => state.user)
+  const { data: authConfig } = useQuery({
+    ...publicAuthConfigOptions(),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
+  const { requestGrant, isPending: stepUpPending } = useStepUpGrant()
+  const regenerate = useMutation(mfaReplaceRecoveryCodesMutation())
+  const [enrolledMethodId, setEnrolledMethodId] = useState<string>("totp")
   const [regenOpen, setRegenOpen] = useState(false)
   const [regenPassword, setRegenPassword] = useState("")
   const [regenCodes, setRegenCodes] = useState<string[] | null>(null)
 
-  if (isLoading) {
-    return <SkeletonCard />
+  if (authConfig && authConfig.mfaEnabled === false) {
+    return null
   }
 
-  if (isError || !data) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Multi-factor authentication</CardTitle>
-          <CardDescription>We could not load MFA status.</CardDescription>
-        </CardHeader>
-      </Card>
-    )
+  const mfaEnabled = user?.isTwoFactorEnabled ?? false
+  const isRegenPending = stepUpPending || regenerate.isPending
+
+  const handleRegenOpenChange = (nextOpen: boolean) => {
+    setRegenOpen(nextOpen)
+    if (!nextOpen) {
+      setRegenPassword("")
+      setRegenCodes(null)
+    }
   }
 
   const handleRegenerate = async () => {
@@ -38,8 +47,11 @@ export function MfaSection() {
       return
     }
     try {
-      const result = await regenerate.mutateAsync(regenPassword)
+      const grant = await requestGrant("mfa-recovery-codes", regenPassword)
+      const result = await regenerate.mutateAsync({ body: { step_up_grant: grant } })
       setRegenCodes(result.codes ?? [])
+      setRegenPassword("")
+      toast.success("Recovery codes regenerated")
     } catch (error) {
       toast.error("Unable to regenerate codes", {
         description: error instanceof Error ? error.message : "Try again later",
@@ -51,37 +63,36 @@ export function MfaSection() {
     <Card>
       <CardHeader>
         <CardTitle>Multi-factor authentication</CardTitle>
-        <CardDescription>{data.enabled ? "MFA is enabled on your account." : "Add an extra layer of security to your account."}</CardDescription>
+        <CardDescription>{mfaEnabled ? "MFA is enabled on your account." : "Add an extra layer of security to your account."}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {data.enabled ? (
+        {mfaEnabled ? (
           <div className="flex flex-wrap gap-2">
-            <MfaDisableDialog />
+            <MfaDisableDialog methodId={enrolledMethodId} />
             <Button variant="outline" onClick={() => setRegenOpen(true)}>
-              Regenerate backup codes
+              Regenerate recovery codes
             </Button>
           </div>
         ) : (
-          <MfaSetupDialog />
+          <MfaSetupDialog onEnrolled={setEnrolledMethodId} />
         )}
-        {data.enabled && data.backupCodesRemaining !== null && <p className="text-muted-foreground text-sm">Backup codes remaining: {data.backupCodesRemaining ?? 0}</p>}
       </CardContent>
-      <Dialog open={regenOpen} onOpenChange={setRegenOpen}>
+      <Dialog open={regenOpen} onOpenChange={handleRegenOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Regenerate backup codes</DialogTitle>
-            <DialogDescription>Confirm your password to generate a fresh set of codes.</DialogDescription>
+            <DialogTitle>Regenerate recovery codes</DialogTitle>
+            <DialogDescription>Confirm your password to generate a fresh set of one-time recovery codes.</DialogDescription>
           </DialogHeader>
           {regenCodes ? (
             <BackupCodesDisplay codes={regenCodes} description="These codes replace your previous set. Store them securely." />
           ) : (
-            <Input type="password" placeholder="Password" value={regenPassword} onChange={(event) => setRegenPassword(event.target.value)} />
+            <Input type="password" placeholder="Password" value={regenPassword} onChange={(event) => setRegenPassword(event.target.value)} disabled={isRegenPending} />
           )}
           <DialogFooter>
             {regenCodes ? (
-              <Button onClick={() => setRegenOpen(false)}>Done</Button>
+              <Button onClick={() => handleRegenOpenChange(false)}>Done</Button>
             ) : (
-              <Button onClick={handleRegenerate} disabled={regenerate.isPending}>
+              <Button onClick={handleRegenerate} disabled={isRegenPending}>
                 Regenerate
               </Button>
             )}

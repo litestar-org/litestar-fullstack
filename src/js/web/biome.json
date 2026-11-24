@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.9/schema.json",
   "root": true,
   "vcs": {
     "enabled": true,
@@ -18,7 +18,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "suspicious": {
         "noExplicitAny": "off"
       },
@@ -56,9 +56,32 @@
       "formatter": {
         "enabled": false
       }
+    },
+    {
+      "includes": ["tests/**/*.ts", "tests/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noDocumentCookie": "off"
+          }
+        }
+      }
     }
   ],
   "files": {
-    "includes": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx", "index.html", "*.ts", "*.js", "*.json", "!src/lib/generated", "!src/routeTree.gen.ts"]
+    "includes": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "tests/**/*.ts",
+      "tests/**/*.tsx",
+      "index.html",
+      "*.ts",
+      "*.js",
+      "*.json",
+      "!src/lib/generated",
+      "!src/routeTree.gen.ts"
+    ]
   }
 }

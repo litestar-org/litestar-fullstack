@@ -5,6 +5,7 @@ const navItems = [
   { label: "Dashboard", to: "/admin" },
   { label: "Users", to: "/admin/users" },
   { label: "Teams", to: "/admin/teams" },
+  { label: "Queues", to: "/admin/queues" },
   { label: "Audit log", to: "/admin/audit" },
 ] as const
 

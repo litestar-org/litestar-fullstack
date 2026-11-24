@@ -1,16 +1,21 @@
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SkeletonTable } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useAdminTeams } from "@/lib/api/hooks/admin"
+import { adminListTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 const PAGE_SIZE = 25
 
 export function TeamTable() {
   const [page, setPage] = useState(1)
-  const { data, isLoading, isError } = useAdminTeams(page, PAGE_SIZE)
+  const { data, isLoading, isError } = useQuery(
+    adminListTeamsOptions({
+      query: { currentPage: page, pageSize: PAGE_SIZE },
+    }),
+  )
 
   if (isLoading) {
     return <SkeletonTable rows={6} />
@@ -27,7 +32,9 @@ export function TeamTable() {
     )
   }
 
-  const totalPages = Math.max(1, Math.ceil(data.total / PAGE_SIZE))
+  const items = data.items ?? []
+  const total = data.total ?? 0
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
     <Card>
@@ -46,14 +53,14 @@ export function TeamTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.items.length === 0 && (
+            {items.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
                   No teams found.
                 </TableCell>
               </TableRow>
             )}
-            {data.items.map((team) => (
+            {items.map((team) => (
               <TableRow key={team.id}>
                 <TableCell>{team.name}</TableCell>
                 <TableCell className="text-muted-foreground">{team.slug}</TableCell>

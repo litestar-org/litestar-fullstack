@@ -182,6 +182,8 @@ dist-ssr
 *.local
 src/js/web/.litestar.json
 src/js/web/public/hot
+src/js/web/src/lib/generated/
+src/js/web/src/routeTree.gen.ts
 
 # Email template build output
 src/py/app/server/static/email/

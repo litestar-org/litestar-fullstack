@@ -9,7 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { Separator } from "@/components/ui/separator"
 import { useAuthStore } from "@/lib/auth"
-import { deleteTeamInvitation, getTeam, listTeamInvitations, removeMemberFromTeam, type TeamInvitation, type TeamMember } from "@/lib/generated/api"
+import type { TeamInvitation, TeamMember } from "@/lib/generated/api"
+import {
+  deleteTeamInvitationMutation,
+  getTeamOptions,
+  getTeamQueryKey,
+  listTeamInvitationsOptions,
+  listTeamInvitationsQueryKey,
+  removeMemberFromTeamMutation,
+} from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/teams/$teamId")({
   component: TeamDetail,
@@ -20,30 +28,15 @@ function TeamDetail() {
   const queryClient = useQueryClient()
   const { user, currentTeam, setCurrentTeam } = useAuthStore()
 
-  const {
-    data: team,
-    isLoading: isTeamLoading,
-    isError: isTeamError,
-  } = useQuery({
-    queryKey: ["team", teamId],
-    queryFn: async () => {
-      const response = await getTeam({ path: { team_id: teamId } })
-      return response.data
-    },
-  })
+  const { data: team, isLoading: isTeamLoading, isError: isTeamError } = useQuery(getTeamOptions({ path: { team_id: teamId } }))
 
-  const { data: invitationsData } = useQuery({
-    queryKey: ["teamInvitations", teamId],
-    queryFn: async () => {
-      const response = await listTeamInvitations({
-        path: { team_id: teamId },
-      })
-      return response.data?.items ?? []
-    },
-    enabled: !!team,
+  const { data: invitationsResponse } = useQuery({
+    ...listTeamInvitationsOptions({ path: { team_id: teamId } }),
+    enabled: Boolean(team),
   })
+  const invitationsData = invitationsResponse?.items ?? []
 
-  const pendingInvitations = invitationsData?.filter((inv) => !inv.isAccepted) ?? []
+  const pendingInvitations = invitationsData.filter((inv) => !inv.isAccepted)
 
   useEffect(() => {
     if (team && team.id !== currentTeam?.id) {
@@ -52,23 +45,16 @@ function TeamDetail() {
   }, [currentTeam?.id, setCurrentTeam, team])
 
   const removeMemberMutation = useMutation({
-    mutationFn: (memberEmail: string) =>
-      removeMemberFromTeam({
-        path: { team_id: teamId },
-        body: { userName: memberEmail },
-      }),
+    ...removeMemberFromTeamMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team", teamId] })
+      queryClient.invalidateQueries({ queryKey: getTeamQueryKey({ path: { team_id: teamId } }) })
     },
   })
 
   const cancelInvitationMutation = useMutation({
-    mutationFn: (invitationId: string) =>
-      deleteTeamInvitation({
-        path: { team_id: teamId, invitation_id: invitationId },
-      }),
+    ...deleteTeamInvitationMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teamInvitations", teamId] })
+      queryClient.invalidateQueries({ queryKey: listTeamInvitationsQueryKey({ path: { team_id: teamId } }) })
     },
   })
 
@@ -151,7 +137,16 @@ function TeamDetail() {
                         {member.role ?? "MEMBER"}
                       </Badge>
                       {canRemoveMember(member) && (
-                        <Button variant="outline" size="sm" onClick={() => removeMemberMutation.mutate(member.email)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            removeMemberMutation.mutate({
+                              path: { team_id: teamId },
+                              body: { userName: member.email },
+                            })
+                          }
+                        >
                           Remove
                         </Button>
                       )}
@@ -180,7 +175,15 @@ function TeamDetail() {
                           </div>
                         </div>
                         {canManageMembers && (
-                          <Button variant="ghost" size="sm" onClick={() => cancelInvitationMutation.mutate(invitation.id)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              cancelInvitationMutation.mutate({
+                                path: { team_id: teamId, invitation_id: invitation.id },
+                              })
+                            }
+                          >
                             <X className="h-4 w-4" />
                             <span className="sr-only">Cancel invitation</span>
                           </Button>

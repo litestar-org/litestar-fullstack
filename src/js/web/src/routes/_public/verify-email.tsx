@@ -8,8 +8,8 @@ import { AuthHeroPanel } from "@/components/auth/auth-hero-panel"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { apiEmailVerificationRequestRequestVerification, apiEmailVerificationVerifyVerifyEmail } from "@/lib/generated/api"
+import { useAuthStore } from "@/lib/auth"
+import { localVerificationConfirmMutation, localVerificationResendMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_public/verify-email")({
   validateSearch: (search) =>
@@ -24,42 +24,33 @@ export const Route = createFileRoute("/_public/verify-email")({
 function VerifyEmailPage() {
   const navigate = useNavigate()
   const searchParams = useSearch({ from: "/_public/verify-email" })
-  const { refetch: refetchUser } = useAuth()
+  const checkAuth = useAuthStore((state) => state.checkAuth)
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying")
   const [errorMessage, setErrorMessage] = useState<string>("")
 
   const token = searchParams.token
 
   const { mutate: verifyEmail, isPending: isVerifying } = useMutation({
-    mutationFn: async (verificationToken: string) => {
-      const response = await apiEmailVerificationVerifyVerifyEmail({
-        body: { token: verificationToken },
-      })
-
-      if (response.error) {
-        throw new Error((response.error as any).detail || "Verification failed")
-      }
-
-      return response.data
-    },
+    ...localVerificationConfirmMutation(),
     onSuccess: async () => {
       setStatus("success")
       toast.success("Email verified successfully!")
-      await refetchUser()
+      await checkAuth()
       setTimeout(() => {
         navigate({ to: "/home" })
       }, 3000)
     },
-    onError: (error: Error) => {
+    onError: (error) => {
+      const msg = error instanceof Error ? error.message : "Verification failed"
       setStatus("error")
-      setErrorMessage(error.message)
-      toast.error(error.message)
+      setErrorMessage(msg)
+      toast.error(msg)
     },
   })
 
   useEffect(() => {
     if (token) {
-      verifyEmail(token)
+      verifyEmail({ body: { token } })
     } else {
       setStatus("error")
       setErrorMessage("Verification token is missing")
@@ -123,7 +114,7 @@ function VerifyEmailPage() {
                       Back to Login
                     </Button>
                     {token && (
-                      <Button onClick={() => verifyEmail(token)} variant="outline" className="w-full" disabled={isVerifying}>
+                      <Button onClick={() => verifyEmail({ body: { token } })} variant="outline" className="w-full" disabled={isVerifying}>
                         Try Again
                       </Button>
                     )}
@@ -140,28 +131,17 @@ function VerifyEmailPage() {
 
 export function ResendVerificationPage() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const user = useAuthStore((state) => state.user)
   const [hasSent, setHasSent] = useState(false)
 
   const { mutate: resendVerification, isPending } = useMutation({
-    mutationFn: async () => {
-      if (!user?.email) {
-        throw new Error("User email not available")
-      }
-      const response = await apiEmailVerificationRequestRequestVerification({
-        body: { email: user.email },
-      })
-      if (response.error) {
-        throw new Error((response.error as any).detail || "Failed to send verification email")
-      }
-      return response.data
-    },
+    ...localVerificationResendMutation(),
     onSuccess: () => {
       setHasSent(true)
       toast.success("Verification email sent! Please check your inbox.")
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to send verification email")
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send verification email")
     },
   })
 
@@ -201,7 +181,7 @@ export function ResendVerificationPage() {
             </p>
           </div>
           <div className="space-y-2">
-            <Button onClick={() => resendVerification()} disabled={isPending} className="w-full">
+            <Button onClick={() => user?.email && resendVerification({ body: { identifier: user.email } })} disabled={isPending || !user?.email} className="w-full">
               {isPending ? "Sending..." : "Send Verification Email"}
             </Button>
             <Button onClick={() => navigate({ to: "/home" })} variant="outline" className="w-full">

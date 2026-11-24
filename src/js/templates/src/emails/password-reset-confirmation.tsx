@@ -65,7 +65,7 @@ export default function PasswordResetConfirmation() {
           fontSize: "13px",
         }}
       >
-        For security, avoid reusing old passwords and consider enabling multi-factor authentication.
+        For security, avoid reusing old passwords and consider enabling multi-factor authentication or adding a passkey.
       </Text>
     </Layout>
   )

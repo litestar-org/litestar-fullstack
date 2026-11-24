@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ShieldCheck, User, UserPlus } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createTeamInvitation, type TeamRoles } from "@/lib/generated/api"
+import type { TeamRoles } from "@/lib/generated/api"
+import { createTeamInvitationMutation, getTeamQueryKey, listTeamInvitationsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 const inviteSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -34,9 +35,11 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
     },
   })
 
+  const createInvitation = useMutation(createTeamInvitationMutation())
+
   const onSubmit = async (data: InviteFormData) => {
     try {
-      await createTeamInvitation({
+      await createInvitation.mutateAsync({
         path: { team_id: teamId },
         body: {
           email: data.email,
@@ -44,10 +47,10 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
         },
       })
       await queryClient.invalidateQueries({
-        queryKey: ["team", teamId],
+        queryKey: getTeamQueryKey({ path: { team_id: teamId } }),
       })
       await queryClient.invalidateQueries({
-        queryKey: ["teamInvitations", teamId],
+        queryKey: listTeamInvitationsQueryKey({ path: { team_id: teamId } }),
       })
       setOpen(false)
       form.reset()

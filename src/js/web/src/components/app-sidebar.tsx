@@ -9,23 +9,21 @@ import { TeamSwitcher } from "@/components/team-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/auth"
-import { listTeams, type Team } from "@/lib/generated/api"
+import type { Team } from "@/lib/generated/api"
+import { listTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { teams, currentTeam, setTeams, setCurrentTeam, user, isAuthenticated } = useAuthStore()
 
   const {
-    data: teamsData = [],
+    data: teamsResponse,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const response = await listTeams()
-      return response.data?.items ?? []
-    },
+    ...listTeamsOptions(),
     enabled: isAuthenticated,
   })
+  const teamsData = teamsResponse?.items ?? []
 
   const teamIds = useMemo(() => teamsData.map((team) => team.id).join("|"), [teamsData])
   const storeIds = useMemo(() => teams.map((team) => team.id).join("|"), [teams])

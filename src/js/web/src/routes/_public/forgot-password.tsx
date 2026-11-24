@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { forgotPassword } from "@/lib/generated/api"
+import { localPasswordRecoveryMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_public/forgot-password")({
   component: ForgotPasswordPage,
@@ -35,36 +35,19 @@ function ForgotPasswordPage() {
   })
 
   const { mutate: requestReset, isPending } = useMutation({
-    mutationFn: async (data: ForgotPasswordForm) => {
-      const response = await forgotPassword({
-        body: { email: data.email },
-      })
-
-      if (response.error) {
-        throw new Error((response.error as any).detail || "Failed to send reset email")
-      }
-
-      return response.data
-    },
+    ...localPasswordRecoveryMutation(),
     onSuccess: (_, variables) => {
-      setSubmittedEmail(variables.email)
+      setSubmittedEmail(variables.body.identifier)
       setIsSuccess(true)
-      toast.success("Password reset email sent!")
+      toast.success("If an account exists, a password reset email has been sent.")
     },
-    onError: (error: Error) => {
-      // Don't reveal if email exists or not for security
-      if (error.message.includes("not found")) {
-        setSubmittedEmail(form.getValues("email"))
-        setIsSuccess(true)
-        toast.success("If an account exists, a reset email has been sent")
-      } else {
-        toast.error(error.message || "Failed to send reset email")
-      }
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send reset email")
     },
   })
 
   const onSubmit = (data: ForgotPasswordForm) => {
-    requestReset(data)
+    requestReset({ body: { identifier: data.email } })
   }
 
   if (isSuccess) {

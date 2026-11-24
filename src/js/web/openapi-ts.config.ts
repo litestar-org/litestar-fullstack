@@ -4,7 +4,6 @@ export default defineConfig({
   input: "src/lib/generated/openapi.json",
   output: {
     path: "src/lib/generated/api",
-    format: "prettier",
   },
   plugins: [
     "@hey-api/typescript",

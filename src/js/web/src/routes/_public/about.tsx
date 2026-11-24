@@ -101,9 +101,9 @@ function AboutPage() {
           {/* Animated star constellation */}
           <div className="relative">
             {/* Orbiting particles */}
-            {Array.from({ length: 12 }).map((_, i) => (
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((slot) => (
               <motion.div
-                key={`star-${i}-${Math.random()}`}
+                key={`orbit-star-${slot}`}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{
                   opacity: [0, 1, 0],
@@ -113,15 +113,15 @@ function AboutPage() {
                 transition={{
                   duration: 3,
                   repeat: Number.POSITIVE_INFINITY,
-                  delay: i * 0.25,
+                  delay: slot * 0.25,
                   ease: "easeInOut",
                 }}
                 style={{
                   position: "absolute",
                   left: "50%",
                   top: "50%",
-                  x: Math.cos((i / 12) * Math.PI * 2) * 150 - 6,
-                  y: Math.sin((i / 12) * Math.PI * 2) * 150 - 6,
+                  x: Math.cos((slot / 12) * Math.PI * 2) * 150 - 6,
+                  y: Math.sin((slot / 12) * Math.PI * 2) * 150 - 6,
                 }}
                 className="h-3 w-3 rounded-full bg-primary shadow-glow-sm"
               />

@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SkeletonTable } from "@/components/ui/skeleton"
-import { useAdminRecentActivity } from "@/lib/api/hooks/admin"
+import { getRecentActivityOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function RecentActivity() {
-  const { data, isLoading, isError } = useAdminRecentActivity()
+  const { data, isLoading, isError } = useQuery(getRecentActivityOptions())
 
   if (isLoading) {
     return <SkeletonTable rows={4} />

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -10,10 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
-import { useOAuthConfig } from "@/hooks/use-oauth-config"
 import { validatePassword } from "@/hooks/use-validation"
-import { useAuthStore } from "@/lib/auth"
-import { accountRegister } from "@/lib/generated/api"
+import { localRegisterMutation, publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 
 const signupSchema = z
@@ -44,12 +43,16 @@ interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupFormProps) {
   const navigate = useNavigate()
-  const { isLoading } = useAuthStore()
-  const { data: oauthConfig } = useOAuthConfig()
-  const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
+  const { data: authConfig } = useQuery({
+    ...publicAuthConfigOptions(),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
+  const registerMutation = useMutation(localRegisterMutation())
 
-  const googleOAuthEnabled = oauthConfig?.googleEnabled ?? false
-  const githubOAuthEnabled = oauthConfig?.githubEnabled ?? false
+  const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
+  const googleOAuthEnabled = authConfig?.googleEnabled ?? false
+  const githubOAuthEnabled = authConfig?.githubEnabled ?? false
   const hasOAuthProviders = googleOAuthEnabled || githubOAuthEnabled
 
   const form = useForm<SignupFormData>({
@@ -67,21 +70,18 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      const response = await accountRegister({
-        body: { email: data.email, password: data.password, name: data.name },
+      await registerMutation.mutateAsync({
+        body: {
+          identifier: data.email,
+          password: data.password,
+          display_name: data.name,
+        },
       })
-
-      if (response.data) {
-        toast.success("Account created! Please check your email to verify your account.")
-        // Preserve redirect URL when navigating to login
-        const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
-        navigate({ to: "/login", search: loginSearch })
-        return
-      }
-
-      toast.error(response.error?.detail || "Signup failed")
-    } catch (_error) {
-      toast.error("An error occurred during signup")
+      toast.success("Account created! Please check your email to verify your account.")
+      const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
+      navigate({ to: "/login", search: loginSearch })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Signup failed")
     }
   }
 
@@ -97,7 +97,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your name" autoCapitalize="none" autoComplete="name" autoCorrect="off" {...field} disabled={isLoading} />
+                    <Input placeholder="Enter your name" autoCapitalize="none" autoComplete="name" autoCorrect="off" {...field} disabled={registerMutation.isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +111,15 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" autoCapitalize="none" autoComplete="email" autoCorrect="off" {...field} type="email" disabled={isLoading} />
+                    <Input
+                      placeholder="name@example.com"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      autoCorrect="off"
+                      {...field}
+                      type="email"
+                      disabled={registerMutation.isPending}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,7 +133,15 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Create a password" autoCapitalize="none" autoComplete="new-password" autoCorrect="off" {...field} type="password" disabled={isLoading} />
+                    <Input
+                      placeholder="Create a password"
+                      autoCapitalize="none"
+                      autoComplete="new-password"
+                      autoCorrect="off"
+                      {...field}
+                      type="password"
+                      disabled={registerMutation.isPending}
+                    />
                   </FormControl>
                   <PasswordStrength password={passwordValue} />
                   <FormMessage />
@@ -147,7 +163,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                       autoCorrect="off"
                       {...field}
                       type="password"
-                      disabled={isLoading}
+                      disabled={registerMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -155,8 +171,8 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
               )}
             />
 
-            <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
-              {isLoading && <Icons.spinner className="mr-2 h-4 w-4" />}
+            <Button type="submit" className="mt-2 w-full" disabled={registerMutation.isPending}>
+              {registerMutation.isPending && <Icons.spinner className="mr-2 h-4 w-4" />}
               Create Account
             </Button>
           </form>
@@ -173,8 +189,8 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
               </div>
             </div>
             <div className="grid gap-2">
-              {githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} onSuccess={() => navigate({ to: finalRedirect })} />}
-              {googleOAuthEnabled && <GoogleSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} onSuccess={() => navigate({ to: finalRedirect })} />}
+              {githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}
+              {googleOAuthEnabled && <GoogleSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}
             </div>
           </>
         )}

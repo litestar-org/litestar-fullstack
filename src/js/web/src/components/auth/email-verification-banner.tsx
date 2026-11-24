@@ -4,8 +4,8 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { apiEmailVerificationRequestRequestVerification } from "@/lib/generated/api"
+import { useAuthStore } from "@/lib/auth"
+import { localVerificationResendMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 interface EmailVerificationBannerProps {
   dismissible?: boolean
@@ -13,29 +13,18 @@ interface EmailVerificationBannerProps {
 }
 
 export function EmailVerificationBanner({ dismissible = false, className }: EmailVerificationBannerProps) {
-  const { user } = useAuth()
+  const user = useAuthStore((state) => state.user)
   const [isDismissed, setIsDismissed] = useState(false)
   const [lastSentAt, setLastSentAt] = useState<Date | null>(null)
 
   const { mutate: resendVerification, isPending } = useMutation({
-    mutationFn: async () => {
-      if (!user?.email) {
-        throw new Error("User email not available")
-      }
-      const response = await apiEmailVerificationRequestRequestVerification({
-        body: { email: user.email },
-      })
-      if (response.error) {
-        throw new Error((response.error as any).detail || "Failed to send verification email")
-      }
-      return response.data
-    },
+    ...localVerificationResendMutation(),
     onSuccess: () => {
       setLastSentAt(new Date())
       toast.success("Verification email sent! Please check your inbox.")
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to send verification email")
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send verification email")
     },
   })
 
@@ -44,7 +33,7 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
     return null
   }
 
-  const canResend = !lastSentAt || Date.now() - lastSentAt.getTime() > 60000 // 1 minute cooldown
+  const canResend = !lastSentAt || Date.now() - lastSentAt.getTime() > 60000
 
   return (
     <Alert className={className} variant="warning">
@@ -62,7 +51,7 @@ export function EmailVerificationBanner({ dismissible = false, className }: Emai
           Please verify your email address to access all features. Check your inbox for a verification link sent to <strong>{user.email}</strong>.
         </p>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => resendVerification()} disabled={isPending || !canResend}>
+          <Button variant="outline" size="sm" onClick={() => resendVerification({ body: { identifier: user.email } })} disabled={isPending || !canResend}>
             {isPending ? "Sending..." : "Resend verification email"}
           </Button>
           {lastSentAt && !canResend && <span className="text-muted-foreground text-xs">Please wait before requesting another email</span>}

@@ -65,4 +65,4 @@ function SkeletonButton({ className }: { className?: string }) {
   return <Skeleton className={cn("h-9 w-24 rounded-md", className)} />
 }
 
-export { Skeleton, SkeletonCard, SkeletonTable, SkeletonAvatar, SkeletonText, SkeletonButton }
+export { Skeleton, SkeletonAvatar, SkeletonButton, SkeletonCard, SkeletonTable, SkeletonText }

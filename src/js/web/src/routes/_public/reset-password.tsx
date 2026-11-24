@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { validatePassword } from "@/hooks/use-validation"
-import { resetPassword } from "@/lib/generated/api"
+import { localPasswordResetMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_public/reset-password")({
   validateSearch: (search) =>
@@ -64,25 +64,7 @@ function ResetPasswordPage() {
   const password = form.watch("password")
 
   const { mutate: doResetPassword, isPending } = useMutation({
-    mutationFn: async (data: ResetPasswordForm) => {
-      if (!token) {
-        throw new Error("Reset token is missing")
-      }
-
-      const response = await resetPassword({
-        body: {
-          token,
-          password: data.password,
-          password_confirm: data.confirmPassword,
-        },
-      })
-
-      if (response.error) {
-        throw new Error((response.error as any).detail || "Failed to reset password")
-      }
-
-      return response.data
-    },
+    ...localPasswordResetMutation(),
     onSuccess: () => {
       setIsSuccess(true)
       toast.success("Password reset successfully!")
@@ -90,17 +72,27 @@ function ResetPasswordPage() {
         navigate({ to: "/login" })
       }, 3000)
     },
-    onError: (error: Error) => {
-      if (error.message.includes("expired") || error.message.includes("invalid")) {
+    onError: (error) => {
+      const msg = error instanceof Error ? error.message : "Failed to reset password"
+      if (msg.includes("expired") || msg.includes("invalid")) {
         toast.error("This reset link has expired or is invalid. Please request a new one.")
       } else {
-        toast.error(error.message || "Failed to reset password")
+        toast.error(msg)
       }
     },
   })
 
   const onSubmit = (data: ResetPasswordForm) => {
-    doResetPassword(data)
+    if (!token) {
+      toast.error("Reset token is missing")
+      return
+    }
+    doResetPassword({
+      body: {
+        token,
+        password: data.password,
+      },
+    })
   }
 
   if (!token) {

@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { useAuthStore } from "@/lib/auth"
-import { listTeams, type Team } from "@/lib/generated/api"
+import type { Team } from "@/lib/generated/api"
+import { listTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 function getTeamInitials(name: string): string {
   return name
@@ -38,17 +39,8 @@ export function TeamList() {
   const { user, currentTeam, setCurrentTeam, setTeams } = useAuthStore()
   const [search, setSearch] = useState("")
 
-  const {
-    data: teamsData = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const response = await listTeams()
-      return response.data?.items ?? []
-    },
-  })
+  const { data: teamsResponse, isLoading, isError } = useQuery(listTeamsOptions())
+  const teamsData = teamsResponse?.items ?? []
 
   useEffect(() => {
     if (!isLoading && !isError) {

@@ -1,11 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
 import { AdminNav } from "@/components/admin/admin-nav"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { SkeletonCard } from "@/components/ui/skeleton"
-import { useAdminUpdateUser, useAdminUser } from "@/lib/api/hooks/admin"
+import { adminGetUserOptions, adminGetUserQueryKey, adminListUsersQueryKey, adminUpdateUserMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/admin/users/$userId")({
   component: AdminUserDetailPage,
@@ -13,8 +15,24 @@ export const Route = createFileRoute("/_app/admin/users/$userId")({
 
 function AdminUserDetailPage() {
   const { userId } = Route.useParams()
-  const { data, isLoading, isError } = useAdminUser(userId)
-  const updateUser = useAdminUpdateUser(userId)
+  const queryClient = useQueryClient()
+  const { data, isLoading, isError } = useQuery({
+    ...adminGetUserOptions({ path: { user_id: userId } }),
+    enabled: Boolean(userId),
+  })
+  const updateUser = useMutation({
+    ...adminUpdateUserMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminListUsersQueryKey() })
+      queryClient.invalidateQueries({ queryKey: adminGetUserQueryKey({ path: { user_id: userId } }) })
+      toast.success("User updated")
+    },
+    onError: (error) => {
+      toast.error("Unable to update user", {
+        description: error instanceof Error ? error.message : "Try again later",
+      })
+    },
+  })
 
   if (isLoading) {
     return (
@@ -100,13 +118,13 @@ function AdminUserDetailPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => updateUser.mutate({ is_active: !data.isActive })} disabled={updateUser.isPending}>
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isActive: !data.isActive } })} disabled={updateUser.isPending}>
                 {data.isActive ? "Deactivate" : "Activate"}
               </Button>
-              <Button variant="outline" onClick={() => updateUser.mutate({ is_superuser: !data.isSuperuser })} disabled={updateUser.isPending}>
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isSuperuser: !data.isSuperuser } })} disabled={updateUser.isPending}>
                 {data.isSuperuser ? "Remove superuser" : "Make superuser"}
               </Button>
-              <Button variant="outline" onClick={() => updateUser.mutate({ is_verified: !data.isVerified })} disabled={updateUser.isPending}>
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isVerified: !data.isVerified } })} disabled={updateUser.isPending}>
                 {data.isVerified ? "Mark unverified" : "Mark verified"}
               </Button>
             </div>
