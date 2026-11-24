@@ -2,53 +2,36 @@
 Getting Started
 ===============
 
-The following is a guide to help you get this repository running.
-
-Setup
------
-
-Most of the development-related tasks are included in the ``Makefile`` (See: :doc:`development`).
-To install an environment, with all development packages run:
+Bootstrap Python (``uv``) and frontend/email (``bun``) dependencies with:
 
 .. code-block:: bash
 
     make install
 
-This command does the following:
+This creates ``.venv`` via ``uv`` and installs packages in ``src/js/web`` and ``src/js/templates``.
 
-- Install ``uv`` if it is not available in the path.
-- Create a virtual environment with all dependencies configured.
-- Install frontend dependencies with ``bun``.
+Configure ``.env``
+------------------
 
-Edit ``.env`` configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-There is a sample ``.env`` file located in the root of the repository.
+Copy the sample environment file:
 
 .. code-block:: bash
 
     cp .env.local.example .env
 
-.. tip:: ``SECRET_KEY``, ``DATABASE_URL``, ``APP_URL``, and ``ALLOWED_CORS_ORIGINS`` are the most important config settings.
-  Be sure to set them properly.
-
-You can generate a ``SECRET_KEY`` by running:
+Generate a 32-byte ``SECRET_KEY`` for HKDF subkey derivation (sessions, CSRF, MFA, OAuth, API keys):
 
 .. code-block:: bash
 
-    ❯ openssl rand -base64 32
+    openssl rand -base64 32
 
-    +U9UcN0meCsxkShMINkqZ7pcwpEpOC9AwOArZI6mYDU=
+Start Infrastructure & Run Migrations
+-------------------------------------
 
-Deploy Database Migrations
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can run most of the database commands with the integrated CLI tool.
-
-To deploy migrations to the database, execute:
+Start PostgreSQL, Mailpit, and RustFS, build email templates, and run Alembic migrations:
 
 .. code-block:: bash
 
-    ❯ uv run app database upgrade
-    2023-06-16T16:55:17.048183Z [info     ] Context impl PostgresqlImpl.
-    2023-06-16T16:55:17.048251Z [info     ] Will assume transactional DDL.
+    make start-infra
+    make build-emails
+    uv run app database upgrade

@@ -6,7 +6,7 @@ from datetime import UTC, datetime, timedelta
 
 from advanced_alchemy.exceptions import wrap_sqlalchemy_exception
 from advanced_alchemy.service import SQLAlchemyAsyncQueryService
-from sqlalchemy import case, func, select
+from sqlalchemy import case, func, select, true
 
 from app.db import models as m
 from app.domain.admin.schemas import DashboardStats
@@ -24,8 +24,8 @@ class DashboardQueryService(SQLAlchemyAsyncQueryService):
 
         user_agg_stmt = select(
             func.count(m.User.id),
-            func.coalesce(func.sum(case((m.User.is_active.is_(True), 1), else_=0)), 0),
-            func.coalesce(func.sum(case((m.User.is_verified.is_(True), 1), else_=0)), 0),
+            func.coalesce(func.sum(case((m.User.is_active.is_(true()), 1), else_=0)), 0),
+            func.coalesce(func.sum(case((m.User.is_verified.is_(true()), 1), else_=0)), 0),
             func.coalesce(func.sum(case((m.User.created_at >= today_start, 1), else_=0)), 0),
             func.coalesce(func.sum(case((m.User.created_at >= week_start, 1), else_=0)), 0),
         )

@@ -1,10 +1,10 @@
-===
-web
-===
+=====
+admin
+=====
 
 .. toctree::
     :titlesonly:
-    :caption: Web Domain API Reference
+    :caption: Admin Domain API Reference
     :glob:
     :hidden:
 

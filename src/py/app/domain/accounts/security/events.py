@@ -44,7 +44,7 @@ def _is_sensitive_key(key: str) -> bool:
 def sanitize_event_details(payload: Any) -> Any:
     """Recursively redact sensitive keys from structured audit metadata."""
     if isinstance(payload, Mapping):
-        mapping = cast("Mapping[Any, Any]", payload)
+        mapping = cast("Mapping[object, object]", payload)
         sanitized: dict[str, Any] = {}
         for raw_key, value in mapping.items():
             key = str(raw_key)
@@ -54,7 +54,7 @@ def sanitize_event_details(payload: Any) -> Any:
                 sanitized[key] = sanitize_event_details(value)
         return sanitized
     if isinstance(payload, list | tuple | set | frozenset):
-        items = cast("list[Any] | tuple[Any, ...] | set[Any] | frozenset[Any]", payload)
+        items = cast("list[object] | tuple[object, ...] | set[object] | frozenset[object]", payload)
         return [sanitize_event_details(item) for item in items]
     if isinstance(payload, bytes | bytearray):
         return "[REDACTED_BYTES]"

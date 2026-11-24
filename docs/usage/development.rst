@@ -2,80 +2,30 @@
 Development
 ===========
 
-This section describes tips on developing using this example repository.
+Common tasks are exposed through the root ``Makefile``.
 
-Makefile
---------
+Core Commands
+-------------
 
-This repository includes a ``Makefile`` with common commands for development.
+- ``make install`` — sync Python and Bun dependencies across ``src/js/web`` and ``src/js/templates``.
+- ``make upgrade`` — update ``uv.lock``, Bun dependencies, and pre-commit hooks.
+- ``make types`` — export OpenAPI and AsyncAPI schemas and regenerate the TypeScript SDK (gitignored under ``src/js/web/src/lib/generated``).
+- ``make build-emails`` — compile React Email templates into ``src/py/app/server/static/email``.
+- ``make lint`` — run Ruff, Mypy, Pyright, Slotscheck, and Codespell.
+- ``make frontend-check`` — run Biome lint checks and Vitest tests in ``src/js/web``.
+- ``make test`` — execute pytest with ``pytest-databases`` PostgreSQL template database cloning.
+- ``make build-wheel`` — compile emails, frontend SPA assets, and the ``uv_build`` wheel in ``dist/``.
+- ``make docs`` — build Sphinx documentation strictly with ``-W --keep-going``.
 
+Database Migrations
+-------------------
 
-Install Development Environment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Create or apply migrations via the ``app`` CLI:
 
-This command will remove any existing environment and install a new environment with the latest dependencies.
-
-.. code-block:: shell
-
-    make install
-
-Upgrade Project Dependencies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This command will upgrade all components of the application at the same time. It automatically executes:
-
-- ``uv lock --upgrade``
-- ``bun update``
-- ``pre-commit autoupdate``
-
-.. code-block:: shell
-
-    make upgrade
-
-Execute Pre-commit
-^^^^^^^^^^^^^^^^^^
-
-This command will automatically execute the pre-commit process for the project.
-
-.. code-block:: shell
-
-    make lint
-
-Generate New Migrations
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Create a new migration with the Litestar CLI:
-
-.. code-block:: shell
+.. code-block:: bash
 
     uv run app database make-migrations
-
-Upgrade a Database to the Latest Revision
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Upgrade the database to the latest revision:
-
-.. code-block:: shell
-
     uv run app database upgrade
-
-Execute Full Test Suite
-^^^^^^^^^^^^^^^^^^^^^^^
-
-This command executes all tests for the project.
-
-.. code-block:: shell
-
-    make test
-
-Generate TypeScript Types
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-After backend schema changes, regenerate the TypeScript client:
-
-.. code-block:: shell
-
-    make types
 
 Full Makefile
 -------------

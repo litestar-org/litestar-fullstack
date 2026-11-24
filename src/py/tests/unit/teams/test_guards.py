@@ -192,9 +192,7 @@ async def test_team_role_guards_and_least_privilege_api_key_matrix(tmp_path: Pat
                 headers={"X-XSRF-TOKEN": csrf},
             )
         ).status_code == 200
-        assert (
-            await admin_client.delete(f"/api/teams/{team_id}", headers={"X-XSRF-TOKEN": csrf})
-        ).status_code == 403
+        assert (await admin_client.delete(f"/api/teams/{team_id}", headers={"X-XSRF-TOKEN": csrf})).status_code == 403
         remove_owner = await admin_client.request(
             "DELETE",
             f"/api/teams/{team_id}/members",

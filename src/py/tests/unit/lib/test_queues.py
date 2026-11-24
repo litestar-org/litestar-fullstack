@@ -162,15 +162,9 @@ async def test_queue_stream_channel_authorizer_enforces_superuser_and_task_owner
     unauth_conn = SimpleNamespace(scope={})
     assert await _check(unauth_conn, "global", None) is False
 
-    regular_conn = SimpleNamespace(
-        scope={"user": Principal(id=owner_id, user=SimpleNamespace(is_superuser=False))}
-    )
-    other_conn = SimpleNamespace(
-        scope={"user": Principal(id=other_id, user=SimpleNamespace(is_superuser=False))}
-    )
-    admin_conn = SimpleNamespace(
-        scope={"user": Principal(id=str(uuid4()), user=SimpleNamespace(is_superuser=True))}
-    )
+    regular_conn = SimpleNamespace(scope={"user": Principal(id=owner_id, user=SimpleNamespace(is_superuser=False))})
+    other_conn = SimpleNamespace(scope={"user": Principal(id=other_id, user=SimpleNamespace(is_superuser=False))})
+    admin_conn = SimpleNamespace(scope={"user": Principal(id=str(uuid4()), user=SimpleNamespace(is_superuser=True))})
 
     assert await _check(regular_conn, "global", None) is False
     assert await _check(regular_conn, "task", str(task_id)) is True

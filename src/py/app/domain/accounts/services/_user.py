@@ -143,12 +143,11 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     def is_superuser(user: m.User) -> bool:
         """Return whether the user is a superuser via flag or role assignment."""
         return bool(
-            user.is_superuser
-            or any(assigned.role_name == constants.SUPERUSER_ACCESS_ROLE for assigned in user.roles),
+            user.is_superuser or any(assigned.role_name == constants.SUPERUSER_ACCESS_ROLE for assigned in user.roles),
         )
 
     async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        dumped = service.schema_dump(data)
+        dumped: ModelDictT[m.User] = service.schema_dump(data)
         dumped = await self._populate_with_hashed_password(dumped)
         return await self._populate_with_role(dumped)
 

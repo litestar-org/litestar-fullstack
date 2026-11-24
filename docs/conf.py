@@ -14,15 +14,13 @@ if TYPE_CHECKING:
     from sphinx.application import Sphinx
 
 warnings.filterwarnings("ignore", category=SAWarning)
-warnings.filterwarnings("ignore", category=DeprecationWarning)  # RemovedInSphinx80Warning
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-# -- Project information -----------------------------------------------------
 project = importlib.metadata.metadata("app")["Name"]
-copyright = "2025, Litestar Organization"
+copyright = "2026, Litestar Organization"
 author = "Cody Fincher"
 release = importlib.metadata.version("app")
 
-# -- General configuration ---------------------------------------------------
 extensions = [
     "sphinx_click",
     "sphinx_design",
@@ -42,12 +40,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "anyio": ("https://anyio.readthedocs.io/en/stable/", None),
-    "click": ("https://click.palletsprojects.com/en/8.1.x/", None),
+    "click": ("https://click.palletsprojects.com/en/stable/", None),
     "structlog": ("https://www.structlog.org/en/stable/", None),
     "litestar": ("https://docs.litestar.dev/latest/", None),
-    "msgspec": ("https://jcristharif.com/msgspec/", None),
-    "saq": ("https://saq-py.readthedocs.io/en/latest/", None),
-    "advanced-alchemy": ("https://docs.advanced-alchemy.litestar.dev/latest/", None),
 }
 
 napoleon_google_docstring = True
@@ -71,11 +66,10 @@ autodoc_default_options = {
 autosectionlabel_prefix_document = True
 suppress_warnings = [
     "autosectionlabel.*",
-    "ref.python",  # TODO: remove when https://github.com/sphinx-doc/sphinx/issues/4961 is fixed
+    "ref.python",
 ]
 todo_include_todos = True
 
-# -- Style configuration -----------------------------------------------------
 html_theme = "shibuya"
 html_static_path = ["_static"]
 html_show_sourcelink = True

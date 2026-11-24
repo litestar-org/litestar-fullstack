@@ -53,9 +53,7 @@ class AppAuthorizationResolver:
             return InvalidCredentials()
         try:
             roles: set[str] = {
-                assigned.role_slug.lower()
-                for assigned in user.roles
-                if getattr(assigned, "role_slug", None)
+                assigned.role_slug.lower() for assigned in user.roles if getattr(assigned, "role_slug", None)
             }
             if user.is_superuser or SUPERUSER_ACCESS_ROLE.lower() in roles:
                 roles.add("superuser")

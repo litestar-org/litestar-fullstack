@@ -215,9 +215,7 @@ class SQLAlchemyAPIKeyStore:
         now_utc = _ensure_utc(now)
         async with self._lock, self._alchemy_config.get_session() as session:
             result = await session.execute(
-                update(m.APIKey)
-                .where(m.APIKey.key_id == key_id)
-                .values(revoked_at=now_utc, overlap_until=None)
+                update(m.APIKey).where(m.APIKey.key_id == key_id).values(revoked_at=now_utc, overlap_until=None)
             )
             await session.commit()
             if int(getattr(result, "rowcount", 0) or 0) != 1:
@@ -229,9 +227,7 @@ class SQLAlchemyAPIKeyStore:
         async with self._alchemy_config.get_session() as session:
             rows = (
                 await session.scalars(
-                    select(m.APIKey)
-                    .where(m.APIKey.user_id == user_id)
-                    .order_by(m.APIKey.created_at.desc())
+                    select(m.APIKey).where(m.APIKey.user_id == user_id).order_by(m.APIKey.created_at.desc())
                 )
             ).all()
             return list(rows)
@@ -239,9 +235,7 @@ class SQLAlchemyAPIKeyStore:
     async def get_for_user(self, user_id: UUID, key_id: str) -> m.APIKey | None:
         """Fetch one API key metadata row owned by ``user_id``."""
         async with self._alchemy_config.get_session() as session:
-            return await session.scalar(
-                select(m.APIKey).where(m.APIKey.user_id == user_id, m.APIKey.key_id == key_id)
-            )
+            return await session.scalar(select(m.APIKey).where(m.APIKey.user_id == user_id, m.APIKey.key_id == key_id))
 
     async def update_metadata(
         self,

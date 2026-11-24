@@ -41,7 +41,7 @@ EXISTING_PROJECT=false
 
 # Service names (can be customized if renamed in Railway dashboard)
 APP_SERVICE_NAME="${APP_SERVICE_NAME:-Litestar Web Frontend}"
-WORKER_SERVICE_NAME="${WORKER_SERVICE_NAME:-SAQ Worker}"
+WORKER_SERVICE_NAME="${WORKER_SERVICE_NAME:-Queue Worker}"
 
 # -----------------------------------------------------------------------------
 # Parse Arguments
@@ -210,25 +210,6 @@ ensure_database() {
 }
 
 # -----------------------------------------------------------------------------
-# Redis Provisioning (for SAQ background tasks)
-# -----------------------------------------------------------------------------
-
-ensure_redis() {
-    log_info "Checking Redis for SAQ..."
-    cd "${PROJECT_ROOT}"
-
-    # Check if Redis service already exists
-    if railway status --json 2>/dev/null | grep -qi 'redis'; then
-        log_success "Redis already provisioned"
-        return 0
-    fi
-
-    log_info "Provisioning Redis for SAQ background tasks..."
-    railway add --database redis
-    log_success "Redis provisioned"
-}
-
-# -----------------------------------------------------------------------------
 # App Service Setup
 # -----------------------------------------------------------------------------
 
@@ -312,12 +293,6 @@ ensure_environment() {
             railway variables --set "SQLALCHEMY_LOG_LEVEL=30" --skip-deploys
         fi
 
-        # Ensure SAQ_REDIS_URL is set (for existing deployments without Redis)
-        if ! railway variables --kv 2>/dev/null | grep -q "SAQ_REDIS_URL="; then
-            log_info "Setting SAQ_REDIS_URL for background tasks..."
-            railway variables --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' --skip-deploys
-        fi
-
         # Ensure LITESTAR_TRUSTED_PROXIES is set (for OAuth redirect URL protocol)
         if ! railway variables --kv 2>/dev/null | grep -q "LITESTAR_TRUSTED_PROXIES="; then
             log_info "Setting LITESTAR_TRUSTED_PROXIES=* for proxy header support..."
@@ -341,13 +316,11 @@ ensure_environment() {
         --set "EMAIL_BACKEND=console" \
         --set 'LITESTAR_PORT=${{PORT}}' \
         --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
-        --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' \
         --set 'APP_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}' \
         --skip-deploys
 
     log_success "Environment variables configured"
-    log_info "  - DATABASE_URL: linked to Postgres service"
-    log_info "  - SAQ_REDIS_URL: linked to Redis service"
+    log_info "  - DATABASE_URL: linked to Postgres service (also backs litestar-queues)"
     log_info "  - APP_URL: auto-configured from Railway domain"
     log_info "  - LITESTAR_PORT: uses Railway's injected PORT"
 }
@@ -360,19 +333,6 @@ configure_app_service() {
     log_info "Configuring app service..."
     cd "${PROJECT_ROOT}"
     railway service link "${APP_SERVICE_NAME}"
-
-    local current_vars
-    current_vars=$(railway variables --kv 2>/dev/null || echo "")
-
-    # Only update if not already configured
-    if ! echo "$current_vars" | grep -q "SAQ_USE_SERVER_LIFESPAN=false"; then
-        log_info "Setting app service environment variables..."
-        # NOTE: SAQ_USE_SERVER_LIFESPAN=false because worker runs separately
-        # Start command is defined in Dockerfile CMD or Railway dashboard settings
-        railway variables \
-            --set "SAQ_USE_SERVER_LIFESPAN=false" \
-            --skip-deploys
-    fi
 
     log_success "App service configured"
     log_info "  NOTE: Verify in Railway dashboard that:"
@@ -389,15 +349,6 @@ configure_worker_service() {
     local current_vars
     current_vars=$(railway variables --kv 2>/dev/null || echo "")
 
-    # Set worker-specific environment variables
-    if ! echo "$current_vars" | grep -q "SAQ_USE_SERVER_LIFESPAN=false"; then
-        log_info "Setting worker service environment variables..."
-        # NOTE: Worker runs independently, not tied to server lifespan
-        railway variables \
-            --set "SAQ_USE_SERVER_LIFESPAN=false" \
-            --skip-deploys
-    fi
-
     # Copy shared variables from app service if worker doesn't have them
     if ! echo "$current_vars" | grep -q "SECRET_KEY="; then
         log_info "Copying shared environment variables to worker..."
@@ -412,8 +363,8 @@ configure_worker_service() {
             --set "LITESTAR_DEBUG=false" \
             --set "DATABASE_ECHO=false" \
             --set "SQLALCHEMY_LOG_LEVEL=30" \
+            --set "QUEUES_PLACEMENT=external" \
             --set 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
-            --set 'SAQ_REDIS_URL=${{Redis.REDIS_URL}}' \
             --skip-deploys
     fi
 
@@ -421,8 +372,9 @@ configure_worker_service() {
     log_warn "IMPORTANT: Configure worker service in Railway dashboard:"
     log_info "  1. Settings → Deploy → Dockerfile Path: tools/deploy/docker/Dockerfile.worker"
     log_info "  2. Settings → Deploy → Config file: tools/deploy/railway/railway.worker.json"
-    log_info "  3. Settings → Deploy → Serverless: DISABLED (worker cannot wake from HTTP)"
+    log_info "  3. Settings → Deploy → Serverless: DISABLED (worker listens on Postgres LISTEN/NOTIFY)"
     log_info "  4. Settings → Deploy → Health check: DISABLED (no HTTP endpoint)"
+    log_info "  5. Optional Cron Service: schedule 'app queues run-maintenance --json' periodically"
 }
 
 # -----------------------------------------------------------------------------
@@ -448,7 +400,6 @@ enable_metal_builds() {
     log_success "Metal builds enabled on all app services"
     log_info "Note: Database metal builds and sizing must be configured in Railway dashboard"
     log_info "  - Postgres: Set to 2 CPU / 2 GB RAM"
-    log_info "  - Redis: Set to smallest available instance"
 }
 
 # -----------------------------------------------------------------------------
@@ -555,14 +506,16 @@ display_summary() {
     echo ""
     echo "Services:"
     echo "  - App service: Litestar web server (1 CPU / 1 GB RAM)"
-    echo "  - Worker service: SAQ background tasks (1 CPU / 1 GB RAM)"
+    echo "  - Worker service: PostgreSQL litestar-queues worker (1 CPU / 1 GB RAM)"
     echo ""
     echo "Infrastructure:"
-    echo "  - PostgreSQL database (DATABASE_URL)"
-    echo "  - Redis for SAQ background tasks (SAQ_REDIS_URL)"
+    echo "  - PostgreSQL database (DATABASE_URL, backs application and queues)"
     echo "  - Public domain (APP_URL auto-detected)"
-    echo "  - Serverless: DISABLED (worker cannot wake from HTTP)"
+    echo "  - Serverless: DISABLED (worker listens on Postgres LISTEN/NOTIFY)"
     echo "  - Metal builds enabled"
+    echo ""
+    echo "Scheduled Maintenance:"
+    echo "  - Configure a Railway cron service running: app queues run-maintenance --json"
     echo ""
     echo "Useful commands:"
     echo "  railway open                      - Open Railway dashboard"
@@ -584,7 +537,6 @@ display_summary() {
     echo ""
     echo "  3. Database Resources:"
     echo "     - Postgres: 2 CPU / 2 GB RAM, enable Metal builds"
-    echo "     - Redis: Smallest instance, enable Metal builds"
     echo ""
     if [ "${CONFIGURE_EMAIL}" = false ]; then
         echo "To configure email:"
@@ -621,7 +573,6 @@ main() {
         check_existing_project
         ensure_project
         ensure_database
-        ensure_redis
         ensure_app_service
         ensure_worker_service
         ensure_domain

@@ -10,6 +10,7 @@ from litestar.exceptions import HTTPException
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_202_ACCEPTED
 from litestar_security import AuthenticationPolicy, SecureController, required
+from sqlalchemy import true
 
 from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
@@ -78,7 +79,7 @@ class TeamMemberController(SecureController):
         if membership.is_owner:
             owner_count = await team_members_service.count(
                 m.TeamMember.team_id == team_id,
-                m.TeamMember.is_owner.is_(True),
+                m.TeamMember.is_owner.is_(true()),
             )
             if owner_count <= 1:
                 raise HTTPException(

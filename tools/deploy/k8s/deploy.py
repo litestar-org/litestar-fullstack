@@ -76,22 +76,12 @@ CONFIG: dict[str, dict[str, Any]] = {
         "db_mem_request": "256Mi",
         "db_cpu_limit": "500m",
         "db_mem_limit": "512Mi",
-        "storage_class_name": None,  # Use default storage class
-        # Redis
-        "redis_host": "redis-service",
-        "redis_port": "6379",
-        "redis_storage": "1Gi",
-        "redis_max_memory": "256mb",
-        "redis_cpu_request": "50m",
-        "redis_mem_request": "128Mi",
-        "redis_cpu_limit": "200m",
-        "redis_mem_limit": "256Mi",
-        # Application
+        "storage_class_name": None,
         "log_level": "DEBUG",
         "allowed_cors_origins": '["*"]',
+        "trusted_proxies": "*",
         "api_workers": 1,
-        "saq_concurrency": 10,
-        "saq_web_enabled": "false",
+        "queue_concurrency": 10,
         # HPA
         "hpa_cpu_target": 70,
         "hpa_mem_target": None,  # No memory target for dev HPA
@@ -137,22 +127,12 @@ CONFIG: dict[str, dict[str, Any]] = {
         "db_mem_request": "512Mi",
         "db_cpu_limit": "1000m",
         "db_mem_limit": "1Gi",
-        "storage_class_name": None,  # Use default or set to 'premium-rwo' for GKE
-        # Redis
-        "redis_host": "redis-service",
-        "redis_port": "6379",
-        "redis_storage": "5Gi",
-        "redis_max_memory": "512mb",
-        "redis_cpu_request": "100m",
-        "redis_mem_request": "256Mi",
-        "redis_cpu_limit": "500m",
-        "redis_mem_limit": "512Mi",
-        # Application
+        "storage_class_name": None,
         "log_level": "INFO",
-        "allowed_cors_origins": '["https://your-frontend-domain.com"]',  # IMPORTANT: Change this!
-        "api_workers": 4,  # Adjust based on prod instance size/cores
-        "saq_concurrency": 20,  # Adjust based on expected load
-        "saq_web_enabled": "false",
+        "allowed_cors_origins": '["https://your-frontend-domain.com"]',
+        "trusted_proxies": "*",
+        "api_workers": 4,
+        "queue_concurrency": 20,
         # HPA
         "hpa_cpu_target": 60,  # Lower target for better responsiveness
         "hpa_mem_target": 75,  # Add memory scaling for prod
@@ -184,10 +164,6 @@ TEMPLATES_APPLY_ORDER = [
     "db-pvc.yaml.j2",
     "db-service.yaml.j2",
     "db-statefulset.yaml.j2",
-    # Redis (required for SAQ worker)
-    "redis-service.yaml.j2",
-    "redis-statefulset.yaml.j2",
-    # Services (must exist before deployments reference them)
     "api-service.yaml.j2",
     "web-service.yaml.j2",
     "nginx-config.yaml.j2",  # Nginx config needs to exist before deployment
@@ -481,7 +457,8 @@ HELP_TEXT = """
 [bold]NOTES:[/bold]
 - All secrets must be provided via the [bold]--env-file[/bold] option.
 - For production, always use a specific image tag (not 'latest').
-- The tool deploys: API, Worker, Redis, PostgreSQL, and optional Ingress.
+- The tool deploys: API, Queue Worker, PostgreSQL, and optional Ingress.
+- Schedule a Kubernetes CronJob running `app queues run-maintenance --json` for periodic queue maintenance.
 - Database migrations are not handled by this tool.
 """
 
@@ -506,7 +483,6 @@ def cli() -> None:
     help="Docker image repository for worker (defaults to api-image-repo if not set).",
 )
 @click.option("--skip-db-wait", is_flag=True, default=False, help="Skip waiting for the database pod to be ready.")
-@click.option("--skip-redis-wait", is_flag=True, default=False, help="Skip waiting for the Redis pod to be ready.")
 @click.option("--skip-rollout-wait", is_flag=True, default=False, help="Skip waiting for deployment rollouts.")
 @click.option(
     "--env-file",
@@ -532,7 +508,6 @@ def deploy(
     api_image_repo: str,
     worker_image_repo: str | None,
     skip_db_wait: bool,
-    skip_redis_wait: bool,
     skip_rollout_wait: bool,
     env_file: str,
     scratch_path: str | None,
@@ -565,8 +540,6 @@ def deploy(
     # Wait for infrastructure
     if not skip_db_wait:
         wait_for_pod(namespace, "postgres", "300s", "Database")
-    if not skip_redis_wait:
-        wait_for_pod(namespace, "redis", "120s", "Redis")
     if not skip_rollout_wait:
         wait_for_deployments(namespace, ["api", "worker", "web"])
 

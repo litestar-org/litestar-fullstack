@@ -1,3 +1,5 @@
+"""Shared seed data fixtures for integration tests."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -5,33 +7,14 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
-
-    from httpx import AsyncClient
-    from litestar import Litestar
-    from pytest import MonkeyPatch
-
     from app.db.models import Team, User
 
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="app")
-def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
-    """App fixture.
-
-    Returns:
-        An application instance, configured via plugin.
-    """
-    from app.server.asgi import create_app
-
-    return create_app()
-
-
 @pytest.fixture(name="raw_users")
 def fx_raw_users() -> list[User | dict[str, Any]]:
-    """Unstructured user representations."""
-
+    """Unstructured user representations for database seeding."""
     return [
         {
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
@@ -83,14 +66,13 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
 
 @pytest.fixture(name="raw_teams")
 def fx_raw_teams() -> list[Team | dict[str, Any]]:
-    """Unstructured team representations."""
-
+    """Unstructured team representations for database seeding."""
     return [
         {
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
             "slug": "test-team",
             "name": "Test Team",
-            "description": "This is a description for a  team.",
+            "description": "This is a description for a team.",
             "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         },
         {
@@ -110,12 +92,3 @@ def fx_raw_teams() -> list[Team | dict[str, Any]]:
             "tags": ["extra"],
         },
     ]
-
-
-@pytest.fixture(name="seeded_client")
-async def fx_seeded_client(app: Litestar, seeded_db: None) -> AsyncGenerator[AsyncClient, None]:
-    """Create test client after seeding the database fixtures."""
-    from litestar.testing import AsyncTestClient
-
-    async with AsyncTestClient(app=app) as client:
-        yield client

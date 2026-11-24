@@ -137,14 +137,18 @@ async def test_users_service_eager_loads_mfa_factors_and_serializes_schema(tmp_p
 
 
 def test_filter_sets_and_api_key_schemas_camel_case() -> None:
-    user_filters = UserFilterSet(searchString="alice", page=2, pageSize=10, orderBy="email", sortOrder="asc").to_statement_filters()
+    user_filters = UserFilterSet(
+        searchString="alice", page=2, pageSize=10, orderBy="email", sortOrder="asc"
+    ).to_statement_filters()
     search_groups = [item for item in user_filters if isinstance(item, FilterGroup)]
     assert len(search_groups) == 1
     assert any(isinstance(sub, SearchFilter) for sub in search_groups[0].filters)
     assert any(isinstance(item, OrderByFilter) for item in user_filters)
     assert any(isinstance(item, LimitOffsetFilter) for item in user_filters)
 
-    role_filters = RoleFilterSet(searchString="admin", page=1, pageSize=20, orderBy="name", sortOrder="asc").to_statement_filters()
+    role_filters = RoleFilterSet(
+        searchString="admin", page=1, pageSize=20, orderBy="name", sortOrder="asc"
+    ).to_statement_filters()
     role_groups = [item for item in role_filters if isinstance(item, FilterGroup)]
     assert len(role_groups) == 1
     assert any(isinstance(sub, SearchFilter) for sub in role_groups[0].filters)

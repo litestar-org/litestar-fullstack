@@ -125,7 +125,9 @@ def _row_to_linked_account(row: m.UserOAuthAccount) -> LinkedProviderAccount:
         subject=row.account_id,
         grant=ProviderGrant(
             scopes=frozenset(row.scopes or ()),
-            expires_at=_ensure_utc(row.token_expires_at) if row.token_expires_at is not None else _ensure_utc(row.created_at),
+            expires_at=_ensure_utc(row.token_expires_at)
+            if row.token_expires_at is not None
+            else _ensure_utc(row.created_at),
         ),
         linked_at=_ensure_utc(row.created_at),
     )
@@ -499,7 +501,9 @@ class SQLAlchemyOAuthAccountStore:
                 oauth_count = int(
                     (
                         await session.scalar(
-                            select(func.count()).select_from(m.UserOAuthAccount).where(m.UserOAuthAccount.user_id == uid)
+                            select(func.count())
+                            .select_from(m.UserOAuthAccount)
+                            .where(m.UserOAuthAccount.user_id == uid)
                         )
                     )
                     or 0

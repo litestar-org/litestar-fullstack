@@ -21,7 +21,7 @@ from litestar_security.accounts import (
     TOTPMethod,
     TOTPPolicy,
 )
-from sqlalchemy import delete, or_, select, update
+from sqlalchemy import delete, false, or_, select, true, update
 
 from app.db import models as m
 from app.domain.accounts.security.backend import persist_login_method
@@ -137,7 +137,7 @@ class SQLAlchemyMFAService:
             row = await session.scalar(
                 select(m.UserMFAFactor).where(
                     m.UserMFAFactor.enrollment_id == enrollment_id,
-                    m.UserMFAFactor.is_confirmed.is_(False),
+                    m.UserMFAFactor.is_confirmed.is_(false()),
                 )
             )
             if row is None or row.enrollment_id is None or row.expires_at is None:
@@ -214,7 +214,7 @@ class SQLAlchemyMFAService:
                 select(m.UserMFAFactor).where(
                     m.UserMFAFactor.enrollment_id == enrollment_id,
                     m.UserMFAFactor.user_id == uid,
-                    m.UserMFAFactor.is_confirmed.is_(False),
+                    m.UserMFAFactor.is_confirmed.is_(false()),
                 )
             )
             if row is None:
@@ -225,7 +225,7 @@ class SQLAlchemyMFAService:
                 update(m.UserMFAFactor)
                 .where(
                     m.UserMFAFactor.id == row.id,
-                    m.UserMFAFactor.is_confirmed.is_(False),
+                    m.UserMFAFactor.is_confirmed.is_(false()),
                 )
                 .values(
                     is_confirmed=True,
@@ -262,7 +262,7 @@ class SQLAlchemyMFAService:
         async with self._alchemy_config.get_session() as session:
             stmt = select(m.UserMFAFactor).where(
                 m.UserMFAFactor.user_id == uid,
-                m.UserMFAFactor.is_confirmed.is_(True),
+                m.UserMFAFactor.is_confirmed.is_(true()),
             )
             if method_id == "__active__":
                 stmt = stmt.where(m.UserMFAFactor.kind == "totp").order_by(m.UserMFAFactor.created_at.desc()).limit(1)
@@ -279,7 +279,7 @@ class SQLAlchemyMFAService:
                 update(m.UserMFAFactor)
                 .where(
                     m.UserMFAFactor.method_id == method_id,
-                    m.UserMFAFactor.is_confirmed.is_(True),
+                    m.UserMFAFactor.is_confirmed.is_(true()),
                     or_(
                         m.UserMFAFactor.last_accepted_counter.is_(None),
                         m.UserMFAFactor.last_accepted_counter < accepted_counter,

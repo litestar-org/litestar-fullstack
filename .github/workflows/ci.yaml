@@ -5,14 +5,15 @@ on:
   push:
     branches:
       - main
+
 concurrency:
-  group: test-${{ github.head_ref }}
+  group: test-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 env:
   PYTHONUNBUFFERED: "1"
   FORCE_COLOR: "1"
-  UV_LOCKED: 1
+  UV_LOCKED: "1"
 
 jobs:
   validate:
@@ -22,18 +23,83 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
+          version: "0.13.8"
           enable-cache: true
 
-      - name: Install dependencies
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.5"
+
+      - name: Install Python dependencies
         run: uv sync --all-groups
 
-      - name: Run pre-commit
-        run: uv run pre-commit run --all-files
+      - name: Install frontend dependencies
+        run: cd src/js/web && bun install --frozen-lockfile
+
+      - name: Python lint and format check
+        run: |
+          uv run ruff check src/py/app src/py/tests tools
+          uv run ruff format --check src/py/app src/py/tests tools
+          uv run mypy src/py/app src/py/tests tools
+          uv run pyright
+          uv run slotscheck -m app
+          uv run codespell
+
+      - name: Verify security routes and MCP tool schema
+        run: |
+          uv run app security routes
+          uv run app mcp export-tool-spec --strict-bounds
+
+      - name: Verify OpenAPI and AsyncAPI TypeGen pipeline
+        run: make types
+
+  frontend-and-wheel:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.8"
+          enable-cache: true
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.5"
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-groups
+          (cd src/js/web && bun install --frozen-lockfile)
+          (cd src/js/templates && bun install --frozen-lockfile)
+
+      - name: Generate TypeScript SDK and channels
+        run: make types
+
+      - name: Frontend lint, Vitest, and SPA build
+        run: cd src/js/web && bun run lint:check && bun run test && bun run build
+
+      - name: Build wheel and verify bundled static assets
+        run: |
+          make build-wheel
+          unzip -l dist/*.whl
+          unzip -l dist/*.whl | grep -E "app/server/static/web/index\.html"
+          unzip -l dist/*.whl | grep -E "app/server/static/web/assets/.*\.js"
+          unzip -l dist/*.whl | grep -E "app/server/static/web/assets/.*\.css"
+          unzip -l dist/*.whl | grep -E "app/server/static/email/.*\.html"
 
   test:
     needs: validate
@@ -51,16 +117,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Create cache file
-        run: echo '${{ matrix.python-version }}' > ./matrix-file.txt
-
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
+          version: "0.13.8"
           enable-cache: true
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.5"
 
       - name: Install dependencies
         run: uv sync --all-groups
@@ -68,8 +134,8 @@ jobs:
       - name: Build email templates
         run: make build-emails
 
-      - name: Test with Coverage
-        run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
+      - name: Test with Coverage (PostgreSQL via pytest-databases)
+        run: uv run pytest src/py/tests -m '' --cov=src/py/app --cov-report=xml
 
       - if: matrix.python-version == '3.13'
         uses: actions/upload-artifact@v6
@@ -80,7 +146,6 @@ jobs:
   build-docs:
     needs:
       - validate
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -89,25 +154,28 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
+          version: "0.13.8"
           enable-cache: true
 
       - name: Install dependencies
         run: uv sync --all-groups
 
       - name: Build docs
-        run: uv run make docs
+        run: make docs
 
       - name: Save PR number
+        if: github.event_name == 'pull_request'
         env:
           PR_NUMBER: ${{ github.event.number }}
         run: echo $PR_NUMBER > .pr_number
 
       - name: Upload artifact
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v6
         with:
           name: docs-preview
@@ -125,14 +193,14 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: python
+
       - name: Checkout repository
         uses: actions/checkout@v5
-      - name: Install base libraries
-        run: pip install nodeenv cython setuptools pip --upgrade --quiet --user
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
+          version: "0.13.8"
           enable-cache: true
 
       - name: Install dependencies

@@ -8,7 +8,6 @@ API Reference
     :hidden:
 
     cli
-    asgi
     server
     config
     db

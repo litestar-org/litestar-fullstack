@@ -302,10 +302,14 @@ class QueueSettings:
             target: str | None,
         ) -> bool:
             raw_principal: object = connection.scope.get("user")
-            if not isinstance(raw_principal, Principal) or not raw_principal.is_authenticated or raw_principal.id is None:
+            if (
+                not isinstance(raw_principal, Principal)
+                or not raw_principal.is_authenticated
+                or raw_principal.id is None
+            ):
                 return False
-            principal = cast("Principal[Any]", raw_principal)
-            user_obj: Any = principal.user
+            principal = cast("Principal[object]", raw_principal)
+            user_obj: object = principal.user
             if bool(getattr(user_obj, "is_superuser", False)):
                 return True
             if scope != "task" or not target:
@@ -323,7 +327,7 @@ class QueueSettings:
                     except ValueError:
                         return False
                 return isinstance(raw_meta, dict) and bool(
-                    cast("dict[str, Any]", raw_meta).get("requested_by_id") == str(principal.id)
+                    cast("dict[str, Any]", raw_meta).get("requested_by_id") == str(raw_principal.id)
                 )
 
         events = QueueEventsConfig(
@@ -370,9 +374,7 @@ class SecuritySettings:
     PASSKEY_ORIGINS: list[str] = field(
         default_factory=get_env("PASSKEY_ORIGINS", ["http://localhost:8000", "http://localhost:5173"])
     )
-    REGISTRATION_REQUIRE_VERIFICATION: bool = field(
-        default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", False)
-    )
+    REGISTRATION_REQUIRE_VERIFICATION: bool = field(default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", False))
 
     def derive_key(self, app_settings: AppSettings, info: bytes, *, length: int = 32) -> bytes:
         """Derive a purpose-isolated HKDF-SHA256 subkey from ``app_settings.SECRET_KEY``."""

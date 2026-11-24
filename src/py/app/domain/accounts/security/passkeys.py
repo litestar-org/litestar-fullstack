@@ -117,9 +117,7 @@ class SQLAlchemyPasskeyStore:
     async def get_credential(self, credential_id: bytes) -> PasskeyCredential | None:
         """Load one passkey credential by raw credential identifier bytes."""
         async with self._alchemy_config.get_session() as session:
-            row = await session.scalar(
-                select(m.UserPasskey).where(m.UserPasskey.credential_id == credential_id.hex())
-            )
+            row = await session.scalar(select(m.UserPasskey).where(m.UserPasskey.credential_id == credential_id.hex()))
             return _row_to_credential(row) if row is not None else None
 
     async def list_credentials(self, account_id: str) -> tuple[PasskeyCredential, ...]:

@@ -29,17 +29,8 @@ spec:
           type: Utilization
           averageUtilization: {{ hpa_mem_target }}
 {% endif %}
-    # For queue-based scaling with KEDA or external metrics adapter:
-    # - type: External
-    #   external:
-    #     metric:
-    #       name: redis_queue_length
-    #       selector:
-    #         matchLabels:
-    #           queue: saq
-    #     target:
-    #       type: AverageValue
-    #       averageValue: "10"
+    # For queue-based scaling with KEDA PostgreSQL scaler:
+    # Query pending task count from litestar-queues PostgreSQL table.
   behavior:
     scaleDown:
       # Workers can scale down more aggressively when queue is empty

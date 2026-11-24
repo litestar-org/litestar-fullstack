@@ -40,9 +40,6 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
-          env:
-            - name: SAQ_USE_SERVER_LIFESPAN
-              value: "false"
           envFrom:
             - configMapRef:
                 name: app-config

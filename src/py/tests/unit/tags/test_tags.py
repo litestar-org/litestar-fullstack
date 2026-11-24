@@ -137,9 +137,7 @@ async def test_tag_service_slugs_and_controller_auth_matrix(tmp_path: Path) -> N
                 headers={"X-XSRF-TOKEN": csrf},
             )
         ).status_code == 403
-        assert (
-            await user_client.delete(f"/api/tags/{created_id}", headers={"X-XSRF-TOKEN": csrf})
-        ).status_code == 403
+        assert (await user_client.delete(f"/api/tags/{created_id}", headers={"X-XSRF-TOKEN": csrf})).status_code == 403
 
     async with AsyncTestClient(app=app) as admin_client:
         csrf = await _login(admin_client, superuser.email)

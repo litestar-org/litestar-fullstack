@@ -280,8 +280,12 @@ async def test_api_key_lifecycle_step_up_and_cross_user_isolation(tmp_path: Path
 
     async with AsyncTestClient(app=app) as bob_client:
         bob_csrf = await _login(bob_client, "bob@example.com")
-        assert (await bob_client.delete(f"/api/me/api-keys/{rotated_id}", headers={"X-XSRF-TOKEN": bob_csrf})).status_code == 404
-        assert (await bob_client.post(f"/api/me/api-keys/{rotated_id}/rotate", headers={"X-XSRF-TOKEN": bob_csrf})).status_code == 404
+        assert (
+            await bob_client.delete(f"/api/me/api-keys/{rotated_id}", headers={"X-XSRF-TOKEN": bob_csrf})
+        ).status_code == 404
+        assert (
+            await bob_client.post(f"/api/me/api-keys/{rotated_id}/rotate", headers={"X-XSRF-TOKEN": bob_csrf})
+        ).status_code == 404
 
 
 async def test_mfa_enrollment_enforces_login_challenge_and_expired_key_rotation_rejected(tmp_path: Path) -> None:
@@ -372,7 +376,5 @@ async def test_mfa_enrollment_enforces_login_challenge_and_expired_key_rotation_
     )
     assert outcome.status.value == "revoked"
     async with db_cfg.get_session() as session:
-        remaining = (
-            await session.scalars(select(m.UserMFAFactor).where(m.UserMFAFactor.user_id == alice.id))
-        ).all()
+        remaining = (await session.scalars(select(m.UserMFAFactor).where(m.UserMFAFactor.user_id == alice.id))).all()
         assert remaining == []

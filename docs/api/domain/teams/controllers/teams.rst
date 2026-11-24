@@ -2,7 +2,7 @@
 teams
 =====
 
-Controllers for the teams routes for the teams domain.
+Team CRUD controller for the teams domain.
 
-.. automodule:: app.domain.teams.controllers.teams
+.. automodule:: app.domain.teams.controllers._team
     :members:

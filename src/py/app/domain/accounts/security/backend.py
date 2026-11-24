@@ -36,7 +36,7 @@ from litestar_security.accounts import (
     VerificationStatus,
 )
 from litestar_security.authentication import InvalidCredentials, VerificationUnavailable
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, true, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import joinedload, selectinload, undefer_group
 
@@ -281,11 +281,24 @@ class SQLAlchemySecurityBackend:
                     display_name=data.get("display_name"),
                 )
             if uid is not None:
+                user_row = await session.scalar(
+                    select(m.User).where(m.User.id == uid).options(undefer_group("security_sensitive"))
+                )
+                if (
+                    user_row is not None
+                    and user_row.hashed_password is not None
+                    and not any(method.kind == "password" for method in methods_by_id.values())
+                ):
+                    methods_by_id["password"] = LoginMethod(
+                        method_id="password",
+                        kind="password",
+                        created_at=_ensure_utc(user_row.created_at),
+                    )
                 mfa_rows = (
                     await session.scalars(
                         select(m.UserMFAFactor).where(
                             m.UserMFAFactor.user_id == uid,
-                            m.UserMFAFactor.is_confirmed.is_(True),
+                            m.UserMFAFactor.is_confirmed.is_(true()),
                         )
                     )
                 ).all()
@@ -296,9 +309,7 @@ class SQLAlchemySecurityBackend:
                             kind=factor.kind,
                             created_at=_ensure_utc(factor.created_at),
                         )
-                passkey_rows = (
-                    await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == uid))
-                ).all()
+                passkey_rows = (await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == uid))).all()
                 for pk_row in passkey_rows:
                     pk_method_id = _passkey_method_id_from_hex(pk_row.credential_id)
                     if pk_method_id not in methods_by_id:
@@ -352,11 +363,20 @@ class SQLAlchemySecurityBackend:
             mfa_target: m.UserMFAFactor | None = None
             passkey_target: m.UserPasskey | None = None
             if uid is not None:
+                has_password_method = any(
+                    json.loads(row.value.decode("utf-8")).get("kind") == "password" for row in rows
+                )
+                if not has_password_method:
+                    user_row = await session.scalar(
+                        select(m.User).where(m.User.id == uid).options(undefer_group("security_sensitive"))
+                    )
+                    if user_row is not None and user_row.hashed_password is not None:
+                        existing_ids.add("password")
                 mfa_rows = (
                     await session.scalars(
                         select(m.UserMFAFactor).where(
                             m.UserMFAFactor.user_id == uid,
-                            m.UserMFAFactor.is_confirmed.is_(True),
+                            m.UserMFAFactor.is_confirmed.is_(true()),
                         )
                     )
                 ).all()
@@ -399,9 +419,7 @@ class SQLAlchemySecurityBackend:
         del event
         notification: NotificationCommand | None = None
         async with self._lock, self._alchemy_config.get_session() as session:
-            existing = await session.scalar(
-                select(m.User.id).where(m.User.email == command.normalized_identifier)
-            )
+            existing = await session.scalar(select(m.User.id).where(m.User.email == command.normalized_identifier))
             if existing is not None:
                 return RegistrationOutcome(RegistrationStatus.DUPLICATE)
 
@@ -467,9 +485,7 @@ class SQLAlchemySecurityBackend:
 
             await session.commit()
 
-            loaded = await session.scalar(
-                select(m.User).where(m.User.id == user.id).options(*_user_load_options())
-            )
+            loaded = await session.scalar(select(m.User).where(m.User.id == user.id).options(*_user_load_options()))
             account_state = _to_account_state(loaded if loaded is not None else user)
 
         if notification is not None and self._notification_handler is not None:
@@ -486,9 +502,7 @@ class SQLAlchemySecurityBackend:
         """Persist a single-use purpose token digest and dispatch its notification callback."""
         del event
         async with self._lock, self._alchemy_config.get_session() as session:
-            existing = await session.scalar(
-                select(m.PurposeToken.id).where(m.PurposeToken.token_id == issue.token_id)
-            )
+            existing = await session.scalar(select(m.PurposeToken.id).where(m.PurposeToken.token_id == issue.token_id))
             if existing is not None:
                 msg = "Purpose token identifier collision"
                 raise ValueError(msg)

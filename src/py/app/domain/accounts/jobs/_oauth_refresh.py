@@ -86,15 +86,11 @@ async def _refresh_single_account(
 
         new_refresh_raw = payload.get("refresh_token")
         new_refresh = (
-            SecretStr(new_refresh_raw)
-            if isinstance(new_refresh_raw, str) and new_refresh_raw
-            else stored.refresh_token
+            SecretStr(new_refresh_raw) if isinstance(new_refresh_raw, str) and new_refresh_raw else stored.refresh_token
         )
         new_id_token_raw = payload.get("id_token")
         new_id_token = (
-            SecretStr(new_id_token_raw)
-            if isinstance(new_id_token_raw, str) and new_id_token_raw
-            else stored.id_token
+            SecretStr(new_id_token_raw) if isinstance(new_id_token_raw, str) and new_id_token_raw else stored.id_token
         )
         expires_in = payload.get("expires_in")
         new_expires_at = (
@@ -103,11 +99,7 @@ async def _refresh_single_account(
             else (row.token_expires_at or now + timedelta(hours=1))
         )
         scopes_raw = payload.get("scope")
-        scopes = (
-            frozenset(scopes_raw.split())
-            if isinstance(scopes_raw, str) and scopes_raw.strip()
-            else stored.scopes
-        )
+        scopes = frozenset(scopes_raw.split()) if isinstance(scopes_raw, str) and scopes_raw.strip() else stored.scopes
         tokens = ProviderTokenSet(
             access_token=SecretStr(new_access),
             token_type=stored.token_type,

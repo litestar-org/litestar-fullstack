@@ -94,9 +94,7 @@ async def _create_default_roles_async(alchemy_config: SQLAlchemyAsyncConfig | No
         for user in active_users:
             if any(role.role_id == default_role.id for role in user.roles):
                 continue
-            await accounts.user_roles.create(
-                data={"user_id": user.id, "role_id": default_role.id, "assigned_at": now}
-            )
+            await accounts.user_roles.create(data={"user_id": user.id, "role_id": default_role.id, "assigned_at": now})
             assigned += 1
         await accounts.session.commit()
     return assigned

@@ -177,9 +177,7 @@ async def run_export_team_summary(
         tag_count = int(
             (
                 await session.scalar(
-                    select(func.count())
-                    .select_from(m.team_tag)
-                    .where(m.team_tag.c.team_id == parsed_team_id)
+                    select(func.count()).select_from(m.team_tag).where(m.team_tag.c.team_id == parsed_team_id)
                 )
             )
             or 0

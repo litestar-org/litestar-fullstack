@@ -1,31 +1,48 @@
+"""Integration tests for degraded health reporting on database and queue outages."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
 import pytest
-from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
-from litestar.testing import AsyncTestClient
+from litestar.status_codes import HTTP_503_SERVICE_UNAVAILABLE
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.server.asgi import create_app
+if TYPE_CHECKING:
+    from httpx import AsyncClient
 
-pytestmark = pytest.mark.anyio
+pytestmark = [pytest.mark.anyio, pytest.mark.integration]
 
 
-async def test_health_endpoint_db_offline() -> None:
-    """Test health endpoint returns 500 and offline status when DB is unreachable.
+async def test_health_endpoint_returns_503_when_db_offline(client: AsyncClient) -> None:
+    """Health endpoint returns HTTP 503 with offline databaseStatus when PostgreSQL check fails."""
+    original_execute = AsyncSession.execute
 
-    It should catch OperationalError and not crash.
-    """
-    app = create_app()
+    async def _fail_health_probe(self: AsyncSession, statement: Any, *args: Any, **kwargs: Any) -> Any:
+        if str(statement).strip().lower() == "select 1":
+            msg = "db_offline"
+            raise OperationalError(msg, None, Exception(msg))
+        return await original_execute(self, statement, *args, **kwargs)
 
-    # Patch AsyncSession.execute to raise an OperationalError (like connection failed)
-    with patch(
-        "sqlalchemy.ext.asyncio.AsyncSession.execute",
-        side_effect=OperationalError("connection failed", None, Exception("orig")),
-    ):
-        async with AsyncTestClient(app=app) as client:
-            response = await client.get("/health")
+    with patch.object(AsyncSession, "execute", _fail_health_probe):
+        response = await client.get("/health")
 
-            assert response.status_code == HTTP_500_INTERNAL_SERVER_ERROR
-            data = response.json()
-            assert data["databaseStatus"] == "offline"
-            assert "app" in data
+    assert response.status_code == HTTP_503_SERVICE_UNAVAILABLE
+    data = response.json()
+    assert data["databaseStatus"] == "offline"
+    assert data["queueStatus"] == "online"
+    assert data["app"]
+
+
+async def test_health_endpoint_returns_503_when_queue_offline(client: AsyncClient) -> None:
+    """Health endpoint returns HTTP 503 with offline queueStatus when queue probe fails."""
+    with patch("litestar_queues.QueueService.list_tasks", side_effect=RuntimeError("queue unavailable")):
+        response = await client.get("/health")
+
+    assert response.status_code == HTTP_503_SERVICE_UNAVAILABLE
+    data = response.json()
+    assert data["databaseStatus"] == "online"
+    assert data["queueStatus"] == "offline"
+    assert data["app"]

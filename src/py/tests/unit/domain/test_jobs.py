@@ -109,9 +109,7 @@ async def test_cleanup_auth_tokens_prunes_expired_tokens_and_rate_limit_store(tm
     async with db_cfg.get_session() as session:
         remaining_tokens = (await session.scalars(select(m.PurposeToken.token_id))).all()
         assert list(remaining_tokens) == ["tok-live"]
-        remaining_rl = (
-            await session.scalars(select(m.AppStore.key).where(m.AppStore.namespace == "rate_limit"))
-        ).all()
+        remaining_rl = (await session.scalars(select(m.AppStore.key).where(m.AppStore.namespace == "rate_limit"))).all()
         assert list(remaining_rl) == ["rl:live"]
 
     canary = await scheduler_canary()

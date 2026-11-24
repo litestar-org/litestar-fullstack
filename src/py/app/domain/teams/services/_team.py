@@ -53,10 +53,7 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
         """Return whether ``user`` may list all teams across the workspace."""
         return bool(
             user.is_superuser
-            or any(
-                assigned_role.role.name == constants.SUPERUSER_ACCESS_ROLE
-                for assigned_role in user.roles
-            ),
+            or any(assigned_role.role.name == constants.SUPERUSER_ACCESS_ROLE for assigned_role in user.roles),
         )
 
     async def _populate_with_owner_and_tags(
