@@ -293,10 +293,18 @@ ensure_environment() {
             railway variables --set "SQLALCHEMY_LOG_LEVEL=30" --skip-deploys
         fi
 
-        # Ensure LITESTAR_TRUSTED_PROXIES is set (for OAuth redirect URL protocol)
+        # Ensure LITESTAR_TRUSTED_PROXIES, QUEUES_PLACEMENT, and COOKIE_SECURE are set
         if ! railway variables --kv 2>/dev/null | grep -q "LITESTAR_TRUSTED_PROXIES="; then
             log_info "Setting LITESTAR_TRUSTED_PROXIES=* for proxy header support..."
             railway variables --set "LITESTAR_TRUSTED_PROXIES=*" --skip-deploys
+        fi
+        if ! railway variables --kv 2>/dev/null | grep -q "QUEUES_PLACEMENT="; then
+            log_info "Setting QUEUES_PLACEMENT=external for dedicated queue worker..."
+            railway variables --set "QUEUES_PLACEMENT=external" --skip-deploys
+        fi
+        if ! railway variables --kv 2>/dev/null | grep -q "COOKIE_SECURE="; then
+            log_info "Setting COOKIE_SECURE=true for HTTPS session cookies..."
+            railway variables --set "COOKIE_SECURE=true" --skip-deploys
         fi
         return 0
     fi
@@ -309,6 +317,8 @@ ensure_environment() {
     railway variables --set "SECRET_KEY=${SECRET_KEY}" \
         --set "LITESTAR_DEBUG=false" \
         --set "VITE_DEV_MODE=false" \
+        --set "COOKIE_SECURE=true" \
+        --set "QUEUES_PLACEMENT=external" \
         --set "LITESTAR_TRUSTED_PROXIES=*" \
         --set "DATABASE_ECHO=false" \
         --set "SQLALCHEMY_LOG_LEVEL=30" \

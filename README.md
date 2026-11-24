@@ -70,8 +70,8 @@ uv run app queues run
 
 ### Docker
 
-Run the full stack (PostgreSQL, migrator, Granian API, and standalone queue worker):
+Run the full stack (PostgreSQL, migrator, Granian API, and standalone queue worker via `tools/deploy/docker/docker-compose.yml`):
 
 ```bash
-docker compose up
+make start-all-docker
 ```

@@ -23,7 +23,7 @@ data:
   DATABASE_NAME: "{{ db_name | default('appdb') }}"
   DATABASE_USER: "{{ db_user | default('appuser') }}"
   DATABASE_POOL_SIZE: "{{ db_pool_size | default('5') }}"
-  DATABASE_POOL_MAX_OVERFLOW: "{{ db_pool_max_overflow | default('10') }}"
+  DATABASE_MAX_POOL_OVERFLOW: "{{ db_pool_max_overflow | default('10') }}"
   DATABASE_ECHO: "false"
 
   # PostgreSQL Queue Settings (litestar-queues)
@@ -31,8 +31,10 @@ data:
   QUEUES_POLL_INTERVAL: "{{ queue_poll_interval | default('1.0') | string }}"
   QUEUES_PLACEMENT: "external"
 
-  # CORS Settings
+  # Security & CORS Settings
+  COOKIE_SECURE: "{{ 'false' if env == 'dev' else 'true' }}"
   ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}'
+  REGISTRATION_REQUIRE_VERIFICATION: "{{ 'true' if email_verification_required | default(false) else 'false' }}"
 
   # Vite Settings
   VITE_DEV_MODE: "false"
@@ -41,11 +43,6 @@ data:
   EMAIL_BACKEND: "{{ email_backend | default('console') }}"
   EMAIL_FROM_ADDRESS: "{{ email_from_address | default('noreply@localhost') }}"
   EMAIL_FROM_NAME: "{{ email_from_name | default('Litestar App') }}"
-
-  # Feature Flags
-  REGISTRATION_ENABLED: "{{ 'true' if registration_enabled | default(true) else 'false' }}"
-  EMAIL_VERIFICATION_REQUIRED: "{{ 'true' if email_verification_required | default(false) else 'false' }}"
-  MFA_ENABLED: "{{ 'true' if mfa_enabled | default(false) else 'false' }}"
 
   # Logging
   SQLALCHEMY_LOG_LEVEL: "{{ sqlalchemy_log_level | default('30') }}"

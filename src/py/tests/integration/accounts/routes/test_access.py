@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
-from litestar_queues import QueueService
 from sqlalchemy import select
 
 from app.db import models as m
@@ -14,7 +13,6 @@ from tests.integration.conftest import CSRF_HEADER_NAME, fetch_csrf_headers, log
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
-    from litestar import Litestar
     from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth]
@@ -22,12 +20,9 @@ pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth]
 
 async def test_registration_login_csrf_and_logout_lifecycle(
     client: AsyncClient,
-    app: Litestar,
     session: AsyncSession,
-    email_outbox: list[Any],
 ) -> None:
     """Register -> enqueue verification email -> login with cookie -> enforce CSRF -> logout."""
-    _ = email_outbox
     csrf = await fetch_csrf_headers(client)
 
     register_res = await client.post(
@@ -94,7 +89,6 @@ async def test_registration_login_csrf_and_logout_lifecycle(
 
     after_logout = await client.get("/api/me")
     assert after_logout.status_code == 401
-    assert isinstance(app.state.get("queue_service"), QueueService) or app is not None
 
 
 async def test_unauthenticated_and_inactive_login_fail_closed(

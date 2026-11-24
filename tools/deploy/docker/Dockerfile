@@ -101,12 +101,15 @@ RUN groupadd --system --gid 65532 nonroot \
     && chown -R nonroot:nonroot /workspace
 
 COPY --from=builder --chown=65532:65532 /cloudsql /cloudsql
+COPY --from=builder --chown=65532:65532 /workspace/app/requirements.txt /tmp/requirements.txt
 COPY --from=builder --chown=65532:65532 /workspace/app/dist/*.whl /tmp/
 
 WORKDIR /workspace/app
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-    uv pip install --quiet --disable-pip-version-check --no-cache-dir /tmp/*.whl \
+    uv venv /workspace/app/.venv \
+    && uv pip install --quiet --no-cache-dir --no-deps --requirement=/tmp/requirements.txt \
+    && uv pip install --quiet --no-cache-dir --no-deps /tmp/*.whl \
     && rm -rf /tmp/* \
     && chown -R nonroot:nonroot /workspace/app
 

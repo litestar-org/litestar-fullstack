@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from tests.integration.conftest import fetch_csrf_headers
+from tests.integration.conftest import fetch_csrf_headers, reset_client_session
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
@@ -47,6 +47,7 @@ async def test_passkey_registration_options_list_and_invalid_assertion_rejected(
     )
     assert bad_reg.status_code in {400, 401}
 
+    reset_client_session(client)
     csrf = await fetch_csrf_headers(client)
     auth_opts = await client.post(
         "/api/access/passkeys/authentication/options",
