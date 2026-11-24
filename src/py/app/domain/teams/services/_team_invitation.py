@@ -1,37 +1,32 @@
+"""Team invitation database service using AA 1.13 inferred default repository."""
+
 from __future__ import annotations
 
-from advanced_alchemy.extensions.litestar import repository, service
+from advanced_alchemy.extensions.litestar import service
 
 from app.db import models as m
 
 
 class TeamInvitationService(service.SQLAlchemyAsyncRepositoryService[m.TeamInvitation]):
-    """Team Invitation Service."""
-
-    class Repo(repository.SQLAlchemyAsyncRepository[m.TeamInvitation]):
-        """Team Invitation Repository."""
-
-        model_type = m.TeamInvitation
-
-    repository_type = Repo
+    """Team invitation CRUD service."""
 
     async def to_model_on_create(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        data = service.schema_dump(data)
-        return await self._populate_inviter(data)
+        """Resolve inviter metadata before creating an invitation."""
+        return await self._populate_inviter(service.schema_dump(data))
 
     async def to_model_on_update(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        data = service.schema_dump(data)
-        return await self._populate_inviter(data)
+        """Resolve inviter metadata before updating an invitation."""
+        return await self._populate_inviter(service.schema_dump(data))
 
     async def to_model_on_upsert(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        data = service.schema_dump(data)
-        return await self._populate_inviter(data)
+        """Resolve inviter metadata before upserting an invitation."""
+        return await self._populate_inviter(service.schema_dump(data))
 
     async def _populate_inviter(
         self, data: service.ModelDictT[m.TeamInvitation]

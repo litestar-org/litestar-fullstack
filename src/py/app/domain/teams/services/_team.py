@@ -1,7 +1,8 @@
+"""Team database service with slug generation, tags, and ownership transfer."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from uuid import UUID  # noqa: TC003
 
 from advanced_alchemy.exceptions import RepositoryError
 from advanced_alchemy.extensions.litestar import repository, service
@@ -9,58 +10,52 @@ from advanced_alchemy.extensions.litestar import repository, service
 from app.db import models as m
 from app.domain.tags.services import TagService
 from app.lib import constants
-from app.lib.deps import CompositeServiceMixin
-from app.lib.service import AutoSlugServiceMixin
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.service import ModelDictT
 
 
-class TeamService(
-    CompositeServiceMixin, AutoSlugServiceMixin[m.Team], service.SQLAlchemyAsyncRepositoryService[m.Team]
-):
-    """Handles CRUD operations on Team resources."""
+class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
+    """Handles CRUD operations, unique slugs, tag assignment, and ownership transfer for teams."""
 
     class Repo(repository.SQLAlchemyAsyncSlugRepository[m.Team]):
-        """Team Repository."""
+        """Team SQLAlchemy slug repository."""
 
         model_type = m.Team
 
     repository_type = Repo
     match_fields = ["name"]
 
-    @property
-    def tags(self) -> TagService:
-        """Lazy-loaded tag service sharing this session.
-
-        Returns:
-            The tag service instance.
-        """
-        return self._get_service(TagService)
-
     async def to_model_on_create(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        data = service.schema_dump(data)
-        data = await self._populate_slug(data)
-        return await self._populate_with_owner_and_tags(data, "create")
+        """Populate unique slug, initial owner membership, and tags on team creation."""
+        dumped = await self._populate_slug(service.schema_dump(data))
+        return await self._populate_with_owner_and_tags(dumped, "create")
 
     async def to_model_on_update(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        data = service.schema_dump(data)
-        data = await self._populate_slug(data)
-        return await self._populate_with_owner_and_tags(data, "update")
+        """Populate unique slug and resolve tag associations on team update."""
+        dumped = await self._populate_slug(service.schema_dump(data))
+        return await self._populate_with_owner_and_tags(dumped, "update")
 
     async def to_model_on_upsert(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        data = service.schema_dump(data)
-        data = await self._populate_slug(data)
-        return await self._populate_with_owner_and_tags(data, "upsert")
+        """Populate unique slug and resolve tag associations on team upsert."""
+        dumped = await self._populate_slug(service.schema_dump(data))
+        return await self._populate_with_owner_and_tags(dumped, "upsert")
+
+    async def _populate_slug(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
+        if service.is_dict_without_field(data, "slug") and service.is_dict_with_field(data, "name"):
+            data["slug"] = await self.repository.get_available_slug(str(data["name"]))
+        return data
 
     @staticmethod
     def can_view_all(user: m.User) -> bool:
+        """Return whether ``user`` may list all teams across the workspace."""
         return bool(
             user.is_superuser
             or any(
-                assigned_role.role.name
+                assigned_role.role.name == constants.SUPERUSER_ACCESS_ROLE
                 for assigned_role in user.roles
-                if assigned_role.role.name == constants.SUPERUSER_ACCESS_ROLE
             ),
         )
 
@@ -78,22 +73,17 @@ class TeamService(
         if operation == "create" and owner_id is None and owner is None:
             msg = "'owner_id' is required to create a team."
             raise RepositoryError(msg)
-        data = await super().to_model(data)
+        model = await super().to_model(data)
         if operation == "create":
             owner_data: dict[str, Any] = {"user": owner} if owner else {"user_id": owner_id}
-            data.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
+            model.members.append(m.TeamMember(**owner_data, role=m.TeamRoles.ADMIN, is_owner=True))
         if input_tags is not None:
-            data.tags = list(await self.tags.upsert_many([{"name": tag_text} for tag_text in input_tags]))
-        return data
+            tag_service = TagService(session=self.repository.session)
+            model.tags = list(await tag_service.upsert_many([{"name": tag_text} for tag_text in input_tags]))
+        return model
 
     async def update(self, data: ModelDictT[m.Team], item_id: Any | None = None, **kwargs: Any) -> m.Team:
-        """Update team with owner change support.
-
-        Handles owner changes by updating member records after the base update.
-
-        Returns:
-            The updated team object.
-        """
+        """Update team details and optionally transfer ownership when ``owner_id`` is provided."""
         pending_owner_id: UUID | None = None
         if service.is_dict_with_field(data, "owner_id"):
             pending_owner_id = data.get("owner_id")
@@ -103,7 +93,6 @@ class TeamService(
         return team
 
     async def _transfer_ownership(self, team: m.Team, new_owner_id: UUID) -> None:
-        """Transfer team ownership to a new member."""
         await self.repository.session.refresh(team, ["members"])
         for member in team.members:
             if member.user_id == new_owner_id:

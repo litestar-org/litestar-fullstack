@@ -1,28 +1,39 @@
-"""System domain controllers."""
+"""System health, public auth configuration, and user-scoped queue controllers."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import Annotated, ClassVar, Literal
+from uuid import UUID
 
 import structlog
-from litestar import Controller, MediaType, get
+from litestar import MediaType, get, post
+from litestar.di import NamedDependency
+from litestar.params import Parameter
 from litestar.response import Response
+from litestar_queues import QueueService
+from litestar_security import (
+    CSRF_REQUIRED_OPT_KEY,
+    AuthenticationPolicy,
+    CurrentUser,
+    PublicController,
+    SecureController,
+    any_of,
+)
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db import models as m
+from app.domain.accounts.security import requires_team_role
+from app.domain.admin.controllers._queues import serialize_task_record
+from app.domain.admin.schemas import QueueTaskListResponse, QueueTaskSummary
 from app.domain.system import schemas as s
+from app.domain.system.jobs import export_team_summary
+from app.lib.settings import get_settings
 
-if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession
-
-    from app.lib.settings import AppSettings
-
-logger = structlog.get_logger()
-OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
+logger = structlog.get_logger(__name__)
 
 
-class SystemController(Controller):
-    """System health and configuration."""
+class SystemController(PublicController):
+    """Public system health and frontend authentication configuration endpoints."""
 
     tags = ["System"]
     dependencies = {}
@@ -32,23 +43,15 @@ class SystemController(Controller):
         name="system:health",
         path="/health",
         summary="Health Check",
-        exclude_from_auth=True,
-        security=[],  # Public endpoint - no auth required
+        mcp_resource="system_health",
     )
     async def check_system_health(
         self,
         db_session: AsyncSession,
-        settings: AppSettings,
+        queue_service: NamedDependency[QueueService],
     ) -> Response[s.SystemHealth]:
-        """Check database available and returns app config info.
-
-        Args:
-            db_session: The database session.
-            settings: Application settings.
-
-        Returns:
-            The response object.
-        """
+        """Check database and queue backend health, returning HTTP 503 when degraded."""
+        app_settings = get_settings().app
         db_status: Literal["online", "offline"]
         try:
             await db_session.execute(text("select 1"))
@@ -56,39 +59,105 @@ class SystemController(Controller):
         except SQLAlchemyError:
             db_status = "offline"
 
-        healthy = db_status == "online"
+        queue_status: Literal["online", "offline"]
+        try:
+            await queue_service.list_tasks(limit=1)
+            queue_status = "online"
+        except Exception:  # noqa: BLE001
+            queue_status = "offline"
+
+        healthy = db_status == "online" and queue_status == "online"
         if healthy:
-            await logger.adebug(
-                "System Health",
-                database_status=db_status,
-            )
+            await logger.adebug("System health ok", database_status=db_status, queue_status=queue_status)
         else:
-            await logger.awarn(
-                "System Health Check",
-                database_status=db_status,
-            )
+            await logger.awarning("System health degraded", database_status=db_status, queue_status=queue_status)
 
         return Response(
-            content=s.SystemHealth(database_status=db_status, app=settings.NAME),
-            status_code=200 if healthy else 500,
+            content=s.SystemHealth(
+                app=app_settings.NAME,
+                database_status=db_status,
+                queue_status=queue_status,
+            ),
+            status_code=200 if healthy else 503,
             media_type=MediaType.JSON,
         )
 
     @get(
-        operation_id="OAuthConfig",
-        name="system:oauth-config",
-        path="/api/config/oauth",
-        summary="Get OAuth Configuration",
-        exclude_from_auth=True,
-        security=[],  # Public endpoint - no auth required
+        operation_id="PublicAuthConfig",
+        name="system:auth-config",
+        path="/api/config/auth",
+        summary="Get Public Authentication Configuration",
+        opt={CSRF_REQUIRED_OPT_KEY: True},
     )
-    async def get_oauth_config(self, settings: AppSettings) -> s.OAuthConfig:
-        """Get OAuth provider configuration for frontend.
+    async def get_auth_config(self) -> s.PublicAuthConfig:
+        """Return enabled OAuth providers and authentication capability flags."""
+        app_settings = get_settings().app
+        return s.PublicAuthConfig(
+            google_enabled=app_settings.google_oauth_enabled,
+            github_enabled=app_settings.github_oauth_enabled,
+            passkeys_enabled=True,
+            mfa_enabled=True,
+        )
 
-        Args:
-            settings: Application settings.
 
-        Returns:
-            OAuth configuration indicating which providers are enabled.
-        """
-        return s.OAuthConfig(google_enabled=settings.google_oauth_enabled, github_enabled=settings.github_oauth_enabled)
+class UserQueueController(SecureController):
+    """User-scoped queue task inspection and safe team report enqueuing."""
+
+    path = "/api/queues"
+    tags = ["Queues"]
+    auth: ClassVar[AuthenticationPolicy] = any_of("session", "api-key")
+
+    @get(
+        operation_id="ListMyQueueTasks",
+        path="/tasks",
+        mcp_tool="list_my_tasks",
+        mcp_description="List recent background queue tasks initiated by the current user.",
+    )
+    async def list_my_tasks(
+        self,
+        queue_service: NamedDependency[QueueService],
+        current_user: CurrentUser[m.User],
+        limit: Annotated[int, Parameter(ge=1, le=100, description="Maximum number of tasks to return.")] = 25,
+        offset: Annotated[int, Parameter(ge=0, description="Pagination offset.")] = 0,
+    ) -> QueueTaskListResponse:
+        """List recent background queue tasks owned by the authenticated user."""
+        page = await queue_service.list_tasks(limit=max(limit * 4, 200), offset=0)
+        owner_id = str(current_user.id)
+        owned = [item for item in page.items if (item.metadata or {}).get("requested_by_id") == owner_id]
+        sliced = owned[offset : offset + limit]
+        return QueueTaskListResponse(
+            items=[serialize_task_record(item) for item in sliced],
+            total=len(owned),
+            limit=limit,
+            offset=offset,
+        )
+
+    @post(
+        operation_id="EnqueueTeamSummaryReport",
+        path="/reports/team-summary/{team_id:uuid}",
+        guards=[requires_team_role("member")],
+        mcp_tool="enqueue_team_report",
+        mcp_description="Enqueue an asynchronous team summary report task for a team you belong to.",
+    )
+    async def enqueue_team_report(
+        self,
+        queue_service: NamedDependency[QueueService],
+        current_user: CurrentUser[m.User],
+        team_id: Annotated[UUID, Parameter(title="Team ID", description="Target team UUID.")],
+    ) -> QueueTaskSummary:
+        """Enqueue a background team summary report task for a team the user belongs to."""
+        task_result = await queue_service.enqueue(
+            export_team_summary,
+            team_id=str(team_id),
+            requested_by_id=str(current_user.id),
+            metadata={"requested_by_id": str(current_user.id), "team_id": str(team_id)},
+        )
+        if task_result.record is not None:
+            return serialize_task_record(task_result.record)
+        return QueueTaskSummary(
+            task_id=str(task_result.id),
+            task_name=task_result.task_name,
+            queue="reports",
+            status=str(task_result.status),
+            metadata={"requested_by_id": str(current_user.id), "team_id": str(team_id)},
+        )

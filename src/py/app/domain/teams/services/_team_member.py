@@ -1,16 +1,11 @@
+"""Team membership database service using AA 1.13 inferred default repository."""
+
 from __future__ import annotations
 
-from advanced_alchemy.extensions.litestar import repository, service
+from advanced_alchemy.extensions.litestar import service
 
 from app.db import models as m
 
 
 class TeamMemberService(service.SQLAlchemyAsyncRepositoryService[m.TeamMember]):
-    """Team Member Service."""
-
-    class Repo(repository.SQLAlchemyAsyncRepository[m.TeamMember]):
-        """Team Member Repository."""
-
-        model_type = m.TeamMember
-
-    repository_type = Repo
+    """Team membership CRUD service."""

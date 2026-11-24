@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import structlog
-from litestar_asyncapi import AsyncAPIConfig
+from litestar_asyncapi import AsyncAPIConfig, ChannelDefinition, MessageDefinition, OperationDefinition
 from litestar_autowire import AutowireConfig
 from litestar_security import required
 
@@ -12,6 +12,7 @@ from app.domain.accounts.security.config import (
     build_security_config,
     build_session_middleware,
 )
+from app.domain.system.jobs import QueueTaskEventPayload
 from app.lib.settings import get_settings
 
 _settings = get_settings()
@@ -29,10 +30,29 @@ queues = _settings.queues.get_config(
     app_settings=_settings.app,
 )
 asyncapi = AsyncAPIConfig(
-    title=_settings.app.NAME,
+    title=f"{_settings.app.NAME} Events",
     version=_settings.app.VERSION,
     include_sse_routes=True,
     include_websocket_routes=True,
+    channels=[
+        ChannelDefinition(
+            key="queue_events",
+            address=_settings.queues.STREAM_PATH,
+            description="Live background queue task lifecycle and progress events.",
+            operations=[
+                OperationDefinition(
+                    action="receive",
+                    operation_id="receiveQueueEvents",
+                    messages=[
+                        MessageDefinition(
+                            name="QueueTaskEvent",
+                            payload=QueueTaskEventPayload,
+                        )
+                    ],
+                )
+            ],
+        )
+    ],
 )
 autowire = AutowireConfig(
     domain_packages=["app.domain"],

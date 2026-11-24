@@ -18,6 +18,7 @@ from litestar_security import (
     PasskeyConfig,
     SecurityConfig,
     SecurityHeadersConfig,
+    WebSocketSecurityConfig,
 )
 from litestar_security.accounts import (
     LocalAuth,
@@ -295,10 +296,10 @@ def build_notification_handler(
         payload: dict[str, Any] = {
             "email": notification.destination,
             "token": notification.token,
-            "expires_at": notification.expires_at.isoformat(),
+            "token_expires_at": notification.expires_at.isoformat(),
             "return_url": notification.return_url,
         }
-        await service.enqueue(task_name, kwargs=payload, queue="emails")
+        await service.enqueue(task_name, queue="emails", **payload)
 
     return _dispatch_notification
 
@@ -535,6 +536,16 @@ def build_security_config(
         scopes_supported=("read", "write", "mcp"),
     )
 
+    ws_origins: set[str] = set(origins)
+    for raw_origin in settings.app.ALLOWED_CORS_ORIGINS:
+        normalized = _normalize_origin(raw_origin)
+        if normalized is not None:
+            ws_origins.add(normalized)
+    websocket_config = WebSocketSecurityConfig(
+        allowed_origins=frozenset(ws_origins),
+        current_security_epoch=backend.current_epoch,
+    )
+
     return SecurityConfig(
         local_auth=local_auth,
         mfa=mfa_config,
@@ -542,6 +553,7 @@ def build_security_config(
         oauth=oauth_config,
         api_key=api_key_config,
         protected_resource=protected_resource,
+        websocket=websocket_config,
         headers=SecurityHeadersConfig.hardened(),
         authorization_resolver=AppAuthorizationResolver(),
         jwks_providers=jwks_providers,

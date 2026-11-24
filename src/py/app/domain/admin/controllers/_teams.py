@@ -1,57 +1,36 @@
-"""Admin Teams Controller."""
+"""Admin Teams SecureController."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import Annotated, Any, ClassVar
 from uuid import UUID
 
-from litestar import Controller, delete, get, patch
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service.pagination import OffsetPagination
+from litestar import Request, delete, get, patch
 from litestar.di import Provide
 from litestar.params import Dependency
+from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, required, requires_role
 from msgspec import UNSET
-from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import models as m
-from app.domain.accounts.guards import requires_superuser
 from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import AdminTeamDetail, AdminTeamSummary, AdminTeamUpdate
+from app.domain.admin.services import AuditLogService
+from app.domain.teams.deps import TeamFilterSet, create_filter_dependencies, provide_teams_service
 from app.domain.teams.services import TeamService
-from app.lib.deps import create_service_dependencies
 from app.lib.schema import Message
 
-if TYPE_CHECKING:
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service.pagination import OffsetPagination
-    from litestar import Request
-    from litestar.security.jwt import Token
 
-    from app.domain.admin.services import AuditLogService
+class AdminTeamsController(SecureController):
+    """Superuser team administration endpoints."""
 
-
-class AdminTeamsController(Controller):
-    """Admin team management endpoints."""
-
-    tags = ["Admin"]
     path = "/api/admin/teams"
-    guards = [requires_superuser]
-    dependencies = create_service_dependencies(
-        TeamService,
-        key="teams_service",
-        load=[selectinload(m.Team.members).options(joinedload(m.TeamMember.user, innerjoin=True))],
-        error_messages={"duplicate_key": "This team already exists.", "integrity": "Team operation failed."},
-        filters={
-            "id_filter": UUID,
-            "search": "name",
-            "pagination_type": "limit_offset",
-            "pagination_size": 25,
-            "created_at": True,
-            "updated_at": True,
-            "sort_field": "created_at",
-            "sort_order": "desc",
-        },
-    ) | {
+    tags = ["Admin"]
+    auth: ClassVar[AuthenticationPolicy] = required("session")
+    guards = [requires_role("superuser")]
+    dependencies = {
+        "teams_service": Provide(provide_teams_service),
         "audit_service": Provide(provide_audit_log_service),
-    }
+    } | create_filter_dependencies(TeamFilterSet)
 
     @get(operation_id="AdminListTeams", path="/")
     async def list_teams(
@@ -59,16 +38,8 @@ class AdminTeamsController(Controller):
         teams_service: TeamService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[AdminTeamSummary]:
-        """List all teams with pagination.
-
-        Args:
-            teams_service: Team service
-            filters: Filter and pagination parameters
-
-        Returns:
-            Paginated team list
-        """
-        results, total = await teams_service.list_and_count(*filters)
+        """List all teams with filtering and pagination."""
+        results, total = await teams_service.get_many_and_count(*filters)
         return teams_service.to_schema(results, total, filters, schema_type=AdminTeamSummary)
 
     @get(operation_id="AdminGetTeam", path="/{team_id:uuid}")
@@ -77,40 +48,21 @@ class AdminTeamsController(Controller):
         teams_service: TeamService,
         team_id: UUID,
     ) -> AdminTeamDetail:
-        """Get detailed team information.
-
-        Args:
-            teams_service: Team service
-            team_id: ID of team to retrieve
-
-        Returns:
-            Detailed team information
-        """
+        """Get detailed team information."""
         team = await teams_service.get(team_id)
         return teams_service.to_schema(team, schema_type=AdminTeamDetail)
 
     @patch(operation_id="AdminUpdateTeam", path="/{team_id:uuid}")
     async def update_team(
         self,
-        request: Request[m.User, Token, Any],
+        request: Request[Any, Any, Any],
+        current_user: CurrentUser[m.User],
         teams_service: TeamService,
         audit_service: AuditLogService,
         team_id: UUID,
         data: AdminTeamUpdate,
     ) -> AdminTeamDetail:
-        """Update team as admin.
-
-        Args:
-            request: Request with authenticated superuser
-            teams_service: Team service
-            audit_service: Audit log service
-            team_id: ID of team to update
-            data: Update payload
-
-        Returns:
-            Updated team details
-        """
-
+        """Update team attributes as an administrator."""
         update_data: dict[str, Any] = {}
         for field in ("name", "description", "is_active"):
             value = getattr(data, field)
@@ -118,8 +70,8 @@ class AdminTeamsController(Controller):
                 update_data[field] = value
         team = await teams_service.update(item_id=team_id, data=update_data, auto_commit=True)
         await audit_service.log_admin_team_update(
-            actor_id=request.user.id,
-            actor_email=request.user.email,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
             team_id=team_id,
             team_name=team.name,
             changes=list(update_data.keys()),
@@ -130,28 +82,19 @@ class AdminTeamsController(Controller):
     @delete(operation_id="AdminDeleteTeam", path="/{team_id:uuid}", status_code=200)
     async def delete_team(
         self,
-        request: Request[m.User, Token, Any],
+        request: Request[Any, Any, Any],
+        current_user: CurrentUser[m.User],
         teams_service: TeamService,
         audit_service: AuditLogService,
         team_id: UUID,
     ) -> Message:
-        """Delete a team (admin only).
-
-        Args:
-            request: Request with authenticated superuser
-            teams_service: Team service
-            audit_service: Audit log service
-            team_id: ID of team to delete
-
-        Returns:
-            Success message
-        """
+        """Delete a team as an administrator."""
         team = await teams_service.get(team_id)
         team_name = team.name
-        await teams_service.delete(team.id)
+        await teams_service.delete(team.id, auto_commit=True)
         await audit_service.log_admin_team_delete(
-            actor_id=request.user.id,
-            actor_email=request.user.email,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
             team_id=team_id,
             team_name=team_name,
             request=request,

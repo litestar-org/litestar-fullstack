@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import pytest
 from litestar import Litestar
 from litestar.openapi.config import OpenAPIConfig
-from litestar_queues import QueueConfig, QueueService, WorkerConfig, task
+from litestar_queues import QueueConfig, QueueService, WorkerConfig
 from litestar_security import SecurityPlugin
 from litestar_security.accounts import NotificationCommand
 from litestar_security.providers.oauth import OAuthLifecycleService
@@ -106,20 +106,9 @@ def test_security_config_cookie_flags_and_exclusions(tmp_path: Path) -> None:
 
 
 async def test_notification_handler_enqueues_canonical_email_tasks() -> None:
-    @task("email.send_verification", queue="emails")
-    async def _send_verification(email: str, token: str, expires_at: str, return_url: str | None = None) -> None:
-        _ = (email, token, expires_at, return_url)
+    import app.domain.accounts.jobs
 
-    @task("email.send_password_reset", queue="emails")
-    async def _send_password_reset(email: str, token: str, expires_at: str, return_url: str | None = None) -> None:
-        _ = (email, token, expires_at, return_url)
-
-    @task("email.send_password_reset_confirmation", queue="emails")
-    async def _send_password_reset_confirmation(
-        email: str, token: str, expires_at: str, return_url: str | None = None
-    ) -> None:
-        _ = (email, token, expires_at, return_url)
-
+    _ = app.domain.accounts.jobs
     queue_service = QueueService(
         config=QueueConfig(
             queue_backend="memory",

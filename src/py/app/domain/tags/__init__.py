@@ -1,4 +1,4 @@
-"""Tags domain - tag management."""
+"""Tags domain - workspace tag catalog."""
 
 from app.domain.tags import controllers, schemas, services
 

@@ -1,98 +1,192 @@
-"""Background job for refreshing OAuth tokens."""
+"""Background ``litestar-queues`` task for refreshing expiring OAuth access tokens."""
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import httpx
-from httpx_oauth.clients.github import GitHubOAuth2
-from httpx_oauth.clients.google import GoogleOAuth2
-from httpx_oauth.oauth2 import GetAccessTokenError
-from structlog import get_logger
+import structlog
+from litestar_queues import RetryBackoff, get_current_task_context, task
+from litestar_security.providers.oauth import ProtectedOAuthSecret, ProviderTokenSet, SecretStr
+from sqlalchemy import select
 
 from app.db import models as m
-from app.domain.accounts import deps as account_deps
-from app.lib.deps import provide_services
-from app.lib.settings import get_settings
+from app.domain.accounts.security.oauth import build_oauth_protector
+from app.lib.settings import Settings, get_settings
 
 if TYPE_CHECKING:
-    from saq.types import Context
+    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
+    from litestar_security.providers.oauth import OAuthTransactionProtector
 
-logger = get_logger()
+__all__ = ("refresh_oauth_tokens", "run_refresh_oauth_tokens")
+
+logger = structlog.get_logger(__name__)
 REFRESH_WINDOW_MINUTES = 10
 
+_TOKEN_ENDPOINTS: dict[str, str] = {
+    "google": "https://oauth2.googleapis.com/token",
+    "github": "https://github.com/login/oauth/access_token",
+}
 
-def _get_oauth_clients() -> dict[str, GitHubOAuth2 | GoogleOAuth2]:
-    settings = get_settings()
-    clients: dict[str, GitHubOAuth2 | GoogleOAuth2] = {}
+
+def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
+    creds: dict[str, tuple[str, str]] = {}
     if settings.app.google_oauth_enabled:
-        clients["google"] = GoogleOAuth2(
-            settings.app.GOOGLE_OAUTH2_CLIENT_ID,
-            settings.app.GOOGLE_OAUTH2_CLIENT_SECRET,
-        )
+        creds["google"] = (settings.app.GOOGLE_OAUTH2_CLIENT_ID, settings.app.GOOGLE_OAUTH2_CLIENT_SECRET)
     if settings.app.github_oauth_enabled:
-        clients["github"] = GitHubOAuth2(
-            settings.app.GITHUB_OAUTH2_CLIENT_ID,
-            settings.app.GITHUB_OAUTH2_CLIENT_SECRET,
+        creds["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
+    return creds
+
+
+async def _refresh_single_account(
+    row: m.UserOAuthAccount,
+    *,
+    client: httpx.AsyncClient,
+    protector: OAuthTransactionProtector,
+    credentials: dict[str, tuple[str, str]],
+    now: datetime,
+) -> str:
+    provider_creds = credentials.get(row.oauth_name)
+    endpoint = _TOKEN_ENDPOINTS.get(row.oauth_name)
+    if provider_creds is None or endpoint is None or row.protected_tokens is None or row.key_version is None:
+        return "skipped"
+
+    aad = f"oauth-account:{row.oauth_name}:{row.account_id}".encode()
+    try:
+        raw_blob = await protector.unprotect(
+            ProtectedOAuthSecret(key_version=row.key_version, ciphertext=row.protected_tokens),
+            associated_data=aad,
         )
-    return clients
+        stored: dict[str, Any] = json.loads(raw_blob.decode("utf-8"))
+        refresh_token = stored.get("refresh_token")
+        if not isinstance(refresh_token, str) or not refresh_token:
+            return "skipped"
+
+        client_id, client_secret = provider_creds
+        resp = await client.post(
+            endpoint,
+            headers={"Accept": "application/json"},
+            data={
+                "grant_type": "refresh_token",
+                "refresh_token": refresh_token,
+                "client_id": client_id,
+                "client_secret": client_secret,
+            },
+        )
+        resp.raise_for_status()
+        payload: dict[str, Any] = resp.json()
+        new_access = payload.get("access_token")
+        if not isinstance(new_access, str) or not new_access:
+            return "failed"
+
+        new_refresh = payload.get("refresh_token") or refresh_token
+        expires_in = payload.get("expires_in")
+        new_expires_at = (
+            now + timedelta(seconds=int(expires_in))
+            if isinstance(expires_in, (int, float)) and expires_in > 0
+            else row.token_expires_at
+        )
+        scopes_raw = payload.get("scope")
+        scopes = (
+            frozenset(scopes_raw.split())
+            if isinstance(scopes_raw, str) and scopes_raw.strip()
+            else frozenset(row.scopes or [])
+        )
+        tokens = ProviderTokenSet(
+            access_token=SecretStr(new_access),
+            token_type="Bearer",  # noqa: S106
+            scopes=scopes,
+            refresh_token=SecretStr(str(new_refresh)) if new_refresh else None,
+            expires_at=new_expires_at or (now + timedelta(hours=1)),
+        )
+        serialized = json.dumps(
+            {
+                "access_token": tokens.access_token.get_secret_value(),
+                "refresh_token": tokens.refresh_token.get_secret_value() if tokens.refresh_token is not None else None,
+                "token_type": tokens.token_type,
+                "scopes": sorted(tokens.scopes),
+            }
+        ).encode("utf-8")
+        re_protected = await protector.protect(serialized, associated_data=aad)
+        row.protected_tokens = re_protected.ciphertext
+        row.key_version = re_protected.key_version
+        row.token_version += 1
+        row.token_expires_at = new_expires_at
+        row.scopes = sorted(tokens.scopes)
+    except Exception as exc:  # noqa: BLE001
+        await logger.awarning(
+            "OAuth token refresh failed",
+            provider=row.oauth_name,
+            error_type=type(exc).__name__,
+        )
+        return "failed"
+    else:
+        return "refreshed"
 
 
-async def refresh_oauth_tokens(_: Context) -> dict[str, int]:
-    """Refresh OAuth access tokens that are nearing expiration."""
-    clients = _get_oauth_clients()
-    if not clients:
+async def run_refresh_oauth_tokens(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    *,
+    settings: Settings | None = None,
+    transport: httpx.AsyncBaseTransport | None = None,
+) -> dict[str, int]:
+    """Refresh AES-GCM-protected OAuth tokens nearing expiration using ``httpx.AsyncClient``."""
+    active_settings = settings or get_settings()
+    credentials = _configured_credentials(active_settings)
+    if not credentials:
         return {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
 
+    context = get_current_task_context()
+    protector = build_oauth_protector(active_settings)
     now = datetime.now(UTC)
     cutoff = now + timedelta(minutes=REFRESH_WINDOW_MINUTES)
-    processed = 0
-    refreshed = 0
-    skipped = 0
-    failed = 0
+    counts = {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
 
-    async with provide_services(account_deps.provide_user_oauth_service) as (oauth_service,):
-        accounts = await oauth_service.list(
-            m.UserOAuthAccount.refresh_token.is_not(None),
-            m.UserOAuthAccount.token_expires_at.is_not(None),
-            m.UserOAuthAccount.token_expires_at <= cutoff,
-        )
+    async with alchemy_config.get_session() as session:
+        rows = (
+            await session.scalars(
+                select(m.UserOAuthAccount).where(
+                    m.UserOAuthAccount.protected_tokens.is_not(None),
+                    m.UserOAuthAccount.token_expires_at.is_not(None),
+                    m.UserOAuthAccount.token_expires_at <= cutoff,
+                )
+            )
+        ).all()
 
-        for account in accounts:
-            processed += 1
-            client = clients.get(account.oauth_name)
-            if client is None or account.refresh_token is None:
-                skipped += 1
-                continue
+        total = len(rows)
+        async with httpx.AsyncClient(timeout=15.0, transport=transport) as client:
+            for idx, row in enumerate(rows, start=1):
+                counts["processed"] += 1
+                if context is not None:
+                    await context.progress(current=idx, total=max(1, total), message=f"Refreshing {row.oauth_name} token")
+                outcome = await _refresh_single_account(
+                    row,
+                    client=client,
+                    protector=protector,
+                    credentials=credentials,
+                    now=now,
+                )
+                counts[outcome] += 1
+        await session.commit()
 
-            try:
-                token_data = await client.refresh_token(account.refresh_token)
-            except (GetAccessTokenError, httpx.HTTPError) as exc:
-                failed += 1
-                await logger.awarning("OAuth refresh failed", provider=account.oauth_name, error=str(exc))
-                continue
-
-            expires_at = token_data.get("expires_at")
-            token_expires_at = datetime.fromtimestamp(expires_at, tz=UTC) if expires_at else None
-
-            update_data: dict[str, object] = {
-                "access_token": token_data["access_token"],
-            }
-            if token_data.get("refresh_token"):
-                update_data["refresh_token"] = token_data["refresh_token"]
-            if expires_at is not None:
-                update_data["expires_at"] = expires_at
-                update_data["token_expires_at"] = token_expires_at
-            if token_data.get("scope") is not None:
-                update_data["scope"] = token_data["scope"]
-
-            await oauth_service.update(item_id=account.id, data=update_data, auto_commit=True)
-            refreshed += 1
-
-    result = {"processed": processed, "refreshed": refreshed, "skipped": skipped, "failed": failed}
-    await logger.ainfo("OAuth refresh job complete", **result)
-    return result
+    if context is not None:
+        await context.log("OAuth token refresh job completed")
+    await logger.ainfo("OAuth refresh job complete", **counts)
+    return counts
 
 
-__all__ = ("refresh_oauth_tokens",)
+@task(
+    "accounts.refresh_oauth_tokens",
+    queue="maintenance",
+    cron="*/15 * * * *",
+    retries=3,
+    retry_backoff=RetryBackoff(initial_delay=5.0, multiplier=2.0, max_delay=300.0),
+    unique_by="task",
+)
+async def refresh_oauth_tokens() -> dict[str, int]:
+    """Scheduled task refreshing OAuth access tokens nearing expiration."""
+    from app import config
+
+    return await run_refresh_oauth_tokens(config.alchemy)

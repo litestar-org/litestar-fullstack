@@ -25,6 +25,7 @@ from advanced_alchemy.extensions.litestar import (
 )
 from advanced_alchemy.utils.text import slugify
 from dotenv import load_dotenv
+from litestar.channels.backends.memory import MemoryChannelsBackend
 from litestar.cli._utils import console
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
@@ -265,20 +266,51 @@ class QueueSettings:
             batch_size=self.BATCH_SIZE,
             poll_interval=self.POLL_INTERVAL,
             queues=self.QUEUES,
+            heartbeat_interval=30,
+            graceful_shutdown_timeout=60,
         )
         maintenance = QueueMaintenanceConfig(
+            time_budget=300,
+            coordination_timeout=360,
+            stale_after=900,
+            stale_limit=100,
             terminal_retention=(
                 float(self.TERMINAL_RETENTION_SECONDS) if self.TERMINAL_RETENTION_SECONDS is not None else None
             ),
+            terminal_limit=1000,
+            event_limit=1000,
         )
         observability = ObservabilityConfig(
             enable_otel=app_settings.ENABLE_INSTRUMENTATION if app_settings is not None else False,
             enable_prometheus=self.ENABLE_PROMETHEUS,
+            enable_sqlcommenter=True,
         )
+        from litestar.exceptions import NotAuthorizedException
+        from litestar_security import any_of
+        from litestar_security.context import Principal
+
+        def _require_authenticated_stream(connection: Any, _: Any) -> None:
+            principal: object = connection.scope.get("user")
+            if not isinstance(principal, Principal) or not principal.is_authenticated:
+                raise NotAuthorizedException
+
         events = QueueEventsConfig(
-            delivery=EventDeliveryConfig(),
-            stream=EventStreamConfig(path=self.STREAM_PATH) if self.STREAM_ENABLED else None,
-            history=EventHistoryConfig(),
+            channels=MemoryChannelsBackend(history=100),
+            delivery=EventDeliveryConfig(
+                publish_task_channel=True,
+                publish_global_lifecycle=True,
+            ),
+            stream=(
+                EventStreamConfig(
+                    path=self.STREAM_PATH,
+                    transports={"sse", "websocket"},
+                    guards=[_require_authenticated_stream],
+                    opt={"auth": any_of("session", "api-key")},
+                )
+                if self.STREAM_ENABLED
+                else None
+            ),
+            history=EventHistoryConfig(batch_size=1),
         )
         return QueueConfig(
             queue_backend=backend,
@@ -287,6 +319,9 @@ class QueueSettings:
             maintenance=maintenance,
             observability=observability,
             events=events,
+            scheduler_canary_task="system.scheduler_canary",
+            error_sanitizer=lambda exc, _rec: f"Task failed: {type(exc).__name__}",
+            max_argument_identity_bytes=64 * 1024,
         )
 
 
@@ -329,21 +364,36 @@ class MCPSettings:
     INSTRUCTIONS: str = field(
         default_factory=get_env(
             "MCP_INSTRUCTIONS",
-            "Authenticated Model Context Protocol surface for Litestar Fullstack.",
+            (
+                "Read workspace health, user profile, teams, and tags as resources. "
+                "Use tools only to create tags, inspect your queue tasks, or enqueue team summary reports."
+            ),
         )
     )
     ALLOWED_ORIGINS: list[str] | None = field(default_factory=_get_optional_list_env("MCP_ALLOWED_ORIGINS"))
 
-    def get_config(self, *, auth: Any | None = None) -> MCPConfig:
-        """Build ``MCPConfig`` with optional authentication binding."""
+    def get_config(
+        self,
+        *,
+        auth: Any | None = None,
+        before_tool_call: Any | None = None,
+        after_tool_call: Any | None = None,
+    ) -> MCPConfig:
+        """Build ``MCPConfig`` with API-key auth, strict description bounds, tasks, and optional audit hooks."""
         return MCPConfig(
             base_path=self.BASE_PATH,
+            include_in_schema=False,
             name=self.NAME,
             instructions=self.INSTRUCTIONS,
             allowed_origins=self.ALLOWED_ORIGINS,
             auth=auth,
-            include_in_schema=False,
+            tasks=True,
             auto_output_schema=True,
+            max_tool_description_length=1000,
+            max_param_description_length=750,
+            max_output_field_description_length=300,
+            before_tool_call=before_tool_call,
+            after_tool_call=after_tool_call,
         )
 
 

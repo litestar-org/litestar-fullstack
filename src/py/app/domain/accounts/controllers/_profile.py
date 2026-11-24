@@ -39,6 +39,7 @@ class ProfileController(SecureController):
         summary="User Profile",
         description="Return the authenticated user's profile.",
         opt={"auth": any_of("session", "api-key")},
+        mcp_resource="user_profile",
     )
     async def get_profile(
         self,

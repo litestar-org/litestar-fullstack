@@ -292,3 +292,62 @@ async def test_template_caching(
     )
 
     assert "User2" in html2
+
+
+async def test_email_service_litestar_di_route_and_exception_specificity() -> None:
+    from collections.abc import AsyncIterator
+    from typing import Any
+
+    from litestar import Litestar, post
+    from litestar.di import Provide
+    from litestar.testing import AsyncTestClient
+    from litestar_email.exceptions import EmailDeliveryError, EmailRateLimitError
+
+    email_cfg = EmailConfig(backend="memory", from_email="noreply@example.com")
+
+    async def provide_mailer() -> AsyncIterator[EmailService]:
+        async with email_cfg.provide_service() as service:
+            yield service
+
+    @post("/send-test")
+    async def send_test(app_mailer: AppEmailService) -> dict[str, bool]:
+        sent = await app_mailer.send_email(
+            to_email="di@example.com",
+            subject="DI Test",
+            html_content="<p>Hello <b>DI</b></p>",
+        )
+        return {"sent": sent}
+
+    app = Litestar(
+        route_handlers=[send_test],
+        dependencies={
+            "mailer": Provide(provide_mailer),
+            "app_mailer": Provide(AppEmailService, sync_to_thread=False),
+        },
+    )
+    async with AsyncTestClient(app=app) as client:
+        resp = await client.post("/send-test")
+        assert resp.status_code == 201
+        assert resp.json() == {"sent": True}
+    assert len(InMemoryBackend.outbox) == 1
+    assert InMemoryBackend.outbox[0].to == ["di@example.com"]
+
+    class _RateLimitedMailer:
+        async def send_message(self, message: Any) -> int:
+            _ = message
+            msg = "429 rate limited"
+            raise EmailRateLimitError(msg)
+
+    failing = AppEmailService(mailer=cast("EmailService", _RateLimitedMailer()))
+    with pytest.raises(EmailRateLimitError):
+        await failing.send_email(to_email="fail@example.com", subject="Fail", html_content="<p>x</p>")
+
+    class _DeliveryFailedMailer:
+        async def send_message(self, message: Any) -> int:
+            _ = message
+            msg = "550 bounce"
+            raise EmailDeliveryError(msg)
+
+    failing2 = AppEmailService(mailer=cast("EmailService", _DeliveryFailedMailer()))
+    with pytest.raises(EmailDeliveryError):
+        await failing2.send_email(to_email="fail@example.com", subject="Fail", html_content="<p>x</p>")

@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from dataclasses import replace
+from datetime import UTC, datetime
 from functools import partial
 from importlib import import_module
 from typing import TYPE_CHECKING, Any, cast
-from uuid import UUID
+from uuid import UUID, uuid4
 
+import structlog
 from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
 from advanced_alchemy.filters import FilterTypes
 from advanced_alchemy.service import CursorPagination, OffsetPagination
@@ -19,10 +21,13 @@ from litestar.params import Body
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar_email import EmailService
 from litestar_queues import QueueService
+from litestar_security.accounts import SecurityEvent
+from litestar_security.context import Principal
 
 from app import config
 from app.__metadata__ import __version__
 from app.db import models as m
+from app.domain.accounts.security.events import AuditSecurityEventSink, sanitize_event_details
 from app.lib.email import AppEmailService
 from app.lib.exceptions import (
     ApplicationClientError,
@@ -37,14 +42,118 @@ if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
     from click import Group
+    from litestar import Request
     from litestar.config.app import AppConfig
     from litestar_autowire import AutowireConfig
     from litestar_email import EmailConfig
-    from litestar_mcp import MCPConfig
+    from litestar_mcp import AfterToolCallHook, BeforeToolCallHook, MCPConfig
     from litestar_queues import QueueConfig
     from litestar_security import SecurityConfig
 
-__all__ = ("ApplicationCore",)
+__all__ = ("ApplicationCore", "build_mcp_audit_hooks")
+
+logger = structlog.get_logger(__name__)
+
+
+def _extract_mcp_principal_id(request: Request[Any, Any, Any]) -> str | None:
+    principal: object = cast("dict[str, Any]", request.scope).get("user")
+    if isinstance(principal, Principal) and principal.is_authenticated and principal.id is not None:
+        return str(principal.id)
+    return None
+
+
+def build_mcp_audit_hooks(
+    sink: AuditSecurityEventSink,
+) -> tuple[BeforeToolCallHook, AfterToolCallHook]:
+    """Build observability-only MCP tool call hooks writing redacted telemetry to ``AuditSecurityEventSink``."""
+
+    async def _before_tool_call(
+        tool_name: str,
+        arguments: dict[str, Any],
+        request: Request[Any, Any, Any],
+        /,
+    ) -> None:
+        principal_id = _extract_mcp_principal_id(request)
+        correlation_id = request.headers.get("x-request-id") or str(uuid4())
+        sanitized_keys = ",".join(sorted(str(k) for k in sanitize_event_details(arguments)))
+        event = SecurityEvent(
+            event_id=str(uuid4()),
+            occurred_at=datetime.now(UTC),
+            operation="mcp.tool.call.started",
+            outcome="started",
+            account_id=principal_id,
+            principal_id=principal_id,
+            mechanism="api-key",
+            correlation={
+                "tool_name": tool_name,
+                "correlation_id": correlation_id,
+                "argument_keys": sanitized_keys,
+            },
+        )
+        try:
+            await logger.ainfo(
+                "MCP tool call started",
+                tool_name=tool_name,
+                principal_id=principal_id,
+                correlation_id=correlation_id,
+            )
+            await sink.emit(event)
+        except Exception as exc:  # noqa: BLE001
+            await logger.awarning(
+                "MCP before_tool_call audit hook failed",
+                tool_name=tool_name,
+                error_type=type(exc).__name__,
+            )
+
+    async def _after_tool_call(
+        tool_name: str,
+        arguments: dict[str, Any],
+        request: Request[Any, Any, Any],
+        /,
+        *,
+        result: Any,
+        exception: Exception | None,
+        duration: float,
+    ) -> None:
+        _ = (arguments, result)
+        principal_id = _extract_mcp_principal_id(request)
+        correlation_id = request.headers.get("x-request-id") or str(uuid4())
+        operation = "mcp.tool.call.failed" if exception is not None else "mcp.tool.call.completed"
+        outcome = "failure" if exception is not None else "success"
+        correlation: dict[str, str] = {
+            "tool_name": tool_name,
+            "correlation_id": correlation_id,
+            "duration_seconds": f"{duration:.6f}",
+        }
+        if exception is not None:
+            correlation["error_type"] = type(exception).__name__
+        event = SecurityEvent(
+            event_id=str(uuid4()),
+            occurred_at=datetime.now(UTC),
+            operation=operation,
+            outcome=outcome,
+            account_id=principal_id,
+            principal_id=principal_id,
+            mechanism="api-key",
+            correlation=correlation,
+        )
+        try:
+            await logger.ainfo(
+                "MCP tool call finished",
+                tool_name=tool_name,
+                principal_id=principal_id,
+                outcome=outcome,
+                duration_seconds=round(duration, 6),
+            )
+            await sink.emit(event)
+        except Exception as exc:  # noqa: BLE001
+            await logger.awarning(
+                "MCP after_tool_call audit hook failed",
+                tool_name=tool_name,
+                error_type=type(exc).__name__,
+            )
+
+    return _before_tool_call, _after_tool_call
 
 
 class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
@@ -98,12 +207,21 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
 
+        resolved_mcp = self.mcp_config or config.mcp
+        if resolved_mcp.before_tool_call is None and resolved_mcp.after_tool_call is None:
+            before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
+            resolved_mcp = replace(
+                resolved_mcp,
+                before_tool_call=before_hook,
+                after_tool_call=after_hook,
+            )
+
         app_config.plugins.extend(
             plugins.build_plugins(
                 autowire_config=self.autowire_config,
                 security_config=self.security_config,
                 queue_config=self.queue_config,
-                mcp_config=self.mcp_config,
+                mcp_config=resolved_mcp,
                 email_config=self.email_config,
             )
         )

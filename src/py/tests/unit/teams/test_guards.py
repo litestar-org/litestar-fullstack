@@ -1,567 +1,232 @@
-"""Comprehensive tests for team domain guards."""
+"""Unit/HTTP authorization tests for Teams SecureControllers and least-privilege MCP auth."""
 
 from __future__ import annotations
 
-from unittest.mock import Mock
-from uuid import uuid4
+from typing import TYPE_CHECKING, Any
 
 import pytest
-from litestar.exceptions import PermissionDeniedException
+from advanced_alchemy.base import orm_registry
+from advanced_alchemy.extensions.litestar import SQLAlchemyPlugin
+from litestar import Litestar, get
+from litestar.testing import AsyncTestClient
+from litestar_queues import QueueConfig, QueuePlugin, WorkerConfig
+from litestar_security import CSRF_REQUIRED_OPT_KEY, SecurityPlugin, public
+from litestar_security.accounts import Argon2PasswordHasher
+from litestar_security.context import CredentialRestrictions
 
 from app.db import models as m
-from app.domain.teams.guards import (
-    requires_team_admin,
-    requires_team_membership,
-    requires_team_ownership,
+from app.domain.accounts.security import (
+    SQLAlchemyAPIKeyStore,
+    build_api_key_service,
+    build_csrf_config,
+    build_security_config,
+    build_session_middleware,
+    build_session_store,
 )
-from app.lib import constants
-
-pytestmark = [pytest.mark.anyio, pytest.mark.unit, pytest.mark.auth, pytest.mark.security, pytest.mark.teams]
-
-
-def test_membership_superuser_flag_passes() -> None:
-    """Test that is_superuser=True passes the guard."""
-    team_id = uuid4()
-
-    mock_user = Mock()
-    mock_user.is_superuser = True
-    mock_user.roles = []
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_membership(mock_connection, mock_handler)
-
-
-def test_membership_superuser_role_passes() -> None:
-    """Test that user with SUPERUSER_ACCESS_ROLE passes."""
-    team_id = uuid4()
-
-    mock_role = Mock()
-    mock_role.role_name = constants.SUPERUSER_ACCESS_ROLE
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = [mock_role]
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_membership(mock_connection, mock_handler)
-
-
-def test_team_member_passes() -> None:
-    """Test that team member passes the guard."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_membership(mock_connection, mock_handler)
-
-
-def test_non_member_raises_permission_denied() -> None:
-    """Test that non-member raises PermissionDeniedException."""
-    team_id = uuid4()
-    other_team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = other_team_id  # Different team
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException) as exc_info:
-        requires_team_membership(mock_connection, mock_handler)
-
-    assert "Insufficient permissions" in str(exc_info.value.detail)
-
-
-def test_no_teams_raises_permission_denied() -> None:
-    """Test that user with no teams raises PermissionDeniedException."""
-    team_id = uuid4()
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException) as exc_info:
-        requires_team_membership(mock_connection, mock_handler)
-
-    assert "Insufficient permissions" in str(exc_info.value.detail)
-
-
-def test_non_superuser_role_fails() -> None:
-    """Test that user with non-superuser role fails."""
-    team_id = uuid4()
-
-    mock_role = Mock()
-    mock_role.role_name = "regular_user"
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = [mock_role]
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException):
-        requires_team_membership(mock_connection, mock_handler)
-
-
-def test_admin_superuser_flag_passes() -> None:
-    """Test that is_superuser=True passes the guard."""
-    team_id = uuid4()
-
-    mock_user = Mock()
-    mock_user.is_superuser = True
-    mock_user.roles = []
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_admin(mock_connection, mock_handler)
-
-
-def test_admin_superuser_role_passes() -> None:
-    """Test that user with SUPERUSER_ACCESS_ROLE passes."""
-    team_id = uuid4()
-
-    mock_role = Mock()
-    mock_role.role_name = constants.SUPERUSER_ACCESS_ROLE
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = [mock_role]
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_admin(mock_connection, mock_handler)
-
-
-def test_team_admin_passes() -> None:
-    """Test that team admin passes the guard."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.ADMIN
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_admin(mock_connection, mock_handler)
-
-
-def test_team_member_fails() -> None:
-    """Test that regular team member fails admin guard."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.MEMBER  # Not admin
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException) as exc_info:
-        requires_team_admin(mock_connection, mock_handler)
-
-    assert "Insufficient permissions" in str(exc_info.value.detail)
-
-
-def test_admin_of_different_team_fails() -> None:
-    """Test that admin of different team fails."""
-    team_id = uuid4()
-    other_team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = other_team_id  # Different team
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.ADMIN
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException):
-        requires_team_admin(mock_connection, mock_handler)
-
-
-def test_ownership_superuser_flag_passes() -> None:
-    """Test that is_superuser=True passes the guard."""
-    team_id = uuid4()
-
-    mock_user = Mock()
-    mock_user.is_superuser = True
-    mock_user.roles = []
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_ownership_superuser_role_passes() -> None:
-    """Test that user with SUPERUSER_ACCESS_ROLE passes."""
-    team_id = uuid4()
-
-    mock_role = Mock()
-    mock_role.role_name = constants.SUPERUSER_ACCESS_ROLE
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = [mock_role]
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_team_owner_passes() -> None:
-    """Test that team owner passes the guard."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.is_owner = True
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should not raise
-    requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_team_admin_non_owner_fails() -> None:
-    """Test that team admin who is not owner fails."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.is_owner = False  # Not owner
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException) as exc_info:
-        requires_team_ownership(mock_connection, mock_handler)
-
-    assert "Insufficient permissions" in str(exc_info.value.detail)
-
-
-def test_owner_of_different_team_fails() -> None:
-    """Test that owner of different team fails."""
-    team_id = uuid4()
-    other_team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = other_team_id  # Different team
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.is_owner = True
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException):
-        requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_no_memberships_fails() -> None:
-    """Test that user with no memberships fails."""
-    team_id = uuid4()
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = []
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    with pytest.raises(PermissionDeniedException):
-        requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_owner_passes_all_guards() -> None:
-    """Test that team owner passes all guards."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.ADMIN
-    mock_membership.is_owner = True
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # All guards should pass
-    requires_team_membership(mock_connection, mock_handler)
-    requires_team_admin(mock_connection, mock_handler)
-    requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_admin_passes_membership_and_admin() -> None:
-    """Test that admin passes membership and admin guards but not ownership."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.ADMIN
-    mock_membership.is_owner = False
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should pass membership and admin
-    requires_team_membership(mock_connection, mock_handler)
-    requires_team_admin(mock_connection, mock_handler)
-
-    # Should fail ownership
-    with pytest.raises(PermissionDeniedException):
-        requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_member_passes_only_membership() -> None:
-    """Test that regular member only passes membership guard."""
-    team_id = uuid4()
-
-    mock_team = Mock()
-    mock_team.id = team_id
-
-    mock_membership = Mock()
-    mock_membership.team = mock_team
-    mock_membership.role = m.TeamRoles.MEMBER
-    mock_membership.is_owner = False
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should pass membership
-    requires_team_membership(mock_connection, mock_handler)
-
-    # Should fail admin and ownership
-    with pytest.raises(PermissionDeniedException):
-        requires_team_admin(mock_connection, mock_handler)
-
-    with pytest.raises(PermissionDeniedException):
-        requires_team_ownership(mock_connection, mock_handler)
-
-
-def test_member_of_requested_team_among_many() -> None:
-    """Test user who is member of requested team among multiple teams."""
-    team_id = uuid4()
-    other_team_id = uuid4()
-
-    mock_team1 = Mock()
-    mock_team1.id = other_team_id
-
-    mock_team2 = Mock()
-    mock_team2.id = team_id
-
-    mock_membership1 = Mock()
-    mock_membership1.team = mock_team1
-
-    mock_membership2 = Mock()
-    mock_membership2.team = mock_team2
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_membership1, mock_membership2]
-
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": team_id}
-    mock_handler = Mock()
-
-    # Should pass
-    requires_team_membership(mock_connection, mock_handler)
-
-
-def test_admin_in_one_member_in_another() -> None:
-    """Test user who is admin in one team but member in another."""
-    admin_team_id = uuid4()
-    member_team_id = uuid4()
-
-    mock_admin_team = Mock()
-    mock_admin_team.id = admin_team_id
-
-    mock_member_team = Mock()
-    mock_member_team.id = member_team_id
-
-    mock_admin_membership = Mock()
-    mock_admin_membership.team = mock_admin_team
-    mock_admin_membership.role = m.TeamRoles.ADMIN
-    mock_admin_membership.is_owner = False
-
-    mock_member_membership = Mock()
-    mock_member_membership.team = mock_member_team
-    mock_member_membership.role = m.TeamRoles.MEMBER
-    mock_member_membership.is_owner = False
-
-    mock_user = Mock()
-    mock_user.is_superuser = False
-    mock_user.roles = []
-    mock_user.teams = [mock_admin_membership, mock_member_membership]
-
-    mock_handler = Mock()
-
-    # Should pass admin for admin_team
-    mock_connection = Mock()
-    mock_connection.user = mock_user
-    mock_connection.path_params = {"team_id": admin_team_id}
-    requires_team_admin(mock_connection, mock_handler)
-
-    # Should fail admin for member_team
-    mock_connection2 = Mock()
-    mock_connection2.user = mock_user
-    mock_connection2.path_params = {"team_id": member_team_id}
-    with pytest.raises(PermissionDeniedException):
-        requires_team_admin(mock_connection2, mock_handler)
+from app.domain.teams.controllers import TeamController, TeamInvitationController, TeamMemberController
+from app.lib.secrets import API_KEY_PEPPER_INFO, derive_subkey
+from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
+
+pytestmark = pytest.mark.anyio
+
+
+async def _build_teams_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLAlchemyAsyncConfig, Settings]:
+    db_cfg = DatabaseSettings(URL=f"sqlite+aiosqlite:///{tmp_path / name}").get_config()
+    async with db_cfg.get_engine().begin() as conn:
+        await conn.run_sync(orm_registry.metadata.create_all)
+
+    settings = Settings(
+        app=AppSettings(SECRET_KEY="teams-guards-secret", COOKIE_SECURE=False),
+        security=SecuritySettings(COOKIE_SECURE=False),
+    )
+
+    @get("/api/csrf", opt={"auth": public(), CSRF_REQUIRED_OPT_KEY: True})
+    async def csrf_bootstrap() -> dict[str, bool]:
+        return {"ok": True}
+
+    sec_cfg = build_security_config(settings, db_cfg)
+    queue_cfg = QueueConfig(
+        queue_backend="memory",
+        execution_backend="immediate",
+        worker=WorkerConfig(placement="external"),
+    )
+    app = Litestar(
+        route_handlers=[csrf_bootstrap, TeamController, TeamMemberController, TeamInvitationController],
+        plugins=[
+            SQLAlchemyPlugin(config=db_cfg),
+            QueuePlugin(config=queue_cfg),
+            SecurityPlugin(sec_cfg),
+        ],
+        middleware=[build_session_middleware(settings)],
+        csrf_config=build_csrf_config(settings),
+        stores={"sessions": build_session_store(db_cfg)},
+    )
+    return app, db_cfg, settings
+
+
+async def _seed_user(
+    db_cfg: SQLAlchemyAsyncConfig,
+    *,
+    email: str,
+    name: str = "User",
+    is_superuser: bool = False,
+) -> m.User:
+    hashed = await Argon2PasswordHasher().hash("StrongPassword!123")
+    async with db_cfg.get_session() as session:
+        user = m.User(
+            email=email,
+            name=name,
+            hashed_password=hashed,
+            is_active=True,
+            is_verified=True,
+            is_superuser=is_superuser,
+        )
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+        return user
+
+
+async def _login(client: AsyncTestClient[Any], email: str) -> str:
+    boot = await client.get("/api/csrf")
+    assert boot.status_code == 200
+    csrf_token = client.cookies.get("XSRF-TOKEN") or ""
+    resp = await client.post(
+        "/api/access/login",
+        json={"identifier": email, "password": "StrongPassword!123"},
+        headers={"X-XSRF-TOKEN": csrf_token},
+    )
+    assert resp.status_code in {200, 201, 204}, resp.text
+    return client.cookies.get("XSRF-TOKEN") or csrf_token
+
+
+async def _seed_team_roles(
+    db_cfg: SQLAlchemyAsyncConfig,
+) -> tuple[str, m.User, m.User, m.User, m.User, m.User]:
+    owner = await _seed_user(db_cfg, email="owner@example.com", name="Owner")
+    admin = await _seed_user(db_cfg, email="admin@example.com", name="Admin")
+    member = await _seed_user(db_cfg, email="member@example.com", name="Member")
+    outsider = await _seed_user(db_cfg, email="outsider@example.com", name="Outsider")
+    invitee = await _seed_user(db_cfg, email="invitee@example.com", name="Invitee")
+
+    async with db_cfg.get_session() as session:
+        team = m.Team(name="Alpha", slug="alpha")
+        session.add(team)
+        await session.flush()
+        session.add_all(
+            [
+                m.TeamMember(team_id=team.id, user_id=owner.id, role=m.TeamRoles.ADMIN, is_owner=True),
+                m.TeamMember(team_id=team.id, user_id=admin.id, role=m.TeamRoles.ADMIN, is_owner=False),
+                m.TeamMember(team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER, is_owner=False),
+            ]
+        )
+        await session.commit()
+        return str(team.id), owner, admin, member, outsider, invitee
+
+
+async def test_team_role_guards_and_least_privilege_api_key_matrix(tmp_path: Path) -> None:
+    app, db_cfg, settings = await _build_teams_app(tmp_path, "team_guards.sqlite3")
+    team_id, owner, admin, member, outsider, invitee = await _seed_team_roles(db_cfg)
+
+    key_svc = build_api_key_service(
+        SQLAlchemyAPIKeyStore(db_cfg),
+        derive_subkey(settings.app.SECRET_KEY, API_KEY_PEPPER_INFO),
+    )
+    issued = await key_svc.issue(
+        subject_id=str(owner.id),
+        restrictions=CredentialRestrictions(scopes=frozenset({"read", "write", "mcp"})),
+    )
+
+    async with AsyncTestClient(app=app) as api_client:
+        headers = {"Authorization": f"Bearer {issued.value}"}
+        assert (await api_client.get("/api/teams", headers=headers)).status_code == 200
+        assert (await api_client.get(f"/api/teams/{team_id}", headers=headers)).status_code == 200
+        assert (await api_client.post("/api/teams", json={"name": "Nope"}, headers=headers)).status_code == 401
+        assert (
+            await api_client.patch(f"/api/teams/{team_id}", json={"name": "Renamed"}, headers=headers)
+        ).status_code == 401
+        assert (await api_client.delete(f"/api/teams/{team_id}", headers=headers)).status_code == 401
+
+    async with AsyncTestClient(app=app) as outsider_client:
+        csrf = await _login(outsider_client, outsider.email)
+        assert (await outsider_client.get(f"/api/teams/{team_id}")).status_code == 403
+        assert (await outsider_client.get(f"/api/teams/{team_id}/invitations")).status_code == 403
+        assert (
+            await outsider_client.post(
+                f"/api/teams/{team_id}/members",
+                json={"userName": outsider.email},
+                headers={"X-XSRF-TOKEN": csrf},
+            )
+        ).status_code == 403
+
+    async with AsyncTestClient(app=app) as member_client:
+        csrf = await _login(member_client, member.email)
+        assert (await member_client.get(f"/api/teams/{team_id}")).status_code == 200
+        assert (await member_client.get(f"/api/teams/{team_id}/invitations")).status_code == 200
+        assert (
+            await member_client.patch(
+                f"/api/teams/{team_id}",
+                json={"name": "MemberEdit"},
+                headers={"X-XSRF-TOKEN": csrf},
+            )
+        ).status_code == 403
+        assert (
+            await member_client.post(
+                f"/api/teams/{team_id}/invitations",
+                json={"email": invitee.email, "role": "MEMBER"},
+                headers={"X-XSRF-TOKEN": csrf},
+            )
+        ).status_code == 403
+
+    async with AsyncTestClient(app=app) as admin_client:
+        csrf = await _login(admin_client, admin.email)
+        assert (
+            await admin_client.patch(
+                f"/api/teams/{team_id}",
+                json={"description": "Updated by admin"},
+                headers={"X-XSRF-TOKEN": csrf},
+            )
+        ).status_code == 200
+        assert (
+            await admin_client.delete(f"/api/teams/{team_id}", headers={"X-XSRF-TOKEN": csrf})
+        ).status_code == 403
+        remove_owner = await admin_client.request(
+            "DELETE",
+            f"/api/teams/{team_id}/members",
+            json={"userName": owner.email},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert remove_owner.status_code == 400
+        inv_resp = await admin_client.post(
+            f"/api/teams/{team_id}/invitations",
+            json={"email": invitee.email, "role": "MEMBER"},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert inv_resp.status_code == 201, inv_resp.text
+        invitation_id = inv_resp.json()["id"]
+
+    async with AsyncTestClient(app=app) as outsider_accept_client:
+        csrf = await _login(outsider_accept_client, outsider.email)
+        wrong_user = await outsider_accept_client.post(
+            f"/api/teams/{team_id}/invitations/{invitation_id}/accept",
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert wrong_user.status_code == 403
+
+    async with AsyncTestClient(app=app) as invitee_client:
+        csrf = await _login(invitee_client, invitee.email)
+        accepted = await invitee_client.post(
+            f"/api/teams/{team_id}/invitations/{invitation_id}/accept",
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert accepted.status_code in {200, 201}, accepted.text
+
+    async with AsyncTestClient(app=app) as owner_client:
+        csrf = await _login(owner_client, owner.email)
+        deleted = await owner_client.delete(f"/api/teams/{team_id}", headers={"X-XSRF-TOKEN": csrf})
+        assert deleted.status_code in {200, 204}
