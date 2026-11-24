@@ -1,25 +1,28 @@
-# pylint: disable=[invalid-name,import-outside-toplevel]
+"""Litestar application core plugin and dependency assembly."""
+
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, TypeVar
+from functools import partial
+from importlib import import_module
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 from advanced_alchemy.exceptions import DuplicateKeyError, RepositoryError
-from httpx_oauth.oauth2 import OAuth2Token
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service import CursorPagination, OffsetPagination
 from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.params import Body
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
-from litestar.security.jwt import OAuth2Login, Token
 from litestar_email import EmailService
+from litestar_queues import QueueService
 
 from app import config
 from app.__metadata__ import __version__
 from app.db import models as m
-from app.domain.accounts.guards import auth, provide_user
 from app.lib.email import AppEmailService
 from app.lib.exceptions import (
     ApplicationClientError,
@@ -31,85 +34,121 @@ from app.lib.validation import ValidationError
 from app.server import plugins
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
+    from collections.abc import AsyncIterator
 
     from click import Group
     from litestar.config.app import AppConfig
-    from litestar.datastructures import State
+    from litestar_autowire import AutowireConfig
+    from litestar_email import EmailConfig
+    from litestar_mcp import MCPConfig
+    from litestar_queues import QueueConfig
+    from litestar_security import SecurityConfig
 
-
-T = TypeVar("T")
+__all__ = ("ApplicationCore",)
 
 
 class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
-    """Application core configuration plugin.
+    """Primary Litestar initialization and CLI plugin assembling the first-party stack."""
 
-    This class is responsible for configuring the main Litestar application with our routes, guards, and various plugins
+    __slots__ = (
+        "app_slug",
+        "autowire_config",
+        "email_config",
+        "mcp_config",
+        "queue_config",
+        "security_config",
+    )
 
-    """
-
-    __slots__ = ("app_slug",)
-    app_slug: str
+    def __init__(
+        self,
+        *,
+        autowire_config: AutowireConfig | None = None,
+        security_config: SecurityConfig[Any] | None = None,
+        queue_config: QueueConfig | None = None,
+        mcp_config: MCPConfig | None = None,
+        email_config: EmailConfig | None = None,
+    ) -> None:
+        """Initialize the core plugin with optional config overrides for isolated testing."""
+        self.app_slug = ""
+        self.autowire_config = autowire_config
+        self.security_config = security_config
+        self.queue_config = queue_config
+        self.mcp_config = mcp_config
+        self.email_config = email_config
 
     def on_cli_init(self, cli: Group) -> None:
-        from app.cli.commands import user_management_group
-
+        """Register application-specific CLI command groups."""
         settings = get_settings()
         self.app_slug = settings.app.slug
+        try:
+            from app.cli.commands import user_management_group
+        except ImportError:
+            return
         cli.add_command(user_management_group)
 
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
-        """Configure application for use with SQLAlchemy.
-
-        Args:
-            app_config: The :class:`AppConfig <litestar.config.app.AppConfig>` instance.
-
-        Returns:
-            The configured app config.
-        """
+        """Configure OpenAPI, CORS, proxy headers, first-party plugins, DI, and exception handlers."""
         settings = get_settings()
         self.app_slug = settings.app.slug
         app_config.debug = settings.app.DEBUG
+        app_config.cors_config = config.cors
         app_config.openapi_config = OpenAPIConfig(
             title=settings.app.NAME,
             version=__version__,
-            components=[auth.openapi_components],
-            security=[auth.security_requirement],
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
-        app_config = auth.on_app_init(app_config)
-        app_config.cors_config = config.cors
 
         app_config.plugins.extend(
-            [
-                plugins.structlog,
-                plugins.granian,
-                plugins.alchemy,
-                plugins.vite,
-                plugins.get_saq_plugin(),
-                plugins.problem_details,
-                plugins.oauth2_provider,
-                plugins.email,
-                plugins.domain,
-            ],
+            plugins.build_plugins(
+                autowire_config=self.autowire_config,
+                security_config=self.security_config,
+                queue_config=self.queue_config,
+                mcp_config=self.mcp_config,
+                email_config=self.email_config,
+            )
+        )
+
+        if settings.server.LITESTAR_TRUSTED_PROXIES:
+            proxy_wrapper: Any = vars(import_module("granian.utils.proxies"))["wrap_asgi_with_proxy_headers"]
+            app_config.middleware.append(
+                partial(
+                    proxy_wrapper,
+                    trusted_hosts=settings.server.LITESTAR_TRUSTED_PROXIES,
+                )
+            )
+
+        active_email_config = self.email_config or config.email
+
+        async def provide_mailer() -> AsyncIterator[EmailService]:
+            async with active_email_config.provide_service() as service:
+                yield service
+
+        app_config.dependencies.update(
+            {
+                "settings": Provide(provide_app_settings, sync_to_thread=False),
+                "mailer": Provide(provide_mailer),
+                "app_mailer": Provide(AppEmailService, sync_to_thread=False),
+            }
         )
 
         app_config.signature_namespace.update(
             {
-                "Token": Token,
-                "OAuth2Login": OAuth2Login,
-                "RequestEncodingType": RequestEncodingType,
-                "Body": Body,
-                "m": m,
-                "UUID": UUID,
-                "datetime": datetime,
-                "OAuth2Token": OAuth2Token,
+                "FilterTypes": FilterTypes,
+                "OffsetPagination": OffsetPagination,
+                "CursorPagination": CursorPagination,
                 "AppSettings": AppSettings,
-                "User": m.User,
                 "AppEmailService": AppEmailService,
                 "EmailService": EmailService,
-            },
+                "QueueService": QueueService,
+                "m": m,
+                "User": m.User,
+                "UUID": UUID,
+                "datetime": datetime,
+                "RequestEncodingType": RequestEncodingType,
+                "Body": Body,
+            }
         )
+
         app_config.exception_handlers = {
             ApplicationError: exception_to_http_response,
             ApplicationClientError: exception_to_http_response,
@@ -118,26 +157,4 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             DuplicateKeyError: exception_to_http_response,
         }
 
-        app_config.dependencies.update(
-            {
-                "current_user": Provide(provide_user, sync_to_thread=False),
-                "settings": Provide(provide_app_settings, sync_to_thread=False),
-                "app_mailer": Provide(get_mailer_dependency),
-            }
-        )
-
         return app_config
-
-
-async def get_mailer_dependency(state: State) -> AsyncGenerator[AppEmailService, None]:
-    """Provide the app email service.
-
-    Args:
-        state: The application state.
-
-    Yields:
-        The configured AppEmailService.
-    """
-    email_config = state.mailer
-    async with email_config.provide_service() as mailer:
-        yield AppEmailService(mailer=mailer)

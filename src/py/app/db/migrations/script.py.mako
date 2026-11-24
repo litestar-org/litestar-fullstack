@@ -10,7 +10,17 @@ from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
-from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC, StoredObject, PasswordHash
+from advanced_alchemy.types import (
+    Bool,
+    DateTimeUTC,
+    EncryptedString,
+    EncryptedText,
+    GUID,
+    JsonB,
+    ORA_JSONB,
+    PasswordHash,
+    StoredObject,
+)
 from sqlalchemy import Text  # pyright: ignore  # noqa: F401
 ${imports if imports else ""}
 if TYPE_CHECKING:
@@ -18,15 +28,17 @@ if TYPE_CHECKING:
 
 __all__ = ("downgrade", "upgrade", "schema_upgrades", "schema_downgrades", "data_upgrades", "data_downgrades")
 
-sa.GUID = GUID # pyright: ignore
+sa.Bool = Bool  # pyright: ignore
+sa._OracleAwareBoolean = Bool  # pyright: ignore
+sa.GUID = GUID  # pyright: ignore
 sa.DateTimeUTC = DateTimeUTC  # pyright: ignore
+sa.JsonB = JsonB  # pyright: ignore
 sa.ORA_JSONB = ORA_JSONB  # pyright: ignore
 sa.EncryptedString = EncryptedString  # pyright: ignore
 sa.EncryptedText = EncryptedText  # pyright: ignore
 sa.StoredObject = StoredObject  # pyright: ignore
 sa.PasswordHash = PasswordHash  # pyright: ignore
 
-# revision identifiers, used by Alembic.
 revision = ${repr(up_revision)}
 down_revision = ${repr(down_revision)}
 branch_labels = ${repr(branch_labels)}

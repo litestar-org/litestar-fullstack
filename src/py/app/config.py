@@ -1,7 +1,11 @@
-from functools import cache
+"""Module-level Litestar plugin configuration singletons."""
+
+from __future__ import annotations
 
 import structlog
-from litestar_saq import SAQConfig
+from litestar_asyncapi import AsyncAPIConfig
+from litestar_autowire import AutowireConfig
+from litestar_security import required
 
 from app.lib.settings import get_settings
 
@@ -14,16 +18,45 @@ vite = _settings.vite.get_config()
 problem_details = _settings.app.get_problem_details_config()
 log = _settings.log.get_structlog_config()
 email = _settings.email.get_config()
+queues = _settings.queues.get_config(
+    alchemy_config=alchemy,
+    db_settings=_settings.db,
+    app_settings=_settings.app,
+)
+asyncapi = AsyncAPIConfig(
+    title=_settings.app.NAME,
+    version=_settings.app.VERSION,
+    include_sse_routes=True,
+    include_websocket_routes=True,
+)
+autowire = AutowireConfig(
+    domain_packages=["app.domain"],
+    integrations=["queues"],
+)
+security = _settings.security.get_config(_settings.app)
+mcp = _settings.mcp.get_config(
+    auth=required("api-key") if security.api_key is not None else None,
+)
 
-
-@cache
-def get_saq_config() -> SAQConfig:
-    """Get SAQ config lazily to avoid Redis connection during build."""
-    return _settings.saq.get_config()
+__all__ = (
+    "alchemy",
+    "asyncapi",
+    "autowire",
+    "compression",
+    "cors",
+    "email",
+    "log",
+    "mcp",
+    "problem_details",
+    "queues",
+    "security",
+    "setup_logging",
+    "vite",
+)
 
 
 def setup_logging() -> None:
-    """Return a configured logger for the given name."""
+    """Configure stdlib and structlog loggers from application log settings."""
     if log.structlog_logging_config.standard_lib_logging_config:
         log.structlog_logging_config.standard_lib_logging_config.configure()
     log.structlog_logging_config.configure()

@@ -15,18 +15,18 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "litestar[jinja,jwt,structlog,cryptography,pydantic]",
-  "advanced-alchemy[uuid,obstore,pwdlib]",
-  "redis",
-  "psycopg[pool,binary]",
+  "litestar[jinja,structlog,cryptography]>=2.25.0",
+  "advanced-alchemy[uuid,obstore,pwdlib,cryptography]>=1.13.0b3",
+  "asyncpg",
   "python-dotenv",
-  "litestar-saq[hiredis]",
-  "litestar-vite>=0.15.0b4",
-  "litestar-granian[uvloop]",
-  "litestar-email[smtp]>=0.3.0",
-  "httpx-oauth",
-  "pyotp>=2.9.0",
-  "qrcode[pil]>=7.4.0",
+  "litestar-granian[uvloop]>=0.17.0",
+  "litestar-email[smtp,httpx]>=0.4.0",
+  "litestar-security[argon2,mfa,oauth,passkeys]>=0.7.3",
+  "litestar-queues>=0.15.0",
+  "litestar-autowire[queues]>=0.2.0",
+  "litestar-mcp>=0.20.2",
+  "litestar-asyncapi>=0.3.0",
+  "litestar-vite[asyncapi]>=0.34.0",
 ]
 description = "Reference application for building a fullstack application with Litestar."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vite", "spa"]
@@ -64,7 +64,6 @@ linting = [
   "ruff>=0.0.287",
   "slotscheck",
   "types-click",
-  "types-passlib",
   "types-pyyaml",
   "pyright",
   "codespell>=2.4.1",
@@ -77,36 +76,24 @@ test = [
   "pytest-cov",
   "coverage[toml]",
   "pytest-sugar",
-  "pytest-databases[postgres]>=0.1.0",
+  "pytest-databases[postgres]>=0.20.0b3",
   "polyfactory",
   "aiosqlite",
-  "asyncpg",
   "anyio",
   "pytest-anyio",
 ]
 
 
 [build-system]
-build-backend = "hatchling.build"
-requires = ["hatchling", "setuptools"]
+build-backend = "uv_build"
+requires = ["uv_build>=0.13.0,<0.14.0"]
 
-[tool.hatch.metadata]
-# direct dependency references, e.g `pip @ git+https://github.com/pypa/pip.git@master`
-allow-direct-references = true
-
-[tool.hatch.build]
-dev-mode-dirs = ["src/py", "."]
-ignore-vcs = true
-sources = ["src/py"]
-
-[tool.hatch.build.targets.sdist]
-exclude = [".github", "docs"]
-include = ["src/**/*", "tools/*", "resources", "LICENSE"]
-skip-excluded-dirs = false
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/py/app"]
-# ignore-vcs is inherited from [tool.hatch.build] - static assets are included automatically
+[tool.uv.build-backend]
+module-name = "app"
+module-root = "src/py"
+source-exclude = ["**/tests/**"]
+source-include = ["LICENSE", "README.md"]
+wheel-exclude = ["*.map"]
 
 [tool.bumpversion]
 allow_dirty = false
@@ -179,8 +166,6 @@ addopts = [
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
   "ignore::DeprecationWarning:google.*",
-  "ignore::DeprecationWarning:passlib.*",
-  "ignore::DeprecationWarning:aiosql.*",
   "ignore::DeprecationWarning:litestar.constants.*",
   "ignore::DeprecationWarning:litestar.utils.*",
   "ignore::DeprecationWarning:litestar.cli.*",
@@ -289,6 +274,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "src/py/app/db/models/*.py" = ["PLW0108", "TC003"]
+"src/py/app/domain/**/controllers*.py" = ["TC001", "TC002", "TC003"]
 "src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
@@ -332,7 +318,7 @@ exclude = '''(?x)(
 |^dist/
 |^.venv/
 |^node_modules/
-|^migrations/
+|^src/py/app/db/migrations/
 |^src/py/app/server/static/
 )
 '''
@@ -358,19 +344,13 @@ warn_unused_ignores = false
 ignore_missing_imports = true
 module = [
   "sqlalchemy.*",
-  "saq.*",
-  "uvicorn.*",
-  "aiohttp.*",
-  "jsbeautifier",
-  "jsbeautifier.*",
   "uvloop",
   "uvloop.*",
-  "nodeenv",
 ]
 
 [[tool.mypy.overrides]]
 ignore_errors = true
-module = ["app.db.migrations.*", "app.lib.dto.*"]
+module = ["app.db.migrations.*"]
 
 
 [tool.pyright]

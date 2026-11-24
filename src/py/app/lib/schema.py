@@ -1,36 +1,25 @@
+from __future__ import annotations
+
 from typing import Any
 
 import msgspec
-from advanced_alchemy.utils.text import camelize
-from pydantic import BaseModel as _BaseModel
-from pydantic import ConfigDict
+
+__all__ = ("BaseStruct", "CamelizedBaseStruct", "Message")
 
 
 class BaseStruct(msgspec.Struct):
+    """Base msgspec Struct with unset-filtering dictionary export."""
+
     def to_dict(self) -> dict[str, Any]:
+        """Convert populated struct fields to a plain dictionary."""
         return {f: getattr(self, f) for f in self.__struct_fields__ if getattr(self, f, None) != msgspec.UNSET}
 
 
 class CamelizedBaseStruct(BaseStruct, rename="camel"):
-    """Camelized Base Struct"""
+    """Camel-cased msgspec Struct for HTTP API payloads."""
 
 
 class Message(CamelizedBaseStruct):
+    """Simple human-readable status message payload."""
+
     message: str
-
-
-class BaseSchema(_BaseModel):
-    """Base Settings."""
-
-    model_config = ConfigDict(
-        validate_assignment=True,
-        from_attributes=True,
-        use_enum_values=True,
-        arbitrary_types_allowed=True,
-    )
-
-
-class CamelizedBaseSchema(BaseSchema):
-    """Camelized Base pydantic schema."""
-
-    model_config = ConfigDict(populate_by_name=True, alias_generator=camelize)

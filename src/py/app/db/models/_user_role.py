@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from advanced_alchemy.base import UUIDv7AuditBase
+from advanced_alchemy.types import DateTimeUTC
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,13 +16,18 @@ if TYPE_CHECKING:
 
 
 class UserRole(UUIDv7AuditBase):
-    """User Role."""
+    """Association between a user and an application role."""
 
     __tablename__ = "user_account_role"
     __table_args__ = {"comment": "Links a user to a specific role."}
+
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user_account.id", ondelete="cascade"), nullable=False)
     role_id: Mapped[UUID] = mapped_column(ForeignKey("role.id", ondelete="cascade"), nullable=False)
-    assigned_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
+    assigned_at: Mapped[datetime] = mapped_column(
+        DateTimeUTC(timezone=True),
+        default=lambda: datetime.now(UTC),
+        nullable=False,
+    )
 
     user: Mapped[User] = relationship(back_populates="roles", innerjoin=True, uselist=False, lazy="joined")
     user_name: AssociationProxy[str] = association_proxy("user", "name")
