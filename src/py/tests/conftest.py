@@ -18,7 +18,6 @@ os.environ.update(
         "QUEUES_PLACEMENT": "external",
         "VITE_PORT": "3006",
         "VITE_DEV_MODE": "false",
-        "EMAIL_ENABLED": "true",
         "EMAIL_BACKEND": "memory",
         "LITESTAR_DEBUG": "false",
         "MCP_ENABLED": "true",

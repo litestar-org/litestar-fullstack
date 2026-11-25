@@ -29,6 +29,7 @@ function AcceptInvitationPage() {
       const response = await getTeam({ path: { team_id: teamId } })
       return response.data
     },
+    retry: false,
   })
 
   const acceptMutation = useMutation({

@@ -55,7 +55,7 @@ async def test_team_invitation_queued_email_contains_app_url(
     message = email_outbox[0]
     assert isinstance(message, EmailMultiAlternatives)
     assert message.html_body is not None
-    expected_path = f"{app_url}/teams/{test_team.id}/invitations/{invitation_id}"
+    expected_path = f"{app_url}/teams/{test_team.id}/invitations/{invitation_id}/accept"
     assert expected_path in message.html_body
     assert "example.com" not in message.html_body
 

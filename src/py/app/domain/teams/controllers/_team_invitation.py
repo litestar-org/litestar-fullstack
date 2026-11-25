@@ -53,7 +53,14 @@ class TeamInvitationController(SecureController):
         team_id: UUID,
         data: TeamInvitationCreate,
     ) -> Response[TeamInvitation]:
-        """Create a new team invitation and enqueue durable email delivery."""
+        """Create a new team invitation and enqueue durable email delivery.
+
+        Returns:
+            HTTP 201 response containing the created invitation.
+
+        Raises:
+            HTTPException: If the invitee is already a member of the team.
+        """
         team = await teams_service.get(team_id)
         if any(member.email == data.email for member in team.members):
             raise HTTPException(status_code=400, detail="User is already a member of this team")
@@ -63,7 +70,7 @@ class TeamInvitationController(SecureController):
         db_obj = await team_invitations_service.create(payload, auto_commit=True)
 
         app_url = get_settings().app.URL.rstrip("/")
-        invitation_url = f"{app_url}/teams/{team_id}/invitations/{db_obj.id}"
+        invitation_url = f"{app_url}/teams/{team_id}/invitations/{db_obj.id}/accept"
         return Response(
             content=team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation),
             status_code=201,
@@ -87,7 +94,11 @@ class TeamInvitationController(SecureController):
         team_id: UUID,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[TeamInvitation]:
-        """List invitations for a team."""
+        """List invitations for a team.
+
+        Returns:
+            Paginated team invitations.
+        """
         db_objs, total = await team_invitations_service.get_many_and_count(
             *filters,
             m.TeamInvitation.team_id == team_id,
@@ -105,7 +116,11 @@ class TeamInvitationController(SecureController):
         team_id: UUID,
         invitation_id: UUID,
     ) -> None:
-        """Delete a team invitation."""
+        """Delete a team invitation.
+
+        Raises:
+            HTTPException: If the invitation does not belong to ``team_id``.
+        """
         invitation = await team_invitations_service.get(invitation_id)
         if invitation.team_id != team_id:
             raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
@@ -120,7 +135,15 @@ class TeamInvitationController(SecureController):
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Accept a pending invitation addressed to the authenticated user."""
+        """Accept a pending invitation addressed to the authenticated user.
+
+        Returns:
+            Confirmation message for the accepted invitation.
+
+        Raises:
+            HTTPException: If the invitation belongs to another team, was already accepted, or the user is already a member.
+            PermissionDeniedException: If the invitation email does not match ``current_user``.
+        """
         db_obj = await team_invitations_service.get(item_id=invitation_id)
         if db_obj.team_id != team_id:
             raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
@@ -158,7 +181,15 @@ class TeamInvitationController(SecureController):
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Reject a pending invitation addressed to the authenticated user."""
+        """Reject a pending invitation addressed to the authenticated user.
+
+        Returns:
+            Confirmation message for the rejected invitation.
+
+        Raises:
+            HTTPException: If the invitation does not belong to ``team_id``.
+            PermissionDeniedException: If the invitation email does not match ``current_user``.
+        """
         db_obj = await team_invitations_service.get(item_id=invitation_id)
         if db_obj.team_id != team_id:
             raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
