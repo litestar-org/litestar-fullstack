@@ -93,11 +93,11 @@ _GITHUB_ISSUER = "https://github.com"
 
 _WILDCARD_PROXY_NETWORKS: tuple[str, ...] = (
     "127.0.0.0/8",
-    "10.0.0.0/8",
-    "172.16.0.0/12",
-    "192.168.0.0/16",
-    "100.64.0.0/10",
-    "169.254.0.0/16",
+    "10.0.0.0/8",  # NOSONAR - RFC 1918 private range
+    "172.16.0.0/12",  # NOSONAR - RFC 1918 private range
+    "192.168.0.0/16",  # NOSONAR - RFC 1918 private range
+    "100.64.0.0/10",  # NOSONAR - RFC 6598 shared address space
+    "169.254.0.0/16",  # NOSONAR - RFC 3927 link-local range
     "::1/128",
     "fc00::/7",
     "fe80::/10",

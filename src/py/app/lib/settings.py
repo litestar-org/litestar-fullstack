@@ -753,7 +753,7 @@ def provide_app_settings() -> AppSettings:
 
 
 def _require_authenticated_queue_stream(connection: ASGIConnection[Any, Any, Any, Any], _: BaseRouteHandler) -> None:
-    principal: object = cast("dict[str, Any]", connection.scope).get("user")
+    principal = _scope_value(connection, "user")
     if not isinstance(principal, Principal) or not principal.is_authenticated:
         raise NotAuthorizedException
 
@@ -769,7 +769,7 @@ async def _authorize_queue_stream_channel(
     Returns:
         ``True`` when the connection may subscribe to the requested channel.
     """
-    principal: object = cast("dict[str, Any]", connection.scope).get("user")
+    principal = _scope_value(connection, "user")
     if not isinstance(principal, Principal) or not principal.is_authenticated or principal.id is None:
         return False
     if _holds_superuser_role(connection):
@@ -780,8 +780,12 @@ async def _authorize_queue_stream_channel(
 
 
 def _holds_superuser_role(connection: ASGIConnection[Any, Any, Any, Any]) -> bool:
-    context: object = cast("dict[str, Any]", connection.scope).get("auth")
+    context = _scope_value(connection, "auth")
     return isinstance(context, SecurityContext) and "superuser" in context.authorization.roles
+
+
+def _scope_value(connection: ASGIConnection[Any, Any, Any, Any], key: str) -> object:
+    return cast("dict[str, Any]", connection.scope).get(key)
 
 
 async def _requested_queue_task(alchemy_config: SQLAlchemyAsyncConfig, target: str, principal_id: str) -> bool:
