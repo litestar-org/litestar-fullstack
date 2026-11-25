@@ -29,14 +29,14 @@ export function buildTeam(overrides: Partial<Team> = {}): Team {
 
 /** Replaces `fetch` with a router over the given API routes; unlisted routes answer 404. */
 export function mockApi(routes: ApiRoutes) {
-  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+  const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
     const request = input instanceof Request ? input : new Request(input, init)
     const route = `${request.method} ${new URL(request.url).pathname}`
     const handler = routes[route]
     if (handler === undefined) {
-      return jsonResponse({ detail: `No handler for ${route}` }, 404)
+      return Promise.resolve(jsonResponse({ detail: `No handler for ${route}` }, 404))
     }
-    return typeof handler === "function" ? handler(request) : jsonResponse(handler)
+    return Promise.resolve(typeof handler === "function" ? handler(request) : jsonResponse(handler))
   })
   globalThis.fetch = fetchMock as typeof fetch
   return {

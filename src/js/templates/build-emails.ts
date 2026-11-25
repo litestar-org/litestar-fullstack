@@ -45,35 +45,36 @@ async function buildTemplates() {
   // A leading underscore marks a file that is not a standalone template.
   const templateFiles = readdirSync(TEMPLATES_DIR).filter((fileName) => fileName.endsWith(".tsx") && !fileName.startsWith("_"))
 
-  let builtCount = 0
-  let failedCount = 0
-
-  for (const templateFile of templateFiles) {
-    const templateName = basename(templateFile, ".tsx")
-
-    try {
-      const { default: Template } = await import(resolve(TEMPLATES_DIR, templateFile))
-
-      if (!Template) {
-        console.warn(`   ⚠ Warning: No default export in ${templateFile}, skipping`)
-        continue
-      }
-
-      const html = inlineGlobalCss(await render(Template(), { pretty: true }))
-      writeFileSync(resolve(OUTPUT_DIR, `${templateName}.html`), html, "utf-8")
-      console.log(`   ✓ ${templateName}.html`)
-      builtCount++
-    } catch (error) {
-      console.error(`   ✗ ${templateFile}:`, error instanceof Error ? error.message : error)
-      failedCount++
-    }
-  }
+  const outcomes = await Promise.all(templateFiles.map(buildTemplate))
+  const builtCount = outcomes.filter((outcome) => outcome === "built").length
+  const failedCount = outcomes.filter((outcome) => outcome === "failed").length
 
   console.log(`\n✅ ${builtCount} templates built to: ${OUTPUT_DIR}`)
 
   if (failedCount > 0) {
     console.error(`❌ ${failedCount} template(s) failed to build`)
     process.exit(1)
+  }
+}
+
+async function buildTemplate(templateFile: string): Promise<"built" | "skipped" | "failed"> {
+  const templateName = basename(templateFile, ".tsx")
+
+  try {
+    const { default: Template } = await import(resolve(TEMPLATES_DIR, templateFile))
+
+    if (!Template) {
+      console.warn(`   ⚠ Warning: No default export in ${templateFile}, skipping`)
+      return "skipped"
+    }
+
+    const html = inlineGlobalCss(await render(Template(), { pretty: true }))
+    writeFileSync(resolve(OUTPUT_DIR, `${templateName}.html`), html, "utf-8")
+    console.log(`   ✓ ${templateName}.html`)
+    return "built"
+  } catch (error) {
+    console.error(`   ✗ ${templateFile}:`, error instanceof Error ? error.message : error)
+    return "failed"
   }
 }
 

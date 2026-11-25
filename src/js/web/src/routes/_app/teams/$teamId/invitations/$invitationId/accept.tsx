@@ -117,7 +117,11 @@ function AcceptInvitationPage() {
       return
     }
     const redirectTimer = setTimeout(() => {
-      void (status === "accepted" ? navigate({ to: "/teams/$teamId", params: { teamId } }) : navigate({ to: "/teams" }))
+      if (status === "accepted") {
+        void navigate({ to: "/teams/$teamId", params: { teamId } })
+      } else {
+        void navigate({ to: "/teams" })
+      }
     }, REDIRECT_DELAY_MS)
     return () => clearTimeout(redirectTimer)
   }, [status, navigate, teamId])

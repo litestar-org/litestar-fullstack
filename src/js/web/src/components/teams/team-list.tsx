@@ -34,8 +34,8 @@ const TEAM_AVATAR_COLORS = [
 
 /** Picks a stable avatar colour for a team, so the same name always gets the same colour. */
 function getTeamColor(name: string): string {
-  const characterCodeSum = name.split("").reduce((sum, character) => sum + character.charCodeAt(0), 0)
-  return TEAM_AVATAR_COLORS[characterCodeSum % TEAM_AVATAR_COLORS.length]
+  const codePointSum = [...name].reduce((sum, character) => sum + (character.codePointAt(0) ?? 0), 0)
+  return TEAM_AVATAR_COLORS[codePointSum % TEAM_AVATAR_COLORS.length]
 }
 
 export function TeamList() {

@@ -334,8 +334,9 @@ async def test_a_user_links_one_identity_per_provider(
     rejections = [link for link in links if isinstance(link, BaseException)]
     assert len(rejections) == CONTENDERS - 1
     assert all(isinstance(rejection, AccountLinkError) for rejection in rejections)
+    second_identity, grant, tokens = _identity("github", "another-subject"), _grant(), _tokens()
     with pytest.raises(AccountLinkError):
-        await store.link(account_id, _identity("github", "another-subject"), _grant(), _tokens(), now=NOW)
+        await store.link(account_id, second_identity, grant, tokens, now=NOW)
     async with alchemy_config.get_session() as db_session:
         assert await db_session.scalar(select(func.count()).select_from(m.UserOAuthAccount)) == 1
 
@@ -419,10 +420,12 @@ async def test_api_key_creation_tells_a_reused_key_id_from_an_unknown_account(
     store = SQLAlchemyAPIKeyStore(alchemy_config)
     await store.create(_api_key("a2tra2tra2tra2tr", account_id))
 
+    duplicate_key = _api_key("a2tra2tra2tra2tr", account_id)
+    orphan_key = _api_key("b2trb2trb2trb2tr", _account_id("unknown-account", 0))
     with pytest.raises(ValueError, match="already exists"):
-        await store.create(_api_key("a2tra2tra2tra2tr", account_id))
+        await store.create(duplicate_key)
     with pytest.raises(ValueError, match="subject does not exist"):
-        await store.create(_api_key("b2trb2trb2trb2tr", _account_id("unknown-account", 0)))
+        await store.create(orphan_key)
 
 
 async def test_revoking_an_api_key_that_already_stopped_working_leaves_it_untouched(
