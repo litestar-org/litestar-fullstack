@@ -11,24 +11,27 @@ const VARIANT_LABELS: Record<GitHubSignInVariant, string> = {
   link: "Link GitHub Account",
 }
 
+const GITHUB_CALLBACK_PATH = "/auth/github/callback"
+
+/** Sends the browser to GitHub; the provider returns it to the callback page. */
+export function startGitHubSignIn() {
+  window.location.assign(`/api/auth/oauth/github/login?return_to=${encodeURIComponent(GITHUB_CALLBACK_PATH)}`)
+}
+
 interface GitHubSignInButtonProps {
   variant?: GitHubSignInVariant
-  onSuccess?: () => void
-  redirectUrl?: string
   authRedirect?: string
   className?: string
 }
 
-export function GitHubSignInButton({ variant = "signin", onSuccess, redirectUrl, authRedirect, className }: Readonly<GitHubSignInButtonProps>) {
+export function GitHubSignInButton({ variant = "signin", authRedirect, className }: Readonly<GitHubSignInButtonProps>) {
   const handleClick = () => {
     if (authRedirect) {
       sessionStorage.setItem(GITHUB_AUTH_REDIRECT_KEY, authRedirect)
     } else {
       sessionStorage.removeItem(GITHUB_AUTH_REDIRECT_KEY)
     }
-    const returnTo = redirectUrl ?? "/auth/github/callback"
-    onSuccess?.()
-    window.location.assign(`/api/auth/oauth/github/login?return_to=${encodeURIComponent(returnTo)}`)
+    startGitHubSignIn()
   }
 
   return (

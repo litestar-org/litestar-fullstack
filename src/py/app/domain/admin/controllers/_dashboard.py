@@ -43,19 +43,12 @@ class DashboardController(SecureController):
     ) -> RecentActivity:
         """Return recent audit activity within the requested time window."""
         cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
-        results, total = await audit_service.get_many_and_count(
+        audit_logs, total = await audit_service.get_many_and_count(
             LimitOffsetFilter(limit=limit, offset=0),
             OrderByFilter(field_name="created_at", sort_order="desc"),
             m.AuditLog.created_at >= cutoff_time,
         )
-        items = [
-            ActivityLogEntry(
-                id=log.id,
-                action=log.action,
-                actor_email=log.actor_email,
-                target_label=log.target_label,
-                created_at=log.created_at,
-            )
-            for log in results
-        ]
-        return RecentActivity(activities=items, total=total)
+        return RecentActivity(
+            activities=[audit_service.to_schema(audit_log, schema_type=ActivityLogEntry) for audit_log in audit_logs],
+            total=total,
+        )

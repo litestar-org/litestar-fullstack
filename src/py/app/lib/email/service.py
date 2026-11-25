@@ -62,26 +62,6 @@ class AppEmailService:
         """Configured application base URL."""
         return self._settings.app.URL
 
-    def _resolve_user_details(self, user: UserProtocol) -> tuple[str, str]:
-        return user.email, user.name or "there"
-
-    def _load_template(self, template_name: str) -> str:
-        if template_name in self._template_cache:
-            return self._template_cache[template_name]
-        template_path = self._template_dir / template_name
-        rendered = template_path.read_text(encoding="utf-8")
-        self._template_cache[template_name] = rendered
-        return rendered
-
-    def _render_template(self, template_name: str, context: dict[str, str | int]) -> str:
-        content = self._load_template(template_name)
-        merged = {"APP_NAME": self.app_name, **context}
-        for key, value in merged.items():
-            text_value = self._validate_http_url(str(value)) if key in _URL_KEYS else str(value)
-            substituted = html_lib.escape(text_value, quote=True)
-            content = content.replace(f"{{{{{key}}}}}", substituted)
-        return content
-
     async def send_email(
         self,
         to_email: str | list[str],
@@ -104,55 +84,31 @@ class AppEmailService:
             EmailConnectionError: If the backend connection fails.
             EmailDeliveryError: If the backend reports a delivery failure.
         """
-        if not text_content:
-            text_content = self._html_to_text(html_content)
-
         recipients = [to_email] if isinstance(to_email, str) else list(to_email)
         message = EmailMultiAlternatives(
             subject=subject,
-            body=text_content,
+            body=text_content or self._html_to_text(html_content),
             html_body=html_content,
             from_email=from_email,
             to=recipients,
             reply_to=[reply_to] if reply_to else [],
         )
-
+        delivery = {"recipient_count": len(recipients), "template": template_name}
         try:
-            num_sent = await self._mailer.send_message(message)
+            sent_count = await self._mailer.send_message(message)
         except EmailRateLimitError as exc:
-            await logger.awarning(
-                "Email delivery rate limited",
-                recipient_count=len(recipients),
-                template=template_name,
-                error_type=type(exc).__name__,
-            )
+            await logger.awarning("Email delivery rate limited", **delivery, error_type=type(exc).__name__)
             raise
         except EmailAuthenticationError as exc:
-            await logger.aerror(
-                "Email backend authentication failed",
-                recipient_count=len(recipients),
-                template=template_name,
-                error_type=type(exc).__name__,
-            )
+            await logger.aerror("Email backend authentication failed", **delivery, error_type=type(exc).__name__)
             raise
         except EmailConnectionError as exc:
-            await logger.awarning(
-                "Email backend connection failed",
-                recipient_count=len(recipients),
-                template=template_name,
-                error_type=type(exc).__name__,
-            )
+            await logger.awarning("Email backend connection failed", **delivery, error_type=type(exc).__name__)
             raise
         except EmailDeliveryError as exc:
-            await logger.aerror(
-                "Email delivery failed",
-                recipient_count=len(recipients),
-                template=template_name,
-                error_type=type(exc).__name__,
-            )
+            await logger.aerror("Email delivery failed", **delivery, error_type=type(exc).__name__)
             raise
-        else:
-            return num_sent > 0
+        return sent_count > 0
 
     async def send_verification_email(self, user: UserProtocol, verification_token: str) -> bool:
         """Send an account email verification message.
@@ -278,6 +234,30 @@ class AppEmailService:
         )
 
     @staticmethod
+    def _html_to_text(html_content: str) -> str:
+        text = HTML_TAG_PATTERN.sub("", html_content)
+        text = html_lib.unescape(text)
+        text = re.sub(r"\s+", " ", text)
+        return text.strip()
+
+    @staticmethod
+    def _resolve_user_details(user: UserProtocol) -> tuple[str, str]:
+        return user.email, user.name or "there"
+
+    def _render_template(self, template_name: str, context: dict[str, str | int]) -> str:
+        html_content = self._load_template(template_name)
+        for placeholder, value in {"APP_NAME": self.app_name, **context}.items():
+            text = self._validate_http_url(str(value)) if placeholder in _URL_KEYS else str(value)
+            html_content = html_content.replace(f"{{{{{placeholder}}}}}", html_lib.escape(text, quote=True))
+        return html_content
+
+    def _load_template(self, template_name: str) -> str:
+        if template_name not in self._template_cache:
+            template_path = self._template_dir / template_name
+            self._template_cache[template_name] = template_path.read_text(encoding="utf-8")
+        return self._template_cache[template_name]
+
+    @staticmethod
     def _validate_http_url(url: str) -> str:
         stripped = url.strip()
         parsed = urlsplit(stripped)
@@ -285,9 +265,3 @@ class AppEmailService:
             msg = "Template URL must use http or https scheme with a valid host"
             raise ValueError(msg)
         return stripped
-
-    def _html_to_text(self, html_content: str) -> str:
-        text = HTML_TAG_PATTERN.sub("", html_content)
-        text = html_lib.unescape(text)
-        text = re.sub(r"\s+", " ", text)
-        return text.strip()

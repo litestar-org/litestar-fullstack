@@ -28,14 +28,17 @@ from app.domain.accounts.security.oauth import (
 from app.domain.accounts.security.passkeys import SQLAlchemyPasskeyStore
 from app.domain.accounts.security.rate_limit import build_rate_limiter
 from app.domain.accounts.security.resolver import (
+    APPLICATION_ACCESS_REQUIRED,
     TEAM_ROLE_EXPANSION,
     AppAuthorizationResolver,
     SelfSubjectPredicate,
+    require_application_access,
     requires_self_or_superuser,
     requires_team_role,
 )
 
 __all__ = (
+    "APPLICATION_ACCESS_REQUIRED",
     "TEAM_ROLE_EXPANSION",
     "APIKeyIdentityResolver",
     "AppAuthorizationResolver",
@@ -58,6 +61,7 @@ __all__ = (
     "build_security_config",
     "build_session_middleware",
     "build_session_store",
+    "require_application_access",
     "requires_self_or_superuser",
     "requires_team_role",
     "sanitize_event_details",

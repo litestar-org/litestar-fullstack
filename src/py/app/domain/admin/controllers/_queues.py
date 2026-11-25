@@ -6,7 +6,7 @@ from uuid import UUID
 from litestar import get, post
 from litestar.di import NamedDependency
 from litestar.exceptions import HTTPException, NotFoundException
-from litestar_queues import QueuedTaskRecord, QueueService, TaskStatus
+from litestar_queues import QueueService, TaskStatus
 from litestar_security import AuthenticationPolicy, SecureController, required, requires_role
 
 from app.domain.admin.schemas import (
@@ -16,27 +16,6 @@ from app.domain.admin.schemas import (
 )
 
 _VALID_TASK_STATUSES = frozenset({"pending", "scheduled", "running", "completed", "failed", "cancelled", "expired"})
-
-
-def serialize_task_record(record: QueuedTaskRecord) -> QueueTaskSummary:
-    """Convert a ``litestar-queues`` task record into a camelized API summary.
-
-    Returns:
-        Serialized queue task summary.
-    """
-    return QueueTaskSummary(
-        task_id=str(record.id),
-        task_name=record.task_name,
-        queue=record.queue,
-        status=str(record.status),
-        retry_count=record.retry_count,
-        max_retries=record.max_retries,
-        created_at=record.created_at,
-        started_at=record.started_at,
-        completed_at=record.completed_at,
-        error=record.error,
-        metadata=dict(record.metadata or {}),
-    )
 
 
 class AdminQueueController(SecureController):
@@ -79,7 +58,7 @@ class AdminQueueController(SecureController):
             offset=offset,
         )
         return QueueTaskListResponse(
-            items=[serialize_task_record(item) for item in page.items],
+            items=[QueueTaskSummary.from_record(task) for task in page.items],
             total=page.total,
             limit=page.limit,
             offset=page.offset,
@@ -101,13 +80,10 @@ class AdminQueueController(SecureController):
             NotFoundException: If ``task_id`` is invalid or the task does not exist.
         """
         try:
-            parsed_id = UUID(task_id)
+            requested_task_id = UUID(task_id)
         except ValueError as exc:
             raise NotFoundException(detail="Queue task not found") from exc
-
-        existing = await queue_service.get_task(parsed_id)
-        if existing is None:
+        if await queue_service.get_task(requested_task_id) is None:
             raise NotFoundException(detail="Queue task not found")
-
-        cancelled = await queue_service.cancel_task(parsed_id, include_running=include_running)
-        return QueueTaskCancelResponse(task_id=str(parsed_id), cancelled=cancelled)
+        cancelled = await queue_service.cancel_task(requested_task_id, include_running=include_running)
+        return QueueTaskCancelResponse(task_id=str(requested_task_id), cancelled=cancelled)

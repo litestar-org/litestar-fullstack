@@ -599,10 +599,10 @@ def schema_upgrades() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_user_account_oauth_user_id_user_account'), ondelete='cascade'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user_account_oauth')),
     sa.UniqueConstraint('oauth_name', 'account_id', name='uq_user_account_oauth_provider_account'),
+    sa.UniqueConstraint('user_id', 'oauth_name', name='uq_user_account_oauth_user_provider'),
     comment='Registered OAuth2 accounts for users'
     )
     with op.batch_alter_table('user_account_oauth', schema=None) as batch_op:
-        batch_op.create_index('ix_oauth_user_provider', ['user_id', 'oauth_name'], unique=False)
         batch_op.create_index(batch_op.f('ix_user_account_oauth_account_id'), ['account_id'], unique=False)
         batch_op.create_index(batch_op.f('ix_user_account_oauth_oauth_name'), ['oauth_name'], unique=False)
 
@@ -628,7 +628,6 @@ def schema_downgrades() -> None:
     with op.batch_alter_table('user_account_oauth', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_user_account_oauth_oauth_name'))
         batch_op.drop_index(batch_op.f('ix_user_account_oauth_account_id'))
-        batch_op.drop_index('ix_oauth_user_provider')
 
     op.drop_table('user_account_oauth')
     op.drop_table('team_tag')

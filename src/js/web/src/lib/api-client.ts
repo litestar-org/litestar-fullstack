@@ -16,16 +16,21 @@ const CREDENTIAL_CHECK_PATH_FRAGMENTS = [
 ]
 
 const REAUTHENTICATION_REQUIRED = "reauthentication_required"
+const APPLICATION_ACCESS_REQUIRED = "application_access_required"
 
 export interface ApiClientConfigOptions {
   baseUrl?: string
+  /** The session is missing or expired. */
   onUnauthorized?: () => void
+  /** The session is valid, but the account lacks the role required to use the application. */
+  onAccessDenied?: () => void
 }
 
 let isConfigured = false
 let requestInterceptorId: number | null = null
 let errorInterceptorId: number | null = null
 let activeOnUnauthorized: (() => void) | undefined
+let activeOnAccessDenied: (() => void) | undefined
 
 function isPublicAuthPath(pathname: string): boolean {
   return PUBLIC_AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -43,6 +48,14 @@ function readNonEmptyString(source: object, key: string): string | undefined {
   return value.trim() || undefined
 }
 
+/** Reads the machine-readable `code` member of a problem-details error body. */
+function readProblemCode(error: unknown): string | undefined {
+  if (typeof error !== "object" || error === null) {
+    return undefined
+  }
+  return readNonEmptyString(error, "code")
+}
+
 export function extractApiErrorMessage(error: unknown, fallback: string): string {
   if (typeof error === "string" && error.trim().length > 0) {
     return error
@@ -51,22 +64,23 @@ export function extractApiErrorMessage(error: unknown, fallback: string): string
     return error.message
   }
   if (typeof error === "object" && error !== null) {
-    return readNonEmptyString(error, "detail") ?? readNonEmptyString(error, "message") ?? fallback
+    return readNonEmptyString(error, "detail") ?? readNonEmptyString(error, "message") ?? readNonEmptyString(error, "title") ?? fallback
   }
   return fallback
 }
 
 export function isReauthenticationRequired(error: unknown): boolean {
-  if (typeof error !== "object" || error === null) {
-    return false
-  }
-  const extra: unknown = (error as Record<string, unknown>).extra
-  return typeof extra === "object" && extra !== null && (extra as Record<string, unknown>).code === REAUTHENTICATION_REQUIRED
+  return readProblemCode(error) === REAUTHENTICATION_REQUIRED
+}
+
+export function isApplicationAccessRequired(error: unknown): boolean {
+  return readProblemCode(error) === APPLICATION_ACCESS_REQUIRED
 }
 
 export function configureApiClient(options?: ApiClientConfigOptions): void {
   const baseUrl = options?.baseUrl ?? ""
   activeOnUnauthorized = options?.onUnauthorized
+  activeOnAccessDenied = options?.onAccessDenied
 
   client.setConfig({
     baseUrl,
@@ -97,6 +111,9 @@ export function configureApiClient(options?: ApiClientConfigOptions): void {
         activeOnUnauthorized?.()
       }
     }
+    if (response?.status === 403 && isApplicationAccessRequired(error)) {
+      activeOnAccessDenied?.()
+    }
     return error
   })
 
@@ -113,5 +130,6 @@ export function resetApiClientForTest(): void {
     errorInterceptorId = null
   }
   activeOnUnauthorized = undefined
+  activeOnAccessDenied = undefined
   isConfigured = false
 }

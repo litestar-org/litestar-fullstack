@@ -20,6 +20,7 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.params import Body
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
+from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from litestar_email import EmailService
 from litestar_queues import QueueService
 from litestar_security.accounts import SecurityEvent
@@ -28,7 +29,7 @@ from litestar_security.context import Principal
 from app import config
 from app.__metadata__ import __version__
 from app.db import models as m
-from app.domain.accounts.security.events import AuditSecurityEventSink, sanitize_event_details
+from app.domain.accounts.security import AuditSecurityEventSink, require_application_access, sanitize_event_details
 from app.lib.email import AppEmailService
 from app.lib.exceptions import (
     ApplicationClientError,
@@ -54,13 +55,6 @@ __all__ = ("ApplicationCore", "build_mcp_audit_hooks")
 logger = structlog.get_logger(__name__)
 
 
-def _extract_mcp_principal_id(request: Request[Any, Any, Any]) -> str | None:
-    principal: object = cast("dict[str, Any]", request.scope).get("user")
-    if isinstance(principal, Principal) and principal.is_authenticated and principal.id is not None:
-        return str(principal.id)
-    return None
-
-
 def build_mcp_audit_hooks(
     sink: AuditSecurityEventSink,
 ) -> tuple[BeforeToolCallHook, AfterToolCallHook]:
@@ -78,19 +72,14 @@ def build_mcp_audit_hooks(
     ) -> None:
         principal_id = _extract_mcp_principal_id(request)
         correlation_id = _mcp_correlation_id(request)
-        sanitized_keys = ",".join(sorted(str(k) for k in sanitize_event_details(arguments)))
-        event = SecurityEvent(
-            event_id=str(uuid4()),
-            occurred_at=datetime.now(UTC),
-            operation="mcp.tool.call.started",
+        event = _mcp_tool_call_event(
+            "mcp.tool.call.started",
             outcome="started",
-            account_id=principal_id,
             principal_id=principal_id,
-            mechanism="api-key",
             correlation={
                 "tool_name": tool_name,
                 "correlation_id": correlation_id,
-                "argument_keys": sanitized_keys,
+                "argument_keys": ",".join(sorted(str(key) for key in sanitize_event_details(arguments))),
             },
         )
         try:
@@ -120,24 +109,18 @@ def build_mcp_audit_hooks(
     ) -> None:
         _ = (arguments, result)
         principal_id = _extract_mcp_principal_id(request)
-        correlation_id = _mcp_correlation_id(request)
-        operation = "mcp.tool.call.failed" if exception is not None else "mcp.tool.call.completed"
         outcome = "failure" if exception is not None else "success"
-        correlation: dict[str, str] = {
+        correlation = {
             "tool_name": tool_name,
-            "correlation_id": correlation_id,
+            "correlation_id": _mcp_correlation_id(request),
             "duration_seconds": f"{duration:.6f}",
         }
         if exception is not None:
             correlation["error_type"] = type(exception).__name__
-        event = SecurityEvent(
-            event_id=str(uuid4()),
-            occurred_at=datetime.now(UTC),
-            operation=operation,
+        event = _mcp_tool_call_event(
+            "mcp.tool.call.failed" if exception is not None else "mcp.tool.call.completed",
             outcome=outcome,
-            account_id=principal_id,
             principal_id=principal_id,
-            mechanism="api-key",
             correlation=correlation,
         )
         try:
@@ -199,7 +182,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         cli.add_command(user_management_group)
 
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
-        """Configure OpenAPI, CORS, proxy headers, first-party plugins, DI, and exception handlers.
+        """Configure OpenAPI, CORS, proxy headers, first-party plugins, the access guard, DI, and exception handlers.
 
         Returns:
             Updated Litestar ``AppConfig``.
@@ -213,7 +196,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             version=__version__,
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
-
         app_config.plugins.extend(
             plugins.build_plugins(
                 autowire_config=self.autowire_config,
@@ -223,27 +205,55 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 email_config=self.email_config,
             )
         )
+        app_config.guards.append(require_application_access)  # pyright: ignore[reportUnknownMemberType]
+        self._enable_local_auth(app_config)
+        self._trust_proxy_headers(app_config, settings.server.LITESTAR_TRUSTED_PROXIES)
+        self._register_dependencies(app_config)
+        self._register_exception_handlers(app_config)
+        return app_config
 
-        active_security = self.security_config or config.security
-        if active_security.local_auth is not None:
-            _register_session_store(app_config)
-            app_config.middleware.append(config.session_middleware)
-            if app_config.csrf_config is None:
-                app_config.csrf_config = config.csrf
+    def _resolve_mcp_config(self, *, mcp_enabled: bool) -> MCPConfig | None:
+        if self.mcp_config is None and not mcp_enabled:
+            return None
+        mcp_config = self.mcp_config or config.mcp
+        if mcp_config.before_tool_call is not None or mcp_config.after_tool_call is not None:
+            return mcp_config
+        before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
+        return replace(mcp_config, before_tool_call=before_hook, after_tool_call=after_hook)
 
-        if settings.server.LITESTAR_TRUSTED_PROXIES:
-            proxy_wrapper: Any = vars(import_module("granian.utils.proxies"))["wrap_asgi_with_proxy_headers"]
-            app_config.middleware.append(
-                partial(
-                    proxy_wrapper,
-                    trusted_hosts=settings.server.LITESTAR_TRUSTED_PROXIES,
-                )
-            )
+    def _enable_local_auth(self, app_config: AppConfig) -> None:
+        security_config = self.security_config or config.security
+        if security_config.local_auth is None:
+            return
+        self._register_session_store(app_config)
+        app_config.middleware.append(config.session_middleware)
+        if app_config.csrf_config is None:
+            app_config.csrf_config = config.csrf
 
-        active_email_config = self.email_config or config.email
+    @staticmethod
+    def _register_session_store(app_config: AppConfig) -> None:
+        from app.domain.accounts.security import build_session_store
+
+        if isinstance(app_config.stores, dict):
+            app_config.stores.setdefault("sessions", build_session_store(config.alchemy))
+        elif app_config.stores is not None:
+            with suppress(KeyError, ValueError):
+                app_config.stores.register("sessions", build_session_store(config.alchemy), allow_override=False)
+        else:
+            app_config.stores = {"sessions": build_session_store(config.alchemy)}
+
+    @staticmethod
+    def _trust_proxy_headers(app_config: AppConfig, trusted_proxies: list[str]) -> None:
+        if not trusted_proxies:
+            return
+        proxy_wrapper: Any = vars(import_module("granian.utils.proxies"))["wrap_asgi_with_proxy_headers"]
+        app_config.middleware.append(partial(proxy_wrapper, trusted_hosts=trusted_proxies))
+
+    def _register_dependencies(self, app_config: AppConfig) -> None:
+        email_config = self.email_config or config.email
 
         def provide_mailer() -> EmailService:
-            return active_email_config.get_service()
+            return email_config.get_service()
 
         app_config.dependencies.update(
             {
@@ -252,7 +262,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 "app_mailer": Provide(AppEmailService, sync_to_thread=False),
             }
         )
-
         app_config.signature_namespace.update(
             {
                 "FilterTypes": FilterTypes,
@@ -271,6 +280,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             }
         )
 
+    @staticmethod
+    def _register_exception_handlers(app_config: AppConfig) -> None:
         handlers: dict[Any, Any] = cast("Any", app_config).exception_handlers
         handlers.update(
             {
@@ -279,19 +290,16 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 ValidationError: exception_to_http_response,
                 RepositoryError: exception_to_http_response,
                 DuplicateKeyError: exception_to_http_response,
+                HTTP_500_INTERNAL_SERVER_ERROR: exception_to_http_response,
             }
         )
 
-        return app_config
 
-    def _resolve_mcp_config(self, *, mcp_enabled: bool) -> MCPConfig | None:
-        if self.mcp_config is None and not mcp_enabled:
-            return None
-        resolved = self.mcp_config or config.mcp
-        if resolved.before_tool_call is not None or resolved.after_tool_call is not None:
-            return resolved
-        before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
-        return replace(resolved, before_tool_call=before_hook, after_tool_call=after_hook)
+def _extract_mcp_principal_id(request: Request[Any, Any, Any]) -> str | None:
+    principal: object = cast("dict[str, Any]", request.scope).get("user")
+    if isinstance(principal, Principal) and principal.is_authenticated and principal.id is not None:
+        return str(principal.id)
+    return None
 
 
 def _mcp_correlation_id(request: Request[Any, Any, Any]) -> str:
@@ -302,13 +310,20 @@ def _mcp_correlation_id(request: Request[Any, Any, Any]) -> str:
     return cast("str", state.setdefault("mcp_correlation_id", str(uuid4())))
 
 
-def _register_session_store(app_config: AppConfig) -> None:
-    from app.domain.accounts.security import build_session_store
-
-    if isinstance(app_config.stores, dict):
-        app_config.stores.setdefault("sessions", build_session_store(config.alchemy))
-    elif app_config.stores is not None:
-        with suppress(KeyError, ValueError):
-            app_config.stores.register("sessions", build_session_store(config.alchemy), allow_override=False)
-    else:
-        app_config.stores = {"sessions": build_session_store(config.alchemy)}
+def _mcp_tool_call_event(
+    operation: str,
+    *,
+    outcome: str,
+    principal_id: str | None,
+    correlation: dict[str, str],
+) -> SecurityEvent:
+    return SecurityEvent(
+        event_id=str(uuid4()),
+        occurred_at=datetime.now(UTC),
+        operation=operation,
+        outcome=outcome,
+        account_id=principal_id,
+        principal_id=principal_id,
+        mechanism="api-key",
+        correlation=correlation,
+    )

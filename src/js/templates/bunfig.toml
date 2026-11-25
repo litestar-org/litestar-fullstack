@@ -1,0 +1,4 @@
+[install]
+# Hold third-party packages to a rolling seven-day window (in seconds), matching
+# the uv cooldown in pyproject.toml.
+minimumReleaseAge = 604800

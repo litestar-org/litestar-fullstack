@@ -13,24 +13,17 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { basename, resolve } from "node:path"
 import { render } from "@react-email/render"
 
-// Output directory (inside Python package for wheel bundling)
+const TEMPLATES_DIR = resolve(import.meta.dir, "src/emails")
 const OUTPUT_DIR = resolve(import.meta.dir, "../../py/app/server/static/email")
-
-// Optional global CSS file for additional styles
 const GLOBAL_CSS_PATH = resolve(import.meta.dir, "src/styles/global.css")
 
-// Ensure output directory exists
-mkdirSync(OUTPUT_DIR, { recursive: true })
-
-// Discover email templates
-const emailsDir = resolve(import.meta.dir, "src/emails")
-
 /**
- * Inline CSS into HTML head if a global CSS file exists.
- * React Email already inlines component styles, but this allows
- * for additional global styles if needed.
+ * Adds the optional global stylesheet to the document head.
+ *
+ * React Email already inlines component styles; this covers rules that
+ * cannot be expressed inline.
  */
-function inlineGlobalCSS(html: string): string {
+function inlineGlobalCss(html: string): string {
   if (!existsSync(GLOBAL_CSS_PATH)) {
     return html
   }
@@ -40,7 +33,6 @@ function inlineGlobalCSS(html: string): string {
     return html
   }
 
-  // Insert CSS into head
   const styleTag = `<style type="text/css">\n${css}\n</style>`
   return html.replace("</head>", `${styleTag}\n</head>`)
 }
@@ -48,47 +40,39 @@ function inlineGlobalCSS(html: string): string {
 async function buildTemplates() {
   console.log("📧 Building email templates...\n")
 
-  const templateFiles = readdirSync(emailsDir).filter((f) => f.endsWith(".tsx") && !f.startsWith("_"))
+  mkdirSync(OUTPUT_DIR, { recursive: true })
 
-  let successCount = 0
-  let failCount = 0
+  // A leading underscore marks a file that is not a standalone template.
+  const templateFiles = readdirSync(TEMPLATES_DIR).filter((fileName) => fileName.endsWith(".tsx") && !fileName.startsWith("_"))
 
-  for (const file of templateFiles) {
-    const name = basename(file, ".tsx")
-    const modulePath = resolve(emailsDir, file)
+  let builtCount = 0
+  let failedCount = 0
+
+  for (const templateFile of templateFiles) {
+    const templateName = basename(templateFile, ".tsx")
 
     try {
-      // Dynamic import the TSX file (Bun handles this natively)
-      const module = await import(modulePath)
-      const Component = module.default
+      const { default: Template } = await import(resolve(TEMPLATES_DIR, templateFile))
 
-      if (!Component) {
-        console.warn(`   ⚠ Warning: No default export in ${file}, skipping`)
+      if (!Template) {
+        console.warn(`   ⚠ Warning: No default export in ${templateFile}, skipping`)
         continue
       }
 
-      // Render to static HTML with react-email (all styles inlined)
-      let html = await render(Component(), {
-        pretty: true,
-      })
-
-      // Optionally inline global CSS
-      html = inlineGlobalCSS(html)
-
-      const outputPath = resolve(OUTPUT_DIR, `${name}.html`)
-      writeFileSync(outputPath, html, "utf-8")
-      console.log(`   ✓ ${name}.html`)
-      successCount++
+      const html = inlineGlobalCss(await render(Template(), { pretty: true }))
+      writeFileSync(resolve(OUTPUT_DIR, `${templateName}.html`), html, "utf-8")
+      console.log(`   ✓ ${templateName}.html`)
+      builtCount++
     } catch (error) {
-      console.error(`   ✗ ${file}:`, error instanceof Error ? error.message : error)
-      failCount++
+      console.error(`   ✗ ${templateFile}:`, error instanceof Error ? error.message : error)
+      failedCount++
     }
   }
 
-  console.log(`\n✅ ${successCount} templates built to: ${OUTPUT_DIR}`)
+  console.log(`\n✅ ${builtCount} templates built to: ${OUTPUT_DIR}`)
 
-  if (failCount > 0) {
-    console.error(`❌ ${failCount} template(s) failed to build`)
+  if (failedCount > 0) {
+    console.error(`❌ ${failedCount} template(s) failed to build`)
     process.exit(1)
   }
 }

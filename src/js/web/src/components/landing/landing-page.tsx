@@ -10,7 +10,6 @@ export function LandingPage() {
 
   return (
     <div className="relative flex min-h-screen w-full">
-      {/* Left panel with RetroGrid - hidden on mobile */}
       <div className="relative hidden min-h-screen w-1/2 max-w-2xl flex-col bg-brand-navy p-10 text-white lg:flex">
         <RetroGrid />
         <Link to="/" className="relative z-20">
@@ -43,9 +42,7 @@ export function LandingPage() {
         </div>
       </div>
 
-      {/* Right panel with content */}
       <div className="flex flex-1 flex-col bg-brand-gray-light dark:bg-background">
-        {/* Header with theme toggle and sign in */}
         <div className="flex items-center justify-end gap-2 p-4 md:p-8">
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="size-9 rounded-full" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
             {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
@@ -55,7 +52,6 @@ export function LandingPage() {
           </Button>
         </div>
 
-        {/* Main content - centered */}
         <main className="flex flex-1 flex-col items-center justify-center px-4 pb-16">
           <Icons.LogoBrand className="h-16 w-16" />
 
@@ -76,7 +72,6 @@ export function LandingPage() {
           </div>
         </main>
 
-        {/* Footer */}
         <footer className="py-6 text-center text-sm text-muted-foreground">© {new Date().getFullYear()} Litestar Organization · MIT License</footer>
       </div>
     </div>

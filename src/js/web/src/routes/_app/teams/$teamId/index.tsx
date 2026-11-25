@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { Separator } from "@/components/ui/separator"
 import { useAuthStore } from "@/lib/auth"
-import type { TeamInvitation, TeamMember } from "@/lib/generated/api"
+import type { TeamMember } from "@/lib/generated/api"
 import {
   deleteTeamInvitationMutation,
   getTeamOptions,
@@ -30,13 +30,11 @@ function TeamDetail() {
 
   const { data: team, isLoading: isTeamLoading, isError: isTeamError } = useQuery(getTeamOptions({ path: { team_id: teamId } }))
 
-  const { data: invitationsResponse } = useQuery({
+  const { data: invitationPage } = useQuery({
     ...listTeamInvitationsOptions({ path: { team_id: teamId } }),
     enabled: Boolean(team),
   })
-  const invitationsData = invitationsResponse?.items ?? []
-
-  const pendingInvitations = invitationsData.filter((inv) => !inv.isAccepted)
+  const pendingInvitations = (invitationPage?.items ?? []).filter((invitation) => !invitation.isAccepted)
 
   useEffect(() => {
     if (team && team.id !== currentTeam?.id) {
@@ -44,17 +42,17 @@ function TeamDetail() {
     }
   }, [currentTeam?.id, setCurrentTeam, team])
 
-  const removeMemberMutation = useMutation({
+  const removeMember = useMutation({
     ...removeMemberFromTeamMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getTeamQueryKey({ path: { team_id: teamId } }) })
+      void queryClient.invalidateQueries({ queryKey: getTeamQueryKey({ path: { team_id: teamId } }) })
     },
   })
 
-  const cancelInvitationMutation = useMutation({
+  const cancelInvitation = useMutation({
     ...deleteTeamInvitationMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: listTeamInvitationsQueryKey({ path: { team_id: teamId } }) })
+      void queryClient.invalidateQueries({ queryKey: listTeamInvitationsQueryKey({ path: { team_id: teamId } }) })
     },
   })
 
@@ -75,9 +73,7 @@ function TeamDetail() {
   }
 
   const members = team.members ?? []
-  const owner = members.find((member) => member.isOwner)
-  const ownerId = owner?.userId
-  const isOwner = ownerId === user?.id
+  const isOwner = members.some((member) => member.isOwner && member.userId === user?.id)
   const canManageMembers = isOwner || user?.isSuperuser || members.some((member) => member.userId === user?.id && member.role === "ADMIN")
 
   const canRemoveMember = (member: TeamMember) => {
@@ -111,7 +107,7 @@ function TeamDetail() {
               <CardTitle>Members</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {members.map((member: TeamMember) => {
+              {members.map((member) => {
                 const isSelf = member.userId === user?.id
                 return (
                   <div
@@ -139,7 +135,7 @@ function TeamDetail() {
                           variant="outline"
                           size="sm"
                           onClick={() =>
-                            removeMemberMutation.mutate({
+                            removeMember.mutate({
                               path: { team_id: teamId },
                               body: { userName: member.email },
                             })
@@ -162,7 +158,7 @@ function TeamDetail() {
                       <Clock className="h-4 w-4" />
                       Pending invitations
                     </p>
-                    {pendingInvitations.map((invitation: TeamInvitation) => (
+                    {pendingInvitations.map((invitation) => (
                       <div key={invitation.id} className="flex items-center justify-between rounded-lg border border-dashed border-border/60 bg-muted/30 p-3">
                         <div className="flex items-center gap-3">
                           <Mail className="h-4 w-4 text-muted-foreground" />
@@ -176,7 +172,7 @@ function TeamDetail() {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              cancelInvitationMutation.mutate({
+                              cancelInvitation.mutate({
                                 path: { team_id: teamId, invitation_id: invitation.id },
                               })
                             }
@@ -211,5 +207,3 @@ function TeamDetail() {
     </PageContainer>
   )
 }
-
-export default TeamDetail

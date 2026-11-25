@@ -20,6 +20,7 @@ from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
 from app.server.core import ApplicationCore
+from tests.factories import grant_application_access
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, AsyncIterator
@@ -83,7 +84,8 @@ async def seeded_db(
             _ = await service.repository.get_or_upsert(match_fields="name", upsert=True, **obj)
         await service.repository.session.commit()
     async with UserService.new(sessionmaker(), load=[m.User.teams]) as users_service:
-        await users_service.create_many(raw_users, auto_commit=True)
+        seeded_users = await users_service.create_many(raw_users, auto_commit=True)
+        await grant_application_access(users_service.repository.session, *seeded_users)
     async with TeamService.new(sessionmaker(), load=[m.Team.members, m.Team.tags]) as teams_service:
         for obj in raw_teams:
             await teams_service.create(obj)
@@ -172,6 +174,7 @@ async def fx_test_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -194,6 +197,7 @@ async def fx_inactive_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -216,6 +220,7 @@ async def fx_unverified_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -311,6 +316,7 @@ async def fx_test_team_member(
     session.add(membership)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 

@@ -20,25 +20,6 @@ __all__ = (
 _EMAIL_RETRY = RetryBackoff(initial_delay=2.0, multiplier=2.0, max_delay=120.0)
 
 
-@dataclass(frozen=True, slots=True)
-class _EmailRecipient:
-    email: str
-    name: str | None = None
-
-
-def _minutes_until(expires_at: str | None, default: int = 60) -> int:
-    if not expires_at:
-        return default
-    try:
-        parsed = datetime.fromisoformat(expires_at)
-    except ValueError:
-        return default
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=UTC)
-    remaining = int((parsed - datetime.now(UTC)).total_seconds() // 60)
-    return max(1, remaining)
-
-
 @task(
     "email.send_verification",
     queue="emails",
@@ -191,3 +172,22 @@ async def send_team_invitation_email_task(
             team_name=team_name,
             invitation_url=invitation_url,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class _EmailRecipient:
+    email: str
+    name: str | None = None
+
+
+def _minutes_until(expires_at: str | None, default: int = 60) -> int:
+    if not expires_at:
+        return default
+    try:
+        expiry = datetime.fromisoformat(expires_at)
+    except ValueError:
+        return default
+    if expiry.tzinfo is None:
+        expiry = expiry.replace(tzinfo=UTC)
+    remaining_minutes = int((expiry - datetime.now(UTC)).total_seconds() // 60)
+    return max(1, remaining_minutes)

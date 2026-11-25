@@ -1,47 +1,83 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { CheckCircle, Users, XCircle } from "lucide-react"
-import { useState } from "react"
+import { type ReactNode, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-layout"
-import { acceptTeamInvitation, getTeam, rejectTeamInvitation } from "@/lib/generated/api"
+import { extractApiErrorMessage } from "@/lib/api-client"
+import type { Team } from "@/lib/generated/api"
+import { acceptTeamInvitationMutation, getTeamOptions, rejectTeamInvitationMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/teams/$teamId/invitations/$invitationId/accept")({
   component: AcceptInvitationPage,
 })
+
+const REDIRECT_DELAY_MS = 1500
+
+type InvitationStatus = "pending" | "accepting" | "declining" | "accepted" | "declined" | "error"
+
+interface InvitationHeading {
+  icon: ReactNode
+  title: string
+  description: ReactNode
+}
+
+function describeInvitation(team: Team | undefined, isTeamLoading: boolean): ReactNode {
+  if (isTeamLoading) {
+    return "Loading invitation details..."
+  }
+  if (!team) {
+    return "You've been invited to join a team"
+  }
+  return (
+    <>
+      You've been invited to join <strong>{team.name}</strong>
+    </>
+  )
+}
+
+function resolveHeading(status: InvitationStatus, team: Team | undefined, isTeamLoading: boolean): InvitationHeading {
+  if (status === "accepted") {
+    return {
+      icon: <CheckCircle className="h-6 w-6 text-success" />,
+      title: "Welcome to the team!",
+      description: "You're now a member. Redirecting...",
+    }
+  }
+  if (status === "declined") {
+    return {
+      icon: <XCircle className="h-6 w-6 text-muted-foreground" />,
+      title: "Invitation declined",
+      description: "You won't be added to this team.",
+    }
+  }
+  return {
+    icon: <Users className="h-6 w-6 text-primary" />,
+    title: "Team Invitation",
+    description: describeInvitation(team, isTeamLoading),
+  }
+}
 
 function AcceptInvitationPage() {
   const navigate = useNavigate()
   const { teamId, invitationId } = useParams({
     from: "/_app/teams/$teamId/invitations/$invitationId/accept",
   })
-  const [status, setStatus] = useState<"pending" | "accepting" | "declining" | "accepted" | "declined" | "error">("pending")
+  const [status, setStatus] = useState<InvitationStatus>("pending")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Optionally fetch team info for display
+  // The team name only decorates the prompt, so a failed lookup is not retried.
   const { data: team, isLoading: isTeamLoading } = useQuery({
-    queryKey: ["team", teamId],
-    queryFn: async () => {
-      const response = await getTeam({ path: { team_id: teamId } })
-      return response.data
-    },
+    ...getTeamOptions({ path: { team_id: teamId } }),
     retry: false,
   })
 
-  const acceptMutation = useMutation({
-    mutationFn: async () => {
-      const response = await acceptTeamInvitation({
-        path: { team_id: teamId, invitation_id: invitationId },
-      })
-      if (response.error) {
-        throw new Error(response.error.detail || "Failed to accept invitation")
-      }
-      return response.data
-    },
+  const acceptInvitation = useMutation({
+    ...acceptTeamInvitationMutation(),
     onMutate: () => {
       setStatus("accepting")
       setErrorMessage(null)
@@ -49,30 +85,17 @@ function AcceptInvitationPage() {
     onSuccess: () => {
       setStatus("accepted")
       toast.success("You've joined the team!")
-      // Navigate to the team page after a short delay
-      setTimeout(() => {
-        navigate({ to: "/teams/$teamId", params: { teamId } })
-      }, 1500)
     },
-    onError: (error: Error) => {
+    onError: (error) => {
+      const message = extractApiErrorMessage(error, "Failed to accept invitation")
       setStatus("error")
-      setErrorMessage(error.message)
-      toast.error("Failed to accept invitation", {
-        description: error.message,
-      })
+      setErrorMessage(message)
+      toast.error("Failed to accept invitation", { description: message })
     },
   })
 
-  const declineMutation = useMutation({
-    mutationFn: async () => {
-      const response = await rejectTeamInvitation({
-        path: { team_id: teamId, invitation_id: invitationId },
-      })
-      if (response.error) {
-        throw new Error(response.error.detail || "Failed to decline invitation")
-      }
-      return response.data
-    },
+  const declineInvitation = useMutation({
+    ...rejectTeamInvitationMutation(),
     onMutate: () => {
       setStatus("declining")
       setErrorMessage(null)
@@ -80,53 +103,38 @@ function AcceptInvitationPage() {
     onSuccess: () => {
       setStatus("declined")
       toast.success("Invitation declined")
-      // Navigate to teams list after a short delay
-      setTimeout(() => {
-        navigate({ to: "/teams" })
-      }, 1500)
     },
-    onError: (error: Error) => {
+    onError: (error) => {
+      const message = extractApiErrorMessage(error, "Failed to decline invitation")
       setStatus("error")
-      setErrorMessage(error.message)
-      toast.error("Failed to decline invitation", {
-        description: error.message,
-      })
+      setErrorMessage(message)
+      toast.error("Failed to decline invitation", { description: message })
     },
   })
 
-  const isPending = status === "pending"
+  useEffect(() => {
+    if (status !== "accepted" && status !== "declined") {
+      return
+    }
+    const redirectTimer = setTimeout(() => {
+      void (status === "accepted" ? navigate({ to: "/teams/$teamId", params: { teamId } }) : navigate({ to: "/teams" }))
+    }, REDIRECT_DELAY_MS)
+    return () => clearTimeout(redirectTimer)
+  }, [status, navigate, teamId])
+
+  const invitationPath = { team_id: teamId, invitation_id: invitationId }
+  const canRespond = status === "pending" || status === "error"
   const isProcessing = status === "accepting" || status === "declining"
   const isComplete = status === "accepted" || status === "declined"
+  const heading = resolveHeading(status, team, isTeamLoading)
 
   return (
     <PageContainer className="flex flex-1 items-center justify-center">
       <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            {status === "accepted" ? (
-              <CheckCircle className="h-6 w-6 text-success" />
-            ) : status === "declined" ? (
-              <XCircle className="h-6 w-6 text-muted-foreground" />
-            ) : (
-              <Users className="h-6 w-6 text-primary" />
-            )}
-          </div>
-          <CardTitle>{status === "accepted" ? "Welcome to the team!" : status === "declined" ? "Invitation declined" : "Team Invitation"}</CardTitle>
-          <CardDescription>
-            {status === "accepted" ? (
-              "You're now a member. Redirecting..."
-            ) : status === "declined" ? (
-              "You won't be added to this team."
-            ) : isTeamLoading ? (
-              "Loading invitation details..."
-            ) : team ? (
-              <>
-                You've been invited to join <strong>{team.name}</strong>
-              </>
-            ) : (
-              "You've been invited to join a team"
-            )}
-          </CardDescription>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">{heading.icon}</div>
+          <CardTitle>{heading.title}</CardTitle>
+          <CardDescription>{heading.description}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -151,12 +159,12 @@ function AcceptInvitationPage() {
           )}
         </CardContent>
 
-        {(isPending || status === "error") && (
+        {canRespond && (
           <CardFooter className="flex flex-col gap-2">
-            <Button className="w-full" onClick={() => acceptMutation.mutate()} disabled={isProcessing}>
+            <Button className="w-full" onClick={() => acceptInvitation.mutate({ path: invitationPath })} disabled={isProcessing}>
               Accept Invitation
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => declineMutation.mutate()} disabled={isProcessing}>
+            <Button variant="outline" className="w-full" onClick={() => declineInvitation.mutate({ path: invitationPath })} disabled={isProcessing}>
               Decline
             </Button>
           </CardFooter>

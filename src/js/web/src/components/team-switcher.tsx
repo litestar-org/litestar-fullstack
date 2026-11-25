@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router"
 import { ChevronsUpDown, Plus, Users } from "lucide-react"
-import * as React from "react"
 
 import {
   DropdownMenu,
@@ -14,14 +13,15 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import type { Team } from "@/lib/generated/api"
 
-export function TeamSwitcher({ teams, currentTeam, onTeamSelect }: { teams: Team[]; currentTeam: Team | null; onTeamSelect: (team: Team) => void }) {
+interface TeamSwitcherProps {
+  teams: Team[]
+  currentTeam: Team | null
+  onTeamSelect: (team: Team) => void
+}
+
+export function TeamSwitcher({ teams, currentTeam, onTeamSelect }: Readonly<TeamSwitcherProps>) {
   const { isMobile } = useSidebar()
-  const activeTeam = React.useMemo(() => {
-    if (currentTeam) {
-      return teams.find((team) => team.id === currentTeam.id) ?? teams[0]
-    }
-    return teams[0]
-  }, [currentTeam, teams])
+  const activeTeam = teams.find((team) => team.id === currentTeam?.id) ?? teams[0]
 
   if (!activeTeam) {
     return null

@@ -27,8 +27,8 @@ _recent_sign_in = requires_assurance(max_age=RECENT_AUTHENTICATION_WINDOW)
 async def confirm_authentication(request: Request[Any, Any, Any], user: m.User, current_password: str | None) -> None:
     """Admit a sensitive action after a recent sign-in or a re-verified current password.
 
-    A denial for a missing password carries ``extra={"code": REAUTHENTICATION_REQUIRED}`` so clients can
-    prompt for the password and retry.
+    A denial for a missing password reaches the client as a problem-details body whose top-level ``code``
+    member is ``REAUTHENTICATION_REQUIRED``, so clients can prompt for the password and retry.
 
     Args:
         request: Request whose session evidence and client address are evaluated.

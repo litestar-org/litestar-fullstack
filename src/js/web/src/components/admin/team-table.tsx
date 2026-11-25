@@ -11,7 +11,11 @@ const PAGE_SIZE = 25
 
 export function TeamTable() {
   const [page, setPage] = useState(1)
-  const { data, isLoading, isError } = useQuery(
+  const {
+    data: teamPage,
+    isLoading,
+    isError,
+  } = useQuery(
     adminListTeamsOptions({
       query: { currentPage: page, pageSize: PAGE_SIZE },
     }),
@@ -21,7 +25,7 @@ export function TeamTable() {
     return <SkeletonTable rows={6} />
   }
 
-  if (isError || !data) {
+  if (isError || !teamPage) {
     return (
       <Card>
         <CardHeader>
@@ -32,9 +36,8 @@ export function TeamTable() {
     )
   }
 
-  const items = data.items ?? []
-  const total = data.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const teams = teamPage.items ?? []
+  const totalPages = Math.max(1, Math.ceil((teamPage.total ?? 0) / PAGE_SIZE))
 
   return (
     <Card>
@@ -53,14 +56,14 @@ export function TeamTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.length === 0 && (
+            {teams.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
                   No teams found.
                 </TableCell>
               </TableRow>
             )}
-            {items.map((team) => (
+            {teams.map((team) => (
               <TableRow key={team.id}>
                 <TableCell>{team.name}</TableCell>
                 <TableCell className="text-muted-foreground">{team.slug}</TableCell>
@@ -82,10 +85,10 @@ export function TeamTable() {
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
+            <Button variant="outline" size="sm" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page <= 1}>
               Previous
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+            <Button variant="outline" size="sm" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page >= totalPages}>
               Next
             </Button>
           </div>

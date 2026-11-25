@@ -1,9 +1,35 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router"
-import { useMemo } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/lib/auth"
+
+interface PageHeading {
+  eyebrow: string
+  title: string
+}
+
+function resolvePageHeading(pathname: string, currentTeamName: string | undefined): PageHeading {
+  if (pathname === "/home") {
+    return { eyebrow: "Overview", title: "Home" }
+  }
+  if (pathname === "/teams") {
+    return { eyebrow: "Workspace", title: "Teams" }
+  }
+  if (pathname === "/teams/new") {
+    return { eyebrow: "Workspace", title: "Create team" }
+  }
+  if (pathname.startsWith("/teams/")) {
+    return { eyebrow: "Workspace", title: currentTeamName ?? "Team" }
+  }
+  if (pathname.startsWith("/admin")) {
+    return { eyebrow: "Operations", title: "Admin" }
+  }
+  if (pathname.startsWith("/profile")) {
+    return { eyebrow: "Account", title: "Profile" }
+  }
+  return { eyebrow: "Workspace", title: "Dashboard" }
+}
 
 export function AppLayout() {
   const currentTeam = useAuthStore((state) => state.currentTeam)
@@ -11,27 +37,8 @@ export function AppLayout() {
     select: (state) => state.location.pathname,
   })
 
-  const header = useMemo(() => {
-    if (pathname === "/home") {
-      return { eyebrow: "Overview", title: "Home" }
-    }
-    if (pathname === "/teams") {
-      return { eyebrow: "Workspace", title: "Teams" }
-    }
-    if (pathname === "/teams/new") {
-      return { eyebrow: "Workspace", title: "Create team" }
-    }
-    if (pathname.startsWith("/teams/")) {
-      return { eyebrow: "Workspace", title: currentTeam?.name ?? "Team" }
-    }
-    if (pathname.startsWith("/admin")) {
-      return { eyebrow: "Operations", title: "Admin" }
-    }
-    if (pathname.startsWith("/profile")) {
-      return { eyebrow: "Account", title: "Profile" }
-    }
-    return { eyebrow: "Workspace", title: "Dashboard" }
-  }, [currentTeam?.name, pathname])
+  const heading = resolvePageHeading(pathname, currentTeam?.name)
+  const isViewingCurrentTeam = currentTeam !== null && pathname.startsWith(`/teams/${currentTeam.id}`)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -45,11 +52,11 @@ export function AppLayout() {
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div>
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{header.eyebrow}</p>
-                    <p className="font-heading text-lg font-semibold text-foreground">{header.title}</p>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{heading.eyebrow}</p>
+                    <p className="font-heading text-lg font-semibold text-foreground">{heading.title}</p>
                   </div>
                 </div>
-                {currentTeam && pathname !== "/teams/new" && !pathname.startsWith(`/teams/${currentTeam.id}`) && (
+                {currentTeam && pathname !== "/teams/new" && !isViewingCurrentTeam && (
                   <Link
                     to="/teams/$teamId"
                     params={{ teamId: currentTeam.id }}

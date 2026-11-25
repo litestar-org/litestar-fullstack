@@ -1,15 +1,14 @@
-"""SQLAlchemy digest-only API key store, identity resolver, and ``APIKeyService`` factory."""
+"""Digest-only API key store, identity resolver, and ``APIKeyService`` factory."""
 
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 import structlog
-from anyio import Lock
+from advanced_alchemy.exceptions import IntegrityError, RepositoryError
 from litestar_security.authentication import InvalidCredentials, VerificationUnavailable
-from litestar_security.context import CredentialRestrictions, Principal, ResourcePermission
+from litestar_security.context import Principal
 from litestar_security.providers.api_key import (
     APIKeyClaims,
     APIKeyCodec,
@@ -17,18 +16,21 @@ from litestar_security.providers.api_key import (
     APIKeyService,
     APIKeyState,
 )
-from sqlalchemy import select, update
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.db import models as m
+from app.domain.accounts.services import APIKeyRecordService, UserService, is_constraint_violation
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
 
 logger = structlog.get_logger(__name__)
 
+_DUPLICATE_KEY = "API-key ID already exists"
 _ROTATION_CONFLICT = "API-key rotation conflict"
+_UNKNOWN_KEY = "API-key does not exist"
 
 __all__ = (
     "APIKeyIdentityResolver",
@@ -37,84 +39,14 @@ __all__ = (
 )
 
 
-def _ensure_utc(value: datetime) -> datetime:
-    if value.tzinfo is None:
-        return value.replace(tzinfo=UTC)
-    return value.astimezone(UTC)
-
-
-def _parse_uuid(raw: str) -> UUID | None:
-    try:
-        return UUID(raw)
-    except ValueError:
-        return None
-
-
-def _serialize_restrictions(restrictions: CredentialRestrictions) -> dict[str, Any]:
-    return {
-        "scopes": sorted(restrictions.scopes) if restrictions.scopes is not None else None,
-        "roles": sorted(restrictions.roles) if restrictions.roles is not None else None,
-        "capabilities": sorted(restrictions.capabilities) if restrictions.capabilities is not None else None,
-        "tenant_ids": sorted(restrictions.tenant_ids) if restrictions.tenant_ids is not None else None,
-        "resources": (
-            [
-                {
-                    "resource": perm.resource,
-                    "scopes": sorted(perm.scopes),
-                }
-                for perm in restrictions.resources
-            ]
-            if restrictions.resources is not None
-            else None
-        ),
-    }
-
-
-def _deserialize_restrictions(raw: dict[str, Any] | None) -> CredentialRestrictions:
-    if not raw:
-        return CredentialRestrictions()
-    raw_resources = raw.get("resources")
-    resources = (
-        frozenset(
-            ResourcePermission(
-                resource=item["resource"],
-                scopes=frozenset(item.get("scopes") or ()),
-            )
-            for item in raw_resources
-        )
-        if raw_resources is not None
-        else None
-    )
-    return CredentialRestrictions(
-        scopes=frozenset(raw["scopes"]) if raw.get("scopes") is not None else None,
-        roles=frozenset(raw["roles"]) if raw.get("roles") is not None else None,
-        capabilities=frozenset(raw["capabilities"]) if raw.get("capabilities") is not None else None,
-        tenant_ids=frozenset(raw["tenant_ids"]) if raw.get("tenant_ids") is not None else None,
-        resources=resources,
-    )
-
-
-def _row_to_state(row: m.APIKey) -> APIKeyState:
-    return APIKeyState(
-        key_id=row.key_id,
-        subject_id=str(row.user_id),
-        digest=bytes.fromhex(row.key_hash),
-        restrictions=_deserialize_restrictions(row.restrictions),
-        expires_at=_ensure_utc(row.expires_at) if row.expires_at is not None else None,
-        revoked_at=_ensure_utc(row.revoked_at) if row.revoked_at is not None else None,
-        overlap_until=_ensure_utc(row.overlap_until) if row.overlap_until is not None else None,
-    )
-
-
 class SQLAlchemyAPIKeyStore:
-    """SQLAlchemy ``APIKeyStore`` storing only peppered digests, prefixes, and rotation lineage."""
+    """``APIKeyStore`` on Advanced Alchemy services storing only peppered digests, prefixes, and rotation lineage."""
 
-    __slots__ = ("_alchemy_config", "_lock")
+    __slots__ = ("_alchemy_config",)
 
     def __init__(self, alchemy_config: SQLAlchemyAsyncConfig) -> None:
         """Initialize the API key store."""
         self._alchemy_config = alchemy_config
-        self._lock = Lock()
 
     async def get(self, key_id: str) -> APIKeyState | None:
         """Load one API key state record by opaque ``key_id``.
@@ -122,46 +54,24 @@ class SQLAlchemyAPIKeyStore:
         Returns:
             Matching key state, or ``None`` if not found.
         """
-        async with self._alchemy_config.get_session() as session:
-            row = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == key_id))
-            return _row_to_state(row) if row is not None else None
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
+            api_key = await api_keys.get_one_or_none(m.APIKey.key_id == key_id)
+            return api_keys.to_state(api_key) if api_key is not None else None
 
-    async def create(
-        self,
-        record: APIKeyState,
-        *,
-        name: str = "API Key",
-        key_prefix: str | None = None,
-    ) -> None:
+    async def create(self, record: APIKeyState) -> None:
         """Persist a new digest-only API key record.
 
         Raises:
             ValueError: If ``subject_id`` is not a valid UUID or ``key_id`` already exists.
+            IntegrityError: If the database fails for a reason other than a violated constraint.
         """
-        uid = _parse_uuid(record.subject_id)
-        if uid is None:
-            msg = "API key subject_id must be a valid UUID"
-            raise ValueError(msg)
-        row = m.APIKey(
-            key_id=record.key_id,
-            user_id=uid,
-            name=name,
-            key_prefix=key_prefix or record.key_id[:8],
-            key_hash=record.digest.hex(),
-            scopes=sorted(record.restrictions.scopes) if record.restrictions.scopes is not None else [],
-            restrictions=_serialize_restrictions(record.restrictions),
-            expires_at=_ensure_utc(record.expires_at) if record.expires_at is not None else None,
-            revoked_at=_ensure_utc(record.revoked_at) if record.revoked_at is not None else None,
-            overlap_until=_ensure_utc(record.overlap_until) if record.overlap_until is not None else None,
-        )
-        async with self._lock, self._alchemy_config.get_session() as session:
-            session.add(row)
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
             try:
-                await session.commit()
-            except IntegrityError as exc:
-                await session.rollback()
-                msg = "API-key ID already exists"
-                raise ValueError(msg) from exc
+                await api_keys.create(record, auto_commit=True)
+            except IntegrityError as error:
+                if not is_constraint_violation(error):
+                    raise
+                raise ValueError(_DUPLICATE_KEY) from error
 
     async def rotate(
         self,
@@ -175,43 +85,18 @@ class SQLAlchemyAPIKeyStore:
 
         Raises:
             ValueError: If ``replacement.subject_id`` is invalid or rotation conflicts with current state.
+            IntegrityError: If the database fails for a reason other than a violated constraint.
         """
-        now_utc = _ensure_utc(now)
-        uid = _parse_uuid(replacement.subject_id)
-        if uid is None:
-            msg = "Replacement API key subject_id must be a valid UUID"
-            raise ValueError(msg)
-        async with self._lock, self._alchemy_config.get_session() as session:
-            current = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == current_key_id))
-            if current is None or current.revoked_at is not None:
-                raise ValueError(_ROTATION_CONFLICT)
-            result = await session.execute(
-                update(m.APIKey)
-                .where(m.APIKey.id == current.id, m.APIKey.revoked_at.is_(None))
-                .values(revoked_at=now_utc, overlap_until=_bound_overlap(overlap_until, current.expires_at, now_utc))
-            )
-            if int(getattr(result, "rowcount", 0) or 0) != 1:
-                await session.rollback()
-                raise ValueError(_ROTATION_CONFLICT)
-            successor = m.APIKey(
-                key_id=replacement.key_id,
-                user_id=uid,
-                name=current.name,
-                key_prefix=replacement.key_id[:8],
-                key_hash=replacement.digest.hex(),
-                scopes=sorted(replacement.restrictions.scopes) if replacement.restrictions.scopes is not None else [],
-                restrictions=_serialize_restrictions(replacement.restrictions),
-                rotated_from_id=current.id,
-                expires_at=_ensure_utc(replacement.expires_at) if replacement.expires_at is not None else None,
-                revoked_at=_ensure_utc(replacement.revoked_at) if replacement.revoked_at is not None else None,
-                overlap_until=_ensure_utc(replacement.overlap_until) if replacement.overlap_until is not None else None,
-            )
-            session.add(successor)
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
             try:
-                await session.commit()
-            except IntegrityError as exc:
-                await session.rollback()
-                raise ValueError(_ROTATION_CONFLICT) from exc
+                rotated = await api_keys.rotate(current_key_id, replacement, overlap_until=overlap_until, now=now)
+                await api_keys.repository.session.commit()
+            except IntegrityError as error:
+                if not is_constraint_violation(error):
+                    raise
+                raise ValueError(_ROTATION_CONFLICT) from error
+        if not rotated:
+            raise ValueError(_ROTATION_CONFLICT)
 
     async def revoke(self, *, key_id: str, now: datetime) -> None:
         """Immediately revoke an existing API key and clear any grace overlap window.
@@ -219,38 +104,29 @@ class SQLAlchemyAPIKeyStore:
         Raises:
             ValueError: If no API key matches ``key_id``.
         """
-        now_utc = _ensure_utc(now)
-        async with self._lock, self._alchemy_config.get_session() as session:
-            result = await session.execute(
-                update(m.APIKey).where(m.APIKey.key_id == key_id).values(revoked_at=now_utc, overlap_until=None)
-            )
-            await session.commit()
-            if int(getattr(result, "rowcount", 0) or 0) != 1:
-                msg = "API-key does not exist"
-                raise ValueError(msg)
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
+            revoked = await api_keys.revoke(key_id, now=now)
+            await api_keys.repository.session.commit()
+        if not revoked:
+            raise ValueError(_UNKNOWN_KEY)
 
     async def list_for_user(self, user_id: UUID) -> list[m.APIKey]:
-        """List all API key metadata rows owned by a user ordered newest first.
+        """List all API keys owned by a user ordered newest first.
 
         Returns:
-            API key ORM rows belonging to ``user_id``.
+            API keys belonging to ``user_id``.
         """
-        async with self._alchemy_config.get_session() as session:
-            rows = (
-                await session.scalars(
-                    select(m.APIKey).where(m.APIKey.user_id == user_id).order_by(m.APIKey.created_at.desc())
-                )
-            ).all()
-            return list(rows)
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
+            return list(await api_keys.list(m.APIKey.user_id == user_id, order_by=m.APIKey.created_at.desc()))
 
     async def get_for_user(self, user_id: UUID, key_id: str) -> m.APIKey | None:
-        """Fetch one API key metadata row owned by ``user_id``.
+        """Fetch one API key owned by ``user_id``.
 
         Returns:
-            Matching API key row, or ``None`` if not found.
+            Matching API key, or ``None`` if not found.
         """
-        async with self._alchemy_config.get_session() as session:
-            return await session.scalar(select(m.APIKey).where(m.APIKey.user_id == user_id, m.APIKey.key_id == key_id))
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
+            return await api_keys.get_one_or_none(m.APIKey.user_id == user_id, m.APIKey.key_id == key_id)
 
     async def update_metadata(
         self,
@@ -262,16 +138,15 @@ class SQLAlchemyAPIKeyStore:
         """Update human-readable name and display prefix on an existing key.
 
         Returns:
-            Updated API key row, or ``None`` if ``key_id`` does not exist.
+            Updated API key, or ``None`` if ``key_id`` does not exist.
         """
-        async with self._lock, self._alchemy_config.get_session() as session:
-            row = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == key_id))
-            if row is None:
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
+            api_key = await api_keys.get_one_or_none(m.APIKey.key_id == key_id)
+            if api_key is None:
                 return None
-            row.name = name
-            row.key_prefix = key_prefix
-            await session.commit()
-            return row
+            api_key.name = name
+            api_key.key_prefix = key_prefix
+            return await api_keys.update(api_key, auto_commit=True)
 
     async def record(self, *, key_id: str, used_at: datetime) -> None:
         """Persist one coalesced API-key usage timestamp."""
@@ -281,12 +156,10 @@ class SQLAlchemyAPIKeyStore:
         """Batch-update ``last_used_at`` timestamps for verified API keys."""
         if not updates:
             return
-        async with self._lock, self._alchemy_config.get_session() as session:
+        async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
             for key_id, used_at in updates.items():
-                await session.execute(
-                    update(m.APIKey).where(m.APIKey.key_id == key_id).values(last_used_at=_ensure_utc(used_at))
-                )
-            await session.commit()
+                await api_keys.record_usage(key_id, used_at=used_at)
+            await api_keys.repository.session.commit()
 
 
 class APIKeyIdentityResolver:
@@ -307,22 +180,13 @@ class APIKeyIdentityResolver:
         Returns:
             Resolved user principal, ``InvalidCredentials`` if missing/inactive, or ``VerificationUnavailable``.
         """
-        uid = _parse_uuid(claims.subject_id)
-        if uid is None:
+        user_id = UserService.to_user_id(claims.subject_id)
+        if user_id is None:
             return InvalidCredentials()
         try:
-            async with self._alchemy_config.get_session() as session:
-                stmt = (
-                    select(m.User)
-                    .where(m.User.id == uid)
-                    .options(
-                        selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
-                        selectinload(m.User.teams).options(joinedload(m.TeamMember.team, innerjoin=True)),
-                        selectinload(m.User.mfa_factors),
-                    )
-                )
-                user = await session.scalar(stmt)
-        except SQLAlchemyError:
+            async with UserService.new(config=self._alchemy_config) as users:
+                user = await users.find_for_authorization(m.User.id == user_id)
+        except (RepositoryError, SQLAlchemyError):
             logger.warning("Database error during API key identity resolution", key_id=claims.key_id)
             return VerificationUnavailable()
         if user is None or not user.is_active:
@@ -350,14 +214,3 @@ def build_api_key_service(
         codec=APIKeyCodec(pepper=pepper, prefix=prefix),
         clock=lambda: datetime.now(UTC),
     )
-
-
-def _bound_overlap(
-    overlap_until: datetime | None, current_expires_at: datetime | None, now: datetime
-) -> datetime | None:
-    if overlap_until is None:
-        return None
-    bounded = _ensure_utc(overlap_until)
-    if current_expires_at is not None:
-        bounded = min(bounded, _ensure_utc(current_expires_at))
-    return bounded if bounded >= now else None

@@ -51,7 +51,7 @@ def build_plugins(
     resolved_email = email_config or config.email
     if resolved_email.email_service_dependency_key == "mailer":
         resolved_email = replace(resolved_email, email_service_dependency_key="email_service_provider")
-    plugin_list: list[PluginProtocol] = [
+    plugins: list[PluginProtocol] = [
         StructlogPlugin(config=config.log),
         GranianPlugin(static="auto"),
         SQLAlchemyPlugin(config=config.alchemy),
@@ -61,12 +61,12 @@ def build_plugins(
         VitePlugin(config=config.vite),
     ]
     if mcp_config is not None or get_settings().mcp.ENABLED:
-        plugin_list.append(LitestarMCP(config=mcp_config or config.mcp))
-    plugin_list.extend(
+        plugins.append(LitestarMCP(config=mcp_config or config.mcp))
+    plugins.extend(
         [
             AutowirePlugin(config=autowire_config or config.autowire),
             ProblemDetailsPlugin(config=config.problem_details),
             SecurityPlugin(config=security_config or config.security),
         ]
     )
-    return plugin_list
+    return plugins

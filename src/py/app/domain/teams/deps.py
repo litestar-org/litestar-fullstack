@@ -20,6 +20,7 @@ from app.domain.teams.services import (
     TeamService,
     TeamServices,
 )
+from app.domain.teams.services._team_member import ALREADY_A_MEMBER
 
 if TYPE_CHECKING:
     from collections.abc import Collection
@@ -81,7 +82,7 @@ provide_team_members_service = create_service_provider(
         selectinload(m.TeamMember.team),
         selectinload(m.TeamMember.user),
     ],
-    error_messages={"duplicate_key": "User is already a team member.", "integrity": "Team member operation failed."},
+    error_messages={"duplicate_key": ALREADY_A_MEMBER, "integrity": "Team member operation failed."},
 )
 
 provide_team_services = create_service_provider(TeamServices)

@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
@@ -52,6 +53,25 @@ describe("useAuthStore", () => {
     expect(useAuthStore.getState().isAuthenticated).toBe(true)
     expect(useAuthStore.getState().user?.email).toBe("user@example.com")
     expect(localStorage.getItem("access_token")).toBeNull()
+  })
+
+  it("leaves the explanation to the access-denied handler when the account lacks application access", async () => {
+    const toastError = vi.spyOn(toast, "error")
+    globalThis.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: "u-1", email: "user@example.com" }), { status: 200, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ status: 403, title: "Forbidden", detail: "Application access is required.", code: "application_access_required" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+
+    const result = await useAuthStore.getState().login("user@example.com", "StrongPassword!123")
+
+    expect(result).toEqual({ authenticated: false, mfaRequired: false })
+    expect(useAuthStore.getState().isAuthenticated).toBe(false)
+    expect(toastError).not.toHaveBeenCalled()
   })
 
   it("returns mfaRequired and stores pending challenge on 403 MFA challenge response", async () => {

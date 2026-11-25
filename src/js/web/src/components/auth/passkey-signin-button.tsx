@@ -8,12 +8,11 @@ import { useAuthStore } from "@/lib/auth"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
 
 interface PasskeySignInButtonProps {
-  accountId?: string
   authRedirect?: string
   className?: string
 }
 
-export function PasskeySignInButton({ accountId, authRedirect, className }: Readonly<PasskeySignInButtonProps>) {
+export function PasskeySignInButton({ authRedirect, className }: Readonly<PasskeySignInButtonProps>) {
   const navigate = useNavigate()
   const loginWithPasskey = useAuthStore((state) => state.loginWithPasskey)
   const isLoading = useAuthStore((state) => state.isLoading)
@@ -23,10 +22,10 @@ export function PasskeySignInButton({ accountId, authRedirect, className }: Read
   }
 
   const handleClick = async () => {
-    const ok = await loginWithPasskey(accountId)
-    if (ok) {
+    const isSignedIn = await loginWithPasskey()
+    if (isSignedIn) {
       toast.success("Signed in with passkey")
-      navigate({ to: authRedirect || DEFAULT_AUTH_REDIRECT })
+      void navigate({ to: authRedirect || DEFAULT_AUTH_REDIRECT })
     }
   }
 

@@ -36,7 +36,7 @@ class Team(UUIDv7AuditBase, SlugKey):
         cascade="all, delete",
     )
     pending_invitations: Mapped[list[TeamInvitation]] = relationship(
-        primaryjoin="and_(TeamInvitation.team_id==Team.id, TeamInvitation.is_accepted == False)",
+        primaryjoin="and_(TeamInvitation.team_id == Team.id, TeamInvitation.is_accepted.is_(false()))",
         viewonly=True,
     )
     tags: Mapped[list[Tag]] = relationship(

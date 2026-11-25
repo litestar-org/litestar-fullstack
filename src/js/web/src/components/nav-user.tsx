@@ -1,5 +1,3 @@
-"use client"
-
 import { useNavigate } from "@tanstack/react-router"
 import { ChevronsUpDown, Key, LogOut, Shield, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,9 +11,9 @@ export function NavUser() {
   const { logout, user } = useAuthStore()
   const { isMobile } = useSidebar()
 
-  const onLogout = async () => {
+  const handleLogout = async () => {
     await logout()
-    navigate({ to: "/" })
+    void navigate({ to: "/" })
   }
 
   if (!user) {
@@ -76,7 +74,7 @@ export function NavUser() {
               API Keys
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

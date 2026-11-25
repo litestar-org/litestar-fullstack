@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { configureApiClient, isReauthenticationRequired, resetApiClientForTest } from "@/lib/api-client"
+import { configureApiClient, extractApiErrorMessage, isApplicationAccessRequired, isReauthenticationRequired, resetApiClientForTest } from "@/lib/api-client"
 import { client } from "@/lib/generated/api/client.gen"
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/generated/routes"
 
@@ -79,14 +79,63 @@ describe("configureApiClient", () => {
     await client.post({ url: "/api/access/step-up/totp-enroll", body: { method: "password", credential: "wrong" } })
     expect(onUnauthorized).not.toHaveBeenCalled()
   })
+
+  it("invokes onAccessDenied once per response that says the account lacks application access", async () => {
+    const accessDenied = { status: 403, title: "Forbidden", detail: "Application access is required.", code: "application_access_required" }
+    const forbidden = { status: 403, title: "Forbidden", detail: "You do not have the required role.", code: "missing_role" }
+    const fetchSpy = vi.fn<typeof fetch>()
+    globalThis.fetch = fetchSpy
+    const onAccessDenied = vi.fn()
+    const onUnauthorized = vi.fn()
+
+    configureApiClient({ baseUrl: "http://localhost:8000", onAccessDenied, onUnauthorized })
+    configureApiClient({ baseUrl: "http://localhost:8000", onAccessDenied, onUnauthorized })
+
+    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify(accessDenied), { status: 403, headers: { "Content-Type": "application/json" } }))
+    await client.get({ url: "/api/me" })
+    expect(onAccessDenied).toHaveBeenCalledTimes(1)
+    expect(onUnauthorized).not.toHaveBeenCalled()
+
+    onAccessDenied.mockClear()
+    window.history.pushState({}, "", "/login")
+    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify(accessDenied), { status: 403, headers: { "Content-Type": "application/json" } }))
+    await client.get({ url: "/api/me" })
+    expect(onAccessDenied).toHaveBeenCalledTimes(1)
+
+    onAccessDenied.mockClear()
+    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify(forbidden), { status: 403, headers: { "Content-Type": "application/json" } }))
+    await client.get({ url: "/api/admin/users" })
+    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } }))
+    await client.post({ url: "/api/access/logout" })
+    expect(onAccessDenied).not.toHaveBeenCalled()
+  })
+})
+
+describe("isApplicationAccessRequired", () => {
+  it("recognizes only the application access denial among API errors", () => {
+    expect(isApplicationAccessRequired({ status: 403, title: "Forbidden", detail: "Application access is required.", code: "application_access_required" })).toBe(true)
+    expect(isApplicationAccessRequired({ status: 403, title: "Forbidden", detail: "Confirm your password to continue.", code: "reauthentication_required" })).toBe(false)
+    expect(isApplicationAccessRequired({ status: 403, title: "Forbidden" })).toBe(false)
+    expect(isApplicationAccessRequired(new Error("network down"))).toBe(false)
+    expect(isApplicationAccessRequired(null)).toBe(false)
+  })
 })
 
 describe("isReauthenticationRequired", () => {
   it("recognizes only the reauthentication denial among API errors", () => {
-    expect(isReauthenticationRequired({ status_code: 403, detail: "Confirm your password to continue.", extra: { code: "reauthentication_required" } })).toBe(true)
-    expect(isReauthenticationRequired({ status_code: 403, detail: "The current password is incorrect." })).toBe(false)
-    expect(isReauthenticationRequired({ status_code: 403, detail: "Forbidden", extra: { code: "missing_role" } })).toBe(false)
+    expect(isReauthenticationRequired({ status: 403, title: "Forbidden", detail: "Confirm your password to continue.", code: "reauthentication_required" })).toBe(true)
+    expect(isReauthenticationRequired({ status: 403, title: "Forbidden", detail: "The current password is incorrect." })).toBe(false)
+    expect(isReauthenticationRequired({ status: 403, title: "Forbidden", detail: "You do not have the required role.", code: "missing_role" })).toBe(false)
     expect(isReauthenticationRequired(new Error("network down"))).toBe(false)
     expect(isReauthenticationRequired(null)).toBe(false)
+  })
+})
+
+describe("extractApiErrorMessage", () => {
+  it("prefers the detail, then a message, and uses the bare title only when neither is present", () => {
+    expect(extractApiErrorMessage({ status: 403, title: "Forbidden", detail: "Confirm your password to continue." }, "Try again")).toBe("Confirm your password to continue.")
+    expect(extractApiErrorMessage({ status: 409, title: "Conflict", message: "This invitation was already used." }, "Try again")).toBe("This invitation was already used.")
+    expect(extractApiErrorMessage({ status: 403, title: "Forbidden" }, "Try again")).toBe("Forbidden")
+    expect(extractApiErrorMessage({ status: 500 }, "Try again")).toBe("Try again")
   })
 })

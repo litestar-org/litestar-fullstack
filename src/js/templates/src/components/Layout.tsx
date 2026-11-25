@@ -10,23 +10,7 @@ interface LayoutProps {
   children: ReactNode
 }
 
-export const Layout = ({ preview, appName, children }: LayoutProps) => {
-  return (
-    <Html lang="en">
-      <Head />
-      <Preview>{preview}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Header appName={appName} />
-          <Section style={content}>{children}</Section>
-          <Footer appName={appName} />
-        </Container>
-      </Body>
-    </Html>
-  )
-}
-
-const main = {
+const bodyStyle = {
   backgroundColor: emailTheme.colors.bodyBg,
   fontFamily: emailTheme.fonts.primary,
   lineHeight: emailTheme.lineHeight,
@@ -34,7 +18,7 @@ const main = {
   padding: emailTheme.spacing.bodyPadding,
 }
 
-const container = {
+const containerStyle = {
   maxWidth: "600px",
   margin: "0 auto",
   backgroundColor: emailTheme.colors.containerBg,
@@ -44,6 +28,22 @@ const container = {
   boxShadow: emailTheme.shadows.container,
 }
 
-const content = {
+const contentStyle = {
   padding: emailTheme.spacing.containerPadding,
+}
+
+export const Layout = ({ preview, appName, children }: Readonly<LayoutProps>) => {
+  return (
+    <Html lang="en">
+      <Head />
+      <Preview>{preview}</Preview>
+      <Body style={bodyStyle}>
+        <Container style={containerStyle}>
+          <Header appName={appName} />
+          <Section style={contentStyle}>{children}</Section>
+          <Footer appName={appName} />
+        </Container>
+      </Body>
+    </Html>
+  )
 }

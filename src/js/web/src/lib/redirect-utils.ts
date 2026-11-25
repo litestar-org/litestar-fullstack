@@ -11,6 +11,14 @@
 export const DEFAULT_AUTH_REDIRECT = "/home"
 
 /**
+ * Login search parameter value that marks a user who was signed out because
+ * their account lacks access to the application.
+ */
+export const ACCESS_DENIED_REASON = "access-denied"
+
+export const ACCESS_DENIED_LOGIN_URL = `/login?reason=${ACCESS_DENIED_REASON}`
+
+/**
  * Validates and sanitizes redirect URLs to prevent open redirect vulnerabilities.
  * Only allows relative paths that start with '/'.
  *

@@ -1,7 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router"
 import { Icons } from "@/components/icons"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { buttonVariants } from "@/components/ui/button"
-import { validateRedirectUrl } from "@/lib/redirect-utils"
+import { ACCESS_DENIED_REASON, validateRedirectUrl } from "@/lib/redirect-utils"
 import { cn } from "@/lib/utils"
 
 import { AuthHeroPanel } from "./auth-hero-panel"
@@ -14,23 +15,18 @@ export function AuthForm() {
 
   const isLogin = pathname === "/login"
 
-  // Get redirect param from URL search params
   const searchParams = new URLSearchParams(router.state.location.searchStr)
-  const redirectParam = searchParams.get("redirect")
-  const validatedRedirect = validateRedirectUrl(redirectParam)
+  const validatedRedirect = validateRedirectUrl(searchParams.get("redirect"))
+  const wasAccessDenied = isLogin && searchParams.get("reason") === ACCESS_DENIED_REASON
 
-  // Build toggle URL with redirect preserved
   const togglePath = isLogin ? "/signup" : "/login"
   const toggleSearch = validatedRedirect ? { redirect: validatedRedirect } : undefined
 
   return (
     <div className="relative flex min-h-screen w-full">
-      {/* Left panel with RetroGrid - hidden on mobile */}
       <AuthHeroPanel title="Litestar Fullstack" description="Build high-performance web applications with Python and React. Seamless SPA experience powered by Vite." />
 
-      {/* Right panel with form - centers on mobile when hero is hidden */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-        {/* Toggle link in top right */}
         <Link to={togglePath} search={toggleSearch} className={cn(buttonVariants({ variant: "ghost" }), "absolute top-4 right-4 md:top-8 md:right-8")}>
           {isLogin ? "Need an account?" : "Sign in"}
         </Link>
@@ -42,6 +38,12 @@ export function AuthForm() {
             </h1>
             <p className="text-muted-foreground text-sm">{isLogin ? "Enter your credentials to sign in to your account" : "Enter your details to create your account"}</p>
           </div>
+
+          {wasAccessDenied && (
+            <Alert variant="destructive">
+              <AlertDescription>Your account does not have access to this application.</AlertDescription>
+            </Alert>
+          )}
 
           {isLogin ? <UserLoginForm redirectUrl={validatedRedirect} /> : <UserSignupForm redirectUrl={validatedRedirect} />}
 

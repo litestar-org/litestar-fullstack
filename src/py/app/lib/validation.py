@@ -1,4 +1,4 @@
-"""Production-ready field validation utilities with comprehensive security checks."""
+"""Validators and annotated types for user-supplied account and resource fields."""
 
 import hashlib
 import re
@@ -73,11 +73,6 @@ COMMON_PASSWORDS = {
 
 PASSWORD_MIN_LENGTH = 12
 PASSWORD_MAX_LENGTH = 128
-PASSWORD_STRONG_LENGTH = 16
-PASSWORD_VERY_STRONG_LENGTH = 20
-
-PASSWORD_SCORE_STRONG = 7
-PASSWORD_SCORE_MEDIUM = 5
 
 PHONE_MIN_DIGITS = 7
 PHONE_MAX_DIGITS = 15
@@ -157,23 +152,6 @@ class PasswordValidationError(ValidationError):
     """Exception raised when password validation fails."""
 
 
-def _ensure_str(value: Any, field_name: str, exc_type: type[ValidationError] = ValidationError) -> str:
-    """Ensure the value is a string.
-
-    Args:
-        value: The value to validate.
-        field_name: Field label used in error messages.
-        exc_type: Exception type to raise on validation failure.
-
-    Returns:
-        The validated string.
-    """
-    if not isinstance(value, str):
-        msg = f"{field_name} must be a string"
-        raise exc_type(msg)
-    return value
-
-
 def validate_not_empty(value: str) -> str:
     cleaned = value.strip()
     if not cleaned:
@@ -193,13 +171,10 @@ def validate_length(value: str, min_length: int = 0, max_length: int | None = No
 
 
 def validate_no_control_chars(value: str) -> str:
-    """Remove/reject control characters.
-
-    Args:
-        value: The string to validate.
+    """Reject control characters other than newline, carriage return, and tab.
 
     Returns:
-        The cleansed string without control characters.
+        The unchanged string.
 
     Raises:
         ValidationError: If control characters are found.
@@ -211,10 +186,7 @@ def validate_no_control_chars(value: str) -> str:
 
 
 def validate_password_strength(password: str) -> None:
-    """Validate password meets production security requirements.
-
-    Args:
-        password: The password to validate.
+    """Require the length and character-class rules and reject common passwords.
 
     Raises:
         PasswordValidationError: If password doesn't meet requirements.
@@ -250,102 +222,8 @@ def validate_password_strength(password: str) -> None:
         raise PasswordValidationError(msg)
 
 
-def _is_common_password(password: str) -> bool:
-    """Check if password is in common password list.
-
-    Args:
-        password: The password to check.
-
-    Returns:
-        True if the password is common, False otherwise.
-    """
-    password_lower = password.lower()
-
-    if password_lower in COMMON_PASSWORDS:
-        return True
-
-    if PASSWORD_SIMPLE_REPEATED_PATTERN.match(password):
-        return True
-
-    if PASSWORD_SEQUENTIAL_PATTERN.match(password_lower):
-        return True
-
-    return bool(PASSWORD_KEYBOARD_PATTERN.match(password_lower))
-
-
-def get_password_strength(password: str) -> dict[str, Any]:
-    """Get detailed password strength analysis.
-
-    Args:
-        password: The password to analyze.
-
-    Returns:
-        Dictionary with strength analysis.
-    """
-    analysis: dict[str, Any] = {
-        "score": 0,
-        "strength": "weak",
-        "requirements": {
-            "length": len(password) >= PASSWORD_MIN_LENGTH,
-            "uppercase": bool(PASSWORD_UPPERCASE_PATTERN.search(password)),
-            "lowercase": bool(PASSWORD_LOWERCASE_PATTERN.search(password)),
-            "digits": bool(PASSWORD_DIGIT_PATTERN.search(password)),
-            "special_chars": bool(PASSWORD_SPECIAL_PATTERN.search(password)),
-            "not_common": not _is_common_password(password),
-        },
-        "feedback": [],
-    }
-
-    if analysis["requirements"]["length"]:
-        analysis["score"] += 2
-    else:
-        analysis["feedback"].append("Use at least 12 characters")
-
-    if analysis["requirements"]["uppercase"]:
-        analysis["score"] += 1
-    else:
-        analysis["feedback"].append("Include uppercase letters")
-
-    if analysis["requirements"]["lowercase"]:
-        analysis["score"] += 1
-    else:
-        analysis["feedback"].append("Include lowercase letters")
-
-    if analysis["requirements"]["digits"]:
-        analysis["score"] += 1
-    else:
-        analysis["feedback"].append("Include numbers")
-
-    if analysis["requirements"]["special_chars"]:
-        analysis["score"] += 1
-    else:
-        analysis["feedback"].append("Include special characters (!@#$%^&*)")
-
-    if analysis["requirements"]["not_common"]:
-        analysis["score"] += 1
-    else:
-        analysis["feedback"].append("Avoid common passwords")
-
-    if len(password) >= PASSWORD_STRONG_LENGTH:
-        analysis["score"] += 1
-    if len(password) >= PASSWORD_VERY_STRONG_LENGTH:
-        analysis["score"] += 1
-
-    if analysis["score"] >= PASSWORD_SCORE_STRONG:
-        analysis["strength"] = "strong"
-    elif analysis["score"] >= PASSWORD_SCORE_MEDIUM:
-        analysis["strength"] = "medium"
-    else:
-        analysis["strength"] = "weak"
-
-    return analysis
-
-
-def validate_email(v: str) -> str:
-    """Production-ready email validation with comprehensive checks.
-
-    Args:
-        v: The email address to validate.
+def validate_email(value: str) -> str:
+    """Normalize an email address and reject malformed, disposable, or blocked addresses.
 
     Returns:
         The normalized email address.
@@ -353,9 +231,7 @@ def validate_email(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Email")
-
-    email = v.strip().lower()
+    email = _ensure_str(value, "Email").strip().lower()
 
     if len(email) > EMAIL_MAX_LENGTH:
         msg = "Email address too long"
@@ -393,11 +269,8 @@ def validate_email(v: str) -> str:
 Email = Annotated[str, msgspec.Meta(description="Valid email address")]
 
 
-def validate_password(v: str) -> str:
-    """Production-ready password validation with security checks.
-
-    Args:
-        v: The password to validate.
+def validate_password(value: str) -> str:
+    """Require a strong password that is not on the common-password list.
 
     Returns:
         The validated password.
@@ -405,26 +278,19 @@ def validate_password(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Password")
-
-    validate_password_strength(v)
-
-    password_hash = hashlib.sha256(v.encode()).hexdigest()
-    if password_hash in COMMON_PASSWORDS_HASHES:
+    password = _ensure_str(value, "Password")
+    validate_password_strength(password)
+    if hashlib.sha256(password.encode()).hexdigest() in COMMON_PASSWORDS_HASHES:
         msg = "Password is too common, please choose a different one"
         raise ValidationError(msg)
-
-    return v
+    return password
 
 
 Password = Annotated[str, msgspec.Meta(description="Strong password (12+ chars, mixed case, numbers, symbols)")]
 
 
-def validate_name(v: str) -> str:
-    """Human name validation with proper handling of international names.
-
-    Args:
-        v: The name to validate.
+def validate_name(value: str) -> str:
+    """Normalize a human name, accepting international scripts.
 
     Returns:
         The normalized name.
@@ -432,9 +298,7 @@ def validate_name(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Name")
-
-    name = v.strip()
+    name = _ensure_str(value, "Name").strip()
     name = NAME_WHITESPACE_PATTERN.sub(" ", name)
 
     if len(name) < 1:
@@ -455,11 +319,8 @@ def validate_name(v: str) -> str:
     return name
 
 
-def validate_username(v: str) -> str:
-    """Username validation with uniqueness and character restrictions.
-
-    Args:
-        v: The username to validate.
+def validate_username(value: str) -> str:
+    """Normalize a username and enforce its length, character, and reserved-name rules.
 
     Returns:
         The normalized username.
@@ -467,9 +328,7 @@ def validate_username(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Username")
-
-    username = v.strip().lower()
+    username = _ensure_str(value, "Username").strip().lower()
 
     if len(username) < USERNAME_MIN_LENGTH:
         msg = f"Username must be at least {USERNAME_MIN_LENGTH} characters"
@@ -501,11 +360,8 @@ Name = Annotated[str, msgspec.Meta(description="Human name (1-100 characters)")]
 Username = Annotated[str, msgspec.Meta(description="Username (3-30 characters, alphanumeric/hyphens/underscores)")]
 
 
-def validate_url(v: str) -> str:
-    """URL validation with security checks.
-
-    Args:
-        v: The URL to validate.
+def validate_url(value: str) -> str:
+    """Require an absolute http(s) URL that does not target a blocked host.
 
     Returns:
         The normalized URL.
@@ -513,9 +369,7 @@ def validate_url(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "URL")
-
-    url = v.strip()
+    url = _ensure_str(value, "URL").strip()
 
     if len(url) > URL_MAX_LENGTH:
         msg = "URL too long"
@@ -523,9 +377,9 @@ def validate_url(v: str) -> str:
 
     try:
         parsed = urlparse(url)
-    except Exception as e:
+    except Exception as exc:
         msg = "Invalid URL format"
-        raise ValidationError(msg) from e
+        raise ValidationError(msg) from exc
 
     if not parsed.scheme:
         msg = "URL must include a scheme (http:// or https://)"
@@ -551,11 +405,8 @@ def validate_url(v: str) -> str:
     return url
 
 
-def validate_slug(v: str) -> str:
-    """Slug validation for URL-safe identifiers.
-
-    Args:
-        v: The slug to validate.
+def validate_slug(value: str) -> str:
+    """Normalize a URL-safe slug and enforce its character and hyphen rules.
 
     Returns:
         The normalized slug.
@@ -563,9 +414,7 @@ def validate_slug(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Slug")
-
-    slug = v.strip().lower()
+    slug = _ensure_str(value, "Slug").strip().lower()
 
     if len(slug) < 1:
         msg = "Slug cannot be empty"
@@ -593,11 +442,8 @@ Url = Annotated[str, msgspec.Meta(description="Valid HTTP/HTTPS URL")]
 Slug = Annotated[str, msgspec.Meta(description="URL-safe slug (lowercase, alphanumeric, hyphens)")]
 
 
-def validate_phone(v: str) -> str:
-    """International phone number validation.
-
-    Args:
-        v: The phone number to validate.
+def validate_phone(value: str) -> str:
+    """Require an international phone number with a plausible digit count.
 
     Returns:
         The normalized phone number.
@@ -605,9 +451,7 @@ def validate_phone(v: str) -> str:
     Raises:
         ValidationError: If validation fails.
     """
-    v = _ensure_str(v, "Phone number")
-
-    phone = v.strip()
+    phone = _ensure_str(value, "Phone number").strip()
 
     if not phone:
         msg = "Phone number cannot be empty"
@@ -626,3 +470,21 @@ def validate_phone(v: str) -> str:
 
 
 Phone = Annotated[str, msgspec.Meta(description="Valid international phone number")]
+
+
+def _ensure_str(value: Any, field_name: str, exc_type: type[ValidationError] = ValidationError) -> str:
+    if not isinstance(value, str):
+        msg = f"{field_name} must be a string"
+        raise exc_type(msg)
+    return value
+
+
+def _is_common_password(password: str) -> bool:
+    password_lower = password.lower()
+    if password_lower in COMMON_PASSWORDS:
+        return True
+    if PASSWORD_SIMPLE_REPEATED_PATTERN.match(password):
+        return True
+    if PASSWORD_SEQUENTIAL_PATTERN.match(password_lower):
+        return True
+    return bool(PASSWORD_KEYBOARD_PATTERN.match(password_lower))

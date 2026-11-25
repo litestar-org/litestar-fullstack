@@ -21,11 +21,13 @@ from app.domain.accounts.security import (
     build_security_config,
     build_session_middleware,
     build_session_store,
+    require_application_access,
 )
 from app.domain.tags.controllers import TagController
 from app.domain.tags.services import TagService
 from app.lib.secrets import API_KEY_PEPPER_INFO, derive_subkey
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
+from tests.factories import grant_application_access
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -56,6 +58,7 @@ async def _build_tags_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLAlche
         middleware=[build_session_middleware(settings)],
         csrf_config=build_csrf_config(settings),
         stores={"sessions": build_session_store(db_cfg)},
+        guards=[require_application_access],
     )
     return app, db_cfg, settings
 
@@ -74,6 +77,7 @@ async def _seed_user(db_cfg: SQLAlchemyAsyncConfig, *, email: str, is_superuser:
         session.add(user)
         await session.commit()
         await session.refresh(user)
+        await grant_application_access(session, user)
         return user
 
 

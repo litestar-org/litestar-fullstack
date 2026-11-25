@@ -11,6 +11,7 @@ from click.testing import CliRunner
 
 from app.cli import commands as cli_commands
 from app.domain.accounts.services import AccountServices
+from app.lib.constants import DEFAULT_ACCESS_ROLE
 from app.lib.settings import DatabaseSettings
 
 if TYPE_CHECKING:
@@ -50,16 +51,15 @@ async def test_cli_fixture_idempotency_and_service_group_helpers(tmp_path: Path)
     assert await cli_commands._promote_to_superuser_async("cli-user@example.com", db_cfg) is True
     assert await cli_commands._promote_to_superuser_async("missing@example.com", db_cfg) is False
 
-    assigned_first = await cli_commands._create_default_roles_async(db_cfg)
-    assigned_second = await cli_commands._create_default_roles_async(db_cfg)
-    assert assigned_first == 1
-    assert assigned_second == 0
-
     async with AccountServices.new(config=db_cfg) as accounts:
         user = await accounts.users.get_one(email="cli-user@example.com")
         assert user.is_superuser is True
         assert user.is_verified is True
-        assert len(user.roles) == 1
+        assert [assigned.role_name for assigned in user.roles] == [DEFAULT_ACCESS_ROLE]
+        roles, _ = await accounts.roles.get_many_and_count()
+        assert {role.name for role in roles} == {DEFAULT_ACCESS_ROLE, "Superuser"}
+
+    assert await cli_commands._create_default_roles_async(db_cfg) == 0
 
 
 def test_cli_click_commands_via_runner(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -98,4 +98,4 @@ def test_cli_click_commands_via_runner(tmp_path: Path, monkeypatch: pytest.Monke
 
     res_roles = runner.invoke(cli_commands.user_management_group, ["create-roles"])
     assert res_roles.exit_code == 0, res_roles.output
-    assert "Assigned default role to 1 user(s)." in click.unstyle(res_roles.output)
+    assert "Assigned default role to 0 user(s)." in click.unstyle(res_roles.output)

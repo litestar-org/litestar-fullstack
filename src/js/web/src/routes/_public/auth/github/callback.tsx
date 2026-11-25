@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
-import { GITHUB_AUTH_REDIRECT_KEY } from "@/components/auth/github-signin-button"
+import { GITHUB_AUTH_REDIRECT_KEY, startGitHubSignIn } from "@/components/auth/github-signin-button"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -23,28 +23,26 @@ export const Route = createFileRoute("/_public/auth/github/callback")({
 
 function GitHubCallbackPage() {
   const navigate = useNavigate()
-  const searchParams = useSearch({ from: "/_public/auth/github/callback" })
+  const { error: providerError, message: providerMessage } = useSearch({ from: "/_public/auth/github/callback" })
   const checkAuth = useAuthStore((state) => state.checkAuth)
-  const [error, setError] = useState<string | null>(null)
-
-  const errorParam = searchParams.error
-  const message = searchParams.message
+  const [failureMessage, setFailureMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    const run = async () => {
-      if (errorParam) {
-        const errorMessage = errorParam === "access_denied" ? "You denied access to your GitHub account" : `Authentication failed: ${errorParam}`
-        setError(errorMessage)
-        toast.error(errorMessage)
+    const reportFailure = (message: string) => {
+      setFailureMessage(message)
+      toast.error(message)
+    }
+
+    const completeSignIn = async () => {
+      if (providerError) {
+        reportFailure(providerError === "access_denied" ? "You denied access to your GitHub account" : `Authentication failed: ${providerError}`)
         return
       }
 
       try {
-        const authenticated = await checkAuth()
-        if (!authenticated) {
-          const errorMessage = message || "Could not verify your GitHub sign-in session. Please try again."
-          setError(errorMessage)
-          toast.error(errorMessage)
+        const isAuthenticated = await checkAuth()
+        if (!isAuthenticated) {
+          reportFailure(providerMessage || "Could not verify your GitHub sign-in session. Please try again.")
           return
         }
 
@@ -52,40 +50,38 @@ function GitHubCallbackPage() {
         const storedRedirect = sessionStorage.getItem(GITHUB_AUTH_REDIRECT_KEY)
         sessionStorage.removeItem(GITHUB_AUTH_REDIRECT_KEY)
         await navigate({ to: getSafeRedirectUrl(storedRedirect) })
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Unable to complete GitHub sign-in"
-        setError(errorMessage)
-        toast.error(errorMessage)
+      } catch (error) {
+        reportFailure(error instanceof Error ? error.message : "Unable to complete GitHub sign-in")
       }
     }
 
-    void run()
-  }, [checkAuth, errorParam, message, navigate])
+    void completeSignIn()
+  }, [checkAuth, providerError, providerMessage, navigate])
 
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-xl shadow-primary/15">
         <CardHeader>
-          <CardTitle className="text-center">{error ? "Authentication Failed" : "Completing sign in..."}</CardTitle>
+          <CardTitle className="text-center">{failureMessage ? "Authentication Failed" : "Completing sign in..."}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {!error && (
+          {!failureMessage && (
             <div className="flex flex-col items-center space-y-4">
               <Icons.Spinner className="h-8 w-8 animate-spin text-primary" />
               <p className="text-muted-foreground text-sm">Please wait while we complete your sign in with GitHub...</p>
             </div>
           )}
 
-          {error && (
+          {failureMessage && (
             <>
               <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{failureMessage}</AlertDescription>
               </Alert>
               <div className="flex flex-col space-y-2">
                 <Button onClick={() => navigate({ to: "/login" })} variant="default" className="w-full">
                   Back to Login
                 </Button>
-                <Button onClick={() => navigate({ to: "/login" })} variant="outline" className="w-full">
+                <Button onClick={startGitHubSignIn} variant="outline" className="w-full">
                   Try Again
                 </Button>
               </div>

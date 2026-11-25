@@ -6,7 +6,7 @@ from uuid import UUID
 
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.types import DateTimeUTC, JsonB
-from sqlalchemy import ForeignKey, Index, Integer, LargeBinary, String, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, LargeBinary, String, UniqueConstraint
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,7 +20,7 @@ class UserOAuthAccount(UUIDv7AuditBase):
     __tablename__ = "user_account_oauth"
     __table_args__ = (
         UniqueConstraint("oauth_name", "account_id", name="uq_user_account_oauth_provider_account"),
-        Index("ix_oauth_user_provider", "user_id", "oauth_name"),
+        UniqueConstraint("user_id", "oauth_name", name="uq_user_account_oauth_user_provider"),
         {"comment": "Registered OAuth2 accounts for users"},
     )
     __pii_columns__ = {"oauth_name", "account_email", "account_id"}

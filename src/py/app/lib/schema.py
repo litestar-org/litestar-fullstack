@@ -16,7 +16,9 @@ class BaseStruct(msgspec.Struct):
         Returns:
             Dictionary of field names to values, excluding ``msgspec.UNSET`` fields.
         """
-        return {f: getattr(self, f) for f in self.__struct_fields__ if getattr(self, f, None) != msgspec.UNSET}
+        return {
+            name: getattr(self, name) for name in self.__struct_fields__ if getattr(self, name, None) != msgspec.UNSET
+        }
 
 
 class CamelizedBaseStruct(BaseStruct, rename="camel"):

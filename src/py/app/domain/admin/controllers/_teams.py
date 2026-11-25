@@ -9,7 +9,6 @@ from litestar import Request, delete, get, patch
 from litestar.di import Provide
 from litestar.params import Dependency
 from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, required, requires_role
-from msgspec import UNSET
 
 from app.db import models as m
 from app.domain.admin.deps import provide_audit_log_service
@@ -43,8 +42,8 @@ class AdminTeamsController(SecureController):
         Returns:
             Paginated team summaries.
         """
-        results, total = await teams_service.get_many_and_count(*filters)
-        return teams_service.to_schema(results, total, filters, schema_type=AdminTeamSummary)
+        teams, total = await teams_service.get_many_and_count(*filters)
+        return teams_service.to_schema(teams, total, filters, schema_type=AdminTeamSummary)
 
     @get(operation_id="AdminGetTeam", path="/{team_id:uuid}")
     async def get_team(
@@ -75,18 +74,15 @@ class AdminTeamsController(SecureController):
         Returns:
             Updated team details.
         """
-        update_data: dict[str, Any] = {}
-        for field in ("name", "description", "is_active"):
-            value = getattr(data, field)
-            if value is not UNSET:
-                update_data[field] = value
-        team = await teams_service.update(item_id=team_id, data=update_data, auto_commit=True)
+        changes = data.to_dict()
+        changed_fields = list(changes)
+        team = await teams_service.update(item_id=team_id, data=changes, auto_commit=True)
         await audit_service.log_admin_team_update(
             actor_id=current_user.id,
             actor_email=current_user.email,
             team_id=team_id,
             team_name=team.name,
-            changes=list(update_data.keys()),
+            changes=changed_fields,
             request=request,
         )
         return teams_service.to_schema(team, schema_type=AdminTeamDetail)

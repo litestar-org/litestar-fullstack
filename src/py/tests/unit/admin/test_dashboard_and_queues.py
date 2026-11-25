@@ -20,6 +20,7 @@ from app.domain.accounts.security import (
     build_security_config,
     build_session_middleware,
     build_session_store,
+    require_application_access,
 )
 from app.domain.admin.controllers import (
     AdminQueueController,
@@ -31,6 +32,7 @@ from app.domain.admin.controllers import (
 from app.domain.admin.services import AuditLogService, DashboardQueryService
 from app.domain.system.jobs import scheduler_canary
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
+from tests.factories import grant_application_access
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -77,6 +79,7 @@ async def _build_admin_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLAlch
         middleware=[build_session_middleware(settings)],
         csrf_config=build_csrf_config(settings),
         stores={"sessions": build_session_store(db_cfg)},
+        guards=[require_application_access],
     )
     return app, db_cfg
 
@@ -112,6 +115,7 @@ async def _seed_user(
             )
         await session.commit()
         await session.refresh(user)
+        await grant_application_access(session, user)
         return user
 
 
@@ -140,8 +144,6 @@ async def test_admin_guards_dashboard_query_service_users_and_queues(tmp_path: P
 
     async with AuditLogService.new(config=db_cfg) as audit_svc:
         await audit_svc.log_action(action="user.login", actor_id=admin.id, actor_email=admin.email)
-        recent = await audit_svc.get_user_activity(admin.id)
-        assert len(recent) == 1
 
     async with DashboardQueryService.new(config=db_cfg) as query_svc:
         stats = await query_svc.get_stats()
@@ -199,3 +201,47 @@ async def test_admin_guards_dashboard_query_service_users_and_queues(tmp_path: P
             headers={"X-XSRF-TOKEN": csrf},
         )
         assert missing_cancel.status_code == 404
+
+
+async def test_recent_activity_reports_the_recorded_ip_address(tmp_path: Path) -> None:
+    app, db_cfg = await _build_admin_app(tmp_path, "admin_activity.sqlite3")
+    admin = await _seed_user(db_cfg, email="root@example.com", is_superuser=True)
+    async with AuditLogService.new(config=db_cfg) as audit_svc:
+        await audit_svc.log_action(
+            action="user.login",
+            actor_id=admin.id,
+            actor_email=admin.email,
+            ip_address="203.0.113.7",
+        )
+
+    async with AsyncTestClient(app=app) as admin_client:
+        await _login(admin_client, admin.email)
+        activity_resp = await admin_client.get("/api/admin/dashboard/activity")
+
+    assert activity_resp.status_code == 200
+    logins = [entry for entry in activity_resp.json()["activities"] if entry["action"] == "user.login"]
+    assert [entry["ipAddress"] for entry in logins] == ["203.0.113.7"]
+
+
+async def test_admin_team_update_audits_only_the_fields_sent(tmp_path: Path) -> None:
+    app, db_cfg = await _build_admin_app(tmp_path, "admin_team_audit.sqlite3")
+    admin = await _seed_user(db_cfg, email="root@example.com", is_superuser=True)
+    async with db_cfg.get_session() as session:
+        team = m.Team(name="Ops", slug="ops")
+        session.add(team)
+        await session.commit()
+        team_id = team.id
+
+    async with AsyncTestClient(app=app) as admin_client:
+        csrf = await _login(admin_client, admin.email)
+        update_resp = await admin_client.patch(
+            f"/api/admin/teams/{team_id}",
+            json={"name": "Operations"},
+            headers={"X-XSRF-TOKEN": csrf},
+        )
+        assert update_resp.status_code == 200, update_resp.text
+        assert update_resp.json()["slug"] == "operations"
+        audit_resp = await admin_client.get(f"/api/admin/audit/target/team/{team_id}")
+
+    assert audit_resp.status_code == 200
+    assert [entry["details"] for entry in audit_resp.json()["items"]] == [{"changes": ["name"]}]

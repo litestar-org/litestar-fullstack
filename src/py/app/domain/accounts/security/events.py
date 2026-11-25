@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, cast
-from uuid import UUID
 
 import structlog
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.db import models as m
+from app.domain.accounts.services import UserService
 
 if TYPE_CHECKING:
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
@@ -33,12 +33,7 @@ _SENSITIVE_KEY_TOKENS = frozenset(
     }
 )
 
-__all__ = ("AuditSecurityEventSink", "sanitize_event_details")
-
-
-def _is_sensitive_key(key: str) -> bool:
-    lowered = key.lower()
-    return any(marker in lowered for marker in _SENSITIVE_KEY_TOKENS)
+__all__ = ("AuditSecurityEventSink", "sanitize_event_details", "security_audit_record")
 
 
 def sanitize_event_details(payload: Any) -> Any:
@@ -52,26 +47,51 @@ def sanitize_event_details(payload: Any) -> Any:
         sanitized: dict[str, Any] = {}
         for raw_key, value in mapping.items():
             key = str(raw_key)
-            if _is_sensitive_key(key):
-                sanitized[key] = "[REDACTED]"
-            else:
-                sanitized[key] = sanitize_event_details(value)
+            is_sensitive = any(token in key.lower() for token in _SENSITIVE_KEY_TOKENS)
+            sanitized[key] = "[REDACTED]" if is_sensitive else sanitize_event_details(value)
         return sanitized
     if isinstance(payload, list | tuple | set | frozenset):
-        items = cast("list[object] | tuple[object, ...] | set[object] | frozenset[object]", payload)
-        return [sanitize_event_details(item) for item in items]
+        values = cast("list[object] | tuple[object, ...] | set[object] | frozenset[object]", payload)
+        return [sanitize_event_details(value) for value in values]
     if isinstance(payload, bytes | bytearray):
         return "[REDACTED_BYTES]"
     return payload
 
 
-def _parse_optional_uuid(raw: str | None) -> UUID | None:
-    if not raw:
-        return None
-    try:
-        return UUID(raw)
-    except ValueError:
-        return None
+def security_audit_record(event: SecurityEvent) -> m.AuditLog:
+    """Build the sanitized ``AuditLog`` row describing one ``SecurityEvent``.
+
+    Returns:
+        Unsaved audit log row ready to be added to a session.
+    """
+    principal_id = event.principal_id or event.account_id
+    actor_id = UserService.to_user_id(principal_id)
+    correlation: dict[str, Any] = (
+        cast("dict[str, Any]", sanitize_event_details(dict(event.correlation))) if event.correlation else {}
+    )
+    details: dict[str, Any] = {
+        "event_id": event.event_id,
+        "occurred_at": event.occurred_at.isoformat(),
+        "outcome": event.outcome,
+        "mechanism": event.mechanism,
+        "session_id": event.session_id,
+        "family_id": event.family_id,
+        "correlation": correlation,
+    }
+    if principal_id is not None and actor_id is None:
+        details["raw_actor_id"] = principal_id
+
+    ip_address: Any = correlation.get("ip_address")
+    user_agent: Any = correlation.get("user_agent")
+    return m.AuditLog(
+        actor_id=actor_id,
+        action=f"security.{event.operation}",
+        target_type="user" if event.account_id else "security",
+        target_id=event.account_id[:36] if event.account_id else None,
+        details=details,
+        ip_address=str(ip_address)[:45] if isinstance(ip_address, str) else None,
+        user_agent=str(user_agent)[:500] if isinstance(user_agent, str) else None,
+    )
 
 
 class AuditSecurityEventSink:
@@ -95,39 +115,11 @@ class AuditSecurityEventSink:
         Raises:
             SQLAlchemyError: If persistence fails and the sink was initialized with ``strict=True``.
         """
-        raw_actor = event.principal_id or event.account_id
-        actor_uuid = _parse_optional_uuid(raw_actor)
-        correlation: dict[str, Any] = (
-            cast("dict[str, Any]", sanitize_event_details(dict(event.correlation))) if event.correlation else {}
-        )
-        details: dict[str, Any] = {
-            "event_id": event.event_id,
-            "occurred_at": event.occurred_at.isoformat(),
-            "outcome": event.outcome,
-            "mechanism": event.mechanism,
-            "session_id": event.session_id,
-            "family_id": event.family_id,
-            "correlation": correlation,
-        }
-        if raw_actor is not None and actor_uuid is None:
-            details["raw_actor_id"] = raw_actor
-
-        ip_address: Any = correlation.get("ip_address")
-        user_agent: Any = correlation.get("user_agent")
-
-        record = m.AuditLog(
-            actor_id=actor_uuid,
-            action=f"security.{event.operation}",
-            target_type="user" if event.account_id else "security",
-            target_id=event.account_id[:36] if event.account_id else None,
-            details=details,
-            ip_address=str(ip_address)[:45] if isinstance(ip_address, str) else None,
-            user_agent=str(user_agent)[:500] if isinstance(user_agent, str) else None,
-        )
+        audit_log = security_audit_record(event)
         try:
-            async with self._alchemy_config.get_session() as session:
-                session.add(record)
-                await session.commit()
+            async with self._alchemy_config.get_session() as db_session:
+                db_session.add(audit_log)
+                await db_session.commit()
         except SQLAlchemyError:
             logger.warning(
                 "Failed to persist security audit event",

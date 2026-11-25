@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
+from advanced_alchemy.utils.text import slugify
+from litestar.exceptions import PermissionDeniedException
 from litestar_security.authentication import InvalidCredentials, VerificationUnavailable
-from litestar_security.context import AuthorizationSnapshot, Principal
+from litestar_security.context import AuthorizationSnapshot, Principal, SecurityContext
 from litestar_security.guards import (
     AuthorizationDecision,
     AuthorizationPredicate,
@@ -15,22 +17,29 @@ from litestar_security.guards import (
 )
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.lib.constants import SUPERUSER_ACCESS_ROLE
+from app.lib.constants import DEFAULT_ACCESS_ROLE, SUPERUSER_ACCESS_ROLE
 
 if TYPE_CHECKING:
     from litestar.connection import ASGIConnection
+    from litestar.handlers import BaseRouteHandler
 
     from app.db import models as m
 
+APPLICATION_ACCESS_REQUIRED = "application_access_required"
 TEAM_ROLE_EXPANSION: dict[str, frozenset[str]] = {
     "MEMBER": frozenset({"member"}),
     "ADMIN": frozenset({"member", "admin"}),
 }
 
+_APPLICATION_ACCESS_ROLES = frozenset({slugify(DEFAULT_ACCESS_ROLE), "superuser"})
+_SIGN_OUT_ROUTE = "local.session.logout"
+
 __all__ = (
+    "APPLICATION_ACCESS_REQUIRED",
     "TEAM_ROLE_EXPANSION",
     "AppAuthorizationResolver",
     "SelfSubjectPredicate",
+    "require_application_access",
     "requires_self_or_superuser",
     "requires_team_role",
 )
@@ -106,6 +115,27 @@ class SelfSubjectPredicate(AuthorizationPredicate):
         if target is not None and str(target) == str(principal.id):
             return AuthorizationDecision(granted=True)
         return AuthorizationDecision(granted=False, code="forbidden")
+
+
+def require_application_access(connection: ASGIConnection[Any, Any, Any, Any], route_handler: BaseRouteHandler) -> None:
+    """Deny signed-in principals that hold neither the default access role nor ``superuser``.
+
+    Anonymous connections pass, because each route's authentication policy decides whether they are
+    admitted. Signing out stays available so an account without access can end its session.
+
+    Raises:
+        PermissionDeniedException: If the principal is signed in without the default access role. The client
+            sees a problem-details body whose top-level ``code`` member is ``APPLICATION_ACCESS_REQUIRED``.
+    """
+    security_context: object = cast("dict[str, Any]", connection.scope).get("auth")
+    if not isinstance(security_context, SecurityContext) or not security_context.evidence:
+        return
+    if route_handler.name == _SIGN_OUT_ROUTE or security_context.authorization.roles & _APPLICATION_ACCESS_ROLES:
+        return
+    raise PermissionDeniedException(
+        detail="Your account does not have access to this application.",
+        extra={"code": APPLICATION_ACCESS_REQUIRED},
+    )
 
 
 def requires_team_role(*roles: str) -> AuthorizationPredicate:

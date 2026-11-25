@@ -6,14 +6,15 @@ import ReactDOM from "react-dom/client"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { configureApiClient } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
-import { buildRedirectUrl } from "@/lib/redirect-utils"
+import { ACCESS_DENIED_LOGIN_URL, buildRedirectUrl } from "@/lib/redirect-utils"
 import { ThemeProvider } from "@/lib/theme-context"
 import { routeTree } from "./routeTree.gen"
 
 import "./styles.css"
-import reportWebVitals from "./reportWebVitals.ts"
 
 const queryClient = new QueryClient()
+
+let isSigningOutForAccessDenial = false
 
 configureApiClient({
   baseUrl: import.meta.env.VITE_API_URL ?? "",
@@ -21,9 +22,20 @@ configureApiClient({
     queryClient.clear()
     useAuthStore.getState().clearSession()
     if (typeof window !== "undefined" && window.location.pathname !== "/login") {
-      const target = buildRedirectUrl("/login", `${window.location.pathname}${window.location.search}`)
-      window.location.assign(target)
+      window.location.assign(buildRedirectUrl("/login", `${window.location.pathname}${window.location.search}`))
     }
+  },
+  onAccessDenied: () => {
+    // Every request in flight is refused at once; sign out for the first refusal only.
+    if (isSigningOutForAccessDenial) {
+      return
+    }
+    isSigningOutForAccessDenial = true
+    queryClient.clear()
+    void useAuthStore
+      .getState()
+      .logout()
+      .finally(() => window.location.assign(ACCESS_DENIED_LOGIN_URL))
   },
 })
 
@@ -59,5 +71,3 @@ if (rootElement && !rootElement.innerHTML) {
     </React.StrictMode>,
   )
 }
-
-reportWebVitals()

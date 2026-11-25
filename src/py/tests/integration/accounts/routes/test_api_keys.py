@@ -2,17 +2,22 @@
 
 from __future__ import annotations
 
+import asyncio
+from secrets import token_bytes
 from typing import TYPE_CHECKING
 
 import pytest
+from litestar_security.providers.api_key import IssuedAPIKey
 from sqlalchemy import select
 
+from app import config
 from app.db import models as m
+from app.domain.accounts.security.api_keys import SQLAlchemyAPIKeyStore, build_api_key_service
 from tests.integration.conftest import login_session_client, reset_client_session
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
-    from sqlalchemy.ext.asyncio import AsyncSession
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.security]
 
@@ -72,3 +77,35 @@ async def test_api_key_lifecycle_hash_storage_rotation_and_revocation(
     reset_client_session(client)
     assert (await client.get("/api/me", headers={"Authorization": f"Bearer {raw_secret}"})).status_code == 401
     assert (await client.get("/api/me", headers={"Authorization": f"Bearer {new_secret}"})).status_code == 401
+
+
+async def test_concurrent_rotations_of_one_key_have_a_single_winner(
+    sessionmaker: async_sessionmaker[AsyncSession],
+    test_user: m.User,
+) -> None:
+    """Two rotations that both read the same live key yield exactly one replacement and one conflict."""
+    api_key_service = build_api_key_service(SQLAlchemyAPIKeyStore(config.alchemy), token_bytes(32))
+    subject_id = str(test_user.id)
+    issued = await api_key_service.issue(subject_id=subject_id)
+
+    async with sessionmaker() as db_session:
+        await db_session.execute(select(m.APIKey.id).where(m.APIKey.key_id == issued.key_id).with_for_update())
+
+        async def unlock_key_after_both_rotations_read_it() -> None:
+            await asyncio.sleep(0.5)
+            await db_session.commit()
+
+        first, second, _ = await asyncio.gather(
+            api_key_service.rotate(current_key_id=issued.key_id, subject_id=subject_id),
+            api_key_service.rotate(current_key_id=issued.key_id, subject_id=subject_id),
+            unlock_key_after_both_rotations_read_it(),
+            return_exceptions=True,
+        )
+        successors = await db_session.scalars(select(m.APIKey).where(m.APIKey.rotated_from_id.is_not(None)))
+        successor_key_ids = [successor.key_id for successor in successors]
+
+    replacements = [outcome for outcome in (first, second) if isinstance(outcome, IssuedAPIKey)]
+    conflicts = [outcome for outcome in (first, second) if isinstance(outcome, ValueError)]
+    assert len(replacements) == 1
+    assert len(conflicts) == 1
+    assert successor_key_ids == [replacements[0].key_id]

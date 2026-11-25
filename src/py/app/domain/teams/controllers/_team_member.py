@@ -3,16 +3,12 @@
 from typing import Annotated, ClassVar
 from uuid import UUID
 
-from advanced_alchemy.exceptions import IntegrityError
 from litestar import delete, patch, post
 from litestar.di import Provide
-from litestar.exceptions import HTTPException
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_202_ACCEPTED
 from litestar_security import AuthenticationPolicy, SecureController, required
-from sqlalchemy import true
 
-from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.security import requires_team_role
 from app.domain.accounts.services import UserService
@@ -47,26 +43,11 @@ class TeamMemberController(SecureController):
 
         Returns:
             The updated team with its members.
-
-        Raises:
-            IntegrityError: If the user is already a member of the team.
         """
-        user_obj = await users_service.get_one(email=data.user_name)
-        existing_membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
-        if existing_membership is not None:
-            msg = "User is already a member of the team."
-            raise IntegrityError(msg)
-        await team_members_service.create(
-            {
-                "team_id": team_id,
-                "user_id": user_obj.id,
-                "role": m.TeamRoles.MEMBER,
-                "is_owner": False,
-            },
-            auto_commit=True,
-        )
-        team_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(team_obj, schema_type=Team)
+        user = await users_service.get_one(email=data.user_name)
+        await team_members_service.add_member(team_id, user.id)
+        team = await teams_service.get(team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
     @delete(operation_id="RemoveMemberFromTeam", path="", status_code=HTTP_202_ACCEPTED)
     async def remove_member_from_team(
@@ -81,29 +62,11 @@ class TeamMemberController(SecureController):
 
         Returns:
             The updated team after removing the member.
-
-        Raises:
-            IntegrityError: If the user is not a member of the team.
-            HTTPException: If removing the sole owner of the team.
         """
-        user_obj = await users_service.get_one(email=data.user_name)
-        membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
-        if membership is None:
-            msg = "User is not a member of this team."
-            raise IntegrityError(msg)
-        if membership.is_owner:
-            owner_count = await team_members_service.count(
-                m.TeamMember.team_id == team_id,
-                m.TeamMember.is_owner.is_(true()),
-            )
-            if owner_count <= 1:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Cannot remove the sole team owner without transferring ownership",
-                )
-        await team_members_service.delete(membership.id, auto_commit=True)
-        team_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(team_obj, schema_type=Team)
+        user = await users_service.get_one(email=data.user_name)
+        await team_members_service.remove_member(team_id, user.id)
+        team = await teams_service.get(team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
     @patch(operation_id="UpdateTeamMember", path="/{user_id:uuid}")
     async def update_team_member(
@@ -117,20 +80,6 @@ class TeamMemberController(SecureController):
 
         Returns:
             The updated team membership.
-
-        Raises:
-            IntegrityError: If the user is not a member of the team.
-            HTTPException: If demoting a team owner from the ``ADMIN`` role.
         """
-        membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_id)
-        if membership is None:
-            msg = "User is not a member of this team."
-            raise IntegrityError(msg)
-        if membership.is_owner and data.role != m.TeamRoles.ADMIN:
-            raise HTTPException(status_code=400, detail="Cannot demote a team owner from ADMIN role")
-        updated = await team_members_service.update(
-            item_id=membership.id,
-            data={"role": data.role},
-            auto_commit=True,
-        )
-        return team_members_service.to_schema(updated, schema_type=TeamMember)
+        membership = await team_members_service.change_role(team_id, user_id, data.role)
+        return team_members_service.to_schema(membership, schema_type=TeamMember)

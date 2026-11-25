@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
-import { Link, useRouter } from "@tanstack/react-router"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { AlertCircle, Loader2, Plus, X } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -12,7 +12,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-import { createTeam, listTags } from "@/lib/generated/api"
+import { createTeamMutation, listTagsOptions, listTeamsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 const createTeamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
@@ -22,17 +22,14 @@ const createTeamSchema = z.object({
 type CreateTeamFormData = z.infer<typeof createTeamSchema>
 
 export function CreateTeamForm() {
-  const router = useRouter()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const createTeam = useMutation(createTeamMutation())
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
 
-  const { data: existingTags = [] } = useQuery({
-    queryKey: ["tags"],
-    queryFn: async () => {
-      const response = await listTags()
-      return response.data?.items ?? []
-    },
-  })
+  const { data: tagPage } = useQuery(listTagsOptions())
+  const existingTags = tagPage?.items ?? []
 
   const form = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
@@ -43,48 +40,47 @@ export function CreateTeamForm() {
   })
 
   const addTag = (tagName: string) => {
-    const trimmed = tagName.trim().toLowerCase()
-    if (trimmed && !selectedTags.includes(trimmed)) {
-      setSelectedTags([...selectedTags, trimmed])
+    const normalizedTag = tagName.trim().toLowerCase()
+    if (normalizedTag && !selectedTags.includes(normalizedTag)) {
+      setSelectedTags([...selectedTags, normalizedTag])
     }
     setTagInput("")
   }
 
-  const removeTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter((t) => t !== tag))
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove))
   }
 
-  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault()
+  const handleTagKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault()
       addTag(tagInput)
     }
   }
 
-  const onSubmit = async (data: CreateTeamFormData) => {
+  const handleCreateTeam = async (team: CreateTeamFormData) => {
     try {
-      await createTeam({
+      await createTeam.mutateAsync({
         body: {
-          name: data.name,
-          description: data.description,
+          name: team.name,
+          description: team.description,
           tags: selectedTags.length > 0 ? selectedTags : undefined,
         },
       })
-      router.invalidate()
-      router.navigate({ to: "/teams" })
-    } catch (_error) {
+      await queryClient.invalidateQueries({ queryKey: listTeamsQueryKey() })
+      void navigate({ to: "/teams" })
+    } catch {
       form.setError("root", {
         message: "Failed to create team",
       })
     }
   }
 
-  // Filter suggestions based on input
   const tagSuggestions = existingTags.filter((tag) => tag.name.toLowerCase().includes(tagInput.toLowerCase()) && !selectedTags.includes(tag.name.toLowerCase()))
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleCreateTeam)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -121,7 +117,7 @@ export function CreateTeamForm() {
                 <Input
                   placeholder="Type a tag and press Enter..."
                   value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
+                  onChange={(event) => setTagInput(event.target.value)}
                   onKeyDown={handleTagKeyDown}
                   onBlur={() => tagInput && addTag(tagInput)}
                   className="pr-10"

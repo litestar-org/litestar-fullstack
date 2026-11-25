@@ -38,8 +38,8 @@ class UserController(SecureController):
         Returns:
             Paginated list of user account records.
         """
-        results, total = await users_service.get_many_and_count(*filters)
-        return users_service.to_schema(results, total, filters=filters, schema_type=User)
+        users, total = await users_service.get_many_and_count(*filters)
+        return users_service.to_schema(users, total, filters=filters, schema_type=User)
 
     @get(operation_id="GetUser", path="/{user_id:uuid}")
     async def get_user(
@@ -52,8 +52,8 @@ class UserController(SecureController):
         Returns:
             Serialized user account record.
         """
-        db_obj = await users_service.get(user_id)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.get(user_id)
+        return users_service.to_schema(user, schema_type=User)
 
     @post(operation_id="CreateUser")
     async def create_user(self, users_service: UserService, data: UserCreate) -> User:
@@ -62,8 +62,8 @@ class UserController(SecureController):
         Returns:
             Newly created user account record.
         """
-        db_obj = await users_service.create(data.to_dict(), auto_commit=True)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.create(data.to_dict(), auto_commit=True)
+        return users_service.to_schema(user, schema_type=User)
 
     @patch(operation_id="UpdateUser", path="/{user_id:uuid}")
     async def update_user(
@@ -77,8 +77,8 @@ class UserController(SecureController):
         Returns:
             Updated user account record.
         """
-        db_obj = await users_service.update(item_id=user_id, data=data.to_dict(), auto_commit=True)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.update(item_id=user_id, data=data.to_dict(), auto_commit=True)
+        return users_service.to_schema(user, schema_type=User)
 
     @delete(operation_id="DeleteUser", path="/{user_id:uuid}")
     async def delete_user(

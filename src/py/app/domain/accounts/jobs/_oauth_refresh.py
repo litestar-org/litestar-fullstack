@@ -3,31 +3,34 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import httpx
 import structlog
 from litestar_queues import RetryBackoff, get_current_task_context, task
 from litestar_security.providers.oauth import ProtectedOAuthSecret, ProviderTokenSet, SecretStr
-from sqlalchemy import select
 
-from app.db import models as m
 from app.domain.accounts.security.oauth import (
     build_oauth_protector,
     deserialize_oauth_tokens,
     oauth_account_aad,
     serialize_oauth_tokens,
 )
+from app.domain.accounts.services import OAuthAccountService
 from app.lib.settings import Settings, get_settings
 
 if TYPE_CHECKING:
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from litestar_security.providers.oauth import OAuthTransactionProtector
 
+    from app.db import models as m
+
 __all__ = ("refresh_oauth_tokens", "run_refresh_oauth_tokens")
 
 logger = structlog.get_logger(__name__)
 REFRESH_WINDOW_MINUTES = 10
+
+_RefreshOutcome = Literal["refreshed", "skipped", "failed"]
 
 _TOKEN_ENDPOINTS: dict[str, str] = {
     "github": "https://github.com/login/oauth/access_token",
@@ -46,46 +49,37 @@ async def run_refresh_oauth_tokens(
         Summary counts mapping for ``processed``, ``refreshed``, ``skipped``, and ``failed`` accounts.
     """
     active_settings = settings or get_settings()
+    counts = {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
     credentials = _configured_credentials(active_settings)
     if not credentials:
-        return {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
+        return counts
 
     context = get_current_task_context()
     protector = build_oauth_protector(active_settings)
     now = datetime.now(UTC)
-    cutoff = now + timedelta(minutes=REFRESH_WINDOW_MINUTES)
-    counts = {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
-
-    async with alchemy_config.get_session() as session:
-        rows = (
-            await session.scalars(
-                select(m.UserOAuthAccount).where(
-                    m.UserOAuthAccount.protected_tokens.is_not(None),
-                    m.UserOAuthAccount.token_expires_at.is_not(None),
-                    m.UserOAuthAccount.token_expires_at <= cutoff,
+    async with (
+        OAuthAccountService.new(config=alchemy_config) as oauth_accounts,
+        httpx.AsyncClient(timeout=15.0, transport=transport) as client,
+    ):
+        expiring_accounts = await oauth_accounts.list_expiring(before=now + timedelta(minutes=REFRESH_WINDOW_MINUTES))
+        for position, oauth_account in enumerate(expiring_accounts, start=1):
+            counts["processed"] += 1
+            if context is not None:
+                await context.progress(
+                    current=position,
+                    total=len(expiring_accounts),
+                    message=f"Refreshing {oauth_account.oauth_name} token",
                 )
+            outcome = await _refresh_account(
+                oauth_accounts,
+                oauth_account,
+                client=client,
+                protector=protector,
+                credentials=credentials,
+                now=now,
             )
-        ).all()
-
-        total = len(rows)
-        async with httpx.AsyncClient(timeout=15.0, transport=transport) as client:
-            for idx, row in enumerate(rows, start=1):
-                counts["processed"] += 1
-                if context is not None:
-                    await context.progress(
-                        current=idx,
-                        total=max(1, total),
-                        message=f"Refreshing {row.oauth_name} token",
-                    )
-                outcome = await _refresh_single_account(
-                    row,
-                    client=client,
-                    protector=protector,
-                    credentials=credentials,
-                    now=now,
-                )
-                counts[outcome] += 1
-        await session.commit()
+            counts[outcome] += 1
+        await oauth_accounts.repository.session.commit()
 
     if context is not None:
         await context.log("OAuth token refresh job completed")
@@ -113,99 +107,104 @@ async def refresh_oauth_tokens() -> dict[str, int]:
 
 
 def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
-    creds: dict[str, tuple[str, str]] = {}
+    credentials: dict[str, tuple[str, str]] = {}
     if settings.app.github_oauth_enabled:
-        creds["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
-    return creds
+        credentials["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
+    return credentials
 
 
-async def _refresh_single_account(
-    row: m.UserOAuthAccount,
+async def _refresh_account(
+    oauth_accounts: OAuthAccountService,
+    oauth_account: m.UserOAuthAccount,
     *,
     client: httpx.AsyncClient,
     protector: OAuthTransactionProtector,
     credentials: dict[str, tuple[str, str]],
     now: datetime,
-) -> str:
-    provider_creds = credentials.get(row.oauth_name)
-    endpoint = _TOKEN_ENDPOINTS.get(row.oauth_name)
-    if provider_creds is None or endpoint is None or row.protected_tokens is None or row.key_version is None:
+) -> _RefreshOutcome:
+    provider_credentials = credentials.get(oauth_account.oauth_name)
+    token_endpoint = _TOKEN_ENDPOINTS.get(oauth_account.oauth_name)
+    if (
+        provider_credentials is None
+        or token_endpoint is None
+        or oauth_account.protected_tokens is None
+        or oauth_account.key_version is None
+    ):
         return "skipped"
 
-    aad = oauth_account_aad(row.oauth_name, row.account_id)
+    associated_data = oauth_account_aad(oauth_account.oauth_name, oauth_account.account_id)
     try:
-        raw_blob = await protector.unprotect(
-            ProtectedOAuthSecret(key_version=row.key_version, ciphertext=row.protected_tokens),
-            associated_data=aad,
+        serialized_tokens = await protector.unprotect(
+            ProtectedOAuthSecret(key_version=oauth_account.key_version, ciphertext=oauth_account.protected_tokens),
+            associated_data=associated_data,
         )
-        stored = deserialize_oauth_tokens(raw_blob)
-        if stored.refresh_token is None or not stored.refresh_token.get_secret_value():
+        stored_tokens = deserialize_oauth_tokens(serialized_tokens)
+        if stored_tokens.refresh_token is None or not stored_tokens.refresh_token.get_secret_value():
             return "skipped"
 
-        client_id, client_secret = provider_creds
-        resp = await client.post(
-            endpoint,
+        client_id, client_secret = provider_credentials
+        response = await client.post(
+            token_endpoint,
             headers={"Accept": "application/json"},
             data={
                 "grant_type": "refresh_token",
-                "refresh_token": stored.refresh_token.get_secret_value(),
+                "refresh_token": stored_tokens.refresh_token.get_secret_value(),
                 "client_id": client_id,
                 "client_secret": client_secret,
             },
         )
-        resp.raise_for_status()
+        response.raise_for_status()
         tokens = _merge_refreshed_tokens(
-            resp.json(),
-            stored,
-            fallback_expires_at=row.token_expires_at or now + timedelta(hours=1),
+            response.json(),
+            stored_tokens,
+            fallback_expires_at=oauth_account.token_expires_at or now + timedelta(hours=1),
             now=now,
         )
         if tokens is None:
             return "failed"
-        re_protected = await protector.protect(serialize_oauth_tokens(tokens), associated_data=aad)
-        row.protected_tokens = re_protected.ciphertext
-        row.key_version = re_protected.key_version
-        row.token_version += 1
-        row.token_expires_at = tokens.expires_at
-        row.scopes = sorted(tokens.scopes)
-    except Exception as exc:  # noqa: BLE001
+        replaced = await oauth_accounts.replace_tokens(
+            oauth_account,
+            expected_version=oauth_account.token_version,
+            tokens=tokens,
+            protected_tokens=await protector.protect(serialize_oauth_tokens(tokens), associated_data=associated_data),
+        )
+    except Exception as error:  # noqa: BLE001
         await logger.awarning(
             "OAuth token refresh failed",
-            provider=row.oauth_name,
-            error_type=type(exc).__name__,
+            provider=oauth_account.oauth_name,
+            error_type=type(error).__name__,
         )
         return "failed"
     else:
-        return "refreshed"
+        return "refreshed" if replaced else "skipped"
 
 
 def _merge_refreshed_tokens(
-    payload: dict[str, Any],
-    stored: ProviderTokenSet,
+    token_response: dict[str, Any],
+    stored_tokens: ProviderTokenSet,
     *,
     fallback_expires_at: datetime,
     now: datetime,
 ) -> ProviderTokenSet | None:
-    new_access = payload.get("access_token")
-    if not isinstance(new_access, str) or not new_access:
+    access_token = token_response.get("access_token")
+    if not isinstance(access_token, str) or not access_token:
         return None
-    expires_in = payload.get("expires_in")
+    expires_in = token_response.get("expires_in")
     expires_at = (
         now + timedelta(seconds=int(expires_in))
         if isinstance(expires_in, (int, float)) and expires_in > 0
         else fallback_expires_at
     )
-    scopes_raw = payload.get("scope")
-    scopes = frozenset(scopes_raw.split()) if isinstance(scopes_raw, str) and scopes_raw.strip() else stored.scopes
+    scope = token_response.get("scope")
     return ProviderTokenSet(
-        access_token=SecretStr(new_access),
-        token_type=stored.token_type,
-        scopes=scopes,
-        refresh_token=_secret_or(payload.get("refresh_token"), stored.refresh_token),
-        id_token=_secret_or(payload.get("id_token"), stored.id_token),
+        access_token=SecretStr(access_token),
+        token_type=stored_tokens.token_type,
+        scopes=frozenset(scope.split()) if isinstance(scope, str) and scope.strip() else stored_tokens.scopes,
+        refresh_token=_secret_or(token_response.get("refresh_token"), stored_tokens.refresh_token),
+        id_token=_secret_or(token_response.get("id_token"), stored_tokens.id_token),
         expires_at=expires_at,
     )
 
 
-def _secret_or(raw: object, fallback: SecretStr | None) -> SecretStr | None:
-    return SecretStr(raw) if isinstance(raw, str) and raw else fallback
+def _secret_or(value: object, fallback: SecretStr | None) -> SecretStr | None:
+    return SecretStr(value) if isinstance(value, str) and value else fallback

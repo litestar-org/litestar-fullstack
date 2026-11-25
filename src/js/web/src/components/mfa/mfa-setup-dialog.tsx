@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
 import { QRCodeSVG } from "qrcode.react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { toast } from "sonner"
 import { BackupCodesDisplay } from "@/components/mfa/backup-codes-display"
-import { TotpInput } from "@/components/mfa/totp-input"
+import { TOTP_CODE_LENGTH, TotpInput } from "@/components/mfa/totp-input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -17,6 +17,8 @@ interface MfaSetupDialogProps {
   disabled?: boolean
   onEnrolled?: (methodId: string) => void
 }
+
+const DEFAULT_DEVICE_LABEL = "Authenticator"
 
 function extractManualSecret(provisioningUri: string): string | null {
   try {
@@ -34,38 +36,39 @@ const STEP_DESCRIPTIONS = {
 
 type SetupStep = keyof typeof STEP_DESCRIPTIONS
 
-function resolveStep(setup: TotpProvisioning | null, codes: string[] | null): SetupStep {
-  if (codes) {
+function resolveStep(provisioning: TotpProvisioning | null, recoveryCodes: string[] | null): SetupStep {
+  if (recoveryCodes) {
     return "codes"
   }
-  return setup ? "verify" : "password"
+  return provisioning ? "verify" : "password"
 }
 
 export function MfaSetupDialog({ disabled, onEnrolled }: Readonly<MfaSetupDialogProps>) {
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
-  const [label, setLabel] = useState("Authenticator")
-  const [setup, setSetup] = useState<TotpProvisioning | null>(null)
-  const [codes, setCodes] = useState<string[] | null>(null)
-  const [code, setCode] = useState("")
+  const [deviceLabel, setDeviceLabel] = useState(DEFAULT_DEVICE_LABEL)
+  const [provisioning, setProvisioning] = useState<TotpProvisioning | null>(null)
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null)
+  const [totpCode, setTotpCode] = useState("")
 
-  const { requestGrant, isPending: stepUpPending } = useStepUpGrant()
+  const { requestGrant, isPending: isStepUpPending } = useStepUpGrant()
   const enroll = useMutation(mfaEnrollTotpMutation())
   const verify = useMutation(mfaVerifyTotpEnrollmentMutation())
   const checkAuth = useAuthStore((state) => state.checkAuth)
 
-  const isLoading = stepUpPending || enroll.isPending || verify.isPending
-  const manualSecret = useMemo(() => (setup ? extractManualSecret(setup.provisioning_uri) : null), [setup])
-  const step = resolveStep(setup, codes)
+  const isBusy = isStepUpPending || enroll.isPending || verify.isPending
+  const isTotpCodeComplete = totpCode.length >= TOTP_CODE_LENGTH
+  const manualSecret = provisioning ? extractManualSecret(provisioning.provisioning_uri) : null
+  const step = resolveStep(provisioning, recoveryCodes)
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen)
     if (!nextOpen) {
       setPassword("")
-      setLabel("Authenticator")
-      setSetup(null)
-      setCodes(null)
-      setCode("")
+      setDeviceLabel(DEFAULT_DEVICE_LABEL)
+      setProvisioning(null)
+      setRecoveryCodes(null)
+      setTotpCode("")
     }
   }
 
@@ -76,13 +79,13 @@ export function MfaSetupDialog({ disabled, onEnrolled }: Readonly<MfaSetupDialog
     }
     try {
       const grant = await requestGrant("totp-enroll", password)
-      const provisioned = await enroll.mutateAsync({
+      const totpProvisioning = await enroll.mutateAsync({
         body: {
-          label: label.trim() || "Authenticator",
+          label: deviceLabel.trim() || DEFAULT_DEVICE_LABEL,
           step_up_grant: grant,
         },
       })
-      setSetup(provisioned)
+      setProvisioning(totpProvisioning)
       setPassword("")
     } catch (error) {
       toast.error("Unable to start MFA setup", {
@@ -91,20 +94,20 @@ export function MfaSetupDialog({ disabled, onEnrolled }: Readonly<MfaSetupDialog
     }
   }
 
-  const handleConfirm = async () => {
-    if (!setup || code.length < 6) {
+  const handleVerify = async () => {
+    if (!provisioning || !isTotpCodeComplete) {
       toast.error("Enter the 6-digit code from your authenticator app")
       return
     }
     try {
-      const result = await verify.mutateAsync({
+      const { codes } = await verify.mutateAsync({
         body: {
-          enrollment_id: setup.enrollment_id,
-          code,
+          enrollment_id: provisioning.enrollment_id,
+          code: totpCode,
         },
       })
-      setCodes(result.codes ?? [])
-      onEnrolled?.(setup.method_id)
+      setRecoveryCodes(codes ?? [])
+      onEnrolled?.(provisioning.method_id)
       await checkAuth()
       toast.success("MFA enabled")
     } catch (error) {
@@ -125,32 +128,34 @@ export function MfaSetupDialog({ disabled, onEnrolled }: Readonly<MfaSetupDialog
           <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
         </DialogHeader>
 
-        {codes && <BackupCodesDisplay codes={codes} description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator." />}
-        {step === "verify" && setup && (
+        {recoveryCodes && (
+          <BackupCodesDisplay codes={recoveryCodes} description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator." />
+        )}
+        {step === "verify" && provisioning && (
           <div className="space-y-4">
             <div className="flex justify-center rounded-lg border border-border/60 bg-white p-4">
-              <QRCodeSVG value={setup.provisioning_uri} size={192} />
+              <QRCodeSVG value={provisioning.provisioning_uri} size={192} />
             </div>
             {manualSecret && <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 font-mono text-sm">{manualSecret}</div>}
-            <TotpInput value={code} onChange={setCode} disabled={isLoading} autoFocus />
+            <TotpInput value={totpCode} onChange={setTotpCode} disabled={isBusy} autoFocus />
           </div>
         )}
         {step === "password" && (
           <div className="space-y-3">
-            <Input placeholder="Device label (e.g. Authenticator)" value={label} onChange={(event) => setLabel(event.target.value)} disabled={isLoading} />
-            <Input type="password" placeholder="Current password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading} />
+            <Input placeholder="Device label (e.g. Authenticator)" value={deviceLabel} onChange={(event) => setDeviceLabel(event.target.value)} disabled={isBusy} />
+            <Input type="password" placeholder="Current password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isBusy} />
           </div>
         )}
 
         <DialogFooter>
           {step === "codes" && <Button onClick={() => handleOpenChange(false)}>Done</Button>}
           {step === "verify" && (
-            <Button onClick={handleConfirm} disabled={isLoading || code.length < 6}>
+            <Button onClick={handleVerify} disabled={isBusy || !isTotpCodeComplete}>
               Verify &amp; finish
             </Button>
           )}
           {step === "password" && (
-            <Button onClick={handleStartSetup} disabled={isLoading || !password}>
+            <Button onClick={handleStartSetup} disabled={isBusy || !password}>
               Continue
             </Button>
           )}

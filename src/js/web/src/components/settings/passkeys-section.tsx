@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { useStepUpGrant } from "@/lib/api/hooks/auth"
+import { useAuthConfig, useStepUpGrant } from "@/lib/api/hooks/auth"
 import { extractApiErrorMessage } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 import {
@@ -16,35 +16,28 @@ import {
   passkeyRegistrationOptionsMutation,
   passkeyRegistrationVerifyMutation,
   passkeyRemoveMutation,
-  publicAuthConfigOptions,
 } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function PasskeysSection() {
   const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
-  const { data: authConfig } = useQuery({
-    ...publicAuthConfigOptions(),
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-  })
+  const { data: authConfig } = useAuthConfig()
   const { data: passkeys = [], isLoading } = useQuery(passkeyListOptions())
-  const startRegMutation = useMutation(passkeyRegistrationOptionsMutation())
-  const verifyRegMutation = useMutation(passkeyRegistrationVerifyMutation())
-  const removeMutation = useMutation(passkeyRemoveMutation())
-  const { requestGrant, isPending: stepUpPending } = useStepUpGrant()
+  const beginRegistration = useMutation(passkeyRegistrationOptionsMutation())
+  const verifyRegistration = useMutation(passkeyRegistrationVerifyMutation())
+  const removePasskey = useMutation(passkeyRemoveMutation())
+  const { requestGrant, isPending: isStepUpPending } = useStepUpGrant()
 
-  const [registerOpen, setRegisterOpen] = useState(false)
-  const [removeTarget, setRemoveTarget] = useState<string | null>(null)
+  const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false)
+  const [credentialIdToRemove, setCredentialIdToRemove] = useState<string | null>(null)
   const [password, setPassword] = useState("")
 
-  const webAuthnSupported = browserSupportsWebAuthn()
-  const passkeysFeatureEnabled = authConfig?.passkeysEnabled ?? true
-
-  if (!passkeysFeatureEnabled) {
+  if (authConfig?.passkeysEnabled === false) {
     return null
   }
 
-  const isBusy = stepUpPending || startRegMutation.isPending || verifyRegMutation.isPending || removeMutation.isPending
+  const isWebAuthnSupported = browserSupportsWebAuthn()
+  const isBusy = isStepUpPending || beginRegistration.isPending || verifyRegistration.isPending || removePasskey.isPending
 
   const handleRegister = async () => {
     if (!password) {
@@ -53,24 +46,24 @@ export function PasskeysSection() {
     }
     try {
       const grant = await requestGrant("passkey-register", password)
-      const options = await startRegMutation.mutateAsync({
+      const ceremony = await beginRegistration.mutateAsync({
         body: {
           step_up_grant: grant,
           user_name: user?.email ?? "account",
         },
       })
-      const optionsJSON = JSON.parse(options.options)
+      const optionsJSON = JSON.parse(ceremony.options)
       const attestation = await startRegistration({ optionsJSON })
-      await verifyRegMutation.mutateAsync({
+      await verifyRegistration.mutateAsync({
         body: {
           account_id: user?.id ?? "",
-          binding: options.binding ?? undefined,
+          binding: ceremony.binding ?? undefined,
           response: JSON.stringify(attestation),
         },
       })
       await queryClient.invalidateQueries({ queryKey: passkeyListQueryKey() })
       toast.success("Passkey registered")
-      setRegisterOpen(false)
+      setIsRegisterDialogOpen(false)
       setPassword("")
     } catch (error) {
       if (error instanceof Error && (error.name === "AbortError" || error.name === "NotAllowedError")) {
@@ -84,19 +77,19 @@ export function PasskeysSection() {
   }
 
   const handleRemove = async () => {
-    if (!removeTarget || !password) {
+    if (!credentialIdToRemove || !password) {
       toast.error("Confirm your password to remove this passkey")
       return
     }
     try {
       const grant = await requestGrant("passkey-remove", password)
-      await removeMutation.mutateAsync({
-        path: { credential_id: removeTarget },
+      await removePasskey.mutateAsync({
+        path: { credential_id: credentialIdToRemove },
         body: { step_up_grant: grant },
       })
       await queryClient.invalidateQueries({ queryKey: passkeyListQueryKey() })
       toast.success("Passkey removed")
-      setRemoveTarget(null)
+      setCredentialIdToRemove(null)
       setPassword("")
     } catch (error) {
       toast.error("Unable to remove passkey", {
@@ -112,11 +105,11 @@ export function PasskeysSection() {
           <CardTitle>Passkeys</CardTitle>
           <CardDescription>Sign in securely with biometrics or a hardware security key.</CardDescription>
         </div>
-        {webAuthnSupported && (
+        {isWebAuthnSupported && (
           <Dialog
-            open={registerOpen}
+            open={isRegisterDialogOpen}
             onOpenChange={(open) => {
-              setRegisterOpen(open)
+              setIsRegisterDialogOpen(open)
               if (!open) setPassword("")
             }}
           >
@@ -142,7 +135,7 @@ export function PasskeysSection() {
         )}
       </CardHeader>
       <CardContent className="space-y-3">
-        {!webAuthnSupported && <p className="text-muted-foreground text-sm">This browser does not support WebAuthn passkeys.</p>}
+        {!isWebAuthnSupported && <p className="text-muted-foreground text-sm">This browser does not support WebAuthn passkeys.</p>}
         {isLoading && <p className="text-muted-foreground text-sm">Loading passkeys...</p>}
         {!isLoading && passkeys.length === 0 && <p className="text-muted-foreground text-sm">No passkeys registered yet.</p>}
         {!isLoading &&
@@ -158,7 +151,7 @@ export function PasskeysSection() {
                   </p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setRemoveTarget(passkey.credential_id)} disabled={isBusy}>
+              <Button variant="outline" size="sm" onClick={() => setCredentialIdToRemove(passkey.credential_id)} disabled={isBusy}>
                 <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                 Remove
               </Button>
@@ -167,10 +160,10 @@ export function PasskeysSection() {
       </CardContent>
 
       <Dialog
-        open={removeTarget !== null}
+        open={credentialIdToRemove !== null}
         onOpenChange={(open) => {
           if (!open) {
-            setRemoveTarget(null)
+            setCredentialIdToRemove(null)
             setPassword("")
           }
         }}

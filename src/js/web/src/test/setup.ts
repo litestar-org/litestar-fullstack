@@ -33,6 +33,26 @@ if (typeof globalThis.sessionStorage?.clear !== "function") {
   Object.defineProperty(globalThis, "sessionStorage", { value: createMemoryStorage(), configurable: true })
 }
 
+// jsdom has no layout engine, so media queries never match.
+if (typeof window.matchMedia !== "function") {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: (query: string): MediaQueryList => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  })
+}
+
+// jsdom does not implement scrolling; the router restores scroll position on navigation.
+window.scrollTo = () => {}
+
 afterEach(() => {
   cleanup()
 })

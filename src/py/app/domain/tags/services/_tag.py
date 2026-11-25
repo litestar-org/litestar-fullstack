@@ -34,9 +34,9 @@ class TagService(service.SQLAlchemyAsyncRepositoryService[m.Tag]):
             and service.is_dict_with_field(data, "name")
             and service.is_dict_without_field(data, "slug")
         ):
-            existing = await self.get(item_id)
-            if existing.name == data["name"]:
-                data["slug"] = existing.slug
+            tag = await self.get(item_id)
+            if tag.name == data["name"]:
+                data["slug"] = tag.slug
         return await super().update(data, item_id=item_id, **kwargs)
 
     async def to_model_on_create(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:

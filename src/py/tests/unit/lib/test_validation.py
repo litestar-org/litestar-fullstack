@@ -44,16 +44,6 @@ def test_validate_password_strength() -> None:
         validation.validate_password_strength("NoSpecialPass123")
 
 
-def test_get_password_strength() -> None:
-    result = validation.get_password_strength("StrongPass123!")
-    assert result["strength"] == "strong"
-    assert result["score"] >= 7
-
-    result_weak = validation.get_password_strength("weak")
-    assert result_weak["strength"] == "weak"
-    assert result_weak["score"] < 5
-
-
 def test_validate_email() -> None:
     assert validation.validate_email("valid@example.com") == "valid@example.com"
     assert validation.validate_email("VALID@EXAMPLE.COM") == "valid@example.com"

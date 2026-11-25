@@ -17,15 +17,19 @@ export const Route = createFileRoute("/_app/admin/users/$userId")({
 function AdminUserDetailPage() {
   const { userId } = Route.useParams()
   const queryClient = useQueryClient()
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = useQuery({
     ...adminGetUserOptions({ path: { user_id: userId } }),
     enabled: Boolean(userId),
   })
   const updateUser = useMutation({
     ...adminUpdateUserMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminListUsersQueryKey() })
-      queryClient.invalidateQueries({ queryKey: adminGetUserQueryKey({ path: { user_id: userId } }) })
+      void queryClient.invalidateQueries({ queryKey: adminListUsersQueryKey() })
+      void queryClient.invalidateQueries({ queryKey: adminGetUserQueryKey({ path: { user_id: userId } }) })
       toast.success("User updated")
     },
     onError: (error) => {
@@ -47,7 +51,7 @@ function AdminUserDetailPage() {
     )
   }
 
-  if (isError || !data) {
+  if (isError || !user) {
     return (
       <PageContainer className="flex-1 space-y-8">
         <PageHeader
@@ -78,7 +82,7 @@ function AdminUserDetailPage() {
     <PageContainer className="flex-1 space-y-8">
       <PageHeader
         eyebrow="Administration"
-        title={data.name ?? data.email}
+        title={user.name ?? user.email}
         description="Manage user account settings and permissions."
         actions={
           <Button variant="outline" size="sm" asChild>
@@ -95,38 +99,38 @@ function AdminUserDetailPage() {
             <div className="grid gap-3 text-sm md:grid-cols-2">
               <div>
                 <p className="text-muted-foreground">Email</p>
-                <p>{data.email}</p>
+                <p>{user.email}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Username</p>
-                <p>{data.username ?? "—"}</p>
+                <p>{user.username ?? "—"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Status</p>
-                <p>{data.isActive ? "Active" : "Inactive"}</p>
+                <p>{user.isActive ? "Active" : "Inactive"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Superuser</p>
-                <p>{data.isSuperuser ? "Yes" : "No"}</p>
+                <p>{user.isSuperuser ? "Yes" : "No"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Verified</p>
-                <p>{data.isVerified ? "Yes" : "No"}</p>
+                <p>{user.isVerified ? "Yes" : "No"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">MFA enabled</p>
-                <p>{data.isTwoFactorEnabled ? "Yes" : "No"}</p>
+                <p>{user.isTwoFactorEnabled ? "Yes" : "No"}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isActive: !data.isActive } })} disabled={updateUser.isPending}>
-                {data.isActive ? "Deactivate" : "Activate"}
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isActive: !user.isActive } })} disabled={updateUser.isPending}>
+                {user.isActive ? "Deactivate" : "Activate"}
               </Button>
-              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isSuperuser: !data.isSuperuser } })} disabled={updateUser.isPending}>
-                {data.isSuperuser ? "Remove superuser" : "Make superuser"}
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isSuperuser: !user.isSuperuser } })} disabled={updateUser.isPending}>
+                {user.isSuperuser ? "Remove superuser" : "Make superuser"}
               </Button>
-              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isVerified: !data.isVerified } })} disabled={updateUser.isPending}>
-                {data.isVerified ? "Mark unverified" : "Mark verified"}
+              <Button variant="outline" onClick={() => updateUser.mutate({ path: { user_id: userId }, body: { isVerified: !user.isVerified } })} disabled={updateUser.isPending}>
+                {user.isVerified ? "Mark unverified" : "Mark verified"}
               </Button>
             </div>
           </CardContent>

@@ -7,6 +7,7 @@ export const Route = createFileRoute("/_public/login")({
     z
       .object({
         redirect: z.string().optional(),
+        reason: z.string().optional(),
       })
       .parse(search),
   component: LoginPage,

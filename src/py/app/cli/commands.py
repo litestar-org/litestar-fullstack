@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
 import anyio
 import click
@@ -25,8 +25,7 @@ logger = structlog.get_logger(__name__)
 
 
 @click.group(name="users", invoke_without_command=False, help="Manage application users and roles.")
-@click.pass_context
-def user_management_group(_: dict[str, Any]) -> None:
+def user_management_group() -> None:
     """Manage application users and roles."""
 
 
@@ -36,69 +35,9 @@ async def load_database_fixtures(alchemy_config: SQLAlchemyAsyncConfig | None = 
     active_alchemy = alchemy_config or alchemy
     fixtures_path = Path(settings.db.FIXTURE_PATH)
     async with AccountServices.new(config=active_alchemy) as accounts:
-        fixture_data = await open_fixture_async(fixtures_path, "role")
-        await accounts.roles.upsert_many(match_fields=["name"], data=fixture_data, auto_commit=True)
+        role_fixtures = await open_fixture_async(fixtures_path, "role")
+        await accounts.roles.upsert_many(match_fields=["name"], data=role_fixtures, auto_commit=True)
         await logger.ainfo("Loaded role fixtures")
-
-
-async def _create_user_async(
-    email: str,
-    password: str,
-    name: str | None = None,
-    superuser: bool = False,
-    alchemy_config: SQLAlchemyAsyncConfig | None = None,
-) -> str:
-    active_alchemy = alchemy_config or alchemy
-    obj_in = UserCreate(
-        email=email,
-        name=name,
-        password=password,
-        is_superuser=superuser,
-        is_verified=True,
-    )
-    async with AccountServices.new(config=active_alchemy) as accounts:
-        user = await accounts.users.create(data=obj_in.to_dict(), auto_commit=True)
-        return user.email
-
-
-async def _promote_to_superuser_async(
-    email: str,
-    alchemy_config: SQLAlchemyAsyncConfig | None = None,
-) -> bool:
-    active_alchemy = alchemy_config or alchemy
-    async with AccountServices.new(config=active_alchemy) as accounts:
-        user = await accounts.users.get_one_or_none(email=email)
-        if user is None:
-            return False
-        user_in = UserUpdate(email=user.email, is_superuser=True)
-        await accounts.users.update(item_id=user.id, data=user_in.to_dict(), auto_commit=True)
-        return True
-
-
-async def _create_default_roles_async(alchemy_config: SQLAlchemyAsyncConfig | None = None) -> int:
-    active_alchemy = alchemy_config or alchemy
-    await load_database_fixtures(active_alchemy)
-    assigned = 0
-    async with AccountServices.new(config=active_alchemy) as accounts:
-        default_role = await accounts.roles.get_one_or_none(slug=slugify(accounts.users.default_role))
-        if default_role is None:
-            default_role = await accounts.roles.create(
-                data={
-                    "name": accounts.users.default_role,
-                    "slug": slugify(accounts.users.default_role),
-                    "description": "Default application access role.",
-                },
-                auto_commit=True,
-            )
-        active_users = await accounts.users.get_many(is_active=True)
-        now = datetime.now(UTC)
-        for user in active_users:
-            if any(role.role_id == default_role.id for role in user.roles):
-                continue
-            await accounts.user_roles.create(data={"user_id": user.id, "role_id": default_role.id, "assigned_at": now})
-            assigned += 1
-        await accounts.session.commit()
-    return assigned
 
 
 @user_management_group.command(name="create-user", help="Create a user")
@@ -166,3 +105,65 @@ def create_default_roles() -> None:
     console.rule("Creating default roles.")
     assigned = anyio.run(_create_default_roles_async, alchemy)
     console.print(f"Assigned default role to {assigned} user(s).")
+
+
+async def _create_user_async(
+    email: str,
+    password: str,
+    name: str | None = None,
+    superuser: bool = False,
+    alchemy_config: SQLAlchemyAsyncConfig | None = None,
+) -> str:
+    active_alchemy = alchemy_config or alchemy
+    new_user = UserCreate(email=email, name=name, password=password, is_superuser=superuser, is_verified=True)
+    async with AccountServices.new(config=active_alchemy) as accounts:
+        user = await accounts.users.provision(
+            email=new_user.email,
+            name=new_user.name,
+            verified=True,
+            now=datetime.now(UTC),
+            hashed_password=await accounts.users.hash_password(new_user.password),
+            is_superuser=new_user.is_superuser,
+        )
+        await accounts.session.commit()
+        return user.email
+
+
+async def _promote_to_superuser_async(
+    email: str,
+    alchemy_config: SQLAlchemyAsyncConfig | None = None,
+) -> bool:
+    active_alchemy = alchemy_config or alchemy
+    async with AccountServices.new(config=active_alchemy) as accounts:
+        user = await accounts.users.get_one_or_none(email=email)
+        if user is None:
+            return False
+        promotion = UserUpdate(email=user.email, is_superuser=True)
+        await accounts.users.update(item_id=user.id, data=promotion.to_dict(), auto_commit=True)
+        return True
+
+
+async def _create_default_roles_async(alchemy_config: SQLAlchemyAsyncConfig | None = None) -> int:
+    active_alchemy = alchemy_config or alchemy
+    await load_database_fixtures(active_alchemy)
+    assigned = 0
+    async with AccountServices.new(config=active_alchemy) as accounts:
+        default_role = await accounts.roles.get_one_or_none(slug=slugify(accounts.users.default_role))
+        if default_role is None:
+            default_role = await accounts.roles.create(
+                data={
+                    "name": accounts.users.default_role,
+                    "slug": slugify(accounts.users.default_role),
+                    "description": "Default application access role.",
+                },
+                auto_commit=True,
+            )
+        active_users = await accounts.users.get_many(is_active=True)
+        now = datetime.now(UTC)
+        for user in active_users:
+            if any(user_role.role_id == default_role.id for user_role in user.roles):
+                continue
+            await accounts.user_roles.create(data={"user_id": user.id, "role_id": default_role.id, "assigned_at": now})
+            assigned += 1
+        await accounts.session.commit()
+    return assigned

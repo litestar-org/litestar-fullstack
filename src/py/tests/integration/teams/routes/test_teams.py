@@ -10,6 +10,7 @@ from litestar_security.accounts import Argon2PasswordHasher
 from sqlalchemy import select
 
 from app.db import models as m
+from tests.factories import grant_application_access
 from tests.integration.conftest import fetch_csrf_headers, login_session_client, reset_client_session
 
 if TYPE_CHECKING:
@@ -34,6 +35,7 @@ async def _create_user(session: AsyncSession, email: str, *, is_superuser: bool 
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 

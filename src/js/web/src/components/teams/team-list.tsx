@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { useAuthStore } from "@/lib/auth"
 import type { Team } from "@/lib/generated/api"
 import { listTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
+import { cn } from "@/lib/utils"
 
 function getTeamInitials(name: string): string {
   return name
@@ -20,35 +21,38 @@ function getTeamInitials(name: string): string {
     .slice(0, 2)
 }
 
+const TEAM_AVATAR_COLORS = [
+  "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+  "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+  "bg-violet-500/15 text-violet-600 dark:text-violet-400",
+  "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  "bg-rose-500/15 text-rose-600 dark:text-rose-400",
+  "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400",
+  "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400",
+  "bg-orange-500/15 text-orange-600 dark:text-orange-400",
+]
+
+/** Picks a stable avatar colour for a team, so the same name always gets the same colour. */
 function getTeamColor(name: string): string {
-  const colors = [
-    "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-    "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    "bg-violet-500/15 text-violet-600 dark:text-violet-400",
-    "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-    "bg-rose-500/15 text-rose-600 dark:text-rose-400",
-    "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400",
-    "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400",
-    "bg-orange-500/15 text-orange-600 dark:text-orange-400",
-  ]
-  const index = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
-  return colors[index]
+  const characterCodeSum = name.split("").reduce((sum, character) => sum + character.charCodeAt(0), 0)
+  return TEAM_AVATAR_COLORS[characterCodeSum % TEAM_AVATAR_COLORS.length]
 }
 
 export function TeamList() {
   const { user, currentTeam, setCurrentTeam, setTeams } = useAuthStore()
   const [search, setSearch] = useState("")
 
-  const { data: teamsResponse, isLoading, isError } = useQuery(listTeamsOptions())
-  const teamsData = teamsResponse?.items ?? []
+  const { data: teamPage, isLoading, isError } = useQuery(listTeamsOptions())
+  const teams = teamPage?.items ?? []
 
   useEffect(() => {
     if (!isLoading && !isError) {
-      setTeams(teamsData)
+      setTeams(teams)
     }
-  }, [isError, isLoading, setTeams, teamsData])
+  }, [isError, isLoading, setTeams, teams])
 
-  const filteredTeams = teamsData.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()) || team.description?.toLowerCase().includes(search.toLowerCase()))
+  const searchTerm = search.toLowerCase()
+  const filteredTeams = teams.filter((team) => team.name.toLowerCase().includes(searchTerm) || team.description?.toLowerCase().includes(searchTerm))
 
   if (isLoading) {
     return (
@@ -71,7 +75,7 @@ export function TeamList() {
     )
   }
 
-  if (teamsData.length === 0) {
+  if (teams.length === 0) {
     return (
       <Card className="border-dashed border-2">
         <CardContent className="py-16 text-center space-y-6">
@@ -97,108 +101,17 @@ export function TeamList() {
 
   return (
     <div className="space-y-6">
-      {teamsData.length > 3 && (
+      {teams.length > 3 && (
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search teams..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+          <Input placeholder="Search teams..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-10" />
         </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredTeams.map((team: Team) => {
-          const isActive = currentTeam?.id === team.id
-          const tags = team.tags ?? []
-          const memberCount = team.members?.length ?? 0
-          const userMembership = team.members?.find((m) => m.userId === user?.id)
-          const isOwner = userMembership?.isOwner
-          const isAdmin = userMembership?.role === "ADMIN"
-
-          return (
-            <Card
-              key={team.id}
-              className={`group relative overflow-hidden transition-all hover:shadow-md ${
-                isActive ? "border-primary/50 bg-primary/5 shadow-primary/10 shadow-sm ring-1 ring-primary/20" : "border-border/60 hover:border-border"
-              }`}
-            >
-              {/* Active indicator stripe */}
-              {isActive && <div className="absolute inset-y-0 left-0 w-1 bg-primary" />}
-
-              <CardHeader className="pb-3">
-                <div className="flex items-start gap-3">
-                  <button type="button" onClick={() => setCurrentTeam(team)} className="group/avatar relative" title={isActive ? "Current team" : "Click to switch to this team"}>
-                    <Avatar className={`h-12 w-12 transition-all ${getTeamColor(team.name)} ${!isActive && "group-hover/avatar:ring-2 group-hover/avatar:ring-primary/30"}`}>
-                      <AvatarFallback className={`text-sm font-semibold ${getTeamColor(team.name)}`}>{getTeamInitials(team.name)}</AvatarFallback>
-                    </Avatar>
-                    {isActive && (
-                      <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-background">
-                        <Check className="h-3 w-3" />
-                      </div>
-                    )}
-                  </button>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Link to="/teams/$teamId" params={{ teamId: team.id }} className="font-semibold hover:underline truncate text-foreground">
-                        {team.name}
-                      </Link>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        {memberCount} member{memberCount !== 1 ? "s" : ""}
-                      </span>
-                      {(isOwner || isAdmin) && (
-                        <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium">
-                          {isOwner ? (
-                            "Owner"
-                          ) : (
-                            <>
-                              <Shield className="mr-0.5 h-2.5 w-2.5" />
-                              Admin
-                            </>
-                          )}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                {team.description ? (
-                  <p className="text-sm text-muted-foreground line-clamp-2 min-h-10">{team.description}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground/60 italic min-h-10">No description</p>
-                )}
-
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag.id} variant="secondary" className="text-[10px] px-2 py-0.5">
-                        {tag.name}
-                      </Badge>
-                    ))}
-                    {tags.length > 3 && (
-                      <Badge variant="outline" className="text-[10px] px-2 py-0.5">
-                        +{tags.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-
-                <div className="mt-4 pt-3 border-t border-border/60">
-                  <Link
-                    to="/teams/$teamId"
-                    params={{ teamId: team.id }}
-                    className="flex items-center justify-between text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link"
-                  >
-                    <span>View team</span>
-                    <ChevronRight className="h-4 w-4 transition-transform group-hover/link:translate-x-0.5" />
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+        {filteredTeams.map((team) => (
+          <TeamCard key={team.id} team={team} isActive={currentTeam?.id === team.id} currentUserId={user?.id} onSelect={setCurrentTeam} />
+        ))}
       </div>
 
       {filteredTeams.length === 0 && search && (
@@ -211,10 +124,110 @@ export function TeamList() {
 
       {filteredTeams.length > 0 && (
         <p className="text-xs text-muted-foreground text-center">
-          Showing {filteredTeams.length} of {teamsData.length} team
-          {teamsData.length === 1 ? "" : "s"}
+          Showing {filteredTeams.length} of {teams.length} team
+          {teams.length === 1 ? "" : "s"}
         </p>
       )}
     </div>
+  )
+}
+
+interface TeamCardProps {
+  team: Team
+  isActive: boolean
+  currentUserId: string | undefined
+  onSelect: (team: Team) => void
+}
+
+function TeamCard({ team, isActive, currentUserId, onSelect }: Readonly<TeamCardProps>) {
+  const tags = team.tags ?? []
+  const memberCount = team.members?.length ?? 0
+  const membership = team.members?.find((member) => member.userId === currentUserId)
+  const isOwner = membership?.isOwner
+  const isAdmin = membership?.role === "ADMIN"
+
+  return (
+    <Card
+      className={`group relative overflow-hidden transition-all hover:shadow-md ${
+        isActive ? "border-primary/50 bg-primary/5 shadow-primary/10 shadow-sm ring-1 ring-primary/20" : "border-border/60 hover:border-border"
+      }`}
+    >
+      {/* Active indicator stripe */}
+      {isActive && <div className="absolute inset-y-0 left-0 w-1 bg-primary" />}
+
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-3">
+          <button type="button" onClick={() => onSelect(team)} className="group/avatar relative" title={isActive ? "Current team" : "Click to switch to this team"}>
+            <Avatar className={cn("h-12 w-12 transition-all", getTeamColor(team.name), !isActive && "group-hover/avatar:ring-2 group-hover/avatar:ring-primary/30")}>
+              <AvatarFallback className={`text-sm font-semibold ${getTeamColor(team.name)}`}>{getTeamInitials(team.name)}</AvatarFallback>
+            </Avatar>
+            {isActive && (
+              <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-background">
+                <Check className="h-3 w-3" />
+              </div>
+            )}
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <Link to="/teams/$teamId" params={{ teamId: team.id }} className="font-semibold hover:underline truncate text-foreground">
+                {team.name}
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {memberCount} member{memberCount !== 1 ? "s" : ""}
+              </span>
+              {(isOwner || isAdmin) && (
+                <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium">
+                  {isOwner ? (
+                    "Owner"
+                  ) : (
+                    <>
+                      <Shield className="mr-0.5 h-2.5 w-2.5" />
+                      Admin
+                    </>
+                  )}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="pt-0">
+        {team.description ? (
+          <p className="text-sm text-muted-foreground line-clamp-2 min-h-10">{team.description}</p>
+        ) : (
+          <p className="text-sm text-muted-foreground/60 italic min-h-10">No description</p>
+        )}
+
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {tags.slice(0, 3).map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="text-[10px] px-2 py-0.5">
+                {tag.name}
+              </Badge>
+            ))}
+            {tags.length > 3 && (
+              <Badge variant="outline" className="text-[10px] px-2 py-0.5">
+                +{tags.length - 3}
+              </Badge>
+            )}
+          </div>
+        )}
+
+        <div className="mt-4 pt-3 border-t border-border/60">
+          <Link
+            to="/teams/$teamId"
+            params={{ teamId: team.id }}
+            className="flex items-center justify-between text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link"
+          >
+            <span>View team</span>
+            <ChevronRight className="h-4 w-4 transition-transform group-hover/link:translate-x-0.5" />
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

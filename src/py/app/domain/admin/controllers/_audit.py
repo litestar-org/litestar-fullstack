@@ -1,7 +1,7 @@
 """Admin Audit Log SecureController."""
 
 from datetime import datetime
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, ClassVar
 from uuid import UUID
 
 from advanced_alchemy.filters import FilterTypes
@@ -41,13 +41,8 @@ class AuditController(SecureController):
         Returns:
             Paginated audit log entries.
         """
-        conditions: list[Any] = []
-        if action:
-            conditions.append(m.AuditLog.action == action)
-        if end_date:
-            conditions.append(m.AuditLog.created_at <= end_date)
-        results, total = await audit_service.get_many_and_count(*filters, *conditions)
-        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)
+        audit_logs, total = await audit_service.find_logs(*filters, action=action, end_date=end_date)
+        return audit_service.to_schema(audit_logs, total, filters, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetAuditLog", path="/{log_id:uuid}")
     async def get_log(
@@ -60,8 +55,8 @@ class AuditController(SecureController):
         Returns:
             The matching audit log entry.
         """
-        log = await audit_service.get(log_id)
-        return audit_service.to_schema(log, schema_type=AuditLogEntry)
+        audit_log = await audit_service.get(log_id)
+        return audit_service.to_schema(audit_log, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetUserAuditLogs", path="/user/{user_id:uuid}")
     async def get_user_logs(
@@ -77,13 +72,13 @@ class AuditController(SecureController):
         Returns:
             Paginated audit log entries for the actor.
         """
-        conditions: list[Any] = [m.AuditLog.actor_id == user_id]
-        if action:
-            conditions.append(m.AuditLog.action == action)
-        if end_date:
-            conditions.append(m.AuditLog.created_at <= end_date)
-        results, total = await audit_service.get_many_and_count(*filters, *conditions)
-        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)
+        audit_logs, total = await audit_service.find_logs(
+            *filters,
+            m.AuditLog.actor_id == user_id,
+            action=action,
+            end_date=end_date,
+        )
+        return audit_service.to_schema(audit_logs, total, filters, schema_type=AuditLogEntry)
 
     @get(operation_id="AdminGetTargetAuditLogs", path="/target/{target_type:str}/{target_id:str}")
     async def get_target_logs(
@@ -100,13 +95,11 @@ class AuditController(SecureController):
         Returns:
             Paginated audit log entries for the target resource.
         """
-        conditions: list[Any] = [
+        audit_logs, total = await audit_service.find_logs(
+            *filters,
             m.AuditLog.target_type == target_type,
             m.AuditLog.target_id == target_id,
-        ]
-        if action:
-            conditions.append(m.AuditLog.action == action)
-        if end_date:
-            conditions.append(m.AuditLog.created_at <= end_date)
-        results, total = await audit_service.get_many_and_count(*filters, *conditions)
-        return audit_service.to_schema(results, total, filters, schema_type=AuditLogEntry)
+            action=action,
+            end_date=end_date,
+        )
+        return audit_service.to_schema(audit_logs, total, filters, schema_type=AuditLogEntry)

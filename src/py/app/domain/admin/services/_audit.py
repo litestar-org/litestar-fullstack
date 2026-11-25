@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
 from advanced_alchemy.extensions.litestar import service
-from advanced_alchemy.filters import LimitOffsetFilter, OrderByFilter
 
 from app.db import models as m
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+    from datetime import datetime
     from uuid import UUID
 
+    from advanced_alchemy.filters import StatementFilter
     from litestar import Request
+    from sqlalchemy import ColumnElement
 
 
 class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
@@ -56,25 +58,6 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
                 "user_agent": user_agent,
             },
             auto_commit=True,
-        )
-
-    async def count_recent_actions(
-        self,
-        *,
-        action: str,
-        actor_id: UUID,
-        window_minutes: int,
-    ) -> int:
-        """Count recent actions for an actor within a rolling window.
-
-        Returns:
-            Number of matching audit log entries within the window.
-        """
-        cutoff_time = datetime.now(UTC) - timedelta(minutes=window_minutes)
-        return await self.count(
-            m.AuditLog.action == action,
-            m.AuditLog.actor_id == actor_id,
-            m.AuditLog.created_at >= cutoff_time,
         )
 
     async def log_admin_user_update(
@@ -177,15 +160,20 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             request=request,
         )
 
-    async def get_user_activity(
+    async def find_logs(
         self,
-        user_id: UUID,
-        limit: int = 50,
-    ) -> list[m.AuditLog]:
-        """Return recent audit activity for a specific actor."""
-        results = await self.get_many(
-            LimitOffsetFilter(limit=limit, offset=0),
-            OrderByFilter(field_name="created_at", sort_order="desc"),
-            m.AuditLog.actor_id == user_id,
-        )
-        return list(results)
+        *filters: StatementFilter | ColumnElement[bool],
+        action: str | None = None,
+        end_date: datetime | None = None,
+    ) -> tuple[Sequence[m.AuditLog], int]:
+        """Find audit logs matching ``filters``, optionally narrowed to one action and to entries up to ``end_date``.
+
+        Returns:
+            The matching audit logs and their total count before pagination.
+        """
+        criteria: list[ColumnElement[bool]] = []
+        if action:
+            criteria.append(m.AuditLog.action == action)
+        if end_date:
+            criteria.append(m.AuditLog.created_at <= end_date)
+        return await self.get_many_and_count(*filters, *criteria)

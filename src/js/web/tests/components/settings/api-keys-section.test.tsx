@@ -192,10 +192,10 @@ describe("ApiKeysSection", () => {
         if (pathname === "/api/me/api-keys/key-1/rotate" && request.method === "POST") {
           const body = (await request.json()) as { currentPassword?: string | null } | null
           if (!body?.currentPassword) {
-            return jsonResponse({ status_code: 403, detail: "Confirm your password to continue.", extra: { code: "reauthentication_required" } }, 403)
+            return jsonResponse({ status: 403, title: "Forbidden", detail: "Confirm your password to continue.", code: "reauthentication_required" }, 403)
           }
           if (body.currentPassword !== expectedPassword) {
-            return jsonResponse({ status_code: 403, detail: "The current password is incorrect." }, 403)
+            return jsonResponse({ status: 403, title: "Forbidden", detail: "The current password is incorrect." }, 403)
           }
           return jsonResponse({ ...staleKey, id: "key-2", prefix: "lsk_new2", secret: "lsk_new2_rotated_secret" })
         }

@@ -17,15 +17,19 @@ export const Route = createFileRoute("/_app/admin/teams/$teamId")({
 function AdminTeamDetailPage() {
   const { teamId } = Route.useParams()
   const queryClient = useQueryClient()
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: team,
+    isLoading,
+    isError,
+  } = useQuery({
     ...adminGetTeamOptions({ path: { team_id: teamId } }),
     enabled: Boolean(teamId),
   })
   const updateTeam = useMutation({
     ...adminUpdateTeamMutation(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminListTeamsQueryKey() })
-      queryClient.invalidateQueries({ queryKey: adminGetTeamQueryKey({ path: { team_id: teamId } }) })
+      void queryClient.invalidateQueries({ queryKey: adminListTeamsQueryKey() })
+      void queryClient.invalidateQueries({ queryKey: adminGetTeamQueryKey({ path: { team_id: teamId } }) })
       toast.success("Team updated")
     },
     onError: (error) => {
@@ -47,7 +51,7 @@ function AdminTeamDetailPage() {
     )
   }
 
-  if (isError || !data) {
+  if (isError || !team) {
     return (
       <PageContainer className="flex-1 space-y-8">
         <PageHeader
@@ -78,8 +82,8 @@ function AdminTeamDetailPage() {
     <PageContainer className="flex-1 space-y-8">
       <PageHeader
         eyebrow="Administration"
-        title={data.name}
-        description={data.description || "No description provided."}
+        title={team.name}
+        description={team.description || "No description provided."}
         actions={
           <Button variant="outline" size="sm" asChild>
             <Link to="/admin/teams">
@@ -95,24 +99,24 @@ function AdminTeamDetailPage() {
             <div className="grid gap-3 text-sm md:grid-cols-2">
               <div>
                 <p className="text-muted-foreground">Slug</p>
-                <p>{data.slug}</p>
+                <p>{team.slug}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Owner</p>
-                <p>{data.ownerEmail ?? "—"}</p>
+                <p>{team.ownerEmail ?? "—"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Members</p>
-                <p>{data.memberCount ?? 0}</p>
+                <p>{team.memberCount ?? 0}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Status</p>
-                <p>{data.isActive ? "Active" : "Inactive"}</p>
+                <p>{team.isActive ? "Active" : "Inactive"}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => updateTeam.mutate({ path: { team_id: teamId }, body: { isActive: !data.isActive } })} disabled={updateTeam.isPending}>
-                {data.isActive ? "Deactivate" : "Activate"}
+              <Button variant="outline" onClick={() => updateTeam.mutate({ path: { team_id: teamId }, body: { isActive: !team.isActive } })} disabled={updateTeam.isPending}>
+                {team.isActive ? "Deactivate" : "Activate"}
               </Button>
             </div>
           </CardContent>

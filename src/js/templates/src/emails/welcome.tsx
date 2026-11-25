@@ -9,70 +9,41 @@
 
 import { Heading, Text } from "@react-email/components"
 import { Button, Layout } from "../components"
+import { emailStyles, emailTheme } from "../lib/theme"
+
+const nextStepListStyle = {
+  margin: "0 0 24px 0",
+  paddingLeft: "20px",
+  color: emailTheme.colors.textBody,
+}
+
+const nextStepStyle = {
+  marginBottom: "8px",
+  fontSize: "14px",
+}
 
 export default function Welcome() {
   return (
     <Layout preview="Welcome to {{APP_NAME}}" appName="{{APP_NAME}}">
-      <Heading
-        style={{
-          margin: "0 0 16px 0",
-          fontSize: "20px",
-          fontWeight: 600,
-          color: "#f3f4f6", // white-ish
-        }}
-      >
-        Welcome to {"{{APP_NAME}}"}!
-      </Heading>
+      <Heading style={emailStyles.heading}>Welcome to {"{{APP_NAME}}"}!</Heading>
 
-      <Text
-        style={{
-          margin: "0 0 16px 0",
-          color: "#d1d5db", // gray-300
-          fontSize: "14px",
-        }}
-      >
-        Hi {"{{USER_NAME}}"},
-      </Text>
+      <Text style={emailStyles.paragraph}>Hi {"{{USER_NAME}}"},</Text>
 
-      <Text
-        style={{
-          margin: "0 0 16px 0",
-          color: "#d1d5db",
-          fontSize: "14px",
-        }}
-      >
-        Your email has been verified and your account is now fully activated. We're excited to have you on board!
-      </Text>
+      <Text style={emailStyles.paragraph}>Your email has been verified and your account is now fully activated. We're excited to have you on board!</Text>
 
-      <Text
-        style={{
-          margin: "0 0 24px 0",
-          color: "#d1d5db",
-          fontSize: "14px",
-        }}
-      >
-        Here's what you can do next:
-      </Text>
+      <Text style={emailStyles.lastParagraph}>Here's what you can do next:</Text>
 
-      <ul style={{ margin: "0 0 24px 0", paddingLeft: "20px", color: "#d1d5db" }}>
-        <li style={{ marginBottom: "8px", fontSize: "14px" }}>Complete your profile settings</li>
-        <li style={{ marginBottom: "8px", fontSize: "14px" }}>Enable two-factor authentication or register a passkey for extra security</li>
-        <li style={{ marginBottom: "8px", fontSize: "14px" }}>Create or join a team</li>
+      <ul style={nextStepListStyle}>
+        <li style={nextStepStyle}>Complete your profile settings</li>
+        <li style={nextStepStyle}>Enable two-factor authentication or register a passkey for extra security</li>
+        <li style={nextStepStyle}>Create or join a team</li>
       </ul>
 
-      <div style={{ textAlign: "center" as const, margin: "32px 0" }}>
+      <div style={emailStyles.buttonRow}>
         <Button href="{{LOGIN_URL}}">Get Started</Button>
       </div>
 
-      <Text
-        style={{
-          margin: "24px 0 0 0",
-          color: "#9ca3af",
-          fontSize: "13px",
-        }}
-      >
-        If you have any questions, feel free to reach out to our support team.
-      </Text>
+      <Text style={emailStyles.closingNote}>If you have any questions, feel free to reach out to our support team.</Text>
     </Layout>
   )
 }

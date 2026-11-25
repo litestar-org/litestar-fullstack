@@ -3,13 +3,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ShieldCheck, User, UserPlus } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { TeamRoles } from "@/lib/generated/api"
 import { createTeamInvitationMutation, getTeamQueryKey, listTeamInvitationsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 const inviteSchema = z.object({
@@ -19,11 +18,26 @@ const inviteSchema = z.object({
 
 type InviteFormData = z.infer<typeof inviteSchema>
 
+const ROLE_OPTIONS = [
+  {
+    value: "MEMBER",
+    label: "Member",
+    description: "Can view and collaborate on team content",
+    icon: User,
+  },
+  {
+    value: "ADMIN",
+    label: "Admin",
+    description: "Can invite members and manage team settings",
+    icon: ShieldCheck,
+  },
+] as const
+
 interface InviteMemberDialogProps {
   teamId: string
 }
 
-export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
+export function InviteMemberDialog({ teamId }: Readonly<InviteMemberDialogProps>) {
   const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
 
@@ -37,13 +51,13 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
 
   const createInvitation = useMutation(createTeamInvitationMutation())
 
-  const onSubmit = async (data: InviteFormData) => {
+  const handleInvite = async (invitation: InviteFormData) => {
     try {
       await createInvitation.mutateAsync({
         path: { team_id: teamId },
         body: {
-          email: data.email,
-          role: data.role as TeamRoles,
+          email: invitation.email,
+          role: invitation.role,
         },
       })
       await queryClient.invalidateQueries({
@@ -62,22 +76,8 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
     }
   }
 
-  const roleOptions = [
-    {
-      value: "MEMBER" as const,
-      label: "Member",
-      description: "Can view and collaborate on team content",
-      icon: User,
-    },
-    {
-      value: "ADMIN" as const,
-      label: "Admin",
-      description: "Can invite members and manage team settings",
-      icon: ShieldCheck,
-    },
-  ]
-
-  const selectedRole = roleOptions.find((opt) => opt.value === form.watch("role"))
+  const selectedRoleValue = form.watch("role")
+  const selectedRole = ROLE_OPTIONS.find((option) => option.value === selectedRoleValue)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -93,7 +93,7 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
           <DialogDescription>Send an invitation to join this team. They'll receive an email to accept or decline.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={form.handleSubmit(handleInvite)} className="space-y-5">
             <FormField
               control={form.control}
               name="email"
@@ -127,7 +127,7 @@ export function InviteMemberDialog({ teamId }: InviteMemberDialogProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {roleOptions.map((option) => (
+                      {ROLE_OPTIONS.map((option) => (
                         <SelectItem key={option.value} value={option.value} className="py-3">
                           <div className="flex items-start gap-3">
                             <option.icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />

@@ -9,11 +9,12 @@ import pytest
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.extensions.litestar import SQLAlchemyPlugin
 from litestar import Litestar, get
+from litestar.plugins.problem_details import ProblemDetailsPlugin
 from litestar.testing import AsyncTestClient
 from litestar_security import CSRF_REQUIRED_OPT_KEY, SecurityPlugin, public
-from litestar_security.accounts import Argon2PasswordHasher
 from litestar_security.context import CredentialRestrictions
 
+from app import config as app_config
 from app.db import models as m
 from app.domain import accounts as accounts_pkg
 from app.domain.accounts.controllers import (
@@ -23,14 +24,17 @@ from app.domain.accounts.controllers import (
     UserController,
 )
 from app.domain.accounts.security import (
+    APPLICATION_ACCESS_REQUIRED,
     SQLAlchemyAPIKeyStore,
     build_api_key_service,
     build_csrf_config,
     build_security_config,
     build_session_middleware,
     build_session_store,
+    require_application_access,
 )
 from app.domain.accounts.security.reauth import REAUTHENTICATION_REQUIRED
+from app.domain.accounts.services import UserService
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
 
 if TYPE_CHECKING:
@@ -63,7 +67,12 @@ async def _build_accounts_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLA
     sec_cfg.local_auth.session_auth.clock = lambda: clock_box[0]
     app = Litestar(
         route_handlers=[csrf_bootstrap, ProfileController, ApiKeyController, UserController, RoleController],
-        plugins=[SQLAlchemyPlugin(config=db_cfg), SecurityPlugin(sec_cfg)],
+        plugins=[
+            SQLAlchemyPlugin(config=db_cfg),
+            ProblemDetailsPlugin(config=app_config.problem_details),
+            SecurityPlugin(sec_cfg),
+        ],
+        guards=[require_application_access],
         middleware=[build_session_middleware(settings)],
         csrf_config=build_csrf_config(settings),
         stores={"sessions": build_session_store(db_cfg)},
@@ -78,21 +87,31 @@ async def _seed_user(
     password: str = "StrongPassword!123",
     name: str = "Test User",
     is_superuser: bool = False,
+    application_access: bool = True,
 ) -> m.User:
-    hasher = Argon2PasswordHasher()
-    hashed = await hasher.hash(password)
-    async with db_cfg.get_session() as session:
-        user = m.User(
-            email=email,
-            name=name,
-            hashed_password=hashed,
-            is_active=True,
-            is_verified=True,
-            is_superuser=is_superuser,
-        )
-        session.add(user)
-        await session.commit()
-        await session.refresh(user)
+    async with UserService.new(config=db_cfg) as users:
+        hashed_password = await users.hash_password(password)
+        if application_access:
+            user = await users.provision(
+                email=email,
+                name=name,
+                verified=True,
+                now=datetime.now(UTC),
+                hashed_password=hashed_password,
+                is_superuser=is_superuser,
+            )
+        else:
+            user = await users.create(
+                m.User(
+                    email=email,
+                    name=name,
+                    hashed_password=hashed_password,
+                    is_active=True,
+                    is_verified=True,
+                    is_superuser=is_superuser,
+                )
+            )
+        await users.repository.session.commit()
         return user
 
 
@@ -168,6 +187,30 @@ async def test_unauthenticated_and_rbac_boundaries(tmp_path: Path) -> None:
         assert revoke_resp.status_code == 201
 
 
+async def test_signed_in_accounts_need_application_access(tmp_path: Path) -> None:
+    app, db_cfg, _ = await _build_accounts_app(tmp_path, "application_access.sqlite3")
+    await _seed_user(db_cfg, email="no-access@example.com", application_access=False)
+    await _seed_user(db_cfg, email="root@example.com", is_superuser=True, application_access=False)
+
+    async with AsyncTestClient(app=app) as client:
+        assert (await client.get("/api/csrf")).status_code == 200
+
+        csrf = await _login(client, "no-access@example.com")
+        denied = await client.get("/api/me")
+        assert denied.status_code == 403
+        assert denied.json()["code"] == APPLICATION_ACCESS_REQUIRED
+        assert denied.json()["detail"] == "Your account does not have access to this application."
+
+        signed_out = await client.post("/api/access/logout", headers={"X-XSRF-TOKEN": csrf})
+        assert signed_out.status_code in {200, 201, 204}, signed_out.text
+        assert (await client.get("/api/me")).status_code == 401
+
+    async with AsyncTestClient(app=app) as superuser_client:
+        await _login(superuser_client, "root@example.com")
+        assert (await superuser_client.get("/api/me")).status_code == 200
+        assert (await superuser_client.get("/api/users")).status_code == 200
+
+
 async def test_profile_auth_modes_and_step_up(tmp_path: Path) -> None:
     app, db_cfg, clock_box = await _build_accounts_app(tmp_path, "profile_auth.sqlite3")
     alice = await _seed_user(db_cfg, email="alice@example.com", name="Alice")
@@ -224,7 +267,7 @@ async def test_profile_auth_modes_and_step_up(tmp_path: Path) -> None:
         del_csrf = await _login(del_client, "alice@example.com", password="NewStrongPassword!456")
         del_unconfirmed = await del_client.delete("/api/me", headers={"X-XSRF-TOKEN": del_csrf})
         assert del_unconfirmed.status_code == 403
-        assert del_unconfirmed.json()["extra"] == {"code": REAUTHENTICATION_REQUIRED}
+        assert del_unconfirmed.json()["code"] == REAUTHENTICATION_REQUIRED
         del_ok = await del_client.request(
             "DELETE",
             "/api/me",
@@ -260,7 +303,7 @@ async def test_api_key_lifecycle_reconfirmation_and_cross_user_isolation(tmp_pat
             "/api/me/api-keys", json={"name": "Blocked Key", "scopes": ["read"]}, headers=stale_headers
         )
         assert unconfirmed.status_code == 403
-        assert unconfirmed.json()["extra"] == {"code": REAUTHENTICATION_REQUIRED}
+        assert unconfirmed.json()["code"] == REAUTHENTICATION_REQUIRED
 
         wrong_password = await stale_client.post(
             "/api/me/api-keys",
@@ -268,7 +311,7 @@ async def test_api_key_lifecycle_reconfirmation_and_cross_user_isolation(tmp_pat
             headers=stale_headers,
         )
         assert wrong_password.status_code == 403
-        assert "extra" not in wrong_password.json()
+        assert "code" not in wrong_password.json()
 
         confirmed = await stale_client.post(
             "/api/me/api-keys",

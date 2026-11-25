@@ -23,13 +23,13 @@ export interface QueueActivityMonitorProps {
   EventSourceCtor?: typeof EventSource
 }
 
-function extractEventSequence(frame: QueueTaskEventPayload): { stream: string; value: number } | undefined {
-  const candidate = frame as QueueTaskEventPayload & { seq?: unknown; sequence?: unknown }
-  const raw = [candidate.sequence, candidate.seq].find((value) => typeof value === "number")
-  if (typeof raw !== "number" || !Number.isFinite(raw)) {
+function extractEventSequence(event: QueueTaskEventPayload): { stream: string; value: number } | undefined {
+  const sequencedEvent = event as QueueTaskEventPayload & { seq?: unknown; sequence?: unknown }
+  const sequence = [sequencedEvent.sequence, sequencedEvent.seq].find((value) => typeof value === "number")
+  if (typeof sequence !== "number" || !Number.isFinite(sequence)) {
     return undefined
   }
-  return { stream: frame.queue || "default", value: raw }
+  return { stream: event.queue || "default", value: sequence }
 }
 
 function statusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
@@ -45,8 +45,13 @@ interface MonitorEventEntry {
   payload: QueueTaskEventPayload
 }
 
-function ConnectionBadge({ authDenied, healthy }: Readonly<{ authDenied: boolean; healthy: boolean }>) {
-  if (authDenied) {
+interface ConnectionBadgeProps {
+  isAuthDenied: boolean
+  isHealthy: boolean
+}
+
+function ConnectionBadge({ isAuthDenied, isHealthy }: Readonly<ConnectionBadgeProps>) {
+  if (isAuthDenied) {
     return (
       <Badge variant="destructive" className="gap-1">
         <WifiOff className="h-3 w-3" />
@@ -54,7 +59,7 @@ function ConnectionBadge({ authDenied, healthy }: Readonly<{ authDenied: boolean
       </Badge>
     )
   }
-  if (healthy) {
+  if (isHealthy) {
     return (
       <Badge variant="default" className="gap-1">
         <Wifi className="h-3 w-3" />
@@ -72,20 +77,20 @@ function ConnectionBadge({ authDenied, healthy }: Readonly<{ authDenied: boolean
 
 export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor, EventSourceCtor }: Readonly<QueueActivityMonitorProps>) {
   const [events, setEvents] = useState<MonitorEventEntry[]>([])
-  const [healthy, setHealthy] = useState(false)
-  const [paused, setPaused] = useState(false)
-  const [authDenied, setAuthDenied] = useState(false)
+  const [isHealthy, setIsHealthy] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const [isAuthDenied, setIsAuthDenied] = useState(false)
   const [gapWarning, setGapWarning] = useState<StreamGap | null>(null)
-  const nextEventIdRef = useRef(0)
+  const lastEventIdRef = useRef(0)
 
-  const pausedRef = useRef(paused)
-  pausedRef.current = paused
+  const isPausedRef = useRef(isPaused)
+  isPausedRef.current = isPaused
 
   const onTaskEventRef = useRef(onTaskEvent)
   onTaskEventRef.current = onTaskEvent
 
   useEffect(() => {
-    setAuthDenied(false)
+    setIsAuthDenied(false)
     const channels = createTypedChannels<QueueEventChannelMap>({
       basePath,
       metadata: CHANNEL_METADATA,
@@ -95,17 +100,17 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
       WebSocketCtor,
       EventSourceCtor,
       onEvent: (event) => {
-        if (!pausedRef.current) {
-          nextEventIdRef.current += 1
-          const entry: MonitorEventEntry = { id: nextEventIdRef.current, payload: event }
-          setEvents((prev) => [entry, ...prev].slice(0, MAX_EVENTS))
+        if (!isPausedRef.current) {
+          lastEventIdRef.current += 1
+          const entry: MonitorEventEntry = { id: lastEventIdRef.current, payload: event }
+          setEvents((shownEvents) => [entry, ...shownEvents].slice(0, MAX_EVENTS))
         }
         onTaskEventRef.current?.(event)
       },
-      onHealthChange: (isHealthy) => {
-        setHealthy(isHealthy)
-        if (isHealthy) {
-          setAuthDenied(false)
+      onHealthChange: (isStreamHealthy) => {
+        setIsHealthy(isStreamHealthy)
+        if (isStreamHealthy) {
+          setIsAuthDenied(false)
         }
       },
       getSequence: extractEventSequence,
@@ -114,8 +119,8 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
       },
       shouldReconnect: (closeCode) => {
         if (closeCode === 4003 || closeCode === 403) {
-          setAuthDenied(true)
-          setHealthy(false)
+          setIsAuthDenied(true)
+          setIsHealthy(false)
           return false
         }
         return true
@@ -139,10 +144,10 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
           <CardDescription>Real-time task lifecycle events streamed from {CHANNEL_METADATA[QUEUE_EVENTS_CHANNEL].address}.</CardDescription>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ConnectionBadge authDenied={authDenied} healthy={healthy} />
-          <Button type="button" variant="outline" size="sm" onClick={() => setPaused((prev) => !prev)}>
-            {paused ? <Play className="mr-1.5 h-3.5 w-3.5" /> : <Pause className="mr-1.5 h-3.5 w-3.5" />}
-            {paused ? "Resume" : "Pause"}
+          <ConnectionBadge isAuthDenied={isAuthDenied} isHealthy={isHealthy} />
+          <Button type="button" variant="outline" size="sm" onClick={() => setIsPaused((wasPaused) => !wasPaused)}>
+            {isPaused ? <Play className="mr-1.5 h-3.5 w-3.5" /> : <Pause className="mr-1.5 h-3.5 w-3.5" />}
+            {isPaused ? "Resume" : "Pause"}
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => setEvents([])} disabled={events.length === 0}>
             <Trash2 className="mr-1.5 h-3.5 w-3.5" />
@@ -151,7 +156,7 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {authDenied && (
+        {isAuthDenied && (
           <div role="alert" className="flex items-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>Authorization required to stream queue events. Sign in with an authorized account and reload.</span>
@@ -171,7 +176,7 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
           </div>
         )}
         {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{paused ? "Event stream paused. Resume to display incoming task events." : "Waiting for queue task events…"}</p>
+          <p className="text-sm text-muted-foreground">{isPaused ? "Event stream paused. Resume to display incoming task events." : "Waiting for queue task events…"}</p>
         ) : (
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {events.map(({ id, payload: event }) => {

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -10,49 +10,37 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
-import { validatePassword } from "@/hooks/use-validation"
+import { useAuthConfig } from "@/lib/api/hooks/auth"
 import { extractApiErrorMessage } from "@/lib/api-client"
-import { localRegisterMutation, publicAuthConfigOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
+import { localRegisterMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
+import { newPasswordSchema } from "@/lib/validation"
 
 const signupSchema = z
   .object({
     email: z.string().email("Invalid email address"),
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .superRefine((value, ctx) => {
-        const error = validatePassword(value)
-        if (error) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: error })
-        }
-      }),
+    password: newPasswordSchema,
     name: z.string().min(1, "Name is required"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((signup) => signup.password === signup.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   })
 
 type SignupFormData = z.infer<typeof signupSchema>
 
-interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {
+interface UserSignupFormProps {
   redirectUrl?: string | null
 }
 
-export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupFormProps) {
+export function UserSignupForm({ redirectUrl }: Readonly<UserSignupFormProps>) {
   const navigate = useNavigate()
-  const { data: authConfig } = useQuery({
-    ...publicAuthConfigOptions(),
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-  })
+  const { data: authConfig } = useAuthConfig()
   const registerMutation = useMutation(localRegisterMutation())
 
-  const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
-  const githubOAuthEnabled = authConfig?.githubEnabled ?? false
-  const hasOAuthProviders = githubOAuthEnabled
+  const redirectTarget = redirectUrl || DEFAULT_AUTH_REDIRECT
+  const isGithubEnabled = authConfig?.githubEnabled ?? false
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -65,31 +53,30 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
     mode: "onBlur",
     reValidateMode: "onBlur",
   })
-  const passwordValue = form.watch("password")
+  const password = form.watch("password")
 
-  const onSubmit = async (data: SignupFormData) => {
+  const handleSignup = async (signup: SignupFormData) => {
     try {
       await registerMutation.mutateAsync({
         body: {
-          identifier: data.email,
-          password: data.password,
-          display_name: data.name,
+          identifier: signup.email,
+          password: signup.password,
+          display_name: signup.name,
         },
       })
-      const verificationRequired = authConfig?.emailVerificationRequired ?? true
-      toast.success(verificationRequired ? "Account created! Please check your email to verify your account." : "Account created! You can sign in now.")
-      const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
-      navigate({ to: "/login", search: loginSearch })
+      const isVerificationRequired = authConfig?.emailVerificationRequired ?? true
+      toast.success(isVerificationRequired ? "Account created! Please check your email to verify your account." : "Account created! You can sign in now.")
+      void navigate({ to: "/login", search: redirectUrl ? { redirect: redirectUrl } : undefined })
     } catch (error) {
       toast.error(extractApiErrorMessage(error, "Signup failed"))
     }
   }
 
   return (
-    <div className={className} {...props}>
+    <div>
       <div className="grid gap-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <form onSubmit={form.handleSubmit(handleSignup)} className="grid gap-4">
             <FormField
               control={form.control}
               name="name"
@@ -143,7 +130,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                       disabled={registerMutation.isPending}
                     />
                   </FormControl>
-                  <PasswordStrength password={passwordValue} />
+                  <PasswordStrength password={password} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -178,7 +165,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
           </form>
         </Form>
 
-        {hasOAuthProviders && (
+        {isGithubEnabled && (
           <>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -188,7 +175,9 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                 <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
-            <div className="grid gap-2">{githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}</div>
+            <div className="grid gap-2">
+              <GitHubSignInButton variant="signup" className="w-full" authRedirect={redirectTarget} />
+            </div>
           </>
         )}
       </div>

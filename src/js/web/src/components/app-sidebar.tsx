@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { Home, ShieldCheck, Users } from "lucide-react"
 import type * as React from "react"
-import { useEffect, useMemo } from "react"
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
+import { useEffect } from "react"
+import { NavMain, type NavSection } from "@/components/nav-main"
+import { NavTeams } from "@/components/nav-teams"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -12,78 +12,58 @@ import { useAuthStore } from "@/lib/auth"
 import type { Team } from "@/lib/generated/api"
 import { listTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const MEMBER_NAV_SECTIONS: NavSection[] = [
+  { title: "Home", to: "/home", icon: Home },
+  {
+    title: "Teams",
+    to: "/teams",
+    icon: Users,
+    subLinks: [
+      { title: "All teams", to: "/teams" },
+      { title: "Create new", to: "/teams/new" },
+    ],
+  },
+]
+const ADMIN_NAV_SECTION: NavSection = { title: "Admin", to: "/admin", icon: ShieldCheck }
+
+function joinTeamIds(teams: Team[]): string {
+  return teams.map((team) => team.id).join("|")
+}
+
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const { teams, currentTeam, setTeams, setCurrentTeam, user, isAuthenticated } = useAuthStore()
 
   const {
-    data: teamsResponse,
+    data: teamPage,
     isLoading,
     isError,
   } = useQuery({
     ...listTeamsOptions(),
     enabled: isAuthenticated,
   })
-  const teamsData = teamsResponse?.items ?? []
+  const fetchedTeams = teamPage?.items ?? []
 
-  const teamIds = useMemo(() => teamsData.map((team) => team.id).join("|"), [teamsData])
-  const storeIds = useMemo(() => teams.map((team) => team.id).join("|"), [teams])
+  const fetchedTeamIds = joinTeamIds(fetchedTeams)
+  const storedTeamIds = joinTeamIds(teams)
 
   useEffect(() => {
-    if (isLoading || isError || teamIds === storeIds) {
+    if (isLoading || isError || fetchedTeamIds === storedTeamIds) {
       return
     }
-    setTeams(teamsData)
-  }, [isError, isLoading, setTeams, storeIds, teamIds, teamsData])
+    setTeams(fetchedTeams)
+  }, [isError, isLoading, setTeams, storedTeamIds, fetchedTeamIds, fetchedTeams])
 
-  const navMain = useMemo(() => {
-    const items = [
-      {
-        title: "Home",
-        to: "/home",
-        icon: Home,
-      },
-      {
-        title: "Teams",
-        to: "/teams",
-        icon: Users,
-        items: [
-          { title: "All teams", to: "/teams" },
-          { title: "Create new", to: "/teams/new" },
-        ],
-      },
-    ]
-
-    if (user?.isSuperuser) {
-      items.push({
-        title: "Admin",
-        to: "/admin",
-        icon: ShieldCheck,
-      })
-    }
-
-    return items
-  }, [user?.isSuperuser])
-
-  const teamLinks = useMemo(
-    () =>
-      teams.map((team: Team) => ({
-        name: team.name,
-        to: "/teams/$teamId",
-        params: { teamId: team.id },
-        icon: Users,
-      })),
-    [teams],
-  )
-  const teamOptions = teamsData.length > 0 ? teamsData : teams
+  const navSections = user?.isSuperuser ? [...MEMBER_NAV_SECTIONS, ADMIN_NAV_SECTION] : MEMBER_NAV_SECTIONS
+  const switchableTeams = fetchedTeams.length > 0 ? fetchedTeams : teams
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teamOptions} currentTeam={currentTeam} onTeamSelect={setCurrentTeam} />
+        <TeamSwitcher teams={switchableTeams} currentTeam={currentTeam} onTeamSelect={setCurrentTeam} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain} />
-        {teamLinks.length > 0 && <NavProjects label="Teams" projects={teamLinks} />}
+        <NavMain sections={navSections} />
+        {teams.length > 0 && <NavTeams teams={teams} />}
       </SidebarContent>
       <SidebarFooter>
         <div className="flex items-center gap-2">

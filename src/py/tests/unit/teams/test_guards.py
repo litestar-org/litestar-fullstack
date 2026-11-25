@@ -22,10 +22,12 @@ from app.domain.accounts.security import (
     build_security_config,
     build_session_middleware,
     build_session_store,
+    require_application_access,
 )
 from app.domain.teams.controllers import TeamController, TeamInvitationController, TeamMemberController
 from app.lib.secrets import API_KEY_PEPPER_INFO, derive_subkey
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
+from tests.factories import grant_application_access
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -65,6 +67,7 @@ async def _build_teams_app(tmp_path: Path, name: str) -> tuple[Litestar, SQLAlch
         middleware=[build_session_middleware(settings)],
         csrf_config=build_csrf_config(settings),
         stores={"sessions": build_session_store(db_cfg)},
+        guards=[require_application_access],
     )
     return app, db_cfg, settings
 
@@ -89,6 +92,7 @@ async def _seed_user(
         session.add(user)
         await session.commit()
         await session.refresh(user)
+        await grant_application_access(session, user)
         return user
 
 

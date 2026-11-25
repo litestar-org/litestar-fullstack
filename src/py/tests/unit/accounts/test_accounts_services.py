@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 import msgspec
 import pytest
@@ -52,24 +53,51 @@ async def test_user_service_argon2_create_and_update_password(tmp_path: Path) ->
 
         with pytest.raises(PermissionDeniedException):
             await service.update_password(
-                {"current_password": "WrongPassword!999", "new_password": "NewStrongPassword!456"},
-                db_obj=created,
+                created,
+                current_password="WrongPassword!999",
+                new_password="NewStrongPassword!456",
             )
 
         initial_epoch = created.security_epoch
+        now = datetime.now(UTC)
+        signed_in = m.UserSession(
+            session_id="alice-session",
+            binding_id="alice-binding",
+            binding_digest="00" * 32,
+            user_id=created.id,
+            security_epoch=initial_epoch,
+            authenticated_at=now,
+            last_seen_at=now,
+            expires_at=now + timedelta(hours=1),
+        )
+        session.add(signed_in)
+        await session.commit()
         await service.update_password(
-            {"current_password": "StrongPassword!123", "new_password": "NewStrongPassword!456"},
-            db_obj=created,
+            created,
+            current_password="StrongPassword!123",
+            new_password="NewStrongPassword!456",
         )
         authed_after = await service.authenticate("alice@example.com", "NewStrongPassword!456")
         assert authed_after.security_epoch == initial_epoch + 1
+        await session.refresh(signed_in)
+        assert signed_in.revoked_at is not None
 
         await service.update({"is_active": False}, item_id=created.id, auto_commit=True)
         with pytest.raises(PermissionDeniedException):
             await service.update_password(
-                {"current_password": "NewStrongPassword!456", "new_password": "AnotherStrongPass!789"},
-                db_obj=created,
+                created,
+                current_password="NewStrongPassword!456",
+                new_password="AnotherStrongPass!789",
             )
+
+
+def test_account_ids_map_to_user_ids_and_back() -> None:
+    user_id = UUID("01890a5d-ac96-774b-bcce-b302099a8057")
+
+    assert UserService.to_user_id(str(user_id)) == user_id
+    assert UserService.to_user_id("not-a-uuid") is None
+    assert UserService.to_user_id("") is None
+    assert UserService.to_user_id(None) is None
 
 
 async def test_role_service_generates_unique_slugs(tmp_path: Path) -> None:

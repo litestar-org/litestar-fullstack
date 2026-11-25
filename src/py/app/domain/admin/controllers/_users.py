@@ -3,7 +3,6 @@
 from typing import Annotated, Any, ClassVar
 from uuid import UUID
 
-import msgspec
 from advanced_alchemy.filters import FilterTypes
 from advanced_alchemy.service.pagination import OffsetPagination
 from litestar import Request, delete, get, patch
@@ -45,8 +44,8 @@ class AdminUsersController(SecureController):
         Returns:
             Paginated user summaries.
         """
-        results, total = await users_service.get_many_and_count(*filters)
-        return users_service.to_schema(results, total, filters, schema_type=AdminUserSummary)
+        users, total = await users_service.get_many_and_count(*filters)
+        return users_service.to_schema(users, total, filters, schema_type=AdminUserSummary)
 
     @get(operation_id="AdminGetUser", path="/{user_id:uuid}")
     async def get_user(
@@ -80,26 +79,22 @@ class AdminUsersController(SecureController):
         Returns:
             Updated user account details.
         """
-        update_data: dict[str, Any] = {}
-        for field in ("name", "username", "phone", "is_active", "is_superuser", "is_verified"):
-            value = getattr(data, field)
-            if value is not msgspec.UNSET:
-                update_data[field] = value
-
-        user = await users_service.update(item_id=user_id, data=update_data, auto_commit=True)
+        changes = data.to_dict()
+        changed_fields = list(changes)
+        user = await users_service.update(item_id=user_id, data=changes, auto_commit=True)
         await audit_service.log_admin_user_update(
             actor_id=current_user.id,
             actor_email=current_user.email,
             user_id=user_id,
             user_email=user.email,
-            changes=list(update_data.keys()),
+            changes=changed_fields,
             request=request,
         )
-        fresh = await users_service.get(
+        detailed_user = await users_service.get(
             user_id,
             load=[undefer_group("security_sensitive"), selectinload(m.User.mfa_factors)],
         )
-        return users_service.to_schema(fresh, schema_type=AdminUserDetail)
+        return users_service.to_schema(detailed_user, schema_type=AdminUserDetail)
 
     @delete(operation_id="AdminDeleteUser", path="/{user_id:uuid}", status_code=200)
     async def delete_user(

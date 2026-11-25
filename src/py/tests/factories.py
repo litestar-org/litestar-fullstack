@@ -3,15 +3,21 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, Mock, create_autospec
 from uuid import UUID, uuid4
 
+from advanced_alchemy.utils.text import slugify
 from polyfactory import Ignore, Use
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
+from sqlalchemy import select
 
 from app.db import models as m
+from app.lib.constants import DEFAULT_ACCESS_ROLE
 from app.lib.email import AppEmailService
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserFactory(SQLAlchemyFactory[m.User]):
@@ -201,6 +207,19 @@ class TagFactory(SQLAlchemyFactory[m.Tag]):
     description = Use(lambda: f"Test tag description {uuid4().hex[:8]}")
 
     teams = Ignore()
+
+
+async def grant_application_access(db_session: AsyncSession, *users: m.User) -> None:
+    """Give persisted users the default access role every account needs, creating the role on first use."""
+    access_role = await db_session.scalar(select(m.Role).where(m.Role.name == DEFAULT_ACCESS_ROLE))
+    if access_role is None:
+        access_role = m.Role(name=DEFAULT_ACCESS_ROLE, slug=slugify(DEFAULT_ACCESS_ROLE))
+        db_session.add(access_role)
+        await db_session.flush()
+    db_session.add_all(
+        m.UserRole(user_id=user.id, role_id=access_role.id, assigned_at=datetime.now(UTC)) for user in users
+    )
+    await db_session.commit()
 
 
 async def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:

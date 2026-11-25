@@ -2,7 +2,7 @@ import { startAuthentication } from "@simplewebauthn/browser"
 import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { extractApiErrorMessage } from "@/lib/api-client"
+import { extractApiErrorMessage, isApplicationAccessRequired } from "@/lib/api-client"
 import type { LocalMfaChallenge, Team, User } from "@/lib/generated/api"
 import { accountProfile, localSessionLogin, localSessionLogout, passkeyAuthenticationOptions, passkeyAuthenticationVerify } from "@/lib/generated/api"
 
@@ -70,19 +70,23 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
-          const response = await localSessionLogin({
+          const {
+            data: session,
+            error: loginError,
+            response,
+          } = await localSessionLogin({
             body: { identifier: email, password },
           })
 
-          if (response.response?.status === 403 && isMfaChallengePayload(response.error)) {
-            const methods = Array.isArray(response.error.methods) ? response.error.methods : ["totp"]
-            const totpMethodIds = Array.isArray(response.error.totp_method_ids) ? response.error.totp_method_ids : []
+          if (response?.status === 403 && isMfaChallengePayload(loginError)) {
+            const methods = Array.isArray(loginError.methods) ? loginError.methods : ["totp"]
+            const totpMethodIds = Array.isArray(loginError.totp_method_ids) ? loginError.totp_method_ids : []
             set({
               user: null,
               isAuthenticated: false,
               mfaChallenge: {
-                accountId: response.error.account_id,
-                challenge: response.error.challenge,
+                accountId: loginError.account_id,
+                challenge: loginError.challenge,
                 methods,
                 totpMethodIds,
               },
@@ -90,27 +94,28 @@ export const useAuthStore = create<AuthState>()(
             return {
               authenticated: false,
               mfaRequired: true,
-              challengeToken: response.error.challenge,
-              accountId: response.error.account_id,
+              challengeToken: loginError.challenge,
+              accountId: loginError.account_id,
               methods,
               totpMethodIds,
             }
           }
 
-          if (response.data) {
-            const profileRes = await accountProfile()
-            if (profileRes.data) {
-              set({
-                user: profileRes.data,
-                isAuthenticated: true,
-                mfaChallenge: null,
-              })
+          if (session) {
+            const { data: user, error: profileError } = await accountProfile()
+            if (user) {
+              set({ user, isAuthenticated: true, mfaChallenge: null })
               return { authenticated: true, mfaRequired: false }
+            }
+            if (isApplicationAccessRequired(profileError)) {
+              // The API client's access-denied handler signs the user out and explains why.
+              get().clearSession()
+              return { authenticated: false, mfaRequired: false }
             }
           }
 
           get().clearSession()
-          toast.error(extractApiErrorMessage(response.error, "Invalid email or password"))
+          toast.error(extractApiErrorMessage(loginError, "Invalid email or password"))
           return { authenticated: false, mfaRequired: false }
         } catch (error) {
           get().clearSession()
@@ -127,26 +132,26 @@ export const useAuthStore = create<AuthState>()(
 
         set({ isLoading: true })
         try {
-          const optionsRes = await passkeyAuthenticationOptions({
+          const { data: ceremony, error: ceremonyError } = await passkeyAuthenticationOptions({
             body: resolvedAccountId ? { account_id: resolvedAccountId } : {},
           })
-          if (!optionsRes.data) {
-            toast.error(extractApiErrorMessage(optionsRes.error, "Unable to start passkey sign-in"))
+          if (!ceremony) {
+            toast.error(extractApiErrorMessage(ceremonyError, "Unable to start passkey sign-in"))
             return false
           }
 
-          const optionsJSON = JSON.parse(optionsRes.data.options)
+          const optionsJSON = JSON.parse(ceremony.options)
           const assertion = await startAuthentication({ optionsJSON })
-          const verifyRes = await passkeyAuthenticationVerify({
+          const { error: verificationError } = await passkeyAuthenticationVerify({
             body: {
               ...(resolvedAccountId ? { account_id: resolvedAccountId } : {}),
-              binding: optionsRes.data.binding ?? undefined,
+              binding: ceremony.binding ?? undefined,
               response: JSON.stringify(assertion),
             },
           })
 
-          if (verifyRes.error) {
-            toast.error(extractApiErrorMessage(verifyRes.error, "Passkey authentication failed"))
+          if (verificationError) {
+            toast.error(extractApiErrorMessage(verificationError, "Passkey authentication failed"))
             return false
           }
 
@@ -167,17 +172,13 @@ export const useAuthStore = create<AuthState>()(
       completeMfaLogin: async () => {
         set({ isLoading: true })
         try {
-          const profileRes = await accountProfile()
-          if (profileRes.data) {
-            set({
-              user: profileRes.data,
-              isAuthenticated: true,
-              mfaChallenge: null,
-            })
+          const { data: user, error: profileError } = await accountProfile()
+          if (user) {
+            set({ user, isAuthenticated: true, mfaChallenge: null })
             return
           }
           get().clearSession()
-          throw new Error(extractApiErrorMessage(profileRes.error, "Unable to complete MFA sign-in"))
+          throw new Error(extractApiErrorMessage(profileError, "Unable to complete MFA sign-in"))
         } finally {
           set({ isLoading: false })
         }
@@ -194,16 +195,15 @@ export const useAuthStore = create<AuthState>()(
       checkAuth: async () => {
         set({ isLoading: true })
         try {
-          const response = await accountProfile()
-          const status = response.response?.status
-
-          if (response.data) {
-            set({ user: response.data, isAuthenticated: true })
+          const { data: user, error: profileError, response } = await accountProfile()
+          if (user) {
+            set({ user, isAuthenticated: true })
             return true
           }
 
+          const status = response?.status
           if (status !== undefined && status >= 500) {
-            throw new Error(extractApiErrorMessage(response.error, `Authentication service unavailable (${status})`))
+            throw new Error(extractApiErrorMessage(profileError, `Authentication service unavailable (${status})`))
           }
 
           get().clearSession()
@@ -215,8 +215,8 @@ export const useAuthStore = create<AuthState>()(
       setCurrentTeam: (team: Team) => set({ currentTeam: team }),
       setTeams: (teams: Team[]) =>
         set((state) => {
-          const nextCurrent = state.currentTeam && teams.some((team) => team.id === state.currentTeam?.id) ? state.currentTeam : (teams[0] ?? null)
-          return { teams, currentTeam: nextCurrent }
+          const isCurrentTeamListed = teams.some((team) => team.id === state.currentTeam?.id)
+          return { teams, currentTeam: isCurrentTeamListed ? state.currentTeam : (teams[0] ?? null) }
         }),
     }),
     {

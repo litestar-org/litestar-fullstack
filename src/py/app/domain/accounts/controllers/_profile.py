@@ -48,8 +48,8 @@ class ProfileController(SecureController):
     ) -> User:
         """Return the authenticated user's profile."""
         _ = security_context
-        db_obj = await users_service.get(current_user.id)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.get(current_user.id)
+        return users_service.to_schema(user, schema_type=User)
 
     @patch(operation_id="AccountProfileUpdate", path="")
     async def update_profile(
@@ -63,8 +63,8 @@ class ProfileController(SecureController):
         Returns:
             Updated user profile payload.
         """
-        db_obj = await users_service.update(data.to_dict(), item_id=current_user.id, auto_commit=True)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.update(data.to_dict(), item_id=current_user.id, auto_commit=True)
+        return users_service.to_schema(user, schema_type=User)
 
     @patch(operation_id="AccountPasswordUpdate", path="/password")
     async def update_password(
@@ -80,7 +80,11 @@ class ProfileController(SecureController):
             Confirmation message for the password change.
         """
         await confirm_authentication(request, current_user, data.current_password)
-        await users_service.update_password(data.to_dict(), db_obj=current_user)
+        await users_service.update_password(
+            current_user,
+            current_password=data.current_password,
+            new_password=data.new_password,
+        )
         return Message(message="Your password was successfully modified.")
 
     @delete(operation_id="AccountDelete", path="")

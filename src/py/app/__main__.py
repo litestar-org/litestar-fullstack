@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Any
 
+    from click import Context, HelpFormatter
+
 
 def setup_environment() -> None:
     """Configure environment variables and Litestar CLI help loading."""
@@ -24,12 +26,12 @@ def setup_environment() -> None:
     os.environ.setdefault("LITESTAR_APP_NAME", settings.app.NAME)
     original_format_help = LitestarExtensionGroup.format_help
 
-    def fixed_format_help(self: Any, ctx: Any, formatter: Any) -> None:
+    def format_help_with_plugins(self: Any, context: Context, formatter: HelpFormatter) -> None:
         """Ensure plugins are loaded before formatting CLI help."""
-        self._prepare(ctx)
-        return original_format_help(self, ctx, formatter)
+        self._prepare(context)
+        return original_format_help(self, context, formatter)
 
-    setattr(LitestarExtensionGroup, "format_help", fixed_format_help)
+    setattr(LitestarExtensionGroup, "format_help", format_help_with_plugins)
 
 
 def run_cli() -> None:

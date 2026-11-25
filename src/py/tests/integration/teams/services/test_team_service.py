@@ -124,3 +124,29 @@ async def test_get_list_delete_and_not_found_errors(session: AsyncSession, team_
 
     with pytest.raises(RepositoryError):
         await team_service.delete(item_id=uuid4())
+
+
+async def test_pending_invitations_exclude_accepted_ones(session: AsyncSession, team_service: TeamService) -> None:
+    """``Team.pending_invitations`` loads only unaccepted invitations, filtered with an ``IS false`` predicate."""
+    owner = UserFactory.build()
+    session.add(owner)
+    await session.commit()
+    team = await team_service.create(data={"name": "Invitation Team", "owner_id": owner.id})
+    session.add_all(
+        [
+            m.TeamInvitation(
+                team_id=team.id,
+                email=email,
+                is_accepted=is_accepted,
+                invited_by_id=owner.id,
+                invited_by_email=owner.email,
+            )
+            for email, is_accepted in (("pending@example.com", False), ("accepted@example.com", True))
+        ]
+    )
+    await session.commit()
+
+    await session.refresh(team, ["pending_invitations"])
+
+    assert [invitation.email for invitation in team.pending_invitations] == ["pending@example.com"]
+    assert "is_accepted IS false" in str(m.Team.pending_invitations.property.primaryjoin)

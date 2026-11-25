@@ -1,80 +1,69 @@
-/**
- * Password strength indicator component with visual feedback
- */
-
 import { motion } from "framer-motion"
 import { Check, X } from "lucide-react"
-import { getPasswordStrength } from "@/hooks/use-validation"
 import { cn } from "@/lib/utils"
+import { getPasswordStrength, MAX_PASSWORD_STRENGTH_SCORE, type PasswordStrengthLevel } from "@/lib/validation"
 
-export interface PasswordStrengthProps {
-  password: string
-  showRequirements?: boolean
-  className?: string
-}
-
-const strengthColors = {
+const METER_COLORS: Record<PasswordStrengthLevel, string> = {
   weak: "bg-destructive",
   medium: "bg-warning",
   strong: "bg-success",
-} as const
+}
 
-const strengthTextColors = {
+const LEVEL_TEXT_COLORS: Record<PasswordStrengthLevel, string> = {
   weak: "text-destructive",
   medium: "text-warning",
   strong: "text-success",
-} as const
+}
 
-export function PasswordStrength({ password, showRequirements = true, className }: PasswordStrengthProps) {
-  const strength = getPasswordStrength(password)
-  const progressWidth = password ? (strength.score / 8) * 100 : 0
+interface PasswordStrengthProps {
+  password: string
+  className?: string
+}
 
-  // Don't show anything if password is empty
+export function PasswordStrength({ password, className }: Readonly<PasswordStrengthProps>) {
   if (!password) {
     return null
   }
 
+  const { score, level, requirements, feedback } = getPasswordStrength(password)
+  const meterWidthPercent = (score / MAX_PASSWORD_STRENGTH_SCORE) * 100
+
   return (
     <div className={cn("space-y-3", className)}>
-      {/* Strength meter */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="font-medium text-foreground text-sm">Password strength</span>
-          <span className={cn("font-medium text-sm capitalize", strengthTextColors[strength.strength])}>{strength.strength}</span>
+          <span className={cn("font-medium text-sm capitalize", LEVEL_TEXT_COLORS[level])}>{level}</span>
         </div>
 
         <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
           <motion.div
-            className={cn("h-2 rounded-full", strengthColors[strength.strength])}
+            className={cn("h-2 rounded-full", METER_COLORS[level])}
             initial={{ width: 0 }}
-            animate={{ width: `${progressWidth}%` }}
+            animate={{ width: `${meterWidthPercent}%` }}
             transition={{ type: "spring", stiffness: 100, damping: 15 }}
           />
         </div>
       </div>
 
-      {/* Requirements checklist */}
-      {showRequirements && (
-        <div className="space-y-2">
-          <span className="font-medium text-foreground text-sm">Requirements</span>
-          <div className="grid grid-cols-1 gap-1">
-            <RequirementItem met={strength.requirements.length} text="At least 12 characters" />
-            <RequirementItem met={strength.requirements.uppercase} text="One uppercase letter" />
-            <RequirementItem met={strength.requirements.lowercase} text="One lowercase letter" />
-            <RequirementItem met={strength.requirements.digits} text="One number" />
-            <RequirementItem met={strength.requirements.special} text="One special character (!@#$%^&*)" />
-            <RequirementItem met={strength.requirements.notCommon} text="Not a common password" />
-          </div>
+      <div className="space-y-2">
+        <span className="font-medium text-foreground text-sm">Requirements</span>
+        <div className="grid grid-cols-1 gap-1">
+          <RequirementItem isMet={requirements.length} text="At least 12 characters" />
+          <RequirementItem isMet={requirements.uppercase} text="One uppercase letter" />
+          <RequirementItem isMet={requirements.lowercase} text="One lowercase letter" />
+          <RequirementItem isMet={requirements.digits} text="One number" />
+          <RequirementItem isMet={requirements.special} text="One special character (!@#$%^&*)" />
+          <RequirementItem isMet={requirements.notCommon} text="Not a common password" />
         </div>
-      )}
+      </div>
 
-      {/* Feedback messages */}
-      {strength.feedback.length > 0 && (
+      {feedback.length > 0 && (
         <div className="space-y-1">
-          {strength.feedback.map((message) => (
-            <div key={message} className="flex items-center space-x-2 text-muted-foreground text-sm">
+          {feedback.map((hint) => (
+            <div key={hint} className="flex items-center space-x-2 text-muted-foreground text-sm">
               <X className="h-4 w-4 shrink-0 text-destructive" />
-              <span>{message}</span>
+              <span>{hint}</span>
             </div>
           ))}
         </div>
@@ -84,17 +73,15 @@ export function PasswordStrength({ password, showRequirements = true, className 
 }
 
 interface RequirementItemProps {
-  met: boolean
+  isMet: boolean
   text: string
 }
 
-function RequirementItem({ met, text }: RequirementItemProps) {
+function RequirementItem({ isMet, text }: Readonly<RequirementItemProps>) {
   return (
-    <div className={cn("flex items-center space-x-2 text-sm transition-colors", met ? "text-success" : "text-muted-foreground")}>
-      {met ? <Check className="h-4 w-4 shrink-0 text-success" /> : <div className="h-4 w-4 shrink-0 rounded-full border border-border" />}
+    <div className={cn("flex items-center space-x-2 text-sm transition-colors", isMet ? "text-success" : "text-muted-foreground")}>
+      {isMet ? <Check className="h-4 w-4 shrink-0 text-success" /> : <div className="h-4 w-4 shrink-0 rounded-full border border-border" />}
       <span>{text}</span>
     </div>
   )
 }
-
-export default PasswordStrength

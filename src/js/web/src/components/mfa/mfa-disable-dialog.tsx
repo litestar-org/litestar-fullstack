@@ -19,14 +19,14 @@ export function MfaDisableDialog({ disabled, methodId }: Readonly<MfaDisableDial
   const [password, setPassword] = useState("")
   const user = useAuthStore((state) => state.user)
   const checkAuth = useAuthStore((state) => state.checkAuth)
-  const { requestGrant, isPending: stepUpPending } = useStepUpGrant()
+  const { requestGrant, isPending: isStepUpPending } = useStepUpGrant()
   const removeTotp = useMutation(mfaRemoveTotpMutation())
 
   const hasPassword = user?.hasPassword ?? true
   const resolvedMethodId = methodId ?? user?.totpMethodId ?? null
-  const isPending = stepUpPending || removeTotp.isPending
+  const isPending = isStepUpPending || removeTotp.isPending
 
-  const handlePasswordDisable = async () => {
+  const handleDisable = async () => {
     if (!password) {
       toast.error("Enter your password to disable MFA")
       return
@@ -73,7 +73,7 @@ export function MfaDisableDialog({ disabled, methodId }: Readonly<MfaDisableDial
           <>
             <Input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isPending} />
             <DialogFooter>
-              <Button onClick={handlePasswordDisable} disabled={isPending}>
+              <Button onClick={handleDisable} disabled={isPending}>
                 Disable MFA
               </Button>
             </DialogFooter>

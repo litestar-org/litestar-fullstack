@@ -13,13 +13,13 @@ import { createApiKeyMutation, listApiKeysOptions, listApiKeysQueryKey, revokeAp
 
 export function ApiKeysSection() {
   const queryClient = useQueryClient()
-  const { data: keys = [], isLoading } = useQuery(listApiKeysOptions())
+  const { data: apiKeys = [], isLoading } = useQuery(listApiKeysOptions())
   const createKey = useMutation(createApiKeyMutation())
   const rotateKey = useMutation(rotateApiKeyMutation())
   const revokeKey = useMutation(revokeApiKeyMutation())
   const { runConfirmed, confirmationDialog } = useConfirmedAction()
 
-  const [createOpen, setCreateOpen] = useState(false)
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [name, setName] = useState("")
   const [scopesText, setScopesText] = useState("read,write,mcp")
   const [expiresInDays, setExpiresInDays] = useState("90")
@@ -34,7 +34,7 @@ export function ApiKeysSection() {
     }
     const scopes = scopesText
       .split(",")
-      .map((s) => s.trim())
+      .map((scope) => scope.trim())
       .filter(Boolean)
     const parsedDays = Number.parseInt(expiresInDays, 10)
     void runConfirmed({
@@ -49,7 +49,7 @@ export function ApiKeysSection() {
           },
         })
         await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
-        setCreateOpen(false)
+        setIsCreateDialogOpen(false)
         setName("")
         setRevealedSecret({ name: issued.name, secret: issued.secret })
         toast.success("API key created")
@@ -91,7 +91,7 @@ export function ApiKeysSection() {
           <CardTitle>Personal API keys</CardTitle>
           <CardDescription>Create scoped bearer keys for MCP clients and programmatic access.</CardDescription>
         </div>
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus className="mr-2 h-4 w-4" />
@@ -125,34 +125,34 @@ export function ApiKeysSection() {
       </CardHeader>
       <CardContent className="space-y-3">
         {isLoading && <p className="text-muted-foreground text-sm">Loading API keys...</p>}
-        {!isLoading && keys.length === 0 && <p className="text-muted-foreground text-sm">No API keys created yet.</p>}
+        {!isLoading && apiKeys.length === 0 && <p className="text-muted-foreground text-sm">No API keys created yet.</p>}
         {!isLoading &&
-          keys.map((key) => (
-            <div key={key.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+          apiKeys.map((apiKey) => (
+            <div key={apiKey.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Key className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{key.name}</span>
-                  <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{key.prefix}...</code>
-                  {key.revokedAt && <Badge variant="destructive">Revoked</Badge>}
+                  <span className="font-medium">{apiKey.name}</span>
+                  <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{apiKey.prefix}...</code>
+                  {apiKey.revokedAt && <Badge variant="destructive">Revoked</Badge>}
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5 text-muted-foreground text-xs">
-                  {key.scopes.map((scope) => (
+                  {apiKey.scopes.map((scope) => (
                     <Badge key={scope} variant="outline" className="text-[11px]">
                       {scope}
                     </Badge>
                   ))}
-                  {key.expiresAt && <span>Expires {new Date(key.expiresAt).toLocaleDateString()}</span>}
-                  {key.lastUsedAt && <span>· Last used {new Date(key.lastUsedAt).toLocaleDateString()}</span>}
+                  {apiKey.expiresAt && <span>Expires {new Date(apiKey.expiresAt).toLocaleDateString()}</span>}
+                  {apiKey.lastUsedAt && <span>· Last used {new Date(apiKey.lastUsedAt).toLocaleDateString()}</span>}
                 </div>
               </div>
-              {!key.revokedAt && (
+              {!apiKey.revokedAt && (
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => handleRotate(key.id)} disabled={isBusy}>
+                  <Button variant="outline" size="sm" onClick={() => handleRotate(apiKey.id)} disabled={isBusy}>
                     <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
                     Rotate
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleRevoke(key.id)} disabled={isBusy}>
+                  <Button variant="outline" size="sm" onClick={() => handleRevoke(apiKey.id)} disabled={isBusy}>
                     <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                     Revoke
                   </Button>

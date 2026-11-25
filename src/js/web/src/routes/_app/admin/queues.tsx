@@ -33,23 +33,29 @@ function AdminQueuesPage() {
   const [taskNameFilter, setTaskNameFilter] = useState("")
   const [offset, setOffset] = useState(0)
 
-  const queryOptions = adminListQueueTasksOptions({
-    query: {
-      status: statusFilter || undefined,
-      queue: queueFilter || undefined,
-      task_name: taskNameFilter || undefined,
-      limit: PAGE_LIMIT,
-      offset,
-    },
-  })
-
-  const { data, isLoading, isError, isFetching, refetch } = useQuery(queryOptions)
+  const {
+    data: taskPage,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+  } = useQuery(
+    adminListQueueTasksOptions({
+      query: {
+        status: statusFilter || undefined,
+        queue: queueFilter || undefined,
+        task_name: taskNameFilter || undefined,
+        limit: PAGE_LIMIT,
+        offset,
+      },
+    }),
+  )
 
   const cancelTask = useMutation({
     ...adminCancelQueueTaskMutation(),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: adminListQueueTasksQueryKey() })
-      toast.success(result.cancelled ? `Cancelled task ${result.taskId}` : `Task ${result.taskId} could not be cancelled`)
+    onSuccess: (cancellation) => {
+      void queryClient.invalidateQueries({ queryKey: adminListQueueTasksQueryKey() })
+      toast.success(cancellation.cancelled ? `Cancelled task ${cancellation.taskId}` : `Task ${cancellation.taskId} could not be cancelled`)
     },
     onError: (error) => {
       toast.error("Unable to cancel task", {
@@ -67,7 +73,7 @@ function AdminQueuesPage() {
     [queryClient],
   )
 
-  const total = data?.total ?? 0
+  const total = taskPage?.total ?? 0
   const currentPage = Math.floor(offset / PAGE_LIMIT) + 1
   const totalPages = Math.max(1, Math.ceil(total / PAGE_LIMIT))
 
@@ -129,8 +135,8 @@ function AdminQueuesPage() {
             </div>
 
             {isLoading && <SkeletonTable rows={6} />}
-            {!isLoading && (isError || !data) && <p className="text-sm text-muted-foreground">We could not load queue tasks.</p>}
-            {!isLoading && !isError && data && (
+            {!isLoading && (isError || !taskPage) && <p className="text-sm text-muted-foreground">We could not load queue tasks.</p>}
+            {!isLoading && !isError && taskPage && (
               <>
                 <Table>
                   <TableHeader>
@@ -144,14 +150,14 @@ function AdminQueuesPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.items.length === 0 && (
+                    {taskPage.items.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center text-muted-foreground">
                           No queue tasks found.
                         </TableCell>
                       </TableRow>
                     )}
-                    {data.items.map((task) => {
+                    {taskPage.items.map((task) => {
                       const canCancel = CANCELLABLE_STATUSES.has(task.status.toLowerCase())
                       return (
                         <TableRow key={task.taskId}>
@@ -197,10 +203,10 @@ function AdminQueuesPage() {
                     Page {currentPage} of {totalPages} ({total} total)
                   </p>
                   <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setOffset((prev) => Math.max(0, prev - PAGE_LIMIT))} disabled={offset <= 0}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setOffset((current) => Math.max(0, current - PAGE_LIMIT))} disabled={offset <= 0}>
                       Previous
                     </Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setOffset((prev) => prev + PAGE_LIMIT)} disabled={offset + PAGE_LIMIT >= total}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setOffset((current) => current + PAGE_LIMIT)} disabled={offset + PAGE_LIMIT >= total}>
                       Next
                     </Button>
                   </div>

@@ -81,8 +81,8 @@ class TagController(SecureController):
             Paginated workspace tags.
         """
         _ = current_user
-        results, total = await tags_service.get_many_and_count(*filters)
-        return tags_service.to_schema(results, total, filters, schema_type=Tag)
+        tags, total = await tags_service.get_many_and_count(*filters)
+        return tags_service.to_schema(tags, total, filters, schema_type=Tag)
 
     @get(operation_id="GetTag", path="/{tag_id:uuid}")
     async def get_tag(
@@ -97,8 +97,8 @@ class TagController(SecureController):
             The matching tag.
         """
         _ = current_user
-        db_obj = await tags_service.get(tag_id)
-        return tags_service.to_schema(db_obj, schema_type=Tag)
+        tag = await tags_service.get(tag_id)
+        return tags_service.to_schema(tag, schema_type=Tag)
 
     @post(
         operation_id="CreateTag",
@@ -119,8 +119,8 @@ class TagController(SecureController):
             The created tag.
         """
         _ = current_user
-        db_obj = await tags_service.create(data.to_dict(), auto_commit=True)
-        return tags_service.to_schema(db_obj, schema_type=Tag)
+        tag = await tags_service.create(data.to_dict(), auto_commit=True)
+        return tags_service.to_schema(tag, schema_type=Tag)
 
     @patch(
         operation_id="UpdateTag",
@@ -138,8 +138,8 @@ class TagController(SecureController):
         Returns:
             The updated tag.
         """
-        db_obj = await tags_service.update(item_id=tag_id, data=data.to_dict(), auto_commit=True)
-        return tags_service.to_schema(db_obj, schema_type=Tag)
+        tag = await tags_service.update(item_id=tag_id, data=data.to_dict(), auto_commit=True)
+        return tags_service.to_schema(tag, schema_type=Tag)
 
     @delete(
         operation_id="DeleteTag",
@@ -153,4 +153,4 @@ class TagController(SecureController):
         tag_id: Annotated[UUID, Parameter(title="Tag ID", description="The tag to delete.")],
     ) -> None:
         """Delete a tag."""
-        _ = await tags_service.delete(tag_id, auto_commit=True)
+        await tags_service.delete(tag_id, auto_commit=True)

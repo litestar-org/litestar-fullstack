@@ -12,6 +12,7 @@ from sqlalchemy import select
 
 from app.db import models as m
 from app.domain.teams.services import TeamInvitationService
+from tests.factories import grant_application_access
 from tests.integration.conftest import fetch_csrf_headers, login_session_client, reset_client_session
 
 if TYPE_CHECKING:
@@ -36,6 +37,7 @@ async def _create_user(session: AsyncSession, email: str) -> m.User:
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -215,3 +217,86 @@ async def test_invitation_tenant_guard_isolation(
             headers=outsider_csrf,
         )
     ).status_code == 403
+
+
+async def test_invitation_emails_ignore_letter_case(
+    authenticated_client: AsyncClient,
+    test_team: m.Team,
+    test_user: m.User,
+) -> None:
+    """Invitation emails are stored normalized, and a member is recognised however their email is cased."""
+    create_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/invitations",
+        json={"email": "Mixed.Case@Example.COM", "role": m.TeamRoles.MEMBER.value},
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    assert create_resp.json()["email"] == "mixed.case@example.com"
+
+    existing_member_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/invitations",
+        json={"email": test_user.email.upper(), "role": m.TeamRoles.MEMBER.value},
+    )
+    assert existing_member_resp.status_code == 400
+
+
+async def test_invitee_can_respond_when_invitation_email_case_differs(
+    client: AsyncClient,
+    session: AsyncSession,
+    test_team: m.Team,
+    test_user: m.User,
+) -> None:
+    """An invitation addressed with different letter case still belongs to its invitee."""
+    invitee = await _create_user(session, f"case-invitee-{uuid4().hex[:8]}@example.com")
+    declined, accepted = (
+        m.TeamInvitation(
+            team_id=test_team.id,
+            email=invitee.email.upper(),
+            role=m.TeamRoles.MEMBER,
+            is_accepted=False,
+            invited_by_id=test_user.id,
+            invited_by_email=test_user.email,
+        )
+        for _ in range(2)
+    )
+    session.add_all([declined, accepted])
+    await session.commit()
+
+    csrf = await login_session_client(client, invitee.email, "TestPassword123!")
+    reject_resp = await client.post(f"/api/teams/{test_team.id}/invitations/{declined.id}/reject", headers=csrf)
+    accept_resp = await client.post(f"/api/teams/{test_team.id}/invitations/{accepted.id}/accept", headers=csrf)
+
+    assert reject_resp.status_code == 201, reject_resp.text
+    assert accept_resp.status_code == 201, accept_resp.text
+
+
+async def test_existing_member_is_reported_with_one_message(
+    authenticated_client: AsyncClient,
+    session: AsyncSession,
+    test_team: m.Team,
+    test_user: m.User,
+) -> None:
+    """Inviting, adding, and accepting all describe an existing member with the same message."""
+    own_invitation = m.TeamInvitation(
+        team_id=test_team.id,
+        email=test_user.email,
+        role=m.TeamRoles.MEMBER,
+        is_accepted=False,
+        invited_by_id=test_user.id,
+        invited_by_email=test_user.email,
+    )
+    session.add(own_invitation)
+    await session.commit()
+
+    invite_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/invitations",
+        json={"email": test_user.email, "role": m.TeamRoles.MEMBER.value},
+    )
+    add_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": test_user.email},
+    )
+    accept_resp = await authenticated_client.post(f"/api/teams/{test_team.id}/invitations/{own_invitation.id}/accept")
+
+    assert (invite_resp.status_code, add_resp.status_code, accept_resp.status_code) == (400, 409, 400)
+    for resp in (invite_resp, add_resp, accept_resp):
+        assert "User is already a member of this team" in resp.text

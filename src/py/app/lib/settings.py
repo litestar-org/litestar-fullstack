@@ -28,13 +28,11 @@ from advanced_alchemy.utils.text import slugify
 from dotenv import load_dotenv
 from litestar.channels.backends.memory import MemoryChannelsBackend
 from litestar.cli._utils import console
-from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.data_extractors import RequestExtractorField, ResponseExtractorField
 from litestar.exceptions import NotAuthorizedException, PermissionDeniedException
 from litestar.logging.config import LoggingConfig, StructLoggingConfig, default_logger_factory
 from litestar.middleware.logging import LoggingMiddlewareConfig
-from litestar.plugins.problem_details import ProblemDetailsConfig
 from litestar.plugins.structlog import StructlogConfig
 from litestar.serialization import decode_json, encode_json
 from litestar.utils.module_loader import module_to_os_path
@@ -49,21 +47,25 @@ from litestar_queues import (
     QueueMaintenanceConfig,
     WorkerConfig,
 )
-from litestar_queues.backends.advanced_alchemy import SQLAlchemyBackendConfig
+from litestar_queues.backends.advanced_alchemy import (
+    QueueEventHistoryModel,
+    QueueMaintenanceModel,
+    QueueTaskModel,
+    QueueTaskReservationModel,
+    SQLAlchemyBackendConfig,
+)
 from litestar_queues.observability import ObservabilityConfig
-from litestar_security import SecurityConfig, SecurityHeadersConfig
+from litestar_security import any_of
 from litestar_security.context import Principal, SecurityContext
 from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 from sqlalchemy import select
 from sqlalchemy.pool import NullPool
 
 from app.__metadata__ import __version__ as current_version
-from app.lib.secrets import derive_subkey
-from app.utils.env import TRUE_VALUES, get_config_val, get_env
+from app.lib.log import is_tty, stdlib_logger_processors, structlog_processors
+from app.utils.env import get_env
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
     from litestar.connection import ASGIConnection
     from litestar.handlers import BaseRouteHandler
     from litestar_mcp import AfterToolCallHook, BeforeToolCallHook
@@ -73,72 +75,6 @@ if TYPE_CHECKING:
 DEFAULT_MODULE_NAME: Final[str] = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
 STATIC_DIR: Final[Path] = Path(BASE_DIR / "server" / "static" / "web")
-
-
-def _encode_json_str(value: Any) -> str:
-    return encode_json(value).decode("utf-8")
-
-
-def _get_float_env(key: str, default: float) -> Callable[[], float]:
-    def _factory() -> float:
-        raw = os.getenv(key)
-        return float(raw) if raw else default
-
-    return _factory
-
-
-def _get_optional_int_env(key: str) -> Callable[[], int | None]:
-    def _factory() -> int | None:
-        raw = os.getenv(key)
-        return int(raw) if raw else None
-
-    return _factory
-
-
-def _get_optional_bool_env(key: str) -> Callable[[], bool | None]:
-    def _factory() -> bool | None:
-        raw = os.getenv(key)
-        return raw in TRUE_VALUES if raw else None
-
-    return _factory
-
-
-def _get_list_env(key: str, default: list[str]) -> Callable[[], list[str]]:
-    def _factory() -> list[str]:
-        raw = os.getenv(key)
-        if raw is None:
-            return list(default)
-        if not raw.strip():
-            return []
-        parsed = get_config_val(key, list(default), list[str])
-        return [item for item in parsed if item]
-
-    return _factory
-
-
-def _get_optional_list_env(key: str) -> Callable[[], list[str] | None]:
-    def _factory() -> list[str] | None:
-        raw = os.getenv(key)
-        if raw is None or not raw.strip():
-            return None
-        parsed = get_config_val(key, [], list[str])
-        cleaned = [item for item in parsed if item]
-        return cleaned or None
-
-    return _factory
-
-
-def _get_queue_names_env(
-    key: str,
-    default: tuple[str, ...],
-) -> Callable[[], tuple[str, ...]]:
-    def _factory() -> tuple[str, ...]:
-        if os.getenv(key) is None:
-            return default
-        parsed = get_config_val(key, list(default), list[str])
-        return tuple(item for item in parsed if item)
-
-    return _factory
 
 
 @dataclass
@@ -188,7 +124,7 @@ class DatabaseSettings:
                 echo=self.ECHO,
                 echo_pool=self.ECHO_POOL,
                 poolclass=NullPool,
-                json_serializer=_encode_json_str,
+                json_serializer=self._encode_json,
                 json_deserializer=decode_json,
             )
         else:
@@ -201,7 +137,7 @@ class DatabaseSettings:
                 pool_recycle=self.POOL_RECYCLE,
                 pool_pre_ping=self.POOL_PRE_PING,
                 pool_use_lifo=True,
-                json_serializer=_encode_json_str,
+                json_serializer=self._encode_json,
                 json_deserializer=decode_json,
             )
         return SQLAlchemyAsyncConfig(
@@ -216,6 +152,10 @@ class DatabaseSettings:
             ),
         )
 
+    @staticmethod
+    def _encode_json(value: Any) -> str:
+        return encode_json(value).decode("utf-8")
+
 
 @dataclass
 class QueueSettings:
@@ -225,17 +165,17 @@ class QueueSettings:
     EXECUTION_BACKEND: str = field(default_factory=get_env("QUEUES_EXECUTION_BACKEND", "local"))
     MAX_CONCURRENCY: int = field(default_factory=get_env("QUEUES_MAX_CONCURRENCY", 8))
     BATCH_SIZE: int = field(default_factory=get_env("QUEUES_BATCH_SIZE", 10))
-    POLL_INTERVAL: float = field(default_factory=_get_float_env("QUEUES_POLL_INTERVAL", 0.25))
+    POLL_INTERVAL: float = field(default_factory=get_env("QUEUES_POLL_INTERVAL", 0.25))
     QUEUES: tuple[str, ...] = field(
-        default_factory=_get_queue_names_env("QUEUES_NAMES", ("default", "emails", "reports", "maintenance"))
+        default_factory=get_env("QUEUES_NAMES", ("default", "emails", "reports", "maintenance"))
     )
     STREAM_ENABLED: bool = field(default_factory=get_env("QUEUES_STREAM_ENABLED", True))
     STREAM_PATH: str = field(default_factory=get_env("QUEUES_STREAM_PATH", "/api/queues/events"))
     TERMINAL_RETENTION_SECONDS: int | None = field(
-        default_factory=_get_optional_int_env("QUEUES_TERMINAL_RETENTION_SECONDS")
+        default_factory=get_env("QUEUES_TERMINAL_RETENTION_SECONDS", None, int)
     )
     ENABLE_PROMETHEUS: bool = field(default_factory=get_env("QUEUES_ENABLE_PROMETHEUS", False))
-    WORKER_WAKEUPS: bool | None = field(default_factory=_get_optional_bool_env("QUEUES_WORKER_WAKEUPS"))
+    WORKER_WAKEUPS: bool | None = field(default_factory=get_env("QUEUES_WORKER_WAKEUPS", None, bool))
 
     def resolve_worker_wakeups(self, db_settings: DatabaseSettings) -> bool:
         """Resolve whether PostgreSQL LISTEN/NOTIFY worker wakeups should be enabled.
@@ -263,14 +203,28 @@ class QueueSettings:
         Returns:
             Configured ``QueueConfig`` instance.
         """
-        from litestar_queues.backends.advanced_alchemy import (
-            QueueEventHistoryModel,
-            QueueMaintenanceModel,
-            QueueTaskModel,
-            QueueTaskReservationModel,
+        return QueueConfig(
+            queue_backend=self._backend_config(alchemy_config, db_settings),
+            execution_backend=cast("ExecutionBackendConfig", self.EXECUTION_BACKEND),
+            worker=self._worker_config(),
+            maintenance=self._maintenance_config(),
+            observability=ObservabilityConfig(
+                enable_otel=app_settings.ENABLE_INSTRUMENTATION if app_settings is not None else False,
+                enable_prometheus=self.ENABLE_PROMETHEUS,
+                enable_sqlcommenter=True,
+            ),
+            events=self._events_config(alchemy_config),
+            scheduler_canary_task="system.scheduler_canary",
+            error_sanitizer=lambda exc, _record: f"Task failed: {type(exc).__name__}",
+            max_argument_identity_bytes=64 * 1024,
         )
 
-        backend = SQLAlchemyBackendConfig(
+    def _backend_config(
+        self,
+        alchemy_config: SQLAlchemyAsyncConfig,
+        db_settings: DatabaseSettings,
+    ) -> SQLAlchemyBackendConfig:
+        return SQLAlchemyBackendConfig(
             sqlalchemy_config=alchemy_config,
             model_class=QueueTaskModel,
             event_history_model_class=QueueEventHistoryModel,
@@ -278,7 +232,9 @@ class QueueSettings:
             task_reservation_model_class=QueueTaskReservationModel,
             worker_wakeups=self.resolve_worker_wakeups(db_settings),
         )
-        worker = WorkerConfig(
+
+    def _worker_config(self) -> WorkerConfig:
+        return WorkerConfig(
             placement=cast("WorkerPlacement", self.PLACEMENT),
             max_concurrency=self.MAX_CONCURRENCY,
             batch_size=self.BATCH_SIZE,
@@ -287,7 +243,9 @@ class QueueSettings:
             heartbeat_interval=30,
             graceful_shutdown_timeout=60,
         )
-        maintenance = QueueMaintenanceConfig(
+
+    def _maintenance_config(self) -> QueueMaintenanceConfig:
+        return QueueMaintenanceConfig(
             time_budget=300,
             coordination_timeout=360,
             stale_after=900,
@@ -298,14 +256,9 @@ class QueueSettings:
             terminal_limit=1000,
             event_limit=1000,
         )
-        observability = ObservabilityConfig(
-            enable_otel=app_settings.ENABLE_INSTRUMENTATION if app_settings is not None else False,
-            enable_prometheus=self.ENABLE_PROMETHEUS,
-            enable_sqlcommenter=True,
-        )
-        from litestar_security import any_of
 
-        events = QueueEventsConfig(
+    def _events_config(self, alchemy_config: SQLAlchemyAsyncConfig) -> QueueEventsConfig:
+        return QueueEventsConfig(
             channels=MemoryChannelsBackend(history=100),
             delivery=EventDeliveryConfig(
                 publish_task_channel=True,
@@ -315,8 +268,8 @@ class QueueSettings:
                 EventStreamConfig(
                     path=self.STREAM_PATH,
                     transports={"sse", "websocket"},
-                    guards=[_require_authenticated_queue_stream],
-                    channel_authorizer=partial(_authorize_queue_stream_channel, alchemy_config),
+                    guards=[self._require_authenticated_queue_stream],
+                    channel_authorizer=partial(self._authorize_queue_stream_channel, alchemy_config),
                     opt={"auth": any_of("session", "api-key")},
                 )
                 if self.STREAM_ENABLED
@@ -324,22 +277,68 @@ class QueueSettings:
             ),
             history=EventHistoryConfig(batch_size=1),
         )
-        return QueueConfig(
-            queue_backend=backend,
-            execution_backend=cast("ExecutionBackendConfig", self.EXECUTION_BACKEND),
-            worker=worker,
-            maintenance=maintenance,
-            observability=observability,
-            events=events,
-            scheduler_canary_task="system.scheduler_canary",
-            error_sanitizer=lambda exc, _rec: f"Task failed: {type(exc).__name__}",
-            max_argument_identity_bytes=64 * 1024,
+
+    @staticmethod
+    def _require_authenticated_queue_stream(
+        connection: ASGIConnection[Any, Any, Any, Any],
+        _: BaseRouteHandler,
+    ) -> None:
+        principal = QueueSettings._scope_value(connection, "user")
+        if not isinstance(principal, Principal) or not principal.is_authenticated:
+            raise NotAuthorizedException
+
+    @staticmethod
+    async def _authorize_queue_stream_channel(
+        alchemy_config: SQLAlchemyAsyncConfig,
+        connection: ASGIConnection[Any, Any, Any, Any],
+        scope: str,
+        target: str | None,
+    ) -> bool:
+        """Allow superusers on every channel and other principals only on tasks they requested.
+
+        Returns:
+            ``True`` when the connection may subscribe to the requested channel.
+        """
+        principal = QueueSettings._scope_value(connection, "user")
+        if not isinstance(principal, Principal) or not principal.is_authenticated or principal.id is None:
+            return False
+        if QueueSettings._holds_superuser_role(connection):
+            return True
+        if scope != "task" or not target:
+            return False
+        return await QueueSettings._is_task_requester(alchemy_config, target, str(principal.id))
+
+    @staticmethod
+    def _holds_superuser_role(connection: ASGIConnection[Any, Any, Any, Any]) -> bool:
+        context = QueueSettings._scope_value(connection, "auth")
+        return isinstance(context, SecurityContext) and "superuser" in context.authorization.roles
+
+    @staticmethod
+    def _scope_value(connection: ASGIConnection[Any, Any, Any, Any], key: str) -> object:
+        return cast("dict[str, Any]", connection.scope).get(key)
+
+    @staticmethod
+    async def _is_task_requester(alchemy_config: SQLAlchemyAsyncConfig, target: str, principal_id: str) -> bool:
+        try:
+            task_id = UUID(target)
+        except ValueError:
+            return False
+        async with alchemy_config.get_session() as db_session:
+            task = await db_session.scalar(select(QueueTaskModel).where(QueueTaskModel.id == task_id))
+            metadata: Any = task.metadata_json if task is not None else None
+        if isinstance(metadata, str):
+            try:
+                metadata = json.loads(metadata)
+            except ValueError:
+                return False
+        return isinstance(metadata, dict) and bool(
+            cast("dict[str, Any]", metadata).get("requested_by_id") == principal_id
         )
 
 
 @dataclass
 class SecuritySettings:
-    """Declarative ``litestar-security`` settings and HKDF subkey derivation helpers."""
+    """Declarative ``litestar-security`` settings."""
 
     COOKIE_SECURE: bool = field(default_factory=get_env("COOKIE_SECURE", False))
     SESSION_MAX_AGE: int = field(default_factory=get_env("SESSION_MAX_AGE", 60 * 60 * 24 * 14))
@@ -350,26 +349,6 @@ class SecuritySettings:
         default_factory=get_env("PASSKEY_ORIGINS", ["http://localhost:8000", "http://localhost:5173"])
     )
     REGISTRATION_REQUIRE_VERIFICATION: bool = field(default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", True))
-
-    def derive_key(self, app_settings: AppSettings, info: bytes, *, length: int = 32) -> bytes:
-        """Derive a purpose-isolated HKDF-SHA256 subkey from ``app_settings.SECRET_KEY``.
-
-        Returns:
-            Derived subkey bytes of the requested length.
-        """
-        return derive_subkey(app_settings.SECRET_KEY, info, length=length)
-
-    def get_config(self, app_settings: AppSettings) -> SecurityConfig[Any]:
-        """Build baseline hardened ``SecurityConfig`` excluding only static assets.
-
-        Returns:
-            Baseline hardened ``SecurityConfig`` instance.
-        """
-        _ = app_settings
-        return SecurityConfig(
-            headers=SecurityHeadersConfig.hardened(),
-            exclude=["^/static"],
-        )
 
 
 @dataclass
@@ -388,7 +367,7 @@ class MCPSettings:
             ),
         )
     )
-    ALLOWED_ORIGINS: list[str] | None = field(default_factory=_get_optional_list_env("MCP_ALLOWED_ORIGINS"))
+    ALLOWED_ORIGINS: list[str] | None = field(default_factory=get_env("MCP_ALLOWED_ORIGINS", None, list[str]))
 
     def get_config(
         self,
@@ -464,7 +443,7 @@ class ServerSettings:
     KEEPALIVE: int = field(default_factory=get_env("LITESTAR_KEEPALIVE", 65))
     RELOAD: bool = field(default_factory=get_env("LITESTAR_RELOAD", False))
     RELOAD_DIRS: list[str] = field(default_factory=get_env("LITESTAR_RELOAD_DIRS", [f"{BASE_DIR}"]))
-    LITESTAR_TRUSTED_PROXIES: list[str] = field(default_factory=_get_list_env("LITESTAR_TRUSTED_PROXIES", []))
+    LITESTAR_TRUSTED_PROXIES: list[str] = field(default_factory=get_env("LITESTAR_TRUSTED_PROXIES", [], list[str]))
 
 
 @dataclass
@@ -543,17 +522,9 @@ class AppSettings:
         """Slugified form of the application name."""
         return slugify(self.NAME)
 
-    def get_compression_config(self) -> CompressionConfig:
-        """Return HTTP response compression configuration."""
-        return CompressionConfig(backend="gzip")
-
     def get_cors_config(self) -> CORSConfig:
         """Return CORS configuration."""
         return CORSConfig(allow_origins=cast("list[str]", self.ALLOWED_CORS_ORIGINS), allow_credentials=True)
-
-    def get_problem_details_config(self) -> ProblemDetailsConfig:
-        """Return RFC 9457 Problem Details configuration."""
-        return ProblemDetailsConfig(enable_for_all_http_exceptions=True)
 
     def __post_init__(self) -> None:
         if isinstance(self.ALLOWED_CORS_ORIGINS, str):
@@ -610,73 +581,15 @@ class LogSettings:
         Returns:
             Configured ``StructlogConfig`` instance.
         """
-        from app.lib import log as log_conf
-
+        as_json = not is_tty()
         return StructlogConfig(
             enable_middleware_logging=False,
             structlog_logging_config=StructLoggingConfig(
                 log_exceptions="always",
-                processors=log_conf.structlog_processors(as_json=not log_conf.is_tty()),
-                logger_factory=default_logger_factory(as_json=not log_conf.is_tty()),
+                processors=structlog_processors(as_json=as_json),
+                logger_factory=default_logger_factory(as_json=as_json),
                 disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
-                standard_lib_logging_config=LoggingConfig(
-                    log_exceptions="always",
-                    disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
-                    root={"level": logging.getLevelName(self.LEVEL), "handlers": ["queue_listener"]},
-                    formatters={
-                        "standard": {
-                            "()": structlog.stdlib.ProcessorFormatter,
-                            "processors": log_conf.stdlib_logger_processors(as_json=not log_conf.is_tty()),
-                        },
-                    },
-                    loggers={
-                        "litestar_queues": {
-                            "propagate": False,
-                            "level": self.QUEUES_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                        "sqlalchemy.engine": {
-                            "propagate": False,
-                            "level": self.SQLALCHEMY_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                        "sqlalchemy.pool": {
-                            "propagate": False,
-                            "level": self.SQLALCHEMY_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                        "opentelemetry.sdk.metrics._internal": {
-                            "propagate": False,
-                            "level": 40,
-                            "handlers": ["queue_listener"],
-                        },
-                        "httpx": {
-                            "propagate": False,
-                            "level": max(self.LEVEL, logging.WARNING),
-                            "handlers": ["queue_listener"],
-                        },
-                        "httpcore": {
-                            "propagate": False,
-                            "level": max(self.LEVEL, logging.WARNING),
-                            "handlers": ["queue_listener"],
-                        },
-                        "_granian": {
-                            "propagate": False,
-                            "level": self.ASGI_ERROR_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                        "granian.server": {
-                            "propagate": False,
-                            "level": self.ASGI_ERROR_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                        "granian.access": {
-                            "propagate": False,
-                            "level": self.ASGI_ACCESS_LEVEL,
-                            "handlers": ["queue_listener"],
-                        },
-                    },
-                ),
+                standard_lib_logging_config=self._stdlib_logging_config(as_json=as_json),
             ),
             middleware_logging_config=LoggingMiddlewareConfig(
                 request_log_fields=self.REQUEST_FIELDS,
@@ -686,6 +599,34 @@ class LogSettings:
                 response_cookies_to_obfuscate=self.OBFUSCATE_COOKIES,
                 response_headers_to_obfuscate=self.OBFUSCATE_HEADERS,
             ),
+        )
+
+    def _stdlib_logging_config(self, *, as_json: bool) -> LoggingConfig:
+        logger_levels = {
+            "litestar_queues": self.QUEUES_LEVEL,
+            "sqlalchemy.engine": self.SQLALCHEMY_LEVEL,
+            "sqlalchemy.pool": self.SQLALCHEMY_LEVEL,
+            "opentelemetry.sdk.metrics._internal": 40,
+            "httpx": max(self.LEVEL, logging.WARNING),
+            "httpcore": max(self.LEVEL, logging.WARNING),
+            "_granian": self.ASGI_ERROR_LEVEL,
+            "granian.server": self.ASGI_ERROR_LEVEL,
+            "granian.access": self.ASGI_ACCESS_LEVEL,
+        }
+        return LoggingConfig(
+            log_exceptions="always",
+            disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
+            root={"level": logging.getLevelName(self.LEVEL), "handlers": ["queue_listener"]},
+            formatters={
+                "standard": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": stdlib_logger_processors(as_json=as_json),
+                },
+            },
+            loggers={
+                name: {"propagate": False, "level": level, "handlers": ["queue_listener"]}
+                for name, level in logger_levels.items()
+            },
         )
 
 
@@ -750,59 +691,3 @@ def get_settings(dotenv_filename: str = ".env") -> Settings:
 def provide_app_settings() -> AppSettings:
     """Return application settings for Litestar dependency injection."""
     return get_settings().app
-
-
-def _require_authenticated_queue_stream(connection: ASGIConnection[Any, Any, Any, Any], _: BaseRouteHandler) -> None:
-    principal = _scope_value(connection, "user")
-    if not isinstance(principal, Principal) or not principal.is_authenticated:
-        raise NotAuthorizedException
-
-
-async def _authorize_queue_stream_channel(
-    alchemy_config: SQLAlchemyAsyncConfig,
-    connection: ASGIConnection[Any, Any, Any, Any],
-    scope: str,
-    target: str | None,
-) -> bool:
-    """Allow superusers on every channel and other principals only on tasks they requested.
-
-    Returns:
-        ``True`` when the connection may subscribe to the requested channel.
-    """
-    principal = _scope_value(connection, "user")
-    if not isinstance(principal, Principal) or not principal.is_authenticated or principal.id is None:
-        return False
-    if _holds_superuser_role(connection):
-        return True
-    if scope != "task" or not target:
-        return False
-    return await _requested_queue_task(alchemy_config, target, str(principal.id))
-
-
-def _holds_superuser_role(connection: ASGIConnection[Any, Any, Any, Any]) -> bool:
-    context = _scope_value(connection, "auth")
-    return isinstance(context, SecurityContext) and "superuser" in context.authorization.roles
-
-
-def _scope_value(connection: ASGIConnection[Any, Any, Any, Any], key: str) -> object:
-    return cast("dict[str, Any]", connection.scope).get(key)
-
-
-async def _requested_queue_task(alchemy_config: SQLAlchemyAsyncConfig, target: str, principal_id: str) -> bool:
-    from litestar_queues.backends.advanced_alchemy import QueueTaskModel
-
-    try:
-        task_uuid = UUID(target)
-    except ValueError:
-        return False
-    async with alchemy_config.get_session() as session:
-        row = await session.scalar(select(QueueTaskModel).where(QueueTaskModel.id == task_uuid))
-        raw_meta: Any = row.metadata_json if row is not None else None
-        if isinstance(raw_meta, str):
-            try:
-                raw_meta = json.loads(raw_meta)
-            except ValueError:
-                return False
-        return isinstance(raw_meta, dict) and bool(
-            cast("dict[str, Any]", raw_meta).get("requested_by_id") == principal_id
-        )

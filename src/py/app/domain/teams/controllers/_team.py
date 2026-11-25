@@ -9,7 +9,6 @@ from litestar import delete, get, patch, post
 from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, any_of, required
-from sqlalchemy import select
 
 from app.db import models as m
 from app.domain.accounts.security import requires_team_role
@@ -45,16 +44,8 @@ class TeamController(SecureController):
         Returns:
             Paginated teams visible to the current user.
         """
-        if not teams_service.can_view_all(current_user):
-            results, total = await teams_service.get_many_and_count(
-                *filters,
-                m.Team.id.in_(
-                    select(m.TeamMember.team_id).where(m.TeamMember.user_id == current_user.id).scalar_subquery()
-                ),
-            )
-        else:
-            results, total = await teams_service.get_many_and_count(*filters)
-        return teams_service.to_schema(results, total, filters, schema_type=Team)
+        teams, total = await teams_service.list_visible_to(current_user, *filters)
+        return teams_service.to_schema(teams, total, filters, schema_type=Team)
 
     @post(operation_id="CreateTeam", path="")
     async def create_team(
@@ -68,10 +59,11 @@ class TeamController(SecureController):
         Returns:
             The created team.
         """
-        obj = data.to_dict()
-        obj.update({"owner_id": current_user.id, "owner": current_user})
-        db_obj = await teams_service.create(obj, auto_commit=True)
-        return teams_service.to_schema(db_obj, schema_type=Team)
+        team = await teams_service.create(
+            data.to_dict() | {"owner_id": current_user.id, "owner": current_user},
+            auto_commit=True,
+        )
+        return teams_service.to_schema(team, schema_type=Team)
 
     @get(
         operation_id="GetTeam",
@@ -91,8 +83,8 @@ class TeamController(SecureController):
         Returns:
             The matching team.
         """
-        db_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(db_obj, schema_type=Team)
+        team = await teams_service.get(team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
     @patch(
         operation_id="UpdateTeam",
@@ -115,8 +107,8 @@ class TeamController(SecureController):
             data=data.to_dict(),
             auto_commit=True,
         )
-        fresh_obj = await teams_service.get_one(id=team_id)
-        return teams_service.to_schema(fresh_obj, schema_type=Team)
+        team = await teams_service.get_one(id=team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
     @delete(
         operation_id="DeleteTeam",
@@ -129,4 +121,4 @@ class TeamController(SecureController):
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to delete.")],
     ) -> None:
         """Delete a team."""
-        _ = await teams_service.delete(team_id, auto_commit=True)
+        await teams_service.delete(team_id, auto_commit=True)

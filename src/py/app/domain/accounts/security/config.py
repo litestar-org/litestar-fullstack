@@ -21,6 +21,7 @@ from litestar_security import (
 )
 from litestar_security.accounts import (
     LocalAuth,
+    LocalAuthConfig,
     LocalAuthSecrets,
     NotificationCommand,
     PurposeTokenCodec,
@@ -78,7 +79,7 @@ from app.lib.secrets import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable
+    from collections.abc import Awaitable, Callable, Sequence
 
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from litestar import Request
@@ -103,6 +104,8 @@ _WILDCARD_PROXY_NETWORKS: tuple[str, ...] = (
     "fe80::/10",
 )
 _ACCESS_ROUTE_PREFIX = "/api/access"
+_OAUTH_ROUTE_PREFIX = "/api/auth"
+_OAUTH_RETURN_PATHS = frozenset({"/", "/home", "/dashboard", "/settings/security", "/auth/github/callback"})
 _VERIFICATION_EMAIL_TASK = "email.send_verification"
 _RECOVERY_EMAIL_TASK = "email.send_password_reset"
 
@@ -123,54 +126,6 @@ __all__ = (
     "build_session_middleware",
     "build_session_store",
 )
-
-
-def _normalize_origin(raw: str) -> str | None:
-    candidate = raw.strip().rstrip("/")
-    if not candidate:
-        return None
-    try:
-        parsed = urlparse(candidate)
-        _ = parsed.port
-    except ValueError:
-        return None
-    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
-        return None
-    return f"{parsed.scheme}://{parsed.netloc}"
-
-
-def _extract_rp_id(app_url: str, configured_rp_id: str) -> str:
-    if configured_rp_id and configured_rp_id != "localhost":
-        return configured_rp_id
-    normalized = _normalize_origin(app_url)
-    if normalized is not None:
-        hostname = urlparse(normalized).hostname
-        if hostname:
-            return hostname
-    return configured_rp_id or "localhost"
-
-
-def _resolve_passkey_origins(settings: Settings, *, rp_id: str, cookie_secure: bool) -> tuple[str, ...]:
-    candidates: list[str] = []
-    for raw in (settings.app.URL, *settings.security.PASSKEY_ORIGINS):
-        origin = _normalize_origin(raw)
-        if origin is None:
-            continue
-        parsed = urlparse(origin)
-        if cookie_secure and parsed.scheme != "https":
-            continue
-        if parsed.hostname != rp_id and not (parsed.hostname or "").endswith(f".{rp_id}"):
-            continue
-        if origin not in candidates:
-            candidates.append(origin)
-    if not candidates:
-        scheme = "https" if cookie_secure else "http"
-        candidates.append(f"{scheme}://{rp_id}")
-    return tuple(candidates)
-
-
-def _resolve_cookie_secure(settings: Settings) -> bool:
-    return bool(settings.security.COOKIE_SECURE or settings.app.COOKIE_SECURE)
 
 
 def build_session_store(alchemy_config: SQLAlchemyAsyncConfig) -> SQLAlchemyStore[SQLAlchemyAsyncConfig]:
@@ -232,100 +187,20 @@ def build_notification_handler(
         if task_name is None:
             logger.warning("Ignoring unmapped security notification template", template=notification.template)
             return
-        service = queue_service if queue_service is not None else get_default_service()
-        if service is None:
+        queues = queue_service if queue_service is not None else get_default_service()
+        if queues is None:
             logger.warning("No QueueService available to enqueue security email", task_name=task_name)
             return
-        payload: dict[str, Any] = {
-            "email": notification.destination,
-            "token": notification.token,
-            "token_expires_at": notification.expires_at.isoformat(),
-            "return_url": notification.return_url,
-        }
-        await service.enqueue(task_name, queue="emails", **payload)
+        await queues.enqueue(
+            task_name,
+            queue="emails",
+            email=notification.destination,
+            token=notification.token,
+            token_expires_at=notification.expires_at.isoformat(),
+            return_url=notification.return_url,
+        )
 
     return _dispatch_notification
-
-
-def _build_oauth_config(
-    settings: Settings,
-    alchemy_config: SQLAlchemyAsyncConfig,
-    local_auth_config: Any,
-    backend: SQLAlchemySecurityBackend,
-    step_up_store: SQLAlchemyStepUpService,
-) -> OAuthConfig | None:
-    if not settings.app.github_oauth_enabled:
-        return None
-
-    base_url = settings.app.URL.rstrip("/")
-    cookie_secure = _resolve_cookie_secure(settings)
-    github_callback = f"{base_url}/api/auth/oauth/github/callback"
-    github_provider = GitHubOAuthProvider(
-        client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
-        client_secret=SecretStr(settings.app.GITHUB_OAUTH2_CLIENT_SECRET),
-    )
-    registrations = (
-        OAuthProviderRegistration(
-            provider=cast("OAuthProvider", github_provider),
-            redirect_uri=github_callback,
-            default_scopes=frozenset({"user:email", "read:user"}),
-            expected_issuer=_GITHUB_ISSUER,
-            retain_tokens=True,
-        ),
-    )
-    callback_uris = {"github": frozenset({github_callback})}
-
-    protector = build_oauth_protector(settings)
-    tx_store = SQLAlchemyOAuthTransactionStore(alchemy_config, protector)
-    account_store = SQLAlchemyOAuthAccountStore(alchemy_config, protector)
-    tx_pepper = derive_subkey(settings.app.SECRET_KEY, OAUTH_TRANSACTION_PEPPER_INFO)
-    redirects = OAuthRedirectPolicy(
-        callback_uris=callback_uris,
-        return_to=frozenset(
-            {
-                "/",
-                "/home",
-                "/dashboard",
-                "/settings/security",
-                "/auth/github/callback",
-            }
-        ),
-        allow_insecure_localhost=not cookie_secure,
-    )
-    tx_service = OAuthTransactionService(
-        store=tx_store,
-        pepper=tx_pepper,
-        redirects=redirects,
-        lifetime=timedelta(minutes=10),
-    )
-    account_service = OAuthAccountService(store=account_store, provision_unknown=True)
-    local_transport = OAuthLocalAuthTransport(local_auth_service=local_auth_config.local_auth_service)
-
-    session_auth = local_auth_config.session_auth
-
-    def _oauth_session_binding(request: Request[Any, Any, Any]) -> str | None:
-        if session_auth is None:
-            return None
-        current = session_auth.current_authentication(request)
-        return current.session_id if current is not None else None
-
-    step_up_authorizer = StepUpOAuthAuthorizer.from_step_up_service(
-        StepUpService(step_up_store),
-        epochs=backend,
-        session_binding=_oauth_session_binding,
-    )
-    lifecycle = OAuthLifecycleService(
-        registrations=registrations,
-        transactions=tx_service,
-        accounts=account_service,
-        local=local_transport,
-        step_up=cast("OAuthStepUpAuthorizer", step_up_authorizer),
-    )
-    return OAuthConfig(
-        oauth_service=lifecycle,
-        route_prefix="/api/auth",
-        register_routes=True,
-    )
 
 
 def build_security_config(
@@ -339,30 +214,51 @@ def build_security_config(
     Returns:
         Fully configured ``SecurityConfig`` instance.
     """
-    cookie_secure = _resolve_cookie_secure(settings)
-    master = settings.app.SECRET_KEY
-
-    purpose_token_pepper = derive_subkey(master, PURPOSE_TOKEN_PEPPER_INFO)
-    recovery_code_pepper = derive_subkey(master, RECOVERY_CODE_PEPPER_INFO)
-    binding_pepper = derive_subkey(master, SESSION_BINDING_PEPPER_INFO)
-    api_key_pepper = derive_subkey(master, API_KEY_PEPPER_INFO)
-
     backend = SQLAlchemySecurityBackend(
         alchemy_config,
         notification_handler=build_notification_handler(queue_service=queue_service),
     )
     event_sink = AuditSecurityEventSink(alchemy_config)
-    rate_limiter = build_rate_limiter(alchemy_config)
+    step_up_store = SQLAlchemyStepUpService(alchemy_config)
+    local_auth = _build_local_auth(settings, alchemy_config, backend, event_sink)
+    passkey_config = _build_passkey_config(settings, alchemy_config, backend, event_sink, step_up_store)
+    return SecurityConfig(
+        local_auth=local_auth,
+        mfa=_build_mfa_config(settings, alchemy_config, backend, event_sink, step_up_store),
+        passkeys=passkey_config,
+        oauth=_build_oauth_config(settings, alchemy_config, local_auth, backend, step_up_store),
+        api_key=_build_api_key_config(settings, alchemy_config),
+        protected_resource=ProtectedResourceConfig(
+            resource=settings.app.URL.rstrip("/"),
+            scopes_supported=("read", "write", "mcp"),
+        ),
+        websocket=_build_websocket_config(settings, backend, passkey_origins=passkey_config.origins),
+        headers=SecurityHeadersConfig.hardened(),
+        authorization_resolver=AppAuthorizationResolver(),
+        exclude=["^/static"],
+    )
 
+
+def _resolve_cookie_secure(settings: Settings) -> bool:
+    return bool(settings.security.COOKIE_SECURE or settings.app.COOKIE_SECURE)
+
+
+def _build_local_auth(
+    settings: Settings,
+    alchemy_config: SQLAlchemyAsyncConfig,
+    backend: SQLAlchemySecurityBackend,
+    event_sink: AuditSecurityEventSink,
+) -> LocalAuthConfig[m.User]:
+    cookie_secure = _resolve_cookie_secure(settings)
     proxy_networks = _trusted_proxy_networks(settings.server.LITESTAR_TRUSTED_PROXIES)
-    client_key = forwarded_client_key(trusted_proxies=proxy_networks) if proxy_networks else trusted_client_key
-
-    local_auth = LocalAuth.session(
+    return LocalAuth.session(
         accounts=backend,
         session_resolver=backend,
-        secrets=LocalAuthSecrets(purpose_tokens=PurposeTokenCodec(pepper=purpose_token_pepper)),
+        secrets=LocalAuthSecrets(
+            purpose_tokens=PurposeTokenCodec(pepper=derive_subkey(settings.app.SECRET_KEY, PURPOSE_TOKEN_PEPPER_INFO)),
+        ),
         binding=SessionBindingConfig(
-            pepper=binding_pepper,
+            pepper=derive_subkey(settings.app.SECRET_KEY, SESSION_BINDING_PEPPER_INFO),
             cookie_name="__Host-app-binding" if cookie_secure else "app-binding",
             secure=cookie_secure,
             allow_insecure=not cookie_secure,
@@ -374,37 +270,62 @@ def build_security_config(
         ),
         route_prefix=_ACCESS_ROUTE_PREFIX,
         register_routes=True,
-        rate_limiter=rate_limiter,
+        rate_limiter=build_rate_limiter(alchemy_config),
         events=event_sink,
-        client_key=client_key,
+        client_key=forwarded_client_key(trusted_proxies=proxy_networks) if proxy_networks else trusted_client_key,
     )
 
-    mfa_store = SQLAlchemyMFAService(alchemy_config)
-    step_up_store = SQLAlchemyStepUpService(alchemy_config)
-    login_challenge_store = SQLAlchemyMFALoginChallengeService(alchemy_config)
-    mfa_config = MFAConfig(
-        store=mfa_store,
+
+def _trusted_proxy_networks(trusted_proxies: list[str]) -> list[str]:
+    networks: list[str] = []
+    for trusted_proxy in trusted_proxies:
+        network = trusted_proxy.strip()
+        if network == "*":
+            networks.extend(wildcard for wildcard in _WILDCARD_PROXY_NETWORKS if wildcard not in networks)
+        elif network and network not in networks:
+            networks.append(network)
+    return networks
+
+
+def _build_mfa_config(
+    settings: Settings,
+    alchemy_config: SQLAlchemyAsyncConfig,
+    backend: SQLAlchemySecurityBackend,
+    event_sink: AuditSecurityEventSink,
+    step_up_store: SQLAlchemyStepUpService,
+) -> MFAConfig:
+    recovery_code_pepper = derive_subkey(settings.app.SECRET_KEY, RECOVERY_CODE_PEPPER_INFO)
+    return MFAConfig(
+        store=SQLAlchemyMFAService(alchemy_config),
         secret_protector=build_secret_protector(settings),
         recovery_peppers=(RecoveryCodePepper(key_version="v1", key=recovery_code_pepper),),
         login_methods=backend,
         events=event_sink,
         step_up_store=step_up_store,
         require_at_login="enrolled",
-        login_challenge_store=login_challenge_store,
+        login_challenge_store=SQLAlchemyMFALoginChallengeService(alchemy_config),
         route_prefix=_ACCESS_ROUTE_PREFIX,
         issuer=settings.app.NAME,
         register_routes=True,
     )
 
+
+def _build_passkey_config(
+    settings: Settings,
+    alchemy_config: SQLAlchemyAsyncConfig,
+    backend: SQLAlchemySecurityBackend,
+    event_sink: AuditSecurityEventSink,
+    step_up_store: SQLAlchemyStepUpService,
+) -> PasskeyConfig:
+    cookie_secure = _resolve_cookie_secure(settings)
     passkey_store = SQLAlchemyPasskeyStore(alchemy_config)
     rp_id = _extract_rp_id(settings.app.URL, settings.security.PASSKEY_RP_ID)
-    origins = _resolve_passkey_origins(settings, rp_id=rp_id, cookie_secure=cookie_secure)
-    passkey_config = PasskeyConfig(
+    return PasskeyConfig(
         store=passkey_store,
         challenge_store=passkey_store,
         rp_id=rp_id,
         rp_name=settings.security.PASSKEY_RP_NAME or settings.app.NAME,
-        origins=origins,
+        origins=_resolve_passkey_origins(settings, rp_id=rp_id, cookie_secure=cookie_secure),
         allow_insecure_localhost=not cookie_secure,
         login_methods=backend,
         events=event_sink,
@@ -413,58 +334,140 @@ def build_security_config(
         register_routes=True,
     )
 
-    oauth_config = _build_oauth_config(
-        settings,
-        alchemy_config,
-        local_auth,
-        backend,
-        step_up_store,
+
+def _extract_rp_id(app_url: str, configured_rp_id: str) -> str:
+    if configured_rp_id and configured_rp_id != "localhost":
+        return configured_rp_id
+    origin = _normalize_origin(app_url)
+    if origin is not None:
+        hostname = urlparse(origin).hostname
+        if hostname:
+            return hostname
+    return configured_rp_id or "localhost"
+
+
+def _resolve_passkey_origins(settings: Settings, *, rp_id: str, cookie_secure: bool) -> tuple[str, ...]:
+    origins: list[str] = []
+    for url in (settings.app.URL, *settings.security.PASSKEY_ORIGINS):
+        origin = _normalize_origin(url)
+        if origin is None:
+            continue
+        parsed = urlparse(origin)
+        if cookie_secure and parsed.scheme != "https":
+            continue
+        if parsed.hostname != rp_id and not (parsed.hostname or "").endswith(f".{rp_id}"):
+            continue
+        if origin not in origins:
+            origins.append(origin)
+    if not origins:
+        scheme = "https" if cookie_secure else "http"
+        origins.append(f"{scheme}://{rp_id}")
+    return tuple(origins)
+
+
+def _normalize_origin(url: str) -> str | None:
+    candidate = url.strip().rstrip("/")
+    if not candidate:
+        return None
+    try:
+        parsed = urlparse(candidate)
+        _ = parsed.port
+    except ValueError:
+        return None
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        return None
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
+def _build_oauth_config(
+    settings: Settings,
+    alchemy_config: SQLAlchemyAsyncConfig,
+    local_auth: LocalAuthConfig[m.User],
+    backend: SQLAlchemySecurityBackend,
+    step_up_store: SQLAlchemyStepUpService,
+) -> OAuthConfig | None:
+    if not settings.app.github_oauth_enabled:
+        return None
+    github = _github_registration(settings)
+    protector = build_oauth_protector(settings)
+    transactions = OAuthTransactionService(
+        store=SQLAlchemyOAuthTransactionStore(alchemy_config, protector),
+        pepper=derive_subkey(settings.app.SECRET_KEY, OAUTH_TRANSACTION_PEPPER_INFO),
+        redirects=OAuthRedirectPolicy(
+            callback_uris={"github": frozenset({github.redirect_uri})},
+            return_to=_OAUTH_RETURN_PATHS,
+            allow_insecure_localhost=not _resolve_cookie_secure(settings),
+        ),
+        lifetime=timedelta(minutes=10),
+    )
+    lifecycle = OAuthLifecycleService(
+        registrations=(github,),
+        transactions=transactions,
+        accounts=OAuthAccountService(
+            store=SQLAlchemyOAuthAccountStore(alchemy_config, protector),
+            provision_unknown=True,
+        ),
+        local=OAuthLocalAuthTransport(
+            local_auth_service=local_auth.local_auth_service,  # type: ignore[arg-type]
+        ),
+        step_up=cast("OAuthStepUpAuthorizer", _build_oauth_step_up_authorizer(local_auth, backend, step_up_store)),
+    )
+    return OAuthConfig(oauth_service=lifecycle, route_prefix=_OAUTH_ROUTE_PREFIX, register_routes=True)
+
+
+def _github_registration(settings: Settings) -> OAuthProviderRegistration:
+    provider = GitHubOAuthProvider(
+        client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
+        client_secret=SecretStr(settings.app.GITHUB_OAUTH2_CLIENT_SECRET),
+    )
+    return OAuthProviderRegistration(
+        provider=cast("OAuthProvider", provider),
+        redirect_uri=f"{settings.app.URL.rstrip('/')}{_OAUTH_ROUTE_PREFIX}/oauth/github/callback",
+        default_scopes=frozenset({"user:email", "read:user"}),
+        expected_issuer=_GITHUB_ISSUER,
+        retain_tokens=True,
     )
 
+
+def _build_oauth_step_up_authorizer(
+    local_auth: LocalAuthConfig[m.User],
+    backend: SQLAlchemySecurityBackend,
+    step_up_store: SQLAlchemyStepUpService,
+) -> StepUpOAuthAuthorizer:
+    session_auth = local_auth.session_auth
+
+    def current_session_id(request: Request[Any, Any, Any]) -> str | None:
+        if session_auth is None:
+            return None
+        authentication = session_auth.current_authentication(request)
+        return authentication.session_id if authentication is not None else None
+
+    return StepUpOAuthAuthorizer.from_step_up_service(
+        StepUpService(step_up_store),
+        epochs=backend,
+        session_binding=current_session_id,
+    )
+
+
+def _build_api_key_config(settings: Settings, alchemy_config: SQLAlchemyAsyncConfig) -> APIKeyConfig:
     api_key_store = SQLAlchemyAPIKeyStore(alchemy_config)
-    api_key_config = APIKeyConfig(
+    return APIKeyConfig(
         store=api_key_store,
-        pepper=api_key_pepper,
+        pepper=derive_subkey(settings.app.SECRET_KEY, API_KEY_PEPPER_INFO),
         identity_resolver=APIKeyIdentityResolver(alchemy_config),
         usage_sink=api_key_store,
         accept_authorization_bearer=True,
     )
 
-    protected_resource = ProtectedResourceConfig(
-        resource=settings.app.URL.rstrip("/"),
-        scopes_supported=("read", "write", "mcp"),
-    )
 
-    ws_origins: set[str] = set(origins)
-    for raw_origin in settings.app.ALLOWED_CORS_ORIGINS:
-        normalized = _normalize_origin(raw_origin)
-        if normalized is not None:
-            ws_origins.add(normalized)
-    websocket_config = WebSocketSecurityConfig(
-        allowed_origins=frozenset(ws_origins),
+def _build_websocket_config(
+    settings: Settings,
+    backend: SQLAlchemySecurityBackend,
+    *,
+    passkey_origins: Sequence[str],
+) -> WebSocketSecurityConfig:
+    cors_origins = (_normalize_origin(url) for url in settings.app.ALLOWED_CORS_ORIGINS)
+    return WebSocketSecurityConfig(
+        allowed_origins=frozenset({*passkey_origins, *(origin for origin in cors_origins if origin is not None)}),
         current_security_epoch=backend.current_epoch,
     )
-
-    return SecurityConfig(
-        local_auth=local_auth,
-        mfa=mfa_config,
-        passkeys=passkey_config,
-        oauth=oauth_config,
-        api_key=api_key_config,
-        protected_resource=protected_resource,
-        websocket=websocket_config,
-        headers=SecurityHeadersConfig.hardened(),
-        authorization_resolver=AppAuthorizationResolver(),
-        exclude=["^/static"],
-    )
-
-
-def _trusted_proxy_networks(trusted_proxies: list[str]) -> list[str]:
-    networks: list[str] = []
-    for entry in trusted_proxies:
-        candidate = entry.strip()
-        if candidate == "*":
-            networks.extend(network for network in _WILDCARD_PROXY_NETWORKS if network not in networks)
-        elif candidate and candidate not in networks:
-            networks.append(candidate)
-    return networks

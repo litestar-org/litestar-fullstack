@@ -23,7 +23,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import models as m
 from app.domain.accounts.security import requires_team_role
-from app.domain.admin.controllers._queues import serialize_task_record
 from app.domain.admin.schemas import QueueTaskListResponse, QueueTaskSummary
 from app.domain.system import schemas as s
 from app.domain.system.jobs import export_team_summary
@@ -32,6 +31,7 @@ from app.lib.settings import get_settings
 logger = structlog.get_logger(__name__)
 
 _OWNED_TASK_SCAN_LIMIT = 1000
+_OWNED_TASK_SCAN_BATCH_SIZE = 200
 
 
 class SystemController(PublicController):
@@ -58,31 +58,18 @@ class SystemController(PublicController):
         Returns:
             JSON health response with HTTP 200 when healthy or HTTP 503 when degraded.
         """
-        app_settings = get_settings().app
-        db_status: Literal["online", "offline"]
-        try:
-            await db_session.execute(text("select 1"))
-            db_status = "online"
-        except SQLAlchemyError:
-            db_status = "offline"
-
-        queue_status: Literal["online", "offline"]
-        try:
-            await queue_service.list_tasks(limit=1)
-            queue_status = "online"
-        except Exception:  # noqa: BLE001
-            queue_status = "offline"
-
-        healthy = db_status == "online" and queue_status == "online"
+        database_status = await self._probe_database(db_session)
+        queue_status = await self._probe_queue(queue_service)
+        healthy = database_status == "online" and queue_status == "online"
         if healthy:
-            await logger.adebug("System health ok", database_status=db_status, queue_status=queue_status)
+            await logger.adebug("System health ok", database_status=database_status, queue_status=queue_status)
         else:
-            await logger.awarning("System health degraded", database_status=db_status, queue_status=queue_status)
+            await logger.awarning("System health degraded", database_status=database_status, queue_status=queue_status)
 
         return Response(
             content=s.SystemHealth(
-                app=app_settings.NAME,
-                database_status=db_status,
+                app=get_settings().app.NAME,
+                database_status=database_status,
                 queue_status=queue_status,
             ),
             status_code=200 if healthy else 503,
@@ -105,6 +92,22 @@ class SystemController(PublicController):
             mfa_enabled=True,
             email_verification_required=settings.security.REGISTRATION_REQUIRE_VERIFICATION,
         )
+
+    @staticmethod
+    async def _probe_database(db_session: AsyncSession) -> Literal["online", "offline"]:
+        try:
+            await db_session.execute(text("select 1"))
+        except SQLAlchemyError:
+            return "offline"
+        return "online"
+
+    @staticmethod
+    async def _probe_queue(queue_service: QueueService) -> Literal["online", "offline"]:
+        try:
+            await queue_service.list_tasks(limit=1)
+        except Exception:  # noqa: BLE001
+            return "offline"
+        return "online"
 
 
 class UserQueueController(SecureController):
@@ -132,20 +135,10 @@ class UserQueueController(SecureController):
         Returns:
             Paginated queue task summaries initiated by the current user.
         """
-        owner_id = str(current_user.id)
-        owned: list[QueuedTaskRecord] = []
-        batch_size = 200
-        scan_offset = 0
-        while scan_offset < _OWNED_TASK_SCAN_LIMIT:
-            page = await queue_service.list_tasks(queue="reports", limit=batch_size, offset=scan_offset)
-            owned.extend(item for item in page.items if (item.metadata or {}).get("requested_by_id") == owner_id)
-            scan_offset += len(page.items)
-            if len(page.items) < batch_size or scan_offset >= page.total:
-                break
-        sliced = owned[offset : offset + limit]
+        owned_tasks = await self._scan_owned_report_tasks(queue_service, owner_id=str(current_user.id))
         return QueueTaskListResponse(
-            items=[serialize_task_record(item) for item in sliced],
-            total=len(owned),
+            items=[QueueTaskSummary.from_record(task) for task in owned_tasks[offset : offset + limit]],
+            total=len(owned_tasks),
             limit=limit,
             offset=offset,
         )
@@ -168,18 +161,34 @@ class UserQueueController(SecureController):
         Returns:
             Summary of the enqueued report task.
         """
-        task_result = await queue_service.enqueue(
+        report_task = await queue_service.enqueue(
             export_team_summary,
             team_id=str(team_id),
             requested_by_id=str(current_user.id),
             metadata={"requested_by_id": str(current_user.id), "team_id": str(team_id)},
         )
-        if task_result.record is not None:
-            return serialize_task_record(task_result.record)
+        if report_task.record is not None:
+            return QueueTaskSummary.from_record(report_task.record)
         return QueueTaskSummary(
-            task_id=str(task_result.id),
-            task_name=task_result.task_name,
+            task_id=str(report_task.id),
+            task_name=report_task.task_name,
             queue="reports",
-            status=str(task_result.status),
+            status=str(report_task.status),
             metadata={"requested_by_id": str(current_user.id), "team_id": str(team_id)},
         )
+
+    @staticmethod
+    async def _scan_owned_report_tasks(queue_service: QueueService, *, owner_id: str) -> list[QueuedTaskRecord]:
+        owned_tasks: list[QueuedTaskRecord] = []
+        scan_offset = 0
+        while scan_offset < _OWNED_TASK_SCAN_LIMIT:
+            page = await queue_service.list_tasks(
+                queue="reports",
+                limit=_OWNED_TASK_SCAN_BATCH_SIZE,
+                offset=scan_offset,
+            )
+            owned_tasks.extend(task for task in page.items if (task.metadata or {}).get("requested_by_id") == owner_id)
+            scan_offset += len(page.items)
+            if len(page.items) < _OWNED_TASK_SCAN_BATCH_SIZE or scan_offset >= page.total:
+                break
+        return owned_tasks

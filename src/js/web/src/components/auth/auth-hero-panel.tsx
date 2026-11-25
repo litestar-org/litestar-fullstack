@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import type { ReactNode } from "react"
 import { Icons } from "@/components/icons"
 import { RetroGrid } from "@/components/ui/retro-grid"
 
@@ -12,7 +13,7 @@ export function AuthHeroPanel({
   title = "Litestar Fullstack",
   description = "A modern, high-performance Python web framework with React, Vite, and shadcn/ui.",
   showTestimonial = true,
-}: AuthHeroPanelProps) {
+}: Readonly<AuthHeroPanelProps>) {
   return (
     <div className="relative hidden min-h-screen w-1/2 max-w-2xl flex-col bg-brand-navy p-10 text-white lg:flex">
       <RetroGrid />
@@ -50,6 +51,23 @@ export function AuthHeroPanel({
         ) : (
           <p className="text-lg font-medium leading-relaxed text-white/70">{description}</p>
         )}
+      </div>
+    </div>
+  )
+}
+
+interface AuthSplitLayoutProps {
+  heroDescription: string
+  children: ReactNode
+}
+
+/** The hero panel beside a narrow, centred content column, shared by the single-purpose auth pages. */
+export function AuthSplitLayout({ heroDescription, children }: Readonly<AuthSplitLayoutProps>) {
+  return (
+    <div className="relative flex min-h-screen w-full">
+      <AuthHeroPanel showTestimonial={false} description={heroDescription} />
+      <div className="flex flex-1 flex-col items-center justify-center bg-brand-gray-light px-4 py-12 dark:bg-background">
+        <div className="w-full max-w-md space-y-6">{children}</div>
       </div>
     </div>
   )

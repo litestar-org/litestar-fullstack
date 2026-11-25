@@ -99,8 +99,9 @@ async def test_create_and_update_password_rotates_hash_and_epoch(
     initial_epoch = loaded.security_epoch
 
     await user_service.update_password(
-        data={"current_password": "CurrentPassword123!", "new_password": "UpdatedPassword456!"},
-        db_obj=loaded,
+        loaded,
+        current_password="CurrentPassword123!",
+        new_password="UpdatedPassword456!",
     )
     session.expire_all()
     refreshed = await session.scalar(

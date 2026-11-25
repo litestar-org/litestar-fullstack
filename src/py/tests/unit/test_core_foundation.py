@@ -228,6 +228,16 @@ def test_blank_env_strings_do_not_produce_empty_entries(monkeypatch: pytest.Monk
     assert QueueSettings().POLL_INTERVAL == 0.25
 
 
+def test_log_field_env_overrides_load(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LOG_REQUEST_FIELDS", "path,method")
+    monkeypatch.setenv("LOG_RESPONSE_FIELDS", '["status_code", "body"]')
+
+    log_settings = LogSettings()
+
+    assert log_settings.REQUEST_FIELDS == ["path", "method"]
+    assert log_settings.RESPONSE_FIELDS == ["status_code", "body"]
+
+
 def test_build_plugins_order_and_granian_static(monkeypatch: pytest.MonkeyPatch) -> None:
     built = build_plugins()
     assert len(built) == 11

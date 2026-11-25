@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 
-const navItems = [
+const ADMIN_NAV_LINKS = [
   { label: "Dashboard", to: "/admin" },
   { label: "Users", to: "/admin/users" },
   { label: "Teams", to: "/admin/teams" },
@@ -16,11 +16,11 @@ export function AdminNav() {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {navItems.map((item) => {
-        const isActive = pathname === item.to || (item.to !== "/admin" && pathname.startsWith(item.to))
+      {ADMIN_NAV_LINKS.map((link) => {
+        const isActive = pathname === link.to || (link.to !== "/admin" && pathname.startsWith(link.to))
         return (
-          <Button key={item.to} asChild variant={isActive ? "default" : "outline"} size="sm">
-            <Link to={item.to}>{item.label}</Link>
+          <Button key={link.to} asChild variant={isActive ? "default" : "outline"} size="sm">
+            <Link to={link.to}>{link.label}</Link>
           </Button>
         )
       })}
