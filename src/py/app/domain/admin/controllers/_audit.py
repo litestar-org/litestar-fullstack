@@ -36,7 +36,11 @@ class AuditController(SecureController):
         action: Annotated[str | None, Parameter(query="action", required=False)] = None,
         end_date: Annotated[datetime | None, Parameter(query="end_date", required=False)] = None,
     ) -> OffsetPagination[AuditLogEntry]:
-        """List audit logs with filtering and pagination."""
+        """List audit logs with filtering and pagination.
+
+        Returns:
+            Paginated audit log entries.
+        """
         conditions: list[Any] = []
         if action:
             conditions.append(m.AuditLog.action == action)
@@ -51,7 +55,11 @@ class AuditController(SecureController):
         audit_service: AuditLogService,
         log_id: UUID,
     ) -> AuditLogEntry:
-        """Get a specific audit log entry by ID."""
+        """Get a specific audit log entry by ID.
+
+        Returns:
+            The matching audit log entry.
+        """
         log = await audit_service.get(log_id)
         return audit_service.to_schema(log, schema_type=AuditLogEntry)
 
@@ -64,7 +72,11 @@ class AuditController(SecureController):
         action: Annotated[str | None, Parameter(query="action", required=False)] = None,
         end_date: Annotated[datetime | None, Parameter(query="end_date", required=False)] = None,
     ) -> OffsetPagination[AuditLogEntry]:
-        """List audit logs recorded for a specific actor."""
+        """List audit logs recorded for a specific actor.
+
+        Returns:
+            Paginated audit log entries for the actor.
+        """
         conditions: list[Any] = [m.AuditLog.actor_id == user_id]
         if action:
             conditions.append(m.AuditLog.action == action)
@@ -83,7 +95,11 @@ class AuditController(SecureController):
         action: Annotated[str | None, Parameter(query="action", required=False)] = None,
         end_date: Annotated[datetime | None, Parameter(query="end_date", required=False)] = None,
     ) -> OffsetPagination[AuditLogEntry]:
-        """List audit logs recorded for a specific target resource."""
+        """List audit logs recorded for a specific target resource.
+
+        Returns:
+            Paginated audit log entries for the target resource.
+        """
         conditions: list[Any] = [
             m.AuditLog.target_type == target_type,
             m.AuditLog.target_id == target_id,

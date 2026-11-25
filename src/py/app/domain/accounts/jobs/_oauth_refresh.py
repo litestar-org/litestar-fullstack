@@ -30,15 +30,12 @@ logger = structlog.get_logger(__name__)
 REFRESH_WINDOW_MINUTES = 10
 
 _TOKEN_ENDPOINTS: dict[str, str] = {
-    "google": "https://oauth2.googleapis.com/token",
     "github": "https://github.com/login/oauth/access_token",
 }
 
 
 def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
     creds: dict[str, tuple[str, str]] = {}
-    if settings.app.google_oauth_enabled:
-        creds["google"] = (settings.app.GOOGLE_OAUTH2_CLIENT_ID, settings.app.GOOGLE_OAUTH2_CLIENT_SECRET)
     if settings.app.github_oauth_enabled:
         creds["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
     return creds
@@ -131,7 +128,11 @@ async def run_refresh_oauth_tokens(
     settings: Settings | None = None,
     transport: httpx.AsyncBaseTransport | None = None,
 ) -> dict[str, int]:
-    """Refresh AES-GCM-protected OAuth tokens nearing expiration using ``httpx.AsyncClient``."""
+    """Refresh AES-GCM-protected OAuth tokens nearing expiration using ``httpx.AsyncClient``.
+
+    Returns:
+        Summary counts mapping for ``processed``, ``refreshed``, ``skipped``, and ``failed`` accounts.
+    """
     active_settings = settings or get_settings()
     credentials = _configured_credentials(active_settings)
     if not credentials:
@@ -189,7 +190,11 @@ async def run_refresh_oauth_tokens(
     unique_by="task",
 )
 async def refresh_oauth_tokens() -> dict[str, int]:
-    """Scheduled task refreshing OAuth access tokens nearing expiration."""
+    """Scheduled task refreshing OAuth access tokens nearing expiration.
+
+    Returns:
+        Summary counts mapping for ``processed``, ``refreshed``, ``skipped``, and ``failed`` accounts.
+    """
     from app import config
 
     return await run_refresh_oauth_tokens(config.alchemy)

@@ -27,11 +27,12 @@ _ALLOWED_URL_SCHEMES = frozenset({"http", "https"})
 
 
 def _validate_http_url(url: str) -> str:
-    parsed = urlsplit(url.strip())
+    stripped = url.strip()
+    parsed = urlsplit(stripped)
     if parsed.scheme.lower() not in _ALLOWED_URL_SCHEMES or not parsed.netloc:
         msg = "Template URL must use http or https scheme with a valid host"
         raise ValueError(msg)
-    return url.strip()
+    return stripped
 
 
 class UserProtocol(Protocol):
@@ -62,12 +63,12 @@ class AppEmailService:
 
     @property
     def app_name(self) -> str:
-        """Return configured application display name."""
+        """Configured application display name."""
         return self._settings.app.NAME
 
     @property
     def base_url(self) -> str:
-        """Return configured application base URL."""
+        """Configured application base URL."""
         return self._settings.app.URL
 
     def _resolve_user_details(self, user: UserProtocol) -> tuple[str, str]:
@@ -101,7 +102,17 @@ class AppEmailService:
         *,
         template_name: str | None = None,
     ) -> bool:
-        """Send an HTML + plain-text multipart email and log structured delivery failures."""
+        """Send an HTML + plain-text multipart email and log structured delivery failures.
+
+        Returns:
+            ``True`` if at least one message was accepted by the email backend.
+
+        Raises:
+            EmailRateLimitError: If the email backend rejects the request due to rate limiting.
+            EmailAuthenticationError: If backend authentication fails.
+            EmailConnectionError: If the backend connection fails.
+            EmailDeliveryError: If the backend reports a delivery failure.
+        """
         if not text_content:
             text_content = self._html_to_text(html_content)
 
@@ -153,7 +164,11 @@ class AppEmailService:
             return num_sent > 0
 
     async def send_verification_email(self, user: UserProtocol, verification_token: str) -> bool:
-        """Send an account email verification message."""
+        """Send an account email verification message.
+
+        Returns:
+            ``True`` if the message was sent.
+        """
         verification_url = f"{self.base_url.rstrip('/')}/verify-email?token={verification_token}"
         user_email, user_name = self._resolve_user_details(user)
         html_content = self._render_template(
@@ -172,7 +187,11 @@ class AppEmailService:
         )
 
     async def send_welcome_email(self, user: UserProtocol) -> bool:
-        """Send a welcome message to a newly verified user."""
+        """Send a welcome message to a newly verified user.
+
+        Returns:
+            ``True`` if the message was sent.
+        """
         login_url = f"{self.base_url.rstrip('/')}/login"
         user_email, user_name = self._resolve_user_details(user)
         html_content = self._render_template(
@@ -195,7 +214,11 @@ class AppEmailService:
         reset_token: str,
         expires_in_minutes: int = 60,
     ) -> bool:
-        """Send a password reset message."""
+        """Send a password reset message.
+
+        Returns:
+            ``True`` if the message was sent.
+        """
         reset_url = f"{self.base_url.rstrip('/')}/reset-password?token={reset_token}"
         user_email, user_name = self._resolve_user_details(user)
         expires_hours = max(1, (expires_in_minutes + 59) // 60)
@@ -215,7 +238,11 @@ class AppEmailService:
         )
 
     async def send_password_reset_confirmation_email(self, user: UserProtocol) -> bool:
-        """Send a password reset confirmation message."""
+        """Send a password reset confirmation message.
+
+        Returns:
+            ``True`` if the message was sent.
+        """
         login_url = f"{self.base_url.rstrip('/')}/login"
         user_email, user_name = self._resolve_user_details(user)
         html_content = self._render_template(
@@ -239,7 +266,11 @@ class AppEmailService:
         team_name: str,
         invitation_url: str,
     ) -> bool:
-        """Send a team invitation message."""
+        """Send a team invitation message.
+
+        Returns:
+            ``True`` if the message was sent.
+        """
         html_content = self._render_template(
             "team-invitation.html",
             {

@@ -12,7 +12,7 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar_queues import QueueConfig, QueueService, WorkerConfig
 from litestar_security import SecurityPlugin
 from litestar_security.accounts import NotificationCommand
-from litestar_security.providers.oauth import OAuthLifecycleService
+from litestar_security.providers.oauth import OAuthLifecycleService, StepUpOAuthAuthorizer
 
 from app import config as app_config_module
 from app.domain.accounts.security import (
@@ -61,8 +61,6 @@ def test_security_config_cookie_flags_and_exclusions(tmp_path: Path) -> None:
             COOKIE_SECURE=True,
             GITHUB_OAUTH2_CLIENT_ID="gh-client-id",
             GITHUB_OAUTH2_CLIENT_SECRET="gh-client-secret",
-            GOOGLE_OAUTH2_CLIENT_ID="google-client-id",
-            GOOGLE_OAUTH2_CLIENT_SECRET="google-client-secret",
         ),
         security=SecuritySettings(
             COOKIE_SECURE=True,
@@ -79,27 +77,9 @@ def test_security_config_cookie_flags_and_exclusions(tmp_path: Path) -> None:
     assert prod_cfg.oauth.route_prefix == "/api/auth"
     oauth_service = prod_cfg.oauth.oauth_service
     assert isinstance(oauth_service, OAuthLifecycleService)
-    assert set(oauth_service.provider_names) == {"github", "google"}
+    assert set(oauth_service.provider_names) == {"github"}
     assert oauth_service._registration("github").expected_issuer == "https://github.com"
-    assert oauth_service._registration("google").expected_issuer == "https://accounts.google.com"
-    assert oauth_service.step_up is not None
-    assert len(prod_cfg.jwks_providers) == 1
-    assert prod_cfg.jwks_warmup_failure == "lazy"
-
-    google_only_settings = Settings(
-        app=AppSettings(
-            SECRET_KEY="test-secret-google",
-            URL="https://app.example.com",
-            COOKIE_SECURE=True,
-            GOOGLE_OAUTH2_CLIENT_ID="google-only-id",
-            GOOGLE_OAUTH2_CLIENT_SECRET="google-only-secret",
-        ),
-        security=SecuritySettings(COOKIE_SECURE=True, PASSKEY_RP_ID="app.example.com"),
-    )
-    google_only_cfg = build_security_config(google_only_settings, db_cfg)
-    assert google_only_cfg.oauth is not None
-    assert isinstance(google_only_cfg.oauth.oauth_service, OAuthLifecycleService)
-    assert set(google_only_cfg.oauth.oauth_service.provider_names) == {"google"}
+    assert isinstance(oauth_service.step_up, StepUpOAuthAuthorizer)
 
     assert app_config_module.security.api_key is not None
     assert app_config_module.mcp.auth is not None

@@ -38,7 +38,11 @@ class AdminTeamsController(SecureController):
         teams_service: TeamService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[AdminTeamSummary]:
-        """List all teams with filtering and pagination."""
+        """List all teams with filtering and pagination.
+
+        Returns:
+            Paginated team summaries.
+        """
         results, total = await teams_service.get_many_and_count(*filters)
         return teams_service.to_schema(results, total, filters, schema_type=AdminTeamSummary)
 
@@ -48,7 +52,11 @@ class AdminTeamsController(SecureController):
         teams_service: TeamService,
         team_id: UUID,
     ) -> AdminTeamDetail:
-        """Get detailed team information."""
+        """Get detailed team information.
+
+        Returns:
+            Detailed team record.
+        """
         team = await teams_service.get(team_id)
         return teams_service.to_schema(team, schema_type=AdminTeamDetail)
 
@@ -62,7 +70,11 @@ class AdminTeamsController(SecureController):
         team_id: UUID,
         data: AdminTeamUpdate,
     ) -> AdminTeamDetail:
-        """Update team attributes as an administrator."""
+        """Update team attributes as an administrator.
+
+        Returns:
+            Updated team details.
+        """
         update_data: dict[str, Any] = {}
         for field in ("name", "description", "is_active"):
             value = getattr(data, field)
@@ -88,7 +100,11 @@ class AdminTeamsController(SecureController):
         audit_service: AuditLogService,
         team_id: UUID,
     ) -> Message:
-        """Delete a team as an administrator."""
+        """Delete a team as an administrator.
+
+        Returns:
+            Confirmation message for the deleted team.
+        """
         team = await teams_service.get(team_id)
         team_name = team.name
         await teams_service.delete(team.id, auto_commit=True)

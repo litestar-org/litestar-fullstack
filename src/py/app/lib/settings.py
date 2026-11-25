@@ -91,7 +91,7 @@ def _get_optional_int_env(key: str) -> Callable[[], int | None]:
 def _get_optional_bool_env(key: str) -> Callable[[], bool | None]:
     def _factory() -> bool | None:
         raw = os.getenv(key)
-        return raw in TRUE_VALUES if raw is not None and raw != "" else None
+        return raw in TRUE_VALUES if raw else None
 
     return _factory
 
@@ -169,7 +169,11 @@ class DatabaseSettings:
         return self.normalized_url().startswith("postgresql")
 
     def get_config(self) -> SQLAlchemyAsyncConfig:
-        """Build a native Advanced Alchemy async configuration without eager connection startup."""
+        """Build a native Advanced Alchemy async configuration without eager connection startup.
+
+        Returns:
+            Configured ``SQLAlchemyAsyncConfig`` instance.
+        """
         url = self.normalized_url()
         use_null_pool = self.POOL_DISABLED or url.startswith("sqlite")
         if use_null_pool:
@@ -230,6 +234,9 @@ class QueueSettings:
         """Resolve whether PostgreSQL LISTEN/NOTIFY worker wakeups should be enabled.
 
         Wakeups are always disabled for non-PostgreSQL dialects such as SQLite.
+
+        Returns:
+            ``True`` when PostgreSQL worker wakeups should be enabled.
         """
         if not db_settings.is_postgres():
             return False
@@ -244,7 +251,11 @@ class QueueSettings:
         db_settings: DatabaseSettings,
         app_settings: AppSettings | None = None,
     ) -> QueueConfig:
-        """Build the ``litestar-queues`` configuration bound to PostgreSQL via Advanced Alchemy."""
+        """Build the ``litestar-queues`` configuration bound to PostgreSQL via Advanced Alchemy.
+
+        Returns:
+            Configured ``QueueConfig`` instance.
+        """
         from litestar_queues.backends.advanced_alchemy import (
             QueueEventHistoryModel,
             QueueMaintenanceModel,
@@ -377,11 +388,19 @@ class SecuritySettings:
     REGISTRATION_REQUIRE_VERIFICATION: bool = field(default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", False))
 
     def derive_key(self, app_settings: AppSettings, info: bytes, *, length: int = 32) -> bytes:
-        """Derive a purpose-isolated HKDF-SHA256 subkey from ``app_settings.SECRET_KEY``."""
+        """Derive a purpose-isolated HKDF-SHA256 subkey from ``app_settings.SECRET_KEY``.
+
+        Returns:
+            Derived subkey bytes of the requested length.
+        """
         return derive_subkey(app_settings.SECRET_KEY, info, length=length)
 
     def get_config(self, app_settings: AppSettings) -> SecurityConfig[Any]:
-        """Build baseline hardened ``SecurityConfig`` excluding only static assets."""
+        """Build baseline hardened ``SecurityConfig`` excluding only static assets.
+
+        Returns:
+            Baseline hardened ``SecurityConfig`` instance.
+        """
         _ = app_settings
         return SecurityConfig(
             headers=SecurityHeadersConfig.hardened(),
@@ -414,7 +433,11 @@ class MCPSettings:
         before_tool_call: Any | None = None,
         after_tool_call: Any | None = None,
     ) -> MCPConfig:
-        """Build ``MCPConfig`` with API-key auth, strict description bounds, tasks, and optional audit hooks."""
+        """Build ``MCPConfig`` with API-key auth, strict description bounds, tasks, and optional audit hooks.
+
+        Returns:
+            Configured ``MCPConfig`` instance.
+        """
         return MCPConfig(
             base_path=self.BASE_PATH,
             include_in_schema=False,
@@ -442,7 +465,11 @@ class ViteSettings:
     TRUSTED_PROXIES: str | None = field(default_factory=get_env("LITESTAR_TRUSTED_PROXIES", None))
 
     def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
-        """Build ``ViteConfig`` with SPA mode and full TypeGen including AsyncAPI channels."""
+        """Build ``ViteConfig`` with SPA mode and full TypeGen including AsyncAPI channels.
+
+        Returns:
+            Configured ``ViteConfig`` instance.
+        """
         js_home = base_dir / "js" / "web"
         return ViteConfig(
             mode="spa",
@@ -493,7 +520,11 @@ class EmailSettings:
     RESEND_API_KEY: str = field(default_factory=get_env("RESEND_API_KEY", ""))
 
     def get_config(self) -> EmailConfig:
-        """Build ``EmailConfig`` for ``litestar-email``."""
+        """Build ``EmailConfig`` for ``litestar-email``.
+
+        Returns:
+            Configured ``EmailConfig`` instance.
+        """
         backend: str | SMTPConfig | ResendConfig = self.BACKEND
         if self.BACKEND == "smtp":
             backend = SMTPConfig(
@@ -534,25 +565,18 @@ class AppSettings:
     BASE_URL: str | None = None
     DEV_MODE: bool = field(default_factory=get_env("VITE_DEV_MODE", False))
     ENABLE_INSTRUMENTATION: bool = False
-    GOOGLE_OAUTH2_CLIENT_ID: str = field(default_factory=get_env("GOOGLE_OAUTH2_CLIENT_ID", ""))
-    GOOGLE_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GOOGLE_OAUTH2_CLIENT_SECRET", ""))
     GITHUB_OAUTH2_CLIENT_ID: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_ID", ""))
     GITHUB_OAUTH2_CLIENT_SECRET: str = field(default_factory=get_env("GITHUB_OAUTH2_CLIENT_SECRET", ""))
     ENV_SECRETS: str = field(default_factory=get_env("ENV_SECRETS", "runtime-secrets"))
 
     @property
-    def google_oauth_enabled(self) -> bool:
-        """Return whether Google OAuth credentials are configured."""
-        return bool(self.GOOGLE_OAUTH2_CLIENT_ID and self.GOOGLE_OAUTH2_CLIENT_SECRET)
-
-    @property
     def github_oauth_enabled(self) -> bool:
-        """Return whether GitHub OAuth credentials are configured."""
+        """Whether GitHub OAuth credentials are configured."""
         return bool(self.GITHUB_OAUTH2_CLIENT_ID and self.GITHUB_OAUTH2_CLIENT_SECRET)
 
     @property
     def slug(self) -> str:
-        """Return a slugified form of the application name."""
+        """Slugified form of the application name."""
         return slugify(self.NAME)
 
     def get_compression_config(self) -> CompressionConfig:
@@ -617,7 +641,11 @@ class LogSettings:
     ASGI_ERROR_LEVEL: int = field(default_factory=get_env("ASGI_ERROR_LOG_LEVEL", 30))
 
     def get_structlog_config(self) -> StructlogConfig:
-        """Build Litestar ``StructlogConfig`` with ``litestar_queues`` and Granian loggers."""
+        """Build Litestar ``StructlogConfig`` with ``litestar_queues`` and Granian loggers.
+
+        Returns:
+            Configured ``StructlogConfig`` instance.
+        """
         from app.lib import log as log_conf
 
         return StructlogConfig(
@@ -714,7 +742,11 @@ class Settings:
     @classmethod
     @lru_cache(maxsize=1, typed=True)
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
-        """Load settings from optional ``.env`` file and process environment."""
+        """Load settings from optional ``.env`` file and process environment.
+
+        Returns:
+            Cached top-level ``Settings`` instance.
+        """
         logger = structlog.get_logger()
         env_file = Path(f"{os.curdir}/{dotenv_filename}")
         if env_file.is_file():

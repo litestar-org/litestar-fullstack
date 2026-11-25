@@ -198,11 +198,11 @@ def validate_no_control_chars(value: str) -> str:
     Args:
         value: The string to validate.
 
-    Raises:
-        ValidationError: If control characters are found.
-
     Returns:
         The cleansed string without control characters.
+
+    Raises:
+        ValidationError: If control characters are found.
     """
     if any(unicodedata.category(char) == "Cc" for char in value if char not in "\n\r\t"):
         msg = "Contains invalid control characters"

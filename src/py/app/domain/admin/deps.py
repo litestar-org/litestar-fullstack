@@ -42,8 +42,12 @@ provide_audit_log_service = create_service_provider(
 )
 
 
-async def provide_dashboard_query_service(db_session: AsyncSession) -> DashboardQueryService:
-    """Provide a request-scoped ``DashboardQueryService`` bound to ``db_session``."""
+def provide_dashboard_query_service(db_session: AsyncSession) -> DashboardQueryService:
+    """Provide a request-scoped ``DashboardQueryService`` bound to ``db_session``.
+
+    Returns:
+        A ``DashboardQueryService`` instance for the current session.
+    """
     return DashboardQueryService(session=db_session)
 
 

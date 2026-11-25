@@ -24,7 +24,11 @@ class TagService(service.SQLAlchemyAsyncRepositoryService[m.Tag]):
     match_fields = ["name"]
 
     async def update(self, data: ModelDictT[m.Tag], item_id: Any | None = None, **kwargs: Any) -> m.Tag:
-        """Preserve the existing slug when updating a tag without changing its name."""
+        """Preserve the existing slug when updating a tag without changing its name.
+
+        Returns:
+            The updated ``Tag`` model instance.
+        """
         if (
             item_id is not None
             and service.is_dict_with_field(data, "name")
@@ -36,15 +40,27 @@ class TagService(service.SQLAlchemyAsyncRepositoryService[m.Tag]):
         return await super().update(data, item_id=item_id, **kwargs)
 
     async def to_model_on_create(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:
-        """Populate a unique slug from ``name`` when creating a tag."""
+        """Populate a unique slug from ``name`` when creating a tag.
+
+        Returns:
+            Normalized tag payload with a unique slug.
+        """
         return await self._populate_slug(service.schema_dump(data))
 
     async def to_model_on_update(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:
-        """Populate a unique slug when updating a tag's name without an explicit slug."""
+        """Populate a unique slug when updating a tag's name without an explicit slug.
+
+        Returns:
+            Normalized tag payload with a unique slug if applicable.
+        """
         return await self._populate_slug(service.schema_dump(data))
 
     async def to_model_on_upsert(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:
-        """Populate a unique slug when upserting a tag."""
+        """Populate a unique slug when upserting a tag.
+
+        Returns:
+            Normalized tag payload with a unique slug if applicable.
+        """
         return await self._populate_slug(service.schema_dump(data))
 
     async def _populate_slug(self, data: ModelDictT[m.Tag]) -> ModelDictT[m.Tag]:

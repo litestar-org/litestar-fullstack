@@ -40,7 +40,11 @@ class TeamController(SecureController):
         current_user: CurrentUser[m.User],
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
-        """List teams accessible to the authenticated account."""
+        """List teams accessible to the authenticated account.
+
+        Returns:
+            Paginated teams visible to the current user.
+        """
         if not teams_service.can_view_all(current_user):
             results, total = await teams_service.get_many_and_count(
                 *filters,
@@ -59,7 +63,11 @@ class TeamController(SecureController):
         current_user: CurrentUser[m.User],
         data: TeamCreate,
     ) -> Team:
-        """Create a new team owned by the authenticated user."""
+        """Create a new team owned by the authenticated user.
+
+        Returns:
+            The created team.
+        """
         obj = data.to_dict()
         obj.update({"owner_id": current_user.id, "owner": current_user})
         db_obj = await teams_service.create(obj, auto_commit=True)
@@ -78,7 +86,11 @@ class TeamController(SecureController):
         teams_service: TeamService,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to retrieve.")],
     ) -> Team:
-        """Get details about a team."""
+        """Get details about a team.
+
+        Returns:
+            The matching team.
+        """
         db_obj = await teams_service.get(team_id)
         return teams_service.to_schema(db_obj, schema_type=Team)
 
@@ -93,7 +105,11 @@ class TeamController(SecureController):
         teams_service: TeamService,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
     ) -> Team:
-        """Update team attributes, tags, or ownership."""
+        """Update team attributes, tags, or ownership.
+
+        Returns:
+            The updated team.
+        """
         await teams_service.update(
             item_id=team_id,
             data=data.to_dict(),

@@ -65,7 +65,11 @@ def _extract_mcp_principal_id(request: Request[Any, Any, Any]) -> str | None:
 def build_mcp_audit_hooks(
     sink: AuditSecurityEventSink,
 ) -> tuple[BeforeToolCallHook, AfterToolCallHook]:
-    """Build observability-only MCP tool call hooks writing redacted telemetry to ``AuditSecurityEventSink``."""
+    """Build observability-only MCP tool call hooks writing redacted telemetry to ``AuditSecurityEventSink``.
+
+    Returns:
+        Pair of ``(before_tool_call, after_tool_call)`` async hook callables.
+    """
 
     async def _before_tool_call(
         tool_name: str,
@@ -196,7 +200,11 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         cli.add_command(user_management_group)
 
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
-        """Configure OpenAPI, CORS, proxy headers, first-party plugins, DI, and exception handlers."""
+        """Configure OpenAPI, CORS, proxy headers, first-party plugins, DI, and exception handlers.
+
+        Returns:
+            Updated Litestar ``AppConfig``.
+        """
         settings = get_settings()
         self.app_slug = settings.app.slug
         app_config.debug = settings.app.DEBUG

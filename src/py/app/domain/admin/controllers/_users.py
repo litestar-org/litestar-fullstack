@@ -40,7 +40,11 @@ class AdminUsersController(SecureController):
         users_service: UserService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[AdminUserSummary]:
-        """List all users with filtering and pagination."""
+        """List all users with filtering and pagination.
+
+        Returns:
+            Paginated user summaries.
+        """
         results, total = await users_service.get_many_and_count(*filters)
         return users_service.to_schema(results, total, filters, schema_type=AdminUserSummary)
 
@@ -50,7 +54,11 @@ class AdminUsersController(SecureController):
         users_service: UserService,
         user_id: UUID,
     ) -> AdminUserDetail:
-        """Get detailed user information including password and MFA status."""
+        """Get detailed user information including password and MFA status.
+
+        Returns:
+            Detailed user account record.
+        """
         user = await users_service.get(
             user_id,
             load=[undefer_group("security_sensitive"), selectinload(m.User.mfa_factors)],
@@ -67,7 +75,11 @@ class AdminUsersController(SecureController):
         user_id: UUID,
         data: AdminUserUpdate,
     ) -> AdminUserDetail:
-        """Update user flags or profile fields as an administrator."""
+        """Update user flags or profile fields as an administrator.
+
+        Returns:
+            Updated user account details.
+        """
         update_data: dict[str, Any] = {}
         for field in ("name", "username", "phone", "is_active", "is_superuser", "is_verified"):
             value = getattr(data, field)
@@ -98,7 +110,14 @@ class AdminUsersController(SecureController):
         audit_service: AuditLogService,
         user_id: UUID,
     ) -> Message:
-        """Delete a user account while preventing administrator self-deletion."""
+        """Delete a user account while preventing administrator self-deletion.
+
+        Returns:
+            Confirmation message for the deleted user.
+
+        Raises:
+            PermissionDeniedException: If the target user is the current administrator.
+        """
         user = await users_service.get(user_id)
         if user.id == current_user.id:
             raise PermissionDeniedException(detail="Cannot delete your own account")

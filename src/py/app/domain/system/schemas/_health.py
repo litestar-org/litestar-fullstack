@@ -20,7 +20,6 @@ class SystemHealth(CamelizedBaseStruct, kw_only=True):
 class PublicAuthConfig(CamelizedBaseStruct, kw_only=True):
     """Public authentication capability flags exposed to browser clients."""
 
-    google_enabled: bool = False
     github_enabled: bool = False
     passkeys_enabled: bool = True
     mfa_enabled: bool = True

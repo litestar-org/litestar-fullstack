@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { GitHubSignInButton } from "@/components/auth/github-signin-button"
-import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { PasskeySignInButton } from "@/components/auth/passkey-signin-button"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
@@ -28,10 +27,9 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
     retry: false,
   })
 
-  const googleOAuthEnabled = authConfig?.googleEnabled ?? false
   const githubOAuthEnabled = authConfig?.githubEnabled ?? false
   const passkeysEnabled = (authConfig?.passkeysEnabled ?? false) && browserSupportsWebAuthn()
-  const hasAlternativeMethods = googleOAuthEnabled || githubOAuthEnabled || passkeysEnabled
+  const hasAlternativeMethods = githubOAuthEnabled || passkeysEnabled
 
   const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
 
@@ -117,7 +115,6 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
             <div className="grid gap-2">
               {passkeysEnabled && <PasskeySignInButton authRedirect={finalRedirect} className="w-full" />}
               {githubOAuthEnabled && <GitHubSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
-              {googleOAuthEnabled && <GoogleSignInButton variant="signin" className="w-full" authRedirect={finalRedirect} />}
             </div>
           </>
         )}

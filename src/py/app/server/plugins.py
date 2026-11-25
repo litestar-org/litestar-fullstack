@@ -44,6 +44,9 @@ def build_plugins(
     ``SecurityPlugin`` is always registered last so it compiles routes emitted by
     ``QueuePlugin``, ``AsyncAPIPlugin``, ``VitePlugin``, ``LitestarMCP``, and
     ``AutowirePlugin``.
+
+    Returns:
+        Ordered list of configured Litestar plugins.
     """
     resolved_email = email_config or config.email
     if resolved_email.email_service_dependency_key == "mailer":

@@ -69,6 +69,7 @@ async def test_totp_enrollment_login_challenge_replay_and_removal(
     assert login_res.status_code == 403, login_res.text
     challenge_payload = login_res.json()
     assert challenge_payload["account_id"] == str(test_user.id)
+    assert challenge_payload["totp_method_ids"] == [method_id]
     challenge = challenge_payload["challenge"]
 
     complete_res = await client.post(

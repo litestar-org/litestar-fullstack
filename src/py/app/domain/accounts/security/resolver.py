@@ -45,7 +45,11 @@ class AppAuthorizationResolver:
         self,
         principal: Principal[m.User],
     ) -> AuthorizationSnapshot | InvalidCredentials | VerificationUnavailable:
-        """Compute an immutable ``AuthorizationSnapshot`` purely from eager-loaded ``User`` attributes."""
+        """Compute an immutable ``AuthorizationSnapshot`` purely from eager-loaded ``User`` attributes.
+
+        Returns:
+            Computed ``AuthorizationSnapshot``, ``InvalidCredentials`` if user is missing, or ``VerificationUnavailable``.
+        """
         if not principal.is_authenticated:
             return AuthorizationSnapshot()
         user = principal.user
@@ -86,7 +90,11 @@ class SelfSubjectPredicate(AuthorizationPredicate):
         self.parameter = parameter
 
     def decide(self, connection: ASGIConnection[Any, Any, Any, Any]) -> AuthorizationDecision:
-        """Evaluate whether the authenticated principal matches the path parameter value."""
+        """Evaluate whether the authenticated principal matches the path parameter value.
+
+        Returns:
+            Grant decision when IDs match, otherwise an unauthenticated or forbidden denial.
+        """
         principal: object = cast("dict[str, Any]", connection.scope).get("user")
         if not isinstance(principal, Principal) or not principal.is_authenticated or principal.id is None:
             return AuthorizationDecision(
@@ -101,7 +109,11 @@ class SelfSubjectPredicate(AuthorizationPredicate):
 
 
 def requires_team_role(*roles: str) -> AuthorizationPredicate:
-    """Require either global ``superuser`` role or one of the specified roles on path ``team_id``."""
+    """Require either global ``superuser`` role or one of the specified roles on path ``team_id``.
+
+    Returns:
+        Composite authorization predicate enforcing the team role requirement.
+    """
     return requires_any_of(
         requires_role("superuser"),
         requires_tenant_role(tenant_parameter="team_id", roles=frozenset(roles)),

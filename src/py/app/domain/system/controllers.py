@@ -51,7 +51,11 @@ class SystemController(PublicController):
         db_session: AsyncSession,
         queue_service: NamedDependency[QueueService],
     ) -> Response[s.SystemHealth]:
-        """Check database and queue backend health, returning HTTP 503 when degraded."""
+        """Check database and queue backend health, returning HTTP 503 when degraded.
+
+        Returns:
+            JSON health response with HTTP 200 when healthy or HTTP 503 when degraded.
+        """
         app_settings = get_settings().app
         db_status: Literal["online", "offline"]
         try:
@@ -94,7 +98,6 @@ class SystemController(PublicController):
         """Return enabled OAuth providers and authentication capability flags."""
         app_settings = get_settings().app
         return s.PublicAuthConfig(
-            google_enabled=app_settings.google_oauth_enabled,
             github_enabled=app_settings.github_oauth_enabled,
             passkeys_enabled=True,
             mfa_enabled=True,
@@ -121,7 +124,11 @@ class UserQueueController(SecureController):
         limit: Annotated[int, Parameter(ge=1, le=100, description="Maximum number of tasks to return.")] = 25,
         offset: Annotated[int, Parameter(ge=0, description="Pagination offset.")] = 0,
     ) -> QueueTaskListResponse:
-        """List recent background queue tasks owned by the authenticated user."""
+        """List recent background queue tasks owned by the authenticated user.
+
+        Returns:
+            Paginated queue task summaries initiated by the current user.
+        """
         owner_id = str(current_user.id)
         owned: list[QueuedTaskRecord] = []
         batch_size = 200
@@ -153,7 +160,11 @@ class UserQueueController(SecureController):
         current_user: CurrentUser[m.User],
         team_id: Annotated[UUID, Parameter(title="Team ID", description="Target team UUID.")],
     ) -> QueueTaskSummary:
-        """Enqueue a background team summary report task for a team the user belongs to."""
+        """Enqueue a background team summary report task for a team the user belongs to.
+
+        Returns:
+            Summary of the enqueued report task.
+        """
         task_result = await queue_service.enqueue(
             export_team_summary,
             team_id=str(team_id),

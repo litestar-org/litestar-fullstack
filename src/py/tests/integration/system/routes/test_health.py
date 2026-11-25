@@ -33,7 +33,7 @@ async def test_public_auth_config(client: AsyncClient) -> None:
     response = await client.get("/api/config/auth")
     assert response.status_code == 200
     data = response.json()
-    assert set(data.keys()) >= {"googleEnabled", "githubEnabled", "passkeysEnabled", "mfaEnabled"}
+    assert set(data.keys()) >= {"githubEnabled", "passkeysEnabled", "mfaEnabled"}
 
 
 async def test_db_session_dependency(app: Litestar, engine: AsyncEngine) -> None:

@@ -2,6 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
 import { useAuthStore } from "@/lib/auth"
 
+vi.mock("@simplewebauthn/browser", () => ({
+  browserSupportsWebAuthn: () => true,
+  startAuthentication: vi.fn(async () => ({ id: "cred-1", rawId: "cred-1", type: "public-key", response: {} })),
+}))
+
 describe("useAuthStore", () => {
   const originalFetch = globalThis.fetch
 
@@ -57,6 +62,7 @@ describe("useAuthStore", () => {
           account_id: "u-mfa",
           code: "mfa_required",
           methods: ["totp", "recovery-code"],
+          totp_method_ids: ["totp-1"],
         }),
         { status: 403, headers: { "Content-Type": "application/json" } },
       ),
@@ -67,7 +73,42 @@ describe("useAuthStore", () => {
     expect(result.mfaRequired).toBe(true)
     expect(result.challengeToken).toBe("opaque-challenge")
     expect(useAuthStore.getState().mfaChallenge?.accountId).toBe("u-mfa")
+    expect(useAuthStore.getState().mfaChallenge?.totpMethodIds).toEqual(["totp-1"])
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
+  })
+
+  it("authenticates via usernameless discoverable passkey without prior account_id", async () => {
+    const fetchSpy = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            options: JSON.stringify({ challenge: "c-1", rpId: "localhost" }),
+            expires_at: "2026-11-25T02:00:00Z",
+            binding: "bind-1",
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: "u-pk", email: "pk@example.com" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: "u-pk", email: "pk@example.com", name: "Passkey User" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+    globalThis.fetch = fetchSpy
+
+    const ok = await useAuthStore.getState().loginWithPasskey()
+    expect(ok).toBe(true)
+    expect(useAuthStore.getState().isAuthenticated).toBe(true)
+    expect(useAuthStore.getState().user?.email).toBe("pk@example.com")
+    expect(fetchSpy).toHaveBeenCalledTimes(3)
   })
 
   it("checkAuth returns true on 200, false on 401, and throws on 503", async () => {

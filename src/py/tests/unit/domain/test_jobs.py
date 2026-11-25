@@ -178,8 +178,8 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
     settings = Settings(
         app=AppSettings(
             SECRET_KEY="refresh-roundtrip-secret",
-            GOOGLE_OAUTH2_CLIENT_ID="google-client-id",
-            GOOGLE_OAUTH2_CLIENT_SECRET="google-client-secret",
+            GITHUB_OAUTH2_CLIENT_ID="gh-client-id",
+            GITHUB_OAUTH2_CLIENT_SECRET="gh-client-secret",
         )
     )
     now = datetime.now(UTC)
@@ -193,19 +193,19 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
     linked = await store.link(
         account_id=user_id,
         identity=ProviderIdentity(
-            provider="google",
-            issuer="https://accounts.google.com",
+            provider="github",
+            issuer="https://github.com",
             subject="sub-123",
             email="oauth-user@example.com",
             email_verified=True,
             display_name="OAuth User",
             raw_claims={},
         ),
-        grant=ProviderGrant(scopes=frozenset({"openid", "email"}), expires_at=now + timedelta(minutes=2)),
+        grant=ProviderGrant(scopes=frozenset({"read:user", "user:email"}), expires_at=now + timedelta(minutes=2)),
         tokens=ProviderTokenSet(
             access_token=SecretStr("old-access"),
             token_type="Bearer",
-            scopes=frozenset({"openid", "email"}),
+            scopes=frozenset({"read:user", "user:email"}),
             expires_at=now + timedelta(minutes=2),
             refresh_token=SecretStr("old-refresh"),
             id_token=SecretStr("old-id-token"),
@@ -215,14 +215,14 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
     )
 
     def _mock_handler(request: httpx.Request) -> httpx.Response:
-        assert str(request.url) == "https://oauth2.googleapis.com/token"
+        assert str(request.url) == "https://github.com/login/oauth/access_token"
         return httpx.Response(
             200,
             json={
                 "access_token": "new-access-token",
                 "refresh_token": "new-refresh-token",
                 "expires_in": 3600,
-                "scope": "openid email profile",
+                "scope": "read:user user:email repo",
             },
         )
 
@@ -240,4 +240,4 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
     assert refreshed.tokens.refresh_token.get_secret_value() == "new-refresh-token"
     assert refreshed.tokens.id_token is not None
     assert refreshed.tokens.id_token.get_secret_value() == "old-id-token"
-    assert "profile" in refreshed.tokens.scopes
+    assert "repo" in refreshed.tokens.scopes

@@ -45,7 +45,11 @@ class ApiKeyController(SecureController):
         request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
     ) -> list[APIKeyItem]:
-        """List secret-free API key metadata owned by the authenticated user."""
+        """List secret-free API key metadata owned by the authenticated user.
+
+        Returns:
+            List of API key metadata items owned by the authenticated user.
+        """
         store, _ = _resolve_api_key_components(request)
         rows = await store.list_for_user(current_user.id)
         return [
@@ -73,7 +77,11 @@ class ApiKeyController(SecureController):
         current_user: CurrentUser[m.User],
         data: APIKeyCreate,
     ) -> APIKeyIssued:
-        """Mint a new reveal-once API key owned by the authenticated user."""
+        """Mint a new reveal-once API key owned by the authenticated user.
+
+        Returns:
+            Newly issued API key payload including the reveal-once secret.
+        """
         store, service = _resolve_api_key_components(request)
         now = datetime.now(UTC)
         expires_at = now + timedelta(days=data.expires_in_days) if data.expires_in_days is not None else None
@@ -107,7 +115,14 @@ class ApiKeyController(SecureController):
         current_user: CurrentUser[m.User],
         key_id: Annotated[str, Parameter(title="API Key ID", description="Opaque API key identifier to rotate.")],
     ) -> APIKeyIssued:
-        """Rotate an owned API key with a 24-hour overlap grace window."""
+        """Rotate an owned API key with a 24-hour overlap grace window.
+
+        Returns:
+            Replacement API key payload including the reveal-once secret.
+
+        Raises:
+            HTTPException: If the key is not found, already revoked/rotated, expired, or cannot be rotated.
+        """
         store, service = _resolve_api_key_components(request)
         existing = await store.get_for_user(current_user.id, key_id)
         if existing is None:
@@ -115,16 +130,15 @@ class ApiKeyController(SecureController):
         if existing.revoked_at is not None:
             raise HTTPException(status_code=409, detail="API key has already been revoked or rotated.")
         now = datetime.now(UTC)
-        existing_expires = (
+        expires_at = (
             existing.expires_at.replace(tzinfo=UTC)
             if existing.expires_at is not None and existing.expires_at.tzinfo is None
             else existing.expires_at
         )
-        if existing_expires is not None and existing_expires <= now:
+        if expires_at is not None and expires_at <= now:
             raise HTTPException(status_code=409, detail="API key has expired and cannot be rotated.")
         state = await store.get(key_id)
         restrictions = state.restrictions if state is not None else None
-        expires_at = existing_expires
         try:
             issued = await service.rotate(
                 current_key_id=key_id,
@@ -159,7 +173,11 @@ class ApiKeyController(SecureController):
         current_user: CurrentUser[m.User],
         key_id: Annotated[str, Parameter(title="API Key ID", description="Opaque API key identifier to revoke.")],
     ) -> None:
-        """Immediately revoke an API key owned by the authenticated user."""
+        """Immediately revoke an API key owned by the authenticated user.
+
+        Raises:
+            HTTPException: If the API key does not exist or is not owned by the authenticated user.
+        """
         store, service = _resolve_api_key_components(request)
         existing = await store.get_for_user(current_user.id, key_id)
         if existing is None:

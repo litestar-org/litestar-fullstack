@@ -53,7 +53,11 @@ async def send_verification_email_task(
     return_url: str | None = None,
     user_name: str | None = None,
 ) -> bool:
-    """Deliver an account email-verification message."""
+    """Deliver an account email-verification message.
+
+    Returns:
+        ``True`` if the email was accepted for delivery, otherwise ``False``.
+    """
     from app import config
 
     _ = (token_expires_at, return_url)
@@ -79,7 +83,11 @@ async def send_password_reset_email_task(
     return_url: str | None = None,
     user_name: str | None = None,
 ) -> bool:
-    """Deliver a password-reset message."""
+    """Deliver a password-reset message.
+
+    Returns:
+        ``True`` if the email was accepted for delivery, otherwise ``False``.
+    """
     from app import config
 
     _ = return_url
@@ -110,7 +118,11 @@ async def send_password_reset_confirmation_email_task(
     return_url: str | None = None,
     user_name: str | None = None,
 ) -> bool:
-    """Deliver a password-reset confirmation message."""
+    """Deliver a password-reset confirmation message.
+
+    Returns:
+        ``True`` if the email was accepted for delivery, otherwise ``False``.
+    """
     from app import config
 
     _ = (token, token_expires_at, return_url)
@@ -133,7 +145,11 @@ async def send_welcome_email_task(
     email: str,
     user_name: str | None = None,
 ) -> bool:
-    """Deliver a welcome message to a newly verified user."""
+    """Deliver a welcome message to a newly verified user.
+
+    Returns:
+        ``True`` if the email was accepted for delivery, otherwise ``False``.
+    """
     from app import config
 
     context = get_current_task_context()
@@ -157,7 +173,11 @@ async def send_team_invitation_email_task(
     team_name: str,
     invitation_url: str,
 ) -> bool:
-    """Deliver a team invitation email."""
+    """Deliver a team invitation email.
+
+    Returns:
+        ``True`` if the email was accepted for delivery, otherwise ``False``.
+    """
     from app import config
 
     context = get_current_task_context()

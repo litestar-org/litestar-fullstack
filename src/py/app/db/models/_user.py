@@ -101,19 +101,19 @@ class User(UUIDv7AuditBase):
 
     @property
     def has_mfa(self) -> bool:
-        """Return whether an eager-loaded confirmed MFA factor exists without triggering lazy I/O."""
+        """Whether an eager-loaded confirmed MFA factor exists without triggering lazy I/O."""
         if "mfa_factors" in inspect(self).unloaded:
             return False
         return any(factor.is_confirmed for factor in self.mfa_factors)
 
     @property
     def is_two_factor_enabled(self) -> bool:
-        """Compatibility alias returning whether the user has confirmed MFA enabled."""
+        """Compatibility alias indicating whether the user has confirmed MFA enabled."""
         return self.has_mfa
 
     @property
     def totp_method_id(self) -> str | None:
-        """Return the active confirmed TOTP factor identifier when MFA factors are loaded."""
+        """Active confirmed TOTP factor identifier when MFA factors are loaded."""
         if "mfa_factors" in inspect(self).unloaded:
             return None
         for factor in self.mfa_factors:
@@ -122,7 +122,11 @@ class User(UUIDv7AuditBase):
         return None
 
     def __eq__(self, other: object) -> bool:
-        """Compare persisted user records by primary key and core account state."""
+        """Compare persisted user records by primary key and core account state.
+
+        Returns:
+            ``True`` if both instances represent the same persisted user state.
+        """
         if isinstance(other, User):
             self_id = inspect(self).identity
             other_id = inspect(other).identity
@@ -138,6 +142,10 @@ class User(UUIDv7AuditBase):
         return super().__eq__(other)
 
     def __hash__(self) -> int:
-        """Hash persisted users stably by SQLAlchemy identity key."""
+        """Hash persisted users stably by SQLAlchemy identity key.
+
+        Returns:
+            Hash of the SQLAlchemy identity key, or the base object hash if transient.
+        """
         identity = inspect(self).identity
         return hash(identity) if identity is not None else super().__hash__()

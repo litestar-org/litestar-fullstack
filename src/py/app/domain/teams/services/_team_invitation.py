@@ -13,19 +13,31 @@ class TeamInvitationService(service.SQLAlchemyAsyncRepositoryService[m.TeamInvit
     async def to_model_on_create(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        """Resolve inviter metadata before creating an invitation."""
+        """Resolve inviter metadata before creating an invitation.
+
+        Returns:
+            Normalized invitation payload with inviter fields populated.
+        """
         return await self._populate_inviter(service.schema_dump(data))
 
     async def to_model_on_update(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        """Resolve inviter metadata before updating an invitation."""
+        """Resolve inviter metadata before updating an invitation.
+
+        Returns:
+            Normalized invitation payload with inviter fields populated.
+        """
         return await self._populate_inviter(service.schema_dump(data))
 
     async def to_model_on_upsert(
         self, data: service.ModelDictT[m.TeamInvitation]
     ) -> service.ModelDictT[m.TeamInvitation]:
-        """Resolve inviter metadata before upserting an invitation."""
+        """Resolve inviter metadata before upserting an invitation.
+
+        Returns:
+            Normalized invitation payload with inviter fields populated.
+        """
         return await self._populate_inviter(service.schema_dump(data))
 
     async def _populate_inviter(

@@ -19,7 +19,11 @@ _VALID_TASK_STATUSES = frozenset({"pending", "scheduled", "running", "completed"
 
 
 def serialize_task_record(record: QueuedTaskRecord) -> QueueTaskSummary:
-    """Convert a ``litestar-queues`` task record into a camelized API summary."""
+    """Convert a ``litestar-queues`` task record into a camelized API summary.
+
+    Returns:
+        Serialized queue task summary.
+    """
     return QueueTaskSummary(
         task_id=str(record.id),
         task_name=record.task_name,
@@ -53,7 +57,14 @@ class AdminQueueController(SecureController):
         limit: int = 50,
         offset: int = 0,
     ) -> QueueTaskListResponse:
-        """List queued, running, and completed background tasks."""
+        """List queued, running, and completed background tasks.
+
+        Returns:
+            Paginated list of queue task summaries.
+
+        Raises:
+            HTTPException: If ``status`` is not a recognized task status.
+        """
         resolved_status: TaskStatus | None = None
         if status is not None:
             if status not in _VALID_TASK_STATUSES:
@@ -81,7 +92,14 @@ class AdminQueueController(SecureController):
         task_id: str,
         include_running: bool = True,
     ) -> QueueTaskCancelResponse:
-        """Cancel a queued or running background task by ID."""
+        """Cancel a queued or running background task by ID.
+
+        Returns:
+            Cancellation outcome for the requested task.
+
+        Raises:
+            NotFoundException: If ``task_id`` is invalid or the task does not exist.
+        """
         try:
             parsed_id = UUID(task_id)
         except ValueError as exc:

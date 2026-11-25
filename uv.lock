@@ -10,9 +10,6 @@ resolution-markers = [
     "python_full_version < '3.11.5'",
 ]
 
-[manifest]
-constraints = [{ name = "pyotp", specifier = ">=2.10.0,<2.11" }]
-
 [[package]]
 name = "advanced-alchemy"
 version = "1.13.0b3"
@@ -233,7 +230,7 @@ requires-dist = [
     { name = "litestar-granian", extras = ["uvloop"], specifier = ">=0.17.0" },
     { name = "litestar-mcp", specifier = ">=0.20.2" },
     { name = "litestar-queues", specifier = ">=0.15.0" },
-    { name = "litestar-security", extras = ["argon2", "mfa", "oauth", "passkeys"], specifier = ">=0.7.3" },
+    { name = "litestar-security", extras = ["argon2", "mfa", "oauth", "passkeys"], specifier = ">=0.8.0" },
     { name = "litestar-vite", extras = ["asyncapi"], specifier = ">=0.34.0" },
     { name = "python-dotenv" },
 ]
@@ -1814,16 +1811,16 @@ wheels = [
 
 [[package]]
 name = "litestar-security"
-version = "0.7.3"
+version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "litestar" },
     { name = "pyjwt", extra = ["crypto"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/57/98d695439ee7c74ea8414812ac4da2c087cc390f67353346c5ac193431e3/litestar_security-0.7.3.tar.gz", hash = "sha256:8a1b75d5b7457a9df54916f76dc56a51cf0aa7ad32caa121d44a65999491bf09", size = 953425, upload-time = "2026-11-19T16:50:33.542Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/25/f83aaa5db6fbaa0486a94cef208c9de9ff8192da3b9d7462c310f23ef6a3/litestar_security-0.8.0.tar.gz", hash = "sha256:3d6f61bd1eb6475192cc70f9eb241e51033e9af49dd8aed0e0db7e96fa495070", size = 967540, upload-time = "2026-11-25T01:13:40.443Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/5c/31f4083c11b5905ceeed16c76a664517aa3421c00750a39249645f7867af/litestar_security-0.7.3-py3-none-any.whl", hash = "sha256:846e760f7f8f5f5905bae9b3ee383b15d3eafe83cebea42f3498277fc674a3b6", size = 388904, upload-time = "2026-11-19T16:50:31.66Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/14/e88d8af70477b0417898d3ea710f34709f65de1be9469e53f519c85fb609/litestar_security-0.8.0-py3-none-any.whl", hash = "sha256:c040217889fb045b88eeba59e0a03ceeb878317d4c7bd0c37492ac18f1f7bc7a", size = 392268, upload-time = "2026-11-25T01:13:38.957Z" },
 ]
 
 [package.optional-dependencies]
@@ -2851,11 +2848,11 @@ wheels = [
 
 [[package]]
 name = "pyotp"
-version = "2.10.0"
+version = "2.12.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2d/c6/c5d96a86fd0bf6fa1bbb5c5c341ff3208638b692727a683c8289068d9a11/pyotp-2.10.0.tar.gz", hash = "sha256:d01e9703443616b03c57c700b5cbffd56a1f929c1b0f8f03131bc78c1fca9d3f", size = 18625, upload-time = "2026-06-14T03:48:49.221Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/70/d7/fe43d6cfd1e80081a374c612df6b6555205a7ab761fdd6ba6e30435fd963/pyotp-2.12.1.tar.gz", hash = "sha256:8d0c4192f3c5d1b1a8792df23b9d8acbb7e70abd2b160962af55c5700edbd236", size = 27480, upload-time = "2026-11-19T05:06:24.189Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/33/7b83bde70eddaaaaef487751a9c3a5cc0c0be54620ded0e120ebdc401ff9/pyotp-2.10.0-py3-none-any.whl", hash = "sha256:1df2f6a1bcc3bb0716172a5215ddc2f8c7c7fd26a13df9927d52e1746934836c", size = 13768, upload-time = "2026-06-14T03:48:47.831Z" },
+    { url = "https://files.pythonhosted.org/packages/32/d5/ca399f55b474357c42b8d0ee1c0222a22e6f88bbf4588130b75737c3b73b/pyotp-2.12.1-py3-none-any.whl", hash = "sha256:2f65978d0a0afe5588ec960c810cbb974ba1957ffbf29775d8d4e1b2d4b8984c", size = 17026, upload-time = "2026-11-19T05:06:22.922Z" },
 ]
 
 [[package]]

@@ -44,11 +44,11 @@ def derive_subkey(master_secret: str, info: bytes, *, length: int = 32) -> bytes
         info: Non-empty domain-separation info label bytes.
         length: Output key length in bytes; must be at least 16.
 
-    Raises:
-        ValueError: If ``master_secret`` is empty, ``info`` is empty, or ``length`` is below 16.
-
     Returns:
         Deterministic derived subkey bytes of ``length`` bytes.
+
+    Raises:
+        ValueError: If ``master_secret`` is empty, ``info`` is empty, or ``length`` is below 16.
     """
     if not master_secret:
         msg = "master_secret must not be empty"

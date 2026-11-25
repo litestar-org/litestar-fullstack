@@ -114,7 +114,7 @@ class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     __check_model__ = False
 
     id = Use(uuid4)
-    oauth_name = "google"
+    oauth_name = "github"
     account_id = Use(lambda: f"oauth_{uuid4().hex}")
     account_email = Use(lambda: f"oauth{uuid4().hex[:8]}@gmail.com")
     access_token = Use(lambda: f"access_token_{uuid4().hex}")

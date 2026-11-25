@@ -75,7 +75,11 @@ class TagController(SecureController):
         current_user: CurrentUser[m.User],
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Tag]:
-        """List tags in the workspace catalog."""
+        """List tags in the workspace catalog.
+
+        Returns:
+            Paginated workspace tags.
+        """
         _ = current_user
         results, total = await tags_service.get_many_and_count(*filters)
         return tags_service.to_schema(results, total, filters, schema_type=Tag)
@@ -87,7 +91,11 @@ class TagController(SecureController):
         current_user: CurrentUser[m.User],
         tag_id: Annotated[UUID, Parameter(title="Tag ID", description="The tag to retrieve.")],
     ) -> Tag:
-        """Get a tag by ID."""
+        """Get a tag by ID.
+
+        Returns:
+            The matching tag.
+        """
         _ = current_user
         db_obj = await tags_service.get(tag_id)
         return tags_service.to_schema(db_obj, schema_type=Tag)
@@ -105,7 +113,11 @@ class TagController(SecureController):
         current_user: CurrentUser[m.User],
         data: TagCreate,
     ) -> Tag:
-        """Create a new tag in the workspace catalog."""
+        """Create a new tag in the workspace catalog.
+
+        Returns:
+            The created tag.
+        """
         _ = current_user
         db_obj = await tags_service.create(data.to_dict(), auto_commit=True)
         return tags_service.to_schema(db_obj, schema_type=Tag)
@@ -121,7 +133,11 @@ class TagController(SecureController):
         data: TagUpdate,
         tag_id: Annotated[UUID, Parameter(title="Tag ID", description="The tag to update.")],
     ) -> Tag:
-        """Update a tag."""
+        """Update a tag.
+
+        Returns:
+            The updated tag.
+        """
         db_obj = await tags_service.update(item_id=tag_id, data=data.to_dict(), auto_commit=True)
         return tags_service.to_schema(db_obj, schema_type=Tag)
 

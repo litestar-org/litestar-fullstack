@@ -26,13 +26,11 @@ def _build_oauth_app(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> Litestar:
-    """Create a Litestar app with GitHub and Google OAuth providers configured."""
+    """Create a Litestar app with GitHub OAuth configured."""
     settings = get_settings()
     monkeypatch.setattr(settings.app, "URL", "https://app.example.test")
     monkeypatch.setattr(settings.app, "GITHUB_OAUTH2_CLIENT_ID", "gh-test-client-id")
     monkeypatch.setattr(settings.app, "GITHUB_OAUTH2_CLIENT_SECRET", "gh-test-client-secret")
-    monkeypatch.setattr(settings.app, "GOOGLE_OAUTH2_CLIENT_ID", "google-test-client-id")
-    monkeypatch.setattr(settings.app, "GOOGLE_OAUTH2_CLIENT_SECRET", "google-test-client-secret")
 
     queue_config = settings.queues.get_config(
         alchemy_config=config.alchemy,
@@ -70,7 +68,6 @@ async def test_public_auth_config_reflects_enabled_oauth_providers(
         assert response.status_code == 200
         payload = response.json()
         assert payload["githubEnabled"] is True
-        assert payload["googleEnabled"] is True
         assert payload["passkeysEnabled"] is True
         assert payload["mfaEnabled"] is True
 
@@ -113,40 +110,6 @@ async def test_github_oauth_login_redirect_and_tampered_state_rejection(
             follow_redirects=False,
         )
         assert missing_state.status_code in {400, 401, 403}, missing_state.text
-
-
-async def test_google_oidc_login_redirect_and_tampered_state_rejection(
-    engine: AsyncEngine,
-    sessionmaker: async_sessionmaker[AsyncSession],
-    db_schema: None,
-    _patch_db: None,
-    db_cleanup: None,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Google OIDC login redirects with PKCE/state parameters and rejects tampered callbacks."""
-    _ = (db_schema, _patch_db, db_cleanup)
-    oauth_app = _build_oauth_app(engine, sessionmaker, monkeypatch)
-    async with AsyncTestClient(app=oauth_app) as client:
-        response = await client.get(
-            "/api/auth/oauth/google/login",
-            params={"return_to": "/home"},
-            follow_redirects=False,
-        )
-        assert response.status_code in {302, 303, 307}, response.text
-        location = response.headers.get("location", "")
-        parsed = urlparse(location)
-        assert "accounts.google.com" in parsed.netloc
-        query = parse_qs(parsed.query)
-        assert query.get("client_id") == ["google-test-client-id"]
-        assert "state" in query
-        assert "code_challenge" in query
-
-        tampered = await client.get(
-            "/api/auth/oauth/google/callback",
-            params={"code": "fake-auth-code", "state": "invalid-google-state"},
-            follow_redirects=False,
-        )
-        assert tampered.status_code in {400, 401, 403}, tampered.text
 
 
 async def test_oauth_disallowed_return_to_rejected(

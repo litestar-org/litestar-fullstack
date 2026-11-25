@@ -11,7 +11,11 @@ class BaseStruct(msgspec.Struct):
     """Base msgspec Struct with unset-filtering dictionary export."""
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert populated struct fields to a plain dictionary."""
+        """Convert populated struct fields to a plain dictionary.
+
+        Returns:
+            Dictionary of field names to values, excluding ``msgspec.UNSET`` fields.
+        """
         return {f: getattr(self, f) for f in self.__struct_fields__ if getattr(self, f, None) != msgspec.UNSET}
 
 

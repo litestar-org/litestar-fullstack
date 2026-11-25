@@ -18,7 +18,14 @@ __all__ = (
 
 
 def __getattr__(name: str) -> Any:
-    """Lazily load accounts submodules on attribute access."""
+    """Lazily load accounts submodules on attribute access.
+
+    Returns:
+        Imported accounts submodule matching ``name``.
+
+    Raises:
+        AttributeError: If ``name`` is not an exported accounts submodule.
+    """
     if name in __all__:
         return import_module(f"app.domain.accounts.{name}")
     msg = f"module {__name__!r} has no attribute {name!r}"

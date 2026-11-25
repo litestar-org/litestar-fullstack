@@ -35,8 +35,6 @@ OPTIONAL_SECRETS = [
     "RESEND_API_KEY",
     "GITHUB_OAUTH2_CLIENT_ID",
     "GITHUB_OAUTH2_CLIENT_SECRET",
-    "GOOGLE_OAUTH2_CLIENT_ID",
-    "GOOGLE_OAUTH2_CLIENT_SECRET",
 ]
 
 BASE_DIR = Path(__file__).parent
@@ -447,8 +445,6 @@ HELP_TEXT = """
   RESEND_API_KEY              Email service API key.
   GITHUB_OAUTH2_CLIENT_ID     GitHub OAuth client ID.
   GITHUB_OAUTH2_CLIENT_SECRET GitHub OAuth client secret.
-  GOOGLE_OAUTH2_CLIENT_ID     Google OAuth client ID.
-  GOOGLE_OAUTH2_CLIENT_SECRET Google OAuth client secret.
 
 [bold]GKE WORKLOAD IDENTITY:[/bold]
   Use --gcp-service-account to bind the Kubernetes ServiceAccount to a GCP

@@ -33,7 +33,11 @@ class UserController(SecureController):
         users_service: UserService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[User]:
-        """List user accounts using Advanced Alchemy filters."""
+        """List user accounts using Advanced Alchemy filters.
+
+        Returns:
+            Paginated list of user account records.
+        """
         results, total = await users_service.get_many_and_count(*filters)
         return users_service.to_schema(results, total, filters=filters, schema_type=User)
 
@@ -43,13 +47,21 @@ class UserController(SecureController):
         users_service: UserService,
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to retrieve.")],
     ) -> User:
-        """Retrieve a single user account by UUID."""
+        """Retrieve a single user account by UUID.
+
+        Returns:
+            Serialized user account record.
+        """
         db_obj = await users_service.get(user_id)
         return users_service.to_schema(db_obj, schema_type=User)
 
     @post(operation_id="CreateUser")
     async def create_user(self, users_service: UserService, data: UserCreate) -> User:
-        """Create a new user account."""
+        """Create a new user account.
+
+        Returns:
+            Newly created user account record.
+        """
         db_obj = await users_service.create(data.to_dict(), auto_commit=True)
         return users_service.to_schema(db_obj, schema_type=User)
 
@@ -60,7 +72,11 @@ class UserController(SecureController):
         users_service: UserService,
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to update.")],
     ) -> User:
-        """Partially update an existing user account."""
+        """Partially update an existing user account.
+
+        Returns:
+            Updated user account record.
+        """
         db_obj = await users_service.update(item_id=user_id, data=data.to_dict(), auto_commit=True)
         return users_service.to_schema(db_obj, schema_type=User)
 

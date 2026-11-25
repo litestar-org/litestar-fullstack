@@ -17,7 +17,11 @@ class APIKeyCreate(CamelizedBaseStruct):
     expires_in_days: int | None = None
 
     def __post_init__(self) -> None:
-        """Validate API key display name and optional expiration window."""
+        """Validate API key display name and optional expiration window.
+
+        Raises:
+            ValueError: If ``name`` is empty after stripping or ``expires_in_days`` is less than 1.
+        """
         self.name = self.name.strip()
         if not self.name:
             msg = "API key name cannot be empty"

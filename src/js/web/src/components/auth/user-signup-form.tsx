@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { GitHubSignInButton } from "@/components/auth/github-signin-button"
-import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -52,9 +51,8 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
   const registerMutation = useMutation(localRegisterMutation())
 
   const finalRedirect = redirectUrl || DEFAULT_AUTH_REDIRECT
-  const googleOAuthEnabled = authConfig?.googleEnabled ?? false
   const githubOAuthEnabled = authConfig?.githubEnabled ?? false
-  const hasOAuthProviders = googleOAuthEnabled || githubOAuthEnabled
+  const hasOAuthProviders = githubOAuthEnabled
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -189,10 +187,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
                 <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
-            <div className="grid gap-2">
-              {githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}
-              {googleOAuthEnabled && <GoogleSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}
-            </div>
+            <div className="grid gap-2">{githubOAuthEnabled && <GitHubSignInButton variant="signup" className="w-full" authRedirect={finalRedirect} />}</div>
           </>
         )}
       </div>

@@ -110,7 +110,7 @@ describe("PasskeysSection", () => {
       const pathname = new URL(request.url).pathname
 
       if (pathname === "/api/config/auth") {
-        return jsonResponse({ googleEnabled: false, githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
+        return jsonResponse({ githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
       }
       if (pathname === "/api/access/passkeys" && request.method === "GET") {
         return jsonResponse(passkeys)
@@ -171,7 +171,7 @@ describe("PasskeysSection", () => {
       const pathname = new URL(request.url).pathname
 
       if (pathname === "/api/config/auth") {
-        return jsonResponse({ googleEnabled: false, githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
+        return jsonResponse({ githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
       }
       if (pathname === "/api/access/passkeys") {
         return jsonResponse([])
@@ -226,7 +226,7 @@ describe("PasskeysSection", () => {
       const pathname = new URL(request.url).pathname
 
       if (pathname === "/api/config/auth") {
-        return jsonResponse({ googleEnabled: false, githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
+        return jsonResponse({ githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
       }
       if (pathname === "/api/access/passkeys" && request.method === "GET") {
         return jsonResponse(passkeys)
@@ -268,7 +268,7 @@ describe("PasskeysSection", () => {
       const request = input instanceof Request ? input : new Request(input, init)
       const pathname = new URL(request.url).pathname
       if (pathname === "/api/config/auth") {
-        return jsonResponse({ googleEnabled: false, githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
+        return jsonResponse({ githubEnabled: false, passkeysEnabled: true, mfaEnabled: true })
       }
       if (pathname === "/api/access/passkeys") {
         return jsonResponse([])

@@ -29,17 +29,29 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
     match_fields = ["name"]
 
     async def to_model_on_create(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        """Populate unique slug, initial owner membership, and tags on team creation."""
+        """Populate unique slug, initial owner membership, and tags on team creation.
+
+        Returns:
+            Prepared ``Team`` model or payload for creation.
+        """
         dumped = await self._populate_slug(service.schema_dump(data))
         return await self._populate_with_owner_and_tags(dumped, "create")
 
     async def to_model_on_update(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        """Populate unique slug and resolve tag associations on team update."""
+        """Populate unique slug and resolve tag associations on team update.
+
+        Returns:
+            Prepared ``Team`` model or payload for update.
+        """
         dumped = await self._populate_slug(service.schema_dump(data))
         return await self._populate_with_owner_and_tags(dumped, "update")
 
     async def to_model_on_upsert(self, data: ModelDictT[m.Team]) -> ModelDictT[m.Team]:
-        """Populate unique slug and resolve tag associations on team upsert."""
+        """Populate unique slug and resolve tag associations on team upsert.
+
+        Returns:
+            Prepared ``Team`` model or payload for upsert.
+        """
         dumped = await self._populate_slug(service.schema_dump(data))
         return await self._populate_with_owner_and_tags(dumped, "upsert")
 
@@ -80,7 +92,11 @@ class TeamService(service.SQLAlchemyAsyncRepositoryService[m.Team]):
         return model
 
     async def update(self, data: ModelDictT[m.Team], item_id: Any | None = None, **kwargs: Any) -> m.Team:
-        """Update team details and optionally transfer ownership when ``owner_id`` is provided."""
+        """Update team details and optionally transfer ownership when ``owner_id`` is provided.
+
+        Returns:
+            The updated ``Team`` model instance.
+        """
         pending_owner_id: UUID | None = None
         if service.is_dict_with_field(data, "owner_id"):
             pending_owner_id = data.get("owner_id")

@@ -14,7 +14,14 @@ __all__ = ("accounts", "admin", "system", "tags", "teams")
 
 
 def __getattr__(name: str) -> Any:
-    """Lazily load domain subpackages on attribute access."""
+    """Lazily load domain subpackages on attribute access.
+
+    Returns:
+        The imported domain subpackage.
+
+    Raises:
+        AttributeError: If ``name`` is not a known domain subpackage.
+    """
     if name in _SUBMODULES:
         return import_module(f"app.domain.{name}")
     msg = f"module {__name__!r} has no attribute {name!r}"

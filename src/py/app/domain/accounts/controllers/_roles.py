@@ -45,7 +45,11 @@ class RoleController(SecureController):
         roles_service: RoleService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Role]:
-        """List roles using Advanced Alchemy filters."""
+        """List roles using Advanced Alchemy filters.
+
+        Returns:
+            Paginated list of role records.
+        """
         results, total = await roles_service.get_many_and_count(*filters)
         return roles_service.to_schema(results, total, filters=filters, schema_type=Role)
 
@@ -55,13 +59,21 @@ class RoleController(SecureController):
         roles_service: RoleService,
         role_id: Annotated[UUID, Parameter(title="Role ID", description="The role to retrieve.")],
     ) -> Role:
-        """Retrieve a role by UUID."""
+        """Retrieve a role by UUID.
+
+        Returns:
+            Serialized role record.
+        """
         db_obj = await roles_service.get(role_id)
         return roles_service.to_schema(db_obj, schema_type=Role)
 
     @post(operation_id="CreateRole", path="")
     async def create_role(self, roles_service: RoleService, data: RoleCreate) -> Role:
-        """Create a new role."""
+        """Create a new role.
+
+        Returns:
+            Newly created role record.
+        """
         db_obj = await roles_service.create(data.to_dict(), auto_commit=True)
         return roles_service.to_schema(db_obj, schema_type=Role)
 
@@ -72,7 +84,14 @@ class RoleController(SecureController):
         data: RoleUpdate,
         role_id: Annotated[UUID, Parameter(title="Role ID", description="The role to update.")],
     ) -> Role:
-        """Update a non-default role."""
+        """Update a non-default role.
+
+        Returns:
+            Updated role record.
+
+        Raises:
+            HTTPException: If attempting to modify or rename a protected default role.
+        """
         existing = await roles_service.get(role_id)
         if existing.name in _PROTECTED_ROLES or data.name in _PROTECTED_ROLES:
             raise HTTPException(status_code=400, detail="Cannot update default roles")
@@ -85,7 +104,11 @@ class RoleController(SecureController):
         roles_service: RoleService,
         role_id: Annotated[UUID, Parameter(title="Role ID", description="The role to delete.")],
     ) -> None:
-        """Delete a non-default role."""
+        """Delete a non-default role.
+
+        Raises:
+            HTTPException: If attempting to delete a protected default role.
+        """
         db_obj = await roles_service.get(role_id)
         if db_obj.name in _PROTECTED_ROLES:
             raise HTTPException(status_code=400, detail="Cannot delete default roles")
@@ -99,7 +122,14 @@ class RoleController(SecureController):
         data: UserRoleAdd,
         role_slug: Annotated[str, Parameter(title="Role Slug", description="The role slug to assign.")],
     ) -> Message:
-        """Atomically assign a role to a user and record an audit log entry."""
+        """Atomically assign a role to a user and record an audit log entry.
+
+        Returns:
+            Confirmation message for the role assignment.
+
+        Raises:
+            HTTPException: If the role or user is not found, or the user already holds the role.
+        """
         role = await account_services.roles.get_one_or_none(slug=role_slug)
         if role is None:
             raise HTTPException(status_code=404, detail=f"Role '{role_slug}' not found")
@@ -133,7 +163,14 @@ class RoleController(SecureController):
         data: UserRoleRevoke,
         role_slug: Annotated[str, Parameter(title="Role Slug", description="The role slug to revoke.")],
     ) -> Message:
-        """Atomically revoke a role from a user and record an audit log entry."""
+        """Atomically revoke a role from a user and record an audit log entry.
+
+        Returns:
+            Confirmation message for the role revocation.
+
+        Raises:
+            HTTPException: If the role, user, or role assignment does not exist.
+        """
         role = await account_services.roles.get_one_or_none(slug=role_slug)
         if role is None:
             raise HTTPException(status_code=404, detail=f"Role '{role_slug}' not found")

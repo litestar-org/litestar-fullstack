@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urlparse
 
@@ -33,26 +32,7 @@ from litestar_security.accounts import (
     forwarded_client_key,
     trusted_client_key,
 )
-from litestar_security.authentication import (
-    AuthenticationOutcome,
-    InvalidCredentials,
-    VerificationUnavailable,
-)
 from litestar_security.providers.api_key import APIKeyConfig
-from litestar_security.providers.jwks import (
-    CachedJWKSProvider,
-    HttpxJWKSFetcher,
-    InMemoryJWKSCache,
-    JWKSProvider,
-    JWKSSource,
-)
-from litestar_security.providers.jwt import (
-    JWTClaims,
-    JWTValidationConfig,
-    PyJWTVerifier,
-    VerificationKey,
-    parse_unverified_jwt_route,
-)
 from litestar_security.providers.oauth import (
     GitHubOAuthProvider,
     OAuthAccountService,
@@ -68,7 +48,6 @@ from litestar_security.providers.oauth import (
     SecretStr,
     StepUpOAuthAuthorizer,
 )
-from litestar_security.providers.oidc import OIDCMetadata, google_oidc_provider
 
 from app.db import models as m
 from app.domain.accounts.security.api_keys import APIKeyIdentityResolver, SQLAlchemyAPIKeyStore
@@ -111,17 +90,6 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 _GITHUB_ISSUER = "https://github.com"
-_GOOGLE_ISSUER = "https://accounts.google.com"
-_GOOGLE_JWKS_URI = "https://www.googleapis.com/oauth2/v3/certs"
-_GOOGLE_METADATA = OIDCMetadata(
-    issuer=_GOOGLE_ISSUER,
-    jwks_uri=_GOOGLE_JWKS_URI,
-    authorization_endpoint="https://accounts.google.com/o/oauth2/v2/auth",
-    token_endpoint="https://oauth2.googleapis.com/token",  # noqa: S106
-    end_session_endpoint=None,
-    algorithms=frozenset({"RS256"}),
-    revocation_endpoint="https://oauth2.googleapis.com/revoke",
-)
 
 _TEMPLATE_TASK_MAP: dict[str, str] = {
     "local.verify": "email.send_verification",
@@ -140,57 +108,6 @@ __all__ = (
     "build_session_middleware",
     "build_session_store",
 )
-
-
-def _empty_verifier_cache() -> dict[tuple[str, str], PyJWTVerifier]:
-    return {}
-
-
-@dataclass(frozen=True, slots=True)
-class _JWKSIDTokenVerifier:
-    """Public-API OIDC ID-token verifier resolving signing keys via ``JWKSProvider``."""
-
-    config: JWTValidationConfig
-    jwks: JWKSProvider
-    jwks_uri: str
-    _cache: dict[tuple[str, str], PyJWTVerifier] = field(
-        default_factory=_empty_verifier_cache, init=False, repr=False, compare=False
-    )
-
-    async def verify(self, token: str, *, now: datetime | None = None) -> AuthenticationOutcome[JWTClaims]:
-        """Verify an OIDC ID token against cached JWKS keys matching its header ``kid`` and ``alg``."""
-        route = parse_unverified_jwt_route(token)
-        if isinstance(route, InvalidCredentials):
-            return route
-        algorithm = route.header.get("alg")
-        key_id = route.header.get("kid")
-        if (
-            not isinstance(algorithm, str)
-            or algorithm not in self.config.algorithms
-            or not isinstance(key_id, str)
-            or not key_id
-        ):
-            return InvalidCredentials()
-        check_at = now.astimezone(UTC) if now is not None else datetime.now(UTC)
-        selection = cast(
-            "object",
-            await self.jwks.select_key(self.config.issuer, self.jwks_uri, key_id, algorithm, now=check_at),
-        )
-        if isinstance(selection, (InvalidCredentials, VerificationUnavailable)):
-            return selection
-        if not isinstance(selection, VerificationKey):
-            return VerificationUnavailable()
-        cache_key = (key_id, algorithm)
-        verifier = self._cache.get(cache_key)
-        if verifier is None:
-            verifier = PyJWTVerifier(
-                config=replace(self.config, algorithms=frozenset({algorithm})),
-                key=selection.key,
-                mechanism_name="oidc",
-                slot_name="oauth.id-token",
-            )
-            self._cache[cache_key] = verifier
-        return await verifier.verify(token, now=check_at)
 
 
 def _normalize_origin(raw: str) -> str | None:
@@ -241,18 +158,21 @@ def _resolve_cookie_secure(settings: Settings) -> bool:
     return bool(settings.security.COOKIE_SECURE or settings.app.COOKIE_SECURE)
 
 
-def _oauth_transport_binding(request: Request[Any, Any, Any]) -> bytes | None:
-    value = request.headers.get("authorization") or request.headers.get("cookie")
-    return value.encode("utf-8") if value else None
-
-
 def build_session_store(alchemy_config: SQLAlchemyAsyncConfig) -> SQLAlchemyStore[SQLAlchemyAsyncConfig]:
-    """Build the SQLAlchemy-backed Litestar server-side session store on ``m.AppStore``."""
+    """Build the SQLAlchemy-backed Litestar server-side session store on ``m.AppStore``.
+
+    Returns:
+        Configured ``SQLAlchemyStore`` instance for session storage.
+    """
     return SQLAlchemyStore(config=alchemy_config, model=m.AppStore, namespace="sessions")
 
 
 def build_session_middleware(settings: Settings) -> DefineMiddleware:
-    """Build Litestar's native server-side session middleware backed by ``SQLAlchemyStore``."""
+    """Build Litestar's native server-side session middleware backed by ``SQLAlchemyStore``.
+
+    Returns:
+        Configured server-side session middleware definition.
+    """
     cookie_secure = _resolve_cookie_secure(settings)
     return ServerSideSessionConfig(
         key="__Host-app-session" if cookie_secure else "app-session",
@@ -266,7 +186,11 @@ def build_session_middleware(settings: Settings) -> DefineMiddleware:
 
 
 def build_csrf_config(settings: Settings) -> CSRFConfig:
-    """Build Litestar's native CSRF configuration using an HKDF-derived secret."""
+    """Build Litestar's native CSRF configuration using an HKDF-derived secret.
+
+    Returns:
+        Configured ``CSRFConfig`` instance.
+    """
     cookie_secure = _resolve_cookie_secure(settings)
     secret = derive_subkey(settings.app.SECRET_KEY, CSRF_SECRET_INFO, length=32).hex()
     return CSRFConfig(
@@ -282,7 +206,11 @@ def build_csrf_config(settings: Settings) -> CSRFConfig:
 def build_notification_handler(
     queue_service: QueueService | None = None,
 ) -> Callable[[NotificationCommand], Awaitable[None]]:
-    """Create a ``LocalAuth`` notification callback enqueueing canonical ``email.send_*`` queue tasks."""
+    """Create a ``LocalAuth`` notification callback enqueueing canonical ``email.send_*`` queue tasks.
+
+    Returns:
+        Async notification callback accepting a ``NotificationCommand``.
+    """
 
     async def _dispatch_notification(notification: NotificationCommand) -> None:
         task_name = _TEMPLATE_TASK_MAP.get(notification.template)
@@ -310,76 +238,27 @@ def _build_oauth_config(
     local_auth_config: Any,
     backend: SQLAlchemySecurityBackend,
     step_up_store: SQLAlchemyStepUpService,
-) -> tuple[OAuthConfig | None, tuple[JWKSProvider, ...]]:
-    if not (settings.app.github_oauth_enabled or settings.app.google_oauth_enabled):
-        return None, ()
+) -> OAuthConfig | None:
+    if not settings.app.github_oauth_enabled:
+        return None
 
     base_url = settings.app.URL.rstrip("/")
     cookie_secure = _resolve_cookie_secure(settings)
-    registrations: list[OAuthProviderRegistration] = []
-    callback_uris: dict[str, frozenset[str]] = {}
-    jwks_providers: list[JWKSProvider] = []
-
-    if settings.app.github_oauth_enabled:
-        github_callback = f"{base_url}/api/auth/oauth/github/callback"
-        github_provider = GitHubOAuthProvider(
-            client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
-            client_secret=SecretStr(settings.app.GITHUB_OAUTH2_CLIENT_SECRET),
-        )
-        registrations.append(
-            OAuthProviderRegistration(
-                provider=cast("OAuthProvider", github_provider),
-                redirect_uri=github_callback,
-                default_scopes=frozenset({"user:email", "read:user"}),
-                expected_issuer=_GITHUB_ISSUER,
-                retain_tokens=True,
-            )
-        )
-        callback_uris["github"] = frozenset({github_callback})
-
-    if settings.app.google_oauth_enabled:
-        google_callback = f"{base_url}/api/auth/oauth/google/callback"
-        google_jwks = CachedJWKSProvider(
-            entries=(
-                JWKSSource(
-                    issuer=_GOOGLE_ISSUER,
-                    jwks_uri=_GOOGLE_JWKS_URI,
-                    algorithms=frozenset({"RS256"}),
-                ),
-            ),
-            fetcher=HttpxJWKSFetcher(),
-            cache=InMemoryJWKSCache(),
-        )
-        jwks_providers.append(google_jwks)
-        google_verifier = _JWKSIDTokenVerifier(
-            config=JWTValidationConfig(
-                issuer=_GOOGLE_ISSUER,
-                audiences=frozenset({settings.app.GOOGLE_OAUTH2_CLIENT_ID}),
-                algorithms=frozenset({"RS256"}),
-                required_claims=frozenset({"iss", "sub", "aud", "exp", "iat"}),
-                access_token_profile=False,
-                token_types=frozenset({"jwt"}),
-            ),
-            jwks=google_jwks,
-            jwks_uri=_GOOGLE_JWKS_URI,
-        )
-        google_provider = google_oidc_provider(
-            client_id=settings.app.GOOGLE_OAUTH2_CLIENT_ID,
-            client_secret=SecretStr(settings.app.GOOGLE_OAUTH2_CLIENT_SECRET),
-            metadata=_GOOGLE_METADATA,
-            verifier=cast("Any", google_verifier),
-            offline_access=True,
-        )
-        registrations.append(
-            OAuthProviderRegistration.oidc(
-                provider=cast("OAuthProvider", google_provider),
-                redirect_uri=google_callback,
-            )
-        )
-        callback_uris["google"] = frozenset({google_callback})
-
-    if not registrations:
-        return None, ()
+    github_callback = f"{base_url}/api/auth/oauth/github/callback"
+    github_provider = GitHubOAuthProvider(
+        client_id=settings.app.GITHUB_OAUTH2_CLIENT_ID,
+        client_secret=SecretStr(settings.app.GITHUB_OAUTH2_CLIENT_SECRET),
+    )
+    registrations = (
+        OAuthProviderRegistration(
+            provider=cast("OAuthProvider", github_provider),
+            redirect_uri=github_callback,
+            default_scopes=frozenset({"user:email", "read:user"}),
+            expected_issuer=_GITHUB_ISSUER,
+            retain_tokens=True,
+        ),
+    )
+    callback_uris = {"github": frozenset({github_callback})}
 
     protector = build_oauth_protector(settings)
     tx_store = SQLAlchemyOAuthTransactionStore(alchemy_config, protector)
@@ -388,7 +267,13 @@ def _build_oauth_config(
     redirects = OAuthRedirectPolicy(
         callback_uris=callback_uris,
         return_to=frozenset(
-            {"/", "/home", "/dashboard", "/settings/security", "/auth/github/callback", "/auth/google/callback"}
+            {
+                "/",
+                "/home",
+                "/dashboard",
+                "/settings/security",
+                "/auth/github/callback",
+            }
         ),
         allow_insecure_localhost=not cookie_secure,
     )
@@ -409,26 +294,22 @@ def _build_oauth_config(
         current = session_auth.current_authentication(request)
         return current.session_id if current is not None else None
 
-    step_up_authorizer = StepUpOAuthAuthorizer(
-        service=StepUpService(step_up_store),
-        current_epoch=backend.current_epoch,
-        transport_binding=_oauth_transport_binding,
+    step_up_authorizer = StepUpOAuthAuthorizer.from_step_up_service(
+        StepUpService(step_up_store),
+        epochs=backend,
         session_binding=_oauth_session_binding,
     )
     lifecycle = OAuthLifecycleService(
-        registrations=tuple(registrations),
+        registrations=registrations,
         transactions=tx_service,
         accounts=account_service,
         local=local_transport,
         step_up=cast("OAuthStepUpAuthorizer", step_up_authorizer),
     )
-    return (
-        OAuthConfig(
-            oauth_service=lifecycle,
-            route_prefix="/api/auth",
-            register_routes=True,
-        ),
-        tuple(jwks_providers),
+    return OAuthConfig(
+        oauth_service=lifecycle,
+        route_prefix="/api/auth",
+        register_routes=True,
     )
 
 
@@ -438,7 +319,11 @@ def build_security_config(
     *,
     queue_service: QueueService | None = None,
 ) -> SecurityConfig[m.User]:
-    """Assemble the complete declarative ``SecurityConfig[m.User]`` for the application."""
+    """Assemble the complete declarative ``SecurityConfig[m.User]`` for the application.
+
+    Returns:
+        Fully configured ``SecurityConfig`` instance.
+    """
     cookie_secure = _resolve_cookie_secure(settings)
     master = settings.app.SECRET_KEY
 
@@ -516,7 +401,7 @@ def build_security_config(
         register_routes=True,
     )
 
-    oauth_config, jwks_providers = _build_oauth_config(
+    oauth_config = _build_oauth_config(
         settings,
         alchemy_config,
         local_auth,
@@ -558,7 +443,5 @@ def build_security_config(
         websocket=websocket_config,
         headers=SecurityHeadersConfig.hardened(),
         authorization_resolver=AppAuthorizationResolver(),
-        jwks_providers=jwks_providers,
-        jwks_warmup_failure="lazy",
         exclude=["^/static"],
     )

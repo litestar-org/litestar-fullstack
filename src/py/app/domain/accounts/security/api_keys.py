@@ -115,7 +115,11 @@ class SQLAlchemyAPIKeyStore:
         self._lock = Lock()
 
     async def get(self, key_id: str) -> APIKeyState | None:
-        """Load one API key state record by opaque ``key_id``."""
+        """Load one API key state record by opaque ``key_id``.
+
+        Returns:
+            Matching key state, or ``None`` if not found.
+        """
         async with self._alchemy_config.get_session() as session:
             row = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == key_id))
             return _row_to_state(row) if row is not None else None
@@ -127,7 +131,11 @@ class SQLAlchemyAPIKeyStore:
         name: str = "API Key",
         key_prefix: str | None = None,
     ) -> None:
-        """Persist a new digest-only API key record."""
+        """Persist a new digest-only API key record.
+
+        Raises:
+            ValueError: If ``subject_id`` is not a valid UUID or ``key_id`` already exists.
+        """
         uid = _parse_uuid(record.subject_id)
         if uid is None:
             msg = "API key subject_id must be a valid UUID"
@@ -161,7 +169,11 @@ class SQLAlchemyAPIKeyStore:
         overlap_until: datetime | None,
         now: datetime,
     ) -> None:
-        """Atomically mark the current key rotated with bounded overlap and persist its successor."""
+        """Atomically mark the current key rotated with bounded overlap and persist its successor.
+
+        Raises:
+            ValueError: If ``replacement.subject_id`` is invalid or rotation conflicts with current state.
+        """
         now_utc = _ensure_utc(now)
         uid = _parse_uuid(replacement.subject_id)
         if uid is None:
@@ -211,7 +223,11 @@ class SQLAlchemyAPIKeyStore:
                 raise ValueError(msg) from exc
 
     async def revoke(self, *, key_id: str, now: datetime) -> None:
-        """Immediately revoke an existing API key and clear any grace overlap window."""
+        """Immediately revoke an existing API key and clear any grace overlap window.
+
+        Raises:
+            ValueError: If no API key matches ``key_id``.
+        """
         now_utc = _ensure_utc(now)
         async with self._lock, self._alchemy_config.get_session() as session:
             result = await session.execute(
@@ -223,7 +239,11 @@ class SQLAlchemyAPIKeyStore:
                 raise ValueError(msg)
 
     async def list_for_user(self, user_id: UUID) -> list[m.APIKey]:
-        """List all API key metadata rows owned by a user ordered newest first."""
+        """List all API key metadata rows owned by a user ordered newest first.
+
+        Returns:
+            API key ORM rows belonging to ``user_id``.
+        """
         async with self._alchemy_config.get_session() as session:
             rows = (
                 await session.scalars(
@@ -233,7 +253,11 @@ class SQLAlchemyAPIKeyStore:
             return list(rows)
 
     async def get_for_user(self, user_id: UUID, key_id: str) -> m.APIKey | None:
-        """Fetch one API key metadata row owned by ``user_id``."""
+        """Fetch one API key metadata row owned by ``user_id``.
+
+        Returns:
+            Matching API key row, or ``None`` if not found.
+        """
         async with self._alchemy_config.get_session() as session:
             return await session.scalar(select(m.APIKey).where(m.APIKey.user_id == user_id, m.APIKey.key_id == key_id))
 
@@ -244,7 +268,11 @@ class SQLAlchemyAPIKeyStore:
         name: str,
         key_prefix: str,
     ) -> m.APIKey | None:
-        """Update human-readable name and display prefix on an existing key."""
+        """Update human-readable name and display prefix on an existing key.
+
+        Returns:
+            Updated API key row, or ``None`` if ``key_id`` does not exist.
+        """
         async with self._lock, self._alchemy_config.get_session() as session:
             row = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == key_id))
             if row is None:
@@ -283,7 +311,11 @@ class APIKeyIdentityResolver:
         self,
         claims: APIKeyClaims | APIKeyState,
     ) -> Principal[m.User] | InvalidCredentials | VerificationUnavailable:
-        """Load the active user for the key's ``subject_id`` or fail closed on storage errors."""
+        """Load the active user for the key's ``subject_id`` or fail closed on storage errors.
+
+        Returns:
+            Resolved user principal, ``InvalidCredentials`` if missing/inactive, or ``VerificationUnavailable``.
+        """
         uid = _parse_uuid(claims.subject_id)
         if uid is None:
             return InvalidCredentials()
@@ -317,7 +349,11 @@ def build_api_key_service(
     *,
     prefix: str = "lsk",
 ) -> APIKeyService:
-    """Construct an ``APIKeyService`` backed by ``SQLAlchemyAPIKeyStore``."""
+    """Construct an ``APIKeyService`` backed by ``SQLAlchemyAPIKeyStore``.
+
+    Returns:
+        Configured ``APIKeyService`` instance.
+    """
     return APIKeyService(
         config=APIKeyConfig(store=store, pepper=pepper, prefix=prefix),
         codec=APIKeyCodec(pepper=pepper, prefix=prefix),

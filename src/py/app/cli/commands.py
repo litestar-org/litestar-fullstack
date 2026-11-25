@@ -142,7 +142,11 @@ def create_user(
 @user_management_group.command(name="promote-to-superuser", help="Promotes a user to application superuser")
 @click.option("--email", help="Email of the user", type=click.STRING, required=True, show_default=False)
 def promote_to_superuser(email: str) -> None:
-    """Promote an existing user account to superuser."""
+    """Promote an existing user account to superuser.
+
+    Raises:
+        click.ClickException: If no user matches ``email``.
+    """
     console = get_console()
     console.rule("Promote user to superuser.")
     promoted = anyio.run(_promote_to_superuser_async, email, alchemy)

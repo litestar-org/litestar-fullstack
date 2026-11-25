@@ -32,7 +32,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         user_agent: str | None = None,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Create and persist a new audit log entry."""
+        """Create and persist a new audit log entry.
+
+        Returns:
+            The persisted ``AuditLog`` record.
+        """
         if request is not None:
             if ip_address is None:
                 ip_address = request.client.host if request.client else None
@@ -61,7 +65,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         actor_id: UUID,
         window_minutes: int,
     ) -> int:
-        """Count recent actions for an actor within a rolling window."""
+        """Count recent actions for an actor within a rolling window.
+
+        Returns:
+            Number of matching audit log entries within the window.
+        """
         cutoff_time = datetime.now(UTC) - timedelta(minutes=window_minutes)
         return await self.count(
             m.AuditLog.action == action,
@@ -79,7 +87,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         changes: list[str],
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin user update event."""
+        """Log an admin user update event.
+
+        Returns:
+            The persisted ``AuditLog`` record.
+        """
         return await self.log_action(
             action="admin.user.update",
             actor_id=actor_id,
@@ -100,7 +112,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         user_email: str,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin user deletion event."""
+        """Log an admin user deletion event.
+
+        Returns:
+            The persisted ``AuditLog`` record.
+        """
         return await self.log_action(
             action="admin.user.delete",
             actor_id=actor_id,
@@ -121,7 +137,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         changes: list[str],
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team update event."""
+        """Log an admin team update event.
+
+        Returns:
+            The persisted ``AuditLog`` record.
+        """
         return await self.log_action(
             action="admin.team.update",
             actor_id=actor_id,
@@ -142,7 +162,11 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
         team_name: str,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team deletion event."""
+        """Log an admin team deletion event.
+
+        Returns:
+            The persisted ``AuditLog`` record.
+        """
         return await self.log_action(
             action="admin.team.delete",
             actor_id=actor_id,

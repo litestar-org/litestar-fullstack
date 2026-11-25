@@ -43,7 +43,14 @@ class TeamMemberController(SecureController):
         data: TeamMemberModify,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
     ) -> Team:
-        """Add an existing user to the team."""
+        """Add an existing user to the team.
+
+        Returns:
+            The updated team with its members.
+
+        Raises:
+            IntegrityError: If the user is already a member of the team.
+        """
         user_obj = await users_service.get_one(email=data.user_name)
         existing_membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
         if existing_membership is not None:
@@ -70,7 +77,15 @@ class TeamMemberController(SecureController):
         data: TeamMemberModify,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
     ) -> Team:
-        """Revoke a member's access to a team while protecting the sole team owner."""
+        """Revoke a member's access to a team while protecting the sole team owner.
+
+        Returns:
+            The updated team after removing the member.
+
+        Raises:
+            IntegrityError: If the user is not a member of the team.
+            HTTPException: If removing the sole owner of the team.
+        """
         user_obj = await users_service.get_one(email=data.user_name)
         membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_obj.id)
         if membership is None:
@@ -98,7 +113,15 @@ class TeamMemberController(SecureController):
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to update.")],
         data: TeamMemberUpdate,
     ) -> TeamMember:
-        """Update a team member's role."""
+        """Update a team member's role.
+
+        Returns:
+            The updated team membership.
+
+        Raises:
+            IntegrityError: If the user is not a member of the team.
+            HTTPException: If demoting a team owner from the ``ADMIN`` role.
+        """
         membership = await team_members_service.get_one_or_none(team_id=team_id, user_id=user_id)
         if membership is None:
             msg = "User is not a member of this team."

@@ -170,14 +170,22 @@ class SQLAlchemySecurityBackend:
         self._lock = Lock()
 
     async def find_for_login(self, normalized_identifier: str) -> LocalAccountState[m.User] | None:
-        """Locate an account by normalized email address with authorization relationships eager-loaded."""
+        """Locate an account by normalized email address with authorization relationships eager-loaded.
+
+        Returns:
+            Matching ``LocalAccountState``, or ``None`` if not found.
+        """
         async with self._alchemy_config.get_session() as session:
             stmt = select(m.User).where(m.User.email == normalized_identifier).options(*_user_load_options())
             user = await session.scalar(stmt)
             return _to_account_state(user) if user is not None else None
 
     async def get_by_id(self, account_id: str) -> LocalAccountState[m.User] | None:
-        """Load an account by UUID string with authorization relationships eager-loaded."""
+        """Load an account by UUID string with authorization relationships eager-loaded.
+
+        Returns:
+            Matching ``LocalAccountState``, or ``None`` if not found or invalid UUID.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return None
@@ -219,7 +227,11 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> bool:
-        """Atomically compare-and-swap a stored password hash."""
+        """Atomically compare-and-swap a stored password hash.
+
+        Returns:
+            ``True`` if the password hash was updated, ``False`` otherwise.
+        """
         del event
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -241,7 +253,11 @@ class SQLAlchemySecurityBackend:
         expected_epoch: int,
         event: SecurityEvent,
     ) -> PasswordChangeOutcome:
-        """Atomically replace a user's password hash and advance ``security_epoch``."""
+        """Atomically replace a user's password hash and advance ``security_epoch``.
+
+        Returns:
+            ``PasswordChangeOutcome`` indicating ``CHANGED``, ``CONFLICT``, or ``NOT_FOUND``.
+        """
         del event
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -262,7 +278,11 @@ class SQLAlchemySecurityBackend:
             return PasswordChangeOutcome(PasswordChangeStatus.CHANGED, next_epoch)
 
     async def list_methods(self, account_id: str) -> tuple[LoginMethod, ...]:
-        """List registered login methods for an account across AppStore, confirmed MFA factors, and passkeys."""
+        """List registered login methods for an account across AppStore, confirmed MFA factors, and passkeys.
+
+        Returns:
+            Tuple of registered ``LoginMethod`` entries for ``account_id``.
+        """
         prefix = f"{account_id}:"
         uid = _parse_uuid(account_id)
         async with self._alchemy_config.get_session() as session:
@@ -342,7 +362,11 @@ class SQLAlchemySecurityBackend:
         require_remaining: bool = True,
         event: SecurityEvent,
     ) -> RevokeLoginMethodOutcome:
-        """Revoke one login method and its underlying MFA/passkey row atomically."""
+        """Revoke one login method and its underlying MFA/passkey row atomically.
+
+        Returns:
+            ``RevokeLoginMethodOutcome`` indicating ``REVOKED``, ``NOT_FOUND``, or ``FINAL_METHOD``.
+        """
         del event
         prefix = f"{account_id}:"
         target_key = f"{account_id}:{method_id}"
@@ -415,7 +439,14 @@ class SQLAlchemySecurityBackend:
         now: datetime,
         event: SecurityEvent,
     ) -> RegistrationOutcome[m.User]:
-        """Atomically register a new user, assign the default role, and persist optional verification token."""
+        """Atomically register a new user, assign the default role, and persist optional verification token.
+
+        Returns:
+            ``RegistrationOutcome`` with status and created account state when successful.
+
+        Raises:
+            ValueError: If the verification purpose token identifier already exists.
+        """
         del event
         notification: NotificationCommand | None = None
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -499,7 +530,11 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> None:
-        """Persist a single-use purpose token digest and dispatch its notification callback."""
+        """Persist a single-use purpose token digest and dispatch its notification callback.
+
+        Raises:
+            ValueError: If ``issue.token_id`` collides with an existing purpose token.
+        """
         del event
         async with self._lock, self._alchemy_config.get_session() as session:
             existing = await session.scalar(select(m.PurposeToken.id).where(m.PurposeToken.token_id == issue.token_id))
@@ -576,7 +611,11 @@ class SQLAlchemySecurityBackend:
         now: datetime,
         event: SecurityEvent,
     ) -> VerificationOutcome:
-        """Atomically consume a verification token and mark the owning account verified."""
+        """Atomically consume a verification token and mark the owning account verified.
+
+        Returns:
+            ``VerificationOutcome`` with consumption status and updated account metadata.
+        """
         del event
         status_map = {
             "invalid": VerificationStatus.INVALID,
@@ -608,7 +647,11 @@ class SQLAlchemySecurityBackend:
         now: datetime,
         event: SecurityEvent,
     ) -> PasswordResetOutcome:
-        """Atomically consume a recovery token, replace the password hash, and bump ``security_epoch``."""
+        """Atomically consume a recovery token, replace the password hash, and bump ``security_epoch``.
+
+        Returns:
+            ``PasswordResetOutcome`` with reset status and next security epoch.
+        """
         del event
         status_map = {
             "invalid": PasswordResetStatus.INVALID,
@@ -639,7 +682,14 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> UserAuthSession:
-        """Persist a new authenticated browser session."""
+        """Persist a new authenticated browser session.
+
+        Returns:
+            Persisted ``UserAuthSession`` record.
+
+        Raises:
+            ValueError: If ``command.account_id`` is not a valid UUID or ``session_id`` collides.
+        """
         del event
         uid = _parse_uuid(command.account_id)
         if uid is None:
@@ -684,7 +734,11 @@ class SQLAlchemySecurityBackend:
             return _to_session_record(row)
 
     async def list_for_account(self, account_id: str) -> tuple[UserAuthSession, ...]:
-        """List active, unexpired sessions for one user account."""
+        """List active, unexpired sessions for one user account.
+
+        Returns:
+            Tuple of active ``UserAuthSession`` records for ``account_id``.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return ()
@@ -701,7 +755,11 @@ class SQLAlchemySecurityBackend:
             return tuple(_to_session_record(row) for row in rows if _ensure_utc(row.expires_at) > now)
 
     async def touch(self, session_id: str, *, now: datetime) -> UserAuthSession | None:
-        """Advance ``last_seen_at`` on an active, unexpired session."""
+        """Advance ``last_seen_at`` on an active, unexpired session.
+
+        Returns:
+            Updated ``UserAuthSession``, or ``None`` if the session is missing, revoked, or expired.
+        """
         current = _ensure_utc(self._clock())
         touch_at = _ensure_utc(now)
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -727,7 +785,11 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> bool:
-        """Revoke one session owned by the given account."""
+        """Revoke one session owned by the given account.
+
+        Returns:
+            ``True`` if an active session was revoked, ``False`` otherwise.
+        """
         del event
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -752,7 +814,11 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> int:
-        """Revoke all active sessions owned by the given account."""
+        """Revoke all active sessions owned by the given account.
+
+        Returns:
+            Number of sessions revoked.
+        """
         del event
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -777,7 +843,11 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> int:
-        """Revoke all active sessions for an account except the specified current session."""
+        """Revoke all active sessions for an account except the specified current session.
+
+        Returns:
+            Number of sessions revoked.
+        """
         del event
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -803,7 +873,14 @@ class SQLAlchemySecurityBackend:
         *,
         event: SecurityEvent,
     ) -> UserAuthSession | None:
-        """Atomically replace a prior active session with a successor session."""
+        """Atomically replace a prior active session with a successor session.
+
+        Returns:
+            Persisted successor ``UserAuthSession``, or ``None`` if the prior session is inactive or invalid.
+
+        Raises:
+            ValueError: If the replacement ``session_id`` collides with an existing session.
+        """
         del event
         uid = _parse_uuid(command.account_id)
         if uid is None:
@@ -856,6 +933,9 @@ class SQLAlchemySecurityBackend:
 
         Database errors propagate to ``NativeSessionAuth.authenticate`` which
         fails closed with ``VerificationUnavailable``.
+
+        Returns:
+            ``ResolvedUserAuthSession`` if session and user are active, otherwise ``None``.
         """
         uid = _parse_uuid(account_id)
         if uid is None:
@@ -886,7 +966,11 @@ class SQLAlchemySecurityBackend:
         *,
         now: datetime | None = None,
     ) -> ResolvedUserAuthSession[m.User] | InvalidCredentials | VerificationUnavailable:
-        """Fail-closed session lookup converting storage errors to ``VerificationUnavailable``."""
+        """Fail-closed session lookup converting storage errors to ``VerificationUnavailable``.
+
+        Returns:
+            Resolved session, ``InvalidCredentials`` if not found/expired, or ``VerificationUnavailable``.
+        """
         try:
             resolved = await self.resolve_user_auth_session(
                 session_id,

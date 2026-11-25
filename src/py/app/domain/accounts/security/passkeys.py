@@ -80,7 +80,11 @@ class SQLAlchemyPasskeyStore:
         login_method: LoginMethod,
         event: SecurityEvent,
     ) -> bool:
-        """Persist a new WebAuthn passkey credential and its login method atomically."""
+        """Persist a new WebAuthn passkey credential and its login method atomically.
+
+        Returns:
+            ``True`` if stored, ``False`` if ``account_id`` is invalid or the credential already exists.
+        """
         del event
         uid = _parse_uuid(credential.account_id)
         if uid is None:
@@ -115,13 +119,21 @@ class SQLAlchemyPasskeyStore:
             return True
 
     async def get_credential(self, credential_id: bytes) -> PasskeyCredential | None:
-        """Load one passkey credential by raw credential identifier bytes."""
+        """Load one passkey credential by raw credential identifier bytes.
+
+        Returns:
+            Matching passkey credential, or ``None`` if not found.
+        """
         async with self._alchemy_config.get_session() as session:
             row = await session.scalar(select(m.UserPasskey).where(m.UserPasskey.credential_id == credential_id.hex()))
             return _row_to_credential(row) if row is not None else None
 
     async def list_credentials(self, account_id: str) -> tuple[PasskeyCredential, ...]:
-        """List all passkey credentials owned by an account."""
+        """List all passkey credentials owned by an account.
+
+        Returns:
+            Tuple of passkey credentials registered to ``account_id``.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return ()
@@ -140,7 +152,11 @@ class SQLAlchemyPasskeyStore:
         clone_risk: bool,
         now: datetime,
     ) -> PasskeyAssertionStatus:
-        """Optimistically update credential sign count, version, and clone-risk flag."""
+        """Optimistically update credential sign count, version, and clone-risk flag.
+
+        Returns:
+            Assertion recording status (``RECORDED``, ``CLONE_RISK``, or ``CONFLICT``).
+        """
         now_utc = _ensure_utc(now)
         cid_hex = credential_id.hex()
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -174,7 +190,11 @@ class SQLAlchemyPasskeyStore:
         credential_id: bytes,
         display_name: str,
     ) -> PasskeyCredential | None:
-        """Rename a passkey credential owned by the specified account."""
+        """Rename a passkey credential owned by the specified account.
+
+        Returns:
+            Updated passkey credential, or ``None`` if not found.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return None
@@ -217,7 +237,11 @@ class SQLAlchemyPasskeyStore:
         purpose: str,
         now: datetime,
     ) -> WebAuthnChallenge | None:
-        """Atomically burn the WebAuthn challenge and return it only if binding, purpose, and expiry match."""
+        """Atomically burn the WebAuthn challenge and return it only if binding, purpose, and expiry match.
+
+        Returns:
+            Consumed ``WebAuthnChallenge`` when all checks pass, otherwise ``None``.
+        """
         now_utc = _ensure_utc(now)
         digest_hex = challenge_digest.hex()
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -251,7 +275,7 @@ class SQLAlchemyPasskeyStore:
                 challenge_digest=bytes.fromhex(row.challenge_id),
                 binding_digest=bytes.fromhex(row.binding_digest),
                 purpose=row.purpose,
-                account_id=str(row.user_id) if row.user_id is not None else "",
+                account_id=str(row.user_id) if row.user_id is not None else None,
                 rp_id=row.rp_id,
                 origins=tuple(row.origins),
                 user_verification=UserVerification(row.user_verification),

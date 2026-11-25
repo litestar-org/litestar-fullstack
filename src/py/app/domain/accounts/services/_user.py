@@ -30,15 +30,27 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     match_fields = ["email"]
 
     async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords and attach initial role assignments before creation."""
+        """Hash plaintext passwords and attach initial role assignments before creation.
+
+        Returns:
+            Normalized user payload or model instance ready for persistence.
+        """
         return await self._populate_model(data)
 
     async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords when updating a user record."""
+        """Hash plaintext passwords when updating a user record.
+
+        Returns:
+            Normalized user payload or model instance ready for update.
+        """
         return await self._populate_model(data)
 
     async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords when upserting a user record."""
+        """Hash plaintext passwords when upserting a user record.
+
+        Returns:
+            Normalized user payload or model instance ready for upsert.
+        """
         return await self._populate_model(data)
 
     async def authenticate(self, username: str, password: str) -> m.User:

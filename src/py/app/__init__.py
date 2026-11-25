@@ -22,7 +22,14 @@ __all__ = (
 
 
 def __getattr__(name: str) -> Any:
-    """Lazily load top-level application subpackages on attribute access."""
+    """Lazily load top-level application subpackages on attribute access.
+
+    Returns:
+        Imported ``app.<name>`` subpackage module.
+
+    Raises:
+        AttributeError: If ``name`` is not an exported top-level subpackage.
+    """
     if name in _SUBMODULES:
         return import_module(f"app.{name}")
     msg = f"module {__name__!r} has no attribute {name!r}"

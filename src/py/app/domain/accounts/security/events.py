@@ -42,7 +42,11 @@ def _is_sensitive_key(key: str) -> bool:
 
 
 def sanitize_event_details(payload: Any) -> Any:
-    """Recursively redact sensitive keys from structured audit metadata."""
+    """Recursively redact sensitive keys from structured audit metadata.
+
+    Returns:
+        Copy of ``payload`` with sensitive values and byte sequences redacted.
+    """
     if isinstance(payload, Mapping):
         mapping = cast("Mapping[object, object]", payload)
         sanitized: dict[str, Any] = {}
@@ -86,7 +90,11 @@ class AuditSecurityEventSink:
         self._strict = strict
 
     async def emit(self, event: SecurityEvent) -> None:
-        """Persist one sanitized ``SecurityEvent`` record into ``audit_log``."""
+        """Persist one sanitized ``SecurityEvent`` record into ``audit_log``.
+
+        Raises:
+            SQLAlchemyError: If persistence fails and the sink was initialized with ``strict=True``.
+        """
         raw_actor = event.principal_id or event.account_id
         actor_uuid = _parse_optional_uuid(raw_actor)
         correlation: dict[str, Any] = (

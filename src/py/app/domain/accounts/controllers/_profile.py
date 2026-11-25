@@ -59,7 +59,11 @@ class ProfileController(SecureController):
         data: ProfileUpdate,
         users_service: UserService,
     ) -> User:
-        """Update editable profile attributes for the authenticated user."""
+        """Update editable profile attributes for the authenticated user.
+
+        Returns:
+            Updated user profile payload.
+        """
         db_obj = await users_service.update(data.to_dict(), item_id=current_user.id, auto_commit=True)
         return users_service.to_schema(db_obj, schema_type=User)
 
@@ -74,7 +78,11 @@ class ProfileController(SecureController):
         data: PasswordUpdate,
         users_service: UserService,
     ) -> Message:
-        """Update the authenticated user's password after step-up verification."""
+        """Update the authenticated user's password after step-up verification.
+
+        Returns:
+            Confirmation message for the password change.
+        """
         await users_service.update_password(data.to_dict(), db_obj=current_user)
         return Message(message="Your password was successfully modified.")
 

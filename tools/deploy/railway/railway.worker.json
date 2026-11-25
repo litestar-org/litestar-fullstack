@@ -2,7 +2,15 @@
 	"$schema": "https://railway.com/railway.schema.json",
 	"build": {
 		"builder": "DOCKERFILE",
-		"dockerfilePath": "tools/deploy/docker/Dockerfile.worker"
+		"dockerfilePath": "tools/deploy/docker/Dockerfile.worker",
+		"watchPatterns": [
+			"src/py/**",
+			"src/js/templates/**",
+			"pyproject.toml",
+			"uv.lock",
+			"tools/deploy/docker/Dockerfile.worker",
+			"tools/deploy/railway/railway.worker.json"
+		]
 	},
 	"deploy": {
 		"runtime": "V2",
@@ -15,6 +23,7 @@
 			}
 		},
 		"restartPolicyType": "ON_FAILURE",
-		"restartPolicyMaxRetries": 5
+		"restartPolicyMaxRetries": 5,
+		"drainingSeconds": 30
 	}
 }

@@ -114,12 +114,12 @@ def get_config_val(  # noqa: C901, PLR0911, PLR0915
         default: Default value if key not found in environment
         type_hint: Optional type hint to use instead of inferring from `default`
 
+    Returns:
+        Parsed value of the specified type.
+
     Raises:
         RuntimeError: Raised when the configuration value cannot be parsed.
         ValueError: Raised when the configuration value cannot be parsed.
-
-    Returns:
-        Parsed value of the specified type
 
     Note:
         If the default is an empty list and no type hint is provided, the function will return list[str] (not list[Path]).

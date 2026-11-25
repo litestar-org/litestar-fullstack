@@ -6,20 +6,20 @@ import { extractApiErrorMessage } from "@/lib/api-client"
 import type { LocalMfaChallenge, Team, User } from "@/lib/generated/api"
 import { accountProfile, localSessionLogin, localSessionLogout, passkeyAuthenticationOptions, passkeyAuthenticationVerify } from "@/lib/generated/api"
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
 export interface LoginResult {
   authenticated: boolean
   mfaRequired: boolean
   challengeToken?: string
   accountId?: string
   methods?: string[]
+  totpMethodIds?: string[]
 }
 
 export interface PendingMfaChallenge {
   accountId: string
   challenge: string
   methods: string[]
+  totpMethodIds: string[]
 }
 
 export interface AuthState {
@@ -28,7 +28,6 @@ export interface AuthState {
   teams: Team[]
   isLoading: boolean
   isAuthenticated: boolean
-  passkeyAccountId: string | null
   mfaChallenge: PendingMfaChallenge | null
   login: (email: string, password: string) => Promise<LoginResult>
   loginWithPasskey: (accountId?: string) => Promise<boolean>
@@ -59,7 +58,6 @@ export const useAuthStore = create<AuthState>()(
       teams: [],
       isLoading: false,
       isAuthenticated: false,
-      passkeyAccountId: null,
       mfaChallenge: null,
       clearSession: () =>
         set({
@@ -78,6 +76,7 @@ export const useAuthStore = create<AuthState>()(
 
           if (response.response?.status === 403 && isMfaChallengePayload(response.error)) {
             const methods = Array.isArray(response.error.methods) ? response.error.methods : ["totp"]
+            const totpMethodIds = Array.isArray(response.error.totp_method_ids) ? response.error.totp_method_ids : []
             set({
               user: null,
               isAuthenticated: false,
@@ -85,6 +84,7 @@ export const useAuthStore = create<AuthState>()(
                 accountId: response.error.account_id,
                 challenge: response.error.challenge,
                 methods,
+                totpMethodIds,
               },
             })
             return {
@@ -93,6 +93,7 @@ export const useAuthStore = create<AuthState>()(
               challengeToken: response.error.challenge,
               accountId: response.error.account_id,
               methods,
+              totpMethodIds,
             }
           }
 
@@ -102,7 +103,6 @@ export const useAuthStore = create<AuthState>()(
               set({
                 user: profileRes.data,
                 isAuthenticated: true,
-                passkeyAccountId: profileRes.data.id,
                 mfaChallenge: null,
               })
               return { authenticated: true, mfaRequired: false }
@@ -123,16 +123,12 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       loginWithPasskey: async (accountId?: string) => {
-        const resolvedAccountId = accountId?.trim() || get().passkeyAccountId || ""
-        if (!UUID_PATTERN.test(resolvedAccountId)) {
-          toast.error("Passkey sign-in requires a recognized account on this device. Sign in with your password first.")
-          return false
-        }
+        const resolvedAccountId = accountId?.trim() || undefined
 
         set({ isLoading: true })
         try {
           const optionsRes = await passkeyAuthenticationOptions({
-            body: { account_id: resolvedAccountId },
+            body: resolvedAccountId ? { account_id: resolvedAccountId } : {},
           })
           if (!optionsRes.data) {
             toast.error(extractApiErrorMessage(optionsRes.error, "Unable to start passkey sign-in"))
@@ -143,7 +139,7 @@ export const useAuthStore = create<AuthState>()(
           const assertion = await startAuthentication({ optionsJSON })
           const verifyRes = await passkeyAuthenticationVerify({
             body: {
-              account_id: resolvedAccountId,
+              ...(resolvedAccountId ? { account_id: resolvedAccountId } : {}),
               binding: optionsRes.data.binding ?? undefined,
               response: JSON.stringify(assertion),
             },
@@ -176,7 +172,6 @@ export const useAuthStore = create<AuthState>()(
             set({
               user: profileRes.data,
               isAuthenticated: true,
-              passkeyAccountId: profileRes.data.id,
               mfaChallenge: null,
             })
             return
@@ -203,7 +198,7 @@ export const useAuthStore = create<AuthState>()(
           const status = response.response?.status
 
           if (response.data) {
-            set({ user: response.data, isAuthenticated: true, passkeyAccountId: response.data.id })
+            set({ user: response.data, isAuthenticated: true })
             return true
           }
 
@@ -228,7 +223,6 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
-        passkeyAccountId: state.passkeyAccountId,
       }),
     },
   ),

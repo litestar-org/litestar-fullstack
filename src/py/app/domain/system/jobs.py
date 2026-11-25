@@ -41,7 +41,11 @@ class QueueTaskEventPayload(CamelizedBaseStruct):
 
 
 async def run_cleanup_auth_tokens(alchemy_config: SQLAlchemyAsyncConfig) -> dict[str, int]:
-    """Delete expired security tokens, challenges, sessions, and ``AppStore`` entries."""
+    """Delete expired security tokens, challenges, sessions, and ``AppStore`` entries.
+
+    Returns:
+        Mapping of cleaned table or namespace labels to deleted row counts.
+    """
     now = datetime.now(UTC)
     context = get_current_task_context()
     if context is not None:
@@ -119,7 +123,11 @@ async def run_cleanup_auth_tokens(alchemy_config: SQLAlchemyAsyncConfig) -> dict
     unique_by="task",
 )
 async def cleanup_auth_tokens() -> dict[str, int]:
-    """Hourly maintenance task pruning expired auth tokens, challenges, sessions, and rate-limit records."""
+    """Hourly maintenance task pruning expired auth tokens, challenges, sessions, and rate-limit records.
+
+    Returns:
+        Mapping of cleaned table or namespace labels to deleted row counts.
+    """
     from app import config
 
     return await run_cleanup_auth_tokens(config.alchemy)
@@ -132,7 +140,11 @@ async def cleanup_auth_tokens() -> dict[str, int]:
     unique_by="task",
 )
 async def scheduler_canary() -> dict[str, str]:
-    """Periodic scheduler heartbeat confirming beat execution."""
+    """Periodic scheduler heartbeat confirming beat execution.
+
+    Returns:
+        Heartbeat payload with ``status`` and ISO-8601 ``timestamp``.
+    """
     now = datetime.now(UTC).isoformat()
     context = get_current_task_context()
     if context is not None:
@@ -150,7 +162,11 @@ async def run_export_team_summary(
     team_id: str,
     requested_by_id: str,
 ) -> dict[str, Any]:
-    """Compute member and tag counts for a team, aborting non-retryably if missing."""
+    """Compute member and tag counts for a team, aborting non-retryably if missing.
+
+    Returns:
+        Structured summary payload for the requested team.
+    """
     try:
         parsed_team_id = UUID(team_id)
     except ValueError:
@@ -205,7 +221,11 @@ async def run_export_team_summary(
     unique_by="arguments",
 )
 async def export_team_summary(team_id: str, requested_by_id: str) -> dict[str, Any]:
-    """Generate a structured summary report for the specified team."""
+    """Generate a structured summary report for the specified team.
+
+    Returns:
+        Structured summary payload for the requested team.
+    """
     from app import config
 
     return await run_export_team_summary(config.alchemy, team_id=team_id, requested_by_id=requested_by_id)

@@ -47,7 +47,7 @@ function MfaChallengePage() {
           account_id: mfaChallenge.accountId,
           challenge: mfaChallenge.challenge,
           method: tab === "totp" ? "totp" : "recovery-code",
-          method_id: tab === "totp" ? "__active__" : undefined,
+          method_id: tab === "totp" ? (mfaChallenge.totpMethodIds[0] ?? undefined) : undefined,
           code: tab === "totp" ? code : recoveryCode.trim().toUpperCase(),
         },
       })

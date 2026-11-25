@@ -33,12 +33,20 @@ def is_tty() -> bool:
 
 
 def structlog_json_serializer(value: EventDict, **_: Any) -> bytes:
-    """Serialize a structlog event dict into UTF-8 JSON bytes."""
+    """Serialize a structlog event dict into UTF-8 JSON bytes.
+
+    Returns:
+        UTF-8 encoded JSON bytes for the event dictionary.
+    """
     return encode_json(value)
 
 
 def stdlib_json_serializer(value: EventDict, **_: Any) -> str:
-    """Serialize a stdlib-bridged structlog event dict into a JSON string."""
+    """Serialize a stdlib-bridged structlog event dict into a JSON string.
+
+    Returns:
+        JSON-formatted string for the event dictionary.
+    """
     return encode_json(value).decode("utf-8")
 
 

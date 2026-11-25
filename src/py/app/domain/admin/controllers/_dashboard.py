@@ -22,7 +22,7 @@ class DashboardController(SecureController):
     auth: ClassVar[AuthenticationPolicy] = required("session")
     guards = [requires_role("superuser")]
     dependencies = {
-        "dashboard_query_service": Provide(provide_dashboard_query_service),
+        "dashboard_query_service": Provide(provide_dashboard_query_service, sync_to_thread=False),
         "audit_service": Provide(provide_audit_log_service),
     }
 

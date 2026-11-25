@@ -7,7 +7,11 @@ if TYPE_CHECKING:
 
 
 def create_app() -> Litestar:
-    """Create the ASGI Litestar application."""
+    """Create the ASGI Litestar application.
+
+    Returns:
+        Configured ``Litestar`` ASGI application instance.
+    """
     from litestar import Litestar
 
     from app.server.core import ApplicationCore

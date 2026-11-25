@@ -16,7 +16,11 @@ class DashboardQueryService(SQLAlchemyAsyncQueryService):
     """Computes admin dashboard statistics via parameterized SQL aggregate queries."""
 
     async def get_stats(self, *, now: datetime | None = None) -> DashboardStats:
-        """Execute parameterized aggregate counts for users, teams, and 24-hour audit events."""
+        """Execute parameterized aggregate counts for users, teams, and 24-hour audit events.
+
+        Returns:
+            Aggregated dashboard statistics snapshot.
+        """
         current = now or datetime.now(UTC)
         today_start = current.replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = today_start - timedelta(days=7)

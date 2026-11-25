@@ -56,7 +56,11 @@ def do_run_migrations(connection: "Connection") -> None:
 
 
 async def run_migrations_online() -> None:
-    """Run migrations in online async mode."""
+    """Run migrations in online async mode.
+
+    Raises:
+        RuntimeError: If an async SQLAlchemy engine cannot be resolved from config.
+    """
     configuration = config.get_section(config.config_ini_section) or {}
     configuration["sqlalchemy.url"] = config.db_url
 

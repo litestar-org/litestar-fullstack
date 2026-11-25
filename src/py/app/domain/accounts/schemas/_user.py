@@ -77,7 +77,11 @@ class UserCreate(CamelizedBaseStruct):
     is_verified: bool = False
 
     def __post_init__(self) -> None:
-        """Validate user creation fields."""
+        """Validate user creation fields.
+
+        Raises:
+            ValueError: If any field fails validation or ``username`` matches the email local part.
+        """
         self.email = validate_email(self.email)
         self.password = validate_password(self.password)
         if self.name is not None:
@@ -104,7 +108,11 @@ class UserUpdate(CamelizedBaseStruct, omit_defaults=True):
     is_verified: bool | msgspec.UnsetType | None = msgspec.UNSET
 
     def __post_init__(self) -> None:
-        """Validate populated update fields and require at least one field."""
+        """Validate populated update fields and require at least one field.
+
+        Raises:
+            ValueError: If no fields are provided or any populated field fails validation.
+        """
         fields = (
             self.email,
             self.password,

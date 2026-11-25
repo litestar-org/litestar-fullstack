@@ -61,7 +61,11 @@ def build_secret_protector(
     key_version: str = "v1",
     retained_keys: Sequence[SecretProtectorKey] = (),
 ) -> AESGCMSecretProtector:
-    """Build an ``AESGCMSecretProtector`` backed by an HKDF-derived 32-byte key."""
+    """Build an ``AESGCMSecretProtector`` backed by an HKDF-derived 32-byte key.
+
+    Returns:
+        Configured ``AESGCMSecretProtector`` instance.
+    """
     active = SecretProtectorKey(
         key_version=key_version,
         key=derive_subkey(settings.app.SECRET_KEY, TOTP_PROTECTOR_INFO),
@@ -106,7 +110,11 @@ class SQLAlchemyMFAService:
         self._lock = Lock()
 
     async def create_totp_enrollment(self, enrollment: PendingTOTPEnrollment) -> None:
-        """Persist a pending encrypted TOTP enrollment."""
+        """Persist a pending encrypted TOTP enrollment.
+
+        Raises:
+            ValueError: If ``enrollment.account_id`` is not a valid UUID.
+        """
         uid = _parse_uuid(enrollment.account_id)
         if uid is None:
             msg = "TOTP enrollment account_id must be a valid UUID"
@@ -132,7 +140,11 @@ class SQLAlchemyMFAService:
             await session.commit()
 
     async def get_totp_enrollment(self, enrollment_id: str) -> PendingTOTPEnrollment | None:
-        """Load a pending TOTP enrollment by identifier."""
+        """Load a pending TOTP enrollment by identifier.
+
+        Returns:
+            Matching pending enrollment, or ``None`` if not found.
+        """
         async with self._alchemy_config.get_session() as session:
             row = await session.scalar(
                 select(m.UserMFAFactor).where(
@@ -162,7 +174,11 @@ class SQLAlchemyMFAService:
         event: SecurityEvent,
         now: datetime,
     ) -> TOTPMethod | None:
-        """Atomically confirm a pending TOTP enrollment and register its login method."""
+        """Atomically confirm a pending TOTP enrollment and register its login method.
+
+        Returns:
+            Activated ``TOTPMethod``, or ``None`` if missing, expired, or already confirmed.
+        """
         del event
         return await self._activate(
             account_id,
@@ -184,7 +200,11 @@ class SQLAlchemyMFAService:
         event: SecurityEvent,
         now: datetime,
     ) -> TOTPMethod | None:
-        """Atomically confirm a pending TOTP enrollment, register its login method, and replace recovery codes."""
+        """Atomically confirm a pending TOTP enrollment, register its login method, and replace recovery codes.
+
+        Returns:
+            Activated ``TOTPMethod``, or ``None`` if missing, expired, or already confirmed.
+        """
         del event
         return await self._activate(
             account_id,
@@ -255,7 +275,11 @@ class SQLAlchemyMFAService:
             return _row_to_totp_method(refreshed) if refreshed is not None else None
 
     async def get_totp_method(self, account_id: str, method_id: str) -> TOTPMethod | None:
-        """Load an active TOTP method owned by the specified account."""
+        """Load an active TOTP method owned by the specified account.
+
+        Returns:
+            Confirmed ``TOTPMethod``, or ``None`` if not found.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return None
@@ -263,16 +287,17 @@ class SQLAlchemyMFAService:
             stmt = select(m.UserMFAFactor).where(
                 m.UserMFAFactor.user_id == uid,
                 m.UserMFAFactor.is_confirmed.is_(true()),
+                m.UserMFAFactor.method_id == method_id,
             )
-            if method_id == "__active__":
-                stmt = stmt.where(m.UserMFAFactor.kind == "totp").order_by(m.UserMFAFactor.created_at.desc()).limit(1)
-            else:
-                stmt = stmt.where(m.UserMFAFactor.method_id == method_id)
             row = await session.scalar(stmt)
             return _row_to_totp_method(row) if row is not None else None
 
     async def advance_totp_counter(self, method_id: str, *, accepted_counter: int, now: datetime) -> bool:
-        """Atomically advance a TOTP method's counter only when strictly greater than the previous value."""
+        """Atomically advance a TOTP method's counter only when strictly greater than the previous value.
+
+        Returns:
+            ``True`` if the counter advanced, ``False`` otherwise.
+        """
         now_utc = _ensure_utc(now)
         async with self._lock, self._alchemy_config.get_session() as session:
             result = await session.execute(
@@ -316,7 +341,11 @@ class SQLAlchemyMFAService:
             await session.commit()
 
     async def consume_recovery_code(self, account_id: str, digest: bytes, *, now: datetime) -> bool:
-        """Atomically consume one matching unused recovery code digest."""
+        """Atomically consume one matching unused recovery code digest.
+
+        Returns:
+            ``True`` if a matching unused recovery code was consumed, ``False`` otherwise.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return False
@@ -373,7 +402,11 @@ class SQLAlchemyStepUpService:
         transport_digest: bytes,
         now: datetime,
     ) -> StepUpGrantState | None:
-        """Atomically consume a step-up grant matching every binding and expiry check."""
+        """Atomically consume a step-up grant matching every binding and expiry check.
+
+        Returns:
+            Consumed ``StepUpGrantState`` when valid, otherwise ``None``.
+        """
         now_utc = _ensure_utc(now)
         digest_hex = grant_digest.hex()
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -425,7 +458,11 @@ class SQLAlchemyMFALoginChallengeService:
         self._lock = Lock()
 
     async def put(self, challenge: MFALoginChallenge) -> None:
-        """Persist a single-use MFA login challenge."""
+        """Persist a single-use MFA login challenge.
+
+        Raises:
+            ValueError: If ``challenge.account_id`` is not a valid UUID.
+        """
         uid = _parse_uuid(challenge.account_id)
         if uid is None:
             msg = "MFA login challenge account_id must be a valid UUID"
@@ -450,7 +487,11 @@ class SQLAlchemyMFALoginChallengeService:
         security_epoch: int,
         now: datetime,
     ) -> MFALoginChallenge | None:
-        """Atomically burn the challenge and return it only if account, epoch, and expiry match."""
+        """Atomically burn the challenge and return it only if account, epoch, and expiry match.
+
+        Returns:
+            Consumed ``MFALoginChallenge`` when all checks pass, otherwise ``None``.
+        """
         now_utc = _ensure_utc(now)
         digest_hex = challenge_digest.hex()
         async with self._lock, self._alchemy_config.get_session() as session:

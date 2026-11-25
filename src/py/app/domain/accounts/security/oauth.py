@@ -56,7 +56,11 @@ __all__ = (
 
 
 def oauth_account_aad(provider: str, subject: str) -> bytes:
-    """Build canonical AEAD associated data for persisted ``UserOAuthAccount`` tokens."""
+    """Build canonical AEAD associated data for persisted ``UserOAuthAccount`` tokens.
+
+    Returns:
+        UTF-8 encoded associated data bytes binding ``provider`` and ``subject``.
+    """
     return f"oauth_account|{provider}|{subject}".encode()
 
 
@@ -81,7 +85,11 @@ def build_oauth_protector(
     key_version: str = "v1",
     retained_keys: Sequence[OAuthTransactionProtectorKey] = (),
 ) -> AESGCMOAuthTransactionProtector:
-    """Build an ``AESGCMOAuthTransactionProtector`` using an HKDF-derived 32-byte key."""
+    """Build an ``AESGCMOAuthTransactionProtector`` using an HKDF-derived 32-byte key.
+
+    Returns:
+        Configured ``AESGCMOAuthTransactionProtector`` instance.
+    """
     active = OAuthTransactionProtectorKey(
         key_version=key_version,
         key=derive_subkey(settings.app.SECRET_KEY, OAUTH_PROTECTOR_INFO),
@@ -90,7 +98,11 @@ def build_oauth_protector(
 
 
 def serialize_oauth_tokens(tokens: ProviderTokenSet) -> bytes:
-    """Serialize a ``ProviderTokenSet`` into canonical JSON bytes for AEAD encryption."""
+    """Serialize a ``ProviderTokenSet`` into canonical JSON bytes for AEAD encryption.
+
+    Returns:
+        UTF-8 encoded JSON bytes representing the token set.
+    """
     payload: dict[str, Any] = {
         "access_token": tokens.access_token.get_secret_value(),
         "token_type": tokens.token_type,
@@ -103,7 +115,11 @@ def serialize_oauth_tokens(tokens: ProviderTokenSet) -> bytes:
 
 
 def deserialize_oauth_tokens(raw: bytes) -> ProviderTokenSet:
-    """Deserialize canonical JSON bytes back into a ``ProviderTokenSet``."""
+    """Deserialize canonical JSON bytes back into a ``ProviderTokenSet``.
+
+    Returns:
+        Reconstructed ``ProviderTokenSet`` instance.
+    """
     data = json.loads(raw.decode("utf-8"))
     expires_raw = data.get("expires_at")
     return ProviderTokenSet(
@@ -190,7 +206,11 @@ class SQLAlchemyOAuthTransactionStore:
         provider: str,
         now: datetime,
     ) -> OAuthTransaction | None:
-        """Consume a matching unexpired OAuth transaction atomically without burning mismatched callbacks."""
+        """Consume a matching unexpired OAuth transaction atomically without burning mismatched callbacks.
+
+        Returns:
+            Consumed ``OAuthTransaction`` with decrypted secrets, or ``None`` if unmatched or expired.
+        """
         now_utc = _ensure_utc(now)
         state_hex = state_digest.hex()
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -292,7 +312,15 @@ class SQLAlchemyOAuthAccountStore:
         retain_tokens: bool = False,
         now: datetime,
     ) -> LinkedProviderAccount:
-        """Link an external OAuth identity to an existing user account."""
+        """Link an external OAuth identity to an existing user account.
+
+        Returns:
+            Persisted ``LinkedProviderAccount`` record.
+
+        Raises:
+            OAuthAccountError: If ``account_id`` is not a valid UUID.
+            AccountLinkError: If the external identity belongs to another user or the provider is already linked.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             raise OAuthAccountError
@@ -357,7 +385,14 @@ class SQLAlchemyOAuthAccountStore:
         retain_tokens: bool,
         now: datetime,
     ) -> OAuthLoginOutcome:
-        """Authenticate or optionally provision a user via an external OAuth identity."""
+        """Authenticate or optionally provision a user via an external OAuth identity.
+
+        Returns:
+            ``OAuthLoginOutcome`` containing the linked account and provisioning flag.
+
+        Raises:
+            AccountLinkError: If the identity is unlinked and provisioning is disabled or conflicts on email.
+        """
         now_utc = _ensure_utc(now)
         protected = await self._protect_tokens(identity.provider, identity.subject, tokens) if retain_tokens else None
         async with self._lock, self._alchemy_config.get_session() as session:
@@ -419,7 +454,11 @@ class SQLAlchemyOAuthAccountStore:
             return OAuthLoginOutcome(linked=_row_to_linked_account(row), provisioned=True)
 
     async def resolve_provider_account(self, account_id: str, provider: str) -> LinkedProviderAccount | None:
-        """Resolve an account's linked OAuth identity for the named provider."""
+        """Resolve an account's linked OAuth identity for the named provider.
+
+        Returns:
+            Matching ``LinkedProviderAccount``, or ``None`` if not linked.
+        """
         uid = _parse_uuid(account_id)
         if uid is None:
             return None
@@ -443,7 +482,14 @@ class SQLAlchemyOAuthAccountStore:
         retain_tokens: bool,
         now: datetime,
     ) -> LinkedProviderAccount:
-        """Upgrade scopes and optionally replace retained tokens on an existing OAuth link."""
+        """Upgrade scopes and optionally replace retained tokens on an existing OAuth link.
+
+        Returns:
+            Updated ``LinkedProviderAccount`` record.
+
+        Raises:
+            AccountLinkError: If identifiers are invalid or no matching linked account exists.
+        """
         uid = _parse_uuid(account_id)
         pid = _parse_uuid(provider_account_id)
         if uid is None or pid is None:
@@ -478,7 +524,11 @@ class SQLAlchemyOAuthAccountStore:
         require_remaining: bool,
         now: datetime,
     ) -> UnlinkOutcome:
-        """Atomically unlink an owned OAuth identity while protecting the user's final login method."""
+        """Atomically unlink an owned OAuth identity while protecting the user's final login method.
+
+        Returns:
+            ``UnlinkOutcome`` describing whether the link was removed, missing, or blocked as the final method.
+        """
         del now
         uid = _parse_uuid(account_id)
         pid = _parse_uuid(provider_account_id)
@@ -526,7 +576,11 @@ class SQLAlchemyOAuthAccountStore:
             return UnlinkOutcome(UnlinkStatus.UNLINKED, provider_account_id)
 
     async def get_tokens(self, provider_account_id: str, *, now: datetime) -> StoredProviderTokens | None:
-        """Decrypt and return retained OAuth tokens for a linked account."""
+        """Decrypt and return retained OAuth tokens for a linked account.
+
+        Returns:
+            ``StoredProviderTokens`` with version metadata, or ``None`` if unavailable.
+        """
         del now
         pid = _parse_uuid(provider_account_id)
         if pid is None:
@@ -558,7 +612,11 @@ class SQLAlchemyOAuthAccountStore:
         tokens: ProviderTokenSet,
         now: datetime,
     ) -> bool:
-        """Optimistically replace encrypted provider tokens when version matches."""
+        """Optimistically replace encrypted provider tokens when version matches.
+
+        Returns:
+            ``True`` if tokens were replaced, ``False`` on missing row or version mismatch.
+        """
         del now
         pid = _parse_uuid(provider_account_id)
         if pid is None:
@@ -586,7 +644,11 @@ class SQLAlchemyOAuthAccountStore:
             return int(getattr(result, "rowcount", 0) or 0) == 1
 
     async def discard_tokens(self, provider_account_id: str, *, expected_version: int | None = None) -> bool:
-        """Remove retained encrypted tokens for a linked OAuth account."""
+        """Remove retained encrypted tokens for a linked OAuth account.
+
+        Returns:
+            ``True`` if tokens were cleared, ``False`` on missing row or version mismatch.
+        """
         pid = _parse_uuid(provider_account_id)
         if pid is None:
             return False
@@ -611,7 +673,11 @@ class SQLAlchemyOAuthAccountStore:
         *,
         expected_version: int,
     ) -> bool:
-        """Persist encrypted tokens for retry after an upstream revocation error."""
+        """Persist encrypted tokens for retry after an upstream revocation error.
+
+        Returns:
+            ``True`` if staged tokens were persisted, ``False`` on missing row or version mismatch.
+        """
         return await self.replace_tokens(
             failure.provider_account_id,
             expected_version=expected_version,
