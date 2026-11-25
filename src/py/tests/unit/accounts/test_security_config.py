@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import warnings
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING
+from types import SimpleNamespace
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from litestar import Litestar
@@ -22,7 +23,7 @@ from app.domain.accounts.security import (
     build_session_middleware,
     build_session_store,
 )
-from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
+from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, ServerSettings, Settings
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -118,6 +119,37 @@ async def test_notification_handler_enqueues_canonical_email_tasks() -> None:
             assert page.items[0].queue == "emails"
     finally:
         await queue_service.close()
+
+
+def test_wildcard_trusted_proxies_resolve_forwarded_client_from_private_peers(tmp_path: Path) -> None:
+    db_cfg = DatabaseSettings(URL=f"sqlite+aiosqlite:///{tmp_path / 'sec_proxies.sqlite3'}").get_config()
+    settings = Settings(
+        app=AppSettings(SECRET_KEY="proxy-test-secret", COOKIE_SECURE=False),
+        security=SecuritySettings(COOKIE_SECURE=False),
+        server=ServerSettings(LITESTAR_TRUSTED_PROXIES=["*"]),
+    )
+    sec_cfg = build_security_config(settings, db_cfg)
+    assert sec_cfg.local_auth is not None
+    client_key = sec_cfg.local_auth.client_key
+    forwarded = {"x-forwarded-for": "203.0.113.9"}
+
+    behind_proxy = SimpleNamespace(client=SimpleNamespace(host="10.0.0.5"), headers=forwarded)
+    direct_peer = SimpleNamespace(client=SimpleNamespace(host="198.51.100.7"), headers=forwarded)
+
+    assert client_key(cast("Any", behind_proxy)) == "203.0.113.9"
+    assert client_key(cast("Any", direct_peer)) == "198.51.100.7"
+
+
+@pytest.mark.parametrize("required", [True, False])
+def test_registration_verification_follows_setting(tmp_path: Path, required: bool) -> None:
+    db_cfg = DatabaseSettings(URL=f"sqlite+aiosqlite:///{tmp_path / 'sec_verify.sqlite3'}").get_config()
+    settings = Settings(
+        app=AppSettings(SECRET_KEY="verify-test-secret", COOKIE_SECURE=False),
+        security=SecuritySettings(COOKIE_SECURE=False, REGISTRATION_REQUIRE_VERIFICATION=required),
+    )
+    sec_cfg = build_security_config(settings, db_cfg)
+    assert sec_cfg.local_auth is not None
+    assert sec_cfg.local_auth.registration.require_verification is required
 
 
 def test_security_plugin_boots_with_zero_litestar_warnings(tmp_path: Path) -> None:

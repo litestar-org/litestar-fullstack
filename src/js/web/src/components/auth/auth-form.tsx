@@ -37,7 +37,7 @@ export function AuthForm() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-87.5">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="flex items-center justify-center gap-2 font-semibold text-2xl tracking-tight">
-              <Icons.sparkle className="h-5 w-5" />
+              <Icons.Sparkle className="h-5 w-5" />
               {isLogin ? "Welcome back" : "Create account"}
             </h1>
             <p className="text-muted-foreground text-sm">{isLogin ? "Enter your credentials to sign in to your account" : "Enter your details to create your account"}</p>

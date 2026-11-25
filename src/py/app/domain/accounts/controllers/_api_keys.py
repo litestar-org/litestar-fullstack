@@ -6,20 +6,14 @@ from typing import Annotated, Any, ClassVar, cast
 from litestar import Request, delete, get, post
 from litestar.exceptions import HTTPException
 from litestar.params import Parameter
-from litestar_security import (
-    AuthenticationPolicy,
-    CurrentUser,
-    SecureController,
-    SecurityPlugin,
-    required,
-    requires_assurance,
-)
+from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, SecurityPlugin, required
 from litestar_security.context import CredentialRestrictions
 from litestar_security.providers.api_key import APIKeyService
 
 from app.db import models as m
-from app.domain.accounts.schemas import APIKeyCreate, APIKeyIssued, APIKeyItem
+from app.domain.accounts.schemas import APIKeyCreate, APIKeyIssued, APIKeyItem, PasswordConfirmation
 from app.domain.accounts.security.api_keys import SQLAlchemyAPIKeyStore, build_api_key_service
+from app.domain.accounts.security.reauth import confirm_authentication
 
 
 def _resolve_api_key_components(request: Request[Any, Any, Any]) -> tuple[SQLAlchemyAPIKeyStore, APIKeyService]:
@@ -66,22 +60,19 @@ class ApiKeyController(SecureController):
             for row in rows
         ]
 
-    @post(
-        operation_id="CreateApiKey",
-        path="",
-        guards=[requires_assurance(max_age=timedelta(minutes=5))],
-    )
+    @post(operation_id="CreateApiKey", path="")
     async def create_api_key(
         self,
         request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         data: APIKeyCreate,
     ) -> APIKeyIssued:
-        """Mint a new reveal-once API key owned by the authenticated user.
+        """Mint a new reveal-once API key after a recent sign-in or password confirmation.
 
         Returns:
             Newly issued API key payload including the reveal-once secret.
         """
+        await confirm_authentication(request, current_user, data.current_password)
         store, service = _resolve_api_key_components(request)
         now = datetime.now(UTC)
         expires_at = now + timedelta(days=data.expires_in_days) if data.expires_in_days is not None else None
@@ -104,18 +95,15 @@ class ApiKeyController(SecureController):
             expires_at=expires_at,
         )
 
-    @post(
-        operation_id="RotateApiKey",
-        path="/{key_id:str}/rotate",
-        guards=[requires_assurance(max_age=timedelta(minutes=5))],
-    )
+    @post(operation_id="RotateApiKey", path="/{key_id:str}/rotate")
     async def rotate_api_key(
         self,
         request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         key_id: Annotated[str, Parameter(title="API Key ID", description="Opaque API key identifier to rotate.")],
+        data: PasswordConfirmation | None = None,
     ) -> APIKeyIssued:
-        """Rotate an owned API key with a 24-hour overlap grace window.
+        """Rotate an owned API key with a 24-hour overlap after a recent sign-in or password confirmation.
 
         Returns:
             Replacement API key payload including the reveal-once secret.
@@ -123,6 +111,7 @@ class ApiKeyController(SecureController):
         Raises:
             HTTPException: If the key is not found, already revoked/rotated, expired, or cannot be rotated.
         """
+        await confirm_authentication(request, current_user, data.current_password if data else None)
         store, service = _resolve_api_key_components(request)
         existing = await store.get_for_user(current_user.id, key_id)
         if existing is None:
@@ -162,22 +151,20 @@ class ApiKeyController(SecureController):
             expires_at=expires_at,
         )
 
-    @delete(
-        operation_id="RevokeApiKey",
-        path="/{key_id:str}",
-        guards=[requires_assurance(max_age=timedelta(minutes=5))],
-    )
+    @delete(operation_id="RevokeApiKey", path="/{key_id:str}")
     async def revoke_api_key(
         self,
         request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         key_id: Annotated[str, Parameter(title="API Key ID", description="Opaque API key identifier to revoke.")],
+        data: PasswordConfirmation | None = None,
     ) -> None:
-        """Immediately revoke an API key owned by the authenticated user.
+        """Immediately revoke an owned API key after a recent sign-in or password confirmation.
 
         Raises:
             HTTPException: If the API key does not exist or is not owned by the authenticated user.
         """
+        await confirm_authentication(request, current_user, data.current_password if data else None)
         store, service = _resolve_api_key_components(request)
         existing = await store.get_for_user(current_user.id, key_id)
         if existing is None:

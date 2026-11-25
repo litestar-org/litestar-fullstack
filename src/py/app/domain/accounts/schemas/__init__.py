@@ -6,6 +6,7 @@ from app.domain.accounts.schemas._api_keys import APIKeyCreate, APIKeyIssued, AP
 from app.domain.accounts.schemas._roles import Role, RoleCreate, RoleUpdate, UserRoleAdd, UserRoleRevoke
 from app.domain.accounts.schemas._user import (
     OauthAccount,
+    PasswordConfirmation,
     PasswordUpdate,
     ProfileUpdate,
     User,
@@ -22,6 +23,7 @@ __all__ = (
     "APIKeyItem",
     "Message",
     "OauthAccount",
+    "PasswordConfirmation",
     "PasswordUpdate",
     "ProfileUpdate",
     "Role",

@@ -2,9 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import type { ReactNode } from "react"
+import { toast } from "sonner"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { ApiKeysSection } from "@/components/settings/api-keys-section"
 import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
+import { useAuthStore } from "@/lib/auth"
 import type { ApiKeyItem } from "@/lib/generated/api"
 import { CSRF_COOKIE_NAME } from "@/lib/generated/routes"
 
@@ -37,6 +39,7 @@ describe("ApiKeysSection", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch
     resetApiClientForTest()
+    useAuthStore.setState({ user: null })
     vi.restoreAllMocks()
   })
 
@@ -163,6 +166,79 @@ describe("ApiKeysSection", () => {
     await user.click(screen.getByRole("button", { name: /revoke/i }))
     await waitFor(() => {
       expect(screen.queryByText("CI Runner")).not.toBeInTheDocument()
+    })
+  })
+
+  describe("when the sign-in is no longer recent", () => {
+    const staleKey: ApiKeyItem = {
+      id: "key-1",
+      name: "CI Runner",
+      prefix: "lsk_old1",
+      scopes: ["read"],
+      createdAt: "2026-11-20T12:00:00Z",
+      expiresAt: null,
+      lastUsedAt: null,
+      revokedAt: null,
+    }
+
+    function mockRotationRequiringPassword(expectedPassword: string) {
+      globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const request = input instanceof Request ? input : new Request(input, init)
+        const pathname = new URL(request.url).pathname
+
+        if (pathname === "/api/me/api-keys" && request.method === "GET") {
+          return jsonResponse([staleKey])
+        }
+        if (pathname === "/api/me/api-keys/key-1/rotate" && request.method === "POST") {
+          const body = (await request.json()) as { currentPassword?: string | null } | null
+          if (!body?.currentPassword) {
+            return jsonResponse({ status_code: 403, detail: "Confirm your password to continue.", extra: { code: "reauthentication_required" } }, 403)
+          }
+          if (body.currentPassword !== expectedPassword) {
+            return jsonResponse({ status_code: 403, detail: "The current password is incorrect." }, 403)
+          }
+          return jsonResponse({ ...staleKey, id: "key-2", prefix: "lsk_new2", secret: "lsk_new2_rotated_secret" })
+        }
+        return jsonResponse({ detail: "Not found" }, 404)
+      })
+    }
+
+    it("prompts for the password and retries the rotation with it", async () => {
+      mockRotationRequiringPassword("StrongPassword!123")
+      const user = userEvent.setup()
+      render(<ApiKeysSection />, { wrapper: createWrapper() })
+
+      await user.click(await screen.findByRole("button", { name: /rotate/i }))
+      const passwordInput = await screen.findByLabelText(/current password/i)
+
+      await user.type(passwordInput, "WrongPassword!123")
+      await user.click(screen.getByRole("button", { name: /continue/i }))
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /continue/i })).toBeEnabled()
+      })
+      expect(screen.queryByText("lsk_new2_rotated_secret")).not.toBeInTheDocument()
+
+      await user.clear(passwordInput)
+      await user.type(passwordInput, "StrongPassword!123")
+      await user.click(screen.getByRole("button", { name: /continue/i }))
+
+      expect(await screen.findByText("lsk_new2_rotated_secret")).toBeInTheDocument()
+      expect(screen.queryByLabelText(/current password/i)).not.toBeInTheDocument()
+    })
+
+    it("asks accounts without a password to sign in again instead of prompting", async () => {
+      mockRotationRequiringPassword("unused")
+      useAuthStore.setState({ user: { id: "user-1", email: "octocat@example.com", hasPassword: false } })
+      const errorToast = vi.spyOn(toast, "error")
+      const user = userEvent.setup()
+      render(<ApiKeysSection />, { wrapper: createWrapper() })
+
+      await user.click(await screen.findByRole("button", { name: /rotate/i }))
+
+      await waitFor(() => {
+        expect(errorToast).toHaveBeenCalledWith("Sign in again to continue", expect.anything())
+      })
+      expect(screen.queryByLabelText(/current password/i)).not.toBeInTheDocument()
     })
   })
 })

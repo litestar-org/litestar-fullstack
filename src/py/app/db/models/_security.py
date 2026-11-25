@@ -15,6 +15,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from app.db.models._user import User
 
+_USER_FK = "user_account.id"
+
 
 class AppStore(StoreModelMixin):
     """Shared Advanced Alchemy key-value store backing ``StoreRateLimiter`` and ephemeral state."""
@@ -35,7 +37,7 @@ class UserSession(UUIDv7AuditBase):
     binding_id: Mapped[str] = mapped_column(String(length=128), index=True, nullable=False)
     binding_digest: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )
@@ -62,7 +64,7 @@ class PurposeToken(UUIDv7AuditBase):
     token_hash: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     purpose: Mapped[str] = mapped_column(String(length=64), index=True, nullable=False)
     user_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=True,
         default=None,
@@ -90,7 +92,7 @@ class UserMFAFactor(UUIDv7AuditBase):
         String(length=128), unique=True, index=True, nullable=True, default=None
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )
@@ -119,7 +121,7 @@ class UserMFARecoveryCode(UUIDv7AuditBase):
     )
 
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )
@@ -136,7 +138,7 @@ class MFALoginChallenge(UUIDv7AuditBase):
 
     challenge_hash: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )
@@ -173,7 +175,7 @@ class UserPasskey(UUIDv7AuditBase):
 
     credential_id: Mapped[str] = mapped_column(String(length=512), unique=True, index=True, nullable=False)
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )
@@ -203,7 +205,7 @@ class PasskeyChallenge(UUIDv7AuditBase):
     binding_digest: Mapped[str | None] = mapped_column(String(length=128), nullable=True, default=None)
     purpose: Mapped[str] = mapped_column(String(length=64), nullable=False)
     user_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=True,
         default=None,
@@ -233,7 +235,7 @@ class OAuthTransaction(UUIDv7AuditBase):
     protected_payload: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     key_version: Mapped[str] = mapped_column(String(length=64), nullable=False)
     user_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=True,
         default=None,
@@ -258,7 +260,7 @@ class APIKey(UUIDv7AuditBase):
 
     key_id: Mapped[str] = mapped_column(String(length=128), unique=True, index=True, nullable=False)
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user_account.id", ondelete="cascade"),
+        ForeignKey(_USER_FK, ondelete="cascade"),
         index=True,
         nullable=False,
     )

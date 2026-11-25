@@ -44,7 +44,7 @@ from app.db import models as m
 from app.lib.constants import DEFAULT_ACCESS_ROLE
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable
+    from collections.abc import Awaitable, Callable, Sequence
 
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,6 +53,7 @@ logger = structlog.get_logger(__name__)
 
 _LOGIN_METHODS_NAMESPACE = "login_methods"
 _PERMANENT_STORE_EXPIRY = datetime(9999, 12, 31, tzinfo=UTC)
+_IDENTIFIER_COLLISION = "Purpose token identifier collision"
 
 __all__ = ("SQLAlchemySecurityBackend", "persist_login_method")
 
@@ -99,7 +100,7 @@ def _credential_hex_from_passkey_method_id(method_id: str) -> str | None:
     padded = encoded + "=" * ((4 - len(encoded) % 4) % 4)
     try:
         return urlsafe_b64decode(padded.encode("ascii")).hex()
-    except (ValueError, UnicodeEncodeError):
+    except ValueError:
         return None
 
 
@@ -371,7 +372,6 @@ class SQLAlchemySecurityBackend:
         prefix = f"{account_id}:"
         target_key = f"{account_id}:{method_id}"
         uid = _parse_uuid(account_id)
-        cred_hex = _credential_hex_from_passkey_method_id(method_id)
         async with self._lock, self._alchemy_config.get_session() as session:
             rows = (
                 await session.scalars(
@@ -387,33 +387,15 @@ class SQLAlchemySecurityBackend:
             mfa_target: m.UserMFAFactor | None = None
             passkey_target: m.UserPasskey | None = None
             if uid is not None:
-                has_password_method = any(
-                    json.loads(row.value.decode("utf-8")).get("kind") == "password" for row in rows
-                )
-                if not has_password_method:
-                    user_row = await session.scalar(
-                        select(m.User).where(m.User.id == uid).options(undefer_group("security_sensitive"))
-                    )
-                    if user_row is not None and user_row.hashed_password is not None:
-                        existing_ids.add("password")
-                mfa_rows = (
-                    await session.scalars(
-                        select(m.UserMFAFactor).where(
-                            m.UserMFAFactor.user_id == uid,
-                            m.UserMFAFactor.is_confirmed.is_(true()),
-                        )
-                    )
+                if await _has_unrecorded_password(session, uid, rows):
+                    existing_ids.add("password")
+                mfa_ids, mfa_target = await _match_mfa_factor(session, uid, method_id)
+                passkey_ids, passkey_target = await _match_passkey(session, uid, method_id)
+                existing_ids |= mfa_ids | passkey_ids
+                oauth_ids = (
+                    await session.scalars(select(m.UserOAuthAccount.id).where(m.UserOAuthAccount.user_id == uid))
                 ).all()
-                for factor in mfa_rows:
-                    existing_ids.add(factor.method_id)
-                    if factor.method_id == method_id:
-                        mfa_target = factor
-                pk_rows = (await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == uid))).all()
-                for pk_row in pk_rows:
-                    pk_id = _passkey_method_id_from_hex(pk_row.credential_id)
-                    existing_ids.add(pk_id)
-                    if cred_hex is not None and pk_row.credential_id == cred_hex:
-                        passkey_target = pk_row
+                existing_ids.update(f"oauth:{oauth_id}" for oauth_id in oauth_ids)
 
             if target_store is None and mfa_target is None and passkey_target is None:
                 return RevokeLoginMethodOutcome(RevokeLoginMethodStatus.NOT_FOUND)
@@ -456,24 +438,12 @@ class SQLAlchemySecurityBackend:
 
             invitation_row: m.PurposeToken | None = None
             if invitation_digest is not None:
-                invitation_row = await session.scalar(
-                    select(m.PurposeToken).where(
-                        m.PurposeToken.purpose == TokenPurpose.INVITATION.value,
-                        m.PurposeToken.token_hash == invitation_digest.hex(),
-                        m.PurposeToken.consumed_at.is_(None),
-                        m.PurposeToken.revoked_at.is_(None),
-                    )
-                )
-                if invitation_row is None or _ensure_utc(invitation_row.expires_at) <= now:
+                invitation_row = await _find_open_invitation(session, invitation_digest, now)
+                if invitation_row is None:
                     return RegistrationOutcome(RegistrationStatus.INVALID_INVITATION)
 
-            if verification is not None:
-                existing_token = await session.scalar(
-                    select(m.PurposeToken.id).where(m.PurposeToken.token_id == verification.issue.token_id)
-                )
-                if existing_token is not None:
-                    msg = "Purpose token identifier collision"
-                    raise ValueError(msg)
+            if verification is not None and await _token_id_exists(session, verification.issue.token_id):
+                raise ValueError(_IDENTIFIER_COLLISION)
 
             user = m.User(
                 email=command.normalized_identifier,
@@ -537,10 +507,8 @@ class SQLAlchemySecurityBackend:
         """
         del event
         async with self._lock, self._alchemy_config.get_session() as session:
-            existing = await session.scalar(select(m.PurposeToken.id).where(m.PurposeToken.token_id == issue.token_id))
-            if existing is not None:
-                msg = "Purpose token identifier collision"
-                raise ValueError(msg)
+            if await _token_id_exists(session, issue.token_id):
+                raise ValueError(_IDENTIFIER_COLLISION)
             session.add(
                 m.PurposeToken(
                     token_id=issue.token_id,
@@ -560,7 +528,6 @@ class SQLAlchemySecurityBackend:
 
     async def issue_absent(self) -> None:
         """Perform a constant-interface no-op when issuing for a non-existent account."""
-        return
 
     async def _consume_purpose_token(
         self,
@@ -983,3 +950,59 @@ class SQLAlchemySecurityBackend:
         if resolved is None:
             return InvalidCredentials()
         return resolved
+
+
+async def _has_unrecorded_password(session: AsyncSession, user_id: UUID, method_rows: Sequence[m.AppStore]) -> bool:
+    if any(json.loads(row.value.decode("utf-8")).get("kind") == "password" for row in method_rows):
+        return False
+    user = await session.scalar(select(m.User).where(m.User.id == user_id).options(undefer_group("security_sensitive")))
+    return user is not None and user.hashed_password is not None
+
+
+async def _match_mfa_factor(
+    session: AsyncSession, user_id: UUID, method_id: str
+) -> tuple[set[str], m.UserMFAFactor | None]:
+    method_ids: set[str] = set()
+    target: m.UserMFAFactor | None = None
+    factors = await session.scalars(
+        select(m.UserMFAFactor).where(
+            m.UserMFAFactor.user_id == user_id,
+            m.UserMFAFactor.is_confirmed.is_(true()),
+        )
+    )
+    for factor in factors:
+        method_ids.add(factor.method_id)
+        if factor.method_id == method_id:
+            target = factor
+    return method_ids, target
+
+
+async def _match_passkey(session: AsyncSession, user_id: UUID, method_id: str) -> tuple[set[str], m.UserPasskey | None]:
+    credential_hex = _credential_hex_from_passkey_method_id(method_id)
+    method_ids: set[str] = set()
+    target: m.UserPasskey | None = None
+    passkeys = await session.scalars(select(m.UserPasskey).where(m.UserPasskey.user_id == user_id))
+    for passkey in passkeys:
+        method_ids.add(_passkey_method_id_from_hex(passkey.credential_id))
+        if credential_hex is not None and passkey.credential_id == credential_hex:
+            target = passkey
+    return method_ids, target
+
+
+async def _find_open_invitation(session: AsyncSession, digest: bytes, now: datetime) -> m.PurposeToken | None:
+    invitation = await session.scalar(
+        select(m.PurposeToken).where(
+            m.PurposeToken.purpose == TokenPurpose.INVITATION.value,
+            m.PurposeToken.token_hash == digest.hex(),
+            m.PurposeToken.consumed_at.is_(None),
+            m.PurposeToken.revoked_at.is_(None),
+        )
+    )
+    if invitation is None or _ensure_utc(invitation.expires_at) <= now:
+        return None
+    return invitation
+
+
+async def _token_id_exists(session: AsyncSession, token_id: str) -> bool:
+    existing = await session.scalar(select(m.PurposeToken.id).where(m.PurposeToken.token_id == token_id))
+    return existing is not None

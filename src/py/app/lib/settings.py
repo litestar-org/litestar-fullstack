@@ -12,9 +12,10 @@ import logging
 import os
 import sys
 from dataclasses import dataclass, field
-from functools import lru_cache
+from functools import lru_cache, partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, cast
+from uuid import UUID
 
 import structlog
 from advanced_alchemy.extensions.litestar import (
@@ -51,7 +52,9 @@ from litestar_queues import (
 from litestar_queues.backends.advanced_alchemy import SQLAlchemyBackendConfig
 from litestar_queues.observability import ObservabilityConfig
 from litestar_security import SecurityConfig, SecurityHeadersConfig
+from litestar_security.context import Principal, SecurityContext
 from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
+from sqlalchemy import select
 from sqlalchemy.pool import NullPool
 
 from app.__metadata__ import __version__ as current_version
@@ -61,7 +64,11 @@ from app.utils.env import TRUE_VALUES, get_config_val, get_env
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from litestar.connection import ASGIConnection
+    from litestar.handlers import BaseRouteHandler
+    from litestar_mcp import AfterToolCallHook, BeforeToolCallHook
     from litestar_queues import ExecutionBackendConfig, WorkerPlacement
+    from litestar_security import AuthenticationPolicy
 
 DEFAULT_MODULE_NAME: Final[str] = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
@@ -296,50 +303,7 @@ class QueueSettings:
             enable_prometheus=self.ENABLE_PROMETHEUS,
             enable_sqlcommenter=True,
         )
-        from uuid import UUID
-
         from litestar_security import any_of
-        from litestar_security.context import Principal
-        from sqlalchemy import select
-
-        def _require_authenticated_stream(connection: Any, _: Any) -> None:
-            principal: object = connection.scope.get("user")
-            if not isinstance(principal, Principal) or not principal.is_authenticated:
-                raise NotAuthorizedException
-
-        async def _authorize_stream_channel(
-            connection: Any,
-            scope: str,
-            target: str | None,
-        ) -> bool:
-            raw_principal: object = connection.scope.get("user")
-            if (
-                not isinstance(raw_principal, Principal)
-                or not raw_principal.is_authenticated
-                or raw_principal.id is None
-            ):
-                return False
-            principal = cast("Principal[object]", raw_principal)
-            user_obj: object = principal.user
-            if bool(getattr(user_obj, "is_superuser", False)):
-                return True
-            if scope != "task" or not target:
-                return False
-            try:
-                task_uuid = UUID(target)
-            except ValueError:
-                return False
-            async with alchemy_config.get_session() as session:
-                row = await session.scalar(select(QueueTaskModel).where(QueueTaskModel.id == task_uuid))
-                raw_meta: Any = row.metadata_json if row is not None else None
-                if isinstance(raw_meta, str):
-                    try:
-                        raw_meta = json.loads(raw_meta)
-                    except ValueError:
-                        return False
-                return isinstance(raw_meta, dict) and bool(
-                    cast("dict[str, Any]", raw_meta).get("requested_by_id") == str(raw_principal.id)
-                )
 
         events = QueueEventsConfig(
             channels=MemoryChannelsBackend(history=100),
@@ -351,8 +315,8 @@ class QueueSettings:
                 EventStreamConfig(
                     path=self.STREAM_PATH,
                     transports={"sse", "websocket"},
-                    guards=[_require_authenticated_stream],
-                    channel_authorizer=_authorize_stream_channel,
+                    guards=[_require_authenticated_queue_stream],
+                    channel_authorizer=partial(_authorize_queue_stream_channel, alchemy_config),
                     opt={"auth": any_of("session", "api-key")},
                 )
                 if self.STREAM_ENABLED
@@ -385,7 +349,7 @@ class SecuritySettings:
     PASSKEY_ORIGINS: list[str] = field(
         default_factory=get_env("PASSKEY_ORIGINS", ["http://localhost:8000", "http://localhost:5173"])
     )
-    REGISTRATION_REQUIRE_VERIFICATION: bool = field(default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", False))
+    REGISTRATION_REQUIRE_VERIFICATION: bool = field(default_factory=get_env("REGISTRATION_REQUIRE_VERIFICATION", True))
 
     def derive_key(self, app_settings: AppSettings, info: bytes, *, length: int = 32) -> bytes:
         """Derive a purpose-isolated HKDF-SHA256 subkey from ``app_settings.SECRET_KEY``.
@@ -429,9 +393,9 @@ class MCPSettings:
     def get_config(
         self,
         *,
-        auth: Any | None = None,
-        before_tool_call: Any | None = None,
-        after_tool_call: Any | None = None,
+        auth: AuthenticationPolicy | None = None,
+        before_tool_call: BeforeToolCallHook | None = None,
+        after_tool_call: AfterToolCallHook | None = None,
     ) -> MCPConfig:
         """Build ``MCPConfig`` with API-key auth, strict description bounds, tasks, and optional audit hooks.
 
@@ -786,3 +750,55 @@ def get_settings(dotenv_filename: str = ".env") -> Settings:
 def provide_app_settings() -> AppSettings:
     """Return application settings for Litestar dependency injection."""
     return get_settings().app
+
+
+def _require_authenticated_queue_stream(connection: ASGIConnection[Any, Any, Any, Any], _: BaseRouteHandler) -> None:
+    principal: object = cast("dict[str, Any]", connection.scope).get("user")
+    if not isinstance(principal, Principal) or not principal.is_authenticated:
+        raise NotAuthorizedException
+
+
+async def _authorize_queue_stream_channel(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    connection: ASGIConnection[Any, Any, Any, Any],
+    scope: str,
+    target: str | None,
+) -> bool:
+    """Allow superusers on every channel and other principals only on tasks they requested.
+
+    Returns:
+        ``True`` when the connection may subscribe to the requested channel.
+    """
+    principal: object = cast("dict[str, Any]", connection.scope).get("user")
+    if not isinstance(principal, Principal) or not principal.is_authenticated or principal.id is None:
+        return False
+    if _holds_superuser_role(connection):
+        return True
+    if scope != "task" or not target:
+        return False
+    return await _requested_queue_task(alchemy_config, target, str(principal.id))
+
+
+def _holds_superuser_role(connection: ASGIConnection[Any, Any, Any, Any]) -> bool:
+    context: object = cast("dict[str, Any]", connection.scope).get("auth")
+    return isinstance(context, SecurityContext) and "superuser" in context.authorization.roles
+
+
+async def _requested_queue_task(alchemy_config: SQLAlchemyAsyncConfig, target: str, principal_id: str) -> bool:
+    from litestar_queues.backends.advanced_alchemy import QueueTaskModel
+
+    try:
+        task_uuid = UUID(target)
+    except ValueError:
+        return False
+    async with alchemy_config.get_session() as session:
+        row = await session.scalar(select(QueueTaskModel).where(QueueTaskModel.id == task_uuid))
+        raw_meta: Any = row.metadata_json if row is not None else None
+        if isinstance(raw_meta, str):
+            try:
+                raw_meta = json.loads(raw_meta)
+            except ValueError:
+                return False
+        return isinstance(raw_meta, dict) and bool(
+            cast("dict[str, Any]", raw_meta).get("requested_by_id") == principal_id
+        )

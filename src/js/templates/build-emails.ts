@@ -93,4 +93,4 @@ async function buildTemplates() {
   }
 }
 
-buildTemplates()
+await buildTemplates()

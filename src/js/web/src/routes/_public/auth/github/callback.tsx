@@ -51,7 +51,7 @@ function GitHubCallbackPage() {
         toast.success("Successfully signed in with GitHub!")
         const storedRedirect = sessionStorage.getItem(GITHUB_AUTH_REDIRECT_KEY)
         sessionStorage.removeItem(GITHUB_AUTH_REDIRECT_KEY)
-        navigate({ to: getSafeRedirectUrl(storedRedirect) })
+        await navigate({ to: getSafeRedirectUrl(storedRedirect) })
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Unable to complete GitHub sign-in"
         setError(errorMessage)
@@ -59,7 +59,7 @@ function GitHubCallbackPage() {
       }
     }
 
-    run()
+    void run()
   }, [checkAuth, errorParam, message, navigate])
 
   return (
@@ -71,7 +71,7 @@ function GitHubCallbackPage() {
         <CardContent className="space-y-4">
           {!error && (
             <div className="flex flex-col items-center space-y-4">
-              <Icons.spinner className="h-8 w-8 animate-spin text-primary" />
+              <Icons.Spinner className="h-8 w-8 animate-spin text-primary" />
               <p className="text-muted-foreground text-sm">Please wait while we complete your sign in with GitHub...</p>
             </div>
           )}

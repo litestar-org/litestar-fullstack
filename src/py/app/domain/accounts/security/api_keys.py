@@ -28,6 +28,8 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
+_ROTATION_CONFLICT = "API-key rotation conflict"
+
 __all__ = (
     "APIKeyIdentityResolver",
     "SQLAlchemyAPIKeyStore",
@@ -182,25 +184,15 @@ class SQLAlchemyAPIKeyStore:
         async with self._lock, self._alchemy_config.get_session() as session:
             current = await session.scalar(select(m.APIKey).where(m.APIKey.key_id == current_key_id))
             if current is None or current.revoked_at is not None:
-                msg = "API-key rotation conflict"
-                raise ValueError(msg)
-            current_expires = _ensure_utc(current.expires_at) if current.expires_at is not None else None
-            bounded_overlap = (
-                min(_ensure_utc(overlap_until), current_expires)
-                if overlap_until is not None and current_expires is not None
-                else (_ensure_utc(overlap_until) if overlap_until is not None else None)
-            )
-            if bounded_overlap is not None and bounded_overlap < now_utc:
-                bounded_overlap = None
+                raise ValueError(_ROTATION_CONFLICT)
             result = await session.execute(
                 update(m.APIKey)
                 .where(m.APIKey.id == current.id, m.APIKey.revoked_at.is_(None))
-                .values(revoked_at=now_utc, overlap_until=bounded_overlap)
+                .values(revoked_at=now_utc, overlap_until=_bound_overlap(overlap_until, current.expires_at, now_utc))
             )
             if int(getattr(result, "rowcount", 0) or 0) != 1:
                 await session.rollback()
-                msg = "API-key rotation conflict"
-                raise ValueError(msg)
+                raise ValueError(_ROTATION_CONFLICT)
             successor = m.APIKey(
                 key_id=replacement.key_id,
                 user_id=uid,
@@ -219,8 +211,7 @@ class SQLAlchemyAPIKeyStore:
                 await session.commit()
             except IntegrityError as exc:
                 await session.rollback()
-                msg = "API-key rotation conflict"
-                raise ValueError(msg) from exc
+                raise ValueError(_ROTATION_CONFLICT) from exc
 
     async def revoke(self, *, key_id: str, now: datetime) -> None:
         """Immediately revoke an existing API key and clear any grace overlap window.
@@ -359,3 +350,14 @@ def build_api_key_service(
         codec=APIKeyCodec(pepper=pepper, prefix=prefix),
         clock=lambda: datetime.now(UTC),
     )
+
+
+def _bound_overlap(
+    overlap_until: datetime | None, current_expires_at: datetime | None, now: datetime
+) -> datetime | None:
+    if overlap_until is None:
+        return None
+    bounded = _ensure_utc(overlap_until)
+    if current_expires_at is not None:
+        bounded = min(bounded, _ensure_utc(current_expires_at))
+    return bounded if bounded >= now else None

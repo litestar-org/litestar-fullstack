@@ -34,94 +34,6 @@ _TOKEN_ENDPOINTS: dict[str, str] = {
 }
 
 
-def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
-    creds: dict[str, tuple[str, str]] = {}
-    if settings.app.github_oauth_enabled:
-        creds["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
-    return creds
-
-
-async def _refresh_single_account(
-    row: m.UserOAuthAccount,
-    *,
-    client: httpx.AsyncClient,
-    protector: OAuthTransactionProtector,
-    credentials: dict[str, tuple[str, str]],
-    now: datetime,
-) -> str:
-    provider_creds = credentials.get(row.oauth_name)
-    endpoint = _TOKEN_ENDPOINTS.get(row.oauth_name)
-    if provider_creds is None or endpoint is None or row.protected_tokens is None or row.key_version is None:
-        return "skipped"
-
-    aad = oauth_account_aad(row.oauth_name, row.account_id)
-    try:
-        raw_blob = await protector.unprotect(
-            ProtectedOAuthSecret(key_version=row.key_version, ciphertext=row.protected_tokens),
-            associated_data=aad,
-        )
-        stored = deserialize_oauth_tokens(raw_blob)
-        if stored.refresh_token is None or not stored.refresh_token.get_secret_value():
-            return "skipped"
-
-        client_id, client_secret = provider_creds
-        resp = await client.post(
-            endpoint,
-            headers={"Accept": "application/json"},
-            data={
-                "grant_type": "refresh_token",
-                "refresh_token": stored.refresh_token.get_secret_value(),
-                "client_id": client_id,
-                "client_secret": client_secret,
-            },
-        )
-        resp.raise_for_status()
-        payload: dict[str, Any] = resp.json()
-        new_access = payload.get("access_token")
-        if not isinstance(new_access, str) or not new_access:
-            return "failed"
-
-        new_refresh_raw = payload.get("refresh_token")
-        new_refresh = (
-            SecretStr(new_refresh_raw) if isinstance(new_refresh_raw, str) and new_refresh_raw else stored.refresh_token
-        )
-        new_id_token_raw = payload.get("id_token")
-        new_id_token = (
-            SecretStr(new_id_token_raw) if isinstance(new_id_token_raw, str) and new_id_token_raw else stored.id_token
-        )
-        expires_in = payload.get("expires_in")
-        new_expires_at = (
-            now + timedelta(seconds=int(expires_in))
-            if isinstance(expires_in, (int, float)) and expires_in > 0
-            else (row.token_expires_at or now + timedelta(hours=1))
-        )
-        scopes_raw = payload.get("scope")
-        scopes = frozenset(scopes_raw.split()) if isinstance(scopes_raw, str) and scopes_raw.strip() else stored.scopes
-        tokens = ProviderTokenSet(
-            access_token=SecretStr(new_access),
-            token_type=stored.token_type,
-            scopes=scopes,
-            refresh_token=new_refresh,
-            id_token=new_id_token,
-            expires_at=new_expires_at,
-        )
-        re_protected = await protector.protect(serialize_oauth_tokens(tokens), associated_data=aad)
-        row.protected_tokens = re_protected.ciphertext
-        row.key_version = re_protected.key_version
-        row.token_version += 1
-        row.token_expires_at = new_expires_at
-        row.scopes = sorted(tokens.scopes)
-    except Exception as exc:  # noqa: BLE001
-        await logger.awarning(
-            "OAuth token refresh failed",
-            provider=row.oauth_name,
-            error_type=type(exc).__name__,
-        )
-        return "failed"
-    else:
-        return "refreshed"
-
-
 async def run_refresh_oauth_tokens(
     alchemy_config: SQLAlchemyAsyncConfig,
     *,
@@ -198,3 +110,102 @@ async def refresh_oauth_tokens() -> dict[str, int]:
     from app import config
 
     return await run_refresh_oauth_tokens(config.alchemy)
+
+
+def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
+    creds: dict[str, tuple[str, str]] = {}
+    if settings.app.github_oauth_enabled:
+        creds["github"] = (settings.app.GITHUB_OAUTH2_CLIENT_ID, settings.app.GITHUB_OAUTH2_CLIENT_SECRET)
+    return creds
+
+
+async def _refresh_single_account(
+    row: m.UserOAuthAccount,
+    *,
+    client: httpx.AsyncClient,
+    protector: OAuthTransactionProtector,
+    credentials: dict[str, tuple[str, str]],
+    now: datetime,
+) -> str:
+    provider_creds = credentials.get(row.oauth_name)
+    endpoint = _TOKEN_ENDPOINTS.get(row.oauth_name)
+    if provider_creds is None or endpoint is None or row.protected_tokens is None or row.key_version is None:
+        return "skipped"
+
+    aad = oauth_account_aad(row.oauth_name, row.account_id)
+    try:
+        raw_blob = await protector.unprotect(
+            ProtectedOAuthSecret(key_version=row.key_version, ciphertext=row.protected_tokens),
+            associated_data=aad,
+        )
+        stored = deserialize_oauth_tokens(raw_blob)
+        if stored.refresh_token is None or not stored.refresh_token.get_secret_value():
+            return "skipped"
+
+        client_id, client_secret = provider_creds
+        resp = await client.post(
+            endpoint,
+            headers={"Accept": "application/json"},
+            data={
+                "grant_type": "refresh_token",
+                "refresh_token": stored.refresh_token.get_secret_value(),
+                "client_id": client_id,
+                "client_secret": client_secret,
+            },
+        )
+        resp.raise_for_status()
+        tokens = _merge_refreshed_tokens(
+            resp.json(),
+            stored,
+            fallback_expires_at=row.token_expires_at or now + timedelta(hours=1),
+            now=now,
+        )
+        if tokens is None:
+            return "failed"
+        re_protected = await protector.protect(serialize_oauth_tokens(tokens), associated_data=aad)
+        row.protected_tokens = re_protected.ciphertext
+        row.key_version = re_protected.key_version
+        row.token_version += 1
+        row.token_expires_at = tokens.expires_at
+        row.scopes = sorted(tokens.scopes)
+    except Exception as exc:  # noqa: BLE001
+        await logger.awarning(
+            "OAuth token refresh failed",
+            provider=row.oauth_name,
+            error_type=type(exc).__name__,
+        )
+        return "failed"
+    else:
+        return "refreshed"
+
+
+def _merge_refreshed_tokens(
+    payload: dict[str, Any],
+    stored: ProviderTokenSet,
+    *,
+    fallback_expires_at: datetime,
+    now: datetime,
+) -> ProviderTokenSet | None:
+    new_access = payload.get("access_token")
+    if not isinstance(new_access, str) or not new_access:
+        return None
+    expires_in = payload.get("expires_in")
+    expires_at = (
+        now + timedelta(seconds=int(expires_in))
+        if isinstance(expires_in, (int, float)) and expires_in > 0
+        else fallback_expires_at
+    )
+    scopes_raw = payload.get("scope")
+    scopes = frozenset(scopes_raw.split()) if isinstance(scopes_raw, str) and scopes_raw.strip() else stored.scopes
+    return ProviderTokenSet(
+        access_token=SecretStr(new_access),
+        token_type=stored.token_type,
+        scopes=scopes,
+        refresh_token=_secret_or(payload.get("refresh_token"), stored.refresh_token),
+        id_token=_secret_or(payload.get("id_token"), stored.id_token),
+        expires_at=expires_at,
+    )
+
+
+def _secret_or(raw: object, fallback: SecretStr | None) -> SecretStr | None:
+    return SecretStr(raw) if isinstance(raw, str) and raw else fallback

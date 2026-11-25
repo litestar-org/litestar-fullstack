@@ -264,6 +264,9 @@ ignore = [
   "PLR6301",
 ]
 select = ["ALL"]
+preview = true
+explicit-preview-rules = true
+extend-select = ["DOC201", "DOC202", "DOC402", "DOC403", "DOC501", "DOC502"]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
@@ -277,7 +280,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/py/app/domain/**/controllers*.py" = ["TC001", "TC002", "TC003"]
 "src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
-"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
+"tools/**/*.*" = ["D", "DOC", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
 
 
 [tool.ruff.lint.pydocstyle]

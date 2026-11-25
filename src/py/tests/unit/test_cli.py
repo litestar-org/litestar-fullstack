@@ -58,6 +58,7 @@ async def test_cli_fixture_idempotency_and_service_group_helpers(tmp_path: Path)
     async with AccountServices.new(config=db_cfg) as accounts:
         user = await accounts.users.get_one(email="cli-user@example.com")
         assert user.is_superuser is True
+        assert user.is_verified is True
         assert len(user.roles) == 1
 
 

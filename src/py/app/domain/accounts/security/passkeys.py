@@ -110,8 +110,9 @@ class SQLAlchemyPasskeyStore:
         )
         async with self._lock, self._alchemy_config.get_session() as session:
             session.add(row)
-            await persist_login_method(session, credential.account_id, login_method)
             try:
+                await session.flush()
+                await persist_login_method(session, credential.account_id, login_method)
                 await session.commit()
             except IntegrityError:
                 await session.rollback()

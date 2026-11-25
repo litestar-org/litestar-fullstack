@@ -15,6 +15,7 @@ class APIKeyCreate(CamelizedBaseStruct):
     name: str
     scopes: list[str] = []
     expires_in_days: int | None = None
+    current_password: str | None = None
 
     def __post_init__(self) -> None:
         """Validate API key display name and optional expiration window.

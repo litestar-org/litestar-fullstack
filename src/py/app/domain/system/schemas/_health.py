@@ -23,3 +23,4 @@ class PublicAuthConfig(CamelizedBaseStruct, kw_only=True):
     github_enabled: bool = False
     passkeys_enabled: bool = True
     mfa_enabled: bool = True
+    email_verification_required: bool = True

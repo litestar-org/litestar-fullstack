@@ -41,7 +41,7 @@ class AppAuthorizationResolver:
 
     __slots__ = ()
 
-    async def resolve(
+    async def resolve(  # NOSONAR - the AuthorizationResolver protocol awaits this method
         self,
         principal: Principal[m.User],
     ) -> AuthorizationSnapshot | InvalidCredentials | VerificationUnavailable:

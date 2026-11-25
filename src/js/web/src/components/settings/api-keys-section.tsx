@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { extractApiErrorMessage } from "@/lib/api-client"
+import { useConfirmedAction } from "@/hooks/use-confirmed-action"
 import { createApiKeyMutation, listApiKeysOptions, listApiKeysQueryKey, revokeApiKeyMutation, rotateApiKeyMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function ApiKeysSection() {
@@ -17,6 +17,7 @@ export function ApiKeysSection() {
   const createKey = useMutation(createApiKeyMutation())
   const rotateKey = useMutation(rotateApiKeyMutation())
   const revokeKey = useMutation(revokeApiKeyMutation())
+  const { runConfirmed, confirmationDialog } = useConfirmedAction()
 
   const [createOpen, setCreateOpen] = useState(false)
   const [name, setName] = useState("")
@@ -26,7 +27,7 @@ export function ApiKeysSection() {
 
   const isBusy = createKey.isPending || rotateKey.isPending || revokeKey.isPending
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!name.trim()) {
       toast.error("Enter a name for the API key")
       return
@@ -36,50 +37,46 @@ export function ApiKeysSection() {
       .map((s) => s.trim())
       .filter(Boolean)
     const parsedDays = Number.parseInt(expiresInDays, 10)
-    try {
-      const issued = await createKey.mutateAsync({
-        body: {
-          name: name.trim(),
-          scopes,
-          expiresInDays: Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : null,
-        },
-      })
-      await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
-      setCreateOpen(false)
-      setName("")
-      setRevealedSecret({ name: issued.name, secret: issued.secret })
-      toast.success("API key created")
-    } catch (error) {
-      toast.error("Unable to create API key", {
-        description: extractApiErrorMessage(error, "Re-authenticate if step-up verification is required"),
-      })
-    }
+    void runConfirmed({
+      failureTitle: "Unable to create API key",
+      run: async (currentPassword) => {
+        const issued = await createKey.mutateAsync({
+          body: {
+            name: name.trim(),
+            scopes,
+            expiresInDays: Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : null,
+            currentPassword,
+          },
+        })
+        await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
+        setCreateOpen(false)
+        setName("")
+        setRevealedSecret({ name: issued.name, secret: issued.secret })
+        toast.success("API key created")
+      },
+    })
   }
 
-  const handleRotate = async (keyId: string) => {
-    try {
-      const rotated = await rotateKey.mutateAsync({ path: { key_id: keyId } })
-      await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
-      setRevealedSecret({ name: rotated.name, secret: rotated.secret })
-      toast.success("API key rotated")
-    } catch (error) {
-      toast.error("Unable to rotate API key", {
-        description: extractApiErrorMessage(error, "Please try again"),
-      })
-    }
-  }
+  const handleRotate = (keyId: string) =>
+    void runConfirmed({
+      failureTitle: "Unable to rotate API key",
+      run: async (currentPassword) => {
+        const rotated = await rotateKey.mutateAsync({ path: { key_id: keyId }, body: { currentPassword } })
+        await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
+        setRevealedSecret({ name: rotated.name, secret: rotated.secret })
+        toast.success("API key rotated")
+      },
+    })
 
-  const handleRevoke = async (keyId: string) => {
-    try {
-      await revokeKey.mutateAsync({ path: { key_id: keyId } })
-      await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
-      toast.success("API key revoked")
-    } catch (error) {
-      toast.error("Unable to revoke API key", {
-        description: extractApiErrorMessage(error, "Please try again"),
-      })
-    }
-  }
+  const handleRevoke = (keyId: string) =>
+    void runConfirmed({
+      failureTitle: "Unable to revoke API key",
+      run: async (currentPassword) => {
+        await revokeKey.mutateAsync({ path: { key_id: keyId }, body: { currentPassword } })
+        await queryClient.invalidateQueries({ queryKey: listApiKeysQueryKey() })
+        toast.success("API key revoked")
+      },
+    })
 
   const handleCopy = async () => {
     if (!revealedSecret) return
@@ -127,11 +124,9 @@ export function ApiKeysSection() {
         </Dialog>
       </CardHeader>
       <CardContent className="space-y-3">
-        {isLoading ? (
-          <p className="text-muted-foreground text-sm">Loading API keys...</p>
-        ) : keys.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No API keys created yet.</p>
-        ) : (
+        {isLoading && <p className="text-muted-foreground text-sm">Loading API keys...</p>}
+        {!isLoading && keys.length === 0 && <p className="text-muted-foreground text-sm">No API keys created yet.</p>}
+        {!isLoading &&
           keys.map((key) => (
             <div key={key.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
               <div className="space-y-1">
@@ -164,8 +159,7 @@ export function ApiKeysSection() {
                 </div>
               )}
             </div>
-          ))
-        )}
+          ))}
       </CardContent>
 
       <Dialog
@@ -197,6 +191,7 @@ export function ApiKeysSection() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {confirmationDialog}
     </Card>
   )
 }

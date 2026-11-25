@@ -6,10 +6,12 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import pytest
+from litestar.exceptions import HTTPException
 from litestar_security.accounts import Argon2PasswordHasher
 from sqlalchemy import select
 
 from app.db import models as m
+from app.domain.teams.services import TeamInvitationService
 from tests.integration.conftest import fetch_csrf_headers, login_session_client, reset_client_session
 
 if TYPE_CHECKING:
@@ -138,6 +140,33 @@ async def test_accept_and_reject_team_invitations(
     )
     assert reject_resp.status_code == 201
     assert "rejected" in reject_resp.json()["message"].lower()
+
+
+async def test_failed_acceptance_leaves_no_membership(
+    client: AsyncClient,
+    session: AsyncSession,
+    test_team: m.Team,
+    test_team_invitation: m.TeamInvitation,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A failure while marking the invitation accepted rolls back the membership created with it."""
+    invited_user = await _create_user(session, test_team_invitation.email)
+
+    async def _fail_update(*_: object, **__: object) -> None:
+        raise HTTPException(status_code=503, detail="Invitation store unavailable")
+
+    monkeypatch.setattr(TeamInvitationService, "update", _fail_update)
+    csrf = await login_session_client(client, invited_user.email, "TestPassword123!")
+    resp = await client.post(
+        f"/api/teams/{test_team.id}/invitations/{test_team_invitation.id}/accept",
+        headers=csrf,
+    )
+    assert resp.status_code == 503
+
+    membership = await session.scalar(
+        select(m.TeamMember).where(m.TeamMember.team_id == test_team.id, m.TeamMember.user_id == invited_user.id)
+    )
+    assert membership is None
 
 
 async def test_invitation_tenant_guard_isolation(

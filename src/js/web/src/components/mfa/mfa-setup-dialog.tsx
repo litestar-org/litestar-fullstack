@@ -26,7 +26,22 @@ function extractManualSecret(provisioningUri: string): string | null {
   }
 }
 
-export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
+const STEP_DESCRIPTIONS = {
+  password: "Confirm your current password to generate a new authenticator QR code.",
+  verify: "Scan the QR code with your authenticator app, then enter the 6-digit verification code.",
+  codes: "Save your recovery codes in a secure location.",
+} as const
+
+type SetupStep = keyof typeof STEP_DESCRIPTIONS
+
+function resolveStep(setup: TotpProvisioning | null, codes: string[] | null): SetupStep {
+  if (codes) {
+    return "codes"
+  }
+  return setup ? "verify" : "password"
+}
+
+export function MfaSetupDialog({ disabled, onEnrolled }: Readonly<MfaSetupDialogProps>) {
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
   const [label, setLabel] = useState("Authenticator")
@@ -41,6 +56,7 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
 
   const isLoading = stepUpPending || enroll.isPending || verify.isPending
   const manualSecret = useMemo(() => (setup ? extractManualSecret(setup.provisioning_uri) : null), [setup])
+  const step = resolveStep(setup, codes)
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen)
@@ -106,18 +122,11 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Enable multi-factor authentication</DialogTitle>
-          <DialogDescription>
-            {codes
-              ? "Save your recovery codes in a secure location."
-              : setup
-                ? "Scan the QR code with your authenticator app, then enter the 6-digit verification code."
-                : "Confirm your current password to generate a new authenticator QR code."}
-          </DialogDescription>
+          <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
         </DialogHeader>
 
-        {codes ? (
-          <BackupCodesDisplay codes={codes} description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator." />
-        ) : setup ? (
+        {codes && <BackupCodesDisplay codes={codes} description="Save these codes in a secure place. Each code can be used once if you lose access to your authenticator." />}
+        {step === "verify" && setup && (
           <div className="space-y-4">
             <div className="flex justify-center rounded-lg border border-border/60 bg-white p-4">
               <QRCodeSVG value={setup.provisioning_uri} size={192} />
@@ -125,7 +134,8 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
             {manualSecret && <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3 font-mono text-sm">{manualSecret}</div>}
             <TotpInput value={code} onChange={setCode} disabled={isLoading} autoFocus />
           </div>
-        ) : (
+        )}
+        {step === "password" && (
           <div className="space-y-3">
             <Input placeholder="Device label (e.g. Authenticator)" value={label} onChange={(event) => setLabel(event.target.value)} disabled={isLoading} />
             <Input type="password" placeholder="Current password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading} />
@@ -133,13 +143,13 @@ export function MfaSetupDialog({ disabled, onEnrolled }: MfaSetupDialogProps) {
         )}
 
         <DialogFooter>
-          {codes ? (
-            <Button onClick={() => handleOpenChange(false)}>Done</Button>
-          ) : setup ? (
+          {step === "codes" && <Button onClick={() => handleOpenChange(false)}>Done</Button>}
+          {step === "verify" && (
             <Button onClick={handleConfirm} disabled={isLoading || code.length < 6}>
               Verify &amp; finish
             </Button>
-          ) : (
+          )}
+          {step === "password" && (
             <Button onClick={handleStartSetup} disabled={isLoading || !password}>
               Continue
             </Button>

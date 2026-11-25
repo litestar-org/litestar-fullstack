@@ -25,8 +25,8 @@ export interface QueueActivityMonitorProps {
 
 function extractEventSequence(frame: QueueTaskEventPayload): { stream: string; value: number } | undefined {
   const candidate = frame as QueueTaskEventPayload & { seq?: unknown; sequence?: unknown }
-  const raw = typeof candidate.sequence === "number" ? candidate.sequence : typeof candidate.seq === "number" ? candidate.seq : undefined
-  if (raw === undefined || !Number.isFinite(raw)) {
+  const raw = [candidate.sequence, candidate.seq].find((value) => typeof value === "number")
+  if (typeof raw !== "number" || !Number.isFinite(raw)) {
     return undefined
   }
   return { stream: frame.queue || "default", value: raw }
@@ -45,7 +45,32 @@ interface MonitorEventEntry {
   payload: QueueTaskEventPayload
 }
 
-export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor, EventSourceCtor }: QueueActivityMonitorProps) {
+function ConnectionBadge({ authDenied, healthy }: Readonly<{ authDenied: boolean; healthy: boolean }>) {
+  if (authDenied) {
+    return (
+      <Badge variant="destructive" className="gap-1">
+        <WifiOff className="h-3 w-3" />
+        Unauthorized
+      </Badge>
+    )
+  }
+  if (healthy) {
+    return (
+      <Badge variant="default" className="gap-1">
+        <Wifi className="h-3 w-3" />
+        Connected
+      </Badge>
+    )
+  }
+  return (
+    <Badge variant="secondary" className="gap-1">
+      <WifiOff className="h-3 w-3" />
+      Reconnecting
+    </Badge>
+  )
+}
+
+export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor, EventSourceCtor }: Readonly<QueueActivityMonitorProps>) {
   const [events, setEvents] = useState<MonitorEventEntry[]>([])
   const [healthy, setHealthy] = useState(false)
   const [paused, setPaused] = useState(false)
@@ -114,22 +139,7 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
           <CardDescription>Real-time task lifecycle events streamed from {CHANNEL_METADATA[QUEUE_EVENTS_CHANNEL].address}.</CardDescription>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {authDenied ? (
-            <Badge variant="destructive" className="gap-1">
-              <WifiOff className="h-3 w-3" />
-              Unauthorized
-            </Badge>
-          ) : healthy ? (
-            <Badge variant="default" className="gap-1">
-              <Wifi className="h-3 w-3" />
-              Connected
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="gap-1">
-              <WifiOff className="h-3 w-3" />
-              Reconnecting
-            </Badge>
-          )}
+          <ConnectionBadge authDenied={authDenied} healthy={healthy} />
           <Button type="button" variant="outline" size="sm" onClick={() => setPaused((prev) => !prev)}>
             {paused ? <Play className="mr-1.5 h-3.5 w-3.5" /> : <Pause className="mr-1.5 h-3.5 w-3.5" />}
             {paused ? "Resume" : "Pause"}
@@ -148,16 +158,13 @@ export function QueueActivityMonitor({ basePath = "", onTaskEvent, WebSocketCtor
           </div>
         )}
         {gapWarning && (
-          <div
-            role="status"
-            className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-300"
-          >
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-300">
+            <output className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>
                 Detected {gapWarning.missing} missed event(s) on stream {gapWarning.stream} ({gapWarning.from} → {gapWarning.to}). Refresh the task list for latest state.
               </span>
-            </div>
+            </output>
             <Button type="button" variant="ghost" size="sm" onClick={() => setGapWarning(null)}>
               Dismiss
             </Button>

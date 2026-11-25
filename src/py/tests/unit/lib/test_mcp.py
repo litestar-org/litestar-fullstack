@@ -214,6 +214,7 @@ async def test_mcp_auth_catalog_openapi_isolation_audit_and_bounds(tmp_path: Pat
         actions = {row.action for row in audit_rows}
         assert "security.mcp.tool.call.started" in actions
         assert "security.mcp.tool.call.completed" in actions
+        assert len({(row.details or {})["correlation"]["correlation_id"] for row in audit_rows}) == 1
         for row in audit_rows:
             assert issued.value not in str(row.details)
 

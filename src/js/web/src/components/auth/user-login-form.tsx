@@ -96,7 +96,7 @@ export function UserLoginForm({ className, redirectUrl, ...props }: UserLoginFor
             />
 
             <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
-              {isLoading && <Icons.spinner className="mr-2 h-4 w-4" />}
+              {isLoading && <Icons.Spinner className="mr-2 h-4 w-4" />}
               Sign In
             </Button>
           </form>

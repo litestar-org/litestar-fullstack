@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 from anyio import Lock
+from litestar_security.accounts import normalize_identifier
 from litestar_security.providers.oauth import (
     AccountLinkError,
     AESGCMOAuthTransactionProtector,
@@ -415,7 +416,11 @@ class SQLAlchemyOAuthAccountStore:
                 raise AccountLinkError
 
             user = m.User(
-                email=identity.email or f"{identity.provider}-{identity.subject}@oauth.local",
+                email=(
+                    normalize_identifier(identity.email)
+                    if identity.email
+                    else f"{identity.provider}-{identity.subject}@oauth.local"
+                ),
                 name=identity.display_name,
                 is_active=True,
                 is_verified=bool(identity.email_verified),

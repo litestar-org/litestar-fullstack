@@ -31,6 +31,8 @@ from app.lib.settings import get_settings
 
 logger = structlog.get_logger(__name__)
 
+_OWNED_TASK_SCAN_LIMIT = 1000
+
 
 class SystemController(PublicController):
     """Public system health and frontend authentication configuration endpoints."""
@@ -95,12 +97,13 @@ class SystemController(PublicController):
         opt={CSRF_REQUIRED_OPT_KEY: True},
     )
     async def get_auth_config(self) -> s.PublicAuthConfig:
-        """Return enabled OAuth providers and authentication capability flags."""
-        app_settings = get_settings().app
+        """Return enabled OAuth providers, authentication capability flags, and the registration verification policy."""
+        settings = get_settings()
         return s.PublicAuthConfig(
-            github_enabled=app_settings.github_oauth_enabled,
+            github_enabled=settings.app.github_oauth_enabled,
             passkeys_enabled=True,
             mfa_enabled=True,
+            email_verification_required=settings.security.REGISTRATION_REQUIRE_VERIFICATION,
         )
 
 
@@ -124,7 +127,7 @@ class UserQueueController(SecureController):
         limit: Annotated[int, Parameter(ge=1, le=100, description="Maximum number of tasks to return.")] = 25,
         offset: Annotated[int, Parameter(ge=0, description="Pagination offset.")] = 0,
     ) -> QueueTaskListResponse:
-        """List recent background queue tasks owned by the authenticated user.
+        """List the authenticated user's tasks among the most recent report tasks.
 
         Returns:
             Paginated queue task summaries initiated by the current user.
@@ -133,7 +136,7 @@ class UserQueueController(SecureController):
         owned: list[QueuedTaskRecord] = []
         batch_size = 200
         scan_offset = 0
-        while True:
+        while scan_offset < _OWNED_TASK_SCAN_LIMIT:
             page = await queue_service.list_tasks(queue="reports", limit=batch_size, offset=scan_offset)
             owned.extend(item for item in page.items if (item.metadata or {}).get("requested_by_id") == owner_id)
             scan_offset += len(page.items)

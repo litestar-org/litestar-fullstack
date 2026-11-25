@@ -1,6 +1,5 @@
 """User profile SecureController."""
 
-from datetime import timedelta
 from typing import Any, ClassVar, cast
 
 from litestar import Request, delete, get, patch
@@ -13,12 +12,12 @@ from litestar_security import (
     SecurityPlugin,
     any_of,
     required,
-    requires_assurance,
 )
 
 from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
-from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
+from app.domain.accounts.schemas import PasswordConfirmation, PasswordUpdate, ProfileUpdate, User
+from app.domain.accounts.security.reauth import confirm_authentication
 from app.domain.accounts.services import UserService
 from app.lib.schema import Message
 
@@ -67,37 +66,33 @@ class ProfileController(SecureController):
         db_obj = await users_service.update(data.to_dict(), item_id=current_user.id, auto_commit=True)
         return users_service.to_schema(db_obj, schema_type=User)
 
-    @patch(
-        operation_id="AccountPasswordUpdate",
-        path="/password",
-        guards=[requires_assurance(max_age=timedelta(minutes=5))],
-    )
+    @patch(operation_id="AccountPasswordUpdate", path="/password")
     async def update_password(
         self,
+        request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         data: PasswordUpdate,
         users_service: UserService,
     ) -> Message:
-        """Update the authenticated user's password after step-up verification.
+        """Replace the authenticated user's password after verifying the current one.
 
         Returns:
             Confirmation message for the password change.
         """
+        await confirm_authentication(request, current_user, data.current_password)
         await users_service.update_password(data.to_dict(), db_obj=current_user)
         return Message(message="Your password was successfully modified.")
 
-    @delete(
-        operation_id="AccountDelete",
-        path="",
-        guards=[requires_assurance(max_age=timedelta(minutes=5))],
-    )
+    @delete(operation_id="AccountDelete", path="")
     async def remove_account(
         self,
         request: Request[Any, Any, Any],
         current_user: CurrentUser[m.User],
         users_service: UserService,
+        data: PasswordConfirmation | None = None,
     ) -> None:
-        """Delete the authenticated user's account, revoke sessions, and clear browser cookies."""
+        """Delete the authenticated user's account after a recent sign-in or password confirmation."""
+        await confirm_authentication(request, current_user, data.current_password if data else None)
         plugin = cast("SecurityPlugin[m.User]", request.app.plugins.get(SecurityPlugin))
         if plugin.config.local_auth is not None and plugin.config.local_auth.session_auth is not None:
             await plugin.config.local_auth.session_auth.logout(request)

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 type IconProps = React.HTMLAttributes<SVGElement>
 
 export const Icons = {
-  logo: (props: IconProps) => (
+  Logo: (props: IconProps) => (
     <svg viewBox="0 0 375 374.999991" preserveAspectRatio="xMidYMid meet" {...props}>
       <defs>
         <clipPath id="clip-comet">
@@ -49,7 +49,7 @@ export const Icons = {
       />
     </svg>
   ),
-  logoBrand: (props: IconProps) => (
+  LogoBrand: (props: IconProps) => (
     <svg viewBox="0 0 375 374.999991" preserveAspectRatio="xMidYMid meet" {...props}>
       <defs>
         <clipPath id="clip-comet-brand">
@@ -95,7 +95,7 @@ export const Icons = {
       />
     </svg>
   ),
-  gitHub: (props: IconProps) => (
+  GitHub: (props: IconProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path
         fill="currentColor"
@@ -103,7 +103,7 @@ export const Icons = {
       />
     </svg>
   ),
-  sparkle: (props: IconProps) => (
+  Sparkle: (props: IconProps) => (
     <svg role="img" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="1.5" {...props}>
       <path
         strokeLinecap="round"
@@ -112,7 +112,7 @@ export const Icons = {
       />
     </svg>
   ),
-  spinner: ({ className, ...props }: IconProps) => (
+  Spinner: ({ className, ...props }: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -129,7 +129,7 @@ export const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
-  shield: (props: IconProps) => (
+  Shield: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -145,7 +145,7 @@ export const Icons = {
       <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
     </svg>
   ),
-  mail: (props: IconProps) => (
+  Mail: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -162,7 +162,7 @@ export const Icons = {
       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
     </svg>
   ),
-  check: (props: IconProps) => (
+  Check: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -178,7 +178,7 @@ export const Icons = {
       <path d="M20 6 9 17l-5-5" />
     </svg>
   ),
-  x: (props: IconProps) => (
+  X: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -195,7 +195,7 @@ export const Icons = {
       <path d="m6 6 12 12" />
     </svg>
   ),
-  chevronRight: (props: IconProps) => (
+  ChevronRight: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -212,7 +212,7 @@ export const Icons = {
     </svg>
   ),
   // Tech stack logos
-  python: (props: IconProps) => (
+  Python: (props: IconProps) => (
     <svg viewBox="0 0 256 255" {...props}>
       <defs>
         <linearGradient id="python-a" x1="12.959%" x2="79.639%" y1="12.039%" y2="78.201%">
@@ -234,7 +234,7 @@ export const Icons = {
       />
     </svg>
   ),
-  react: (props: IconProps) => (
+  React: (props: IconProps) => (
     <svg viewBox="-11.5 -10.232 23 20.463" {...props}>
       <circle r="2.05" fill="#61dafb" />
       <g stroke="#61dafb" fill="none">
@@ -244,7 +244,7 @@ export const Icons = {
       </g>
     </svg>
   ),
-  vite: (props: IconProps) => (
+  Vite: (props: IconProps) => (
     <svg viewBox="0 0 256 257" {...props}>
       <defs>
         <linearGradient id="vite-a" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%">
@@ -266,7 +266,7 @@ export const Icons = {
       />
     </svg>
   ),
-  typescript: (props: IconProps) => (
+  Typescript: (props: IconProps) => (
     <svg viewBox="0 0 256 256" {...props}>
       <rect fill="#3178C6" height="256" rx="24" width="256" />
       <path
@@ -275,7 +275,7 @@ export const Icons = {
       />
     </svg>
   ),
-  tailwind: (props: IconProps) => (
+  Tailwind: (props: IconProps) => (
     <svg viewBox="0 0 256 154" {...props}>
       <path
         fill="#38bdf8"
@@ -283,7 +283,7 @@ export const Icons = {
       />
     </svg>
   ),
-  postgresql: (props: IconProps) => (
+  Postgresql: (props: IconProps) => (
     <svg viewBox="0 0 256 264" {...props}>
       <path
         fill="#336791"
@@ -291,7 +291,7 @@ export const Icons = {
       />
     </svg>
   ),
-  redis: (props: IconProps) => (
+  Redis: (props: IconProps) => (
     <svg viewBox="0 0 256 220" {...props}>
       <path
         fill="#912626"

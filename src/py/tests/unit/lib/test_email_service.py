@@ -16,8 +16,6 @@ from app.db import models as m
 from app.lib.email import AppEmailService
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
-
     from app.lib.email.service import UserProtocol
 
 pytestmark = pytest.mark.anyio
@@ -91,8 +89,10 @@ def _last_outbox_message() -> EmailMultiAlternatives:
 async def test_app_email_service_initialization(mailer: EmailService) -> None:
     """AppEmailService initializes base_url and app_name from settings."""
     service = AppEmailService(mailer=mailer)
-    assert isinstance(service.base_url, str) and service.base_url
-    assert isinstance(service.app_name, str) and service.app_name
+    assert isinstance(service.base_url, str)
+    assert service.base_url
+    assert isinstance(service.app_name, str)
+    assert service.app_name
 
 
 async def test_send_verification_email_renders_url_structure_and_security_copy(
@@ -111,12 +111,15 @@ async def test_send_verification_email_renders_url_structure_and_security_copy(
     expected_url = f"{app_email_service.base_url}/verify-email?token={verification_token}"
     assert expected_url in html
     assert "verify your email" in html.lower()
-    assert "24" in html and "hours" in html.lower()
+    assert "24" in html
+    assert "hours" in html.lower()
     assert app_email_service.app_name in html
     assert "didn't create an account" in html.lower() or "didn&#x27;t create an account" in html.lower()
-    assert "safely" in html.lower() and "ignore" in html.lower()
+    assert "safely" in html.lower()
+    assert "ignore" in html.lower()
     assert "expire" in html.lower()
-    assert "<" not in message.body and ">" not in message.body
+    assert "<" not in message.body
+    assert ">" not in message.body
 
     result_no_name = await app_email_service.send_verification_email(
         cast("UserProtocol", user_without_name), verification_token
@@ -221,9 +224,8 @@ async def test_email_service_litestar_di_route_and_exception_specificity() -> No
     """Litestar DI injects ``AppEmailService`` and propagates delivery/rate-limit exceptions."""
     email_cfg = EmailConfig(backend="memory", from_email="noreply@example.com")
 
-    async def provide_mailer() -> AsyncIterator[EmailService]:
-        async with email_cfg.provide_service() as service:
-            yield service
+    def provide_mailer() -> EmailService:
+        return email_cfg.get_service()
 
     @post("/send-test")
     async def send_test(app_mailer: AppEmailService) -> dict[str, bool]:
@@ -237,7 +239,7 @@ async def test_email_service_litestar_di_route_and_exception_specificity() -> No
     app = Litestar(
         route_handlers=[send_test],
         dependencies={
-            "mailer": Provide(provide_mailer),
+            "mailer": Provide(provide_mailer, sync_to_thread=False),
             "app_mailer": Provide(AppEmailService, sync_to_thread=False),
         },
     )

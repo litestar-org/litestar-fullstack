@@ -54,6 +54,7 @@ async def _create_user_async(
         name=name,
         password=password,
         is_superuser=superuser,
+        is_verified=True,
     )
     async with AccountServices.new(config=active_alchemy) as accounts:
         user = await accounts.users.create(data=obj_in.to_dict(), auto_commit=True)

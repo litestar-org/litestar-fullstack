@@ -19,11 +19,11 @@ from app.domain.teams.deps import (
     TeamInvitationFilterSet,
     create_filter_dependencies,
     provide_team_invitations_service,
-    provide_team_members_service,
+    provide_team_services,
     provide_teams_service,
 )
 from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
-from app.domain.teams.services import TeamInvitationService, TeamMemberService, TeamService
+from app.domain.teams.services import TeamInvitationService, TeamService, TeamServices
 from app.lib.schema import Message
 from app.lib.settings import get_settings
 
@@ -37,7 +37,7 @@ class TeamInvitationController(SecureController):
     dependencies = {
         "team_invitations_service": Provide(provide_team_invitations_service),
         "teams_service": Provide(provide_teams_service),
-        "team_members_service": Provide(provide_team_members_service),
+        "team_services": Provide(provide_team_services),
     } | create_filter_dependencies(TeamInvitationFilterSet)
 
     @post(
@@ -130,12 +130,11 @@ class TeamInvitationController(SecureController):
     async def accept_team_invitation(
         self,
         current_user: CurrentUser[m.User],
-        team_invitations_service: TeamInvitationService,
-        team_members_service: TeamMemberService,
+        team_services: TeamServices,
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Accept a pending invitation addressed to the authenticated user.
+        """Accept a pending invitation addressed to the authenticated user, adding the membership in the same transaction.
 
         Returns:
             Confirmation message for the accepted invitation.
@@ -144,29 +143,24 @@ class TeamInvitationController(SecureController):
             HTTPException: If the invitation belongs to another team, was already accepted, or the user is already a member.
             PermissionDeniedException: If the invitation email does not match ``current_user``.
         """
-        db_obj = await team_invitations_service.get(item_id=invitation_id)
-        if db_obj.team_id != team_id:
+        invitation = await team_services.invitations.get(item_id=invitation_id)
+        if invitation.team_id != team_id:
             raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
-        if db_obj.is_accepted:
+        if invitation.is_accepted:
             raise HTTPException(status_code=400, detail="Invitation has already been accepted")
-        if db_obj.email != current_user.email:
+        if invitation.email != current_user.email:
             raise PermissionDeniedException(detail="You are not authorized to accept this invitation")
-        existing_membership = await team_members_service.get_one_or_none(
-            team_id=team_id,
-            user_id=current_user.id,
-        )
-        if existing_membership is not None:
+        if await team_services.members.exists(team_id=team_id, user_id=current_user.id):
             raise HTTPException(status_code=400, detail="User is already a member of this team")
-        _ = await team_members_service.create(
+        _ = await team_services.members.create(
             {
                 "team_id": team_id,
                 "user_id": current_user.id,
-                "role": db_obj.role,
+                "role": invitation.role,
                 "is_owner": False,
             },
-            auto_commit=True,
         )
-        await team_invitations_service.update(
+        await team_services.invitations.update(
             item_id=invitation_id,
             data={"is_accepted": True},
             auto_commit=True,

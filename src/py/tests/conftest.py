@@ -140,10 +140,9 @@ def fx_sessionmaker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
 
 
 @pytest.fixture(name="db_schema", scope="session")
-def fx_db_schema(engine: AsyncEngine) -> Generator[None, None, None]:
+def fx_db_schema(engine: AsyncEngine) -> None:
     """Ensure schema tables exist in the cloned worker database."""
     _ = engine
-    yield
 
 
 @pytest.fixture

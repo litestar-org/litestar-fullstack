@@ -138,14 +138,14 @@ function AcceptInvitationPage() {
 
           {isProcessing && (
             <div className="flex flex-col items-center space-y-3 py-4">
-              <Icons.spinner className="h-8 w-8 animate-spin text-primary" />
+              <Icons.Spinner className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">{status === "accepting" ? "Joining team..." : "Declining invitation..."}</p>
             </div>
           )}
 
           {isComplete && (
             <div className="flex flex-col items-center space-y-3 py-4">
-              <Icons.spinner className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Icons.Spinner className="h-6 w-6 animate-spin text-muted-foreground" />
               <p className="text-sm text-muted-foreground">Redirecting...</p>
             </div>
           )}

@@ -76,7 +76,8 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
           display_name: data.name,
         },
       })
-      toast.success("Account created! Please check your email to verify your account.")
+      const verificationRequired = authConfig?.emailVerificationRequired ?? true
+      toast.success(verificationRequired ? "Account created! Please check your email to verify your account." : "Account created! You can sign in now.")
       const loginSearch = redirectUrl ? { redirect: redirectUrl } : undefined
       navigate({ to: "/login", search: loginSearch })
     } catch (error) {
@@ -171,7 +172,7 @@ export function UserSignupForm({ className, redirectUrl, ...props }: UserSignupF
             />
 
             <Button type="submit" className="mt-2 w-full" disabled={registerMutation.isPending}>
-              {registerMutation.isPending && <Icons.spinner className="mr-2 h-4 w-4" />}
+              {registerMutation.isPending && <Icons.Spinner className="mr-2 h-4 w-4" />}
               Create Account
             </Button>
           </form>

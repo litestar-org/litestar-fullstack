@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import suppress
 from dataclasses import replace
 from datetime import UTC, datetime
 from functools import partial
@@ -39,8 +40,6 @@ from app.lib.validation import ValidationError
 from app.server import plugins
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
-
     from click import Group
     from litestar import Request
     from litestar.config.app import AppConfig
@@ -78,7 +77,7 @@ def build_mcp_audit_hooks(
         /,
     ) -> None:
         principal_id = _extract_mcp_principal_id(request)
-        correlation_id = request.headers.get("x-request-id") or str(uuid4())
+        correlation_id = _mcp_correlation_id(request)
         sanitized_keys = ",".join(sorted(str(k) for k in sanitize_event_details(arguments)))
         event = SecurityEvent(
             event_id=str(uuid4()),
@@ -121,7 +120,7 @@ def build_mcp_audit_hooks(
     ) -> None:
         _ = (arguments, result)
         principal_id = _extract_mcp_principal_id(request)
-        correlation_id = request.headers.get("x-request-id") or str(uuid4())
+        correlation_id = _mcp_correlation_id(request)
         operation = "mcp.tool.call.failed" if exception is not None else "mcp.tool.call.completed"
         outcome = "failure" if exception is not None else "success"
         correlation: dict[str, str] = {
@@ -215,40 +214,19 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             render_plugins=[ScalarRenderPlugin(version="latest")],
         )
 
-        resolved_mcp: MCPConfig | None = None
-        if self.mcp_config is not None or settings.mcp.ENABLED:
-            resolved_mcp = self.mcp_config or config.mcp
-            if resolved_mcp.before_tool_call is None and resolved_mcp.after_tool_call is None:
-                before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
-                resolved_mcp = replace(
-                    resolved_mcp,
-                    before_tool_call=before_hook,
-                    after_tool_call=after_hook,
-                )
-
         app_config.plugins.extend(
             plugins.build_plugins(
                 autowire_config=self.autowire_config,
                 security_config=self.security_config,
                 queue_config=self.queue_config,
-                mcp_config=resolved_mcp,
+                mcp_config=self._resolve_mcp_config(mcp_enabled=settings.mcp.ENABLED),
                 email_config=self.email_config,
             )
         )
 
         active_security = self.security_config or config.security
         if active_security.local_auth is not None:
-            from contextlib import suppress
-
-            from app.domain.accounts.security import build_session_store
-
-            if isinstance(app_config.stores, dict):
-                app_config.stores.setdefault("sessions", build_session_store(config.alchemy))
-            elif app_config.stores is not None:
-                with suppress(KeyError):
-                    app_config.stores.register("sessions", build_session_store(config.alchemy), allow_override=False)
-            else:
-                app_config.stores = {"sessions": build_session_store(config.alchemy)}
+            _register_session_store(app_config)
             app_config.middleware.append(config.session_middleware)
             if app_config.csrf_config is None:
                 app_config.csrf_config = config.csrf
@@ -264,14 +242,13 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
         active_email_config = self.email_config or config.email
 
-        async def provide_mailer() -> AsyncIterator[EmailService]:
-            async with active_email_config.provide_service() as service:
-                yield service
+        def provide_mailer() -> EmailService:
+            return active_email_config.get_service()
 
         app_config.dependencies.update(
             {
                 "settings": Provide(provide_app_settings, sync_to_thread=False),
-                "mailer": Provide(provide_mailer),
+                "mailer": Provide(provide_mailer, sync_to_thread=False),
                 "app_mailer": Provide(AppEmailService, sync_to_thread=False),
             }
         )
@@ -306,3 +283,32 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         )
 
         return app_config
+
+    def _resolve_mcp_config(self, *, mcp_enabled: bool) -> MCPConfig | None:
+        if self.mcp_config is None and not mcp_enabled:
+            return None
+        resolved = self.mcp_config or config.mcp
+        if resolved.before_tool_call is not None or resolved.after_tool_call is not None:
+            return resolved
+        before_hook, after_hook = build_mcp_audit_hooks(AuditSecurityEventSink(config.alchemy))
+        return replace(resolved, before_tool_call=before_hook, after_tool_call=after_hook)
+
+
+def _mcp_correlation_id(request: Request[Any, Any, Any]) -> str:
+    supplied = request.headers.get("x-request-id")
+    if supplied:
+        return supplied
+    state = cast("dict[str, Any]", request.scope).setdefault("state", {})
+    return cast("str", state.setdefault("mcp_correlation_id", str(uuid4())))
+
+
+def _register_session_store(app_config: AppConfig) -> None:
+    from app.domain.accounts.security import build_session_store
+
+    if isinstance(app_config.stores, dict):
+        app_config.stores.setdefault("sessions", build_session_store(config.alchemy))
+    elif app_config.stores is not None:
+        with suppress(KeyError, ValueError):
+            app_config.stores.register("sessions", build_session_store(config.alchemy), allow_override=False)
+    else:
+        app_config.stores = {"sessions": build_session_store(config.alchemy)}

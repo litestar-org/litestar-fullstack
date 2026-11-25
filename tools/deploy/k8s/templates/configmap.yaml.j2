@@ -34,7 +34,7 @@ data:
   # Security & CORS Settings
   COOKIE_SECURE: "{{ 'false' if env == 'dev' else 'true' }}"
   ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}'
-  REGISTRATION_REQUIRE_VERIFICATION: "{{ 'true' if email_verification_required | default(false) else 'false' }}"
+  REGISTRATION_REQUIRE_VERIFICATION: "{{ 'true' if email_verification_required | default(true) else 'false' }}"
 
   # Vite Settings
   VITE_DEV_MODE: "false"

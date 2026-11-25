@@ -46,7 +46,8 @@ async def test_registration_login_csrf_and_logout_lifecycle(
     )
     assert verify_task is not None
     verify_token = (verify_task.kwargs_json or {}).get("token")
-    assert isinstance(verify_token, str) and verify_token
+    assert isinstance(verify_token, str)
+    assert verify_token
 
     confirm_res = await client.post(
         "/api/access/verification/confirm",

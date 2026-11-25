@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { configureApiClient, resetApiClientForTest } from "@/lib/api-client"
+import { configureApiClient, isReauthenticationRequired, resetApiClientForTest } from "@/lib/api-client"
 import { client } from "@/lib/generated/api/client.gen"
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/generated/routes"
 
@@ -78,5 +78,15 @@ describe("configureApiClient", () => {
     window.history.pushState({}, "", "/settings/security")
     await client.post({ url: "/api/access/step-up/totp-enroll", body: { method: "password", credential: "wrong" } })
     expect(onUnauthorized).not.toHaveBeenCalled()
+  })
+})
+
+describe("isReauthenticationRequired", () => {
+  it("recognizes only the reauthentication denial among API errors", () => {
+    expect(isReauthenticationRequired({ status_code: 403, detail: "Confirm your password to continue.", extra: { code: "reauthentication_required" } })).toBe(true)
+    expect(isReauthenticationRequired({ status_code: 403, detail: "The current password is incorrect." })).toBe(false)
+    expect(isReauthenticationRequired({ status_code: 403, detail: "Forbidden", extra: { code: "missing_role" } })).toBe(false)
+    expect(isReauthenticationRequired(new Error("network down"))).toBe(false)
+    expect(isReauthenticationRequired(null)).toBe(false)
   })
 })

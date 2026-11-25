@@ -15,6 +15,8 @@ const CREDENTIAL_CHECK_PATH_FRAGMENTS = [
   "/api/me/password",
 ]
 
+const REAUTHENTICATION_REQUIRED = "reauthentication_required"
+
 export interface ApiClientConfigOptions {
   baseUrl?: string
   onUnauthorized?: () => void
@@ -33,6 +35,14 @@ function isCredentialCheckRequest(requestUrl: string): boolean {
   return CREDENTIAL_CHECK_PATH_FRAGMENTS.some((fragment) => requestUrl.includes(fragment))
 }
 
+function readNonEmptyString(source: object, key: string): string | undefined {
+  const value: unknown = (source as Record<string, unknown>)[key]
+  if (typeof value !== "string") {
+    return undefined
+  }
+  return value.trim() || undefined
+}
+
 export function extractApiErrorMessage(error: unknown, fallback: string): string {
   if (typeof error === "string" && error.trim().length > 0) {
     return error
@@ -41,20 +51,17 @@ export function extractApiErrorMessage(error: unknown, fallback: string): string
     return error.message
   }
   if (typeof error === "object" && error !== null) {
-    if ("detail" in error && typeof (error as { detail?: unknown }).detail === "string") {
-      const detail = (error as { detail: string }).detail.trim()
-      if (detail.length > 0) {
-        return detail
-      }
-    }
-    if ("message" in error && typeof (error as { message?: unknown }).message === "string") {
-      const message = (error as { message: string }).message.trim()
-      if (message.length > 0) {
-        return message
-      }
-    }
+    return readNonEmptyString(error, "detail") ?? readNonEmptyString(error, "message") ?? fallback
   }
   return fallback
+}
+
+export function isReauthenticationRequired(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) {
+    return false
+  }
+  const extra: unknown = (error as Record<string, unknown>).extra
+  return typeof extra === "object" && extra !== null && (extra as Record<string, unknown>).code === REAUTHENTICATION_REQUIRED
 }
 
 export function configureApiClient(options?: ApiClientConfigOptions): void {

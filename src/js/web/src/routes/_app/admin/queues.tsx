@@ -128,11 +128,9 @@ function AdminQueuesPage() {
               />
             </div>
 
-            {isLoading ? (
-              <SkeletonTable rows={6} />
-            ) : isError || !data ? (
-              <p className="text-sm text-muted-foreground">We could not load queue tasks.</p>
-            ) : (
+            {isLoading && <SkeletonTable rows={6} />}
+            {!isLoading && (isError || !data) && <p className="text-sm text-muted-foreground">We could not load queue tasks.</p>}
+            {!isLoading && !isError && data && (
               <>
                 <Table>
                   <TableHeader>

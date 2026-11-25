@@ -91,13 +91,28 @@ logger = structlog.get_logger(__name__)
 
 _GITHUB_ISSUER = "https://github.com"
 
+_WILDCARD_PROXY_NETWORKS: tuple[str, ...] = (
+    "127.0.0.0/8",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "100.64.0.0/10",
+    "169.254.0.0/16",
+    "::1/128",
+    "fc00::/7",
+    "fe80::/10",
+)
+_ACCESS_ROUTE_PREFIX = "/api/access"
+_VERIFICATION_EMAIL_TASK = "email.send_verification"
+_RECOVERY_EMAIL_TASK = "email.send_password_reset"
+
 _TEMPLATE_TASK_MAP: dict[str, str] = {
-    "local.verify": "email.send_verification",
-    "local.recovery": "email.send_password_reset",
-    "verification": "email.send_verification",
-    "email_verification": "email.send_verification",
-    "recovery": "email.send_password_reset",
-    "password_reset": "email.send_password_reset",
+    "local.verify": _VERIFICATION_EMAIL_TASK,
+    "local.recovery": _RECOVERY_EMAIL_TASK,
+    "verification": _VERIFICATION_EMAIL_TASK,
+    "email_verification": _VERIFICATION_EMAIL_TASK,
+    "recovery": _RECOVERY_EMAIL_TASK,
+    "password_reset": _RECOVERY_EMAIL_TASK,
     "password_reset_confirmation": "email.send_password_reset_confirmation",
 }
 
@@ -339,11 +354,8 @@ def build_security_config(
     event_sink = AuditSecurityEventSink(alchemy_config)
     rate_limiter = build_rate_limiter(alchemy_config)
 
-    client_key = (
-        forwarded_client_key(trusted_proxies=settings.server.LITESTAR_TRUSTED_PROXIES)
-        if settings.server.LITESTAR_TRUSTED_PROXIES
-        else trusted_client_key
-    )
+    proxy_networks = _trusted_proxy_networks(settings.server.LITESTAR_TRUSTED_PROXIES)
+    client_key = forwarded_client_key(trusted_proxies=proxy_networks) if proxy_networks else trusted_client_key
 
     local_auth = LocalAuth.session(
         accounts=backend,
@@ -358,9 +370,9 @@ def build_security_config(
         ),
         registration=RegistrationPolicy(
             mode=RegistrationMode.PUBLIC,
-            require_verification=True,
+            require_verification=settings.security.REGISTRATION_REQUIRE_VERIFICATION,
         ),
-        route_prefix="/api/access",
+        route_prefix=_ACCESS_ROUTE_PREFIX,
         register_routes=True,
         rate_limiter=rate_limiter,
         events=event_sink,
@@ -379,7 +391,7 @@ def build_security_config(
         step_up_store=step_up_store,
         require_at_login="enrolled",
         login_challenge_store=login_challenge_store,
-        route_prefix="/api/access",
+        route_prefix=_ACCESS_ROUTE_PREFIX,
         issuer=settings.app.NAME,
         register_routes=True,
     )
@@ -397,7 +409,7 @@ def build_security_config(
         login_methods=backend,
         events=event_sink,
         step_up_store=step_up_store,
-        route_prefix="/api/access",
+        route_prefix=_ACCESS_ROUTE_PREFIX,
         register_routes=True,
     )
 
@@ -445,3 +457,14 @@ def build_security_config(
         authorization_resolver=AppAuthorizationResolver(),
         exclude=["^/static"],
     )
+
+
+def _trusted_proxy_networks(trusted_proxies: list[str]) -> list[str]:
+    networks: list[str] = []
+    for entry in trusted_proxies:
+        candidate = entry.strip()
+        if candidate == "*":
+            networks.extend(network for network in _WILDCARD_PROXY_NETWORKS if network not in networks)
+        elif candidate and candidate not in networks:
+            networks.append(candidate)
+    return networks

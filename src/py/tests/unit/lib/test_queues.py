@@ -119,7 +119,7 @@ async def test_queue_stream_channel_authorizer_enforces_superuser_and_task_owner
 
     from advanced_alchemy.base import orm_registry
     from litestar_queues import QueueService
-    from litestar_security.context import Principal
+    from litestar_security.context import AuthorizationSnapshot, Principal, SecurityContext
 
     from app.domain.system.jobs import export_team_summary
 
@@ -164,7 +164,15 @@ async def test_queue_stream_channel_authorizer_enforces_superuser_and_task_owner
 
     regular_conn = SimpleNamespace(scope={"user": Principal(id=owner_id, user=SimpleNamespace(is_superuser=False))})
     other_conn = SimpleNamespace(scope={"user": Principal(id=other_id, user=SimpleNamespace(is_superuser=False))})
-    admin_conn = SimpleNamespace(scope={"user": Principal(id=str(uuid4()), user=SimpleNamespace(is_superuser=True))})
+    admin_conn = SimpleNamespace(
+        scope={
+            "user": Principal(id=str(uuid4()), user=SimpleNamespace(is_superuser=False)),
+            "auth": SecurityContext(
+                session=cast("Any", None),
+                authorization=AuthorizationSnapshot(roles=frozenset({"superuser"})),
+            ),
+        }
+    )
 
     assert await _check(regular_conn, "global", None) is False
     assert await _check(regular_conn, "task", str(task_id)) is True

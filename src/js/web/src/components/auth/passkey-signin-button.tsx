@@ -13,7 +13,7 @@ interface PasskeySignInButtonProps {
   className?: string
 }
 
-export function PasskeySignInButton({ accountId, authRedirect, className }: PasskeySignInButtonProps) {
+export function PasskeySignInButton({ accountId, authRedirect, className }: Readonly<PasskeySignInButtonProps>) {
   const navigate = useNavigate()
   const loginWithPasskey = useAuthStore((state) => state.loginWithPasskey)
   const isLoading = useAuthStore((state) => state.isLoading)
@@ -32,7 +32,7 @@ export function PasskeySignInButton({ accountId, authRedirect, className }: Pass
 
   return (
     <Button type="button" variant="outline" onClick={handleClick} disabled={isLoading} className={className}>
-      {isLoading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <KeyRound className="mr-2 h-4 w-4" />}
+      {isLoading ? <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" /> : <KeyRound className="mr-2 h-4 w-4" />}
       Sign in with Passkey
     </Button>
   )

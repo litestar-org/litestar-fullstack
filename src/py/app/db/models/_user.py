@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from app.db.models._team_member import TeamMember
     from app.db.models._user_role import UserRole
 
+_OWNED_CASCADE = "all, delete-orphan"
+
 
 class User(UUIDv7AuditBase):
     """Application user account model."""
@@ -64,31 +66,31 @@ class User(UUIDv7AuditBase):
     oauth_accounts: Mapped[list[UserOAuthAccount]] = relationship(
         back_populates="user",
         lazy="noload",
-        cascade="all, delete-orphan",
+        cascade=_OWNED_CASCADE,
         uselist=True,
     )
     sessions: Mapped[list[UserSession]] = relationship(
         back_populates="user",
         lazy="noload",
-        cascade="all, delete-orphan",
+        cascade=_OWNED_CASCADE,
         uselist=True,
     )
     mfa_factors: Mapped[list[UserMFAFactor]] = relationship(
         back_populates="user",
         lazy="noload",
-        cascade="all, delete-orphan",
+        cascade=_OWNED_CASCADE,
         uselist=True,
     )
     passkeys: Mapped[list[UserPasskey]] = relationship(
         back_populates="user",
         lazy="noload",
-        cascade="all, delete-orphan",
+        cascade=_OWNED_CASCADE,
         uselist=True,
     )
     api_keys: Mapped[list[APIKey]] = relationship(
         back_populates="user",
         lazy="noload",
-        cascade="all, delete-orphan",
+        cascade=_OWNED_CASCADE,
         uselist=True,
     )
 

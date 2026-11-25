@@ -14,7 +14,7 @@ interface MfaDisableDialogProps {
   methodId?: string | null
 }
 
-export function MfaDisableDialog({ disabled, methodId }: MfaDisableDialogProps) {
+export function MfaDisableDialog({ disabled, methodId }: Readonly<MfaDisableDialogProps>) {
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
   const user = useAuthStore((state) => state.user)

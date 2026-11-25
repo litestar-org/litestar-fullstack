@@ -95,6 +95,8 @@ async def test_health_auth_config_and_user_queue_isolation(tmp_path: Path) -> No
         cfg_resp = await client.get("/api/config/auth")
         assert cfg_resp.status_code == 200
         cfg_body = cfg_resp.json()
+        assert set(cfg_body) == {"githubEnabled", "passkeysEnabled", "mfaEnabled", "emailVerificationRequired"}
+        assert cfg_body["emailVerificationRequired"] is True
         assert cfg_body["passkeysEnabled"] is True
         assert cfg_body["mfaEnabled"] is True
         assert "XSRF-TOKEN" in client.cookies

@@ -92,10 +92,12 @@ async def test_github_oauth_login_redirect_and_tampered_state_rejection(
         assert response.status_code in {302, 303, 307}, response.text
         location = response.headers.get("location", "")
         parsed = urlparse(location)
-        assert "github.com" in parsed.netloc
+        assert parsed.scheme == "https"
+        assert parsed.hostname == "github.com"
         query = parse_qs(parsed.query)
         assert query.get("client_id") == ["gh-test-client-id"]
-        assert "state" in query and len(query["state"][0]) > 10
+        assert "state" in query
+        assert len(query["state"][0]) > 10
 
         tampered = await client.get(
             "/api/auth/oauth/github/callback",

@@ -1,4 +1,4 @@
-"""Unit/HTTP tests for accounts SecureControllers, step-up assurance, and API key lifecycle."""
+"""Unit/HTTP tests for accounts SecureControllers, password re-confirmation, and API key lifecycle."""
 
 from __future__ import annotations
 
@@ -30,6 +30,7 @@ from app.domain.accounts.security import (
     build_session_middleware,
     build_session_store,
 )
+from app.domain.accounts.security.reauth import REAUTHENTICATION_REQUIRED
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
 
 if TYPE_CHECKING:
@@ -206,31 +207,47 @@ async def test_profile_auth_modes_and_step_up(tmp_path: Path) -> None:
         assert upd.status_code == 200
         assert upd.json()["name"] == "Alice Updated"
 
-        pw_no_stepup = await stale_client.patch(
+        pw_wrong = await stale_client.patch(
+            "/api/me/password",
+            json={"currentPassword": "WrongPassword!123", "newPassword": "NewStrongPassword!456"},
+            headers={"X-XSRF-TOKEN": stale_csrf},
+        )
+        assert pw_wrong.status_code == 403
+        pw_ok = await stale_client.patch(
             "/api/me/password",
             json={"currentPassword": "StrongPassword!123", "newPassword": "NewStrongPassword!456"},
             headers={"X-XSRF-TOKEN": stale_csrf},
-        )
-        assert pw_no_stepup.status_code == 403
-        assert (await stale_client.delete("/api/me", headers={"X-XSRF-TOKEN": stale_csrf})).status_code == 403
-
-    clock_box[0] = datetime.now(UTC)
-    async with AsyncTestClient(app=app) as fresh_client:
-        fresh_csrf = await _login(fresh_client, "alice@example.com")
-        pw_ok = await fresh_client.patch(
-            "/api/me/password",
-            json={"currentPassword": "StrongPassword!123", "newPassword": "NewStrongPassword!456"},
-            headers={"X-XSRF-TOKEN": fresh_csrf},
         )
         assert pw_ok.status_code == 200
 
     async with AsyncTestClient(app=app) as del_client:
         del_csrf = await _login(del_client, "alice@example.com", password="NewStrongPassword!456")
-        del_ok = await del_client.delete("/api/me", headers={"X-XSRF-TOKEN": del_csrf})
+        del_unconfirmed = await del_client.delete("/api/me", headers={"X-XSRF-TOKEN": del_csrf})
+        assert del_unconfirmed.status_code == 403
+        assert del_unconfirmed.json()["extra"] == {"code": REAUTHENTICATION_REQUIRED}
+        del_ok = await del_client.request(
+            "DELETE",
+            "/api/me",
+            json={"currentPassword": "NewStrongPassword!456"},
+            headers={"X-XSRF-TOKEN": del_csrf},
+        )
         assert del_ok.status_code == 204
 
 
-async def test_api_key_lifecycle_step_up_and_cross_user_isolation(tmp_path: Path) -> None:
+async def test_password_confirmation_attempts_are_rate_limited(tmp_path: Path) -> None:
+    app, db_cfg, clock_box = await _build_accounts_app(tmp_path, "reauth_limit.sqlite3")
+    await _seed_user(db_cfg, email="alice@example.com", name="Alice")
+
+    clock_box[0] = datetime.now(UTC) - timedelta(minutes=10)
+    async with AsyncTestClient(app=app) as client:
+        headers = {"X-XSRF-TOKEN": await _login(client, "alice@example.com")}
+        guess = {"name": "Guessed Key", "currentPassword": "WrongPassword!123"}
+        statuses = [(await client.post("/api/me/api-keys", json=guess, headers=headers)).status_code for _ in range(11)]
+
+    assert statuses == [403] * 10 + [429]
+
+
+async def test_api_key_lifecycle_reconfirmation_and_cross_user_isolation(tmp_path: Path) -> None:
     app, db_cfg, clock_box = await _build_accounts_app(tmp_path, "api_keys.sqlite3")
     await _seed_user(db_cfg, email="alice@example.com", name="Alice")
     await _seed_user(db_cfg, email="bob@example.com", name="Bob")
@@ -238,12 +255,42 @@ async def test_api_key_lifecycle_step_up_and_cross_user_isolation(tmp_path: Path
     clock_box[0] = datetime.now(UTC) - timedelta(minutes=10)
     async with AsyncTestClient(app=app) as stale_client:
         stale_csrf = await _login(stale_client, "alice@example.com")
-        create_no_stepup = await stale_client.post(
-            "/api/me/api-keys",
-            json={"name": "Blocked Key", "scopes": ["read"]},
-            headers={"X-XSRF-TOKEN": stale_csrf},
+        stale_headers = {"X-XSRF-TOKEN": stale_csrf}
+        unconfirmed = await stale_client.post(
+            "/api/me/api-keys", json={"name": "Blocked Key", "scopes": ["read"]}, headers=stale_headers
         )
-        assert create_no_stepup.status_code == 403
+        assert unconfirmed.status_code == 403
+        assert unconfirmed.json()["extra"] == {"code": REAUTHENTICATION_REQUIRED}
+
+        wrong_password = await stale_client.post(
+            "/api/me/api-keys",
+            json={"name": "Blocked Key", "scopes": ["read"], "currentPassword": "WrongPassword!123"},
+            headers=stale_headers,
+        )
+        assert wrong_password.status_code == 403
+        assert "extra" not in wrong_password.json()
+
+        confirmed = await stale_client.post(
+            "/api/me/api-keys",
+            json={"name": "Confirmed Key", "scopes": ["read"], "currentPassword": "StrongPassword!123"},
+            headers=stale_headers,
+        )
+        assert confirmed.status_code == 201
+        confirmed_key_id = confirmed.json()["id"]
+
+        rotate_path = f"/api/me/api-keys/{confirmed_key_id}/rotate"
+        assert (await stale_client.post(rotate_path, headers=stale_headers)).status_code == 403
+        rotated_confirmed = await stale_client.post(
+            rotate_path, json={"currentPassword": "StrongPassword!123"}, headers=stale_headers
+        )
+        assert rotated_confirmed.status_code == 201
+
+        revoke_path = f"/api/me/api-keys/{rotated_confirmed.json()['id']}"
+        assert (await stale_client.delete(revoke_path, headers=stale_headers)).status_code == 403
+        revoked_confirmed = await stale_client.request(
+            "DELETE", revoke_path, json={"currentPassword": "StrongPassword!123"}, headers=stale_headers
+        )
+        assert revoked_confirmed.status_code == 204
 
     clock_box[0] = datetime.now(UTC)
     async with AsyncTestClient(app=app) as alice_client:

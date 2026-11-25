@@ -27,7 +27,7 @@ export function MfaSection() {
   const [regenPassword, setRegenPassword] = useState("")
   const [regenCodes, setRegenCodes] = useState<string[] | null>(null)
 
-  if (authConfig && authConfig.mfaEnabled === false) {
+  if (authConfig?.mfaEnabled === false) {
     return null
   }
 

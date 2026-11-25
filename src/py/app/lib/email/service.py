@@ -26,15 +26,6 @@ _URL_KEYS = frozenset({"VERIFICATION_URL", "RESET_URL", "LOGIN_URL", "INVITATION
 _ALLOWED_URL_SCHEMES = frozenset({"http", "https"})
 
 
-def _validate_http_url(url: str) -> str:
-    stripped = url.strip()
-    parsed = urlsplit(stripped)
-    if parsed.scheme.lower() not in _ALLOWED_URL_SCHEMES or not parsed.netloc:
-        msg = "Template URL must use http or https scheme with a valid host"
-        raise ValueError(msg)
-    return stripped
-
-
 class UserProtocol(Protocol):
     """Protocol for User objects used in email methods."""
 
@@ -86,7 +77,7 @@ class AppEmailService:
         content = self._load_template(template_name)
         merged = {"APP_NAME": self.app_name, **context}
         for key, value in merged.items():
-            text_value = _validate_http_url(str(value)) if key in _URL_KEYS else str(value)
+            text_value = self._validate_http_url(str(value)) if key in _URL_KEYS else str(value)
             substituted = html_lib.escape(text_value, quote=True)
             content = content.replace(f"{{{{{key}}}}}", substituted)
         return content
@@ -285,6 +276,15 @@ class AppEmailService:
             html_content=html_content,
             template_name="team-invitation.html",
         )
+
+    @staticmethod
+    def _validate_http_url(url: str) -> str:
+        stripped = url.strip()
+        parsed = urlsplit(stripped)
+        if parsed.scheme.lower() not in _ALLOWED_URL_SCHEMES or not parsed.netloc:
+            msg = "Template URL must use http or https scheme with a valid host"
+            raise ValueError(msg)
+        return stripped
 
     def _html_to_text(self, html_content: str) -> str:
         text = HTML_TAG_PATTERN.sub("", html_content)

@@ -155,6 +155,12 @@ class ProfileUpdate(CamelizedBaseStruct, omit_defaults=True):
             self.phone = validate_phone(self.phone)
 
 
+class PasswordConfirmation(CamelizedBaseStruct):
+    """Optional current password re-confirming a sign-in that is no longer recent."""
+
+    current_password: str | None = None
+
+
 class PasswordUpdate(CamelizedBaseStruct):
     """Self-service password change request payload."""
 

@@ -25,12 +25,12 @@ export function ConnectedAccounts() {
       <CardContent className="space-y-4">
         {accounts.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            {githubEnabled ? "No external accounts linked yet. Sign in with GitHub on the login page to associate your account." : "No OAuth providers are currently enabled."}
+            {githubEnabled ? "No external accounts linked yet. Accounts created with GitHub sign-in appear here." : "No OAuth providers are currently enabled."}
           </p>
         ) : (
           <div className="space-y-3">
             {accounts.map((account) => {
-              const Icon = Icons.gitHub
+              const Icon = Icons.GitHub
               return (
                 <div key={account.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
                   <div className="flex items-center gap-3">

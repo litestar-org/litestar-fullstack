@@ -15,7 +15,7 @@ export function LandingPage() {
         <RetroGrid />
         <Link to="/" className="relative z-20">
           <div className="flex items-center font-medium text-lg">
-            <Icons.logo className="mr-2 h-6 w-6" />
+            <Icons.Logo className="mr-2 h-6 w-6" />
             Litestar Fullstack
           </div>
         </Link>
@@ -24,16 +24,16 @@ export function LandingPage() {
           <div className="mt-4 flex items-center gap-4">
             <div className="flex -space-x-1">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.python className="h-5 w-5" />
+                <Icons.Python className="h-5 w-5" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.react className="h-5 w-5 text-[#61DAFB]" />
+                <Icons.React className="h-5 w-5 text-[#61DAFB]" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.vite className="h-5 w-5" />
+                <Icons.Vite className="h-5 w-5" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.typescript className="h-5 w-5" />
+                <Icons.Typescript className="h-5 w-5" />
               </div>
             </div>
             <div className="text-sm text-white/70">
@@ -57,7 +57,7 @@ export function LandingPage() {
 
         {/* Main content - centered */}
         <main className="flex flex-1 flex-col items-center justify-center px-4 pb-16">
-          <Icons.logoBrand className="h-16 w-16" />
+          <Icons.LogoBrand className="h-16 w-16" />
 
           <h1 className="mt-8 font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Litestar Fullstack</h1>
 

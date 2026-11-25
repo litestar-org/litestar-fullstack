@@ -73,7 +73,7 @@ function VerifyEmailPage() {
 
           {status === "verifying" && (
             <div className="flex flex-col items-center space-y-4">
-              <Icons.spinner className="h-8 w-8 animate-spin text-primary" />
+              <Icons.Spinner className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">Please wait while we verify your email address...</p>
             </div>
           )}
