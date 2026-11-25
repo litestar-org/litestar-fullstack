@@ -72,7 +72,7 @@ def test_cli_click_commands_via_runner(tmp_path: Path, monkeypatch: pytest.Monke
     anyio.run(_setup)
     monkeypatch.setattr(cli_commands, "alchemy", db_cfg)
 
-    runner = CliRunner()
+    runner = CliRunner(env={"NO_COLOR": "1", "FORCE_COLOR": "0"})
     res_create = runner.invoke(
         cli_commands.user_management_group,
         ["create-user", "--email", "runner@example.com", "--name", "Runner", "--password", "StrongPassword!123"],

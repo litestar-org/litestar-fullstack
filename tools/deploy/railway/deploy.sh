@@ -92,7 +92,7 @@ configure_service_config() {
 
 configure_app_env() {
     local placement="asgi"
-    if [ "${DEDICATED_WORKER}" = true ]; then
+    if [[ "${DEDICATED_WORKER}" = true ]]; then
         placement="external"
     fi
 
@@ -144,14 +144,14 @@ configure_worker_env() {
 deploy_services() {
     cd "${PROJECT_ROOT}"
     local up_flags=(--detach -m "Deploy Litestar Fullstack SPA")
-    if [ "${DETACH}" = false ]; then
+    if [[ "${DETACH}" = false ]]; then
         up_flags=(--ci -m "Deploy Litestar Fullstack SPA")
     fi
 
     log_info "Deploying ${APP_SERVICE_NAME}..."
     railway up --service "${APP_SERVICE_NAME}" "${up_flags[@]}"
 
-    if [ "${DEDICATED_WORKER}" = true ]; then
+    if [[ "${DEDICATED_WORKER}" = true ]]; then
         log_info "Deploying ${WORKER_SERVICE_NAME}..."
         railway up --service "${WORKER_SERVICE_NAME}" --detach -m "Deploy Queue Worker"
     fi
@@ -161,7 +161,7 @@ main() {
     ensure_cli_and_auth
     cd "${PROJECT_ROOT}"
 
-    if [ "${SKIP_SETUP}" = false ]; then
+    if [[ "${SKIP_SETUP}" = false ]]; then
         ensure_project
         ensure_database
         ensure_service "${APP_SERVICE_NAME}"
@@ -175,7 +175,7 @@ main() {
             "tools/deploy/railway/railway.app.json"
         configure_app_env
 
-        if [ "${DEDICATED_WORKER}" = true ]; then
+        if [[ "${DEDICATED_WORKER}" = true ]]; then
             ensure_service "${WORKER_SERVICE_NAME}"
             configure_service_config \
                 "${WORKER_SERVICE_NAME}" \
@@ -187,14 +187,18 @@ main() {
 
     deploy_services
 
-    if [ "${CONFIGURE_EMAIL}" = true ]; then
+    if [[ "${CONFIGURE_EMAIL}" = true ]]; then
         "${SCRIPT_DIR}/env-setup.sh" --email
     fi
-    if [ "${CONFIGURE_GITHUB_OAUTH}" = true ]; then
+    if [[ "${CONFIGURE_GITHUB_OAUTH}" = true ]]; then
         "${SCRIPT_DIR}/env-setup.sh" --github-oauth
     fi
 
-    log_ok "Railway deployment complete (single-service ASGI worker=$([ "${DEDICATED_WORKER}" = true ] && echo 'false' || echo 'true'))"
+    local embedded_worker="true"
+    if [[ "${DEDICATED_WORKER}" = true ]]; then
+        embedded_worker="false"
+    fi
+    log_ok "Railway deployment complete (single-service ASGI worker=${embedded_worker})"
 }
 
 main "$@"

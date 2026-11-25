@@ -19,42 +19,42 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.13.8"
           enable-cache: true
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.5"
 
       - name: Install Python dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --frozen --no-build
 
       - name: Install frontend dependencies
-        run: cd src/js/web && bun install --frozen-lockfile
+        run: cd src/js/web && bun install --frozen-lockfile --ignore-scripts
 
       - name: Python lint and format check
         run: |
-          uv run ruff check src/py/app src/py/tests tools
-          uv run ruff format --check src/py/app src/py/tests tools
-          uv run mypy src/py/app src/py/tests tools
-          uv run pyright
-          uv run slotscheck -m app
-          uv run codespell
+          uv run --no-sync --no-build ruff check src/py/app src/py/tests tools
+          uv run --no-sync --no-build ruff format --check src/py/app src/py/tests tools
+          uv run --no-sync --no-build mypy src/py/app src/py/tests tools
+          uv run --no-sync --no-build pyright
+          uv run --no-sync --no-build slotscheck -m app
+          uv run --no-sync --no-build codespell
 
       - name: Verify security routes and MCP tool schema
         run: |
-          uv run app security routes
-          uv run app mcp export-tool-spec --strict-bounds
+          uv run --no-sync --no-build app security routes
+          uv run --no-sync --no-build app mcp export-tool-spec --strict-bounds
 
       - name: Verify OpenAPI and AsyncAPI TypeGen pipeline
         run: make types
@@ -63,28 +63,28 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.13.8"
           enable-cache: true
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.5"
 
       - name: Install dependencies
         run: |
-          uv sync --all-groups
-          (cd src/js/web && bun install --frozen-lockfile)
-          (cd src/js/templates && bun install --frozen-lockfile)
+          uv sync --all-groups --frozen --no-build
+          (cd src/js/web && bun install --frozen-lockfile --ignore-scripts)
+          (cd src/js/templates && bun install --frozen-lockfile --ignore-scripts)
 
       - name: Generate TypeScript SDK and channels
         run: make types
@@ -110,35 +110,35 @@ jobs:
         python-version: ["3.12", "3.13"]
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.13.8"
           enable-cache: true
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.5"
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --frozen --no-build
 
       - name: Build email templates
         run: make build-emails
 
       - name: Test with Coverage (PostgreSQL via pytest-databases)
-        run: uv run pytest src/py/tests -m '' --cov=src/py/app --cov-report=xml
+        run: uv run --no-sync --no-build pytest src/py/tests -m '' --cov=src/py/app --cov-report=xml
 
       - if: matrix.python-version == '3.13'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: coverage-xml
           path: coverage.xml
@@ -149,21 +149,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.13.8"
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --frozen --no-build
 
       - name: Build docs
         run: make docs
@@ -176,7 +176,7 @@ jobs:
 
       - name: Upload artifact
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: docs-preview
           path: |
@@ -190,21 +190,21 @@ jobs:
       security-events: write
     steps:
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@74c1aea9df7c0f02e9b7bfe4a8935abf2e5e3aa6 # v3
         with:
           languages: python
 
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.13.8"
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --frozen --no-build
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@74c1aea9df7c0f02e9b7bfe4a8935abf2e5e3aa6 # v3

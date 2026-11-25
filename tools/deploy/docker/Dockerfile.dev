@@ -53,15 +53,15 @@ COPY src/js/web/biome.json src/js/web/vite.config.ts src/js/web/tsconfig.json sr
 COPY src/js/templates/package.json src/js/templates/bun.lock ./src/js/templates/
 
 WORKDIR /workspace/app/src/js/web
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 
 WORKDIR /workspace/app/src/js/templates
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 WORKDIR /workspace/app
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
     uv venv \
-    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable
+    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable --no-build
 
 COPY tools ./tools/
 COPY src/js/web/ ./src/js/web/
@@ -73,9 +73,9 @@ RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
 RUN cd src/js/templates && bun run build
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-    uv sync ${UV_INSTALL_ARGS} --frozen \
-    && uv run app assets generate-types \
-    && uv run app assets build
+    uv sync ${UV_INSTALL_ARGS} --frozen --no-build \
+    && app assets generate-types \
+    && app assets build
 
 STOPSIGNAL SIGTERM
 EXPOSE 8000

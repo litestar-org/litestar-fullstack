@@ -56,15 +56,15 @@ COPY src/js/web/biome.json src/js/web/vite.config.ts src/js/web/tsconfig.json sr
 COPY src/js/templates/package.json src/js/templates/bun.lock ./src/js/templates/
 
 WORKDIR /workspace/app/src/js/web
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 
 WORKDIR /workspace/app/src/js/templates
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 WORKDIR /workspace/app
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
     uv venv \
-    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable \
+    && uv sync ${UV_INSTALL_ARGS} --frozen --no-install-project --no-editable --no-build \
     && uv export ${UV_INSTALL_ARGS} --frozen --no-hashes --no-emit-project --output-file=requirements.txt
 
 COPY tools ./tools/
@@ -77,9 +77,9 @@ RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
 RUN cd src/js/templates && bun run build
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-    uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
-    && uv run app assets generate-types \
-    && uv run app assets build \
+    uv sync ${UV_INSTALL_ARGS} --frozen --no-editable --no-build \
+    && app assets generate-types \
+    && app assets build \
     && uv build --wheel --clear
 
 FROM python-base AS runtime
@@ -108,8 +108,8 @@ WORKDIR /workspace/app
 
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
     uv venv /workspace/app/.venv \
-    && uv pip install --quiet --no-cache-dir --no-deps --requirement=/tmp/requirements.txt \
-    && uv pip install --quiet --no-cache-dir --no-deps /tmp/*.whl \
+    && uv pip install --quiet --no-cache-dir --no-deps --only-binary :all: --requirement=/tmp/requirements.txt \
+    && uv pip install --quiet --no-cache-dir --no-deps --only-binary :all: /tmp/*.whl \
     && rm -rf /tmp/* \
     && chown -R nonroot:nonroot /workspace/app
 

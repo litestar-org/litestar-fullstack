@@ -13,7 +13,7 @@ export default defineConfig({
     tailwindcss(),
     react(),
     litestar({
-      input: ["src/main.tsx", "src/styles.css"],
+      input: ["index.html"],
     }),
   ],
   resolve: {
