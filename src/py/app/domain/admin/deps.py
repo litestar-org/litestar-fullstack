@@ -11,7 +11,6 @@ from advanced_alchemy.extensions.litestar.providers import (
     create_service_provider,
 )
 from advanced_alchemy.filters import FilterSet
-from sqlalchemy.ext.asyncio import AsyncSession  # noqa: TC002
 
 from app.db import models as m
 from app.domain.admin.services import AuditLogService, DashboardQueryService
@@ -42,13 +41,7 @@ provide_audit_log_service = create_service_provider(
 )
 
 
-def provide_dashboard_query_service(db_session: AsyncSession) -> DashboardQueryService:
-    """Provide a request-scoped ``DashboardQueryService`` bound to ``db_session``.
-
-    Returns:
-        A ``DashboardQueryService`` instance for the current session.
-    """
-    return DashboardQueryService(session=db_session)
+provide_dashboard_query_service = create_service_provider(DashboardQueryService)
 
 
 __all__ = (

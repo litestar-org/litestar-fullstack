@@ -30,7 +30,7 @@ ruff = false
 
 [[package]]
 name = "advanced-alchemy"
-version = "1.13.0b3"
+version = "1.13.0b4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "alembic" },
@@ -38,9 +38,9 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bd/72/5a01682d4528d70f9655c5a8b87795ea896d8ec46783409ba06e505a3d3f/advanced_alchemy-1.13.0b3.tar.gz", hash = "sha256:00118346be3e2fff890ff24e53a6225fd4b443e2a92d5f2d6e6f5b23fb2d76fe", size = 2224396, upload-time = "2026-11-21T21:24:17.197Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/5e/2796f0412c49467aaae72a31be356796a9d7332ffef78c1855b204c61262/advanced_alchemy-1.13.0b4.tar.gz", hash = "sha256:6e678072e32cdd2668bb677db05583eb0d6ee498876f35b4efe8cdf779756551", size = 2229805, upload-time = "2026-11-25T18:41:54.492Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/ff/35badbdd658366c19b10620e82ff3fd25012a4bf7dc67cff6697d38c4bf3/advanced_alchemy-1.13.0b3-py3-none-any.whl", hash = "sha256:c402f39932ca038df8966f2e5e53d47e9da740c2c6f7af88732c90ff8b42d851", size = 446358, upload-time = "2026-11-21T21:24:15.172Z" },
+    { url = "https://files.pythonhosted.org/packages/df/ea/0ba21cd39401de06bcca4917a9ce09a2fa24dc696a97f303f8486c4894ab/advanced_alchemy-1.13.0b4-py3-none-any.whl", hash = "sha256:264cc5845b1bb48c951125195bd9382b9f9e085a3c23f77bf7189e0edbf8905b", size = 447760, upload-time = "2026-11-25T18:41:52.196Z" },
 ]
 
 [package.optional-dependencies]
@@ -241,7 +241,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "advanced-alchemy", extras = ["uuid", "obstore", "pwdlib", "cryptography"], specifier = ">=1.13.0b3" },
+    { name = "advanced-alchemy", extras = ["uuid", "obstore", "pwdlib", "cryptography"], specifier = ">=1.13.0b4" },
     { name = "asyncpg" },
     { name = "litestar", extras = ["jinja", "structlog", "cryptography"], specifier = ">=2.25.0" },
     { name = "litestar-asyncapi", specifier = ">=0.3.0" },
