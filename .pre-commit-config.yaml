@@ -20,18 +20,18 @@ repos:
       - id: check-ast
       - id: check-case-conflict
       - id: check-toml
+      - id: check-yaml
       - id: debug-statements
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Keep in step with the ruff version in uv.lock so the hook and `uv run ruff` agree.
     rev: "v0.17.6"
     hooks:
-      # Run the linter.
-      - id: ruff
+      - id: ruff-check
         types_or: [python, pyi]
         args: [--fix]
-      # Run the formatter.
       - id: ruff-format
         types_or: [python, pyi]
   - repo: https://github.com/codespell-project/codespell

@@ -154,6 +154,12 @@ slotscheck:                                        ## Run slotscheck
 	@uv run slotscheck -m app
 	@echo "${OK} Slots check passed ✨"
 
+.PHONY: zizmor
+zizmor:                                            ## Audit GitHub Actions workflows
+	@echo "${INFO} Auditing workflows... 🛡️"
+	@uv run zizmor .github/workflows
+	@echo "${OK} Workflow audit passed ✨"
+
 .PHONY: fix
 fix:                                               ## Run formatting scripts
 	@echo "${INFO} Running code formatters... 🔧"
@@ -162,7 +168,7 @@ fix:                                               ## Run formatting scripts
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint
-lint: ruff type-check slotscheck biome codespell   ## Run all linting
+lint: ruff type-check slotscheck biome codespell zizmor ## Run all linting
 
 .PHONY: coverage
 coverage:                                          ## Run the tests and generate coverage report

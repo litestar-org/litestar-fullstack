@@ -9,6 +9,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Programming Language :: Python",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development",
@@ -67,6 +69,7 @@ linting = [
   "types-pyyaml",
   "pyright",
   "codespell>=2.4.1",
+  "zizmor>=1.32.0",
 ]
 test = [
   "bump-my-version",
@@ -87,6 +90,23 @@ test = [
 [build-system]
 build-backend = "uv_build"
 requires = ["uv_build>=0.13.0,<0.14.0"]
+
+[tool.uv]
+exclude-newer = "2026-11-18T00:00:00Z"
+
+[tool.uv.exclude-newer-package]
+advanced-alchemy = "2099-01-01T00:00:00Z"
+litestar = "2099-01-01T00:00:00Z"
+litestar-asyncapi = "2099-01-01T00:00:00Z"
+litestar-autowire = "2099-01-01T00:00:00Z"
+litestar-email = "2099-01-01T00:00:00Z"
+litestar-granian = "2099-01-01T00:00:00Z"
+litestar-mcp = "2099-01-01T00:00:00Z"
+litestar-queues = "2099-01-01T00:00:00Z"
+litestar-security = "2099-01-01T00:00:00Z"
+litestar-vite = "2099-01-01T00:00:00Z"
+pyyaml = "2026-11-21T00:00:00Z"
+ruff = "2099-01-01T00:00:00Z"
 
 [tool.uv.build-backend]
 module-name = "app"
