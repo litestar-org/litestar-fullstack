@@ -11,21 +11,22 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-11-18T00:00:00Z"
+exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
+exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
-advanced-alchemy = "2099-01-01T00:00:00Z"
-litestar = "2099-01-01T00:00:00Z"
-litestar-asyncapi = "2099-01-01T00:00:00Z"
-litestar-autowire = "2099-01-01T00:00:00Z"
-litestar-email = "2099-01-01T00:00:00Z"
-litestar-granian = "2099-01-01T00:00:00Z"
-litestar-mcp = "2099-01-01T00:00:00Z"
-litestar-queues = "2099-01-01T00:00:00Z"
-litestar-security = "2099-01-01T00:00:00Z"
-litestar-vite = "2099-01-01T00:00:00Z"
-pyyaml = "2026-11-21T00:00:00Z"
-ruff = "2099-01-01T00:00:00Z"
+advanced-alchemy = false
+litestar = false
+litestar-asyncapi = false
+litestar-autowire = false
+litestar-email = false
+litestar-granian = false
+litestar-mcp = false
+litestar-queues = false
+litestar-security = false
+litestar-vite = false
+pyyaml = { timestamp = "0001-01-01T00:00:00Z", span = "P3D" }
+ruff = false
 
 [[package]]
 name = "advanced-alchemy"

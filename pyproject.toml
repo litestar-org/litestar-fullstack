@@ -92,21 +92,22 @@ build-backend = "uv_build"
 requires = ["uv_build>=0.13.0,<0.14.0"]
 
 [tool.uv]
-exclude-newer = "2026-11-18T00:00:00Z"
+exclude-newer = "7 days"
 
 [tool.uv.exclude-newer-package]
-advanced-alchemy = "2099-01-01T00:00:00Z"
-litestar = "2099-01-01T00:00:00Z"
-litestar-asyncapi = "2099-01-01T00:00:00Z"
-litestar-autowire = "2099-01-01T00:00:00Z"
-litestar-email = "2099-01-01T00:00:00Z"
-litestar-granian = "2099-01-01T00:00:00Z"
-litestar-mcp = "2099-01-01T00:00:00Z"
-litestar-queues = "2099-01-01T00:00:00Z"
-litestar-security = "2099-01-01T00:00:00Z"
-litestar-vite = "2099-01-01T00:00:00Z"
-pyyaml = "2026-11-21T00:00:00Z"
-ruff = "2099-01-01T00:00:00Z"
+advanced-alchemy = false
+litestar = false
+litestar-asyncapi = false
+litestar-autowire = false
+litestar-email = false
+litestar-granian = false
+litestar-mcp = false
+litestar-queues = false
+litestar-security = false
+litestar-vite = false
+# 6.0.4 is the first PyYAML with Python 3.15 wheels; remove once it is a week old.
+pyyaml = "3 days"
+ruff = false
 
 [tool.uv.build-backend]
 module-name = "app"
