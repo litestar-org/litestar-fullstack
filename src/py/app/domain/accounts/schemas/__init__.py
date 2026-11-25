@@ -1,35 +1,13 @@
-"""Account domain schemas for users, auth, OAuth, roles, and password reset."""
+"""Account domain schemas."""
 
-from app.domain.accounts.schemas._auth import AccountLogin, AccountRegister, PasswordUpdate, PasswordVerify
-from app.domain.accounts.schemas._email_verification import (
-    EmailVerificationConfirm,
-    EmailVerificationRequest,
-    EmailVerificationSent,
-    EmailVerificationStatus,
-)
-from app.domain.accounts.schemas._mfa import (
-    LoginMfaChallenge,
-    MfaBackupCodes,
-    MfaChallenge,
-    MfaConfirm,
-    MfaDisable,
-    MfaSetup,
-    MfaStatus,
-    MfaVerifyResult,
-)
-from app.domain.accounts.schemas._oauth import OAuthAccountInfo, OAuthAuthorization
-from app.domain.accounts.schemas._password_reset import (
-    ForgotPasswordRequest,
-    PasswordResetComplete,
-    PasswordResetSent,
-    ResetPasswordRequest,
-    ResetTokenValidation,
-    ValidateResetTokenRequest,
-)
-from app.domain.accounts.schemas._roles import Role, RoleCreate, RoleUpdate, UserRoleAdd, UserRoleRevoke
-from app.domain.accounts.schemas._sessions import ActiveSession, TokenRefresh
+from __future__ import annotations
+
+from app.domain.accounts.schemas._api_key import APIKeyCreate, APIKeyIssued, APIKeyItem
+from app.domain.accounts.schemas._role import Role, RoleCreate, RoleUpdate, UserRoleAdd, UserRoleRevoke
 from app.domain.accounts.schemas._user import (
     OauthAccount,
+    PasswordConfirmation,
+    PasswordUpdate,
     ProfileUpdate,
     User,
     UserCreate,
@@ -40,37 +18,17 @@ from app.domain.accounts.schemas._user import (
 from app.lib.schema import Message
 
 __all__ = (
-    "AccountLogin",
-    "AccountRegister",
-    "ActiveSession",
-    "EmailVerificationConfirm",
-    "EmailVerificationRequest",
-    "EmailVerificationSent",
-    "EmailVerificationStatus",
-    "ForgotPasswordRequest",
-    "LoginMfaChallenge",
+    "APIKeyCreate",
+    "APIKeyIssued",
+    "APIKeyItem",
     "Message",
-    "MfaBackupCodes",
-    "MfaChallenge",
-    "MfaConfirm",
-    "MfaDisable",
-    "MfaSetup",
-    "MfaStatus",
-    "MfaVerifyResult",
-    "OAuthAccountInfo",
-    "OAuthAuthorization",
     "OauthAccount",
-    "PasswordResetComplete",
-    "PasswordResetSent",
+    "PasswordConfirmation",
     "PasswordUpdate",
-    "PasswordVerify",
     "ProfileUpdate",
-    "ResetPasswordRequest",
-    "ResetTokenValidation",
     "Role",
     "RoleCreate",
     "RoleUpdate",
-    "TokenRefresh",
     "User",
     "UserCreate",
     "UserRole",
@@ -78,5 +36,4 @@ __all__ = (
     "UserRoleRevoke",
     "UserTeam",
     "UserUpdate",
-    "ValidateResetTokenRequest",
 )

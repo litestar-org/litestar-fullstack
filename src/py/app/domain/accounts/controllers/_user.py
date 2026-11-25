@@ -1,68 +1,45 @@
-"""User Account Controllers."""
+"""User account administration SecureController."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated, ClassVar
 from uuid import UUID
 
-from litestar import Controller, delete, get, patch, post
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service import OffsetPagination
+from litestar import delete, get, patch, post
+from litestar.di import Provide
 from litestar.params import Dependency, Parameter
-from sqlalchemy.orm import joinedload, load_only, selectinload
+from litestar_security import AuthenticationPolicy, SecureController, required, requires_role
 
-from app.db import models as m
-from app.domain.accounts.guards import requires_superuser
+from app.domain.accounts.deps import UserFilterSet, create_filter_dependencies, provide_users_service
 from app.domain.accounts.schemas import User, UserCreate, UserUpdate
 from app.domain.accounts.services import UserService
-from app.lib.deps import create_service_dependencies
-
-if TYPE_CHECKING:
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service import OffsetPagination
 
 
-class UserController(Controller):
-    """User Account Controller."""
+class UserController(SecureController):
+    """Superuser CRUD controller for user accounts."""
 
     path = "/api/users"
     tags = ["User Accounts"]
-    guards = [requires_superuser]
-    dependencies = create_service_dependencies(
-        UserService,
-        key="users_service",
-        load=[
-            selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
-            selectinload(m.User.teams).options(
-                joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
-            ),
-            selectinload(m.User.oauth_accounts),
-        ],
-        filters={
-            "id_filter": UUID,
-            "search": "name,email",
-            "pagination_type": "limit_offset",
-            "pagination_size": 25,
-            "created_at": True,
-            "updated_at": True,
-            "sort_field": "created_at",
-            "sort_order": "desc",
-        },
-    )
+    auth: ClassVar[AuthenticationPolicy] = required("session")
+    guards = [requires_role("superuser")]
+    dependencies = {
+        "users_service": Provide(provide_users_service),
+        **create_filter_dependencies(UserFilterSet),
+    }
 
     @get(operation_id="ListUsers")
     async def list_users(
-        self, users_service: UserService, filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)]
+        self,
+        users_service: UserService,
+        filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[User]:
-        """List users.
-
-        Args:
-            filters: The filters to apply to the list of users.
-            users_service: The user service.
+        """List user accounts using Advanced Alchemy filters.
 
         Returns:
-            The list of users.
+            Paginated list of user account records.
         """
-        results, total = await users_service.list_and_count(*filters)
-        return users_service.to_schema(results, total, filters, schema_type=User)
+        users, total = await users_service.get_many_and_count(*filters)
+        return users_service.to_schema(users, total, filters=filters, schema_type=User)
 
     @get(operation_id="GetUser", path="/{user_id:uuid}")
     async def get_user(
@@ -70,31 +47,23 @@ class UserController(Controller):
         users_service: UserService,
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to retrieve.")],
     ) -> User:
-        """Get a user.
-
-        Args:
-            user_id: The ID of the user to retrieve.
-            users_service: The user service.
+        """Retrieve a single user account by UUID.
 
         Returns:
-            The user.
+            Serialized user account record.
         """
-        db_obj = await users_service.get(user_id)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.get(user_id)
+        return users_service.to_schema(user, schema_type=User)
 
     @post(operation_id="CreateUser")
     async def create_user(self, users_service: UserService, data: UserCreate) -> User:
-        """Create a new user.
-
-        Args:
-            data: The data to create the user with.
-            users_service: The user service.
+        """Create a new user account.
 
         Returns:
-            The created user.
+            Newly created user account record.
         """
-        db_obj = await users_service.create(data.to_dict())
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.create(data.to_dict(), auto_commit=True)
+        return users_service.to_schema(user, schema_type=User)
 
     @patch(operation_id="UpdateUser", path="/{user_id:uuid}")
     async def update_user(
@@ -103,18 +72,21 @@ class UserController(Controller):
         users_service: UserService,
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to update.")],
     ) -> User:
-        """Update a user.
+        """Partially update an existing user account.
 
-        Args:
-            data: The data to update the user with.
-            users_service: The user service.
-            user_id: The ID of the user to update.
+        A new password is set after the other changes, so it is checked against the email address the
+        account ends up with; either both are stored or neither is.
 
         Returns:
-            The updated user.
+            Updated user account record.
         """
-        db_obj = await users_service.update(item_id=user_id, data=data.to_dict())
-        return users_service.to_schema(db_obj, schema_type=User)
+        changes = data.to_dict()
+        password = changes.pop("password", None)
+        user = await users_service.update(changes, item_id=user_id)
+        if password is not None:
+            await users_service.set_password(user, password)
+        await users_service.repository.session.commit()
+        return users_service.to_schema(user, schema_type=User)
 
     @delete(operation_id="DeleteUser", path="/{user_id:uuid}")
     async def delete_user(
@@ -122,10 +94,5 @@ class UserController(Controller):
         users_service: UserService,
         user_id: Annotated[UUID, Parameter(title="User ID", description="The user to delete.")],
     ) -> None:
-        """Delete a user from the system.
-
-        Args:
-            user_id: The ID of the user to delete.
-            users_service: The user service.
-        """
-        _ = await users_service.delete(user_id)
+        """Delete a user account by UUID."""
+        _ = await users_service.delete(user_id, auto_commit=True)

@@ -2,15 +2,31 @@
 	"$schema": "https://railway.com/railway.schema.json",
 	"build": {
 		"builder": "DOCKERFILE",
-		"dockerfilePath": "tools/deploy/docker/Dockerfile.distroless"
+		"dockerfilePath": "tools/deploy/docker/Dockerfile.distroless",
+		"watchPatterns": [
+			"src/**",
+			"pyproject.toml",
+			"uv.lock",
+			"tools/deploy/docker/Dockerfile.distroless",
+			"tools/deploy/railway/railway.app.json"
+		]
 	},
 	"deploy": {
 		"runtime": "V2",
 		"numReplicas": 1,
 		"sleepApplication": false,
+		"preDeployCommand": ["app", "database", "upgrade", "--no-prompt"],
+		"limitOverride": {
+			"containers": {
+				"cpu": 1,
+				"memoryBytes": 1000000000
+			}
+		},
 		"restartPolicyType": "ON_FAILURE",
 		"restartPolicyMaxRetries": 5,
 		"healthcheckPath": "/health",
-		"healthcheckTimeout": 300
+		"healthcheckTimeout": 60,
+		"overlapSeconds": 15,
+		"drainingSeconds": 15
 	}
 }

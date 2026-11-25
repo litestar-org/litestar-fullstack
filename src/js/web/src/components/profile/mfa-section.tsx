@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 import { BackupCodesDisplay } from "@/components/mfa/backup-codes-display"
@@ -7,87 +8,108 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { SkeletonCard } from "@/components/ui/skeleton"
-import { useMfaStatus, useRegenerateBackupCodes } from "@/lib/api/hooks/auth"
+import { useAuthConfig, useStepUpGrant } from "@/lib/api/hooks/auth"
+import { extractApiErrorMessage } from "@/lib/api-client"
+import { useAuthStore } from "@/lib/auth"
+import { mfaReplaceRecoveryCodesMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function MfaSection() {
-  const { data, isLoading, isError } = useMfaStatus()
-  const regenerate = useRegenerateBackupCodes()
-  const [regenOpen, setRegenOpen] = useState(false)
-  const [regenPassword, setRegenPassword] = useState("")
-  const [regenCodes, setRegenCodes] = useState<string[] | null>(null)
+  const user = useAuthStore((state) => state.user)
+  const { data: authConfig } = useAuthConfig()
+  const [enrolledMethodId, setEnrolledMethodId] = useState<string | null>(null)
+  const [isRegenerateDialogOpen, setIsRegenerateDialogOpen] = useState(false)
 
-  if (isLoading) {
-    return <SkeletonCard />
+  if (authConfig?.mfaEnabled === false) {
+    return null
   }
 
-  if (isError || !data) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Multi-factor authentication</CardTitle>
-          <CardDescription>We could not load MFA status.</CardDescription>
-        </CardHeader>
-      </Card>
-    )
-  }
-
-  const handleRegenerate = async () => {
-    if (!regenPassword) {
-      toast.error("Enter your password to regenerate backup codes")
-      return
-    }
-    try {
-      const result = await regenerate.mutateAsync(regenPassword)
-      setRegenCodes(result.codes ?? [])
-    } catch (error) {
-      toast.error("Unable to regenerate codes", {
-        description: error instanceof Error ? error.message : "Try again later",
-      })
-    }
-  }
+  const isMfaEnabled = user?.isTwoFactorEnabled ?? false
+  const activeMethodId = user?.totpMethodId ?? enrolledMethodId
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Multi-factor authentication</CardTitle>
-        <CardDescription>{data.enabled ? "MFA is enabled on your account." : "Add an extra layer of security to your account."}</CardDescription>
+        <CardDescription>{isMfaEnabled ? "MFA is enabled on your account." : "Add an extra layer of security to your account."}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {data.enabled ? (
+        {isMfaEnabled ? (
           <div className="flex flex-wrap gap-2">
-            <MfaDisableDialog />
-            <Button variant="outline" onClick={() => setRegenOpen(true)}>
-              Regenerate backup codes
+            <MfaDisableDialog methodId={activeMethodId} />
+            <Button variant="outline" onClick={() => setIsRegenerateDialogOpen(true)}>
+              Regenerate recovery codes
             </Button>
           </div>
         ) : (
-          <MfaSetupDialog />
+          <MfaSetupDialog onEnrolled={setEnrolledMethodId} />
         )}
-        {data.enabled && data.backupCodesRemaining !== null && <p className="text-muted-foreground text-sm">Backup codes remaining: {data.backupCodesRemaining ?? 0}</p>}
       </CardContent>
-      <Dialog open={regenOpen} onOpenChange={setRegenOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Regenerate backup codes</DialogTitle>
-            <DialogDescription>Confirm your password to generate a fresh set of codes.</DialogDescription>
-          </DialogHeader>
-          {regenCodes ? (
-            <BackupCodesDisplay codes={regenCodes} description="These codes replace your previous set. Store them securely." />
-          ) : (
-            <Input type="password" placeholder="Password" value={regenPassword} onChange={(event) => setRegenPassword(event.target.value)} />
-          )}
-          <DialogFooter>
-            {regenCodes ? (
-              <Button onClick={() => setRegenOpen(false)}>Done</Button>
-            ) : (
-              <Button onClick={handleRegenerate} disabled={regenerate.isPending}>
-                Regenerate
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RegenerateRecoveryCodesDialog open={isRegenerateDialogOpen} onOpenChange={setIsRegenerateDialogOpen} />
     </Card>
+  )
+}
+
+interface RegenerateRecoveryCodesDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+function RegenerateRecoveryCodesDialog({ open, onOpenChange }: Readonly<RegenerateRecoveryCodesDialogProps>) {
+  const { requestGrant, isPending: isStepUpPending } = useStepUpGrant()
+  const replaceRecoveryCodes = useMutation(mfaReplaceRecoveryCodesMutation())
+  const [password, setPassword] = useState("")
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null)
+
+  const isRegenerating = isStepUpPending || replaceRecoveryCodes.isPending
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    onOpenChange(nextOpen)
+    if (!nextOpen) {
+      setPassword("")
+      setRecoveryCodes(null)
+    }
+  }
+
+  const handleRegenerate = async () => {
+    if (!password) {
+      toast.error("Enter your password to regenerate backup codes")
+      return
+    }
+    try {
+      const grant = await requestGrant("recovery-codes", password)
+      const { codes } = await replaceRecoveryCodes.mutateAsync({ body: { step_up_grant: grant } })
+      setRecoveryCodes(codes ?? [])
+      setPassword("")
+      toast.success("Recovery codes regenerated")
+    } catch (error) {
+      toast.error("Unable to regenerate codes", {
+        description: extractApiErrorMessage(error, "Try again later"),
+      })
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Regenerate recovery codes</DialogTitle>
+          <DialogDescription>Confirm your password to generate a fresh set of one-time recovery codes.</DialogDescription>
+        </DialogHeader>
+        {recoveryCodes ? (
+          <BackupCodesDisplay codes={recoveryCodes} description="These codes replace your previous set. Store them securely." />
+        ) : (
+          <Input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isRegenerating} />
+        )}
+        <DialogFooter>
+          {recoveryCodes ? (
+            <Button onClick={() => handleOpenChange(false)}>Done</Button>
+          ) : (
+            <Button onClick={handleRegenerate} disabled={isRegenerating}>
+              Regenerate
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

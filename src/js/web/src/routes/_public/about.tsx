@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { motion, useMotionValue, useTransform } from "framer-motion"
-import { ArrowLeft, Github, Heart, Star, Zap } from "lucide-react"
+import { ArrowLeft, Heart, Star, Zap } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { PageContainer, PageHeader } from "@/components/ui/page-layout"
@@ -10,7 +11,6 @@ export const Route = createFileRoute("/_public/about")({
   component: AboutPage,
 })
 
-// Konami code sequence
 const KONAMI_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"]
 
 const teamMembers = [
@@ -38,7 +38,7 @@ const features = [
 ]
 
 function AboutPage() {
-  const [easterEggActive, setEasterEggActive] = useState(false)
+  const [isEasterEggActive, setIsEasterEggActive] = useState(false)
   const [konamiIndex, setKonamiIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const mouseX = useMotionValue(0)
@@ -46,11 +46,11 @@ function AboutPage() {
 
   // Cursor-following gradient
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
+    (event: React.MouseEvent) => {
       const rect = containerRef.current?.getBoundingClientRect()
       if (rect) {
-        mouseX.set(e.clientX - rect.left)
-        mouseY.set(e.clientY - rect.top)
+        mouseX.set(event.clientX - rect.left)
+        mouseY.set(event.clientY - rect.top)
       }
     },
     [mouseX, mouseY],
@@ -61,19 +61,16 @@ function AboutPage() {
 
   // Konami code listener
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (easterEggActive) {
-        setEasterEggActive(false)
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isEasterEggActive) {
+        setIsEasterEggActive(false)
         return
       }
 
-      const key = e.key
-      const expectedKey = KONAMI_CODE[konamiIndex]
-
-      if (key === expectedKey) {
+      if (event.key === KONAMI_CODE[konamiIndex]) {
         const nextIndex = konamiIndex + 1
         if (nextIndex === KONAMI_CODE.length) {
-          setEasterEggActive(true)
+          setIsEasterEggActive(true)
           setKonamiIndex(0)
         } else {
           setKonamiIndex(nextIndex)
@@ -85,25 +82,25 @@ function AboutPage() {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [konamiIndex, easterEggActive])
+  }, [konamiIndex, isEasterEggActive])
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Visual-only mouse tracker for cursor-following gradient effect
     <div ref={containerRef} onMouseMove={handleMouseMove} role="presentation" className="relative min-h-screen">
       {/* Easter egg overlay */}
-      {easterEggActive && (
+      {isEasterEggActive && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-brand-navy"
-          onClick={() => setEasterEggActive(false)}
+          onClick={() => setIsEasterEggActive(false)}
         >
           {/* Animated star constellation */}
           <div className="relative">
             {/* Orbiting particles */}
-            {Array.from({ length: 12 }).map((_, i) => (
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((slot) => (
               <motion.div
-                key={`star-${i}-${Math.random()}`}
+                key={`orbit-star-${slot}`}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{
                   opacity: [0, 1, 0],
@@ -113,15 +110,15 @@ function AboutPage() {
                 transition={{
                   duration: 3,
                   repeat: Number.POSITIVE_INFINITY,
-                  delay: i * 0.25,
+                  delay: slot * 0.25,
                   ease: "easeInOut",
                 }}
                 style={{
                   position: "absolute",
                   left: "50%",
                   top: "50%",
-                  x: Math.cos((i / 12) * Math.PI * 2) * 150 - 6,
-                  y: Math.sin((i / 12) * Math.PI * 2) * 150 - 6,
+                  x: Math.cos((slot / 12) * Math.PI * 2) * 150 - 6,
+                  y: Math.sin((slot / 12) * Math.PI * 2) * 150 - 6,
                 }}
                 className="h-3 w-3 rounded-full bg-primary shadow-glow-sm"
               />
@@ -242,7 +239,7 @@ function AboutPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-4">
           <Button variant="outline" asChild>
             <a href="https://github.com/litestar-org" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" /> GitHub
+              <Icons.GitHub className="mr-2 h-4 w-4" /> GitHub
             </a>
           </Button>
           <Button variant="outline" asChild>

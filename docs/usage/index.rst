@@ -8,3 +8,6 @@ Usage
     installation
     development
     startup
+    security
+    queues-and-mcp
+    deployment

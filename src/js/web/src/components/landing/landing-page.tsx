@@ -10,12 +10,11 @@ export function LandingPage() {
 
   return (
     <div className="relative flex min-h-screen w-full">
-      {/* Left panel with RetroGrid - hidden on mobile */}
       <div className="relative hidden min-h-screen w-1/2 max-w-2xl flex-col bg-brand-navy p-10 text-white lg:flex">
         <RetroGrid />
         <Link to="/" className="relative z-20">
           <div className="flex items-center font-medium text-lg">
-            <Icons.logo className="mr-2 h-6 w-6" />
+            <Icons.Logo className="mr-2 h-6 w-6" />
             Litestar Fullstack
           </div>
         </Link>
@@ -24,16 +23,16 @@ export function LandingPage() {
           <div className="mt-4 flex items-center gap-4">
             <div className="flex -space-x-1">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.python className="h-5 w-5" />
+                <Icons.Python className="h-5 w-5" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.react className="h-5 w-5 text-[#61DAFB]" />
+                <Icons.React className="h-5 w-5 text-[#61DAFB]" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.vite className="h-5 w-5" />
+                <Icons.Vite className="h-5 w-5" />
               </div>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
-                <Icons.typescript className="h-5 w-5" />
+                <Icons.Typescript className="h-5 w-5" />
               </div>
             </div>
             <div className="text-sm text-white/70">
@@ -43,9 +42,7 @@ export function LandingPage() {
         </div>
       </div>
 
-      {/* Right panel with content */}
       <div className="flex flex-1 flex-col bg-brand-gray-light dark:bg-background">
-        {/* Header with theme toggle and sign in */}
         <div className="flex items-center justify-end gap-2 p-4 md:p-8">
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="size-9 rounded-full" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
             {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
@@ -55,9 +52,8 @@ export function LandingPage() {
           </Button>
         </div>
 
-        {/* Main content - centered */}
         <main className="flex flex-1 flex-col items-center justify-center px-4 pb-16">
-          <Icons.logoBrand className="h-16 w-16" />
+          <Icons.LogoBrand className="h-16 w-16" />
 
           <h1 className="mt-8 font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Litestar Fullstack</h1>
 
@@ -76,7 +72,6 @@ export function LandingPage() {
           </div>
         </main>
 
-        {/* Footer */}
         <footer className="py-6 text-center text-sm text-muted-foreground">© {new Date().getFullYear()} Litestar Organization · MIT License</footer>
       </div>
     </div>

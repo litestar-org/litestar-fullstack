@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
 import { useAuthStore } from "@/lib/auth"
-import { listTeams } from "@/lib/generated/api"
+import { listTeamsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/_app/home")({
   component: HomePage,
@@ -13,13 +13,8 @@ export const Route = createFileRoute("/_app/home")({
 
 function HomePage() {
   const user = useAuthStore((state) => state.user)
-  const { data: teams = [] } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const response = await listTeams()
-      return response.data?.items ?? []
-    },
-  })
+  const { data: teamPage } = useQuery(listTeamsOptions())
+  const teams = teamPage?.items ?? []
 
   const displayName = user?.name || user?.email?.split("@")[0] || "there"
 

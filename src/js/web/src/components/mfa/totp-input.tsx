@@ -1,13 +1,15 @@
 import { Input } from "@/components/ui/input"
 
+export const TOTP_CODE_LENGTH = 6
+
 interface TotpInputProps {
   value: string
-  onChange: (value: string) => void
+  onChange: (code: string) => void
   disabled?: boolean
   autoFocus?: boolean
 }
 
-export function TotpInput({ value, onChange, disabled, autoFocus }: TotpInputProps) {
+export function TotpInput({ value, onChange, disabled, autoFocus }: Readonly<TotpInputProps>) {
   return (
     <Input
       autoFocus={autoFocus}
@@ -16,10 +18,7 @@ export function TotpInput({ value, onChange, disabled, autoFocus }: TotpInputPro
       pattern="[0-9]*"
       placeholder="123456"
       value={value}
-      onChange={(event) => {
-        const next = event.target.value.replace(/\D/g, "").slice(0, 6)
-        onChange(next)
-      }}
+      onChange={(event) => onChange(event.target.value.replace(/\D/g, "").slice(0, TOTP_CODE_LENGTH))}
       disabled={disabled}
     />
   )

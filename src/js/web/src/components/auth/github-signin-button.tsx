@@ -1,80 +1,43 @@
-import { useMutation } from "@tanstack/react-query"
-import { toast } from "sonner"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
-import { apiAuthOauthGithubGithubAuthorize } from "@/lib/generated/api"
 
-/** Key used to store the post-auth redirect destination in sessionStorage */
 export const GITHUB_AUTH_REDIRECT_KEY = "github_auth_redirect"
 
+type GitHubSignInVariant = "signin" | "signup" | "link"
+
+const VARIANT_LABELS: Record<GitHubSignInVariant, string> = {
+  signin: "Sign in with GitHub",
+  signup: "Sign up with GitHub",
+  link: "Link GitHub Account",
+}
+
+const GITHUB_CALLBACK_PATH = "/auth/github/callback"
+
+/** Sends the browser to GitHub; the provider returns it to the callback page. */
+export function startGitHubSignIn() {
+  window.location.assign(`/api/auth/oauth/github/login?return_to=${encodeURIComponent(GITHUB_CALLBACK_PATH)}`)
+}
+
 interface GitHubSignInButtonProps {
-  variant?: "signin" | "signup" | "link"
-  onSuccess?: () => void
-  onError?: (error: string) => void
-  redirectUrl?: string
-  /** The destination to redirect to after successful OAuth authentication */
+  variant?: GitHubSignInVariant
   authRedirect?: string
   className?: string
 }
 
-export function GitHubSignInButton({ variant = "signin", onSuccess, onError, redirectUrl, authRedirect, className }: GitHubSignInButtonProps) {
-  const { mutate: initiateOAuth, isPending } = useMutation({
-    mutationFn: async () => {
-      const targetUrl = redirectUrl ?? `${window.location.origin}/auth/github/callback`
-      const response = await apiAuthOauthGithubGithubAuthorize({
-        query: {
-          redirect_url: targetUrl,
-        },
-      })
-
-      if (response.error) {
-        throw new Error("Failed to initiate GitHub OAuth")
-      }
-
-      return response.data
-    },
-    onSuccess: (data) => {
-      if (data?.authorizationUrl) {
-        // Store the post-auth redirect destination before leaving for OAuth
-        if (authRedirect) {
-          sessionStorage.setItem(GITHUB_AUTH_REDIRECT_KEY, authRedirect)
-        } else {
-          sessionStorage.removeItem(GITHUB_AUTH_REDIRECT_KEY)
-        }
-        // Redirect to GitHub OAuth
-        window.location.href = data.authorizationUrl
-      } else {
-        toast.error("Failed to get authorization URL")
-        onError?.("Failed to get authorization URL")
-      }
-      onSuccess?.()
-    },
-    onError: (error: Error) => {
-      const message = error.message || "Failed to sign in with GitHub"
-      toast.error(message)
-      onError?.(message)
-    },
-  })
-
+export function GitHubSignInButton({ variant = "signin", authRedirect, className }: Readonly<GitHubSignInButtonProps>) {
   const handleClick = () => {
-    initiateOAuth()
-  }
-
-  const getButtonText = () => {
-    switch (variant) {
-      case "signup":
-        return "Sign up with GitHub"
-      case "link":
-        return "Link GitHub Account"
-      default:
-        return "Sign in with GitHub"
+    if (authRedirect) {
+      sessionStorage.setItem(GITHUB_AUTH_REDIRECT_KEY, authRedirect)
+    } else {
+      sessionStorage.removeItem(GITHUB_AUTH_REDIRECT_KEY)
     }
+    startGitHubSignIn()
   }
 
   return (
-    <Button type="button" variant="outline" onClick={handleClick} disabled={isPending} className={className}>
-      {isPending ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <Icons.gitHub className="mr-2 h-4 w-4" />}
-      {getButtonText()}
+    <Button type="button" variant="outline" onClick={handleClick} className={className}>
+      <Icons.GitHub className="mr-2 h-4 w-4" />
+      {VARIANT_LABELS[variant]}
     </Button>
   )
 }

@@ -61,5 +61,50 @@ export const emailTheme = {
   lineHeight: "1.6",
 } as const
 
-// Type for the theme
-export type EmailTheme = typeof emailTheme
+/**
+ * Text and block styles shared by every email body.
+ *
+ * Key order is part of the rendered output: inline `style` attributes are
+ * serialized in declaration order.
+ */
+export const emailStyles = {
+  heading: {
+    margin: "0 0 16px 0",
+    fontSize: "20px",
+    fontWeight: 600,
+    color: emailTheme.colors.textHeading,
+  },
+  paragraph: {
+    margin: "0 0 16px 0",
+    color: emailTheme.colors.textBody,
+    fontSize: "14px",
+  },
+  lastParagraph: {
+    margin: "0 0 24px 0",
+    color: emailTheme.colors.textBody,
+    fontSize: "14px",
+  },
+  buttonRow: {
+    textAlign: "center",
+    margin: "32px 0",
+  },
+  linkBox: {
+    margin: "0 0 24px 0",
+    padding: "12px 16px",
+    backgroundColor: emailTheme.colors.codeBg,
+    borderRadius: "6px",
+    fontSize: "12px",
+    color: emailTheme.colors.brandGold,
+    wordBreak: "break-all",
+  },
+  finePrint: {
+    margin: "0 0 16px 0",
+    color: emailTheme.colors.textMuted,
+    fontSize: "13px",
+  },
+  closingNote: {
+    margin: "24px 0 0 0",
+    color: emailTheme.colors.textMuted,
+    fontSize: "13px",
+  },
+} as const

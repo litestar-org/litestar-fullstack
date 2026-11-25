@@ -182,18 +182,20 @@ dist-ssr
 *.local
 src/js/web/.litestar.json
 src/js/web/public/hot
+src/js/web/src/lib/generated/
+src/js/web/src/routeTree.gen.ts
 
 # Email template build output
 src/py/app/server/static/email/
 src/js/templates/node_modules/
 src/js/py/app/server/static/
 
-# AI agent symlinks (AGENTS.md is tracked, tool-specific symlinks are not)
 CLAUDE.md
 GEMINI.md
 AGENT.md
 .gemini/
 .claude/
 .agent/
+.agents/
 .geminiignore
-specs/
+AGENTS.md

@@ -1,37 +1,36 @@
-"use client"
-
 import { Link } from "@tanstack/react-router"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar"
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    to: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      to: string
-    }[]
-  }[]
-}) {
+interface NavLink {
+  title: string
+  to: string
+}
+
+export interface NavSection extends NavLink {
+  icon?: LucideIcon
+  subLinks?: NavLink[]
+}
+
+interface NavMainProps {
+  sections: NavSection[]
+}
+
+export function NavMain({ sections }: Readonly<NavMainProps>) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => {
-          if (!item.items || item.items.length === 0) {
+        {sections.map((section) => {
+          if (!section.subLinks || section.subLinks.length === 0) {
             return (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title}>
-                  <Link to={item.to}>
-                    {item.icon && <item.icon className="shrink-0" />}
-                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+              <SidebarMenuItem key={section.title}>
+                <SidebarMenuButton asChild tooltip={section.title}>
+                  <Link to={section.to}>
+                    {section.icon && <section.icon className="shrink-0" />}
+                    <span className="group-data-[collapsible=icon]:hidden">{section.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -39,24 +38,24 @@ export function NavMain({
           }
 
           return (
-            <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+            <Collapsible key={section.title} asChild className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <Link to={item.to}>
-                      {item.icon && <item.icon className="shrink-0" />}
-                      <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                  <SidebarMenuButton asChild tooltip={section.title}>
+                    <Link to={section.to}>
+                      {section.icon && <section.icon className="shrink-0" />}
+                      <span className="group-data-[collapsible=icon]:hidden">{section.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
                     </Link>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.items?.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
+                    {section.subLinks.map((subLink) => (
+                      <SidebarMenuSubItem key={subLink.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link to={subItem.to}>
-                            <span>{subItem.title}</span>
+                          <Link to={subLink.to}>
+                            <span>{subLink.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

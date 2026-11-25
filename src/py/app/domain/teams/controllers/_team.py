@@ -1,92 +1,78 @@
-"""Team Controllers."""
+"""Team SecureController."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated, ClassVar
 from uuid import UUID
 
-from litestar import Controller, delete, get, patch, post
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service.pagination import OffsetPagination
+from litestar import delete, get, patch, post
+from litestar.di import Provide
 from litestar.params import Dependency, Parameter
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, any_of, required
 
 from app.db import models as m
-from app.domain.teams.guards import requires_team_admin, requires_team_membership, requires_team_ownership
+from app.domain.accounts.security import requires_team_role
+from app.domain.teams.deps import TeamFilterSet, create_filter_dependencies, provide_teams_service
 from app.domain.teams.schemas import Team, TeamCreate, TeamUpdate
 from app.domain.teams.services import TeamService
-from app.lib.deps import create_service_dependencies
-
-if TYPE_CHECKING:
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service.pagination import OffsetPagination
 
 
-class TeamController(Controller):
-    """Teams."""
+class TeamController(SecureController):
+    """Handles team CRUD with snapshot-based team role authorization."""
 
+    path = "/api/teams"
     tags = ["Teams"]
-    dependencies = create_service_dependencies(
-        TeamService,
-        key="teams_service",
-        load=[selectinload(m.Team.tags), selectinload(m.Team.members)],
-        filters={
-            "id_filter": UUID,
-            "search": "name",
-            "pagination_type": "limit_offset",
-            "pagination_size": 20,
-            "created_at": True,
-            "updated_at": True,
-            "sort_field": "name",
-            "sort_order": "asc",
-        },
-    )
+    auth: ClassVar[AuthenticationPolicy] = required("session")
+    dependencies = {
+        "teams_service": Provide(provide_teams_service),
+    } | create_filter_dependencies(TeamFilterSet)
 
-    @get(component="team/list", operation_id="ListTeams", path="/api/teams")
+    @get(
+        operation_id="ListTeams",
+        path="",
+        opt={"auth": any_of("session", "api-key")},
+        mcp_resource="teams_list",
+    )
     async def list_teams(
         self,
         teams_service: TeamService,
-        current_user: m.User,
+        current_user: CurrentUser[m.User],
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[Team]:
-        """List teams that your account can access.
-
-        Args:
-            teams_service: Team Service
-            current_user: Current User
-            filters: Filters
+        """List teams accessible to the authenticated account.
 
         Returns:
-            OffsetPagination[Team]
+            Paginated teams visible to the current user.
         """
-        if not teams_service.can_view_all(current_user):
-            results, total = await teams_service.list_and_count(
-                *filters,
-                m.Team.id.in_(
-                    select(m.TeamMember.team_id).where(m.TeamMember.user_id == current_user.id).scalar_subquery()
-                ),
-            )
-        else:
-            results, total = await teams_service.list_and_count(*filters)
-        return teams_service.to_schema(results, total, filters, schema_type=Team)
+        teams, total = await teams_service.list_visible_to(current_user, *filters)
+        return teams_service.to_schema(teams, total, filters, schema_type=Team)
 
-    @post(operation_id="CreateTeam", path="/api/teams")
-    async def create_team(self, teams_service: TeamService, current_user: m.User, data: TeamCreate) -> Team:
-        """Create a new team.
-
-        Args:
-            teams_service: Team Service
-            current_user: Current User
-            data: Team Create
+    @post(operation_id="CreateTeam", path="")
+    async def create_team(
+        self,
+        teams_service: TeamService,
+        current_user: CurrentUser[m.User],
+        data: TeamCreate,
+    ) -> Team:
+        """Create a new team owned by the authenticated user.
 
         Returns:
-            Team
+            The created team.
         """
-        obj = data.to_dict()
-        obj.update({"owner_id": current_user.id, "owner": current_user})
-        db_obj = await teams_service.create(obj)
-        return teams_service.to_schema(db_obj, schema_type=Team)
+        team = await teams_service.create(
+            data.to_dict() | {"owner_id": current_user.id, "owner": current_user},
+            auto_commit=True,
+        )
+        return teams_service.to_schema(team, schema_type=Team)
 
-    @get(operation_id="GetTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_membership])
+    @get(
+        operation_id="GetTeam",
+        path="/{team_id:uuid}",
+        guards=[requires_team_role("member")],
+        opt={"auth": any_of("session", "api-key")},
+        mcp_resource="team_detail",
+        mcp_resource_template="app://teams/{team_id}",
+    )
     async def get_team(
         self,
         teams_service: TeamService,
@@ -94,51 +80,45 @@ class TeamController(Controller):
     ) -> Team:
         """Get details about a team.
 
-        Args:
-            teams_service: Team Service
-            team_id: Team ID
-
         Returns:
-            Team
+            The matching team.
         """
-        db_obj = await teams_service.get(team_id)
-        return teams_service.to_schema(db_obj, schema_type=Team)
+        team = await teams_service.get(team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
-    @patch(operation_id="UpdateTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_admin])
+    @patch(
+        operation_id="UpdateTeam",
+        path="/{team_id:uuid}",
+        guards=[requires_team_role("admin")],
+    )
     async def update_team(
         self,
         data: TeamUpdate,
         teams_service: TeamService,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to update.")],
     ) -> Team:
-        """Update a team.
-
-        Args:
-            data: Team Update
-            teams_service: Team Service
-            team_id: Team ID
+        """Update team attributes, tags, or ownership.
 
         Returns:
-            Team
+            The updated team.
         """
         await teams_service.update(
             item_id=team_id,
             data=data.to_dict(),
+            auto_commit=True,
         )
+        team = await teams_service.get_one(id=team_id)
+        return teams_service.to_schema(team, schema_type=Team)
 
-        fresh_obj = await teams_service.get_one(id=team_id)
-        return teams_service.to_schema(fresh_obj, schema_type=Team)
-
-    @delete(operation_id="DeleteTeam", path="/api/teams/{team_id:uuid}", guards=[requires_team_ownership])
+    @delete(
+        operation_id="DeleteTeam",
+        path="/{team_id:uuid}",
+        guards=[requires_team_role("owner")],
+    )
     async def delete_team(
         self,
         teams_service: TeamService,
         team_id: Annotated[UUID, Parameter(title="Team ID", description="The team to delete.")],
     ) -> None:
-        """Delete a team.
-
-        Args:
-            teams_service: Team Service
-            team_id: Team ID
-        """
-        _ = await teams_service.delete(team_id)
+        """Delete a team."""
+        await teams_service.delete(team_id, auto_commit=True)

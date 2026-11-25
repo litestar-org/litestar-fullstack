@@ -1,48 +1,81 @@
+"""PostgreSQL integration test fixtures using cookie sessions, CSRF, and template-cloned databases."""
+
 from __future__ import annotations
 
-from datetime import UTC
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
 from advanced_alchemy.utils.fixtures import open_fixture_async
+from litestar import Litestar
 from litestar.testing import AsyncTestClient
+from litestar_email import EmailConfig
+from litestar_security.accounts import Argon2PasswordHasher
+from sqlalchemy import select
 
 from app import config
-from app.db.models import EmailVerificationToken, PasswordResetToken, Team, TeamInvitation, User
-from app.domain.accounts.guards import create_access_token
+from app.db import models as m
+from app.domain.accounts.security import build_security_config, require_application_access
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
-from tests.utils.events import wait_for_events
+from app.server.core import ApplicationCore
+from tests.factories import grant_application_access
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator, AsyncIterator, Callable, Coroutine
+    from collections.abc import AsyncGenerator, AsyncIterator
 
     from httpx import AsyncClient
-    from litestar import Litestar
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 pytestmark = pytest.mark.anyio
+
+_PASSWORD_HASHER = Argon2PasswordHasher()
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
+CSRF_HEADER_NAME = "X-XSRF-TOKEN"
+
+
+def reset_client_session(client: AsyncClient) -> None:
+    """Clear cookies and auth/CSRF headers so one client can switch principals cleanly."""
+    client.cookies.clear()
+    client.headers.pop(CSRF_HEADER_NAME, None)
+    client.headers.pop("Authorization", None)
+
+
+async def fetch_csrf_headers(client: AsyncClient) -> dict[str, str]:
+    """Ensure the client holds a CSRF cookie and return matching request headers."""
+    token = client.cookies.get(CSRF_COOKIE_NAME)
+    if not token:
+        await client.get("/api/config/auth")
+        token = client.cookies.get(CSRF_COOKIE_NAME)
+    return {CSRF_HEADER_NAME: token} if token else {}
+
+
+async def login_session_client(
+    client: AsyncClient,
+    email: str,
+    password: str,
+) -> dict[str, str]:
+    """Authenticate via LocalAuth.session cookie flow and return CSRF headers for mutating requests."""
+    csrf_headers = await fetch_csrf_headers(client)
+    response = await client.post(
+        "/api/access/login",
+        json={"identifier": email, "password": password},
+        headers=csrf_headers,
+    )
+    assert response.status_code == 200, f"Login failed ({response.status_code}): {response.text}"
+    return await fetch_csrf_headers(client)
 
 
 @pytest.fixture
 async def seeded_db(
     sessionmaker: async_sessionmaker[AsyncSession],
-    raw_users: list[User | dict[str, Any]],
-    raw_teams: list[Team | dict[str, Any]],
+    raw_users: list[m.User | dict[str, Any]],
+    raw_teams: list[m.Team | dict[str, Any]],
     db_cleanup: None,
 ) -> AsyncGenerator[None, None]:
-    """Populate test database with fixtures when explicitly requested.
-
-    Args:
-        sessionmaker: The SQLAlchemy sessionmaker factory.
-        raw_users: Test users to add to the database
-        raw_teams: Test teams to add to the database
-        db_cleanup: Per-test cleanup dependency to ensure isolation.
-
-    """
-
+    """Populate the worker PostgreSQL database with roles, users, and teams."""
+    _ = db_cleanup
     settings = get_settings()
     fixtures_path = Path(settings.db.FIXTURE_PATH)
     async with RoleService.new(sessionmaker()) as service:
@@ -50,108 +83,77 @@ async def seeded_db(
         for obj in fixture:
             _ = await service.repository.get_or_upsert(match_fields="name", upsert=True, **obj)
         await service.repository.session.commit()
-    async with UserService.new(sessionmaker(), load=[User.teams]) as users_service:
-        await users_service.create_many(raw_users, auto_commit=True)
-    async with TeamService.new(sessionmaker(), load=[Team.members, Team.tags]) as teams_services:
+    async with UserService.new(sessionmaker(), load=[m.User.teams]) as users_service:
+        seeded_users = await users_service.create_many(raw_users, auto_commit=True)
+        await grant_application_access(users_service.repository.session, *seeded_users)
+    async with TeamService.new(sessionmaker(), load=[m.Team.members, m.Team.tags]) as teams_service:
         for obj in raw_teams:
-            await teams_services.create(obj)
-        await teams_services.repository.session.commit()
-
+            await teams_service.create(obj)
+        await teams_service.repository.session.commit()
     yield
 
 
 @pytest.fixture
 def _patch_db(
-    app: Litestar,
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Patch the database connection for HTTP client tests.
-
-    This fixture ensures that all HTTP requests made through the test client
-    use the same test database that fixtures populate.
-
-    Note: This is NOT autouse - only client tests need it.
-    Service tests use session directly and don't need app patching.
-    """
+    """Bind the shared SQLAlchemyAsyncConfig singleton to the worker PostgreSQL engine."""
     monkeypatch.setattr(config.alchemy, "session_maker", sessionmaker)
     monkeypatch.setattr(config.alchemy, "engine_instance", engine)
-    # Also patch app state for tests that check app.state directly
-    app.state[config.alchemy.engine_app_state_key] = engine
-    app.state[config.alchemy.session_maker_app_state_key] = sessionmaker
+    monkeypatch.setattr(config.alchemy, "connection_string", engine.url.render_as_string(hide_password=False))
+
+
+@pytest.fixture(name="app")
+def fx_app(
+    engine: AsyncEngine,
+    sessionmaker: async_sessionmaker[AsyncSession],
+    db_schema: None,
+    _patch_db: None,
+) -> Litestar:
+    """Build a fresh Litestar application bound to the worker PostgreSQL database."""
+    _ = (db_schema, _patch_db)
+    settings = get_settings()
+    queue_config = settings.queues.get_config(
+        alchemy_config=config.alchemy,
+        db_settings=settings.db,
+        app_settings=settings.app,
+        stream_guards=[require_application_access],
+    )
+    security_config = build_security_config(settings, config.alchemy)
+    app_instance = Litestar(
+        plugins=[
+            ApplicationCore(
+                security_config=security_config,
+                queue_config=queue_config,
+                email_config=EmailConfig(backend="memory"),
+            )
+        ]
+    )
+    app_instance.state[config.alchemy.engine_app_state_key] = engine
+    app_instance.state[config.alchemy.session_maker_app_state_key] = sessionmaker
+    return app_instance
 
 
 @pytest.fixture(name="client")
-async def fx_client(app: Litestar, _patch_db: None, db_cleanup: None) -> AsyncIterator[AsyncClient]:
-    """Async client that calls requests on the app."""
-    async with AsyncTestClient(app) as client:
+async def fx_client(app: Litestar, db_cleanup: None) -> AsyncIterator[AsyncClient]:
+    """Unauthenticated AsyncTestClient connected to the integration app."""
+    _ = db_cleanup
+    async with AsyncTestClient(app=app) as client:
         yield client
-
-
-@pytest.fixture(name="superuser_token_headers")
-def fx_superuser_token_headers(seeded_db: None) -> dict[str, str]:
-    """Valid superuser token."""
-    token = create_access_token(
-        user_id="superuser",
-        email="superuser@example.com",
-        is_superuser=True,
-        is_verified=True,
-        auth_method="password",
-    )
-    return {"Authorization": f"Bearer {token}"}
-
-
-@pytest.fixture(name="user_token_headers")
-def fx_user_token_headers(seeded_db: None) -> dict[str, str]:
-    """Valid user token."""
-    token = create_access_token(
-        user_id="user",
-        email="user@example.com",
-        is_superuser=False,
-        is_verified=True,
-        auth_method="password",
-    )
-    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture(name="seeded_client")
 async def fx_seeded_client(
     app: Litestar,
-    _patch_db: None,
     seeded_db: None,
     db_cleanup: None,
 ) -> AsyncIterator[AsyncClient]:
-    """Async client with seeded database.
-
-    Uses _patch_db to ensure the test client uses the same database
-    that was seeded with fixtures.
-    """
+    """Unauthenticated AsyncTestClient with seeded users, roles, and teams."""
+    _ = (seeded_db, db_cleanup)
     async with AsyncTestClient(app=app) as client:
         yield client
-
-
-@pytest.fixture(name="authenticated_client")
-async def fx_authenticated_client(
-    client: AsyncClient,
-    test_user: User,
-) -> AsyncClient:
-    """Client with authentication headers for test_user.
-
-    Logs in the test_user and returns the client ready to make authenticated requests.
-    """
-    # Login and get token
-    login_response = await client.post(
-        "/api/access/login",
-        data={"username": test_user.email, "password": "TestPassword123!"},
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    assert login_response.status_code == 201, f"Login failed: {login_response.text}"
-    token = login_response.json()["access_token"]
-
-    # Set auth header on client
-    client.headers["Authorization"] = f"Bearer {token}"
-    return client
 
 
 @pytest.fixture(name="test_user")
@@ -159,18 +161,13 @@ async def fx_test_user(
     session: AsyncSession,
     _patch_db: None,
     db_cleanup: None,
-) -> User:
-    """Create a test user for authentication tests.
-
-    Returns a verified, active user with a known password.
-    Note: Email cannot start with 'test' due to validation rules.
-    """
-    from app.lib.crypt import get_password_hash
-
-    user = User(
+) -> m.User:
+    """Create a verified, active regular user with an Argon2 password hash."""
+    _ = (_patch_db, db_cleanup)
+    user = m.User(
         email="authuser@example.com",
         name="Auth Test User",
-        hashed_password=await get_password_hash("TestPassword123!"),
+        hashed_password=await _PASSWORD_HASHER.hash("TestPassword123!"),
         is_active=True,
         is_verified=True,
         is_superuser=False,
@@ -178,6 +175,7 @@ async def fx_test_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -186,17 +184,13 @@ async def fx_inactive_user(
     session: AsyncSession,
     _patch_db: None,
     db_cleanup: None,
-) -> User:
-    """Create an inactive user for testing login failures.
-
-    Note: Email cannot start with 'test' due to validation rules.
-    """
-    from app.lib.crypt import get_password_hash
-
-    user = User(
+) -> m.User:
+    """Create an inactive user for login rejection tests."""
+    _ = (_patch_db, db_cleanup)
+    user = m.User(
         email="inactive.auth@example.com",
         name="Inactive Auth User",
-        hashed_password=await get_password_hash("TestPassword123!"),
+        hashed_password=await _PASSWORD_HASHER.hash("TestPassword123!"),
         is_active=False,
         is_verified=True,
         is_superuser=False,
@@ -204,6 +198,7 @@ async def fx_inactive_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
@@ -212,17 +207,13 @@ async def fx_unverified_user(
     session: AsyncSession,
     _patch_db: None,
     db_cleanup: None,
-) -> User:
-    """Create an unverified user for email verification tests.
-
-    Note: Email cannot start with 'test' due to validation rules.
-    """
-    from app.lib.crypt import get_password_hash
-
-    user = User(
+) -> m.User:
+    """Create an unverified user for email verification tests."""
+    _ = (_patch_db, db_cleanup)
+    user = m.User(
         email="unverified.auth@example.com",
         name="Unverified Auth User",
-        hashed_password=await get_password_hash("TestPassword123!"),
+        hashed_password=await _PASSWORD_HASHER.hash("TestPassword123!"),
         is_active=True,
         is_verified=False,
         is_superuser=False,
@@ -230,117 +221,66 @@ async def fx_unverified_user(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
-@pytest.fixture(name="test_password_reset_token")
-async def fx_test_password_reset_token(
-    session: AsyncSession,
-    test_user: User,
-    _patch_db: None,
-) -> PasswordResetToken:
-    """Create a password reset token for testing."""
-    import hashlib
-    import secrets
-    from datetime import datetime, timedelta
+@pytest.fixture(name="authenticated_client")
+async def fx_authenticated_client(
+    client: AsyncClient,
+    test_user: m.User,
+) -> AsyncClient:
+    """AsyncTestClient authenticated as ``test_user`` via cookie session with default CSRF header."""
+    csrf_headers = await login_session_client(client, test_user.email, "TestPassword123!")
+    client.headers.update(csrf_headers)
+    return client
 
-    raw_token = secrets.token_urlsafe(32)
-    # Use SHA256 hash to match the service's verification method
-    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
 
-    token = PasswordResetToken(
-        user_id=test_user.id,
-        token_hash=token_hash,
-        expires_at=datetime.now(UTC) + timedelta(hours=1),
+@pytest.fixture(name="superuser_client")
+async def fx_superuser_client(
+    seeded_client: AsyncClient,
+) -> AsyncClient:
+    """AsyncTestClient authenticated as seeded superuser via cookie session with default CSRF header."""
+    csrf_headers = await login_session_client(seeded_client, "superuser@example.com", "Test_Password1!")
+    seeded_client.headers.update(csrf_headers)
+    return seeded_client
+
+
+@pytest.fixture(name="api_key_headers")
+async def fx_api_key_headers(
+    authenticated_client: AsyncClient,
+) -> dict[str, str]:
+    """Issue a personal API key through ``POST /api/me/api-keys`` and return Bearer auth headers."""
+    response = await authenticated_client.post(
+        "/api/me/api-keys",
+        json={"name": "Integration Key", "scopes": ["read", "write", "mcp"]},
     )
-    # Store raw token for tests to use (get_raw_token expects raw_token attr)
-    token.raw_token = raw_token  # type: ignore[attr-defined]
-    session.add(token)
-    await session.commit()
-    await session.refresh(token)
-    return token
-
-
-@pytest.fixture(name="test_email_verification_token")
-async def fx_test_email_verification_token(
-    session: AsyncSession,
-    test_user: User,
-    _patch_db: None,
-) -> EmailVerificationToken:
-    """Create an email verification token for testing."""
-    import hashlib
-    import secrets
-    from datetime import datetime, timedelta
-
-    raw_token = secrets.token_urlsafe(32)
-    # Use SHA256 hash to match the service's verification method
-    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-
-    token = EmailVerificationToken(
-        user_id=test_user.id,
-        token_hash=token_hash,
-        email=test_user.email,
-        expires_at=datetime.now(UTC) + timedelta(hours=24),
-    )
-    # Store raw token for tests to use (get_raw_token expects raw_token attr)
-    token.raw_token = raw_token  # type: ignore[attr-defined]
-    session.add(token)
-    await session.commit()
-    await session.refresh(token)
-    return token
-
-
-@pytest.fixture(name="test_verification_token")
-async def fx_test_verification_token(
-    session: AsyncSession,
-    unverified_user: User,
-    _patch_db: None,
-) -> EmailVerificationToken:
-    """Create email verification token for unverified user."""
-    import hashlib
-    import secrets
-    from datetime import datetime, timedelta
-
-    raw_token = secrets.token_urlsafe(32)
-    # Use SHA256 hash to match the service's verification method
-    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-
-    token = EmailVerificationToken(
-        user_id=unverified_user.id,
-        token_hash=token_hash,
-        email=unverified_user.email,
-        expires_at=datetime.now(UTC) + timedelta(hours=24),
-    )
-    token.raw_token = raw_token  # type: ignore[attr-defined]
-    session.add(token)
-    await session.commit()
-    await session.refresh(token)
-    return token
+    assert response.status_code == 201, f"API key creation failed: {response.text}"
+    secret = response.json()["secret"]
+    return {"Authorization": f"Bearer {secret}"}
 
 
 @pytest.fixture(name="test_team")
 async def fx_test_team(
     session: AsyncSession,
-    test_user: User,
+    test_user: m.User,
     _patch_db: None,
-) -> Team:
-    """Create a test team with test_user as owner."""
-    from app.db.models import TeamMember, TeamRoles
-
-    team = Team(
+) -> m.Team:
+    """Create a test team owned by ``test_user``."""
+    _ = _patch_db
+    team = m.Team(
         name="Auth Test Team",
         slug="auth-test-team",
-        description="Test team for authentication tests",
+        description="Test team for integration tests",
         is_active=True,
     )
     session.add(team)
     await session.flush()
 
-    # Add test_user as owner
-    membership = TeamMember(
+    membership = m.TeamMember(
         team_id=team.id,
         user_id=test_user.id,
-        role=TeamRoles.ADMIN,
+        role=m.TeamRoles.ADMIN,
         is_owner=True,
     )
     session.add(membership)
@@ -352,17 +292,15 @@ async def fx_test_team(
 @pytest.fixture(name="test_team_member")
 async def fx_test_team_member(
     session: AsyncSession,
-    test_team: Team,
+    test_team: m.Team,
     _patch_db: None,
-) -> User:
-    """Create another user who is a member of test_team."""
-    from app.db.models import TeamMember, TeamRoles
-    from app.lib.crypt import get_password_hash
-
-    user = User(
+) -> m.User:
+    """Create a regular ``MEMBER`` user belonging to ``test_team``."""
+    _ = _patch_db
+    user = m.User(
         email="teammember@example.com",
         name="Team Member User",
-        hashed_password=await get_password_hash("TestPassword123!"),
+        hashed_password=await _PASSWORD_HASHER.hash("TestPassword123!"),
         is_active=True,
         is_verified=True,
         is_superuser=False,
@@ -370,32 +308,32 @@ async def fx_test_team_member(
     session.add(user)
     await session.flush()
 
-    membership = TeamMember(
+    membership = m.TeamMember(
         team_id=test_team.id,
         user_id=user.id,
-        role=TeamRoles.MEMBER,
+        role=m.TeamRoles.MEMBER,
         is_owner=False,
     )
     session.add(membership)
     await session.commit()
     await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
 @pytest.fixture(name="test_team_invitation")
 async def fx_test_team_invitation(
     session: AsyncSession,
-    test_team: Team,
-    test_user: User,
+    test_team: m.Team,
+    test_user: m.User,
     _patch_db: None,
-) -> TeamInvitation:
-    """Create a team invitation for testing."""
-    from app.db.models import TeamRoles
-
-    invitation = TeamInvitation(
+) -> m.TeamInvitation:
+    """Create a pending team invitation for ``test_team``."""
+    _ = _patch_db
+    invitation = m.TeamInvitation(
         team_id=test_team.id,
         email="invited.user@example.com",
-        role=TeamRoles.MEMBER,
+        role=m.TeamRoles.MEMBER,
         is_accepted=False,
         invited_by_id=test_user.id,
         invited_by_email=test_user.email,
@@ -406,17 +344,6 @@ async def fx_test_team_invitation(
     return invitation
 
 
-@pytest.fixture
-def await_events() -> Callable[[], Coroutine[Any, Any, None]]:
-    """Fixture providing a coroutine to await all pending events.
-
-    This fixture yields control to the event loop to allow async
-    event listeners to complete processing.
-
-    Usage:
-        async def test_something(client, await_events):
-            response = await client.post(...)
-            await await_events()
-            assert len(InMemoryBackend.outbox) == 1
-    """
-    return wait_for_events
+async def get_user_by_email(session: AsyncSession, email: str) -> m.User | None:
+    """Query a user by email from the provided session."""
+    return await session.scalar(select(m.User).where(m.User.email == email))

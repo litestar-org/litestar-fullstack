@@ -36,11 +36,11 @@ spec:
         - name: worker
           image: {{ worker_image_repo }}:{{ image_tag }}
           imagePullPolicy: {{ image_pull_policy | default('IfNotPresent') }}
-          # Worker uses Dockerfile.worker which has CMD ["app", "workers", "run"]
-          # No command override needed - uses Dockerfile default
+          # Worker uses Dockerfile.worker which has CMD ["app", "queues", "run"]
+          # Schedule a Kubernetes CronJob running `app queues run-maintenance --json` for maintenance.
           env:
-            - name: SAQ_USE_SERVER_LIFESPAN
-              value: "false"
+            - name: QUEUES_PLACEMENT
+              value: "external"
           envFrom:
             - configMapRef:
                 name: app-config
@@ -67,11 +67,8 @@ spec:
               mountPath: {{ app_scratch_path }}
             {% endif %}
           # Note: Workers using distroless images don't have shells for exec probes.
-          # Health is managed by Kubernetes restart policy and SAQ's internal error handling.
-          # If you need health checks, consider:
-          # 1. Adding a simple HTTP health endpoint to the worker
-          # 2. Using a non-distroless image with exec probes
-          # 3. Using external monitoring (e.g., Redis queue depth metrics)
+          # Health is managed by Kubernetes restart policy and litestar-queues worker supervision.
+          # For maintenance, run a CronJob executing: app queues run-maintenance --json
       restartPolicy: Always
       terminationGracePeriodSeconds: 120
       volumes:

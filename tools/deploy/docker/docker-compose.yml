@@ -1,29 +1,6 @@
 services:
-  cache:
-    image: valkey/valkey:latest
-    ports:
-      - "16379:6379"
-    hostname: cache
-    command: redis-server --appendonly yes
-    volumes:
-      - cache-data:/data
-    environment:
-      ALLOW_EMPTY_PASSWORD: "yes"
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-    healthcheck:
-      test:
-        - CMD
-        - redis-cli
-        - ping
-      interval: 1s
-      timeout: 3s
-      retries: 30
   db:
-    image: postgres:latest
+    image: postgres:17
     ports:
       - "15432:5432"
     hostname: db
@@ -32,7 +9,7 @@ services:
       POSTGRES_USER: "app"
       POSTGRES_DB: "app"
     volumes:
-      - db-data:/var/lib/postgresql
+      - db-data:/var/lib/postgresql/data
     restart: unless-stopped
     logging:
       options:
@@ -75,25 +52,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      cache:
-        condition: service_healthy
     ports:
       - "8000:8000"
     environment:
       VITE_DEV_MODE: "false"
-      SAQ_USE_SERVER_LIFESPAN: "false"
     env_file:
       - .env.docker
   worker:
     build:
       context: ../../..
-      dockerfile: tools/deploy/docker/Dockerfile.distroless
-    command: litestar workers run
+      dockerfile: tools/deploy/docker/Dockerfile.worker
+    command: ["app", "queues", "run"]
     restart: always
     depends_on:
       db:
-        condition: service_healthy
-      cache:
         condition: service_healthy
     env_file:
       - .env.docker
@@ -102,14 +74,11 @@ services:
       context: ../../..
       dockerfile: tools/deploy/docker/Dockerfile.distroless
     restart: "no"
-    command: litestar database upgrade --no-prompt
+    command: ["app", "database", "upgrade", "--no-prompt"]
     env_file:
       - .env.docker
     depends_on:
       db:
         condition: service_healthy
-      cache:
-        condition: service_healthy
 volumes:
   db-data: {}
-  cache-data: {}

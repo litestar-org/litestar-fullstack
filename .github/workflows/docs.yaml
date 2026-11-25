@@ -7,8 +7,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 env:
-  UV_LOCKED: 1
+  UV_LOCKED: "1"
 
 jobs:
   docs:
@@ -16,33 +19,35 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          python-version: "3.11"
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
-          version: "0.5.10"
-          enable-cache: true
+          version: "0.13.8"
+          enable-cache: false
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --frozen --no-build
 
       - name: Fetch gh pages
         run: git fetch origin gh-pages --depth=1
 
       - name: Build release docs
-        run: uv run python tools/build_docs.py docs-build
+        run: uv run --no-sync --no-build python tools/build_docs.py docs-build
         if: github.event_name == 'release'
 
       - name: Build dev docs
-        run: uv run python tools/build_docs.py docs-build
+        run: uv run --no-sync --no-build python tools/build_docs.py docs-build
         if: github.event_name == 'push'
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
         with:
           folder: docs-build

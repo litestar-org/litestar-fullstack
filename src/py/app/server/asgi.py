@@ -7,14 +7,11 @@ if TYPE_CHECKING:
 
 
 def create_app() -> Litestar:
-    """Create ASGI application.
+    """Create the ASGI Litestar application.
 
     Returns:
-        The ASGI application.
+        Configured ``Litestar`` ASGI application instance.
     """
-    from litestar_saq.config import QueueConfig
-
-    QueueConfig._POOL_KWARGS = {"autocommit": True}  # type: ignore[attr-defined]  # noqa: SLF001
     from litestar import Litestar
 
     from app.server.core import ApplicationCore

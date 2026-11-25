@@ -8,9 +8,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Any
 
+    from click import Context, HelpFormatter
+
 
 def setup_environment() -> None:
-    """Configure the environment variables and path."""
+    """Configure environment variables and Litestar CLI help loading."""
     current_path = Path(__file__).parent.parent.resolve()
     sys.path.append(str(current_path))
     from litestar.cli._utils import LitestarExtensionGroup
@@ -22,30 +24,18 @@ def setup_environment() -> None:
     settings = get_settings()
     os.environ.setdefault("LITESTAR_APP", "app.server.asgi:create_app")
     os.environ.setdefault("LITESTAR_APP_NAME", settings.app.NAME)
-    os.environ.setdefault("LITESTAR_GRANIAN_IN_SUBPROCESS", "false")
-    os.environ.setdefault("LITESTAR_GRANIAN_USE_LITESTAR_LOGGER", "true")
     original_format_help = LitestarExtensionGroup.format_help
 
-    def fixed_format_help(self: Any, ctx: Any, formatter: Any) -> None:
-        """Ensure plugins are loaded before formatting help.
+    def format_help_with_plugins(self: Any, context: Context, formatter: HelpFormatter) -> None:
+        """Ensure plugins are loaded before formatting CLI help."""
+        self._prepare(context)
+        return original_format_help(self, context, formatter)
 
-        Args:
-            self: The LitestarExtensionGroup instance
-            ctx: The click Context
-            formatter: The help formatter
-        """
-        self._prepare(ctx)
-        return original_format_help(self, ctx, formatter)
-
-    setattr(LitestarExtensionGroup, "format_help", fixed_format_help)
+    setattr(LitestarExtensionGroup, "format_help", format_help_with_plugins)
 
 
 def run_cli() -> None:
-    """Application Entrypoint.
-
-    This function sets up the environment and runs the Litestar CLI.
-    If there's an error loading the required libraries, it will exit with a status code of 1.
-    """
+    """Application CLI entrypoint."""
     setup_environment()
 
     try:

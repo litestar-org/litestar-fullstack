@@ -7,29 +7,18 @@ import { defineConfig } from "vite"
 
 export default defineConfig({
   clearScreen: false,
-  base: process.env.ASSET_URL ?? "/static/web/",
   publicDir: "public",
-  server: {
-    cors: true,
-    port: Number(process.env.VITE_PORT ?? 3006),
-  },
-  build: {
-    outDir: path.resolve(__dirname, "../../py/app/server/static/web"),
-    emptyOutDir: true,
-  },
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     tailwindcss(),
     react(),
     litestar({
-      input: ["src/main.tsx", "src/styles.css"],
-      bundleDir: path.resolve(__dirname, "../../py/app/server/static/web"),
-      hotFile: path.resolve(__dirname, "../../py/app/server/static/web/hot"),
+      input: ["index.html"],
     }),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
 })

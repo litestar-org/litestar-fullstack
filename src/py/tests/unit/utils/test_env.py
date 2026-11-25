@@ -1,62 +1,142 @@
-import os
+"""Unit tests for environment variable parsing behind settings defaults."""
+
+from __future__ import annotations
+
 from pathlib import Path
-from unittest.mock import patch
+from typing import Literal
 
 import pytest
 
-from app.utils.env import get_config_val
+from app.utils.env import get_config_val, get_env
+
+Channel = Literal["email", "sms", "push"]
 
 
-def test_get_config_val_basic() -> None:
-    with patch.dict(os.environ, {"STR_VAL": "hello", "INT_VAL": "123", "BOOL_VAL": "true"}):
-        assert get_config_val("STR_VAL", default="") == "hello"
-        assert get_config_val("INT_VAL", default=0) == 123
-        assert get_config_val("BOOL_VAL", default=False) is True
-        assert get_config_val("MISSING", default="default") == "default"
+def test_unset_variable_returns_the_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("SAMPLE", raising=False)
+
+    assert get_config_val("SAMPLE", 0.25) == 0.25
+    assert get_config_val("SAMPLE", ("a", "b")) == ("a", "b")
+    assert get_config_val("SAMPLE", None, int) is None
 
 
-def test_get_config_val_path() -> None:
-    with patch.dict(os.environ, {"PATH_VAL": "/tmp/test"}):
-        result = get_config_val("PATH_VAL", default=Path("/tmp"))
-        assert isinstance(result, Path)
-        assert str(result) == "/tmp/test"
+@pytest.mark.parametrize(
+    ("value", "default", "expected"),
+    [
+        ("0.5", 0.25, 0.5),
+        ("2", 0.25, 2.0),
+        ("", 0.25, 0.25),
+        ("7", 5, 7),
+        ("", 5, 5),
+    ],
+)
+def test_numbers_parse_and_an_empty_value_counts_as_unset(
+    monkeypatch: pytest.MonkeyPatch,
+    value: str,
+    default: float,
+    expected: float,
+) -> None:
+    monkeypatch.setenv("SAMPLE", value)
+
+    parsed = get_config_val("SAMPLE", default)
+
+    assert parsed == expected
+    assert type(parsed) is type(default)
 
 
-def test_get_config_val_list_json() -> None:
-    with patch.dict(os.environ, {"LIST_VAL": '["a", "b", "c"]'}):
-        result = get_config_val("LIST_VAL", default=[], type_hint=list[str])
-        assert result == ["a", "b", "c"]
+def test_malformed_number_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SAMPLE", "fast")
+
+    with pytest.raises(ValueError, match="could not convert string to float"):
+        get_config_val("SAMPLE", 0.25)
 
 
-def test_get_config_val_list_comma() -> None:
-    with patch.dict(os.environ, {"LIST_VAL": "a,b,c"}):
-        result = get_config_val("LIST_VAL", default=[], type_hint=list[str])
-        assert result == ["a", "b", "c"]
+@pytest.mark.parametrize(
+    ("value", "type_hint", "expected"),
+    [
+        ("60", int, 60),
+        ("", int, None),
+        ("true", bool, True),
+        ("0", bool, False),
+        ("", bool, None),
+        ("a, b", list[str], ["a", "b"]),
+        ('["a", "b"]', list[str], ["a", "b"]),
+        ("", list[str], None),
+        (" ", list[str], None),
+        (",", list[str], None),
+        ('[""]', list[str], None),
+    ],
+)
+def test_none_default_makes_the_hinted_type_optional(
+    monkeypatch: pytest.MonkeyPatch,
+    value: str,
+    type_hint: type,
+    expected: object,
+) -> None:
+    monkeypatch.setenv("SAMPLE", value)
+
+    assert get_config_val("SAMPLE", None, type_hint) == expected
 
 
-def test_get_config_val_dict_json() -> None:
-    with patch.dict(os.environ, {"DICT_VAL": '{"a": 1, "b": 2}'}):
-        result = get_config_val("DICT_VAL", default={}, type_hint=dict[str, str])
-        assert result == {"a": "1", "b": "2"}
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("emails,reports", ("emails", "reports")),
+        (" emails , ,reports,", ("emails", "reports")),
+        ('["emails", "reports"]', ("emails", "reports")),
+        ("", ()),
+    ],
+)
+def test_tuple_default_parses_a_tuple_of_names(
+    monkeypatch: pytest.MonkeyPatch,
+    value: str,
+    expected: tuple[str, ...],
+) -> None:
+    monkeypatch.setenv("SAMPLE", value)
+
+    assert get_config_val("SAMPLE", ("default",)) == expected
 
 
-def test_get_config_val_dict_comma() -> None:
-    with patch.dict(os.environ, {"DICT_VAL": "a=1,b=2"}):
-        result = get_config_val("DICT_VAL", default={}, type_hint=dict[str, str])
-        assert result == {"a": "1", "b": "2"}
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("", []),
+        (" ", []),
+        ("10.0.0.1,,10.0.0.2,", ["10.0.0.1", "10.0.0.2"]),
+        ('["10.0.0.1", ""]', ["10.0.0.1"]),
+    ],
+)
+def test_lists_drop_empty_items(monkeypatch: pytest.MonkeyPatch, value: str, expected: list[str]) -> None:
+    monkeypatch.setenv("SAMPLE", value)
+
+    assert get_config_val("SAMPLE", ["127.0.0.1"]) == expected
+    assert get_config_val("SAMPLE", [], list[str]) == expected
 
 
-def test_get_config_val_invalid_list() -> None:
-    with (
-        patch.dict(os.environ, {"INVALID_LIST": "[a,b"}),
-        pytest.raises(ValueError, match="not a valid list representation"),
-    ):
-        get_config_val("INVALID_LIST", default=[], type_hint=list[str])
+def test_list_of_paths_drops_empty_items(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SAMPLE", "/srv/a,,/srv/b")
+
+    assert get_config_val("SAMPLE", [Path("/srv")]) == [Path("/srv/a"), Path("/srv/b")]
 
 
-def test_get_config_val_invalid_dict() -> None:
-    with (
-        patch.dict(os.environ, {"INVALID_DICT": "a"}),
-        pytest.raises(TypeError, match="not a valid dict representation"),
-    ):
-        get_config_val("INVALID_DICT", default={}, type_hint=dict[str, str])
+@pytest.mark.parametrize("value", ["email,push", '["email", "push"]'])
+def test_list_of_literal_accepts_the_literal_values(monkeypatch: pytest.MonkeyPatch, value: str) -> None:
+    monkeypatch.setenv("SAMPLE", value)
+
+    assert get_config_val("SAMPLE", ["email"], list[Channel]) == ["email", "push"]
+
+
+def test_list_of_literal_rejects_other_values(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SAMPLE", "email,fax")
+
+    with pytest.raises(ValueError, match="fax"):
+        get_config_val("SAMPLE", ["email"], list[Channel])
+
+
+def test_get_env_reads_the_variable_each_time_it_is_called(monkeypatch: pytest.MonkeyPatch) -> None:
+    read_poll_interval = get_env("SAMPLE", 0.25)
+    monkeypatch.delenv("SAMPLE", raising=False)
+    assert read_poll_interval() == 0.25
+
+    monkeypatch.setenv("SAMPLE", "1.5")
+    assert read_poll_interval() == 1.5

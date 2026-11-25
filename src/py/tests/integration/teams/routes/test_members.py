@@ -1,380 +1,214 @@
-"""Integration tests for team member endpoints."""
+"""Integration tests for team member endpoints and tenant admin guard enforcement."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import pytest
+from litestar_security.accounts import Argon2PasswordHasher
+from sqlalchemy import select
 
 from app.db import models as m
-from app.lib.crypt import get_password_hash
-from tests.factories import TeamFactory, TeamMemberFactory, UserFactory
+from tests.factories import grant_application_access
+from tests.integration.conftest import fetch_csrf_headers, login_session_client, reset_client_session
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
-pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.endpoints, pytest.mark.auth]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.teams, pytest.mark.endpoints]
+
+_HASHER = Argon2PasswordHasher()
 
 
-async def _login_user(client: AsyncClient, user: m.User) -> str:
-    """Helper to login user and return auth token."""
-    response = await client.post(
-        "/api/access/login",
-        data={"username": user.email, "password": "testPassword123!"},
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    assert response.status_code == 201
-    return cast("str", response.json()["access_token"])
-
-
-async def _create_team_with_owner(session: AsyncSession, email_prefix: str = "owner") -> tuple[m.User, m.Team]:
-    """Create a team with an owner user."""
-    user = UserFactory.build(
-        email=f"{email_prefix}-{uuid4().hex[:8]}@example.com",
-        hashed_password=await get_password_hash("testPassword123!"),
+async def _create_user(session: AsyncSession, email: str) -> m.User:
+    """Create an active verified user for membership operations."""
+    user = m.User(
+        email=email,
+        name=email.split("@", maxsplit=1)[0],
+        hashed_password=await _HASHER.hash("TestPassword123!"),
         is_active=True,
         is_verified=True,
-    )
-    team = TeamFactory.build(
-        name=f"Test Team {uuid4().hex[:8]}",
-        slug=f"test-team-{uuid4().hex[:8]}",
-    )
-    session.add_all([user, team])
-    await session.flush()
-
-    membership = TeamMemberFactory.build(
-        team_id=team.id,
-        user_id=user.id,
-        role=m.TeamRoles.ADMIN,
-        is_owner=True,
-    )
-    session.add(membership)
-    await session.commit()
-    await session.refresh(team, ["members"])
-    return user, team
-
-
-async def _create_user(session: AsyncSession, email_prefix: str = "user") -> m.User:
-    """Create a regular user."""
-    user = UserFactory.build(
-        email=f"{email_prefix}-{uuid4().hex[:8]}@example.com",
-        hashed_password=await get_password_hash("testPassword123!"),
-        is_active=True,
-        is_verified=True,
+        is_superuser=False,
     )
     session.add(user)
     await session.commit()
+    await session.refresh(user)
+    await grant_application_access(session, user)
     return user
 
 
-# --- Add Member Tests ---
-
-
-async def test_add_member_success(
-    client: AsyncClient,
+async def test_add_update_and_remove_team_member_lifecycle(
+    authenticated_client: AsyncClient,
+    test_team: m.Team,
+    test_user: m.User,
     session: AsyncSession,
 ) -> None:
-    """Test successful member addition to team."""
-    owner, team = await _create_team_with_owner(session, "addmemowner")
-    token = await _login_user(client, owner)
+    """Team admins can add members, promote/demote roles, and remove non-owner members."""
+    candidate = await _create_user(session, f"candidate-{uuid4().hex[:8]}@example.com")
 
-    # Create user to add
-    new_member = await _create_user(session, "newmember")
-
-    response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": new_member.email},
-        headers={"Authorization": f"Bearer {token}"},
+    add_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": candidate.email},
     )
+    assert add_resp.status_code == 201, add_resp.text
+    assert candidate.email in [member["email"] for member in add_resp.json()["members"]]
 
-    assert response.status_code == 201
-    data = response.json()
-    # Verify team is returned with members
-    assert "members" in data
-    member_emails = [m["email"] for m in data["members"]]
-    assert new_member.email in member_emails
-
-
-async def test_add_member_already_member(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test adding member who is already a member."""
-    owner, team = await _create_team_with_owner(session, "dupmemowner")
-    token = await _login_user(client, owner)
-
-    # Try to add the owner (who is already a member)
-    response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": owner.email},
-        headers={"Authorization": f"Bearer {token}"},
+    duplicate_resp = await authenticated_client.post(
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": candidate.email},
     )
+    assert duplicate_resp.status_code == 409
 
-    assert response.status_code == 409
-    assert "already a member" in response.text.lower()
-
-
-async def test_add_member_user_not_found(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test adding non-existent user as member."""
-    owner, team = await _create_team_with_owner(session, "nofoundowner")
-    token = await _login_user(client, owner)
-
-    response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": "nonexistent@example.com"},
-        headers={"Authorization": f"Bearer {token}"},
+    promote_resp = await authenticated_client.patch(
+        f"/api/teams/{test_team.id}/members/{candidate.id}",
+        json={"role": m.TeamRoles.ADMIN.value},
     )
+    assert promote_resp.status_code == 200
+    assert promote_resp.json()["role"] == m.TeamRoles.ADMIN.value
 
-    assert response.status_code == 404
-
-
-async def test_add_member_unauthenticated(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test adding member without authentication."""
-    _, team = await _create_team_with_owner(session, "unauthaddowner")
-
-    response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": "someone@example.com"},
+    demote_resp = await authenticated_client.patch(
+        f"/api/teams/{test_team.id}/members/{candidate.id}",
+        json={"role": m.TeamRoles.MEMBER.value},
     )
+    assert demote_resp.status_code == 200
+    assert demote_resp.json()["role"] == m.TeamRoles.MEMBER.value
 
-    assert response.status_code == 401
-
-
-# --- Remove Member Tests ---
-
-
-async def test_remove_member_success(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test successful member removal from team."""
-    owner, team = await _create_team_with_owner(session, "remowner")
-    token = await _login_user(client, owner)
-
-    # Create and add a member
-    member = await _create_user(session, "removemember")
-
-    # Add member first
-    add_response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert add_response.status_code == 201
-
-    # Remove the member (DELETE with json body requires request method)
-    response = await client.request(
-        "DELETE",
-        f"/api/teams/{team.id}/members",
-        json={"userName": member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert response.status_code == 202
-    data = response.json()
-    # Verify member is removed from team
-    member_emails = [m["email"] for m in data["members"]]
-    assert member.email not in member_emails
-
-
-async def test_remove_member_not_a_member(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test removing user who is not a member."""
-    owner, team = await _create_team_with_owner(session, "notmemowner")
-    token = await _login_user(client, owner)
-
-    # Create user who is not a team member
-    non_member = await _create_user(session, "nonmember")
-
-    response = await client.request(
-        "DELETE",
-        f"/api/teams/{team.id}/members",
-        json={"userName": non_member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert response.status_code == 409
-    assert "not a member" in response.text.lower()
-
-
-async def test_remove_member_user_not_found(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test removing non-existent user."""
-    owner, team = await _create_team_with_owner(session, "remnotfoundowner")
-    token = await _login_user(client, owner)
-
-    response = await client.request(
-        "DELETE",
-        f"/api/teams/{team.id}/members",
-        json={"userName": "nonexistent@example.com"},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert response.status_code == 404
-
-
-async def test_remove_member_unauthenticated(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test removing member without authentication."""
-    _, team = await _create_team_with_owner(session, "unauthremowner")
-
-    response = await client.request(
-        "DELETE",
-        f"/api/teams/{team.id}/members",
-        json={"userName": "someone@example.com"},
-    )
-
-    assert response.status_code == 401
-
-
-# --- Update Member Role Tests ---
-
-
-async def test_update_member_role_success(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test successful member role update."""
-    owner, team = await _create_team_with_owner(session, "uproleowner")
-    token = await _login_user(client, owner)
-
-    # Create and add a member
-    member = await _create_user(session, "roleupdate")
-
-    # Add member first
-    add_response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert add_response.status_code == 201
-
-    # Update the member's role
-    # Need to get the user_id from the member
-    response = await client.patch(
-        f"/api/teams/{team.id}/members/{member.id}",
-        json={"role": "ADMIN"},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert data["role"] == "ADMIN"
-
-
-async def test_update_member_role_not_a_member(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test updating role for non-member."""
-    owner, team = await _create_team_with_owner(session, "uprolenotmem")
-    token = await _login_user(client, owner)
-
-    # Create user who is not a team member
-    non_member = await _create_user(session, "notroleupdate")
-
-    response = await client.patch(
-        f"/api/teams/{team.id}/members/{non_member.id}",
-        json={"role": "ADMIN"},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert response.status_code == 409
-    assert "not a member" in response.text.lower()
-
-
-async def test_update_member_role_unauthenticated(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test updating member role without authentication."""
-    _, team = await _create_team_with_owner(session, "unauthuproleowner")
-    random_user_id = uuid4()
-
-    response = await client.patch(
-        f"/api/teams/{team.id}/members/{random_user_id}",
-        json={"role": "ADMIN"},
-    )
-
-    assert response.status_code == 401
-
-
-async def test_update_member_role_invalid_role(
-    client: AsyncClient,
-    session: AsyncSession,
-) -> None:
-    """Test updating member with invalid role."""
-    owner, team = await _create_team_with_owner(session, "invalidroleowner")
-    token = await _login_user(client, owner)
-
-    # Create and add a member
-    member = await _create_user(session, "invalidrole")
-
-    # Add member first
-    add_response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert add_response.status_code == 201
-
-    # Try to update with invalid role
-    response = await client.patch(
-        f"/api/teams/{team.id}/members/{member.id}",
+    invalid_role_resp = await authenticated_client.patch(
+        f"/api/teams/{test_team.id}/members/{candidate.id}",
         json={"role": "INVALID_ROLE"},
-        headers={"Authorization": f"Bearer {token}"},
     )
+    assert invalid_role_resp.status_code == 400
 
-    assert response.status_code == 400
+    remove_owner_resp = await authenticated_client.request(
+        "DELETE",
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": test_user.email},
+    )
+    assert remove_owner_resp.status_code == 400
+
+    remove_resp = await authenticated_client.request(
+        "DELETE",
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": candidate.email},
+    )
+    assert remove_resp.status_code == 202
+    assert candidate.email not in [member["email"] for member in remove_resp.json()["members"]]
+
+    remaining = await session.scalar(
+        select(m.TeamMember).where(m.TeamMember.team_id == test_team.id, m.TeamMember.user_id == candidate.id)
+    )
+    assert remaining is None
 
 
-async def test_update_member_to_member_role(
-    client: AsyncClient,
+async def test_team_members_are_found_by_email_however_it_is_typed(
+    authenticated_client: AsyncClient,
+    test_team: m.Team,
     session: AsyncSession,
 ) -> None:
-    """Test updating member role to MEMBER (downgrade from ADMIN)."""
-    owner, team = await _create_team_with_owner(session, "downgradeowner")
-    token = await _login_user(client, owner)
+    candidate = await _create_user(session, f"candidate-{uuid4().hex[:8]}@example.com")
+    typed_email = f" {candidate.email.upper()} "
 
-    # Create and add a member as ADMIN
-    member = await _create_user(session, "downgrademem")
-
-    # Add member first
-    add_response = await client.post(
-        f"/api/teams/{team.id}/members",
-        json={"userName": member.email},
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert add_response.status_code == 201
-
-    # Promote to ADMIN first
-    await client.patch(
-        f"/api/teams/{team.id}/members/{member.id}",
-        json={"role": "ADMIN"},
-        headers={"Authorization": f"Bearer {token}"},
+    add_resp = await authenticated_client.post(f"/api/teams/{test_team.id}/members", json={"userName": typed_email})
+    remove_resp = await authenticated_client.request(
+        "DELETE",
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": typed_email},
     )
 
-    # Downgrade to MEMBER
-    response = await client.patch(
-        f"/api/teams/{team.id}/members/{member.id}",
-        json={"role": "MEMBER"},
-        headers={"Authorization": f"Bearer {token}"},
-    )
+    assert add_resp.status_code == 201, add_resp.text
+    assert candidate.email in [member["email"] for member in add_resp.json()["members"]]
+    assert remove_resp.status_code == 202, remove_resp.text
 
-    assert response.status_code == 200
-    data = response.json()
-    assert data["role"] == "MEMBER"
+
+async def test_member_error_conditions(
+    authenticated_client: AsyncClient,
+    test_team: m.Team,
+    session: AsyncSession,
+) -> None:
+    """Missing users return 404 and non-members return 409 on removal or role update."""
+    outsider = await _create_user(session, f"notmember-{uuid4().hex[:8]}@example.com")
+
+    assert (
+        await authenticated_client.post(
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": "missing-user@example.com"},
+        )
+    ).status_code == 404
+
+    assert (
+        await authenticated_client.request(
+            "DELETE",
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": "missing-user@example.com"},
+        )
+    ).status_code == 404
+
+    assert (
+        await authenticated_client.request(
+            "DELETE",
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": outsider.email},
+        )
+    ).status_code == 409
+
+    assert (
+        await authenticated_client.patch(
+            f"/api/teams/{test_team.id}/members/{outsider.id}",
+            json={"role": m.TeamRoles.ADMIN.value},
+        )
+    ).status_code == 409
+
+
+async def test_member_mutations_require_team_admin_role(
+    client: AsyncClient,
+    session: AsyncSession,
+    test_team: m.Team,
+    test_team_member: m.User,
+) -> None:
+    """Unauthenticated callers get 401 and regular team MEMBERs or outsiders get 403."""
+    target = await _create_user(session, f"target-{uuid4().hex[:8]}@example.com")
+    outsider = await _create_user(session, f"outsider-mem-{uuid4().hex[:8]}@example.com")
+
+    unauth_csrf = await fetch_csrf_headers(client)
+    assert (
+        await client.post(
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": target.email},
+            headers=unauth_csrf,
+        )
+    ).status_code == 401
+    assert (
+        await client.patch(
+            f"/api/teams/{test_team.id}/members/{test_team_member.id}",
+            json={"role": m.TeamRoles.ADMIN.value},
+            headers=unauth_csrf,
+        )
+    ).status_code == 401
+
+    member_csrf = await login_session_client(client, test_team_member.email, "TestPassword123!")
+    assert (
+        await client.post(
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": target.email},
+            headers=member_csrf,
+        )
+    ).status_code == 403
+    assert (
+        await client.patch(
+            f"/api/teams/{test_team.id}/members/{test_team_member.id}",
+            json={"role": m.TeamRoles.ADMIN.value},
+            headers=member_csrf,
+        )
+    ).status_code == 403
+
+    reset_client_session(client)
+    outsider_csrf = await login_session_client(client, outsider.email, "TestPassword123!")
+    assert (
+        await client.post(
+            f"/api/teams/{test_team.id}/members",
+            json={"userName": target.email},
+            headers=outsider_csrf,
+        )
+    ).status_code == 403

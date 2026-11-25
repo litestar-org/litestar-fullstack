@@ -9,7 +9,6 @@ export function PublicLayout() {
     select: (state) => state.location.pathname,
   })
 
-  // These pages handle their own layout/navigation
   const isLandingPage = pathname === "/" || pathname === "/landing"
   const isAuthPage =
     pathname === "/login" ||
@@ -20,12 +19,12 @@ export function PublicLayout() {
     pathname === "/verify-email" ||
     pathname.startsWith("/auth/")
 
-  const showHeaderFooter = !isLandingPage && !isAuthPage
+  // Landing and auth pages bring their own navigation; only content pages (terms, privacy, about) get the site header and footer.
+  const isContentPage = !isLandingPage && !isAuthPage
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header for content pages (terms, privacy, about) */}
-      {showHeaderFooter && (
+      {isContentPage && (
         <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
           <div className="container mx-auto flex h-14 items-center justify-between px-4">
             <Link to="/" className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
@@ -51,8 +50,7 @@ export function PublicLayout() {
         <Outlet />
       </main>
 
-      {/* Footer for content pages (terms, privacy, about) */}
-      {showHeaderFooter && (
+      {isContentPage && (
         <footer className="border-t border-border/60 bg-background/80">
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">

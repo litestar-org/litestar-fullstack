@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.mixins import SlugKey
+from advanced_alchemy.types import Bool
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,15 +17,14 @@ if TYPE_CHECKING:
 
 
 class Team(UUIDv7AuditBase, SlugKey):
-    """A group of users with common permissions.
-    Users can create and invite users to a team.
-    """
+    """A collaborative team with scoped member roles and invitations."""
 
     __tablename__ = "team"
     __pii_columns__ = {"name", "description"}
+
     name: Mapped[str] = mapped_column(nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(String(length=500), nullable=True, default=None)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Bool, default=True, nullable=False)
     members: Mapped[list[TeamMember]] = relationship(
         back_populates="team",
         cascade="all, delete",
@@ -36,7 +36,7 @@ class Team(UUIDv7AuditBase, SlugKey):
         cascade="all, delete",
     )
     pending_invitations: Mapped[list[TeamInvitation]] = relationship(
-        primaryjoin="and_(TeamInvitation.team_id==Team.id, TeamInvitation.is_accepted == False)",
+        primaryjoin="and_(TeamInvitation.team_id == Team.id, TeamInvitation.is_accepted.is_(false()))",
         viewonly=True,
     )
     tags: Mapped[list[Tag]] = relationship(

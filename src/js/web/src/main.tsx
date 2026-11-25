@@ -4,121 +4,41 @@ import { createRouter, RouterProvider } from "@tanstack/react-router"
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { ErrorBoundary } from "@/components/error-boundary"
-import { client } from "@/lib/generated/api/client.gen"
+import { configureApiClient } from "@/lib/api-client"
+import { useAuthStore } from "@/lib/auth"
+import { ACCESS_DENIED_LOGIN_URL, buildRedirectUrl } from "@/lib/redirect-utils"
 import { ThemeProvider } from "@/lib/theme-context"
-
-// Import the generated route tree
 import { routeTree } from "./routeTree.gen"
 
 import "./styles.css"
-import reportWebVitals from "./reportWebVitals.ts"
-
-// Extend Window type for CSRF token injected by litestar-vite
-declare global {
-  interface Window {
-    __LITESTAR_CSRF__?: string
-  }
-}
 
 const queryClient = new QueryClient()
 
-const apiUrl = import.meta.env.VITE_API_URL ?? ""
+let isSigningOutForAccessDenial = false
 
-client.setConfig({
-  baseUrl: apiUrl,
-  credentials: "include",
-  auth: () => {
-    if (typeof window === "undefined") {
-      return undefined
+configureApiClient({
+  baseUrl: import.meta.env.VITE_API_URL ?? "",
+  onUnauthorized: () => {
+    queryClient.clear()
+    useAuthStore.getState().clearSession()
+    if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+      window.location.assign(buildRedirectUrl("/login", `${window.location.pathname}${window.location.search}`))
     }
-    return window.localStorage.getItem("access_token") ?? undefined
+  },
+  onAccessDenied: () => {
+    // Every request in flight is refused at once; sign out for the first refusal only.
+    if (isSigningOutForAccessDenial) {
+      return
+    }
+    isSigningOutForAccessDenial = true
+    queryClient.clear()
+    void useAuthStore
+      .getState()
+      .logout()
+      .finally(() => window.location.assign(ACCESS_DENIED_LOGIN_URL))
   },
 })
 
-// Add CSRF token to all non-GET requests
-// litestar-vite injects the token into window.__LITESTAR_CSRF__
-client.interceptors.request.use((request, _options) => {
-  const method = request.method?.toUpperCase()
-  // Only add CSRF header for unsafe methods (non-GET/HEAD/OPTIONS)
-  if (method && !["GET", "HEAD", "OPTIONS"].includes(method)) {
-    const csrfToken = window.__LITESTAR_CSRF__
-    if (csrfToken) {
-      request.headers.set("X-XSRF-TOKEN", csrfToken)
-    }
-  }
-  return request
-})
-
-// Silent token refresh state
-let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void
-  reject: (reason?: unknown) => void
-}> = []
-
-const processQueue = (error: Error | null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve()
-    }
-  })
-  failedQueue = []
-}
-
-// Response interceptor for silent token refresh
-// Using error interceptor with the new client API
-client.interceptors.error.use(async (error, response, request, options) => {
-  // Only attempt refresh for 401 errors, not on refresh endpoint itself
-  const requestUrl = request.url
-  if (response?.status === 401 && !requestUrl?.includes("/api/access/refresh") && !requestUrl?.includes("/api/access/login")) {
-    // Skip refresh attempt if we're already on a public auth page to prevent infinite loops
-    const currentPath = window.location.pathname
-    const isPublicAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].some((p) => currentPath.startsWith(p))
-
-    if (isPublicAuthPage) {
-      // Don't try to refresh or redirect on public auth pages - just throw the error
-      throw error
-    }
-
-    if (isRefreshing) {
-      // If already refreshing, queue this request
-      return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject })
-      }).then(() => {
-        const method = options.method ?? "GET"
-        return client.request({ ...options, method, url: requestUrl })
-      })
-    }
-
-    isRefreshing = true
-
-    try {
-      // Attempt to refresh the token
-      await client.post({ url: "/api/access/refresh" })
-      processQueue(null)
-      // Retry the original request
-      const method = options.method ?? "GET"
-      return client.request({ ...options, method, url: requestUrl })
-    } catch (refreshError) {
-      processQueue(refreshError as Error)
-      // Refresh failed - clear auth state and redirect to login
-      // But only if we're not already on the login page
-      queryClient.clear()
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login"
-      }
-      throw refreshError
-    } finally {
-      isRefreshing = false
-    }
-  }
-
-  throw error
-})
-
-// Create the router using the generated route tree
 const router = createRouter({
   routeTree,
   context: {
@@ -137,7 +57,6 @@ declare module "@tanstack/react-router" {
   }
 }
 
-// Render the app
 const rootElement = document.getElementById("root")
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
@@ -152,8 +71,3 @@ if (rootElement && !rootElement.innerHTML) {
     </React.StrictMode>,
   )
 }
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()

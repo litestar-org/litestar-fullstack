@@ -57,6 +57,7 @@ install: destroy clean                              ## Install the project, depe
 		$(MAKE) install-bun; \
 	fi
 	@cd src/js/web && bun install --frozen-lockfile >/dev/null 2>&1
+	@cd src/js/templates && bun install --frozen-lockfile >/dev/null 2>&1
 	@echo "${OK} Installation complete! 🎉"
 
 .PHONY: upgrade
@@ -64,6 +65,7 @@ upgrade:                                            ## Upgrade all dependencies 
 	@echo "${INFO} Updating all dependencies... 🔄"
 	@uv lock --upgrade
 	@cd src/js/web && bun update
+	@cd src/js/templates && bun update
 	@echo "${OK} Dependencies updated 🔄"
 	@uv run pre-commit autoupdate
 	@echo "${OK} Updated Pre-commit hooks 🔄"
@@ -152,6 +154,12 @@ slotscheck:                                        ## Run slotscheck
 	@uv run slotscheck -m app
 	@echo "${OK} Slots check passed ✨"
 
+.PHONY: zizmor
+zizmor:                                            ## Audit GitHub Actions workflows
+	@echo "${INFO} Auditing workflows... 🛡️"
+	@uv run zizmor .github/workflows
+	@echo "${OK} Workflow audit passed ✨"
+
 .PHONY: fix
 fix:                                               ## Run formatting scripts
 	@echo "${INFO} Running code formatters... 🔧"
@@ -160,7 +168,7 @@ fix:                                               ## Run formatting scripts
 	@echo "${OK} Code formatting complete ✨"
 
 .PHONY: lint
-lint: ruff type-check slotscheck biome codespell   ## Run all linting
+lint: ruff type-check slotscheck biome codespell zizmor ## Run all linting
 
 .PHONY: coverage
 coverage:                                          ## Run the tests and generate coverage report
@@ -182,8 +190,14 @@ test-all:                                          ## Run all tests
 	@uv run pytest src/py/tests -m '' --quiet
 	@echo "${OK} All tests passed ✨"
 
+.PHONY: frontend-check
+frontend-check:                                    ## Run read-only frontend Biome check and Vitest suite
+	@echo "${INFO} Running frontend checks... 🔍"
+	@cd src/js/web && bun run lint:check && bun run test
+	@echo "${OK} Frontend checks passed ✨"
+
 .PHONY: check-all
-check-all: lint test-all coverage                  ## Run all linting, tests, and coverage checks
+check-all: lint test-all frontend-check coverage   ## Run all linting, tests, and coverage checks
 
 
 # =============================================================================
@@ -223,18 +237,18 @@ docs-linkcheck-full:                               ## Run the full link check on
 # Build
 # =============================================================================
 .PHONY: build
-build: build-emails build-assets build-wheel      ## Build wheel with frontend assets
+build: build-wheel                                 ## Build wheel with frontend and email assets
 
 .PHONY: build-assets
-build-assets:                                      ## Build frontend assets
+build-assets: types                                ## Build frontend assets
 	@echo "${INFO} Building frontend assets... 🎨"
 	@uv run app assets build
 	@echo "${OK} Frontend assets built"
 
 .PHONY: build-wheel
-build-wheel:                                       ## Build Python wheel
+build-wheel: build-emails build-assets             ## Build Python wheel
 	@echo "${INFO} Building Python wheel... 📦"
-	@uv build --wheel >/dev/null 2>&1
+	@uv build --wheel --clear
 	@echo "${OK} Wheel built: dist/*.whl"
 
 .PHONY: build-emails

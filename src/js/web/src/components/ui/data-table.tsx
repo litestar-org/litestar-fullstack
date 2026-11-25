@@ -1,15 +1,21 @@
-"use client"
-
 import {
-  type ColumnDef,
   type ColumnFiltersState,
+  columnFilteringFeature,
+  createColumnHelper,
+  createFilteredRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  filterFns,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
+  type RowData,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
   type SortingState,
-  useReactTable,
+  sortFns,
+  type TableOptions,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { useState } from "react"
@@ -17,27 +23,48 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+// Columns are supplied by the caller, so every built-in filter and sort function stays available to "auto".
+const dataTableFeatures = tableFeatures({
+  columnFilteringFeature,
+  rowSortingFeature,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  filterFns,
+  sortFns,
+})
+
+/** Builds column definitions typed for `DataTable`; wrap them in `helper.columns([...])` to keep each column's value type. */
+export function createDataTableColumnHelper<TData extends RowData>() {
+  return createColumnHelper<typeof dataTableFeatures, TData>()
+}
+
+interface DataTableProps<TData extends RowData> {
+  columns: TableOptions<typeof dataTableFeatures, TData>["columns"]
   data: TData[]
   searchKey?: string
   searchPlaceholder?: string
   emptyMessage?: string
 }
 
-export function DataTable<TData, TValue>({ columns, data, searchKey, searchPlaceholder = "Search...", emptyMessage = "No results found." }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends RowData>({
+  columns,
+  data,
+  searchKey,
+  searchPlaceholder = "Search...",
+  emptyMessage = "No results found.",
+}: Readonly<DataTableProps<TData>>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -72,7 +99,7 @@ export function DataTable<TData, TValue>({ columns, data, searchKey, searchPlace
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getAllCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>

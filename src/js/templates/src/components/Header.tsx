@@ -5,7 +5,7 @@ interface HeaderProps {
   appName: string
 }
 
-export const Header = ({ appName }: HeaderProps) => {
+export const Header = ({ appName }: Readonly<HeaderProps>) => {
   return (
     <div
       style={{

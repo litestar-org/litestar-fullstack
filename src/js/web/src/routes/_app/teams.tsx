@@ -7,5 +7,3 @@ export const Route = createFileRoute("/_app/teams")({
 function TeamsLayout() {
   return <Outlet />
 }
-
-export default TeamsLayout

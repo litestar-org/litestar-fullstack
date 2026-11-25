@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, TypeVar, cast, get_args, get_origin, overload
+from typing import TYPE_CHECKING, Any, Final, Literal, TypeVar, cast, get_args, get_origin, overload
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -12,14 +12,11 @@ BASE_DIR: Final[Path] = Path(__file__).parent.parent
 TRUE_VALUES: Final[frozenset[str]] = frozenset({"True", "true", "1", "yes", "YES", "Y", "y", "T", "t"})
 
 T = TypeVar("T")
-ParseTypes = bool | int | str | list[str] | Path | list[Path] | dict[str, Any]
+ParseTypes = bool | int | float | str | list[str] | tuple[str, ...] | Path | list[Path] | dict[str, Any]
 
 
 class UnsetType:
-    """Placeholder for an Unset type.
-
-    This helps differentiate None from the default
-    """
+    """Sentinel type marking an omitted ``type_hint``, so that ``None`` stays a usable default."""
 
 
 _UNSET = UnsetType()
@@ -31,6 +28,10 @@ def get_env(key: str, default: bool, type_hint: UnsetType = _UNSET) -> Callable[
 
 @overload
 def get_env(key: str, default: int, type_hint: UnsetType = _UNSET) -> Callable[[], int]: ...
+
+
+@overload
+def get_env(key: str, default: float, type_hint: UnsetType = _UNSET) -> Callable[[], float]: ...
 
 
 @overload
@@ -50,11 +51,19 @@ def get_env(key: str, default: list[str], type_hint: UnsetType = _UNSET) -> Call
 
 
 @overload
+def get_env(key: str, default: tuple[str, ...], type_hint: UnsetType = _UNSET) -> Callable[[], tuple[str, ...]]: ...
+
+
+@overload
 def get_env(key: str, default: None, type_hint: UnsetType = _UNSET) -> Callable[[], None]: ...
 
 
 @overload
-def get_env(key: str, default: ParseTypes | None, type_hint: type[T]) -> Callable[[], T]: ...
+def get_env(key: str, default: None, type_hint: type[T]) -> Callable[[], T | None]: ...
+
+
+@overload
+def get_env(key: str, default: ParseTypes, type_hint: type[T]) -> Callable[[], T]: ...
 
 
 @overload
@@ -64,6 +73,11 @@ def get_env(key: str, default: dict[str, Any], type_hint: UnsetType = _UNSET) ->
 def get_env(
     key: str, default: ParseTypes | None, type_hint: type[T] | UnsetType = _UNSET
 ) -> Callable[[], ParseTypes | T | None]:
+    """Build a zero-argument reader of ``key`` for use as a dataclass ``default_factory``.
+
+    Returns:
+        Callable that parses the environment variable with :func:`get_config_val` each time it is called.
+    """
     return lambda: get_config_val(key=key, default=default, type_hint=type_hint)
 
 
@@ -73,6 +87,10 @@ def get_config_val(key: str, default: bool, type_hint: UnsetType = _UNSET) -> bo
 
 @overload
 def get_config_val(key: str, default: int, type_hint: UnsetType = _UNSET) -> int: ...
+
+
+@overload
+def get_config_val(key: str, default: float, type_hint: UnsetType = _UNSET) -> float: ...
 
 
 @overload
@@ -92,197 +110,156 @@ def get_config_val(key: str, default: list[str], type_hint: UnsetType = _UNSET) 
 
 
 @overload
+def get_config_val(key: str, default: tuple[str, ...], type_hint: UnsetType = _UNSET) -> tuple[str, ...]: ...
+
+
+@overload
 def get_config_val(key: str, default: None, type_hint: UnsetType = _UNSET) -> None: ...
 
 
 @overload
-def get_config_val(key: str, default: ParseTypes | None, type_hint: type[T]) -> T: ...
+def get_config_val(key: str, default: None, type_hint: type[T]) -> T | None: ...
+
+
+@overload
+def get_config_val(key: str, default: ParseTypes, type_hint: type[T]) -> T: ...
 
 
 @overload
 def get_config_val(key: str, default: dict[str, Any], type_hint: UnsetType = _UNSET) -> dict[str, Any]: ...
 
 
-def get_config_val(  # noqa: C901, PLR0911, PLR0915
+def get_config_val(
     key: str, default: ParseTypes | None, type_hint: type[T] | UnsetType = _UNSET
 ) -> ParseTypes | T | None:
-    """Parse environment variables, prioritizing explicit type hint over default's type.
-    Now supports dict and TypedDict with both JSON and comma-separated formats.
+    """Parse an environment variable as ``type_hint``, or as the type of ``default`` when no hint is given.
+
+    Lists and tuples accept a JSON array or a comma-separated string, and drop empty items. A list of
+    ``Literal`` strings accepts only those strings. Dicts and TypedDicts accept a JSON object or
+    comma-separated ``key=value`` pairs, and their values are always returned as strings. An empty list
+    default parses as ``list[str]``; pass ``type_hint=list[Path]`` to get paths instead.
+
+    An empty value counts as unset for numbers. A ``None`` default makes the hinted type optional: an
+    empty value, or a list with no items, yields ``None``.
+
+    A value that cannot be parsed raises ``ValueError``, or ``TypeError`` for a malformed dict.
 
     Args:
         key: Environment variable key
         default: Default value if key not found in environment
         type_hint: Optional type hint to use instead of inferring from `default`
 
-    Raises:
-        RuntimeError: Raised when the configuration value cannot be parsed.
-        ValueError: Raised when the configuration value cannot be parsed.
-
     Returns:
-        Parsed value of the specified type
-
-    Note:
-        If the default is an empty list and no type hint is provided, the function will return list[str] (not list[Path]).
-        To get list[Path] in this case, provide a type hint (e.g., type_hint=list[Path]).
+        Parsed value of the specified type, or ``default`` when the variable is not set.
     """
-    str_value = os.getenv(key)
-    if str_value is None:
+    value = os.getenv(key)
+    if value is None:
         return default
-    value: str = str_value
-
-    final_type: type | None = None
-    item_constructor: Callable[[str], Any] | None = None
-    parse_as_list = False
-    parse_as_dict = False
-
-    if type_hint != _UNSET:
-        origin = get_origin(type_hint)
-        args = get_args(type_hint)
-        # Handle parameterized generics like list[Path], list[str], dict[str, Any]
-        if origin is list and args:
-            parse_as_list = True
-            item_type_arg = args[0]
-            if item_type_arg is str:
-                item_constructor = str
-            elif isinstance(item_type_arg, type) and issubclass(item_type_arg, Path):
-                item_constructor = item_type_arg
-            else:
-                msg = f"Unsupported item type '{item_type_arg}' in list type hint for key '{key}'"
-                raise ValueError(msg)
-        elif origin is dict or is_typed_dict(type_hint):
-            parse_as_dict = True
-        elif isinstance(type_hint, type):
-            final_type = type_hint
-    elif type_hint != _UNSET and str(type_hint) == "list[pathlib._local.Path]":
-        parse_as_list = True
-        item_constructor = Path
-    elif default is not None:
-        final_type = type(default)
-        if isinstance(default, Path):
-            return Path(value)
-        if isinstance(default, list):
-            parse_as_list = True
-            if default and all(isinstance(x, Path) for x in default):
-                item_constructor = Path
-            elif default and all(isinstance(x, str) for x in default):
-                item_constructor = str
-            else:
-                item_constructor = str
-        if isinstance(default, dict):
-            parse_as_dict = True
-
-    if parse_as_list and not item_constructor:
-        msg = f"Internal error: List parsing requested for key '{key}' but no item constructor determined."
-        raise RuntimeError(msg)
-
-    if parse_as_list and item_constructor:
-        if item_constructor is Path:
-            return _parse_list(key, value, item_constructor)
-        return cast("list[str]", _parse_list(key, value, item_constructor))
-    if parse_as_dict:
-        return _parse_dict(key, value)
-    if final_type is str:
-        return value
-    if final_type is int:
-        return int(value)
-    if final_type is bool:
-        return value in TRUE_VALUES
-    if final_type is Path:
-        return Path(value)
-    if final_type is None or final_type is type(None):
-        return value
-    if type_hint != _UNSET and final_type is type_hint:
-        return cast("T", final_type(value))
-
-    return value
+    is_optional = default is None and not isinstance(type_hint, UnsetType)
+    parse_type = _type_of_default(default) if isinstance(type_hint, UnsetType) else type_hint
+    if not value and (is_optional or parse_type in {int, float}):
+        return default
+    parsed = _parse_as_type(key, value, parse_type)
+    if is_optional and parsed in ([], ()):
+        return None
+    return cast("ParseTypes | T", parsed)
 
 
-def _parse_list(key: str, value: str, item_constructor: Callable[[str], T]) -> list[T]:
-    if value.startswith("["):
-        if not value.endswith("]"):
-            msg = f"{key} is not a valid list representation."
-            raise ValueError(msg)
-        try:
-            parsed_json: Any = json.loads(value)
-            if not isinstance(parsed_json, list):
-                msg = f"{key} is not a valid list representation."
-                raise ValueError(msg)  # noqa: TRY004, TRY301
-            constructed_list: list[T] = []
-            for item in parsed_json:  # pyright: ignore
-                try:
-                    constructed_list.append(item_constructor(item))  # pyright: ignore
-                except (ValueError, TypeError) as item_e:
-                    constructor_name = getattr(item_constructor, "__name__", repr(item_constructor))
-                    msg = f"Error converting item '{item}' (from JSON list) for key '{key}' using {constructor_name}: {item_e}"
-                    raise ValueError(msg) from item_e
-
-        except (json.JSONDecodeError, ValueError) as e:
-            msg = f"{key} is not a valid list representation."
-            raise ValueError(msg) from e
-        return constructed_list
-    items = value.split(",")
-    constructed_list = []
-    try:
-        for item in items:
-            constructed_list.append(item_constructor(item.strip()))
-    except (ValueError, TypeError) as item_e:
-        constructor_name = getattr(item_constructor, "__name__", repr(item_constructor))
-        msg = f"Error converting item in comma-separated list for key '{key}' using {constructor_name}: {item_e}"
-        raise ValueError(msg) from item_e
-    return constructed_list
-
-
-def _parse_dict(key: str, value: str) -> dict[str, Any]:
-    if value.strip().startswith("{"):
-        return _parse_dict_json(key, value)
-
-    return _parse_dict_comma(key, value)
-
-
-def _parse_dict_json(key: str, value: str, key_type: type = str) -> dict[str, Any]:
-    try:
-        parsed_json: dict[str, Any] | Any = json.loads(value)
-    except json.JSONDecodeError as e:
-        msg = f"{key} is not a valid dict representation."
-        raise TypeError(msg) from e
-    if not isinstance(parsed_json, dict):
-        msg = f"{key} is not a valid dict representation."
-        raise TypeError(msg)
-    result: dict[str, Any] = {}
-    for k, v in parsed_json.items():  # pyright: ignore
-        try:
-            # Treat all values as strings when parsing from env var
-            result[key_type(k)] = str(v)  # pyright: ignore
-        except Exception as e:
-            msg = f"Error converting value for key '{k}' in dict for env var '{key}': {e}"
-            raise TypeError(msg) from e
-    return result
-
-
-def _parse_dict_comma(key: str, value: str, key_type: type = str) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-
-    for item in value.split(","):
-        if not item.strip():
-            continue
-        if "=" not in item:
-            msg = f"{key} is not a valid dict representation (missing '=' in '{item}')."
-            raise TypeError(msg)
-        k, v = item.split("=", 1)
-        k_cast = key_type(k.strip())
-        try:
-            # Value is already a string here
-            result[k_cast] = v.strip()
-        except Exception as e:
-            msg = f"Error converting value for key '{k_cast}' in dict for env var '{key}': {e}"
-            raise TypeError(msg) from e
-    return result
-
-
-def is_typed_dict(tp: Any) -> bool:
+def is_typed_dict(type_hint: Any) -> bool:
+    """Return whether ``type_hint`` is a ``TypedDict`` class rather than plain ``dict``."""
     try:
         return (
-            isinstance(tp, type) and issubclass(tp, dict) and hasattr(tp, "__annotations__") and tp.__name__ != "dict"  # pyright: ignore
+            isinstance(type_hint, type)
+            and hasattr(type_hint, "__annotations__")
+            and issubclass(type_hint, dict)
+            and type_hint.__name__ != "dict"
         )
     except Exception:  # noqa: BLE001
         return False
+
+
+def _type_of_default(default: ParseTypes | None) -> object:
+    if isinstance(default, list):
+        return list[Path] if default and all(isinstance(item, Path) for item in default) else list[str]
+    if isinstance(default, tuple):
+        return tuple[str, ...]
+    if isinstance(default, dict):
+        return dict[str, str]
+    if isinstance(default, Path):
+        return Path
+    return type(default) if type(default) in {bool, int, float} else str
+
+
+def _parse_as_type(key: str, value: str, parse_type: object) -> object:
+    origin = get_origin(parse_type)
+    item_types = get_args(parse_type)
+    if origin in {list, tuple} and item_types:
+        items = _parse_items(key, value, item_types[0])
+        return tuple(items) if origin is tuple else items
+    if origin is dict or is_typed_dict(parse_type):
+        return _parse_dict(key, value)
+    if parse_type is bool:
+        return value in TRUE_VALUES
+    if isinstance(parse_type, type) and parse_type is not type(None):
+        return parse_type(value)
+    return value
+
+
+def _parse_items(key: str, value: str, item_type: Any) -> list[Any]:
+    if get_origin(item_type) is Literal:
+        items = _parse_list(key, value, str)
+        unknown = [item for item in items if item not in get_args(item_type)]
+        if unknown:
+            msg = f"Unsupported items {unknown} for key '{key}'; expected any of {list(get_args(item_type))}"
+            raise ValueError(msg)
+        return items
+    if item_type is not str and not (isinstance(item_type, type) and issubclass(item_type, Path)):
+        msg = f"Unsupported item type '{item_type}' in list type hint for key '{key}'"
+        raise ValueError(msg)
+    return _parse_list(key, value, item_type)
+
+
+def _parse_list(key: str, value: str, item_constructor: Callable[[str], T]) -> list[T]:
+    if not value.startswith("["):
+        try:
+            return [item_constructor(item) for item in map(str.strip, value.split(",")) if item]
+        except (ValueError, TypeError) as exc:
+            constructor_name = getattr(item_constructor, "__name__", repr(item_constructor))
+            msg = f"Error converting item in comma-separated list for key '{key}' using {constructor_name}: {exc}"
+            raise ValueError(msg) from exc
+    msg = f"{key} is not a valid list representation."
+    if not value.endswith("]"):
+        raise ValueError(msg)
+    try:
+        items: list[Any] = json.loads(value)
+        return [item_constructor(item) for item in items if item != ""]
+    except (ValueError, TypeError) as exc:
+        raise ValueError(msg) from exc
+
+
+def _parse_dict(key: str, value: str) -> dict[str, str]:
+    if value.strip().startswith("{"):
+        return _parse_dict_json(key, value)
+    return _parse_dict_comma(key, value)
+
+
+def _parse_dict_json(key: str, value: str) -> dict[str, str]:
+    try:
+        entries: dict[str, Any] = json.loads(value)
+    except json.JSONDecodeError as exc:
+        msg = f"{key} is not a valid dict representation."
+        raise TypeError(msg) from exc
+    return {name: str(entry) for name, entry in entries.items()}
+
+
+def _parse_dict_comma(key: str, value: str) -> dict[str, str]:
+    entries: dict[str, str] = {}
+    for pair in value.split(","):
+        if not pair.strip():
+            continue
+        if "=" not in pair:
+            msg = f"{key} is not a valid dict representation (missing '=' in '{pair}')."
+            raise TypeError(msg)
+        name, entry = pair.split("=", 1)
+        entries[name.strip()] = entry.strip()
+    return entries

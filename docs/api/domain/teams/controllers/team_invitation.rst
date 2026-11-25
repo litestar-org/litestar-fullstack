@@ -2,7 +2,7 @@
 team invitation
 ===============
 
-Controllers for the team invitiation routes for the teams domain.
+Team invitation management controller for the teams domain.
 
-.. automodule:: app.domain.teams.controllers.team_invitation
+.. automodule:: app.domain.teams.controllers._team_invitation
     :members:

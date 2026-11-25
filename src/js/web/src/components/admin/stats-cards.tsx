@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SkeletonCard } from "@/components/ui/skeleton"
-import { useAdminDashboardStats } from "@/lib/api/hooks/admin"
+import { getDashboardStatsOptions } from "@/lib/generated/api/@tanstack/react-query.gen"
 
 export function StatsCards() {
-  const { data, isLoading, isError } = useAdminDashboardStats()
+  const { data: stats, isLoading, isError } = useQuery(getDashboardStatsOptions())
 
   if (isLoading) {
     return (
@@ -16,7 +17,7 @@ export function StatsCards() {
     )
   }
 
-  if (isError || !data) {
+  if (isError || !stats) {
     return (
       <Card>
         <CardHeader>
@@ -27,25 +28,25 @@ export function StatsCards() {
     )
   }
 
-  const items = [
-    { label: "Total users", value: data.totalUsers },
-    { label: "Active users", value: data.activeUsers },
-    { label: "Verified users", value: data.verifiedUsers },
-    { label: "Total teams", value: data.totalTeams },
-    { label: "New users today", value: data.newUsersToday },
-    { label: "New users this week", value: data.newUsersWeek },
-    { label: "Events today", value: data.eventsToday },
+  const metrics = [
+    { label: "Total users", value: stats.totalUsers },
+    { label: "Active users", value: stats.activeUsers },
+    { label: "Verified users", value: stats.verifiedUsers },
+    { label: "Total teams", value: stats.totalTeams },
+    { label: "New users today", value: stats.newUsersToday },
+    { label: "New users this week", value: stats.newUsersWeek },
+    { label: "Events today", value: stats.eventsToday },
   ]
 
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {items.map((item) => (
-        <Card key={item.label}>
+      {metrics.map((metric) => (
+        <Card key={metric.label}>
           <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">{item.label}</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{metric.label}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold">{item.value}</div>
+            <div className="text-3xl font-semibold">{metric.value}</div>
           </CardContent>
         </Card>
       ))}

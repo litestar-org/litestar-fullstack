@@ -1,54 +1,77 @@
-"""Account domain dependencies."""
+"""Account domain Advanced Alchemy service and filter providers."""
 
 from __future__ import annotations
 
-from sqlalchemy.orm import joinedload, load_only, selectinload
+from typing import TYPE_CHECKING, ClassVar
+from uuid import UUID
+
+from advanced_alchemy.extensions.litestar.providers import (
+    FilterConfig,
+    create_filter_dependencies,
+    create_service_provider,
+)
+from advanced_alchemy.filters import FilterSet
+from sqlalchemy.orm import joinedload, load_only, selectinload, undefer_group
 
 from app.db import models as m
 from app.domain.accounts.services import (
-    EmailVerificationTokenService,
-    PasswordResetService,
-    RefreshTokenService,
+    AccountServices,
     RoleService,
-    UserOAuthAccountService,
     UserRoleService,
     UserService,
 )
-from app.lib.deps import create_service_provider
+
+if TYPE_CHECKING:
+    from collections.abc import Collection
+
+USER_LOAD_OPTIONS = [
+    undefer_group("security_sensitive"),
+    selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
+    selectinload(m.User.oauth_accounts),
+    selectinload(m.User.mfa_factors),
+    selectinload(m.User.teams).options(
+        joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
+    ),
+]
+
+
+class UserFilterSet(FilterSet[m.User]):
+    """Typed filter set for querying user accounts."""
+
+    model_type: ClassVar[type[m.User]] = m.User
+    search_fields: ClassVar[Collection[str]] = ("name", "email")
+    sort_fields: ClassVar[Collection[str]] = ("created_at", "updated_at", "email", "name")
+    config: ClassVar[FilterConfig] = {
+        "id_filter": UUID,
+        "pagination_type": "limit_offset",
+        "pagination_size": 25,
+        "created_at": True,
+        "updated_at": True,
+        "sort_field": "created_at",
+        "sort_order": "desc",
+    }
+
+
+class RoleFilterSet(FilterSet[m.Role]):
+    """Typed filter set for querying roles."""
+
+    model_type: ClassVar[type[m.Role]] = m.Role
+    search_fields: ClassVar[Collection[str]] = ("name", "slug")
+    sort_fields: ClassVar[Collection[str]] = ("name", "slug", "created_at", "updated_at")
+    config: ClassVar[FilterConfig] = {
+        "id_filter": UUID,
+        "pagination_type": "limit_offset",
+        "pagination_size": 50,
+        "sort_field": "name",
+        "sort_order": "asc",
+    }
+
 
 provide_users_service = create_service_provider(
     UserService,
-    load=[
-        selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
-        selectinload(m.User.oauth_accounts),
-        selectinload(m.User.teams).options(
-            joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
-        ),
-    ],
+    load=USER_LOAD_OPTIONS,
     uniquify=True,
     error_messages={"duplicate_key": "User with this email already exists.", "integrity": "User operation failed."},
-)
-
-provide_email_verification_service = create_service_provider(
-    EmailVerificationTokenService,
-    load=[
-        selectinload(m.EmailVerificationToken.user),
-    ],
-    error_messages={
-        "duplicate_key": "Verification token already exists.",
-        "integrity": "Email verification operation failed.",
-    },
-)
-
-provide_password_reset_service = create_service_provider(
-    PasswordResetService,
-    load=[
-        selectinload(m.PasswordResetToken.user),
-    ],
-    error_messages={
-        "duplicate_key": "Reset token already exists.",
-        "integrity": "Password reset operation failed.",
-    },
 )
 
 provide_roles_service = create_service_provider(
@@ -72,30 +95,18 @@ provide_user_roles_service = create_service_provider(
     },
 )
 
-provide_user_oauth_service = create_service_provider(
-    UserOAuthAccountService,
-    load=[selectinload(m.UserOAuthAccount.user)],
-    error_messages={
-        "duplicate_key": "OAuth account already linked.",
-        "integrity": "OAuth account operation failed.",
-    },
-)
-
-provide_refresh_token_service = create_service_provider(
-    RefreshTokenService,
-    load=[selectinload(m.RefreshToken.user)],
-    error_messages={
-        "duplicate_key": "Refresh token already exists.",
-        "integrity": "Refresh token operation failed.",
-    },
+provide_account_services = create_service_provider(
+    AccountServices,
+    uniquify=True,
 )
 
 __all__ = (
-    "provide_email_verification_service",
-    "provide_password_reset_service",
-    "provide_refresh_token_service",
+    "USER_LOAD_OPTIONS",
+    "RoleFilterSet",
+    "UserFilterSet",
+    "create_filter_dependencies",
+    "provide_account_services",
     "provide_roles_service",
-    "provide_user_oauth_service",
     "provide_user_roles_service",
     "provide_users_service",
 )

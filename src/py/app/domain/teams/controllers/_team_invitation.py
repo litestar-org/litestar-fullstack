@@ -1,204 +1,148 @@
-"""Team Invitation Controllers."""
+"""Team Invitation SecureController with QueuedBackgroundTask email delivery."""
 
-from __future__ import annotations
+from typing import Annotated, ClassVar
+from uuid import UUID
 
-from typing import TYPE_CHECKING, Annotated, Any
-
-from litestar import Controller, Request, delete, get, post
+from advanced_alchemy.filters import FilterTypes
+from advanced_alchemy.service.pagination import OffsetPagination
+from litestar import Response, delete, get, post
 from litestar.di import Provide
-from litestar.exceptions import HTTPException
 from litestar.params import Dependency
-from sqlalchemy.orm import selectinload
+from litestar_queues import QueuedBackgroundTask
+from litestar_security import AuthenticationPolicy, CurrentUser, SecureController, required
 
 from app.db import models as m
-from app.domain.teams.deps import provide_team_members_service, provide_teams_service
+from app.domain.accounts.jobs import send_team_invitation_email_task
+from app.domain.accounts.security import requires_team_role
+from app.domain.teams.deps import (
+    TeamInvitationFilterSet,
+    create_filter_dependencies,
+    provide_team_invitations_service,
+    provide_team_services,
+    provide_teams_service,
+)
 from app.domain.teams.schemas import TeamInvitation, TeamInvitationCreate
-from app.domain.teams.services import TeamInvitationService
-from app.lib.deps import create_service_dependencies
+from app.domain.teams.services import TeamInvitationService, TeamService, TeamServices
 from app.lib.schema import Message
-
-if TYPE_CHECKING:
-    from uuid import UUID
-
-    from advanced_alchemy.filters import FilterTypes
-    from advanced_alchemy.service import OffsetPagination
-    from litestar.security.jwt import Token
-
-    from app.domain.teams.services import TeamMemberService, TeamService
-    from app.lib.email import AppEmailService
+from app.lib.settings import get_settings
 
 
-class TeamInvitationController(Controller):
-    """Team Invitations."""
+class TeamInvitationController(SecureController):
+    """Manages team invitations with durable background email dispatch."""
 
     path = "/api/teams/{team_id:uuid}/invitations"
     tags = ["Teams"]
-    dependencies = create_service_dependencies(
-        TeamInvitationService,
-        key="team_invitations_service",
-        load=[selectinload(m.TeamInvitation.team)],
-        error_messages={
-            "duplicate_key": "Invitation already exists.",
-            "integrity": "Team invitation operation failed.",
-        },
-        filters={
-            "pagination_type": "limit_offset",
-            "pagination_size": 20,
-            "created_at": True,
-            "updated_at": True,
-            "sort_field": "created_at",
-            "sort_order": "desc",
-        },
-    ) | {
+    auth: ClassVar[AuthenticationPolicy] = required("session")
+    dependencies = {
+        "team_invitations_service": Provide(provide_team_invitations_service),
         "teams_service": Provide(provide_teams_service),
-        "team_members_service": Provide(provide_team_members_service),
-    }
+        "team_services": Provide(provide_team_services),
+    } | create_filter_dependencies(TeamInvitationFilterSet)
 
-    @post(operation_id="CreateTeamInvitation", path="")
+    @post(
+        operation_id="CreateTeamInvitation",
+        path="",
+        guards=[requires_team_role("admin")],
+    )
     async def create_team_invitation(
         self,
-        current_user: m.User,
+        current_user: CurrentUser[m.User],
         team_invitations_service: TeamInvitationService,
         teams_service: TeamService,
-        app_mailer: AppEmailService,
-        request: Request[m.User, Token, Any],
         team_id: UUID,
         data: TeamInvitationCreate,
-    ) -> TeamInvitation:
-        """Create a new team invitation.
-
-        Args:
-            current_user: The current user sending the invitation.
-            team_invitations_service: The team invitation service.
-            teams_service: The teams service.
-            app_mailer: Email service for sending notifications.
-            request: The request object.
-            team_id: The team id.
-            data: The data to create the team invitation with.
-
-        Raises:
-            HTTPException: If the invitee is already a team member
+    ) -> Response[TeamInvitation]:
+        """Create a new team invitation and enqueue durable email delivery.
 
         Returns:
-            The created team invitation.
+            HTTP 201 response containing the created invitation.
         """
         team = await teams_service.get(team_id)
-        if any(member.email == data.email for member in team.members):
-            raise HTTPException(status_code=400, detail="User is already a member of this team")
-        payload = data.to_dict()
-        payload["team_id"] = team_id
-        payload["invited_by"] = current_user
-        db_obj = await team_invitations_service.create(payload)
-        request.app.emit(event_id="team_invitation_created", invitation_id=db_obj.id, mailer=app_mailer)
-        return team_invitations_service.to_schema(db_obj, schema_type=TeamInvitation)
+        invitation = await team_invitations_service.invite(
+            team,
+            email=data.email,
+            role=data.role,
+            invited_by=current_user,
+        )
+        app_url = get_settings().app.URL.rstrip("/")
+        invitation_url = f"{app_url}/teams/{team_id}/invitations/{invitation.id}/accept"
+        return Response(
+            content=team_invitations_service.to_schema(invitation, schema_type=TeamInvitation),
+            status_code=201,
+            background=QueuedBackgroundTask(
+                send_team_invitation_email_task,
+                invitee_email=invitation.email,
+                inviter_name=current_user.name or current_user.email,
+                team_name=team.name,
+                invitation_url=invitation_url,
+            ),
+        )
 
-    @get(operation_id="ListTeamInvitations", path="")
+    @get(
+        operation_id="ListTeamInvitations",
+        path="",
+        guards=[requires_team_role("member")],
+    )
     async def list_team_invitations(
         self,
         team_invitations_service: TeamInvitationService,
         team_id: UUID,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
     ) -> OffsetPagination[TeamInvitation]:
-        """List team invitations.
-
-        Args:
-            team_id: The ID of the team to list the invitations for.
-            team_invitations_service: The team invitation service.
-            filters: Filter and pagination parameters
+        """List invitations for a team.
 
         Returns:
-            The list of team invitations.
+            Paginated team invitations.
         """
-        db_objs, total = await team_invitations_service.list_and_count(*filters, m.TeamInvitation.team_id == team_id)
-        return team_invitations_service.to_schema(db_objs, total, filters, schema_type=TeamInvitation)
+        invitations, total = await team_invitations_service.get_many_and_count(
+            *filters,
+            m.TeamInvitation.team_id == team_id,
+        )
+        return team_invitations_service.to_schema(invitations, total, filters, schema_type=TeamInvitation)
 
-    @delete(operation_id="DeleteTeamInvitation", path="/{invitation_id:uuid}")
+    @delete(
+        operation_id="DeleteTeamInvitation",
+        path="/{invitation_id:uuid}",
+        guards=[requires_team_role("admin")],
+    )
     async def delete_team_invitation(
-        self, team_invitations_service: TeamInvitationService, team_id: UUID, invitation_id: UUID
+        self,
+        team_invitations_service: TeamInvitationService,
+        team_id: UUID,
+        invitation_id: UUID,
     ) -> None:
-        """Delete an invitation.
-
-        Args:
-            team_id: The ID of the team to delete the invitation for.
-            invitation_id: The ID of the invitation to delete.
-            team_invitations_service: The team invitation service.
-
-        Raises:
-            HTTPException: If the invitation does not belong to the team
-        """
-        invitation = await team_invitations_service.get(invitation_id)
-        if invitation.team_id != team_id:
-            raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
-        await team_invitations_service.delete(item_id=invitation_id)
+        """Delete an invitation issued by this team."""
+        invitation = await team_invitations_service.get_for_team(invitation_id, team_id)
+        await team_invitations_service.delete(invitation.id, auto_commit=True)
 
     @post(operation_id="AcceptTeamInvitation", path="/{invitation_id:uuid}/accept")
     async def accept_team_invitation(
         self,
-        current_user: m.User,
-        team_invitations_service: TeamInvitationService,
-        team_members_service: TeamMemberService,
+        current_user: CurrentUser[m.User],
+        team_services: TeamServices,
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Accept an invitation.
-
-        Args:
-            team_id: The ID of the team to accept the invitation for.
-            invitation_id: The ID of the invitation to accept.
-            team_invitations_service: The team invitation service.
-            team_members_service: The team member service.
-            current_user: The current user.
-
-        Raises:
-            HTTPException: If the invitation is invalid or the user cannot accept it
+        """Accept a pending invitation addressed to the authenticated user, adding the membership in the same transaction.
 
         Returns:
-            A message indicating that the team invitation has been accepted.
+            Confirmation message for the accepted invitation.
         """
-        db_obj = await team_invitations_service.get(item_id=invitation_id)
-        if db_obj.team_id != team_id:
-            raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
-        if db_obj.is_accepted:
-            raise HTTPException(status_code=400, detail="Invitation has already been accepted")
-        if db_obj.email != current_user.email:
-            raise HTTPException(status_code=400, detail="You are not authorized to accept this invitation")
-        existing_membership = await team_members_service.get_one_or_none(
-            team_id=team_id,
-            user_id=current_user.id,
-        )
-        if existing_membership is not None:
-            raise HTTPException(status_code=400, detail="User is already a member of this team")
-        _ = await team_members_service.create(
-            {
-                "team_id": team_id,
-                "user_id": current_user.id,
-                "role": db_obj.role,
-                "is_owner": False,
-            }
-        )
-        await team_invitations_service.update(item_id=invitation_id, data={"is_accepted": True})
+        await team_services.accept_invitation(invitation_id, team_id=team_id, user=current_user)
         return Message(message="Team invitation accepted")
 
     @post(operation_id="RejectTeamInvitation", path="/{invitation_id:uuid}/reject")
     async def reject_team_invitation(
         self,
-        current_user: m.User,
+        current_user: CurrentUser[m.User],
         team_invitations_service: TeamInvitationService,
         team_id: UUID,
         invitation_id: UUID,
     ) -> Message:
-        """Reject an invitation.
-
-        Raises:
-            HTTPException: If the invitation is invalid or the user cannot reject it
+        """Reject a pending invitation addressed to the authenticated user.
 
         Returns:
-            A message indicating that the team invitation has been rejected.
+            Confirmation message for the rejected invitation.
         """
-        db_obj = await team_invitations_service.get(item_id=invitation_id)
-        if db_obj.team_id != team_id:
-            raise HTTPException(status_code=400, detail="Invitation does not belong to this team")
-        if db_obj.email != current_user.email:
-            raise HTTPException(status_code=400, detail="You are not authorized to reject this invitation")
-        await team_invitations_service.delete(item_id=invitation_id)
+        await team_invitations_service.reject(invitation_id, team_id=team_id, user=current_user)
         return Message(message="Team invitation rejected")

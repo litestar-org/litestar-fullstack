@@ -3,12 +3,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import subprocess
-from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
 
 REDIRECT_TEMPLATE = """
 <!DOCTYPE HTML>
@@ -29,28 +24,30 @@ parser = argparse.ArgumentParser()
 parser.add_argument("output")
 
 
-@contextmanager
-def checkout(branch: str) -> Generator[None, None, None]:
-    subprocess.run(["git", "checkout", branch], check=True)  # noqa: S607
-    yield
-    subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S607
-
-
 def build(output_dir: str) -> None:
+    target = _resolve_output_dir(output_dir)
     subprocess.run(["make", "docs"], check=True)  # noqa: S607
 
-    output_dir = Path(output_dir)  # type: ignore[assignment]
-    output_dir.mkdir()  # type: ignore[attr-defined]
-    output_dir.joinpath(".nojekyll").touch(exist_ok=True)  # type: ignore[attr-defined]
-    output_dir.joinpath("index.html").write_text(REDIRECT_TEMPLATE.format(target="latest"))  # type: ignore[attr-defined]
+    target.mkdir()
+    target.joinpath(".nojekyll").touch(exist_ok=True)
+    target.joinpath("index.html").write_text(REDIRECT_TEMPLATE.format(target="latest"))
 
     docs_src_path = Path("docs/_build/html")
-    shutil.copytree(docs_src_path, output_dir / "latest", dirs_exist_ok=True)  # type: ignore[operator]
+    shutil.copytree(docs_src_path, target / "latest", dirs_exist_ok=True)
 
 
 def main() -> None:
     args = parser.parse_args()
     build(output_dir=args.output)
+
+
+def _resolve_output_dir(output_dir: str) -> Path:
+    root = Path.cwd().resolve()
+    target = (root / output_dir).resolve()
+    if target == root or not target.is_relative_to(root):
+        msg = f"Output directory must be a subdirectory of {root}"
+        raise SystemExit(msg)
+    return target
 
 
 if __name__ == "__main__":

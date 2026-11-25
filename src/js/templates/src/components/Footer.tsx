@@ -5,7 +5,7 @@ interface FooterProps {
   appName: string
 }
 
-export const Footer = ({ appName }: FooterProps) => {
+export const Footer = ({ appName }: Readonly<FooterProps>) => {
   const year = new Date().getFullYear()
 
   return (

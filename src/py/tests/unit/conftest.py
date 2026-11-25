@@ -1,3 +1,5 @@
+"""Offline unit test ASGI fixtures."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -6,59 +8,44 @@ import pytest
 from litestar import Litestar, get
 from litestar.datastructures import State
 from litestar.enums import ScopeType
-from litestar.testing import AsyncTestClient
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
-
     from litestar.types import HTTPResponseBodyEvent, HTTPResponseStartEvent, HTTPScope
 
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="client")
-async def fx_client(app: Litestar) -> AsyncGenerator[AsyncTestClient, None]:
-    """Test client fixture for making calls on the global app instance."""
-    try:
-        async with AsyncTestClient(app=app) as client:
-            yield client
-    except Exception:  # noqa: BLE001
-        ...
-
-
-@pytest.fixture()
+@pytest.fixture
 def http_response_start() -> HTTPResponseStartEvent:
     """ASGI message for start of response."""
     return {"type": "http.response.start", "status": 200, "headers": []}
 
 
-@pytest.fixture()
+@pytest.fixture
 def http_response_body() -> HTTPResponseBodyEvent:
-    """ASGI message for interim, and final response body messages.
-
-    Note:
-        `more_body` is `True` for interim body messages.
-    """
+    """ASGI message for interim and final response body messages."""
     return {"type": "http.response.body", "body": b"body", "more_body": False}
 
 
-@pytest.fixture()
+@pytest.fixture
 def state() -> State:
     """Litestar application state data structure."""
     return State()
 
 
-@pytest.fixture()
-def http_scope(app: Litestar) -> HTTPScope:
-    """Minimal ASGI HTTP connection scope."""
+@pytest.fixture
+def http_scope() -> HTTPScope:
+    """Minimal ASGI HTTP connection scope for offline unit tests."""
 
     @get()
-    async def handler() -> None: ...
+    async def handler() -> None:
+        return None
 
+    minimal_app = Litestar(route_handlers=[handler])
     return {
         "headers": [],
-        "app": app,
-        "litestar_app": app,
+        "app": minimal_app,
+        "litestar_app": minimal_app,
         "asgi": {"spec_version": "whatever", "version": "3.0"},
         "auth": None,
         "client": None,

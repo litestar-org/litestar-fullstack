@@ -1,7 +1,5 @@
-"use client"
-
 import { useNavigate } from "@tanstack/react-router"
-import { ChevronsUpDown, LogOut, User } from "lucide-react"
+import { ChevronsUpDown, Key, LogOut, Shield, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -13,9 +11,9 @@ export function NavUser() {
   const { logout, user } = useAuthStore()
   const { isMobile } = useSidebar()
 
-  const onLogout = async () => {
+  const handleLogout = async () => {
     await logout()
-    navigate({ to: "/" })
+    void navigate({ to: "/" })
   }
 
   if (!user) {
@@ -64,14 +62,19 @@ export function NavUser() {
               <User />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-default focus:bg-transparent">
-              MFA
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate({ to: "/settings/security" })}>
+              <Shield />
+              Security
               <Badge variant={user.isTwoFactorEnabled ? "default" : "secondary"} className="ml-auto">
-                {user.isTwoFactorEnabled ? "Enabled" : "Disabled"}
+                {user.isTwoFactorEnabled ? "MFA On" : "MFA Off"}
               </Badge>
             </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate({ to: "/settings/api-keys" })}>
+              <Key />
+              API Keys
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

@@ -1,97 +1,103 @@
-"""User Profile Controllers."""
+"""User profile SecureController."""
 
-from __future__ import annotations
+from typing import Any, ClassVar, cast
 
-from typing import TYPE_CHECKING
+from litestar import Request, delete, get, patch
+from litestar.di import NamedDependency, Provide
+from litestar_security import (
+    AuthenticationPolicy,
+    CurrentUser,
+    SecureController,
+    SecurityContext,
+    SecurityPlugin,
+    any_of,
+    required,
+)
 
-import structlog
-from litestar import Controller, delete, get, patch
-from litestar.di import Provide
-
+from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
-from app.domain.accounts.schemas import PasswordUpdate, ProfileUpdate, User
+from app.domain.accounts.schemas import PasswordConfirmation, PasswordUpdate, ProfileUpdate, User
+from app.domain.accounts.security import confirm_authentication
+from app.domain.accounts.services import UserService
 from app.lib.schema import Message
 
-if TYPE_CHECKING:
-    from app.db import models as m
-    from app.domain.accounts.services import UserService
 
-logger = structlog.get_logger()
+class ProfileController(SecureController):
+    """Handles self-service profile inspection, updates, password rotation, and account deletion."""
 
-
-class ProfileController(Controller):
-    """Handles the current user profile operations."""
-
+    path = "/api/me"
     tags = ["Access"]
+    auth: ClassVar[AuthenticationPolicy] = required("session")
     dependencies = {
         "users_service": Provide(provide_users_service),
     }
 
     @get(
         operation_id="AccountProfile",
-        path="/api/me",
+        path="",
         summary="User Profile",
-        description="User profile information.",
+        description="Return the authenticated user's profile.",
+        opt={"auth": any_of("session", "api-key")},
+        mcp_resource="user_profile",
     )
-    async def get_profile(self, users_service: UserService, current_user: m.User) -> User:
-        """User profile.
+    async def get_profile(
+        self,
+        users_service: UserService,
+        current_user: CurrentUser[m.User],
+        security_context: NamedDependency[SecurityContext],
+    ) -> User:
+        """Return the authenticated user's profile."""
+        _ = security_context
+        user = await users_service.get(current_user.id)
+        return users_service.to_schema(user, schema_type=User)
 
-        Returns:
-            User: The current user's profile.
-        """
-        return users_service.to_schema(current_user, schema_type=User)
-
-    @patch(operation_id="AccountProfileUpdate", path="/api/me")
+    @patch(operation_id="AccountProfileUpdate", path="")
     async def update_profile(
         self,
-        current_user: m.User,
+        current_user: CurrentUser[m.User],
         data: ProfileUpdate,
         users_service: UserService,
     ) -> User:
-        """User Profile.
-
-        Args:
-            current_user: The current user.
-            data: The profile update data.
-            users_service: The users service.
+        """Update editable profile attributes for the authenticated user.
 
         Returns:
-            The response object.
+            Updated user profile payload.
         """
-        db_obj = await users_service.update(data, item_id=current_user.id)
-        return users_service.to_schema(db_obj, schema_type=User)
+        user = await users_service.update(data.to_dict(), item_id=current_user.id, auto_commit=True)
+        return users_service.to_schema(user, schema_type=User)
 
-    @patch(operation_id="AccountPasswordUpdate", path="/api/me/password")
+    @patch(operation_id="AccountPasswordUpdate", path="/password")
     async def update_password(
         self,
-        current_user: m.User,
+        request: Request[Any, Any, Any],
+        current_user: CurrentUser[m.User],
         data: PasswordUpdate,
         users_service: UserService,
     ) -> Message:
-        """Update user password.
-
-        Args:
-            current_user: The current user.
-            data: The password update data.
-            users_service: The users service.
+        """Replace the authenticated user's password after verifying the current one.
 
         Returns:
-            The response object.
+            Confirmation message for the password change.
         """
-        await users_service.update_password(data.to_dict(), db_obj=current_user)
+        await confirm_authentication(request, current_user, data.current_password)
+        await users_service.update_password(
+            current_user,
+            current_password=data.current_password,
+            new_password=data.new_password,
+        )
         return Message(message="Your password was successfully modified.")
 
-    @delete(operation_id="AccountDelete", path="/api/me")
+    @delete(operation_id="AccountDelete", path="")
     async def remove_account(
         self,
-        current_user: m.User,
+        request: Request[Any, Any, Any],
+        current_user: CurrentUser[m.User],
         users_service: UserService,
+        data: PasswordConfirmation | None = None,
     ) -> None:
-        """Remove your account.
-
-        Args:
-            current_user: The current user.
-            users_service: The users service.
-
-        """
-        _ = await users_service.delete(current_user.id)
+        """Delete the authenticated user's account after a recent sign-in or password confirmation."""
+        await confirm_authentication(request, current_user, data.current_password if data else None)
+        plugin = cast("SecurityPlugin[m.User]", request.app.plugins.get(SecurityPlugin))
+        if plugin.config.local_auth is not None and plugin.config.local_auth.session_auth is not None:
+            await plugin.config.local_auth.session_auth.logout(request)
+        _ = await users_service.delete(current_user.id, auto_commit=True)

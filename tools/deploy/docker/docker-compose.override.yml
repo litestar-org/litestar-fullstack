@@ -20,37 +20,31 @@ services:
     environment:
       VITE_DEV_MODE: "true"
       VITE_PORT: "3006"
-      SAQ_USE_SERVER_LIFESPAN: "false"
-    command: litestar run --reload --host 0.0.0.0 --port 8000
+    command: ["app", "run", "--reload", "--host", "0.0.0.0", "--port", "8000"]
     restart: always
     <<: *development-volumes
   worker:
     build:
       context: ../../..
       dockerfile: tools/deploy/docker/Dockerfile.dev
-    command: litestar workers run
+    command: ["app", "queues", "run"]
     tty: true
     restart: always
     <<: *development-volumes
     depends_on:
       db:
         condition: service_healthy
-      cache:
-        condition: service_healthy
-
     env_file:
       - .env.docker
   migrator:
     build:
       context: ../../..
       dockerfile: tools/deploy/docker/Dockerfile.dev
-    command: litestar database upgrade --no-prompt
+    command: ["app", "database", "upgrade", "--no-prompt"]
     restart: "no"
     <<: *development-volumes
     env_file:
       - .env.docker
     depends_on:
       db:
-        condition: service_healthy
-      cache:
         condition: service_healthy
