@@ -10,7 +10,8 @@ import msgspec
 import pytest
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.filters import FilterGroup, LimitOffsetFilter, OrderByFilter, SearchFilter
-from litestar.exceptions import PermissionDeniedException
+from litestar.exceptions import ClientException, PermissionDeniedException
+from litestar_security.accounts import Argon2PasswordHasher
 from sqlalchemy.orm import undefer_group
 
 from app.db import models as m
@@ -25,6 +26,8 @@ if TYPE_CHECKING:
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
 
 pytestmark = pytest.mark.anyio
+
+_HASHER = Argon2PasswordHasher()
 
 
 async def _init_db(tmp_path: Path, name: str) -> SQLAlchemyAsyncConfig:
@@ -47,9 +50,6 @@ async def test_user_service_argon2_create_and_update_password(tmp_path: Path) ->
         assert loaded.hashed_password is not None
         assert loaded.hashed_password.startswith("$argon2")
         assert loaded.has_password is True
-
-        authed = await service.authenticate("alice@example.com", "StrongPassword!123")
-        assert authed.id == created.id
 
         with pytest.raises(PermissionDeniedException):
             await service.update_password(
@@ -77,8 +77,9 @@ async def test_user_service_argon2_create_and_update_password(tmp_path: Path) ->
             current_password="StrongPassword!123",
             new_password="NewStrongPassword!456",
         )
-        authed_after = await service.authenticate("alice@example.com", "NewStrongPassword!456")
-        assert authed_after.security_epoch == initial_epoch + 1
+        updated = await service.get(created.id, load=[undefer_group("security_sensitive")])
+        assert (await _HASHER.verify(updated.hashed_password, "NewStrongPassword!456")).verified
+        assert updated.security_epoch == initial_epoch + 1
         await session.refresh(signed_in)
         assert signed_in.revoked_at is not None
 
@@ -89,6 +90,82 @@ async def test_user_service_argon2_create_and_update_password(tmp_path: Path) ->
                 current_password="NewStrongPassword!456",
                 new_password="AnotherStrongPass!789",
             )
+
+
+async def test_user_service_applies_the_password_policy_wherever_a_password_is_set(tmp_path: Path) -> None:
+    alchemy_config = await _init_db(tmp_path, "users_password_policy.sqlite3")
+    async with alchemy_config.get_session() as db_session:
+        users = UserService(session=db_session)
+
+        with pytest.raises(ClientException, match="at least 12 characters") as too_short:
+            await users.create({"email": "alice@example.com", "password": "Short1!"})
+        assert too_short.value.status_code == 400
+        with pytest.raises(ClientException, match="same as the email address"):
+            await users.create({"email": "Alice@Example.com", "password": "alice@example.com"})
+
+        alice = await users.create(
+            {"email": "alice@example.com", "password": "correct horse battery staple"},
+            auto_commit=True,
+        )
+        with pytest.raises(ClientException, match="same as the email address"):
+            await users.set_password(alice, "ALICE@example.com")
+        with pytest.raises(ClientException, match="too common"):
+            await users.set_password(alice, "Password12345")
+        with pytest.raises(ClientException, match="must not exceed 128 characters"):
+            await users.update_password(
+                alice,
+                current_password="correct horse battery staple",
+                new_password="x" * 129,
+            )
+
+
+async def test_setting_a_password_advances_the_security_epoch_and_signs_the_user_out(tmp_path: Path) -> None:
+    alchemy_config = await _init_db(tmp_path, "users_set_password.sqlite3")
+    async with alchemy_config.get_session() as db_session:
+        users = UserService(session=db_session)
+        bob = await users.provision(email="bob@example.com", name="Bob", verified=True, now=datetime.now(UTC))
+        now = datetime.now(UTC)
+        signed_in = m.UserSession(
+            session_id="bob-session",
+            binding_id="bob-binding",
+            binding_digest="00" * 32,
+            user_id=bob.id,
+            security_epoch=bob.security_epoch,
+            authenticated_at=now,
+            last_seen_at=now,
+            expires_at=now + timedelta(hours=1),
+        )
+        db_session.add(signed_in)
+        await db_session.commit()
+        initial_epoch = bob.security_epoch
+
+        await users.set_password(bob, "correct horse battery staple")
+        await db_session.commit()
+
+        await db_session.refresh(signed_in)
+        assert signed_in.revoked_at is not None
+        assert bob.security_epoch == initial_epoch + 1
+        assert bob.has_password
+        assert (await _HASHER.verify(bob.hashed_password, "correct horse battery staple")).verified
+
+
+async def test_user_service_normalizes_emails_it_stores_and_looks_up(tmp_path: Path) -> None:
+    alchemy_config = await _init_db(tmp_path, "users_email.sqlite3")
+    async with alchemy_config.get_session() as db_session:
+        users = UserService(session=db_session)
+
+        created = await users.create({"email": " Alice@Example.COM ", "password": "StrongPassword!123"})
+        assert created.email == "alice@example.com"
+
+        provisioned = await users.provision(email="Bob@Example.com", name="Bob", verified=True, now=datetime.now(UTC))
+        assert provisioned.email == "bob@example.com"
+
+        renamed = await users.update({"email": "Carol@Example.com"}, item_id=provisioned.id)
+        assert renamed.email == "carol@example.com"
+
+        assert await users.find_by_email("ALICE@example.com ") is created
+        assert await users.get_by_email(" CAROL@example.com") is renamed
+        assert await users.find_by_email("nobody@example.com") is None
 
 
 def test_account_ids_map_to_user_ids_and_back() -> None:

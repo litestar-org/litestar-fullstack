@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from advanced_alchemy.exceptions import DuplicateKeyError, NotFoundError
-from litestar import Litestar, get
+from litestar import Litestar, get, post
 from litestar.exceptions import HTTPException, PermissionDeniedException
 from litestar.stores.memory import MemoryStore
 from litestar.testing import AsyncTestClient
@@ -13,11 +13,12 @@ from litestar_autowire import AutowireConfig
 from litestar_queues import QueueConfig, WorkerConfig
 
 from app.lib.exceptions import (
+    ApplicationClientError,
     ApplicationError,
     AuthorizationError,
     exception_to_http_response,
 )
-from app.lib.validation import ValidationError
+from app.lib.schema import CamelizedBaseStruct, Username
 from app.server.core import ApplicationCore
 
 if TYPE_CHECKING:
@@ -47,7 +48,7 @@ def test_application_error_init() -> None:
         (AuthorizationError("Not your team"), {"status": 403, "title": "Forbidden", "detail": "Not your team"}),
         (DuplicateKeyError("Tag exists"), {"status": 409, "title": "Conflict", "detail": "Tag exists"}),
         (
-            ValidationError("Name cannot be empty"),
+            ApplicationClientError("Name cannot be empty"),
             {"status": 400, "title": "Bad Request", "detail": "Name cannot be empty"},
         ),
         (
@@ -113,9 +114,24 @@ def raise_repository_conflict() -> None:
 
 
 @get("/api/errors/invalid", opt={"exclude_from_auth": True}, sync_to_thread=False)
-def raise_validation_error() -> None:
+def raise_client_error() -> None:
     msg = "Name cannot be empty"
-    raise ValidationError(msg)
+    raise ApplicationClientError(msg)
+
+
+@get("/api/errors/crash", opt={"exclude_from_auth": True}, sync_to_thread=False)
+def raise_unexpected_error() -> None:
+    msg = "database password rejected"
+    raise RuntimeError(msg)
+
+
+class Signup(CamelizedBaseStruct):
+    user_name: Username
+
+
+@post("/api/errors/constrained", opt={"exclude_from_auth": True, "exclude_from_csrf": True}, sync_to_thread=False)
+def accept_constrained_body(data: Signup) -> None:
+    """Accept a body whose only field carries declarative constraints."""
 
 
 @pytest.fixture
@@ -125,7 +141,9 @@ async def client() -> AsyncIterator[AsyncTestClient[Litestar]]:
             raise_plain_http_exception,
             raise_coded_http_exception,
             raise_repository_conflict,
-            raise_validation_error,
+            raise_client_error,
+            raise_unexpected_error,
+            accept_constrained_body,
         ],
         plugins=[
             ApplicationCore(
@@ -162,3 +180,47 @@ async def test_every_error_response_uses_the_problem_details_envelope(
     assert response.status_code == expected["status"]
     assert response.headers["content-type"].startswith(PROBLEM_JSON)
     assert response.json() == expected
+
+
+async def test_a_field_that_breaks_its_constraints_is_named_in_the_problem(client: AsyncTestClient[Litestar]) -> None:
+    response = await client.post("/api/errors/constrained", json={"userName": "ab"})
+
+    assert response.status_code == 400
+    assert response.headers["content-type"].startswith(PROBLEM_JSON)
+    assert response.json() == {
+        "status": 400,
+        "title": "Bad Request",
+        "detail": "Validation failed for POST /api/errors/constrained",
+        "extra": [{"message": "Expected `str` of length >= 3", "key": "userName", "source": "body"}],
+    }
+
+
+async def test_only_server_errors_log_a_stack_trace(
+    client: AsyncTestClient[Litestar],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    paths_logged_with_a_stack_trace: list[str] = []
+
+    class RecordingLogger:
+        def error(self, event: str, *, path: str, exc_info: BaseException, **fields: Any) -> None:
+            assert event == "Uncaught exception"
+            assert isinstance(exc_info, RuntimeError)
+            paths_logged_with_a_stack_trace.append(path)
+
+    monkeypatch.setattr(client.app, "logger", RecordingLogger())
+
+    statuses = [
+        (await client.get(path)).status_code
+        for path in (
+            "/api/errors/invalid",
+            "/api/errors/coded",
+            "/api/no-such-route",
+            "/api/errors/conflict",
+            "/api/errors/plain",
+            "/api/errors/crash",
+        )
+    ]
+    statuses.append((await client.post("/api/errors/constrained", json={"userName": "ab"})).status_code)
+
+    assert statuses == [400, 403, 404, 409, 429, 500, 400]
+    assert paths_logged_with_a_stack_trace == ["/api/errors/crash"]

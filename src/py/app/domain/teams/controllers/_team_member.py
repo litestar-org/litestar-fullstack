@@ -44,7 +44,7 @@ class TeamMemberController(SecureController):
         Returns:
             The updated team with its members.
         """
-        user = await users_service.get_one(email=data.user_name)
+        user = await users_service.get_by_email(data.user_name)
         await team_members_service.add_member(team_id, user.id)
         team = await teams_service.get(team_id)
         return teams_service.to_schema(team, schema_type=Team)
@@ -63,7 +63,7 @@ class TeamMemberController(SecureController):
         Returns:
             The updated team after removing the member.
         """
-        user = await users_service.get_one(email=data.user_name)
+        user = await users_service.get_by_email(data.user_name)
         await team_members_service.remove_member(team_id, user.id)
         team = await teams_service.get(team_id)
         return teams_service.to_schema(team, schema_type=Team)

@@ -14,7 +14,7 @@ from litestar_security.accounts import (
 )
 
 from app.db import models as m
-from app.domain.accounts.security.events import security_audit_record
+from app.domain.accounts.security._event import security_audit_record
 from app.domain.accounts.services import (
     PasskeyChallengeService,
     PasskeyService,

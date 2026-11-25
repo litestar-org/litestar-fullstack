@@ -35,7 +35,7 @@ from litestar_security.authentication import InvalidCredentials, VerificationUna
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.db import models as m
-from app.domain.accounts.security.events import security_audit_record
+from app.domain.accounts.security._event import security_audit_record
 from app.domain.accounts.services import AccountSecurityServices, TokenRejection, UserService, UserSessionService
 
 if TYPE_CHECKING:

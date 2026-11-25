@@ -26,7 +26,13 @@ from litestar_security.providers.oauth import (
     UnlinkStatus,
 )
 
-from app.domain.accounts.services import OAuthAccountService, OAuthServices, OAuthTransactionService, UserService
+from app.domain.accounts.services import (
+    AccountSecurityServices,
+    OAuthAccountService,
+    OAuthServices,
+    OAuthTransactionService,
+    UserService,
+)
 from app.lib.secrets import OAUTH_PROTECTOR_INFO, derive_subkey
 
 if TYPE_CHECKING:
@@ -313,7 +319,6 @@ class SQLAlchemyOAuthAccountStore:
                 grant=grant,
                 protected_tokens=protected_tokens,
                 now=now,
-                advance_version=True,
             )
             await oauth_accounts.repository.session.commit()
             return oauth_accounts.to_linked_account(oauth_account)
@@ -337,8 +342,13 @@ class SQLAlchemyOAuthAccountStore:
         oauth_account_id = OAuthAccountService.to_oauth_account_id(provider_account_id)
         if user_id is None or oauth_account_id is None:
             return UnlinkOutcome(UnlinkStatus.NOT_FOUND)
-        async with OAuthServices.new(config=self._alchemy_config) as services:
-            status = await services.unlink(user_id, oauth_account_id, provider, require_remaining=require_remaining)
+        async with AccountSecurityServices.new(config=self._alchemy_config) as services:
+            status = await services.unlink_oauth_account(
+                user_id,
+                oauth_account_id,
+                provider,
+                require_remaining=require_remaining,
+            )
             await services.session.commit()
         return UnlinkOutcome(status, provider_account_id if status is UnlinkStatus.UNLINKED else None)
 

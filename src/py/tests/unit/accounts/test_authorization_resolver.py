@@ -11,7 +11,7 @@ from litestar_security.authentication import InvalidCredentials
 from litestar_security.context import AuthorizationSnapshot, Principal
 
 from app.db import models as m
-from app.domain.accounts.security.resolver import (
+from app.domain.accounts.security import (
     TEAM_ROLE_EXPANSION,
     AppAuthorizationResolver,
     SelfSubjectPredicate,

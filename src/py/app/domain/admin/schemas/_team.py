@@ -44,13 +44,8 @@ class AdminTeamDetail(CamelizedBaseStruct, kw_only=True):
 
     def __post_init__(self) -> None:
         """Compute derived fields from members."""
-        object.__setattr__(self, "member_count", len(self.members))
-        owner_email = None
-        for member in self.members:
-            if member.is_owner:
-                owner_email = member.user.email
-                break
-        object.__setattr__(self, "owner_email", owner_email)
+        self.member_count = len(self.members)
+        self.owner_email = next((member.user.email for member in self.members if member.is_owner), None)
 
 
 class AdminTeamUpdate(CamelizedBaseStruct, gc=False, omit_defaults=True):

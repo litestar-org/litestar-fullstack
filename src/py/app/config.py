@@ -8,10 +8,12 @@ from litestar_asyncapi import AsyncAPIConfig, ChannelDefinition, MessageDefiniti
 from litestar_autowire import AutowireConfig
 from litestar_security import required
 
-from app.domain.accounts.security.config import (
+from app.domain.accounts.security import (
+    ApplicationAccessRouter,
     build_csrf_config,
     build_security_config,
     build_session_middleware,
+    require_application_access,
 )
 from app.domain.system.jobs import QueueTaskEventPayload
 from app.lib.exceptions import to_problem_details
@@ -39,6 +41,7 @@ queues = _settings.queues.get_config(
     alchemy_config=alchemy,
     db_settings=_settings.db,
     app_settings=_settings.app,
+    stream_guards=[require_application_access],
 )
 asyncapi = AsyncAPIConfig(
     title=f"{_settings.app.NAME} Events",
@@ -68,11 +71,12 @@ asyncapi = AsyncAPIConfig(
 autowire = AutowireConfig(
     domain_packages=["app.domain"],
     integrations=["queues"],
+    router_class=ApplicationAccessRouter,
 )
 csrf = build_csrf_config(_settings)
 session_middleware = build_session_middleware(_settings)
 security = build_security_config(_settings, alchemy)
-mcp = _settings.mcp.get_config(auth=required("api-key"))
+mcp = _settings.mcp.get_config(auth=required("api-key"), guards=[require_application_access])
 
 __all__ = (
     "alchemy",

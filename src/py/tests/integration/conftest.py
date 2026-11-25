@@ -15,7 +15,7 @@ from sqlalchemy import select
 
 from app import config
 from app.db import models as m
-from app.domain.accounts.security.config import build_security_config
+from app.domain.accounts.security import build_security_config, require_application_access
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.teams.services import TeamService
 from app.lib.settings import get_settings
@@ -119,6 +119,7 @@ def fx_app(
         alchemy_config=config.alchemy,
         db_settings=settings.db,
         app_settings=settings.app,
+        stream_guards=[require_application_access],
     )
     security_config = build_security_config(settings, config.alchemy)
     app_instance = Litestar(

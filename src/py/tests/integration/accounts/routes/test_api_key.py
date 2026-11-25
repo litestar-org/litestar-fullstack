@@ -12,7 +12,7 @@ from sqlalchemy import select
 
 from app import config
 from app.db import models as m
-from app.domain.accounts.security.api_keys import SQLAlchemyAPIKeyStore, build_api_key_service
+from app.domain.accounts.security import SQLAlchemyAPIKeyStore, build_api_key_service
 from tests.integration.conftest import login_session_client, reset_client_session
 
 if TYPE_CHECKING:

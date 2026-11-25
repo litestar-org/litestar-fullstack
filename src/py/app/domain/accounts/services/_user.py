@@ -8,7 +8,15 @@ from uuid import UUID
 
 from advanced_alchemy.extensions.litestar import service
 from litestar.exceptions import ClientException, PermissionDeniedException
-from litestar_security.accounts import Argon2PasswordHasher, LocalAccountState, LoginMethod, PasswordCredentialState
+from litestar_security.accounts import (
+    Argon2PasswordHasher,
+    LocalAccountState,
+    LoginMethod,
+    PasswordCredentialState,
+    PasswordPolicy,
+    PasswordPolicyViolation,
+    normalize_identifier,
+)
 from sqlalchemy import select, update
 from sqlalchemy.orm import undefer_group
 
@@ -16,24 +24,43 @@ from app.db import models as m
 from app.domain.accounts.services._role import RoleService
 from app.domain.accounts.services._session import UserSessionService
 from app.domain.accounts.services._statements import ACCOUNT_STATE_LOAD, affected_rows
-from app.lib import constants
-from app.lib.validation import PasswordValidationError, validate_password_strength
 
 if TYPE_CHECKING:
     from advanced_alchemy.service import ModelDictT
     from sqlalchemy import ColumnElement
 
+_COMMON_PASSWORDS = frozenset({"administrator", "password1234", "password12345"})
+PASSWORD_POLICY = PasswordPolicy(
+    minimum_length=12,
+    maximum_length=128,
+    compromised=lambda password: password.casefold() in _COMMON_PASSWORDS,
+)
+"""The one rule set every new password must satisfy, wherever it is chosen.
+
+A password is 12 to 128 characters long and is not on the common-password list, whatever its letter case.
+A caller that knows the account also passes its email address, which the password may not repeat. The
+security configuration hands the policy to ``LocalAuth`` for sign-up, password reset, and its own password
+change; ``UserService.hash_password`` applies it everywhere the application sets a password.
+"""
+
 _PASSWORD_HASHER = Argon2PasswordHasher()
+_PASSWORD_VIOLATION_MESSAGES = {
+    PasswordPolicyViolation.TOO_SHORT: f"Password must be at least {PASSWORD_POLICY.minimum_length} characters long.",
+    PasswordPolicyViolation.TOO_LONG: f"Password must not exceed {PASSWORD_POLICY.maximum_length} characters.",
+    PasswordPolicyViolation.TOO_MANY_BYTES: f"Password must not exceed {PASSWORD_POLICY.maximum_bytes} bytes.",
+    PasswordPolicyViolation.INVALID_TEXT: "Password must be valid text.",
+    PasswordPolicyViolation.MATCHES_IDENTIFIER: "Password must not be the same as the email address.",
+    PasswordPolicyViolation.COMPROMISED: "Password is too common. Choose one that is harder to guess.",
+}
 
 
 class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
     """Handles database operations for user accounts using Argon2 password hashing."""
 
-    default_role = constants.DEFAULT_ACCESS_ROLE
     match_fields = ["email"]
 
     async def to_model_on_create(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords and attach initial role assignments before creation.
+        """Normalize the email address, hash a plaintext password, and attach an initial role before creation.
 
         Returns:
             Normalized user payload or model instance ready for persistence.
@@ -41,15 +68,18 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         return await self._populate_model(data)
 
     async def to_model_on_update(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords when updating a user record.
+        """Normalize the email address when updating a user record.
+
+        An update never replaces a password: ``set_password`` does, so the security epoch advances and the
+        user's sessions end with it.
 
         Returns:
             Normalized user payload or model instance ready for update.
         """
-        return await self._populate_model(data)
+        return self._normalize_email(service.schema_dump(data))
 
     async def to_model_on_upsert(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        """Hash plaintext passwords when upserting a user record.
+        """Normalize the email address and hash a plaintext password when upserting a user record.
 
         Returns:
             Normalized user payload or model instance ready for upsert.
@@ -145,6 +175,24 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             with_for_update=True,
         )
 
+    async def find_by_email(self, email: str) -> m.User | None:
+        """Load the account an email address identifies, however the address is capitalized or padded.
+
+        Returns:
+            The user, or ``None`` when no account has that address.
+        """
+        return await self.get_one_or_none(email=normalize_identifier(email))
+
+    async def get_by_email(self, email: str) -> m.User:
+        """Load the account an email address identifies, however the address is capitalized or padded.
+
+        A missing account surfaces as the ``NotFoundError`` raised by ``get_one``.
+
+        Returns:
+            The user holding that address.
+        """
+        return await self.get_one(email=normalize_identifier(email))
+
     async def get_security_epoch(self, user_id: UUID) -> int | None:
         """Read an account's security epoch without loading the account.
 
@@ -171,7 +219,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         ever provisioned without it.
 
         Args:
-            email: Normalized email address identifying the account.
+            email: Email address identifying the account, stored normalized.
             name: Display name, when known.
             verified: Whether the email address is already confirmed.
             now: Timestamp recorded for verification and the role assignment.
@@ -183,7 +231,7 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         """
         user = await self.create(
             m.User(
-                email=email,
+                email=normalize_identifier(email),
                 name=name,
                 hashed_password=hashed_password,
                 is_active=True,
@@ -194,11 +242,8 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             )
         )
         db_session = self.repository.session
-        roles = RoleService(session=db_session)
-        default_role = await roles.get_one_or_none(name=self.default_role) or await roles.create(
-            {"name": self.default_role, "description": constants.DEFAULT_ACCESS_ROLE_DESCRIPTION}
-        )
-        db_session.add(m.UserRole(user_id=user.id, role_id=default_role.id, assigned_at=now))
+        default_access_role = await RoleService(session=db_session).ensure_default_access_role()
+        db_session.add(m.UserRole(user_id=user.id, role_id=default_access_role.id, assigned_at=now))
         await db_session.flush()
         return user
 
@@ -252,64 +297,58 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
         return await affected_rows(self.repository.session, statement) == 1
 
     @staticmethod
-    async def hash_password(password: str) -> str:
-        """Hash a plaintext password with the application's Argon2 parameters.
+    async def hash_password(password: str, *, email: str | None) -> str:
+        """Hash a plaintext password that satisfies the application's password policy.
+
+        Every password the application itself sets passes through here, so ``PASSWORD_POLICY`` is the only
+        rule a new password meets.
+
+        Args:
+            password: Plaintext password chosen for the account.
+            email: Email address of the account, which the password must not repeat, when it is known.
 
         Returns:
             Encoded Argon2 hash.
+
+        Raises:
+            ClientException: If the policy rejects the password. The detail names every violated rule.
         """
+        violations = PASSWORD_POLICY.check(password, normalized_identifier=email).violations
+        if violations:
+            raise ClientException(
+                detail=" ".join(
+                    message for violation, message in _PASSWORD_VIOLATION_MESSAGES.items() if violation in violations
+                )
+            )
         return await _PASSWORD_HASHER.hash(password)
 
-    async def authenticate(self, username: str, password: str) -> m.User:
-        """Verify email and password against the stored Argon2 hash.
+    async def set_password(self, user: m.User, password: str) -> None:
+        """Give a user a new password inside the caller's transaction, signing the account out everywhere.
 
-        Args:
-            username: User email address.
-            password: Candidate plaintext password.
-
-        Returns:
-            The authenticated active user record.
+        Advancing the security epoch and revoking every session ends whatever the previous password had
+        opened. ``user`` reflects its new credentials when this returns.
 
         Raises:
-            PermissionDeniedException: If credentials are invalid or the account is inactive.
+            ClientException: If ``hash_password`` rejects the password, or the account's credentials changed
+                after ``user`` was loaded.
         """
-        user = await self.get_one_or_none(email=username, load=[undefer_group("security_sensitive")])
-        if user is None or user.hashed_password is None:
-            msg = "User not found or password invalid"
-            raise PermissionDeniedException(detail=msg)
-        outcome = await _PASSWORD_HASHER.verify(user.hashed_password, password)
-        if not outcome.verified:
-            msg = "User not found or password invalid"
-            raise PermissionDeniedException(detail=msg)
-        if not user.is_active:
-            msg = "User account is inactive"
-            raise PermissionDeniedException(detail=msg)
-        return user
-
-    async def verify_email(self, user_id: UUID, email: str) -> m.User:
-        """Mark a user's email address as verified.
-
-        Args:
-            user_id: Target user UUID.
-            email: Verified email address expected to match the account.
-
-        Returns:
-            The updated user record.
-
-        Raises:
-            ClientException: If the user does not exist or the email does not match.
-        """
-        user = await self.get_one_or_none(id=user_id)
-        if user is None:
-            raise ClientException(detail="User not found", status_code=404)
-        if user.email != email:
-            raise ClientException(detail="Email address does not match user account", status_code=400)
-        user.is_verified = True
-        user.verified_at = datetime.now(UTC).date()
-        return await self.update(data=user)
+        password_hash = await self.hash_password(password, email=user.email)
+        password_replaced = await self.replace_password_hash_and_bump_epoch(
+            user.id,
+            password_hash,
+            expected_epoch=user.security_epoch,
+        )
+        if not password_replaced:
+            raise ClientException(detail="The account's credentials changed. Try again.", status_code=409)
+        db_session = self.repository.session
+        await UserSessionService(session=db_session).revoke_all_for_user(user.id, now=datetime.now(UTC))
+        await db_session.refresh(user, ["hashed_password", "has_password", "security_epoch"])
 
     async def update_password(self, user: m.User, *, current_password: str, new_password: str) -> None:
         """Replace the user's password after verifying the current one, signing the account out everywhere.
+
+        A rejected new password, or credentials that changed while this request was verifying them, surface
+        as the ``ClientException`` raised by ``set_password``.
 
         Args:
             user: Account changing its password.
@@ -317,15 +356,8 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             new_password: Plaintext replacement password.
 
         Raises:
-            ClientException: If the new password fails strength validation, or the account's credentials
-                changed while this request was verifying them.
             PermissionDeniedException: If current password verification fails or the account is inactive.
         """
-        try:
-            validate_password_strength(new_password)
-        except PasswordValidationError as error:
-            raise ClientException(detail=str(error), status_code=400) from error
-
         account = await self.find_with_password(user.id)
         if account is None or account.hashed_password is None:
             msg = "User not found or password invalid."
@@ -338,43 +370,23 @@ class UserService(service.SQLAlchemyAsyncRepositoryService[m.User]):
             msg = "User account is not active"
             raise PermissionDeniedException(detail=msg)
 
-        password_hash = await _PASSWORD_HASHER.hash(new_password)
-        password_replaced = await self.replace_password_hash_and_bump_epoch(
-            account.id,
-            password_hash,
-            expected_epoch=account.security_epoch,
-        )
-        if not password_replaced:
-            raise ClientException(detail="Your credentials changed. Sign in again and retry.", status_code=409)
-        db_session = self.repository.session
-        await UserSessionService(session=db_session).revoke_all_for_user(account.id, now=datetime.now(UTC))
-        await db_session.commit()
-
-    @staticmethod
-    async def has_role_id(user: m.User, role_id: UUID) -> bool:
-        """Return whether the user holds the role identified by ``role_id``."""
-        return any(assigned.role_id == role_id for assigned in user.roles)
-
-    @staticmethod
-    async def has_role(user: m.User, role_name: str) -> bool:
-        """Return whether the user holds the named role."""
-        return any(assigned.role_name == role_name for assigned in user.roles)
-
-    @staticmethod
-    def is_superuser(user: m.User) -> bool:
-        """Return whether the user is a superuser via flag or role assignment."""
-        return bool(
-            user.is_superuser or any(assigned.role_name == constants.SUPERUSER_ACCESS_ROLE for assigned in user.roles),
-        )
+        await self.set_password(account, new_password)
+        await self.repository.session.commit()
 
     async def _populate_model(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
-        dumped: ModelDictT[m.User] = service.schema_dump(data)
+        dumped: ModelDictT[m.User] = self._normalize_email(service.schema_dump(data))
         dumped = await self._populate_with_hashed_password(dumped)
         return await self._populate_with_role(dumped)
 
+    @staticmethod
+    def _normalize_email(data: ModelDictT[m.User]) -> ModelDictT[m.User]:
+        if service.is_dict_with_field(data, "email") and isinstance(data["email"], str):
+            data["email"] = normalize_identifier(data["email"])
+        return data
+
     async def _populate_with_hashed_password(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:
         if service.is_dict(data) and (password := data.pop("password", None)) is not None:
-            data["hashed_password"] = await _PASSWORD_HASHER.hash(str(password))
+            data["hashed_password"] = await self.hash_password(str(password), email=data.get("email"))
         return data
 
     async def _populate_with_role(self, data: ModelDictT[m.User]) -> ModelDictT[m.User]:

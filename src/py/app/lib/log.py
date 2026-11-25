@@ -5,13 +5,19 @@ from functools import lru_cache
 from typing import TYPE_CHECKING
 
 import structlog
+from advanced_alchemy.exceptions import DuplicateKeyError, ForeignKeyError, NotFoundError
+from litestar.exceptions import HTTPException
 from litestar.serialization import encode_json
+from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from structlog.dev import RichTracebackFormatter
+
+from app.lib.exceptions import ApplicationClientError
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from typing import Any
 
+    from litestar.types import Logger, Scope
     from structlog.types import EventDict, WrappedLogger
     from structlog.typing import Processor
 
@@ -19,6 +25,7 @@ __all__ = (
     "EventFilter",
     "add_google_cloud_attributes",
     "is_tty",
+    "log_server_error",
     "stdlib_json_serializer",
     "stdlib_logger_processors",
     "structlog_json_serializer",
@@ -159,3 +166,25 @@ def stdlib_logger_processors(as_json: bool) -> list[Processor]:
             exception_formatter=RichTracebackFormatter(max_frames=1, show_locals=False, width=80),
         ),
     ]
+
+
+def log_server_error(logger: Logger, scope: Scope, stack_trace: list[str]) -> None:
+    """Log an uncaught exception with its stack trace, unless the client caused it.
+
+    A client error is an ``HTTPException`` answering below 500, or one of the application and repository
+    exceptions that ``exception_to_http_response`` always answers with a 4xx status. Litestar's own
+    ``disable_stack_trace`` cannot express this, because it looks at the status code of the exception's
+    class and misses a status passed when the exception is raised.
+
+    Args:
+        logger: Logger the application logs exceptions with.
+        scope: Connection the exception was raised in.
+        stack_trace: Formatted stack trace, unused because the logger formats the exception itself.
+    """
+    _ = stack_trace
+    error = sys.exc_info()[1]
+    if isinstance(error, HTTPException) and error.status_code < HTTP_500_INTERNAL_SERVER_ERROR:
+        return
+    if isinstance(error, ApplicationClientError | NotFoundError | DuplicateKeyError | ForeignKeyError):
+        return
+    logger.error("Uncaught exception", connection_type=scope["type"], path=scope["path"], exc_info=error)

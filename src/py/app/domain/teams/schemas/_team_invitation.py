@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from app.db.models._team_roles import TeamRoles
+from app.db.models import TeamRoles
 from app.lib.schema import CamelizedBaseStruct
 
 

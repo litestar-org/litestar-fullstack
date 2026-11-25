@@ -102,6 +102,26 @@ async def test_add_update_and_remove_team_member_lifecycle(
     assert remaining is None
 
 
+async def test_team_members_are_found_by_email_however_it_is_typed(
+    authenticated_client: AsyncClient,
+    test_team: m.Team,
+    session: AsyncSession,
+) -> None:
+    candidate = await _create_user(session, f"candidate-{uuid4().hex[:8]}@example.com")
+    typed_email = f" {candidate.email.upper()} "
+
+    add_resp = await authenticated_client.post(f"/api/teams/{test_team.id}/members", json={"userName": typed_email})
+    remove_resp = await authenticated_client.request(
+        "DELETE",
+        f"/api/teams/{test_team.id}/members",
+        json={"userName": typed_email},
+    )
+
+    assert add_resp.status_code == 201, add_resp.text
+    assert candidate.email in [member["email"] for member in add_resp.json()["members"]]
+    assert remove_resp.status_code == 202, remove_resp.text
+
+
 async def test_member_error_conditions(
     authenticated_client: AsyncClient,
     test_team: m.Team,

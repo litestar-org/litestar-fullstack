@@ -11,7 +11,7 @@ from litestar.testing import AsyncTestClient
 from litestar_email import EmailConfig
 
 from app import config
-from app.domain.accounts.security.config import build_security_config
+from app.domain.accounts.security import build_security_config
 from app.lib.settings import get_settings
 from app.server.core import ApplicationCore
 

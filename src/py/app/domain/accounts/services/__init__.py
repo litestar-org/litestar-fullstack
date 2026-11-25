@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 from app.domain.accounts.services._api_key import APIKeyRecordService
+from app.domain.accounts.services._group import (
+    AccountSecurityServices,
+    AccountServices,
+    MFAServices,
+    OAuthServices,
+    PasskeyServices,
+)
 from app.domain.accounts.services._mfa import (
     MFAFactorService,
     MFALoginChallengeService,
@@ -19,20 +26,12 @@ from app.domain.accounts.services._session import (
     UserSessionService,
 )
 from app.domain.accounts.services._statements import is_constraint_violation
-from app.domain.accounts.services._user import UserService
+from app.domain.accounts.services._user import PASSWORD_POLICY, UserService
 from app.domain.accounts.services._user_role import UserRoleService
-from app.domain.accounts.services.group import (
-    AccountSecurityServices,
-    AccountServices,
-    APIKeyServices,
-    MFAServices,
-    OAuthServices,
-    PasskeyServices,
-)
 
 __all__ = (
+    "PASSWORD_POLICY",
     "APIKeyRecordService",
-    "APIKeyServices",
     "AccountSecurityServices",
     "AccountServices",
     "LoginMethodService",

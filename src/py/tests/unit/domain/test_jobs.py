@@ -2,23 +2,27 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+import httpx
 import pytest
 from advanced_alchemy.base import orm_registry
 from litestar_email import EmailConfig, InMemoryBackend
 from litestar_queues import NonRetryableError, QueueConfig, QueueService, WorkerConfig
-from sqlalchemy import select
+from litestar_security.providers.oauth import ProviderGrant, ProviderIdentity, ProviderTokenSet, SecretStr
+from sqlalchemy import event, select
 
 from app import config as app_config
 from app.db import models as m
 from app.domain.accounts.jobs import (
+    run_refresh_oauth_tokens,
     send_team_invitation_email_task,
     send_verification_email_task,
 )
-from app.domain.accounts.jobs._oauth_refresh import run_refresh_oauth_tokens
+from app.domain.accounts.security import SQLAlchemyOAuthAccountStore, build_oauth_protector
 from app.domain.system.jobs import (
     export_team_summary,
     run_cleanup_auth_tokens,
@@ -31,8 +35,27 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
+    from litestar_security.providers.oauth import LinkedProviderAccount
 
 pytestmark = pytest.mark.anyio
+
+GITHUB_SETTINGS = Settings(
+    app=AppSettings(
+        SECRET_KEY="refresh-roundtrip-secret",
+        GITHUB_OAUTH2_CLIENT_ID="gh-client-id",
+        GITHUB_OAUTH2_CLIENT_SECRET="gh-client-secret",
+    )
+)
+GITHUB_IDENTITY = ProviderIdentity(
+    provider="github",
+    issuer="https://github.com",
+    subject="sub-123",
+    email="oauth-user@example.com",
+    email_verified=True,
+    display_name="OAuth User",
+    raw_claims={},
+)
+GITHUB_SCOPES = frozenset({"read:user", "user:email"})
 
 
 async def _make_db(tmp_path: Path, name: str) -> SQLAlchemyAsyncConfig:
@@ -168,51 +191,42 @@ async def test_refresh_oauth_tokens_with_no_configured_providers(tmp_path: Path)
     assert result == {"processed": 0, "refreshed": 0, "skipped": 0, "failed": 0}
 
 
-async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(tmp_path: Path) -> None:
-    import httpx
-    from litestar_security.providers.oauth import ProviderGrant, ProviderIdentity, ProviderTokenSet, SecretStr
-
-    from app.domain.accounts.security.oauth import SQLAlchemyOAuthAccountStore, build_oauth_protector
-
-    db_cfg = await _make_db(tmp_path, "oauth_refresh_roundtrip.sqlite3")
-    settings = Settings(
-        app=AppSettings(
-            SECRET_KEY="refresh-roundtrip-secret",
-            GITHUB_OAUTH2_CLIENT_ID="gh-client-id",
-            GITHUB_OAUTH2_CLIENT_SECRET="gh-client-secret",
-        )
+def _expiring_tokens(access_token: str, *, now: datetime) -> ProviderTokenSet:
+    return ProviderTokenSet(
+        access_token=SecretStr(access_token),
+        token_type="Bearer",
+        scopes=GITHUB_SCOPES,
+        expires_at=now + timedelta(minutes=2),
+        refresh_token=SecretStr("old-refresh"),
+        id_token=SecretStr("old-id-token"),
     )
-    now = datetime.now(UTC)
-    async with db_cfg.get_session() as session:
-        user = m.User(email="oauth-user@example.com", name="OAuth User", is_active=True, is_verified=True)
-        session.add(user)
-        await session.commit()
-        user_id = str(user.id)
 
-    store = SQLAlchemyOAuthAccountStore(db_cfg, build_oauth_protector(settings))
+
+async def _link_expiring_github_account(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    *,
+    now: datetime,
+) -> tuple[SQLAlchemyOAuthAccountStore, LinkedProviderAccount]:
+    async with alchemy_config.get_session() as db_session:
+        user = m.User(email="oauth-user@example.com", name="OAuth User", is_active=True, is_verified=True)
+        db_session.add(user)
+        await db_session.commit()
+    store = SQLAlchemyOAuthAccountStore(alchemy_config, build_oauth_protector(GITHUB_SETTINGS))
     linked = await store.link(
-        account_id=user_id,
-        identity=ProviderIdentity(
-            provider="github",
-            issuer="https://github.com",
-            subject="sub-123",
-            email="oauth-user@example.com",
-            email_verified=True,
-            display_name="OAuth User",
-            raw_claims={},
-        ),
-        grant=ProviderGrant(scopes=frozenset({"read:user", "user:email"}), expires_at=now + timedelta(minutes=2)),
-        tokens=ProviderTokenSet(
-            access_token=SecretStr("old-access"),
-            token_type="Bearer",
-            scopes=frozenset({"read:user", "user:email"}),
-            expires_at=now + timedelta(minutes=2),
-            refresh_token=SecretStr("old-refresh"),
-            id_token=SecretStr("old-id-token"),
-        ),
+        account_id=str(user.id),
+        identity=GITHUB_IDENTITY,
+        grant=ProviderGrant(scopes=GITHUB_SCOPES, expires_at=now + timedelta(minutes=2)),
+        tokens=_expiring_tokens("old-access", now=now),
         retain_tokens=True,
         now=now,
     )
+    return store, linked
+
+
+async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(tmp_path: Path) -> None:
+    db_cfg = await _make_db(tmp_path, "oauth_refresh_roundtrip.sqlite3")
+    now = datetime.now(UTC)
+    store, linked = await _link_expiring_github_account(db_cfg, now=now)
 
     def _mock_handler(request: httpx.Request) -> httpx.Response:
         assert str(request.url) == "https://github.com/login/oauth/access_token"
@@ -228,7 +242,7 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
 
     counts = await run_refresh_oauth_tokens(
         db_cfg,
-        settings=settings,
+        settings=GITHUB_SETTINGS,
         transport=httpx.MockTransport(_mock_handler),
     )
     assert counts == {"processed": 1, "refreshed": 1, "skipped": 0, "failed": 0}
@@ -241,3 +255,50 @@ async def test_refresh_oauth_tokens_round_trips_store_aead_and_preserves_tokens(
     assert refreshed.tokens.id_token is not None
     assert refreshed.tokens.id_token.get_secret_value() == "old-id-token"
     assert "repo" in refreshed.tokens.scopes
+
+
+async def test_refresh_oauth_tokens_holds_no_database_connection_while_calling_the_provider(tmp_path: Path) -> None:
+    alchemy_config = await _make_db(tmp_path, "oauth_refresh_connections.sqlite3")
+    await _link_expiring_github_account(alchemy_config, now=datetime.now(UTC))
+    connections: Counter[str] = Counter()
+    sync_engine = alchemy_config.get_engine().sync_engine
+    event.listen(sync_engine, "connect", lambda *_: connections.update(["open"]))
+    event.listen(sync_engine, "close", lambda *_: connections.subtract(["open"]))
+    open_during_provider_calls: list[int] = []
+
+    def _provider(request: httpx.Request) -> httpx.Response:
+        open_during_provider_calls.append(connections["open"])
+        return httpx.Response(200, json={"access_token": "new-access-token", "expires_in": 3600})
+
+    counts = await run_refresh_oauth_tokens(
+        alchemy_config, settings=GITHUB_SETTINGS, transport=httpx.MockTransport(_provider)
+    )
+
+    assert counts == {"processed": 1, "refreshed": 1, "skipped": 0, "failed": 0}
+    assert open_during_provider_calls == [0]
+
+
+async def test_refresh_oauth_tokens_keeps_the_tokens_of_a_sign_in_made_during_the_provider_call(tmp_path: Path) -> None:
+    alchemy_config = await _make_db(tmp_path, "oauth_refresh_sign_in.sqlite3")
+    now = datetime.now(UTC)
+    store, linked = await _link_expiring_github_account(alchemy_config, now=now)
+
+    async def _provider(request: httpx.Request) -> httpx.Response:
+        await store.login(
+            GITHUB_IDENTITY,
+            ProviderGrant(scopes=GITHUB_SCOPES, expires_at=now + timedelta(minutes=2)),
+            _expiring_tokens("signed-in-access", now=now),
+            provision_unknown=False,
+            retain_tokens=True,
+            now=now,
+        )
+        return httpx.Response(200, json={"access_token": "refreshed-access", "expires_in": 3600})
+
+    counts = await run_refresh_oauth_tokens(
+        alchemy_config, settings=GITHUB_SETTINGS, transport=httpx.MockTransport(_provider)
+    )
+
+    assert counts == {"processed": 1, "refreshed": 0, "skipped": 1, "failed": 0}
+    stored = await store.get_tokens(provider_account_id=linked.provider_account_id, now=now)
+    assert stored is not None
+    assert stored.tokens.access_token.get_secret_value() == "signed-in-access"

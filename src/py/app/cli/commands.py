@@ -8,13 +8,14 @@ from typing import TYPE_CHECKING, cast
 
 import anyio
 import click
+import msgspec
 import structlog
 from advanced_alchemy.utils.fixtures import open_fixture_async
-from advanced_alchemy.utils.text import slugify
+from litestar.exceptions import ClientException
 from rich import get_console
 
 from app.config import alchemy
-from app.domain.accounts.schemas import UserCreate, UserUpdate
+from app.domain.accounts.schemas import UserCreate
 from app.domain.accounts.services import AccountServices
 from app.lib.settings import get_settings
 
@@ -59,7 +60,12 @@ def create_user(
     password: str | None,
     superuser: bool | None,
 ) -> None:
-    """Create a new application user."""
+    """Create a new application user.
+
+    Raises:
+        click.ClickException: If a field breaks the rules for user accounts or the password policy rejects
+            the password.
+    """
     console = get_console()
     console.rule("Create a new application user.")
     resolved_email = email or click.prompt("Email")
@@ -68,14 +74,19 @@ def create_user(
     resolved_superuser = (
         bool(superuser) if superuser is not None else click.confirm("Create as superuser?", default=False)
     )
-    created_email = anyio.run(
-        _create_user_async,
-        cast("str", resolved_email),
-        cast("str", resolved_password),
-        resolved_name,
-        resolved_superuser,
-        alchemy,
-    )
+    try:
+        created_email = anyio.run(
+            _create_user_async,
+            cast("str", resolved_email),
+            cast("str", resolved_password),
+            resolved_name,
+            resolved_superuser,
+            alchemy,
+        )
+    except msgspec.ValidationError as error:
+        raise click.ClickException(str(error)) from error
+    except ClientException as error:
+        raise click.ClickException(error.detail) from error
     console.print(f"User created: {created_email}")
 
 
@@ -115,14 +126,17 @@ async def _create_user_async(
     alchemy_config: SQLAlchemyAsyncConfig | None = None,
 ) -> str:
     active_alchemy = alchemy_config or alchemy
-    new_user = UserCreate(email=email, name=name, password=password, is_superuser=superuser, is_verified=True)
+    new_user = msgspec.convert(
+        {"email": email, "name": name, "password": password, "isSuperuser": superuser},
+        type=UserCreate,
+    )
     async with AccountServices.new(config=active_alchemy) as accounts:
         user = await accounts.users.provision(
             email=new_user.email,
             name=new_user.name,
             verified=True,
             now=datetime.now(UTC),
-            hashed_password=await accounts.users.hash_password(new_user.password),
+            hashed_password=await accounts.users.hash_password(new_user.password, email=new_user.email),
             is_superuser=new_user.is_superuser,
         )
         await accounts.session.commit()
@@ -135,11 +149,10 @@ async def _promote_to_superuser_async(
 ) -> bool:
     active_alchemy = alchemy_config or alchemy
     async with AccountServices.new(config=active_alchemy) as accounts:
-        user = await accounts.users.get_one_or_none(email=email)
+        user = await accounts.users.find_by_email(email)
         if user is None:
             return False
-        promotion = UserUpdate(email=user.email, is_superuser=True)
-        await accounts.users.update(item_id=user.id, data=promotion.to_dict(), auto_commit=True)
+        await accounts.users.update({"is_superuser": True}, item_id=user.id, auto_commit=True)
         return True
 
 
@@ -148,22 +161,15 @@ async def _create_default_roles_async(alchemy_config: SQLAlchemyAsyncConfig | No
     await load_database_fixtures(active_alchemy)
     assigned = 0
     async with AccountServices.new(config=active_alchemy) as accounts:
-        default_role = await accounts.roles.get_one_or_none(slug=slugify(accounts.users.default_role))
-        if default_role is None:
-            default_role = await accounts.roles.create(
-                data={
-                    "name": accounts.users.default_role,
-                    "slug": slugify(accounts.users.default_role),
-                    "description": "Default application access role.",
-                },
-                auto_commit=True,
-            )
+        default_access_role = await accounts.roles.ensure_default_access_role()
         active_users = await accounts.users.get_many(is_active=True)
         now = datetime.now(UTC)
         for user in active_users:
-            if any(user_role.role_id == default_role.id for user_role in user.roles):
+            if any(user_role.role_id == default_access_role.id for user_role in user.roles):
                 continue
-            await accounts.user_roles.create(data={"user_id": user.id, "role_id": default_role.id, "assigned_at": now})
+            await accounts.user_roles.create(
+                data={"user_id": user.id, "role_id": default_access_role.id, "assigned_at": now}
+            )
             assigned += 1
         await accounts.session.commit()
     return assigned

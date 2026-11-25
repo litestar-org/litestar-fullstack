@@ -16,7 +16,7 @@ from litestar_security.accounts import (
     TOTPMethod,
 )
 
-from app.domain.accounts.security.events import security_audit_record
+from app.domain.accounts.security._event import security_audit_record
 from app.domain.accounts.services import (
     MFAFactorService,
     MFALoginChallengeService,

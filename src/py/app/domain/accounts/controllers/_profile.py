@@ -17,7 +17,7 @@ from litestar_security import (
 from app.db import models as m
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import PasswordConfirmation, PasswordUpdate, ProfileUpdate, User
-from app.domain.accounts.security.reauth import confirm_authentication
+from app.domain.accounts.security import confirm_authentication
 from app.domain.accounts.services import UserService
 from app.lib.schema import Message
 

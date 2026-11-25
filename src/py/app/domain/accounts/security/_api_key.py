@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 import structlog
-from advanced_alchemy.exceptions import IntegrityError, RepositoryError
+from advanced_alchemy.exceptions import DuplicateKeyError, ForeignKeyError, IntegrityError, RepositoryError
 from litestar_security.authentication import InvalidCredentials, VerificationUnavailable
 from litestar_security.context import Principal
 from litestar_security.providers.api_key import (
@@ -31,6 +31,7 @@ logger = structlog.get_logger(__name__)
 _DUPLICATE_KEY = "API-key ID already exists"
 _ROTATION_CONFLICT = "API-key rotation conflict"
 _UNKNOWN_KEY = "API-key does not exist"
+_UNKNOWN_SUBJECT = "API-key subject does not exist"
 
 __all__ = (
     "APIKeyIdentityResolver",
@@ -62,16 +63,15 @@ class SQLAlchemyAPIKeyStore:
         """Persist a new digest-only API key record.
 
         Raises:
-            ValueError: If ``subject_id`` is not a valid UUID or ``key_id`` already exists.
-            IntegrityError: If the database fails for a reason other than a violated constraint.
+            ValueError: If ``key_id`` already exists, or ``subject_id`` is not a valid UUID or names no account.
         """
         async with APIKeyRecordService.new(config=self._alchemy_config) as api_keys:
             try:
                 await api_keys.create(record, auto_commit=True)
-            except IntegrityError as error:
-                if not is_constraint_violation(error):
-                    raise
+            except DuplicateKeyError as error:
                 raise ValueError(_DUPLICATE_KEY) from error
+            except ForeignKeyError as error:
+                raise ValueError(_UNKNOWN_SUBJECT) from error
 
     async def rotate(
         self,
@@ -99,7 +99,7 @@ class SQLAlchemyAPIKeyStore:
             raise ValueError(_ROTATION_CONFLICT)
 
     async def revoke(self, *, key_id: str, now: datetime) -> None:
-        """Immediately revoke an existing API key and clear any grace overlap window.
+        """Stop an existing API key from working now, ending any rotation overlap it still has.
 
         Raises:
             ValueError: If no API key matches ``key_id``.

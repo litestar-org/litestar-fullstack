@@ -12,7 +12,7 @@ from litestar import Litestar
 from litestar.openapi.config import OpenAPIConfig
 from litestar_queues import QueueConfig, QueueService, WorkerConfig
 from litestar_security import SecurityPlugin
-from litestar_security.accounts import NotificationCommand
+from litestar_security.accounts import NotificationCommand, PasswordPolicyViolation
 from litestar_security.providers.oauth import OAuthLifecycleService, StepUpOAuthAuthorizer
 
 from app import config as app_config_module
@@ -23,12 +23,34 @@ from app.domain.accounts.security import (
     build_session_middleware,
     build_session_store,
 )
+from app.domain.accounts.services import PASSWORD_POLICY
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, ServerSettings, Settings
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 pytestmark = pytest.mark.anyio
+
+
+@pytest.mark.parametrize(
+    ("password", "violations"),
+    [
+        ("correct horse battery staple", set()),
+        ("x" * 12, set()),
+        ("x" * 128, set()),
+        ("x" * 11, {PasswordPolicyViolation.TOO_SHORT}),
+        ("x" * 129, {PasswordPolicyViolation.TOO_LONG}),
+        ("Password12345", {PasswordPolicyViolation.COMPROMISED}),
+        (" Alice@Example.com ", {PasswordPolicyViolation.MATCHES_IDENTIFIER}),
+    ],
+)
+def test_password_policy_checks_length_the_email_address_and_common_passwords(
+    password: str,
+    violations: set[PasswordPolicyViolation],
+) -> None:
+    decision = PASSWORD_POLICY.check(password, normalized_identifier="alice@example.com")
+
+    assert decision.violations == violations
 
 
 def test_security_config_cookie_flags_and_exclusions(tmp_path: Path) -> None:

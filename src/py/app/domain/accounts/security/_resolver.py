@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, cast
 
 from advanced_alchemy.utils.text import slugify
+from litestar import Router
 from litestar.exceptions import PermissionDeniedException
 from litestar_security.authentication import InvalidCredentials, VerificationUnavailable
 from litestar_security.context import AuthorizationSnapshot, Principal, SecurityContext
@@ -38,6 +39,7 @@ __all__ = (
     "APPLICATION_ACCESS_REQUIRED",
     "TEAM_ROLE_EXPANSION",
     "AppAuthorizationResolver",
+    "ApplicationAccessRouter",
     "SelfSubjectPredicate",
     "require_application_access",
     "requires_self_or_superuser",
@@ -136,6 +138,19 @@ def require_application_access(connection: ASGIConnection[Any, Any, Any, Any], r
         detail="Your account does not have access to this application.",
         extra={"code": APPLICATION_ACCESS_REQUIRED},
     )
+
+
+class ApplicationAccessRouter(Router):
+    """Router placing the application's own controllers behind ``require_application_access``.
+
+    Route discovery wraps every domain controller in this router, which keeps the guard off routes the
+    security configuration excludes, such as static files.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the router with the application-access guard ahead of any guards passed in."""
+        guards = [require_application_access, *kwargs.pop("guards", ())]
+        super().__init__(*args, guards=guards, **kwargs)  # pyright: ignore[reportUnknownMemberType]
 
 
 def requires_team_role(*roles: str) -> AuthorizationPredicate:

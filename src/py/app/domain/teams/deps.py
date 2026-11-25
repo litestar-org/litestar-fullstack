@@ -15,12 +15,12 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import models as m
 from app.domain.teams.services import (
+    ALREADY_A_MEMBER,
     TeamInvitationService,
     TeamMemberService,
     TeamService,
     TeamServices,
 )
-from app.domain.teams.services._team_member import ALREADY_A_MEMBER
 
 if TYPE_CHECKING:
     from collections.abc import Collection

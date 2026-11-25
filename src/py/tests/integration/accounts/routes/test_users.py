@@ -6,10 +6,12 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from app.db import models as m
 from tests.integration.conftest import fetch_csrf_headers, login_session_client, reset_client_session
 
 if TYPE_CHECKING:
     from httpx import AsyncClient
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.auth, pytest.mark.endpoints]
 
@@ -104,6 +106,79 @@ async def test_superuser_user_crud_and_admin_endpoints(superuser_client: AsyncCl
 
     team_resp = await superuser_client.get(f"/api/teams/{USER_TEAM_ID}")
     assert team_resp.status_code == 200
+
+
+async def test_user_emails_are_stored_and_matched_however_they_are_typed(superuser_client: AsyncClient) -> None:
+    create_resp = await superuser_client.post(
+        "/api/users",
+        json={"name": "Mixed Case", "email": "Mixed.Case@Example.COM", "password": "Test_Password1!"},
+    )
+    assert create_resp.status_code == 201, create_resp.text
+    assert create_resp.json()["email"] == "mixed.case@example.com"
+
+    update_resp = await superuser_client.patch(
+        f"/api/users/{create_resp.json()['id']}",
+        json={"email": "Renamed.Case@Example.COM"},
+    )
+    assert update_resp.status_code == 200, update_resp.text
+    assert update_resp.json()["email"] == "renamed.case@example.com"
+
+    assign_resp = await superuser_client.post(
+        "/api/roles/superuser/assign",
+        json={"userName": "RENAMED.CASE@example.com"},
+    )
+    assert assign_resp.status_code == 201, assign_resp.text
+
+
+async def test_a_password_sent_with_a_new_email_is_checked_against_the_new_email(superuser_client: AsyncClient) -> None:
+    refused = await superuser_client.patch(
+        f"/api/users/{REGULAR_USER_ID}",
+        json={"email": "renamed.user@example.com", "password": "Renamed.User@Example.com"},
+    )
+
+    assert refused.status_code == 400
+    assert refused.json()["detail"] == "Password must not be the same as the email address."
+    unchanged = await superuser_client.get(f"/api/users/{REGULAR_USER_ID}")
+    assert unchanged.json()["email"] == "user@example.com"
+
+
+async def test_an_account_with_a_password_says_so_in_every_user_response(superuser_client: AsyncClient) -> None:
+    responses = {
+        "own profile": await superuser_client.get("/api/me"),
+        "own profile update": await superuser_client.patch("/api/me", json={"name": "Renamed Superuser"}),
+        "user": await superuser_client.get(f"/api/users/{REGULAR_USER_ID}"),
+        "user update": await superuser_client.patch(f"/api/users/{REGULAR_USER_ID}", json={"name": "Renamed User"}),
+        "admin detail": await superuser_client.get(f"/api/admin/users/{REGULAR_USER_ID}"),
+        "admin update": await superuser_client.patch(f"/api/admin/users/{REGULAR_USER_ID}", json={"name": "Renamed"}),
+    }
+    listed = (await superuser_client.get("/api/users")).json()["items"]
+
+    assert {name: response.json()["hasPassword"] for name, response in responses.items()} == dict.fromkeys(
+        responses, True
+    )
+    assert all(user["hasPassword"] for user in listed)
+
+
+async def test_an_account_without_a_password_says_so_in_every_user_response(
+    superuser_client: AsyncClient,
+    session: AsyncSession,
+) -> None:
+    oauth_only = m.User(email="oauth-only@example.com", name="OAuth Only", is_active=True, is_verified=True)
+    session.add(oauth_only)
+    await session.commit()
+
+    responses = {
+        "user": await superuser_client.get(f"/api/users/{oauth_only.id}"),
+        "user update": await superuser_client.patch(f"/api/users/{oauth_only.id}", json={"name": "Renamed User"}),
+        "admin detail": await superuser_client.get(f"/api/admin/users/{oauth_only.id}"),
+        "admin update": await superuser_client.patch(f"/api/admin/users/{oauth_only.id}", json={"name": "Renamed"}),
+    }
+    listed = (await superuser_client.get("/api/users")).json()["items"]
+
+    assert {name: response.json()["hasPassword"] for name, response in responses.items()} == dict.fromkeys(
+        responses, False
+    )
+    assert [user["hasPassword"] for user in listed if user["email"] == "oauth-only@example.com"] == [False]
 
 
 async def test_superuser_role_assignment_grants_and_revokes_team_access(

@@ -16,6 +16,7 @@ from litestar_security.accounts import (
     RevokeLoginMethodStatus,
     SecurityEvent,
 )
+from litestar_security.providers.api_key import APIKeyState
 from litestar_security.providers.oauth import (
     AccountLinkError,
     ProviderGrant,
@@ -102,6 +103,10 @@ def _tokens() -> ProviderTokenSet:
         scopes=frozenset({"user:email"}),
         expires_at=NOW + timedelta(hours=1),
     )
+
+
+def _api_key(key_id: str, subject_id: str) -> APIKeyState:
+    return APIKeyState(key_id=key_id, subject_id=subject_id, digest=b"d" * 32)
 
 
 @pytest.fixture
@@ -261,6 +266,27 @@ async def test_concurrent_login_method_revocations_always_leave_one(
     assert len(await backend.list_methods(account_id)) == 1
 
 
+async def test_a_totp_factor_does_not_let_the_last_provider_be_unlinked(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    oauth_protector: AESGCMOAuthTransactionProtector,
+    account_id: str,
+) -> None:
+    backend = SQLAlchemySecurityBackend(alchemy_config, clock=lambda: NOW)
+    store = SQLAlchemyOAuthAccountStore(alchemy_config, oauth_protector)
+    link = await store.link(account_id, _identity("github", "github-subject"), _grant(), _tokens(), now=NOW)
+    await backend.register_login_method(
+        account_id,
+        LoginMethod("totp-1", "totp", NOW),
+        event=_event("login_method.register"),
+    )
+
+    unlinked = await store.unlink(account_id, link.provider, link.provider_account_id, require_remaining=True, now=NOW)
+    revoked = await backend.revoke_login_method(account_id, "totp-1", event=_event("login_method.revoke"))
+
+    assert unlinked.status is UnlinkStatus.FINAL_METHOD
+    assert revoked.status is RevokeLoginMethodStatus.REVOKED
+
+
 async def test_concurrent_unlinks_remove_one_link_and_tell_each_loser_why(
     alchemy_config: SQLAlchemyAsyncConfig,
     oauth_protector: AESGCMOAuthTransactionProtector,
@@ -339,3 +365,129 @@ async def test_concurrent_logins_provision_an_unknown_identity_once(
     async with alchemy_config.get_session() as db_session:
         assert await db_session.scalar(select(func.count()).select_from(m.User)) == 1
         assert await db_session.scalar(select(func.count()).select_from(m.UserOAuthAccount)) == 1
+
+
+async def test_concurrent_first_sign_ups_share_one_default_access_role(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    oauth_protector: AESGCMOAuthTransactionProtector,
+) -> None:
+    store = SQLAlchemyOAuthAccountStore(alchemy_config, oauth_protector)
+    identities = [
+        _identity("github", f"first-subject-{contender}", email=f"first-{contender}@example.com")
+        for contender in range(CONTENDERS)
+    ]
+
+    logins = await asyncio.gather(
+        *(
+            store.login(identity, _grant(), _tokens(), provision_unknown=True, retain_tokens=False, now=NOW)
+            for identity in identities
+        )
+    )
+
+    assert all(login.provisioned for login in logins)
+    async with alchemy_config.get_session() as db_session:
+        access_roles = select(func.count()).select_from(m.Role).where(m.Role.name == DEFAULT_ACCESS_ROLE)
+        assert await db_session.scalar(access_roles) == 1
+        assert await db_session.scalar(select(func.count()).select_from(m.UserRole)) == CONTENDERS
+
+
+async def test_signing_in_again_invalidates_token_versions_read_before_it(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    oauth_protector: AESGCMOAuthTransactionProtector,
+    account_id: str,
+) -> None:
+    store = SQLAlchemyOAuthAccountStore(alchemy_config, oauth_protector)
+    identity = _identity("github", "github-subject")
+    link = await store.link(account_id, identity, _grant(), _tokens(), retain_tokens=True, now=NOW)
+    read_before_login = await store.get_tokens(link.provider_account_id, now=NOW)
+    assert read_before_login is not None
+
+    await store.login(identity, _grant(), _tokens(), provision_unknown=False, retain_tokens=True, now=NOW)
+
+    assert not await store.replace_tokens(
+        link.provider_account_id,
+        expected_version=read_before_login.reference.version,
+        tokens=_tokens(),
+        now=NOW,
+    )
+
+
+async def test_api_key_creation_tells_a_reused_key_id_from_an_unknown_account(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    account_id: str,
+) -> None:
+    store = SQLAlchemyAPIKeyStore(alchemy_config)
+    await store.create(_api_key("a2tra2tra2tra2tr", account_id))
+
+    with pytest.raises(ValueError, match="already exists"):
+        await store.create(_api_key("a2tra2tra2tra2tr", account_id))
+    with pytest.raises(ValueError, match="subject does not exist"):
+        await store.create(_api_key("b2trb2trb2trb2tr", _account_id("unknown-account", 0)))
+
+
+async def test_revoking_an_api_key_that_already_stopped_working_leaves_it_untouched(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    account_id: str,
+) -> None:
+    store = SQLAlchemyAPIKeyStore(alchemy_config)
+    await store.create(_api_key("a2tra2tra2tra2tr", account_id))
+    await store.create(_api_key("b2trb2trb2trb2tr", account_id))
+    await store.revoke(key_id="a2tra2tra2tra2tr", now=NOW)
+    await store.rotate(
+        current_key_id="b2trb2trb2trb2tr",
+        replacement=_api_key("c2trc2trc2trc2tr", account_id),
+        overlap_until=NOW + timedelta(hours=1),
+        now=NOW,
+    )
+
+    await store.revoke(key_id="a2tra2tra2tra2tr", now=NOW + timedelta(days=1))
+    await store.revoke(key_id="b2trb2trb2trb2tr", now=NOW + timedelta(days=1))
+
+    revoked = await store.get("a2tra2tra2tra2tr")
+    rotated = await store.get("b2trb2trb2trb2tr")
+    assert revoked is not None
+    assert rotated is not None
+    assert (revoked.revoked_at, revoked.overlap_until) == (NOW, None)
+    assert (rotated.revoked_at, rotated.overlap_until) == (NOW, NOW + timedelta(hours=1))
+
+
+async def test_revoking_a_rotated_api_key_ends_its_overlap(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    account_id: str,
+) -> None:
+    store = SQLAlchemyAPIKeyStore(alchemy_config)
+    await store.create(_api_key("a2tra2tra2tra2tr", account_id))
+    await store.rotate(
+        current_key_id="a2tra2tra2tra2tr",
+        replacement=_api_key("b2trb2trb2trb2tr", account_id),
+        overlap_until=NOW + timedelta(hours=1),
+        now=NOW,
+    )
+    revoked_at = NOW + timedelta(minutes=30)
+
+    await store.revoke(key_id="a2tra2tra2tra2tr", now=revoked_at)
+
+    rotated = await store.get("a2tra2tra2tra2tr")
+    assert rotated is not None
+    assert (rotated.revoked_at, rotated.overlap_until) == (revoked_at, None)
+    with pytest.raises(ValueError, match="does not exist"):
+        await store.revoke(key_id="z2trz2trz2trz2tr", now=NOW)
+
+
+async def test_identities_without_an_email_whose_subjects_differ_only_by_case_get_separate_accounts(
+    alchemy_config: SQLAlchemyAsyncConfig,
+    oauth_protector: AESGCMOAuthTransactionProtector,
+) -> None:
+    store = SQLAlchemyOAuthAccountStore(alchemy_config, oauth_protector)
+
+    logins = [
+        await store.login(
+            _identity("example", subject), _grant(), _tokens(), provision_unknown=True, retain_tokens=False, now=NOW
+        )
+        for subject in ("AbC123", "abc123")
+    ]
+
+    assert all(login.provisioned for login in logins)
+    async with alchemy_config.get_session() as db_session:
+        emails = set(await db_session.scalars(select(m.User.email)))
+    assert emails == {"example-416243313233@oauth.local", "example-616263313233@oauth.local"}

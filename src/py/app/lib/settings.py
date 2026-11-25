@@ -62,15 +62,19 @@ from sqlalchemy import select
 from sqlalchemy.pool import NullPool
 
 from app.__metadata__ import __version__ as current_version
-from app.lib.log import is_tty, stdlib_logger_processors, structlog_processors
+from app.lib.log import is_tty, log_server_error, stdlib_logger_processors, structlog_processors
 from app.utils.env import get_env
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
+
     from litestar.connection import ASGIConnection
     from litestar.handlers import BaseRouteHandler
     from litestar_mcp import AfterToolCallHook, BeforeToolCallHook
     from litestar_queues import ExecutionBackendConfig, WorkerPlacement
     from litestar_security import AuthenticationPolicy
+
+    ConnectionGuard = Callable[[ASGIConnection[Any, Any, Any, Any], BaseRouteHandler], None]
 
 DEFAULT_MODULE_NAME: Final[str] = "app"
 BASE_DIR: Final[Path] = module_to_os_path(DEFAULT_MODULE_NAME)
@@ -197,8 +201,15 @@ class QueueSettings:
         alchemy_config: SQLAlchemyAsyncConfig,
         db_settings: DatabaseSettings,
         app_settings: AppSettings | None = None,
+        stream_guards: Sequence[ConnectionGuard] = (),
     ) -> QueueConfig:
         """Build the ``litestar-queues`` configuration bound to PostgreSQL via Advanced Alchemy.
+
+        Args:
+            alchemy_config: Advanced Alchemy configuration the queue backend and stream authorizer use.
+            db_settings: Database settings deciding the queue backend's connection options.
+            app_settings: Application settings naming the service in queue observability.
+            stream_guards: Guards the event stream applies after requiring an authenticated principal.
 
         Returns:
             Configured ``QueueConfig`` instance.
@@ -213,7 +224,7 @@ class QueueSettings:
                 enable_prometheus=self.ENABLE_PROMETHEUS,
                 enable_sqlcommenter=True,
             ),
-            events=self._events_config(alchemy_config),
+            events=self._events_config(alchemy_config, stream_guards),
             scheduler_canary_task="system.scheduler_canary",
             error_sanitizer=lambda exc, _record: f"Task failed: {type(exc).__name__}",
             max_argument_identity_bytes=64 * 1024,
@@ -257,7 +268,9 @@ class QueueSettings:
             event_limit=1000,
         )
 
-    def _events_config(self, alchemy_config: SQLAlchemyAsyncConfig) -> QueueEventsConfig:
+    def _events_config(
+        self, alchemy_config: SQLAlchemyAsyncConfig, stream_guards: Sequence[ConnectionGuard]
+    ) -> QueueEventsConfig:
         return QueueEventsConfig(
             channels=MemoryChannelsBackend(history=100),
             delivery=EventDeliveryConfig(
@@ -268,7 +281,7 @@ class QueueSettings:
                 EventStreamConfig(
                     path=self.STREAM_PATH,
                     transports={"sse", "websocket"},
-                    guards=[self._require_authenticated_queue_stream],
+                    guards=[self._require_authenticated_queue_stream, *stream_guards],
                     channel_authorizer=partial(self._authorize_queue_stream_channel, alchemy_config),
                     opt={"auth": any_of("session", "api-key")},
                 )
@@ -373,10 +386,17 @@ class MCPSettings:
         self,
         *,
         auth: AuthenticationPolicy | None = None,
+        guards: Sequence[ConnectionGuard] = (),
         before_tool_call: BeforeToolCallHook | None = None,
         after_tool_call: AfterToolCallHook | None = None,
     ) -> MCPConfig:
         """Build ``MCPConfig`` with API-key auth, strict description bounds, tasks, and optional audit hooks.
+
+        Args:
+            auth: Authentication policy protecting the MCP endpoints.
+            guards: Guards the MCP endpoints apply after authentication.
+            before_tool_call: Hook observing each tool call before it runs.
+            after_tool_call: Hook observing each tool call after it finishes.
 
         Returns:
             Configured ``MCPConfig`` instance.
@@ -388,6 +408,7 @@ class MCPSettings:
             instructions=self.INSTRUCTIONS,
             allowed_origins=self.ALLOWED_ORIGINS,
             auth=auth,
+            guards=list(guards),
             tasks=True,
             auto_output_schema=True,
             max_tool_description_length=1000,
@@ -588,7 +609,7 @@ class LogSettings:
                 log_exceptions="always",
                 processors=structlog_processors(as_json=as_json),
                 logger_factory=default_logger_factory(as_json=as_json),
-                disable_stack_trace={404, 401, 403, NotAuthorizedException, PermissionDeniedException},
+                exception_logging_handler=log_server_error,
                 standard_lib_logging_config=self._stdlib_logging_config(as_json=as_json),
             ),
             middleware_logging_config=LoggingMiddlewareConfig(

@@ -51,23 +51,24 @@ from litestar_security.providers.oauth import (
 )
 
 from app.db import models as m
-from app.domain.accounts.security.api_keys import APIKeyIdentityResolver, SQLAlchemyAPIKeyStore
-from app.domain.accounts.security.backend import SQLAlchemySecurityBackend
-from app.domain.accounts.security.events import AuditSecurityEventSink
-from app.domain.accounts.security.mfa import (
+from app.domain.accounts.security._api_key import APIKeyIdentityResolver, SQLAlchemyAPIKeyStore
+from app.domain.accounts.security._backend import SQLAlchemySecurityBackend
+from app.domain.accounts.security._event import AuditSecurityEventSink
+from app.domain.accounts.security._mfa import (
     SQLAlchemyMFALoginChallengeService,
     SQLAlchemyMFAService,
     SQLAlchemyStepUpService,
     build_secret_protector,
 )
-from app.domain.accounts.security.oauth import (
+from app.domain.accounts.security._oauth import (
     SQLAlchemyOAuthAccountStore,
     SQLAlchemyOAuthTransactionStore,
     build_oauth_protector,
 )
-from app.domain.accounts.security.passkeys import SQLAlchemyPasskeyStore
-from app.domain.accounts.security.rate_limit import build_rate_limiter
-from app.domain.accounts.security.resolver import AppAuthorizationResolver
+from app.domain.accounts.security._passkey import SQLAlchemyPasskeyStore
+from app.domain.accounts.security._rate_limit import build_rate_limiter
+from app.domain.accounts.security._resolver import AppAuthorizationResolver
+from app.domain.accounts.services import PASSWORD_POLICY
 from app.lib.secrets import (
     API_KEY_PEPPER_INFO,
     CSRF_SECRET_INFO,
@@ -264,6 +265,7 @@ def _build_local_auth(
             allow_insecure=not cookie_secure,
             max_age=min(86_400 * 7, settings.security.SESSION_MAX_AGE),
         ),
+        password_policy=PASSWORD_POLICY,
         registration=RegistrationPolicy(
             mode=RegistrationMode.PUBLIC,
             require_verification=settings.security.REGISTRATION_REQUIRE_VERIFICATION,

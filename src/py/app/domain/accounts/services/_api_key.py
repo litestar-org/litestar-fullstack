@@ -8,7 +8,7 @@ from uuid import UUID
 from advanced_alchemy.extensions.litestar import service
 from litestar_security.context import CredentialRestrictions, ResourcePermission
 from litestar_security.providers.api_key import APIKeyState
-from sqlalchemy import update
+from sqlalchemy import or_, update
 
 from app.db import models as m
 from app.domain.accounts.schemas import APIKeyItem
@@ -97,13 +97,22 @@ class APIKeyRecordService(service.SQLAlchemyAsyncRepositoryService[m.APIKey]):
         return True
 
     async def revoke(self, key_id: str, *, now: datetime) -> bool:
-        """Revoke a key immediately and clear any rotation overlap window.
+        """Stop a key from working at ``now``, ending any rotation overlap it still has.
+
+        A key that already stopped working keeps the time it was revoked and the overlap it was given.
 
         Returns:
             ``True`` when a key matched ``key_id``, ``False`` when none exists.
         """
-        statement = update(m.APIKey).where(m.APIKey.key_id == key_id).values(revoked_at=now, overlap_until=None)
-        return await affected_rows(self.repository.session, statement) == 1
+        api_key = await self.get_one_or_none(m.APIKey.key_id == key_id)
+        if api_key is None:
+            return False
+        still_working = or_(m.APIKey.revoked_at.is_(None), m.APIKey.overlap_until > now)
+        statement = (
+            update(m.APIKey).where(m.APIKey.id == api_key.id, still_working).values(revoked_at=now, overlap_until=None)
+        )
+        await self.repository.session.execute(statement)
+        return True
 
     async def record_usage(self, key_id: str, *, used_at: datetime) -> bool:
         """Stamp the last time a key authenticated a request.

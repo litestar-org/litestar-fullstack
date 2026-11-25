@@ -49,6 +49,19 @@ class OAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOAuthAc
             return None
 
     @staticmethod
+    def to_account_email(identity: ProviderIdentity) -> str:
+        """Choose the email address an account provisioned for a provider identity is stored under.
+
+        An identity without an email address gets a placeholder at ``oauth.local``. The placeholder spells the
+        subject as the hexadecimal of its UTF-8 bytes, so subjects that differ only by letter case stay
+        distinct once the address is normalized.
+
+        Returns:
+            The identity's email address, or its placeholder.
+        """
+        return identity.email or f"{identity.provider}-{identity.subject.encode().hex()}@oauth.local"
+
+    @staticmethod
     def to_linked_account(oauth_account: m.UserOAuthAccount) -> LinkedProviderAccount:
         """Translate a linked account into the ``LinkedProviderAccount`` the security library works with.
 
@@ -153,7 +166,6 @@ class OAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOAuthAc
             grant=grant,
             protected_tokens=protected_tokens,
             now=now,
-            advance_version=True,
             issuer=identity.issuer,
         )
         return oauth_account
@@ -217,18 +229,18 @@ class OAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOAuthAc
         grant: ProviderGrant,
         protected_tokens: ProtectedOAuthSecret | None,
         now: datetime,
-        advance_version: bool,
         issuer: str | None = None,
     ) -> None:
         """Overwrite a linked account's grant and retained tokens after a completed provider exchange.
+
+        The token version advances with every replacement, so a writer still holding the previous version
+        fails its next compare-and-swap instead of overwriting these tokens.
 
         Args:
             oauth_account: Linked account receiving the new grant.
             grant: Scopes and expiry the provider granted.
             protected_tokens: Encrypted tokens to retain, or ``None`` to drop any retained tokens.
             now: Timestamp of the provider exchange.
-            advance_version: Whether to increment the token version, so a writer still holding the previous
-                version fails its next compare-and-swap.
             issuer: Issuer to record, or ``None`` to keep the stored issuer.
 
         Raises:
@@ -242,12 +254,11 @@ class OAuthAccountService(service.SQLAlchemyAsyncRepositoryService[m.UserOAuthAc
                 token_expires_at=grant.expires_at,
                 protected_tokens=protected_tokens.ciphertext if protected_tokens is not None else None,
                 key_version=protected_tokens.key_version if protected_tokens is not None else None,
+                token_version=m.UserOAuthAccount.token_version + 1,
                 last_login_at=now,
                 updated_at=now,
             )
         )
-        if advance_version:
-            statement = statement.values(token_version=m.UserOAuthAccount.token_version + 1)
         if issuer is not None:
             statement = statement.values(issuer=issuer)
         if await affected_rows(self.repository.session, statement) != 1:

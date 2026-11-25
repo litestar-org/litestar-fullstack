@@ -4,7 +4,7 @@ from uuid import UUID
 
 import msgspec
 
-from app.domain.teams.schemas._member import TeamMember
+from app.domain.teams.schemas._team_member import TeamMember
 from app.lib.schema import CamelizedBaseStruct
 
 

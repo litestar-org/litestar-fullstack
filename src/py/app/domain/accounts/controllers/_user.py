@@ -74,10 +74,18 @@ class UserController(SecureController):
     ) -> User:
         """Partially update an existing user account.
 
+        A new password is set after the other changes, so it is checked against the email address the
+        account ends up with; either both are stored or neither is.
+
         Returns:
             Updated user account record.
         """
-        user = await users_service.update(item_id=user_id, data=data.to_dict(), auto_commit=True)
+        changes = data.to_dict()
+        password = changes.pop("password", None)
+        user = await users_service.update(changes, item_id=user_id)
+        if password is not None:
+            await users_service.set_password(user, password)
+        await users_service.repository.session.commit()
         return users_service.to_schema(user, schema_type=User)
 
     @delete(operation_id="DeleteUser", path="/{user_id:uuid}")

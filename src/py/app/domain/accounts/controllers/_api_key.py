@@ -12,8 +12,7 @@ from litestar_security.providers.api_key import APIKeyService, IssuedAPIKey
 
 from app.db import models as m
 from app.domain.accounts.schemas import APIKeyCreate, APIKeyIssued, APIKeyItem, PasswordConfirmation
-from app.domain.accounts.security.api_keys import SQLAlchemyAPIKeyStore, build_api_key_service
-from app.domain.accounts.security.reauth import confirm_authentication
+from app.domain.accounts.security import SQLAlchemyAPIKeyStore, build_api_key_service, confirm_authentication
 from app.domain.accounts.services import APIKeyRecordService
 
 _SECRET_PREFIX_LENGTH = 12

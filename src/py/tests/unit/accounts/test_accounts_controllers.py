@@ -25,6 +25,7 @@ from app.domain.accounts.controllers import (
 )
 from app.domain.accounts.security import (
     APPLICATION_ACCESS_REQUIRED,
+    REAUTHENTICATION_REQUIRED,
     SQLAlchemyAPIKeyStore,
     build_api_key_service,
     build_csrf_config,
@@ -33,7 +34,6 @@ from app.domain.accounts.security import (
     build_session_store,
     require_application_access,
 )
-from app.domain.accounts.security.reauth import REAUTHENTICATION_REQUIRED
 from app.domain.accounts.services import UserService
 from app.lib.settings import AppSettings, DatabaseSettings, SecuritySettings, Settings
 
@@ -90,7 +90,7 @@ async def _seed_user(
     application_access: bool = True,
 ) -> m.User:
     async with UserService.new(config=db_cfg) as users:
-        hashed_password = await users.hash_password(password)
+        hashed_password = await users.hash_password(password, email=email)
         if application_access:
             user = await users.provision(
                 email=email,
@@ -275,6 +275,84 @@ async def test_profile_auth_modes_and_step_up(tmp_path: Path) -> None:
             headers={"X-XSRF-TOKEN": del_csrf},
         )
         assert del_ok.status_code == 204
+
+
+async def test_admin_and_self_service_passwords_follow_the_password_policy(tmp_path: Path) -> None:
+    app, alchemy_config, _ = await _build_accounts_app(tmp_path, "password_policy.sqlite3")
+    await _seed_user(alchemy_config, email="root@example.com", is_superuser=True)
+
+    async with AsyncTestClient(app=app) as client:
+        headers = {"X-XSRF-TOKEN": await _login(client, "root@example.com")}
+
+        too_short = await client.post(
+            "/api/users",
+            json={"email": "new.account@example.com", "password": "Short1!"},
+            headers=headers,
+        )
+        assert too_short.status_code == 400
+        assert too_short.json() == {
+            "status": 400,
+            "title": "Bad Request",
+            "detail": "Password must be at least 12 characters long.",
+        }
+
+        created = await client.post(
+            "/api/users",
+            json={"email": "new.account@example.com", "password": "correct horse battery staple"},
+            headers=headers,
+        )
+        assert created.status_code == 201, created.text
+
+        same_as_email = await client.patch(
+            f"/api/users/{created.json()['id']}",
+            json={"password": "New.Account@Example.com"},
+            headers=headers,
+        )
+        assert same_as_email.status_code == 400
+        assert same_as_email.json()["detail"] == "Password must not be the same as the email address."
+
+        too_common = await client.patch(
+            "/api/me/password",
+            json={"currentPassword": "StrongPassword!123", "newPassword": "Password12345"},
+            headers=headers,
+        )
+        assert too_common.status_code == 400
+        assert too_common.json()["detail"] == "Password is too common. Choose one that is harder to guess."
+
+        changed = await client.patch(
+            "/api/me/password",
+            json={"currentPassword": "StrongPassword!123", "newPassword": "another long passphrase"},
+            headers=headers,
+        )
+        assert changed.status_code == 200, changed.text
+
+
+async def test_an_admin_password_change_signs_the_user_out_everywhere(tmp_path: Path) -> None:
+    app, alchemy_config, _ = await _build_accounts_app(tmp_path, "admin_password_change.sqlite3")
+    await _seed_user(alchemy_config, email="root@example.com", is_superuser=True)
+    alice = await _seed_user(alchemy_config, email="alice@example.com")
+
+    async with AsyncTestClient(app=app) as alice_client, AsyncTestClient(app=app) as admin_client:
+        await _login(alice_client, "alice@example.com")
+        assert (await alice_client.get("/api/me")).status_code == 200
+
+        changed = await admin_client.patch(
+            f"/api/users/{alice.id}",
+            json={"password": "correct horse battery staple", "name": "Alice Renamed"},
+            headers={"X-XSRF-TOKEN": await _login(admin_client, "root@example.com")},
+        )
+        assert changed.status_code == 200, changed.text
+        assert changed.json()["name"] == "Alice Renamed"
+        assert changed.json()["hasPassword"] is True
+
+        assert (await alice_client.get("/api/me")).status_code == 401
+
+    async with AsyncTestClient(app=app) as alice_client:
+        await _login(alice_client, "alice@example.com", password="correct horse battery staple")
+    async with alchemy_config.get_session() as db_session:
+        stored = await db_session.get(m.User, alice.id)
+        assert stored is not None
+        assert stored.security_epoch == alice.security_epoch + 1
 
 
 async def test_password_confirmation_attempts_are_rate_limited(tmp_path: Path) -> None:

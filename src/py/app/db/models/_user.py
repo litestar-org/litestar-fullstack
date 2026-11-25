@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING
 from advanced_alchemy.base import UUIDv7AuditBase
 from advanced_alchemy.types import Bool, DateTimeUTC
 from sqlalchemy import Integer, String, inspect
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, column_property, mapped_column, relationship
 
 if TYPE_CHECKING:
     from app.db.models._oauth_account import UserOAuthAccount
@@ -38,6 +37,11 @@ class User(UUIDv7AuditBase):
         deferred=True,
         deferred_group="security_sensitive",
     )
+    has_password: Mapped[bool] = column_property(hashed_password.is_not(None))
+    """Whether the account has a password, computed by the database every time the user is loaded.
+
+    The hash itself stays deferred, so this is the way to ask without loading it.
+    """
     avatar_url: Mapped[str | None] = mapped_column(String(length=500), nullable=True, default=None)
     is_active: Mapped[bool] = mapped_column(Bool, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Bool, default=False, nullable=False)
@@ -93,13 +97,6 @@ class User(UUIDv7AuditBase):
         cascade=_OWNED_CASCADE,
         uselist=True,
     )
-
-    @hybrid_property
-    def has_password(self) -> bool:
-        """Return whether the user has a password credential set without triggering lazy I/O."""
-        if "hashed_password" in inspect(self).unloaded:
-            return False
-        return self.hashed_password is not None
 
     @property
     def has_mfa(self) -> bool:

@@ -298,7 +298,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "src/py/app/db/models/*.py" = ["PLW0108", "TC003"]
-"src/py/app/domain/**/controllers*.py" = ["TC001", "TC002", "TC003"]
+"src/py/app/domain/**/controllers/*.py" = ["TC001", "TC002", "TC003"]
 "src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "DOC", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
@@ -329,7 +329,7 @@ ban-relative-imports = "all"
 strict-imports = false
 
 [tool.codespell]
-ignore-words-list = "alog,selectin,selectinload,asend"
+ignore-words-list = "alog,selectin,selectinload,asend,characterclasses"
 skip = 'uv.lock,package-lock.json,*/bun.lock,node_modules,.venv,.agent,./src/py/app/server/static/*,_build,*.txt,*.js,*.css,*.map,*.json,htmlcov'
 
 [tool.mypy]

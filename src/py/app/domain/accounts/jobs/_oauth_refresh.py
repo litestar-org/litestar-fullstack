@@ -10,7 +10,7 @@ import structlog
 from litestar_queues import RetryBackoff, get_current_task_context, task
 from litestar_security.providers.oauth import ProtectedOAuthSecret, ProviderTokenSet, SecretStr
 
-from app.domain.accounts.security.oauth import (
+from app.domain.accounts.security import (
     build_oauth_protector,
     deserialize_oauth_tokens,
     oauth_account_aad,
@@ -45,6 +45,9 @@ async def run_refresh_oauth_tokens(
 ) -> dict[str, int]:
     """Refresh AES-GCM-protected OAuth tokens nearing expiration using ``httpx.AsyncClient``.
 
+    The expiring accounts are read in one short transaction and each refreshed token set is stored in its
+    own, so no transaction is open while a provider is being called.
+
     Returns:
         Summary counts mapping for ``processed``, ``refreshed``, ``skipped``, and ``failed`` accounts.
     """
@@ -57,11 +60,9 @@ async def run_refresh_oauth_tokens(
     context = get_current_task_context()
     protector = build_oauth_protector(active_settings)
     now = datetime.now(UTC)
-    async with (
-        OAuthAccountService.new(config=alchemy_config) as oauth_accounts,
-        httpx.AsyncClient(timeout=15.0, transport=transport) as client,
-    ):
+    async with OAuthAccountService.new(config=alchemy_config) as oauth_accounts:
         expiring_accounts = await oauth_accounts.list_expiring(before=now + timedelta(minutes=REFRESH_WINDOW_MINUTES))
+    async with httpx.AsyncClient(timeout=15.0, transport=transport) as client:
         for position, oauth_account in enumerate(expiring_accounts, start=1):
             counts["processed"] += 1
             if context is not None:
@@ -71,7 +72,7 @@ async def run_refresh_oauth_tokens(
                     message=f"Refreshing {oauth_account.oauth_name} token",
                 )
             outcome = await _refresh_account(
-                oauth_accounts,
+                alchemy_config,
                 oauth_account,
                 client=client,
                 protector=protector,
@@ -79,7 +80,6 @@ async def run_refresh_oauth_tokens(
                 now=now,
             )
             counts[outcome] += 1
-        await oauth_accounts.repository.session.commit()
 
     if context is not None:
         await context.log("OAuth token refresh job completed")
@@ -114,7 +114,7 @@ def _configured_credentials(settings: Settings) -> dict[str, tuple[str, str]]:
 
 
 async def _refresh_account(
-    oauth_accounts: OAuthAccountService,
+    alchemy_config: SQLAlchemyAsyncConfig,
     oauth_account: m.UserOAuthAccount,
     *,
     client: httpx.AsyncClient,
@@ -162,12 +162,15 @@ async def _refresh_account(
         )
         if tokens is None:
             return "failed"
-        replaced = await oauth_accounts.replace_tokens(
-            oauth_account,
-            expected_version=oauth_account.token_version,
-            tokens=tokens,
-            protected_tokens=await protector.protect(serialize_oauth_tokens(tokens), associated_data=associated_data),
-        )
+        protected_tokens = await protector.protect(serialize_oauth_tokens(tokens), associated_data=associated_data)
+        async with OAuthAccountService.new(config=alchemy_config) as oauth_accounts:
+            replaced = await oauth_accounts.replace_tokens(
+                oauth_account,
+                expected_version=oauth_account.token_version,
+                tokens=tokens,
+                protected_tokens=protected_tokens,
+            )
+            await oauth_accounts.repository.session.commit()
     except Exception as error:  # noqa: BLE001
         await logger.awarning(
             "OAuth token refresh failed",

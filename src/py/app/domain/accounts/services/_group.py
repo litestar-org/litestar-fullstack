@@ -15,7 +15,6 @@ from litestar_security.accounts import (
     RegistrationStatus,
     RevokeLoginMethodStatus,
     TokenPurpose,
-    normalize_identifier,
 )
 from litestar_security.providers.oauth import (
     AccountLinkError,
@@ -27,15 +26,9 @@ from litestar_security.providers.oauth import (
 )
 
 from app.db import models as m
-from app.domain.accounts.services._api_key import APIKeyRecordService
-from app.domain.accounts.services._mfa import (
-    MFAFactorService,
-    MFALoginChallengeService,
-    MFARecoveryCodeService,
-    StepUpGrantService,
-)
-from app.domain.accounts.services._oauth import OAuthAccountService, OAuthTransactionService
-from app.domain.accounts.services._passkey import PasskeyChallengeService, PasskeyService
+from app.domain.accounts.services._mfa import MFAFactorService, MFARecoveryCodeService
+from app.domain.accounts.services._oauth import OAuthAccountService
+from app.domain.accounts.services._passkey import PasskeyService
 from app.domain.accounts.services._role import RoleService
 from app.domain.accounts.services._session import (
     LoginMethodService,
@@ -46,10 +39,12 @@ from app.domain.accounts.services._session import (
 from app.domain.accounts.services._statements import is_constraint_violation
 from app.domain.accounts.services._user import UserService
 from app.domain.accounts.services._user_role import UserRoleService
-from app.domain.admin.services._audit import AuditLogService
+from app.domain.admin.services import AuditLogService
+
+_SIGN_IN_KINDS = frozenset({"password", "passkey"})
+"""Kinds of login method that sign an account in on their own; a TOTP factor only confirms another method."""
 
 __all__ = (
-    "APIKeyServices",
     "AccountSecurityServices",
     "AccountServices",
     "MFAServices",
@@ -95,7 +90,7 @@ class AccountServices(ServiceGroup):
         role = await self.roles.get_one_or_none(slug=role_slug)
         if role is None:
             raise HTTPException(status_code=404, detail=f"Role '{role_slug}' not found")
-        user = await self.users.get_one_or_none(email=email)
+        user = await self.users.find_by_email(email)
         if user is None:
             raise HTTPException(status_code=404, detail=f"User '{email}' not found")
         return role, user
@@ -117,8 +112,6 @@ class AccountSecurityServices(ServiceGroup):
     """Services behind local accounts, purpose tokens, login methods, and browser sessions."""
 
     users: UserService
-    roles: RoleService
-    user_roles: UserRoleService
     user_sessions: UserSessionService
     purpose_tokens: PurposeTokenService
     login_methods: LoginMethodService
@@ -233,26 +226,25 @@ class AccountSecurityServices(ServiceGroup):
         """Remove one of the account's login methods together with the MFA factor or passkey behind it.
 
         The account stays locked for the transaction, so concurrent revocations cannot each remove a
-        different method and leave the account without any.
+        different method and leave the account without any. Every login method counts towards the one that
+        must remain, second factors included, which is the contract of the security library's login method
+        store.
 
         Returns:
             ``REVOKED``, ``NOT_FOUND`` when the account has no such method, or ``FINAL_METHOD`` when
-            ``require_remaining`` is set and no other login method or linked provider would remain.
+            ``require_remaining`` is set and the method is the account's only login method.
         """
         user_id = self.users.to_user_id(account_id)
         user = await self.users.find_for_update(user_id) if user_id is not None else None
-        login_methods = await self._login_methods(account_id, user)
         recorded_method = await self.login_methods.find_recorded(account_id, method_id)
         mfa_factor = passkey = None
-        linked_provider_count = 0
         if user is not None:
             mfa_factor = await self.mfa_factors.find_active(user.id, method_id)
             passkey = await self.passkeys.find_for_login_method(user.id, method_id)
-            linked_provider_count = await self.oauth_accounts.count(m.UserOAuthAccount.user_id == user.id)
 
         if recorded_method is None and mfa_factor is None and passkey is None:
             return RevokeLoginMethodStatus.NOT_FOUND
-        if require_remaining and len(login_methods) + linked_provider_count <= 1:
+        if require_remaining and await self._count_login_methods(account_id, user, second_factors=True) <= 1:
             return RevokeLoginMethodStatus.FINAL_METHOD
 
         if recorded_method is not None:
@@ -262,6 +254,55 @@ class AccountSecurityServices(ServiceGroup):
         if passkey is not None:
             await self.passkeys.delete(passkey.id)
         return RevokeLoginMethodStatus.REVOKED
+
+    async def unlink_oauth_account(
+        self,
+        user_id: UUID,
+        oauth_account_id: UUID,
+        provider: str,
+        *,
+        require_remaining: bool,
+    ) -> UnlinkStatus:
+        """Remove one of the user's linked provider accounts.
+
+        The account stays locked for the transaction, so concurrent unlinks cannot each remove a different
+        link and leave the account without a way to sign in. Login methods are counted before the link is
+        looked up, so on a database without row locks the loser of a race for the same link still reads
+        ``NOT_FOUND`` instead of ``FINAL_METHOD``. Only methods that sign the account in on their own count
+        towards the one that must remain, because a TOTP factor cannot replace the link.
+
+        Returns:
+            ``UNLINKED``, ``NOT_FOUND`` when the user has no such link, or ``FINAL_METHOD`` when
+            ``require_remaining`` is set and the link is the only way left to sign in to the account.
+        """
+        user = await self.users.find_for_update(user_id)
+        if user is None:
+            return UnlinkStatus.NOT_FOUND
+        login_method_count = await self._count_login_methods(str(user.id), user, second_factors=False)
+        oauth_account = await self.oauth_accounts.find_owned(oauth_account_id, user_id=user.id, provider=provider)
+        if oauth_account is None:
+            return UnlinkStatus.NOT_FOUND
+        if require_remaining and login_method_count <= 1:
+            return UnlinkStatus.FINAL_METHOD
+        unlinked = await self.oauth_accounts.unlink(oauth_account)
+        return UnlinkStatus.UNLINKED if unlinked else UnlinkStatus.NOT_FOUND
+
+    async def _count_login_methods(self, account_id: str, user: m.User | None, *, second_factors: bool) -> int:
+        """Count the account's login methods and linked provider accounts.
+
+        Args:
+            account_id: Account whose methods are counted.
+            user: The account's user, when it has one.
+            second_factors: Whether to count methods that cannot sign the account in on their own.
+
+        Returns:
+            How many of the account's methods count towards the one a removal must leave behind.
+        """
+        login_methods = (await self._login_methods(account_id, user)).values()
+        counted_methods = sum(second_factors or login_method.kind in _SIGN_IN_KINDS for login_method in login_methods)
+        if user is None:
+            return counted_methods
+        return counted_methods + await self.oauth_accounts.count(m.UserOAuthAccount.user_id == user.id)
 
     async def _login_methods(self, account_id: str, user: m.User | None) -> dict[str, LoginMethod]:
         recorded_methods = [
@@ -289,8 +330,6 @@ class MFAServices(ServiceGroup):
     users: UserService
     mfa_factors: MFAFactorService
     recovery_codes: MFARecoveryCodeService
-    login_challenges: MFALoginChallengeService
-    step_up_grants: StepUpGrantService
     login_methods: LoginMethodService
     audit_logs: AuditLogService
 
@@ -339,23 +378,18 @@ class MFAServices(ServiceGroup):
 
 
 class PasskeyServices(ServiceGroup):
-    """Services behind WebAuthn credentials and ceremony challenges."""
+    """Services behind registering a WebAuthn credential as a login method."""
 
     passkeys: PasskeyService
-    passkey_challenges: PasskeyChallengeService
     login_methods: LoginMethodService
     audit_logs: AuditLogService
 
 
 class OAuthServices(ServiceGroup):
-    """Services behind linked provider accounts and OAuth transactions."""
+    """Services behind signing in with a linked provider account."""
 
     users: UserService
-    roles: RoleService
-    user_roles: UserRoleService
     oauth_accounts: OAuthAccountService
-    oauth_transactions: OAuthTransactionService
-    passkeys: PasskeyService
 
     async def login(
         self,
@@ -389,44 +423,12 @@ class OAuthServices(ServiceGroup):
                 grant=grant,
                 protected_tokens=protected_tokens,
                 now=now,
-                advance_version=False,
             )
             return OAuthLoginOutcome(linked=self.oauth_accounts.to_linked_account(oauth_account), provisioned=False)
         if not provision_unknown:
             raise AccountLinkError
         oauth_account = await self._provision_account(identity, grant=grant, protected_tokens=protected_tokens, now=now)
         return OAuthLoginOutcome(linked=self.oauth_accounts.to_linked_account(oauth_account), provisioned=True)
-
-    async def unlink(
-        self,
-        user_id: UUID,
-        oauth_account_id: UUID,
-        provider: str,
-        *,
-        require_remaining: bool,
-    ) -> UnlinkStatus:
-        """Remove one of the user's linked provider accounts.
-
-        The account stays locked for the transaction, so concurrent unlinks cannot each remove a different
-        link and leave the account without a way to sign in. Login methods are counted before the link is
-        looked up, so on a database without row locks the loser of a race for the same link still reads
-        ``NOT_FOUND`` instead of ``FINAL_METHOD``.
-
-        Returns:
-            ``UNLINKED``, ``NOT_FOUND`` when the user has no such link, or ``FINAL_METHOD`` when
-            ``require_remaining`` is set and the link is the account's only login method.
-        """
-        user = await self.users.find_for_update(user_id)
-        if user is None:
-            return UnlinkStatus.NOT_FOUND
-        login_method_count = await self._count_login_methods(user)
-        oauth_account = await self.oauth_accounts.find_owned(oauth_account_id, user_id=user.id, provider=provider)
-        if oauth_account is None:
-            return UnlinkStatus.NOT_FOUND
-        if require_remaining and login_method_count <= 1:
-            return UnlinkStatus.FINAL_METHOD
-        unlinked = await self.oauth_accounts.unlink(oauth_account)
-        return UnlinkStatus.UNLINKED if unlinked else UnlinkStatus.NOT_FOUND
 
     async def _provision_account(
         self,
@@ -438,7 +440,7 @@ class OAuthServices(ServiceGroup):
     ) -> m.UserOAuthAccount:
         try:
             user = await self.users.provision(
-                email=self._provisioning_email(identity),
+                email=self.oauth_accounts.to_account_email(identity),
                 name=identity.display_name,
                 verified=identity.email_verified,
                 now=now,
@@ -455,21 +457,3 @@ class OAuthServices(ServiceGroup):
             protected_tokens=protected_tokens,
             now=now,
         )
-
-    @staticmethod
-    def _provisioning_email(identity: ProviderIdentity) -> str:
-        if identity.email:
-            return normalize_identifier(identity.email)
-        return f"{identity.provider}-{identity.subject}@oauth.local"
-
-    async def _count_login_methods(self, user: m.User) -> int:
-        linked_provider_count = await self.oauth_accounts.count(user_id=user.id)
-        passkey_count = await self.passkeys.count(user_id=user.id)
-        return linked_provider_count + passkey_count + int(user.hashed_password is not None)
-
-
-class APIKeyServices(ServiceGroup):
-    """Services behind personal API keys and the accounts that own them."""
-
-    api_keys: APIKeyRecordService
-    users: UserService

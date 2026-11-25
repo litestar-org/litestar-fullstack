@@ -29,7 +29,7 @@ from litestar_security.context import Principal
 from app import config
 from app.__metadata__ import __version__
 from app.db import models as m
-from app.domain.accounts.security import AuditSecurityEventSink, require_application_access, sanitize_event_details
+from app.domain.accounts.security import AuditSecurityEventSink, sanitize_event_details
 from app.lib.email import AppEmailService
 from app.lib.exceptions import (
     ApplicationClientError,
@@ -37,7 +37,6 @@ from app.lib.exceptions import (
     exception_to_http_response,
 )
 from app.lib.settings import AppSettings, get_settings, provide_app_settings
-from app.lib.validation import ValidationError
 from app.server import plugins
 
 if TYPE_CHECKING:
@@ -182,7 +181,7 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         cli.add_command(user_management_group)
 
     def on_app_init(self, app_config: AppConfig) -> AppConfig:
-        """Configure OpenAPI, CORS, proxy headers, first-party plugins, the access guard, DI, and exception handlers.
+        """Configure OpenAPI, CORS, proxy headers, first-party plugins, DI, and exception handlers.
 
         Returns:
             Updated Litestar ``AppConfig``.
@@ -205,7 +204,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 email_config=self.email_config,
             )
         )
-        app_config.guards.append(require_application_access)  # pyright: ignore[reportUnknownMemberType]
         self._enable_local_auth(app_config)
         self._trust_proxy_headers(app_config, settings.server.LITESTAR_TRUSTED_PROXIES)
         self._register_dependencies(app_config)
@@ -287,7 +285,6 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
             {
                 ApplicationError: exception_to_http_response,
                 ApplicationClientError: exception_to_http_response,
-                ValidationError: exception_to_http_response,
                 RepositoryError: exception_to_http_response,
                 DuplicateKeyError: exception_to_http_response,
                 HTTP_500_INTERNAL_SERVER_ERROR: exception_to_http_response,
