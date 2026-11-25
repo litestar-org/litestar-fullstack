@@ -236,4 +236,4 @@ jobs:
         run: uv sync --all-groups --frozen --no-build
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@74c1aea9df7c0f02e9b7bfe4a8935abf2e5e3aa6 # v3
+        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
