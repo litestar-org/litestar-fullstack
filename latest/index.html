@@ -6,9 +6,9 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="Litestar Fullstack"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="Litestar Fullstack"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/domain/index.html">domain</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="api/domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/domain/web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -163,37 +167,39 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="litestar-fullstack">
-<h1>Litestar Fullstack<a class="headerlink" href="#litestar-fullstack" title="Link to this heading">¶</a></h1>
-<p>The Litestar Fullstack repository contains the reference code for a fully-capable, production-ready
-fullstack Litestar web application. It is intended to be used as a starting point for new projects
-and as a reference for how to build a large scale fullstack Litestar application.</p>
-<p>You can take pieces as needed, or use the entire thing as a starting point for your project.
-It includes the following capabilities out of the box:</p>
+<h1>Litestar Fullstack<a class="headerlink" href="#litestar-fullstack" title="Link to this heading">#</a></h1>
+<p>Litestar Fullstack is a production-ready reference application demonstrating the first-party
+Litestar plugin ecosystem with PostgreSQL (<code class="docutils literal notranslate"><span class="pre">asyncpg</span></code>), React 19, Vite, and <code class="docutils literal notranslate"><span class="pre">uv_build</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>It is built on the <a class="reference external" href="https://litestar.dev">Litestar</a>, React, <a class="reference external" href="https://vitejs.dev/">Vite</a>,
-<a class="reference external" href="https://saq-py.readthedocs.io/en/latest/index.html" title="(in SAQ v0.26.1)"><span class="xref std std-doc">SAQ</span></a>, <a class="reference external" href="https://tailwindcss.com/">TailwindCSS</a>, and
-<span class="xref std std-doc">Advanced Alchemy</span> with features to reference:</p>
+<p>Built with <a class="reference external" href="https://litestar.dev">Litestar</a>, <a class="reference external" href="https://advanced-alchemy.litestar.dev/">Advanced Alchemy</a>,
+<a class="reference external" href="https://github.com/litestar-org/litestar-security">litestar-security</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-queues">litestar-queues</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-autowire">litestar-autowire</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-mcp">litestar-mcp</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-asyncapi">litestar-asyncapi</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-vite">litestar-vite</a>,
+<a class="reference external" href="https://github.com/cofin/litestar-email">litestar-email</a>, and
+<a class="reference external" href="https://github.com/cofin/litestar-granian">litestar-granian</a>:</p>
 <ul class="simple">
-<li><p>SPA frontend with React 19 and Vite (SPA mode via <a class="reference external" href="https://github.com/cofin/litestar-vite">litestar-vite</a>)</p></li>
-<li><p>JWT auth with refresh tokens, MFA, OAuth, and admin tooling</p></li>
-<li><p>Service/repository pattern with UUIDv7 primary keys</p></li>
-<li><p>Background jobs via <a class="reference external" href="https://saq-py.readthedocs.io/en/latest/index.html" title="(in SAQ v0.26.1)"><span class="xref std std-doc">SAQ</span></a> and structured logging with <a class="reference external" href="https://www.structlog.org/en/stable/index.html" title="(in structlog v25.5)"><span class="xref std std-doc">structlog</span></a></p></li>
-<li><p>Dockerized development and production workflows</p></li>
-<li><p>Test suite for backend features</p></li>
+<li><p>React 19 SPA with TanStack Router, TanStack Query, Tailwind CSS v4, and generated OpenAPI/AsyncAPI types</p></li>
+<li><p>Fail-closed cookie session authentication with CSRF, TOTP MFA, WebAuthn Passkeys, OAuth2/OIDC, and API keys</p></li>
+<li><p>PostgreSQL-backed background queues with <code class="docutils literal notranslate"><span class="pre">LISTEN</span></code>/<code class="docutils literal notranslate"><span class="pre">NOTIFY</span></code> wakeups and live SSE/WebSocket task streaming</p></li>
+<li><p>Authenticated MCP JSON-RPC endpoint for safe workspace resources and tools</p></li>
+<li><p>Postgres-only Docker, Railway, and Kubernetes deployment blueprints</p></li>
 </ul>
 </div>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>To get started, check out <a class="reference internal" href="usage/installation.html"><span class="doc">the installation guide</span></a>.</p>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>Follow <a class="reference internal" href="usage/installation.html"><span class="doc">the installation guide</span></a> to set up your environment.</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<p>To see how to use the Litestar Fullstack, check out <a class="reference internal" href="usage/index.html"><span class="doc">the usage guide</span></a>.</p>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>Explore the operational guides in <a class="reference internal" href="usage/index.html"><span class="doc">Usage</span></a>.</p>
 </section>
 <section id="reference">
-<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">¶</a></h2>
-<p>We also provide an API reference which can be found at <a class="reference internal" href="api/index.html"><span class="doc">API Reference</span></a>.</p>
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<p>Browse the Python module reference in <a class="reference internal" href="api/index.html"><span class="doc">API Reference</span></a>.</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -221,7 +227,7 @@ It includes the following capabilities out of the box:</p>
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -236,10 +242,10 @@ It includes the following capabilities out of the box:</p>
   </div>
 </footer>
       <script src="_static/documentation_options.js?v=e259d695"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
-      <script src="_static/design-tabs.js?v=f930bc37"></script>
-      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
 </html>

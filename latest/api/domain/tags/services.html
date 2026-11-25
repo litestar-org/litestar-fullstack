@@ -2,13 +2,13 @@
 <html lang="en" data-accent-color="violet" data-content_root="../../../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>services - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="web" href="../web/index.html" /><link rel="prev" title="controllers" href="controllers.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>services - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="system" href="../system/index.html" /><link rel="prev" title="controllers" href="controllers.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="services"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="services"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../../../usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">domain</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -128,15 +132,16 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#app.domain.tags.services.TagService"><code class="docutils literal notranslate"><span class="pre">TagService</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.Repo"><code class="docutils literal notranslate">Repo</span></code></a><ul>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.Repo.model_type"><code class="docutils literal notranslate">Repo.model_type</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.Repo"><code class="docutils literal notranslate"><span class="pre">TagService.Repo</span></code></a><ul>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.Repo.model_type"><code class="docutils literal notranslate"><span class="pre">TagService.Repo.model_type</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.match_fields"><code class="docutils literal notranslate">match_fields</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.repository_type"><code class="docutils literal notranslate">repository_type</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_create"><code class="docutils literal notranslate">to_model_on_create()</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_update"><code class="docutils literal notranslate">to_model_on_update()</span></code></a></li>
-<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_upsert"><code class="docutils literal notranslate">to_model_on_upsert()</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.repository_type"><code class="docutils literal notranslate"><span class="pre">TagService.repository_type</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.match_fields"><code class="docutils literal notranslate"><span class="pre">TagService.match_fields</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.update"><code class="docutils literal notranslate"><span class="pre">TagService.update()</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_create"><code class="docutils literal notranslate"><span class="pre">TagService.to_model_on_create()</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_update"><code class="docutils literal notranslate"><span class="pre">TagService.to_model_on_update()</span></code></a></li>
+<li><a class="reference internal" href="#app.domain.tags.services.TagService.to_model_on_upsert"><code class="docutils literal notranslate"><span class="pre">TagService.to_model_on_upsert()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -182,20 +187,22 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="services">
-<h1>services<a class="headerlink" href="#services" title="Link to this heading">¶</a></h1>
+<h1>services<a class="headerlink" href="#services" title="Link to this heading">#</a></h1>
 <p>Services for the tags domain.</p>
 <p id="module-app.domain.tags.services">Tags domain services.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domain.tags.services.</span></span><span class="sig-name descname"><span class="pre">TagService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.ext.asyncio.scoping.async_scoped_session[~sqlalchemy.ext.asyncio.session.AsyncSession],</span> <span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">~sqlalchemy.sql.selectable.Select</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]]</span> <span class="pre">|</span> <span class="pre">tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">wrap_exceptions:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">load:</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]]]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.base.ExecutableOption</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.sql.base.ExecutableOption]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">uniquify:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">count_with_window_function:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.domain.tags.services.</span></span><span class="sig-name descname"><span class="pre">TagService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.ext.asyncio.scoping.async_scoped_session[~sqlalchemy.ext.asyncio.session.AsyncSession],</span> <span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">~sqlalchemy.sql.selectable.Select</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">model_type:</span> <span class="pre">type[~advanced_alchemy.repository.typing.ModelT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">repository_type:</span> <span class="pre">type[~advanced_alchemy.repository.typing.SQLAlchemyAsyncRepositoryT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">~typing.List[tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]]</span> <span class="pre">|</span> <span class="pre">tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">wrap_exceptions:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">load:</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]]]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.base.ExecutableOption</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.sql.base.ExecutableOption]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">uniquify:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">count_with_window_function:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**repo_kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncRepositoryService</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code>, Any]</p>
-<p>Handles basic lookup operations for an Tag.</p>
+<p>Handles CRUD and unique slug generation for workspace tags.</p>
 <p>Configure the service object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
 <li><p><strong>statement</strong> – To facilitate customization of the underlying select query.</p></li>
+<li><p><strong>model_type</strong> – Optional SQLAlchemy model type when instantiating directly without subclassing.</p></li>
+<li><p><strong>repository_type</strong> – Optional repository class override when instantiating directly.</p></li>
 <li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
 <li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
 <li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
@@ -205,22 +212,23 @@ data-aria-dark="Switch to auto color mode">
 <li><p><strong>load</strong> – Set default relationships to be loaded</p></li>
 <li><p><strong>execution_options</strong> – Set default execution options</p></li>
 <li><p><strong>uniquify</strong> – Optionally apply the <code class="docutils literal notranslate"><span class="pre">unique()</span></code> method to results before returning.</p></li>
-<li><p><strong>count_with_window_function</strong> – When false, list and count will use two queries instead of an analytical window function.</p></li>
+<li><p><strong>count_with_window_function</strong> – When false, list and count will use two queries instead of an analytical window function. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> in 1.x (planned to change to <code class="docutils literal notranslate"><span class="pre">False</span></code> in v2.0).</p></li>
 <li><p><strong>**repo_kwargs</strong> – passed as keyword args to repo instantiation.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService.Repo">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">~sqlalchemy.sql.selectable.Select</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.ext.asyncio.scoping.async_scoped_session[~sqlalchemy.ext.asyncio.session.AsyncSession],</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">list[tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]]</span> <span class="pre">|</span> <span class="pre">tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]]]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.strategy_options._AbstractLoad</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.base.ExecutableOption</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.sql.base.ExecutableOption]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">wrap_exceptions:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">uniquify:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">count_with_window_function:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.Repo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.Repo" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">statement:</span> <span class="pre">~sqlalchemy.sql.selectable.Select</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">~sqlalchemy.ext.asyncio.session.AsyncSession</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.ext.asyncio.scoping.async_scoped_session[~sqlalchemy.ext.asyncio.session.AsyncSession],</span> <span class="pre">model_type:</span> <span class="pre">type[~advanced_alchemy.repository.typing.ModelT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">auto_expunge:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">auto_refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">auto_commit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">order_by:</span> <span class="pre">~typing.List[tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]]</span> <span class="pre">|</span> <span class="pre">tuple[str</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.elements.UnaryExpression[~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">error_messages:</span> <span class="pre">~advanced_alchemy.exceptions.ErrorMessages</span> <span class="pre">|</span> <span class="pre">type[~advanced_alchemy.utils.dataclass.Empty]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'advanced_alchemy.utils.dataclass.Empty'&gt;,</span> <span class="pre">load:</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]]]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.LoaderOption</span> <span class="pre">|</span> <span class="pre">~typing.Literal['*']</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.attributes.InstrumentedAttribute[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.relationships.RelationshipProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.orm.interfaces.MapperProperty[~typing.Any]</span> <span class="pre">|</span> <span class="pre">~sqlalchemy.sql.base.ExecutableOption</span> <span class="pre">|</span> <span class="pre">~collections.abc.Sequence[~sqlalchemy.sql.base.ExecutableOption]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">execution_options:</span> <span class="pre">dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">wrap_exceptions:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">uniquify:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">count_with_window_function:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">cache_manager:</span> <span class="pre">CacheManager</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bind_group:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.Repo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.Repo" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyAsyncSlugRepository</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code>]</p>
-<p>Tag Repository.</p>
+<p>Tag SQLAlchemy slug repository.</p>
 <p>Repository for SQLAlchemy models.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>statement</strong> – To facilitate customization of the underlying select query.</p></li>
 <li><p><strong>session</strong> – Session managing the unit-of-work for the operation.</p></li>
+<li><p><strong>model_type</strong> – Optional SQLAlchemy model type when instantiating directly without subclassing.</p></li>
 <li><p><strong>auto_expunge</strong> – Remove object from session before returning.</p></li>
 <li><p><strong>auto_refresh</strong> – Refresh object from session before returning.</p></li>
 <li><p><strong>auto_commit</strong> – Commit objects before returning.</p></li>
@@ -230,69 +238,73 @@ data-aria-dark="Switch to auto color mode">
 <li><p><strong>error_messages</strong> – A set of custom error messages to use for operations</p></li>
 <li><p><strong>wrap_exceptions</strong> – Wrap SQLAlchemy exceptions in a <code class="docutils literal notranslate"><span class="pre">RepositoryError</span></code>.  When set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the original exception will be raised.</p></li>
 <li><p><strong>uniquify</strong> – Optionally apply the <code class="docutils literal notranslate"><span class="pre">unique()</span></code> method to results before returning.</p></li>
-<li><p><strong>count_with_window_function</strong> – When false, list and count will use two queries instead of an analytical window function.</p></li>
+<li><p><strong>count_with_window_function</strong> – When false, list and count will use two queries instead of an analytical window function. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> in 1.x (planned to change to <code class="docutils literal notranslate"><span class="pre">False</span></code> in v2.0).</p></li>
+<li><p><strong>cache_manager</strong> – Optional cache manager for repository-level caching. If not provided, retrieved from <code class="docutils literal notranslate"><span class="pre">session.info</span></code>.</p></li>
+<li><p><strong>bind_group</strong> – Optional default routing group to use for all operations. Can be overridden per-method.</p></li>
 <li><p><strong>**kwargs</strong> – Additional arguments.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService.Repo.model_type">
-<span class="sig-name descname"><span class="pre">model_type</span></span><a class="headerlink" href="#app.domain.tags.services.TagService.Repo.model_type" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">model_type</span></span><a class="headerlink" href="#app.domain.tags.services.TagService.Repo.model_type" title="Link to this definition">#</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code></p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.services.TagService.match_fields">
-<span class="sig-name descname"><span class="pre">match_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['name']</span></em><a class="headerlink" href="#app.domain.tags.services.TagService.match_fields" title="Link to this definition">¶</a></dt>
-<dd><p>List of dialects that prefer to use <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">=</span> <span class="pre">ANY(:1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">IN</span> <span class="pre">(...)</span></code>.</p>
+<dt class="sig sig-object py" id="app.domain.tags.services.TagService.repository_type">
+<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.tags.services.TagService.repository_type" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#app.domain.tags.services.TagService.Repo" title="app.domain.tags.services._tag.TagService.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.domain.tags.services.TagService.repository_type">
-<span class="sig-name descname"><span class="pre">repository_type</span></span><a class="headerlink" href="#app.domain.tags.services.TagService.repository_type" title="Link to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#app.domain.tags.services.TagService.Repo" title="app.domain.tags.services._tag.TagService.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a></p>
+<dt class="sig sig-object py" id="app.domain.tags.services.TagService.match_fields">
+<span class="sig-name descname"><span class="pre">match_fields</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.15)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['name']</span></span><a class="headerlink" href="#app.domain.tags.services.TagService.match_fields" title="Link to this definition">#</a></dt>
+<dd><p>List of dialects that prefer to use <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">=</span> <span class="pre">ANY(:1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">field.id</span> <span class="pre">IN</span> <span class="pre">(...)</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domain.tags.services.TagService.update">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">m.Tag</span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.update" title="Link to this definition">#</a></dt>
+<dd><p>Preserve the existing slug when updating a tag without changing its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The updated <code class="docutils literal notranslate"><span class="pre">Tag</span></code> model instance.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService.to_model_on_create">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_model_on_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_create" title="Link to this definition">¶</a></dt>
-<dd><p>Convenience method to allow for custom behavior on create.</p>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">to_model_on_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_create" title="Link to this definition">#</a></dt>
+<dd><p>Populate a unique slug from <code class="docutils literal notranslate"><span class="pre">name</span></code> when creating a tag.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The data to be converted to a model.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The data to be converted to a model.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Normalized tag payload with a unique slug.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService.to_model_on_update">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_model_on_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_update" title="Link to this definition">¶</a></dt>
-<dd><p>Convenience method to allow for custom behavior on update.</p>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">to_model_on_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_update" title="Link to this definition">#</a></dt>
+<dd><p>Populate a unique slug when updating a tag’s name without an explicit slug.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The data to be converted to a model.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The data to be converted to a model.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Normalized tag payload with a unique slug if applicable.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.domain.tags.services.TagService.to_model_on_upsert">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_model_on_upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">service.ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_upsert" title="Link to this definition">¶</a></dt>
-<dd><p>Convenience method to allow for custom behavior on upsert.</p>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">to_model_on_upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ModelDictT</span><span class="p"><span class="pre">[</span></span><span class="pre">m.Tag</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/app/domain/tags/services/_tag.html#TagService.to_model_on_upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.domain.tags.services.TagService.to_model_on_upsert" title="Link to this definition">#</a></dt>
+<dd><p>Populate a unique slug when upserting a tag.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The data to be converted to a model.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The data to be converted to a model.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Normalized tag payload with a unique slug if applicable.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,10 +325,10 @@ data-aria-dark="Switch to auto color mode">
         <span>Previous</span><div class="title">controllers</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="../web/index.html">
+    <a href="../system/index.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">web</div>
+        <div class="title">system</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>
@@ -327,7 +339,7 @@ data-aria-dark="Switch to auto color mode">
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -342,10 +354,10 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="../../../_static/documentation_options.js?v=e259d695"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
-      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../../../_static/shibuya.js?v=50760d75"></script></body>
 </html>

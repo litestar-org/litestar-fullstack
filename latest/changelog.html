@@ -6,9 +6,9 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="Changelog"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="Changelog"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/domain/index.html">domain</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="api/domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/domain/web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -171,12 +175,12 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="changelog">
-<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">¶</a></h1>
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
 <p>All commits to this project will be documented in this file.</p>
 <section id="unreleased">
-<h2>[unreleased]<a class="headerlink" href="#unreleased" title="Link to this heading">¶</a></h2>
+<h2>[unreleased]<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
 <section id="bug-fixes">
-<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/e134a29bed11ec6b69af5614e5db99ab70b66e40">e134a29</a>)  - Set volume mounts explicitly to avoid mounting <cite>.venv</cite> and <cite>node_modules</cite> not built in the container. (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/cb80d8eae6f7c12aff537d911ee79a31123a6e00">cb80d8e</a>)  - Correct test case (Cody Fincher)</p></li>
@@ -303,7 +307,7 @@ data-aria-dark="Switch to auto color mode">
 <p>———, Co-authored-by:Kumzy &lt;Kumzy&#64;users.noreply.github.com&gt;, Co-authored-by:Faolain &lt;Faolain&#64;users.noreply.github.com&gt;</p>
 </section>
 <section id="documentation">
-<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h3>
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/94637345ea19610e1ebd9b5a28024f704130558d">9463734</a>)  - Adds banner artwork for future updates (#61) (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/80ad7e432175a77ea2aceb99480fa06622e10e21">80ad7e4</a>)  - Update README.md features (#68) (Tom V), Co-authored-by:Cody Fincher &lt;204685+cofin&#64;users.noreply.github.com&gt;</p></li>
@@ -311,14 +315,14 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </section>
 <section id="fix">
-<h3>FIX<a class="headerlink" href="#fix" title="Link to this heading">¶</a></h3>
+<h3>FIX<a class="headerlink" href="#fix" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/5997f90314fb07f6d42e1bc756bcf32c413cf011">5997f90</a>)  - Change 401 to 403 for insufficient privileges (#10) (Bäm)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/95f19b3fb76da60d2d45b951ba7544288c22db30">95f19b3</a>)  - Fields for Before and After filters (#9) (Bäm)</p></li>
 </ul>
 </section>
 <section id="features">
-<h3>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/044e271fcd299b02ff979b9beb10bbf341b80490">044e271</a>)  - Dynamically set the reload dir based on module path. (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/7259fc8711959b22b8faa5a676d3135458a7ae92">7259fc8</a>)  - Launch worker in-process or as standalone with CLI flags. (Cody Fincher)</p></li>
@@ -388,7 +392,7 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </section>
 <section id="miscellaneous-tasks">
-<h3>Miscellaneous Tasks<a class="headerlink" href="#miscellaneous-tasks" title="Link to this heading">¶</a></h3>
+<h3>Miscellaneous Tasks<a class="headerlink" href="#miscellaneous-tasks" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/05233d281f5a735b032c73d1d744e82efbdf0bcd">05233d2</a>)  - Docstring cleanup. (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/111cbc3f9419d609bdf084c947e3bf20d26e8a90">111cbc3</a>)  - Documentation update (Cody Fincher)</p></li>
@@ -417,13 +421,13 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </section>
 <section id="testing">
-<h3>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h3>
+<h3>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/074f8ba736bab7c59232c5f7d28280d8b6ef5749">074f8ba</a>)  - Remove pytest docker and replace with custom implementation (Cody Fincher)</p></li>
 </ul>
 </section>
 <section id="ci">
-<h3>Ci<a class="headerlink" href="#ci" title="Link to this heading">¶</a></h3>
+<h3>Ci<a class="headerlink" href="#ci" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/b4ae5eef21b1de8a5a216dc7561133643ea66fcd">b4ae5ee</a>)  - Move mypy config to pyproject.toml.  Address deprecated import (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/1b91b053a46a64d332e51b4c81c9f9c9b527d5ea">1b91b05</a>)  - Apply pre-commit (Jacob Coffee)</p></li>
@@ -432,7 +436,7 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </section>
 <section id="infra">
-<h3>Infra<a class="headerlink" href="#infra" title="Link to this heading">¶</a></h3>
+<h3>Infra<a class="headerlink" href="#infra" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/42a8f6623f8fdfbed02682a69658415b61fe3dbf">42a8f66</a>)  - Set host to <cite>0.0.0.0</cite> instead of <cite>127.0.0.1</cite>.  This enables external access to the container. (#60) (Cody Fincher)</p></li>
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/39ba71b665784a3a768d8f1c4e1f0d779fab15b7">39ba71b</a>)  - Fix <cite>source</cite> not found on some shells (#64) (Cody Fincher)</p></li>
@@ -440,13 +444,13 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </section>
 <section id="meta">
-<h3>Meta<a class="headerlink" href="#meta" title="Link to this heading">¶</a></h3>
+<h3>Meta<a class="headerlink" href="#meta" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/9a84690bb40d8c9324579c08d5df55f74e609e03">9a84690</a>)  - Org updates (#72) (Jacob Coffee)</p></li>
 </ul>
 </section>
 <section id="wip">
-<h3>Wip<a class="headerlink" href="#wip" title="Link to this heading">¶</a></h3>
+<h3>Wip<a class="headerlink" href="#wip" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>(<a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/commit/84af1da3837ee8ad11cfa904e651a18cdc751614">84af1da</a>)  - Begin refactoring for 2.0 (Cody Fincher)</p></li>
 </ul>
@@ -473,7 +477,7 @@ data-aria-dark="Switch to auto color mode">
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -488,10 +492,10 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="_static/documentation_options.js?v=e259d695"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
-      <script src="_static/design-tabs.js?v=f930bc37"></script>
-      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
 </html>

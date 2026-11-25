@@ -2,13 +2,13 @@
 <html lang="en" data-accent-color="violet" data-content_root="./">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Contribution Guide - Litestar Fullstack Docs</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Changelog" href="changelog.html" /><link rel="prev" title="tasks" href="api/domain/system/tasks.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Contribution Guide - Litestar Fullstack Docs</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Changelog" href="changelog.html" /><link rel="prev" title="jobs" href="api/domain/system/jobs.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="Contribution Guide"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="Contribution Guide"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/domain/index.html">domain</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="api/domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/domain/web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="api/domain/system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/domain/system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/domain/system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -176,9 +180,9 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="contribution-guide">
-<h1>Contribution Guide<a class="headerlink" href="#contribution-guide" title="Link to this heading">¶</a></h1>
+<h1>Contribution Guide<a class="headerlink" href="#contribution-guide" title="Link to this heading">#</a></h1>
 <section id="setting-up-the-environment">
-<h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Link to this heading">¶</a></h2>
+<h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>If you do not have already have Astral’s UV installed, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-uv</span></code></p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span> <span class="pre">--all-groups</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a> and install
@@ -189,9 +193,9 @@ the dependencies</p></li>
 </ol>
 </section>
 <section id="code-contributions">
-<h2>Code contributions<a class="headerlink" href="#code-contributions" title="Link to this heading">¶</a></h2>
+<h2>Code contributions<a class="headerlink" href="#code-contributions" title="Link to this heading">#</a></h2>
 <section id="workflow">
-<h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">¶</a></h3>
+<h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/fork">Fork</a> the <a class="reference external" href="https://github.com/litestar-org/litestar-fullstack">fullstack repository</a></p></li>
 <li><p>Clone your fork locally with git</p></li>
@@ -214,20 +218,20 @@ could be titled <code class="docutils literal notranslate"><span class="pre">fix
 </section>
 </section>
 <section id="project-documentation">
-<h2>Project documentation<a class="headerlink" href="#project-documentation" title="Link to this heading">¶</a></h2>
+<h2>Project documentation<a class="headerlink" href="#project-documentation" title="Link to this heading">#</a></h2>
 <p>The documentation is located in the <code class="docutils literal notranslate"><span class="pre">/docs</span></code> directory and is built with <a class="reference external" href="https://docutils.sourceforge.io/rst.html">ReST</a>
 and <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>. If you’re unfamiliar with any of those,
 <a class="reference external" href="https://www.sphinx-doc.org/en/master/lib/usage/restructuredtext/basics.html">ReStructuredText primer</a> and
 <a class="reference external" href="https://www.sphinx-doc.org/en/master/lib/usage/quickstart.html">Sphinx quickstart</a> are recommended reads.</p>
 <section id="docs-theme-and-appearance">
-<h3>Docs theme and appearance<a class="headerlink" href="#docs-theme-and-appearance" title="Link to this heading">¶</a></h3>
+<h3>Docs theme and appearance<a class="headerlink" href="#docs-theme-and-appearance" title="Link to this heading">#</a></h3>
 <p>We welcome contributions that enhance / improve the appearance and usability of the docs. We use a custom theme that
 inherits the <a class="reference external" href="https://pydata-sphinx-theme.readthedocs.io/en/latest/">PyData Sphinx Theme</a>, which comes
 with a lot of options out of the box. If you wish to contribute to the docs style / setup, or static site generation,
 you should consult the theme docs as a first step.</p>
 </section>
 <section id="running-the-docs-locally">
-<h3>Running the docs locally<a class="headerlink" href="#running-the-docs-locally" title="Link to this heading">¶</a></h3>
+<h3>Running the docs locally<a class="headerlink" href="#running-the-docs-locally" title="Link to this heading">#</a></h3>
 <p>To run or build the docs locally, you need to first install the required dependencies:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="go">uv sync --group docs</span>
 </span></pre></div>
@@ -235,7 +239,7 @@ you should consult the theme docs as a first step.</p>
 <p>Then you can serve the documentation with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs-serve</span></code>, or build them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p>
 </section>
 <section id="writing-and-editing-docs">
-<h3>Writing and editing docs<a class="headerlink" href="#writing-and-editing-docs" title="Link to this heading">¶</a></h3>
+<h3>Writing and editing docs<a class="headerlink" href="#writing-and-editing-docs" title="Link to this heading">#</a></h3>
 <p>We welcome contributions that enhance / improve the content of the docs. Feel free to add examples, clarify text,
 restructure the docs etc., but make sure to follow these guidelines:</p>
 <ul class="simple">
@@ -249,7 +253,7 @@ referencing external libraries</p></li>
 </section>
 </section>
 <section id="creating-a-new-release">
-<h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Link to this heading">¶</a></h2>
+<h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Link to this heading">#</a></h2>
 <ol class="arabic">
 <li><dl>
 <dt>Increment the version in <a class="reference external" href="pyproject.toml">pyproject.toml</a></dt><dd><div class="admonition note">
@@ -270,7 +274,7 @@ referencing external libraries</p></li>
 </ol>
 </section>
 <section id="id1">
-<h2>Setting up the environment<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<h2>Setting up the environment<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>If you do not have already have Astral’s UV installed, run <cite>make install-uv</cite></p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span> <span class="pre">--all-groups</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a> and install
@@ -282,9 +286,9 @@ the dependencies</p></li>
 <p><strong>Note</strong> There is a short-cut for running the installation process.  You can run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> to install the dependencies and pre-commit hooks.</p>
 </section>
 <section id="id4">
-<h2>Code contributions<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<h2>Code contributions<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h3>Workflow<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<h3>Workflow<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://github.com/litestar-org/litestar-fullstack/fork">Fork</a> the <a class="reference external" href="https://github.com/litestar-org/litestar-fullstack">fullstack repository</a></p></li>
 <li><p>Clone your fork locally with git</p></li>
@@ -307,7 +311,7 @@ could be titled <code class="docutils literal notranslate"><span class="pre">fix
 </section>
 </section>
 <section id="id11">
-<h2>Project documentation<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<h2>Project documentation<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
 <p>The documentation is located in the <code class="docutils literal notranslate"><span class="pre">/docs</span></code> directory and is built with <a class="reference external" href="https://docutils.sourceforge.io/rst.html">ReST</a></p>
 </section>
 </section>
@@ -318,10 +322,10 @@ could be titled <code class="docutils literal notranslate"><span class="pre">fix
   </svg>
   <span>Back to top</span>
 </button><div class="navigation flex print:hidden"><div class="navigation-prev">
-    <a href="api/domain/system/tasks.html">
+    <a href="api/domain/system/jobs.html">
       <i class="i-lucide chevron-left"></i>
       <div class="page-info">
-        <span>Previous</span><div class="title">tasks</div></div>
+        <span>Previous</span><div class="title">jobs</div></div>
     </a>
   </div><div class="navigation-next">
     <a href="changelog.html">
@@ -338,7 +342,7 @@ could be titled <code class="docutils literal notranslate"><span class="pre">fix
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -353,10 +357,10 @@ could be titled <code class="docutils literal notranslate"><span class="pre">fix
   </div>
 </footer>
       <script src="_static/documentation_options.js?v=e259d695"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
-      <script src="_static/design-tabs.js?v=f930bc37"></script>
-      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
 </html>

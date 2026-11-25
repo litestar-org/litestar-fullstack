@@ -2,38 +2,39 @@
 Litestar Fullstack
 ==================
 
-The Litestar Fullstack repository contains the reference code for a fully-capable, production-ready
-fullstack Litestar web application. It is intended to be used as a starting point for new projects
-and as a reference for how to build a large scale fullstack Litestar application.
+Litestar Fullstack is a production-ready reference application demonstrating the first-party
+Litestar plugin ecosystem with PostgreSQL (``asyncpg``), React 19, Vite, and ``uv_build``.
 
-You can take pieces as needed, or use the entire thing as a starting point for your project.
-It includes the following capabilities out of the box:
+.. seealso:: Built with `Litestar <https://litestar.dev>`_, `Advanced Alchemy <https://advanced-alchemy.litestar.dev/>`_,
+  `litestar-security <https://github.com/litestar-org/litestar-security>`_,
+  `litestar-queues <https://github.com/cofin/litestar-queues>`_,
+  `litestar-autowire <https://github.com/cofin/litestar-autowire>`_,
+  `litestar-mcp <https://github.com/cofin/litestar-mcp>`_,
+  `litestar-asyncapi <https://github.com/cofin/litestar-asyncapi>`_,
+  `litestar-vite <https://github.com/cofin/litestar-vite>`_,
+  `litestar-email <https://github.com/cofin/litestar-email>`_, and
+  `litestar-granian <https://github.com/cofin/litestar-granian>`_:
 
-.. seealso:: It is built on the `Litestar <https://litestar.dev>`_, React, `Vite <https://vitejs.dev/>`_,
-  :doc:`SAQ <saq:index>`, `TailwindCSS <https://tailwindcss.com/>`_, and
-  :doc:`Advanced Alchemy <advanced-alchemy:index>` with features to reference:
-
-  - SPA frontend with React 19 and Vite (SPA mode via `litestar-vite <https://github.com/cofin/litestar-vite>`_)
-  - JWT auth with refresh tokens, MFA, OAuth, and admin tooling
-  - Service/repository pattern with UUIDv7 primary keys
-  - Background jobs via :doc:`SAQ <saq:index>` and structured logging with :doc:`structlog <structlog:index>`
-  - Dockerized development and production workflows
-  - Test suite for backend features
+  - React 19 SPA with TanStack Router, TanStack Query, Tailwind CSS v4, and generated OpenAPI/AsyncAPI types
+  - Fail-closed cookie session authentication with CSRF, TOTP MFA, WebAuthn Passkeys, OAuth2/OIDC, and API keys
+  - PostgreSQL-backed background queues with ``LISTEN``/``NOTIFY`` wakeups and live SSE/WebSocket task streaming
+  - Authenticated MCP JSON-RPC endpoint for safe workspace resources and tools
+  - Postgres-only Docker, Railway, and Kubernetes deployment blueprints
 
 Installation
 ------------
 
-To get started, check out :doc:`the installation guide <usage/installation>`.
+Follow :doc:`the installation guide <usage/installation>` to set up your environment.
 
 Usage
 -----
 
-To see how to use the Litestar Fullstack, check out :doc:`the usage guide <usage/index>`.
+Explore the operational guides in :doc:`usage/index`.
 
 Reference
 ---------
 
-We also provide an API reference which can be found at :doc:`api/index`.
+Browse the Python module reference in :doc:`api/index`.
 
 .. toctree::
     :titlesonly:

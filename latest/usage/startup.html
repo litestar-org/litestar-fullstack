@@ -2,13 +2,13 @@
 <html lang="en" data-accent-color="violet" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Starting the server - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Reference" href="../api/index.html" /><link rel="prev" title="Development" href="development.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Starting the Server - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Security &amp; Authentication" href="security.html" /><link rel="prev" title="Development" href="development.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="Starting the server"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="Starting the Server"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Usage</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development.html">Development</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Starting the server</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/domain/index.html">domain</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/domain/accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../api/domain/teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../api/domain/web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../api/domain/system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -129,6 +133,7 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#development">Development</a></li>
 <li><a class="reference internal" href="#production">Production</a></li>
+<li><a class="reference internal" href="#key-environment-variables">Key Environment Variables</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -150,7 +155,7 @@ data-aria-dark="Switch to auto color mode">
         <span>/</span>
         <meta itemprop="position" content="2" />
       </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <strong itemprop="name">Starting the server</strong>
+        <strong itemprop="name">Starting the Server</strong>
         <meta itemprop="position" content="3" />
       </li></ol>
     <div class="xl:hidden ml-1">
@@ -164,37 +169,41 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="starting-the-server">
-<h1>Starting the server<a class="headerlink" href="#starting-the-server" title="Link to this heading">¶</a></h1>
-<p>This section describes how to start the application in development and production mode.</p>
+<h1>Starting the Server<a class="headerlink" href="#starting-the-server" title="Link to this heading">#</a></h1>
 <section id="development">
-<h2>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h2>
-<p>Set <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE=true</span></code> to enable the Vite dev server, then run:</p>
+<h2>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE=true</span></code> and <code class="docutils literal notranslate"><span class="pre">QUEUES_PLACEMENT=asgi</span></code> in <code class="docutils literal notranslate"><span class="pre">.env</span></code>, start the Litestar API
+(served by Granian), in-process queue worker, and Vite dev server together:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>run
 </span></pre></div>
 </div>
-<p>This starts the Litestar API, SAQ workers (if <code class="docutils literal notranslate"><span class="pre">SAQ_USE_SERVER_LIFESPAN</span></code> is enabled),
-and the Vite dev server. Assets are served under <code class="docutils literal notranslate"><span class="pre">/static/web/</span></code> and the dev server
-listens on <code class="docutils literal notranslate"><span class="pre">VITE_PORT</span></code> (default <code class="docutils literal notranslate"><span class="pre">3006</span></code>) when set.</p>
+<p>Assets are served under <code class="docutils literal notranslate"><span class="pre">/static/web/</span></code> and the Vite dev server binds to <code class="docutils literal notranslate"><span class="pre">VITE_PORT</span></code> (default <code class="docutils literal notranslate"><span class="pre">3006</span></code>).</p>
 </section>
 <section id="production">
-<h2>Production<a class="headerlink" href="#production" title="Link to this heading">¶</a></h2>
-<p>Build the frontend assets into <code class="docutils literal notranslate"><span class="pre">src/py/app/server/static/web</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>assets<span class="w"> </span>build
+<h2>Production<a class="headerlink" href="#production" title="Link to this heading">#</a></h2>
+<p>Build static email templates and SPA assets (regenerating OpenAPI/AsyncAPI types first):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">make<span class="w"> </span>build-emails
+</span><span data-line="2">make<span class="w"> </span>build-assets
 </span></pre></div>
 </div>
-<p>Then run the server with <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE=false</span></code> (or unset):</p>
+<p>Start the API server with <code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE=false</span></code> and <code class="docutils literal notranslate"><span class="pre">QUEUES_PLACEMENT=external</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>run
 </span></pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE</span></code>: Enable the Vite dev server.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VITE_PORT</span></code>: Optional dev server port override.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ASSET_URL</span></code>: Optional asset base path (defaults to <code class="docutils literal notranslate"><span class="pre">/static/web/</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SAQ_USE_SERVER_LIFESPAN</span></code>: Auto start/stop SAQ processes with the app.</p></li>
-</ul>
+<p>Run one or more dedicated queue worker processes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>queues<span class="w"> </span>run
+</span></pre></div>
 </div>
+</section>
+<section id="key-environment-variables">
+<h2>Key Environment Variables<a class="headerlink" href="#key-environment-variables" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DATABASE_URL</span></code>: <code class="docutils literal notranslate"><span class="pre">postgresql+asyncpg://...</span></code> connection string.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QUEUES_PLACEMENT</span></code>: <code class="docutils literal notranslate"><span class="pre">asgi</span></code> (in-process dev worker) or <code class="docutils literal notranslate"><span class="pre">external</span></code> (dedicated <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">queues</span> <span class="pre">run</span></code> worker).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QUEUES_MAX_CONCURRENCY</span></code> / <code class="docutils literal notranslate"><span class="pre">QUEUES_POLL_INTERVAL</span></code>: Worker concurrency and fallback poll interval.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LITESTAR_TRUSTED_PROXIES</span></code>: Comma-separated trusted proxy CIDR/host list (or <code class="docutils literal notranslate"><span class="pre">*</span></code> behind managed load balancers).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VITE_DEV_MODE</span></code> / <code class="docutils literal notranslate"><span class="pre">VITE_PORT</span></code> / <code class="docutils literal notranslate"><span class="pre">ASSET_URL</span></code>: Vite integration settings.</p></li>
+</ul>
 </section>
 </section>
 
@@ -210,10 +219,10 @@ listens on <code class="docutils literal notranslate"><span class="pre">VITE_POR
         <span>Previous</span><div class="title">Development</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="../api/index.html">
+    <a href="security.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">API Reference</div>
+        <div class="title">Security &amp; Authentication</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>
@@ -224,7 +233,7 @@ listens on <code class="docutils literal notranslate"><span class="pre">VITE_POR
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -239,10 +248,10 @@ listens on <code class="docutils literal notranslate"><span class="pre">VITE_POR
   </div>
 </footer>
       <script src="../_static/documentation_options.js?v=e259d695"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
 </html>

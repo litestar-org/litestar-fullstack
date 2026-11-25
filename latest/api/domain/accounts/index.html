@@ -6,9 +6,9 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="accounts"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="accounts"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../../../usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../cli.html">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">domain</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -164,7 +168,7 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="accounts">
-<h1>accounts<a class="headerlink" href="#accounts" title="Link to this heading">¶</a></h1>
+<h1>accounts<a class="headerlink" href="#accounts" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -195,7 +199,7 @@ data-aria-dark="Switch to auto color mode">
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -210,10 +214,10 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="../../../_static/documentation_options.js?v=e259d695"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
-      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../../../_static/shibuya.js?v=50760d75"></script></body>
 </html>

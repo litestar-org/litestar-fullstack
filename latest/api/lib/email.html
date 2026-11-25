@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>email - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="exceptions" href="exceptions.html" /><link rel="prev" title="lib" href="index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=6a604523" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="email"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/deployment.html">Deployment</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../db.html">db</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">lib</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">email</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="settings.html">settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../domain/index.html">domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../domain/accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/security.html">security</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/admin/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../domain/teams/index.html">teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../domain/tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../domain/system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../domain/system/jobs.html">jobs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService"><code class="docutils literal notranslate"><span class="pre">AppEmailService</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.__init__"><code class="docutils literal notranslate"><span class="pre">AppEmailService.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.app_name"><code class="docutils literal notranslate"><span class="pre">AppEmailService.app_name</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.base_url"><code class="docutils literal notranslate"><span class="pre">AppEmailService.base_url</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_email()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_verification_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_verification_email()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_welcome_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_welcome_email()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_password_reset_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_password_reset_email()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_password_reset_confirmation_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_password_reset_confirmation_email()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.AppEmailService.send_team_invitation_email"><code class="docutils literal notranslate"><span class="pre">AppEmailService.send_team_invitation_email()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig"><code class="docutils literal notranslate"><span class="pre">EmailConfig</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.signature_namespace"><code class="docutils literal notranslate"><span class="pre">EmailConfig.signature_namespace</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.dependencies"><code class="docutils literal notranslate"><span class="pre">EmailConfig.dependencies</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.get_service"><code class="docutils literal notranslate"><span class="pre">EmailConfig.get_service()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.get_backend"><code class="docutils literal notranslate"><span class="pre">EmailConfig.get_backend()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.__init__"><code class="docutils literal notranslate"><span class="pre">EmailConfig.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailConfig.provide_service"><code class="docutils literal notranslate"><span class="pre">EmailConfig.provide_service()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.EmailMessage"><code class="docutils literal notranslate"><span class="pre">EmailMessage</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.EmailMessage.attach"><code class="docutils literal notranslate"><span class="pre">EmailMessage.attach()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailMessage.attach_alternative"><code class="docutils literal notranslate"><span class="pre">EmailMessage.attach_alternative()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailMessage.recipients"><code class="docutils literal notranslate"><span class="pre">EmailMessage.recipients()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailMessage.__init__"><code class="docutils literal notranslate"><span class="pre">EmailMessage.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.EmailMultiAlternatives"><code class="docutils literal notranslate"><span class="pre">EmailMultiAlternatives</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.EmailMultiAlternatives.__post_init__"><code class="docutils literal notranslate"><span class="pre">EmailMultiAlternatives.__post_init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailMultiAlternatives.__init__"><code class="docutils literal notranslate"><span class="pre">EmailMultiAlternatives.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin"><code class="docutils literal notranslate"><span class="pre">EmailPlugin</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin.__init__"><code class="docutils literal notranslate"><span class="pre">EmailPlugin.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin.config"><code class="docutils literal notranslate"><span class="pre">EmailPlugin.config</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin.get_service"><code class="docutils literal notranslate"><span class="pre">EmailPlugin.get_service()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin.get_backend"><code class="docutils literal notranslate"><span class="pre">EmailPlugin.get_backend()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailPlugin.on_app_init"><code class="docutils literal notranslate"><span class="pre">EmailPlugin.on_app_init()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.EmailService"><code class="docutils literal notranslate"><span class="pre">EmailService</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.EmailService.__init__"><code class="docutils literal notranslate"><span class="pre">EmailService.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailService.config"><code class="docutils literal notranslate"><span class="pre">EmailService.config</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailService.get_backend"><code class="docutils literal notranslate"><span class="pre">EmailService.get_backend()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailService.send_messages"><code class="docutils literal notranslate"><span class="pre">EmailService.send_messages()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.EmailService.send_message"><code class="docutils literal notranslate"><span class="pre">EmailService.send_message()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.InMemoryBackend"><code class="docutils literal notranslate"><span class="pre">InMemoryBackend</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.InMemoryBackend.outbox"><code class="docutils literal notranslate"><span class="pre">InMemoryBackend.outbox</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.InMemoryBackend.send_messages"><code class="docutils literal notranslate"><span class="pre">InMemoryBackend.send_messages()</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.InMemoryBackend.clear"><code class="docutils literal notranslate"><span class="pre">InMemoryBackend.clear()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.lib.email.UserProtocol"><code class="docutils literal notranslate"><span class="pre">UserProtocol</span></code></a><ul>
+<li><a class="reference internal" href="#app.lib.email.UserProtocol.email"><code class="docutils literal notranslate"><span class="pre">UserProtocol.email</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.UserProtocol.name"><code class="docutils literal notranslate"><span class="pre">UserProtocol.name</span></code></a></li>
+<li><a class="reference internal" href="#app.lib.email.UserProtocol.__init__"><code class="docutils literal notranslate"><span class="pre">UserProtocol.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">lib</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">email</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="email">
+<h1>email<a class="headerlink" href="#email" title="Link to this heading">#</a></h1>
+<p>Transactional React Email service wrapper.</p>
+<p id="module-app.lib.email">Email module wrapping <code class="docutils literal notranslate"><span class="pre">litestar-email</span></code> with template-backed <code class="docutils literal notranslate"><span class="pre">AppEmailService</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">AppEmailService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailService" title="litestar_email.service.EmailService"><span class="pre">EmailService</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Template-rendering transactional email adapter over <code class="docutils literal notranslate"><span class="pre">litestar-email</span></code> <code class="docutils literal notranslate"><span class="pre">EmailService</span></code>.</p>
+<p>Initialize the email service with a request- or task-scoped <code class="docutils literal notranslate"><span class="pre">EmailService</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailService" title="litestar_email.service.EmailService"><span class="pre">EmailService</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the email service with a request- or task-scoped <code class="docutils literal notranslate"><span class="pre">EmailService</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.app_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">app_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#app.lib.email.AppEmailService.app_name" title="Link to this definition">#</a></dt>
+<dd><p>Configured application display name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.base_url">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">base_url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#app.lib.email.AppEmailService.base_url" title="Link to this definition">#</a></dt>
+<dd><p>Configured application base URL.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reply_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_email" title="Link to this definition">#</a></dt>
+<dd><p>Send an HTML + plain-text multipart email and log structured delivery failures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if at least one message was accepted by the email backend.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>EmailRateLimitError</strong> – If the email backend rejects the request due to rate limiting.</p></li>
+<li><p><strong>EmailAuthenticationError</strong> – If backend authentication fails.</p></li>
+<li><p><strong>EmailConnectionError</strong> – If the backend connection fails.</p></li>
+<li><p><strong>EmailDeliveryError</strong> – If the backend reports a delivery failure.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_verification_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_verification_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.UserProtocol" title="app.lib.email.service.UserProtocol"><span class="pre">UserProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">verification_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_verification_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_verification_email" title="Link to this definition">#</a></dt>
+<dd><p>Send an account email verification message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the message was sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_welcome_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_welcome_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.UserProtocol" title="app.lib.email.service.UserProtocol"><span class="pre">UserProtocol</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_welcome_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_welcome_email" title="Link to this definition">#</a></dt>
+<dd><p>Send a welcome message to a newly verified user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the message was sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_password_reset_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_password_reset_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.UserProtocol" title="app.lib.email.service.UserProtocol"><span class="pre">UserProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_in_minutes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_password_reset_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_password_reset_email" title="Link to this definition">#</a></dt>
+<dd><p>Send a password reset message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the message was sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_password_reset_confirmation_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_password_reset_confirmation_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.UserProtocol" title="app.lib.email.service.UserProtocol"><span class="pre">UserProtocol</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_password_reset_confirmation_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_password_reset_confirmation_email" title="Link to this definition">#</a></dt>
+<dd><p>Send a password reset confirmation message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the message was sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.AppEmailService.send_team_invitation_email">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_team_invitation_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invitee_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inviter_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">team_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/app/lib/email/service.html#AppEmailService.send_team_invitation_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.AppEmailService.send_team_invitation_email" title="Link to this definition">#</a></dt>
+<dd><p>Send a team invitation message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the message was sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">EmailConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SMTPConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResendConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SendGridConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MailgunConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SESConfig</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'console'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'noreply&#64;localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_silently</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_service_dependency_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mailer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_service_state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mailer'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/config.html#EmailConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailConfig" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Configuration for the EmailPlugin.</p>
+<p>This configuration class defines the settings for sending email
+within a Litestar application.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<p>Basic configuration with console backend:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">config</span> <span class="o">=</span> <span class="n">EmailConfig</span><span class="p">(</span>
+</span><span data-line="2">    <span class="n">backend</span><span class="o">=</span><span class="s2">"console"</span><span class="p">,</span>
+</span><span data-line="3">    <span class="n">from_email</span><span class="o">=</span><span class="s2">"noreply@example.com"</span><span class="p">,</span>
+</span><span data-line="4">    <span class="n">from_name</span><span class="o">=</span><span class="s2">"My App"</span><span class="p">,</span>
+</span><span data-line="5"><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Configuration with SMTP backend:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">config</span> <span class="o">=</span> <span class="n">EmailConfig</span><span class="p">(</span>
+</span><span data-line="2">    <span class="n">backend</span><span class="o">=</span><span class="n">SMTPConfig</span><span class="p">(</span>
+</span><span data-line="3">        <span class="n">host</span><span class="o">=</span><span class="s2">"smtp.example.com"</span><span class="p">,</span>
+</span><span data-line="4">        <span class="n">port</span><span class="o">=</span><span class="mi">587</span><span class="p">,</span>
+</span><span data-line="5">        <span class="n">use_tls</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="6">    <span class="p">),</span>
+</span><span data-line="7">    <span class="n">from_email</span><span class="o">=</span><span class="s2">"noreply@example.com"</span><span class="p">,</span>
+</span><span data-line="8"><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Configuration with Resend API backend:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">config</span> <span class="o">=</span> <span class="n">EmailConfig</span><span class="p">(</span>
+</span><span data-line="2">    <span class="n">backend</span><span class="o">=</span><span class="n">ResendConfig</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"re_123abc..."</span><span class="p">),</span>
+</span><span data-line="3">    <span class="n">from_email</span><span class="o">=</span><span class="s2">"noreply@example.com"</span><span class="p">,</span>
+</span><span data-line="4"><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.signature_namespace">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">signature_namespace</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#app.lib.email.EmailConfig.signature_namespace" title="Link to this definition">#</a></dt>
+<dd><p>Return the plugin’s signature namespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string keyed dict of names to be added to the namespace for signature forward reference resolution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.dependencies">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dependencies</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#app.lib.email.EmailConfig.dependencies" title="Link to this definition">#</a></dt>
+<dd><p>Return dependency providers for the plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A mapping of dependency keys to providers for Litestar’s DI system.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.get_service">
+<span class="sig-name descname"><span class="pre">get_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">State</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.email.EmailService" title="app.lib.email.EmailService"><span class="pre">EmailService</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/config.html#EmailConfig.get_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailConfig.get_service" title="Link to this definition">#</a></dt>
+<dd><p>Return an EmailService for this configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – Optional application state to fetch a cached service instance or config.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An EmailService instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.get_backend">
+<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fail_silently</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseEmailBackend</span></span></span><a class="reference internal" href="../../_modules/litestar_email/config.html#EmailConfig.get_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailConfig.get_backend" title="Link to this definition">#</a></dt>
+<dd><p>Return a backend instance configured for this EmailConfig.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fail_silently</strong> – Optional override for fail_silently behavior.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A configured backend instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SMTPConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResendConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SendGridConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MailgunConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SESConfig</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'console'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'noreply&#64;localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_silently</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_service_dependency_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mailer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_service_state_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mailer'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.email.EmailConfig.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailConfig.provide_service">
+<span class="sig-name descname"><span class="pre">provide_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AsyncServiceProvider</span></span></span><a class="reference internal" href="../../_modules/litestar_email/config.html#EmailConfig.provide_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailConfig.provide_service" title="Link to this definition">#</a></dt>
+<dd><p>Provide an EmailService instance.</p>
+<p>Returns a context manager that yields an EmailService with managed
+connection lifecycle.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">async</span> <span class="k">with</span> <span class="n">config</span><span class="o">.</span><span class="n">provide_service</span><span class="p">()</span> <span class="k">as</span> <span class="n">mailer</span><span class="p">:</span>
+</span><span data-line="2">    <span class="k">await</span> <span class="n">mailer</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An AsyncServiceProvider that yields an EmailService instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.EmailMessage">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">EmailMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reply_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMessage" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A container for email message data.</p>
+<p>This dataclass holds all the information needed to send an email,
+including recipients, content, and optional attachments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMessage.attach">
+<span class="sig-name descname"><span class="pre">attach</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mimetype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMessage.attach"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMessage.attach" title="Link to this definition">#</a></dt>
+<dd><p>Add an attachment to the email.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The name of the attachment file.</p></li>
+<li><p><strong>content</strong> – The binary content of the attachment.</p></li>
+<li><p><strong>mimetype</strong> – The MIME type of the attachment (e.g., “application/pdf”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMessage.attach_alternative">
+<span class="sig-name descname"><span class="pre">attach_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mimetype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMessage.attach_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMessage.attach_alternative" title="Link to this definition">#</a></dt>
+<dd><p>Add an alternative content representation.</p>
+<p>Typically used to add an HTML version of the email alongside
+the plain text body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content</strong> – The alternative content (e.g., HTML).</p></li>
+<li><p><strong>mimetype</strong> – The MIME type (e.g., “text/html”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMessage.recipients">
+<span class="sig-name descname"><span class="pre">recipients</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMessage.recipients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMessage.recipients" title="Link to this definition">#</a></dt>
+<dd><p>Return all recipients of the email.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A combined list of all to, cc, and bcc recipients.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMessage.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reply_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.email.EmailMessage.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.EmailMultiAlternatives">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">EmailMultiAlternatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reply_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMultiAlternatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMultiAlternatives" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.lib.email.EmailMessage" title="litestar_email.message.EmailMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></a></p>
+<p>An email message with HTML content support.</p>
+<p>This convenience class extends EmailMessage to automatically
+attach an HTML body as an alternative representation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMultiAlternatives.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/message.html#EmailMultiAlternatives.__post_init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailMultiAlternatives.__post_init__" title="Link to this definition">#</a></dt>
+<dd><p>Automatically attach html_body as an alternative if provided.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailMultiAlternatives.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reply_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[tuple[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#app.lib.email.EmailMultiAlternatives.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">EmailPlugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/plugin.html#EmailPlugin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailPlugin" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.litestar.dev/latest/reference/plugins/index.html#litestar.plugins.InitPluginProtocol" title="(in Litestar)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InitPluginProtocol</span></code></a></p>
+<p>Litestar plugin for email functionality.</p>
+<p>This plugin provides email sending capabilities for Litestar applications.
+It supports multiple backend providers (SMTP, SendGrid, Resend, etc.) through
+a pluggable backend system.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<p>Basic plugin configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Litestar</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_email</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailConfig</span><span class="p">,</span> <span class="n">EmailPlugin</span><span class="p">,</span> <span class="n">SMTPConfig</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="n">email_config</span> <span class="o">=</span> <span class="n">EmailConfig</span><span class="p">(</span>
+</span><span data-line="5">    <span class="n">backend</span><span class="o">=</span><span class="n">SMTPConfig</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">1025</span><span class="p">),</span>
+</span><span data-line="6">    <span class="n">from_email</span><span class="o">=</span><span class="s2">"noreply@example.com"</span><span class="p">,</span>
+</span><span data-line="7"><span class="p">)</span>
+</span><span data-line="8"><span class="n">app</span> <span class="o">=</span> <span class="n">Litestar</span><span class="p">(</span><span class="n">plugins</span><span class="o">=</span><span class="p">[</span><span class="n">EmailPlugin</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">email_config</span><span class="p">)])</span>
+</span></pre></div>
+</div>
+<p>Dependency injection in route handlers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">get</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_email</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailMessage</span><span class="p">,</span> <span class="n">EmailService</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nd">@get</span><span class="p">(</span><span class="s2">"/welcome/{email:str}"</span><span class="p">)</span>
+</span><span data-line="5"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_welcome</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mailer</span><span class="p">:</span> <span class="n">EmailService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="6">    <span class="k">await</span> <span class="n">mailer</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
+</span><span data-line="7">        <span class="n">EmailMessage</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="s2">"Welcome!"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s2">"Thanks for signing up."</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="p">[</span><span class="n">email</span><span class="p">]),</span>
+</span><span data-line="8">    <span class="p">)</span>
+</span><span data-line="9">    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"sent"</span><span class="p">}</span>
+</span></pre></div>
+</div>
+<p>Standalone usage with context manager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_email</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailConfig</span><span class="p">,</span> <span class="n">EmailMessage</span><span class="p">,</span> <span class="n">SMTPConfig</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">config</span> <span class="o">=</span> <span class="n">EmailConfig</span><span class="p">(</span>
+</span><span data-line="4">    <span class="n">backend</span><span class="o">=</span><span class="n">SMTPConfig</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">1025</span><span class="p">),</span>
+</span><span data-line="5">    <span class="n">from_email</span><span class="o">=</span><span class="s2">"noreply@example.com"</span><span class="p">,</span>
+</span><span data-line="6"><span class="p">)</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">async</span> <span class="k">with</span> <span class="n">config</span><span class="o">.</span><span class="n">provide_service</span><span class="p">()</span> <span class="k">as</span> <span class="n">mailer</span><span class="p">:</span>
+</span><span data-line="9">    <span class="k">await</span> <span class="n">mailer</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
+</span><span data-line="10">        <span class="n">EmailMessage</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="s2">"Hello"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s2">"World"</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="p">[</span><span class="s2">"user@example.com"</span><span class="p">]),</span>
+</span><span data-line="11">    <span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Using with event listeners:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">Note</span><span class="p">:</span> <span class="n">Event</span> <span class="n">listeners</span> <span class="ow">in</span> <span class="n">Litestar</span> <span class="n">execute</span> <span class="n">outside</span> <span class="n">request</span> <span class="n">context</span> <span class="ow">and</span>
+</span><span data-line="2"><span class="n">cannot</span> <span class="n">receive</span> <span class="n">DI</span><span class="o">-</span><span class="n">injected</span> <span class="n">dependencies</span><span class="o">.</span> <span class="n">Pass</span> <span class="n">the</span> <span class="n">mailer</span> <span class="n">explicitly</span><span class="o">.</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">get</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">listener</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_email</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailMessage</span><span class="p">,</span> <span class="n">EmailService</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="nd">@get</span><span class="p">(</span><span class="s2">"/register/{email:str}"</span><span class="p">)</span>
+</span><span data-line="9"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mailer</span><span class="p">:</span> <span class="n">EmailService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="10">    <span class="c1"># Pass the DI-injected mailer to the event</span>
+</span><span data-line="11">    <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">"user.registered"</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">mailer</span><span class="o">=</span><span class="n">mailer</span><span class="p">)</span>
+</span><span data-line="12">    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"queued"</span><span class="p">}</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="nd">@listener</span><span class="p">(</span><span class="s2">"user.registered"</span><span class="p">)</span>
+</span><span data-line="15"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_user_registered</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mailer</span><span class="p">:</span> <span class="n">EmailService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="16">    <span class="c1"># mailer is passed explicitly from emit(), not injected via DI</span>
+</span><span data-line="17">    <span class="k">await</span> <span class="n">mailer</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
+</span><span data-line="18">        <span class="n">EmailMessage</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="s2">"Welcome!"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s2">"Thanks!"</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="p">[</span><span class="n">email</span><span class="p">]),</span>
+</span><span data-line="19">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+<p>Initialize the email plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> – Optional email configuration. If not provided, defaults will be used.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/plugin.html#EmailPlugin.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailPlugin.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the email plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> – Optional email configuration. If not provided, defaults will be used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin.config">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a></span><a class="headerlink" href="#app.lib.email.EmailPlugin.config" title="Link to this definition">#</a></dt>
+<dd><p>Return the plugin configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The email configuration instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin.get_service">
+<span class="sig-name descname"><span class="pre">get_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">State</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.lib.email.EmailService" title="app.lib.email.EmailService"><span class="pre">EmailService</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/plugin.html#EmailPlugin.get_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailPlugin.get_service" title="Link to this definition">#</a></dt>
+<dd><p>Return an EmailService for this plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – Optional application state to fetch a cached service instance or config.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An EmailService instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin.get_backend">
+<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fail_silently</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseEmailBackend</span></span></span><a class="reference internal" href="../../_modules/litestar_email/plugin.html#EmailPlugin.get_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailPlugin.get_backend" title="Link to this definition">#</a></dt>
+<dd><p>Return a backend instance configured for this plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fail_silently</strong> – Optional override for fail_silently behavior.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A configured backend instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailPlugin.on_app_init">
+<span class="sig-name descname"><span class="pre">on_app_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AppConfig</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AppConfig</span></span></span><a class="reference internal" href="../../_modules/litestar_email/plugin.html#EmailPlugin.on_app_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailPlugin.on_app_init" title="Link to this definition">#</a></dt>
+<dd><p>Handle application initialization.</p>
+<p>This method is called during Litestar application initialization.
+Registers the EmailService dependency, signature namespace entries, and
+app state helpers for use in handlers and event listeners.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_config</strong> – The Litestar application configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The application configuration (unmodified).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.EmailService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">EmailService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/service.html#EmailService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailService" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>High-level helper for sending email with a configured backend.</p>
+<p>This service is intended for dependency injection in handlers. It can also
+be used directly or as an async context manager to reuse connections.
+Outside of a context manager, each send uses a fresh backend instance.</p>
+<p>Initialize the email service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> – The email configuration.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/service.html#EmailService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailService.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the email service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> – The email configuration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.EmailService.config">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.lib.email.EmailConfig" title="app.lib.email.EmailConfig"><span class="pre">EmailConfig</span></a></span><a class="headerlink" href="#app.lib.email.EmailService.config" title="Link to this definition">#</a></dt>
+<dd><p>Return the email configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailService.get_backend">
+<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseEmailBackend</span></span></span><a class="reference internal" href="../../_modules/litestar_email/service.html#EmailService.get_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailService.get_backend" title="Link to this definition">#</a></dt>
+<dd><p>Return a backend instance for the configured backend name.</p>
+<p>When the service is not in a context manager, this returns a new backend
+instance each call.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailService.send_messages">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.lib.email.EmailMessage" title="app.lib.email.EmailMessage"><span class="pre">EmailMessage</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/service.html#EmailService.send_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailService.send_messages" title="Link to this definition">#</a></dt>
+<dd><p>Send a list of email messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>messages</strong> – List of EmailMessage instances.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of messages sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.EmailService.send_message">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.lib.email.EmailMessage" title="app.lib.email.EmailMessage"><span class="pre">EmailMessage</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/service.html#EmailService.send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.EmailService.send_message" title="Link to this definition">#</a></dt>
+<dd><p>Send a single email message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The email message to send.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of messages sent (0 or 1).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.InMemoryBackend">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">InMemoryBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fail_silently</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/litestar_email/backends/memory.html#InMemoryBackend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.InMemoryBackend" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEmailBackend</span></code></p>
+<p>Email backend that stores messages in memory.</p>
+<p>Useful for unit and integration testing. All messages are stored
+in a class-level list that persists across instances.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<p>Testing with the in-memory backend:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_email.backends</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryBackend</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="c1"># In tests</span>
+</span><span data-line="4"><span class="n">InMemoryBackend</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># Reset before test</span>
+</span><span data-line="5"><span class="c1"># ... code that sends email ...</span>
+</span><span data-line="6"><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">InMemoryBackend</span><span class="o">.</span><span class="n">outbox</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span data-line="7"><span class="k">assert</span> <span class="n">InMemoryBackend</span><span class="o">.</span><span class="n">outbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subject</span> <span class="o">==</span> <span class="s2">"Welcome"</span>
+</span></pre></div>
+</div>
+</div>
+<p>Initialize the email backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fail_silently</strong> – If True, exceptions during sending are suppressed.</p></li>
+<li><p><strong>default_from_email</strong> – Default sender email when message.from_email is missing.</p></li>
+<li><p><strong>default_from_name</strong> – Default sender name when message.from_email has no name.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.lib.email.InMemoryBackend.outbox">
+<span class="sig-name descname"><span class="pre">outbox</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.15)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.lib.email.EmailMessage" title="app.lib.email.EmailMessage"><span class="pre">EmailMessage</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#app.lib.email.InMemoryBackend.outbox" title="Link to this definition">#</a></dt>
+<dd><p>Class-level storage for sent messages. Shared across all instances.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.InMemoryBackend.send_messages">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.lib.email.EmailMessage" title="app.lib.email.EmailMessage"><span class="pre">EmailMessage</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/backends/memory.html#InMemoryBackend.send_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.InMemoryBackend.send_messages" title="Link to this definition">#</a></dt>
+<dd><p>Store messages in the class-level outbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>messages</strong> – List of messages to store.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of messages stored.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.InMemoryBackend.clear">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/litestar_email/backends/memory.html#InMemoryBackend.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.InMemoryBackend.clear" title="Link to this definition">#</a></dt>
+<dd><p>Clear all stored messages.</p>
+<p>Call this in test setup/teardown to reset state between tests.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.lib.email.UserProtocol">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">app.lib.email.</span></span><span class="sig-name descname"><span class="pre">UserProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/app/lib/email/service.html#UserProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.lib.email.UserProtocol" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
+<p>Protocol for User objects used in email methods.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.UserProtocol.email">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">email</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#app.lib.email.UserProtocol.email" title="Link to this definition">#</a></dt>
+<dd><p>User email address.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.lib.email.UserProtocol.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#app.lib.email.UserProtocol.name" title="Link to this definition">#</a></dt>
+<dd><p>Optional display name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.lib.email.UserProtocol.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.lib.email.UserProtocol.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">lib</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="exceptions.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">exceptions</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../../_static/shibuya.js?v=50760d75"></script></body>
+</html>

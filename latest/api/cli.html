@@ -2,13 +2,13 @@
 <html lang="en" data-accent-color="violet" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cli - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="app" href="asgi.html" /><link rel="prev" title="API Reference" href="index.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cli - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="server" href="server.html" /><link rel="prev" title="API Reference" href="index.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="cli"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="cli"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -61,33 +62,40 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../usage/installation.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../usage/development.html">Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../usage/startup.html">Starting the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/deployment.html">Deployment</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="asgi.html">app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server.html">server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config.html">config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="db.html">db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lib/index.html">lib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lib/crypt.html">crypt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/deps.html">deps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lib/dto.html">dto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib/email.html">email</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lib/exceptions.html">exceptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib/settings.html">settings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="domain/index.html">domain</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="domain/accounts/index.html">accounts</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="domain/accounts/deps.html">deps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/accounts/guards.html">guards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/accounts/security.html">security</a></li>
 <li class="toctree-l4"><a class="reference internal" href="domain/accounts/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="domain/accounts/controllers/index.html">accounts</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/admin/services.html">services</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="domain/teams/index.html">teams</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/teams/guards.html">guards</a></li>
 <li class="toctree-l4"><a class="reference internal" href="domain/teams/services.html">services</a></li>
 <li class="toctree-l4"><a class="reference internal" href="domain/teams/controllers/index.html">teams</a></li>
 </ul>
@@ -97,13 +105,9 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="domain/tags/services.html">services</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="domain/web/index.html">web</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="domain/web/controllers.html">controllers</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="domain/system/index.html">system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="domain/system/controllers.html">controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="domain/system/tasks.html">tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="domain/system/jobs.html">jobs</a></li>
 </ul>
 </li>
 </ul>
@@ -130,11 +134,25 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#litestar-cli">Litestar CLI</a><ul>
 <li><a class="reference internal" href="#app">app</a><ul>
 <li><a class="reference internal" href="#app-info">info</a></li>
+<li><a class="reference internal" href="#app-queues">queues</a><ul>
+<li><a class="reference internal" href="#app-queues-list">list</a></li>
+<li><a class="reference internal" href="#app-queues-run">run</a></li>
+<li><a class="reference internal" href="#app-queues-run-consumer">run-consumer</a></li>
+<li><a class="reference internal" href="#app-queues-run-maintenance">run-maintenance</a></li>
+<li><a class="reference internal" href="#app-queues-run-task">run-task</a></li>
+<li><a class="reference internal" href="#app-queues-scheduler-health">scheduler-health</a></li>
+<li><a class="reference internal" href="#app-queues-status">status</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#app-routes">routes</a></li>
 <li><a class="reference internal" href="#app-run">run</a></li>
 <li><a class="reference internal" href="#app-schema">schema</a><ul>
 <li><a class="reference internal" href="#app-schema-openapi">openapi</a></li>
 <li><a class="reference internal" href="#app-schema-typescript">typescript</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app-security">security</a><ul>
+<li><a class="reference internal" href="#app-security-routes">routes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#app-sessions">sessions</a><ul>
@@ -161,6 +179,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#app-database-make-migrations">make-migrations</a></li>
 <li><a class="reference internal" href="#app-database-merge">merge</a></li>
 <li><a class="reference internal" href="#app-database-show">show</a></li>
+<li><a class="reference internal" href="#app-database-show-config">show-config</a></li>
 <li><a class="reference internal" href="#app-database-show-current-revision">show-current-revision</a></li>
 <li><a class="reference internal" href="#app-database-stamp">stamp</a></li>
 <li><a class="reference internal" href="#app-database-upgrade">upgrade</a></li>
@@ -214,18 +233,19 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <section id="cli">
-<h1>cli<a class="headerlink" href="#cli" title="Link to this heading">¶</a></h1>
+<h1>cli<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
 <p>Command line interface for the application.</p>
 <section id="litestar-cli">
-<h2>Litestar CLI<a class="headerlink" href="#litestar-cli" title="Link to this heading">¶</a></h2>
+<h2>Litestar CLI<a class="headerlink" href="#litestar-cli" title="Link to this heading">#</a></h2>
 <section id="app">
-<h3>app<a class="headerlink" href="#app" title="Link to this heading">¶</a></h3>
+<h3>app<a class="headerlink" href="#app" title="Link to this heading">#</a></h3>
 <p>Litestar CLI.</p>
-<p>The application to will be automatically discovered if it’s in one of these
-canonical paths: ‘app.py’, ‘asgi.py’, ‘application.py’ or ‘app/__init__.py’.
-When auto-discovering application factories, functions with the name ‘create_app’
-are considered, or functions that are annotated as returning a ‘Litestar’
-instance.</p>
+<p>The application will be automatically discovered if it’s in one of these
+canonical paths: ‘app.py’, ‘app/’, ‘application.py’ or ‘application/’.
+Submodules within ‘app/’ and ‘application/’ directories are also scanned.
+When auto-discovering application factories, functions with the name
+‘create_app’ are considered, or functions that are annotated as returning
+a ‘Litestar’ instance.</p>
 <p>Alternatively, the application can be specified explicitly via the ‘–app’ option
 (‘litestar –app=&lt;module name&gt;.&lt;submodule&gt;:&lt;app instance or factory&gt;’) or the
 ‘LITESTAR_APP’ environment variable of the same name.</p>
@@ -236,26 +256,236 @@ instance.</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-app">
-<span class="sig-name descname"><span class="pre">--app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-app" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-app" title="Link to this definition">#</a></dt>
 <dd><p>Module path to a Litestar application</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-app-dir">
-<span class="sig-name descname"><span class="pre">--app-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-app-dir" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--app-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-app-dir" title="Link to this definition">#</a></dt>
 <dd><p>Look for APP in the specified directory, by adding this to the PYTHONPATH. Defaults to the current working directory.</p>
 </dd></dl>
 
 <section id="app-info">
-<h4>info<a class="headerlink" href="#app-info" title="Link to this heading">¶</a></h4>
+<h4>info<a class="headerlink" href="#app-info" title="Link to this heading">#</a></h4>
 <p>Show information about the detected Litestar app.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
 </section>
+<section id="app-queues">
+<h4>queues<a class="headerlink" href="#app-queues" title="Link to this heading">#</a></h4>
+<p>litestar-queues operations.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
+</div>
+<section id="app-queues-list">
+<h5>list<a class="headerlink" href="#app-queues-list" title="Link to this heading">#</a></h5>
+<p>List queued task records with filtering and pagination.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-status">
+<span class="sig-name descname"><span class="pre">--status</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;statuses&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-status" title="Link to this definition">#</a></dt>
+<dd><p>Filter by task status. Repeatable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pending | scheduled | running | completed | failed | cancelled | expired</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-queue">
+<span class="sig-name descname"><span class="pre">--queue</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;queue_filter&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-queue" title="Link to this definition">#</a></dt>
+<dd><p>Filter by logical queue name.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-task-name">
+<span class="sig-name descname"><span class="pre">--task-name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;task_name&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-task-name" title="Link to this definition">#</a></dt>
+<dd><p>Filter by registered task name.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-key">
+<span class="sig-name descname"><span class="pre">--key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dedup_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-key" title="Link to this definition">#</a></dt>
+<dd><p>Filter by deduplication key.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-limit">
+<span class="sig-name descname"><span class="pre">--limit</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;limit&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-limit" title="Link to this definition">#</a></dt>
+<dd><p>Maximum records to return (default 50).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-offset">
+<span class="sig-name descname"><span class="pre">--offset</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;offset&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-list-offset" title="Link to this definition">#</a></dt>
+<dd><p>Zero-based starting record offset (default 0).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-list-json">
+<span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-queues-list-json" title="Link to this definition">#</a></dt>
+<dd><p>Emit machine-readable JSON.</p>
+</dd></dl>
+
+</section>
+<section id="app-queues-run">
+<h5>run<a class="headerlink" href="#app-queues-run" title="Link to this heading">#</a></h5>
+<p>Start a standalone worker fleet.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-queue">
+<span class="sig-name descname"><span class="pre">--queue</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;queues&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-queue" title="Link to this definition">#</a></dt>
+<dd><p>Queue name to process. Repeatable.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-max-concurrency">
+<span class="sig-name descname"><span class="pre">--max-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_concurrency&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-max-concurrency" title="Link to this definition">#</a></dt>
+<dd><p>Override WorkerConfig.max_concurrency for this run.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-drain-timeout">
+<span class="sig-name descname"><span class="pre">--drain-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;drain_timeout&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-drain-timeout" title="Link to this definition">#</a></dt>
+<dd><p>Seconds to wait for in-flight tasks to drain after SIGTERM/SIGINT. Defaults to QueueConfig.worker.graceful_shutdown_timeout.</p>
+</dd></dl>
+
+</section>
+<section id="app-queues-run-consumer">
+<h5>run-consumer<a class="headerlink" href="#app-queues-run-consumer" title="Link to this heading">#</a></h5>
+<p>Start a continuous external broker consumer.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>run-consumer<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-consumer-backend">
+<span class="sig-name descname"><span class="pre">--backend</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;backend&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-consumer-backend" title="Link to this definition">#</a></dt>
+<dd><p><strong>Required</strong> Configured broker backend to consume.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>kafka | pubsub | rabbitmq | sqs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-consumer-max-concurrency">
+<span class="sig-name descname"><span class="pre">--max-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_concurrency&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-consumer-max-concurrency" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-consumer-drain-timeout">
+<span class="sig-name descname"><span class="pre">--drain-timeout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;drain_timeout&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-consumer-drain-timeout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="app-queues-run-maintenance">
+<h5>run-maintenance<a class="headerlink" href="#app-queues-run-maintenance" title="Link to this heading">#</a></h5>
+<p>Run one bounded maintenance pass (external reconcile, stale recovery, and retention) and exit. Thresholds and limits come from QueueConfig.maintenance; this command never starts a worker or runs due work.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>run-maintenance<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-maintenance-phase">
+<span class="sig-name descname"><span class="pre">--phase</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;phases&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-maintenance-phase" title="Link to this definition">#</a></dt>
+<dd><p>Maintenance phase to run. Repeatable; defaults to every configured phase. Only narrows configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>expire | external | stale | schedules | terminal | events</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-maintenance-json">
+<span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-queues-run-maintenance-json" title="Link to this definition">#</a></dt>
+<dd><p>Emit machine-readable JSON.</p>
+</dd></dl>
+
+</section>
+<section id="app-queues-run-task">
+<h5>run-task<a class="headerlink" href="#app-queues-run-task" title="Link to this heading">#</a></h5>
+<p>Run one queued record by id (external-executor consumer). By default reads the task id QUEUES_TASK_ID and QUEUES_CONFIG_FACTORY from the environment; the options below override those defaults so a job can be run by hand.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>run-task<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-task-task-id">
+<span class="sig-name descname"><span class="pre">--task-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;task_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-task-task-id" title="Link to this definition">#</a></dt>
+<dd><p>Run the queued record with this id (local one-shot).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-task-config-factory">
+<span class="sig-name descname"><span class="pre">--config-factory</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config_factory&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-task-config-factory" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">module:callable</span></code> returning a QueueConfig or QueueService.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-run-task-task-modules">
+<span class="sig-name descname"><span class="pre">--task-modules</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;task_modules&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-run-task-task-modules" title="Link to this definition">#</a></dt>
+<dd><p>Comma-separated modules to import before running the task.</p>
+</dd></dl>
+
+</section>
+<section id="app-queues-scheduler-health">
+<h5>scheduler-health<a class="headerlink" href="#app-queues-scheduler-health" title="Link to this heading">#</a></h5>
+<p>Exit non-zero if the scheduler canary task has not completed within the window.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>scheduler-health<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-scheduler-health-minutes">
+<span class="sig-name descname"><span class="pre">--minutes</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;minutes&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-scheduler-health-minutes" title="Link to this definition">#</a></dt>
+<dd><p>Staleness threshold in minutes (default 5).</p>
+</dd></dl>
+
+</section>
+<section id="app-queues-status">
+<h5>status<a class="headerlink" href="#app-queues-status" title="Link to this heading">#</a></h5>
+<p>Show queue status counts.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>queues<span class="w"> </span>status<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-status-queue">
+<span class="sig-name descname"><span class="pre">--queue</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;queue_filter&gt;</span></span><a class="headerlink" href="#cmdoption-app-queues-status-queue" title="Link to this definition">#</a></dt>
+<dd><p>Count only records in this queue.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-queues-status-json">
+<span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-queues-status-json" title="Link to this definition">#</a></dt>
+<dd><p>Emit machine-readable JSON.</p>
+</dd></dl>
+
+</section>
+</section>
 <section id="app-routes">
-<h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">¶</a></h4>
+<h4>routes<a class="headerlink" href="#app-routes" title="Link to this heading">#</a></h4>
 <p>Display information about the application’s routes.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -264,19 +494,19 @@ instance.</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-routes-schema">
-<span class="sig-name descname"><span class="pre">--schema</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-routes-schema" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--schema</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-routes-schema" title="Link to this definition">#</a></dt>
 <dd><p>Include schema routes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-routes-exclude">
-<span class="sig-name descname"><span class="pre">--exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-routes-exclude" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-routes-exclude" title="Link to this definition">#</a></dt>
 <dd><p>routes to exclude via regex</p>
 </dd></dl>
 
 </section>
 <section id="app-run">
-<h4>run<a class="headerlink" href="#app-run" title="Link to this heading">¶</a></h4>
+<h4>run<a class="headerlink" href="#app-run" title="Link to this heading">#</a></h4>
 <p>Run a Litestar app. (requires ‘uvicorn’ to be installed).</p>
 <p>The application will be automatically discovered, or can be set as an option to the
 main ‘litestar’ command. Run ‘litestar –help’ for more information about app
@@ -288,31 +518,31 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-r">
-<span id="cmdoption-app-run-reload"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-r" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-reload"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-r" title="Link to this definition">#</a></dt>
 <dd><p>Reload server on changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-R">
-<span id="cmdoption-app-run-reload-dir"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-R" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-reload-dir"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-R" title="Link to this definition">#</a></dt>
 <dd><p>Directories to watch for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-I">
-<span id="cmdoption-app-run-reload-include"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-include</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_include&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-I" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-reload-include"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-include</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_include&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-I" title="Link to this definition">#</a></dt>
 <dd><p>Glob patterns for files to include when watching for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-E">
-<span id="cmdoption-app-run-reload-exclude"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-E" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-reload-exclude"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--reload-exclude</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;reload_exclude&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-E" title="Link to this definition">#</a></dt>
 <dd><p>Glob patterns for files to exclude when watching for file changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-p">
-<span id="cmdoption-app-run-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-p" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-p" title="Link to this definition">#</a></dt>
 <dd><p>Serve under this port</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -323,7 +553,7 @@ autodiscovery</p>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-W">
-<span id="cmdoption-app-run-wc"></span><span id="cmdoption-app-run-web-concurrency"></span><span class="sig-name descname"><span class="pre">-W</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--web-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;wc&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-W" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-wc"></span><span id="cmdoption-app-run-web-concurrency"></span><span class="sig-name descname"><span class="pre">-W</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wc</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--web-concurrency</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;wc&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-W" title="Link to this definition">#</a></dt>
 <dd><p>The number of HTTP workers to launch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -334,7 +564,7 @@ autodiscovery</p>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-H">
-<span id="cmdoption-app-run-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-H" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-H" title="Link to this definition">#</a></dt>
 <dd><p>Server under this host</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -345,43 +575,43 @@ autodiscovery</p>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-F">
-<span id="cmdoption-app-run-fd"></span><span id="cmdoption-app-run-file-descriptor"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file-descriptor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fd&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-F" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-fd"></span><span id="cmdoption-app-run-file-descriptor"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--fd</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file-descriptor</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;fd&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-F" title="Link to this definition">#</a></dt>
 <dd><p>Bind to a socket from this file descriptor.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-U">
-<span id="cmdoption-app-run-uds"></span><span id="cmdoption-app-run-unix-domain-socket"></span><span class="sig-name descname"><span class="pre">-U</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uds</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unix-domain-socket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;uds&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-U" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-uds"></span><span id="cmdoption-app-run-unix-domain-socket"></span><span class="sig-name descname"><span class="pre">-U</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uds</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unix-domain-socket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;uds&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-U" title="Link to this definition">#</a></dt>
 <dd><p>Bind to a UNIX domain socket.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-d">
-<span id="cmdoption-app-run-debug"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-d" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-debug"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-d" title="Link to this definition">#</a></dt>
 <dd><p>Run app in debug mode</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-P">
-<span id="cmdoption-app-run-pdb"></span><span id="cmdoption-app-run-use-pdb"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--pdb</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-pdb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-P" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-run-pdb"></span><span id="cmdoption-app-run-use-pdb"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--pdb</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--use-pdb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-P" title="Link to this definition">#</a></dt>
 <dd><p>Drop into PDB on an exception</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-ssl-certfile">
-<span class="sig-name descname"><span class="pre">--ssl-certfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_certfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-certfile" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--ssl-certfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_certfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-certfile" title="Link to this definition">#</a></dt>
 <dd><p>Location of the SSL cert file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-ssl-keyfile">
-<span class="sig-name descname"><span class="pre">--ssl-keyfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_keyfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-keyfile" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--ssl-keyfile</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ssl_keyfile&gt;</span></span><a class="headerlink" href="#cmdoption-app-run-ssl-keyfile" title="Link to this definition">#</a></dt>
 <dd><p>Location of the SSL key file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-run-create-self-signed-cert">
-<span class="sig-name descname"><span class="pre">--create-self-signed-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-create-self-signed-cert" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--create-self-signed-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-run-create-self-signed-cert" title="Link to this definition">#</a></dt>
 <dd><p>If certificate and key are not found at specified locations, create a self-signed certificate and a key</p>
 </dd></dl>
 
@@ -500,14 +730,14 @@ autodiscovery</p>
 
 </section>
 <section id="app-schema">
-<h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">¶</a></h4>
+<h4>schema<a class="headerlink" href="#app-schema" title="Link to this heading">#</a></h4>
 <p>Manage server-side OpenAPI schemas.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-schema-openapi">
-<h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">¶</a></h5>
+<h5>openapi<a class="headerlink" href="#app-schema-openapi" title="Link to this heading">#</a></h5>
 <p>Generate an OpenAPI Schema.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>openapi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -516,7 +746,7 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-openapi-output">
-<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-openapi-output" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-openapi-output" title="Link to this definition">#</a></dt>
 <dd><p>output file path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -527,7 +757,7 @@ autodiscovery</p>
 
 </section>
 <section id="app-schema-typescript">
-<h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">¶</a></h5>
+<h5>typescript<a class="headerlink" href="#app-schema-typescript" title="Link to this heading">#</a></h5>
 <p>Generate TypeScript specs from the OpenAPI schema.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>schema<span class="w"> </span>typescript<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -536,7 +766,7 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-typescript-output">
-<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-output" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-output" title="Link to this definition">#</a></dt>
 <dd><p>output file path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -547,21 +777,50 @@ autodiscovery</p>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-schema-typescript-namespace">
-<span class="sig-name descname"><span class="pre">--namespace</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;namespace&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-namespace" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--namespace</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;namespace&gt;</span></span><a class="headerlink" href="#cmdoption-app-schema-typescript-namespace" title="Link to this definition">#</a></dt>
 <dd><p>namespace to use for the typescript specs</p>
 </dd></dl>
 
 </section>
 </section>
+<section id="app-security">
+<h4>security<a class="headerlink" href="#app-security" title="Link to this heading">#</a></h4>
+<p>Litestar Security operations.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>security<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-security-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-security-version" title="Link to this definition">#</a></dt>
+<dd><p>Show the version and exit.</p>
+</dd></dl>
+
+<section id="app-security-routes">
+<h5>routes<a class="headerlink" href="#app-security-routes" title="Link to this heading">#</a></h5>
+<p>Display the compiled security posture of every registered route.</p>
+<p><code class="docutils literal notranslate"><span class="pre">app</span></code> is supplied by Litestar. This group is published as a
+<code class="docutils literal notranslate"><span class="pre">litestar.commands</span></code> entry point, so the root CLI group wraps its
+subcommands and injects the application. Litestar’s CLI helpers are
+imported inside the body rather than at module scope, because importing
+them there would close a cycle: <code class="docutils literal notranslate"><span class="pre">litestar.cli</span></code> loads its entry points,
+which include this module.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>security<span class="w"> </span>routes<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+</section>
+</section>
 <section id="app-sessions">
-<h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">¶</a></h4>
+<h4>sessions<a class="headerlink" href="#app-sessions" title="Link to this heading">#</a></h4>
 <p>Manage server-side sessions.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-sessions-clear">
-<h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">¶</a></h5>
+<h5>clear<a class="headerlink" href="#app-sessions-clear" title="Link to this heading">#</a></h5>
 <p>Delete all sessions.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>clear<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -569,7 +828,7 @@ autodiscovery</p>
 </div>
 </section>
 <section id="app-sessions-delete">
-<h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">¶</a></h5>
+<h5>delete<a class="headerlink" href="#app-sessions-delete" title="Link to this heading">#</a></h5>
 <p>Delete a specific session.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>sessions<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SESSION_ID
@@ -578,14 +837,14 @@ autodiscovery</p>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-sessions-delete-arg-SESSION_ID">
-<span class="sig-name descname"><span class="pre">SESSION_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-sessions-delete-arg-SESSION_ID" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">SESSION_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-sessions-delete-arg-SESSION_ID" title="Link to this definition">#</a></dt>
 <dd><p>Required argument</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="app-version">
-<h4>version<a class="headerlink" href="#app-version" title="Link to this heading">¶</a></h4>
+<h4>version<a class="headerlink" href="#app-version" title="Link to this heading">#</a></h4>
 <p>Show the currently installed Litestar version.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -594,23 +853,23 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-version-s">
-<span id="cmdoption-app-version-short"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--short</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-version-s" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-version-short"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--short</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-version-s" title="Link to this definition">#</a></dt>
 <dd><p>Exclude release level and serial information</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="database-cli">
-<h3>Database CLI<a class="headerlink" href="#database-cli" title="Link to this heading">¶</a></h3>
+<h3>Database CLI<a class="headerlink" href="#database-cli" title="Link to this heading">#</a></h3>
 <section id="app-database">
-<h4>app database<a class="headerlink" href="#app-database" title="Link to this heading">¶</a></h4>
+<h4>app database<a class="headerlink" href="#app-database" title="Link to this heading">#</a></h4>
 <p>Manage SQLAlchemy database components.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-database-branches">
-<h5>branches<a class="headerlink" href="#app-database-branches" title="Link to this heading">¶</a></h5>
+<h5>branches<a class="headerlink" href="#app-database-branches" title="Link to this heading">#</a></h5>
 <p>Show current branch points in the migration history</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>branches<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -618,20 +877,41 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-branches-c">
+<span id="cmdoption-app-database-branches-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-branches-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-branches-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-branches-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-branches-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-branches-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-branches-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-branches-verbose">
-<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-branches-verbose" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-branches-verbose" title="Link to this definition">#</a></dt>
 <dd><p>Enable verbose output.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-branches-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-branches-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-check">
-<h5>check<a class="headerlink" href="#app-database-check" title="Link to this heading">¶</a></h5>
+<h5>check<a class="headerlink" href="#app-database-check" title="Link to this heading">#</a></h5>
 <p>Check if the target database is up to date</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>check<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -639,14 +919,35 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-check-c">
+<span id="cmdoption-app-database-check-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-check-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-check-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-check-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-check-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-check-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-check-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-check-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-check-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-downgrade">
-<h5>downgrade<a class="headerlink" href="#app-database-downgrade" title="Link to this heading">¶</a></h5>
+<h5>downgrade<a class="headerlink" href="#app-database-downgrade" title="Link to this heading">#</a></h5>
 <p>Downgrade database to a specific revision.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>downgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
@@ -654,26 +955,38 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-downgrade-c">
+<span id="cmdoption-app-database-downgrade-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-downgrade-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-sql" title="Link to this definition">#</a></dt>
 <dd><p>Generate SQL output for offline migrations.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-tag" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-downgrade-tag" title="Link to this definition">#</a></dt>
 <dd><p>an arbitrary ‘tag’ that can be intercepted by custom env.py scripts via the .EnvironmentContext.get_tag_argument method.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -685,13 +998,22 @@ autodiscovery</p>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-downgrade-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-arg-REVISION" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-downgrade-arg-REVISION" title="Link to this definition">#</a></dt>
 <dd><p>Optional argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-downgrade-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-downgrade-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-drop-all">
-<h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">¶</a></h5>
+<h5>drop-all<a class="headerlink" href="#app-database-drop-all" title="Link to this heading">#</a></h5>
 <p>Drop all tables from the database.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>drop-all<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -699,14 +1021,26 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-drop-all-c">
+<span id="cmdoption-app-database-drop-all-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-drop-all-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-drop-all-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-drop-all-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-drop-all-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-drop-all-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -715,36 +1049,106 @@ autodiscovery</p>
 </dl>
 </dd></dl>
 
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-drop-all-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-drop-all-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
 </section>
 <section id="app-database-dump-data">
-<h5>dump-data<a class="headerlink" href="#app-database-dump-data" title="Link to this heading">¶</a></h5>
-<p>Dump specified tables from the database to JSON files.</p>
+<h5>dump-data<a class="headerlink" href="#app-database-dump-data" title="Link to this heading">#</a></h5>
+<p>Dump specified tables from the database to fixture files.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>dump-data<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></pre></div>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-c">
+<span id="cmdoption-app-database-dump-data-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-dump-data-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-table">
-<span class="sig-name descname"><span class="pre">--table</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;table_names&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-table" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--table</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;table_names&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-table" title="Link to this definition">#</a></dt>
 <dd><p><strong>Required</strong> Name of the table to dump. Multiple tables can be specified. Use ‘*’ to dump all tables.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-dump-data-dir">
-<span class="sig-name descname"><span class="pre">--dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dump_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-dir" title="Link to this definition">¶</a></dt>
-<dd><p>Directory to save the JSON files. Defaults to WORKDIR/fixtures</p>
+<span class="sig-name descname"><span class="pre">--dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dump_dir&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-dir" title="Link to this definition">#</a></dt>
+<dd><p>Directory to save the fixture files. Defaults to WORKDIR/fixtures</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-format">
+<span class="sig-name descname"><span class="pre">--format</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;file_format&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-format" title="Link to this definition">#</a></dt>
+<dd><p>Fixture file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'json'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>json | jsonl | csv</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-compression">
+<span class="sig-name descname"><span class="pre">--compression</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;compression&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-compression" title="Link to this definition">#</a></dt>
+<dd><p>Compression applied to each fixture file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'none'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>none | gzip | zip</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-max-file-size">
+<span class="sig-name descname"><span class="pre">--max-file-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_file_size&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-max-file-size" title="Link to this definition">#</a></dt>
+<dd><p>Start a new numbered shard before a file would exceed this on-disk size, in bytes or with a K, M, or G suffix (1024-based), for example 50M.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-dump-data-max-records">
+<span class="sig-name descname"><span class="pre">--max-records</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_records&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-dump-data-max-records" title="Link to this definition">#</a></dt>
+<dd><p>Start a new numbered shard after this many records.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-dump-data-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-dump-data-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-edit">
-<h5>edit<a class="headerlink" href="#app-database-edit" title="Link to this heading">¶</a></h5>
+<h5>edit<a class="headerlink" href="#app-database-edit" title="Link to this heading">#</a></h5>
 <p>Edit a revision file using $EDITOR</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>edit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
@@ -752,21 +1156,42 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-edit-c">
+<span id="cmdoption-app-database-edit-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-edit-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-edit-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-edit-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-edit-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-edit-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-edit-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-edit-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-edit-arg-REVISION" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-edit-arg-REVISION" title="Link to this definition">#</a></dt>
 <dd><p>Required argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-edit-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-edit-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-ensure-version">
-<h5>ensure-version<a class="headerlink" href="#app-database-ensure-version" title="Link to this heading">¶</a></h5>
+<h5>ensure-version<a class="headerlink" href="#app-database-ensure-version" title="Link to this heading">#</a></h5>
 <p>Create the alembic version table if it doesn’t exist</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>ensure-version<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -774,20 +1199,41 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-c">
+<span id="cmdoption-app-database-ensure-version-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-ensure-version-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-ensure-version-sql" title="Link to this definition">#</a></dt>
 <dd><p>Generate SQL output instead of executing</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-ensure-version-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-ensure-version-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-heads">
-<h5>heads<a class="headerlink" href="#app-database-heads" title="Link to this heading">¶</a></h5>
+<h5>heads<a class="headerlink" href="#app-database-heads" title="Link to this heading">#</a></h5>
 <p>Show current available heads in the script directory</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>heads<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -795,26 +1241,47 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-heads-c">
+<span id="cmdoption-app-database-heads-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-heads-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-heads-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-heads-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-heads-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-heads-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-heads-verbose">
-<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-verbose" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-verbose" title="Link to this definition">#</a></dt>
 <dd><p>Enable verbose output.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-heads-resolve-dependencies">
-<span class="sig-name descname"><span class="pre">--resolve-dependencies</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-resolve-dependencies" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--resolve-dependencies</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-heads-resolve-dependencies" title="Link to this definition">#</a></dt>
 <dd><p>Resolve dependencies between heads</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-heads-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-heads-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-history">
-<h5>history<a class="headerlink" href="#app-database-history" title="Link to this heading">¶</a></h5>
+<h5>history<a class="headerlink" href="#app-database-history" title="Link to this heading">#</a></h5>
 <p>List changeset scripts in chronological order</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span><span class="nb">history</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -822,32 +1289,53 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-c">
+<span id="cmdoption-app-database-history-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-history-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-history-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-history-verbose">
-<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-verbose" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-verbose" title="Link to this definition">#</a></dt>
 <dd><p>Enable verbose output.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-history-rev-range">
-<span class="sig-name descname"><span class="pre">--rev-range</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_range&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-rev-range" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--rev-range</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_range&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-history-rev-range" title="Link to this definition">#</a></dt>
 <dd><p>Revision range (e.g., ‘base:head’, ‘abc:def’)</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-history-indicate-current">
-<span class="sig-name descname"><span class="pre">--indicate-current</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-indicate-current" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--indicate-current</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-history-indicate-current" title="Link to this definition">#</a></dt>
 <dd><p>Indicate the current revision</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-history-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-history-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-init">
-<h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">¶</a></h5>
+<h5>init<a class="headerlink" href="#app-database-init" title="Link to this heading">#</a></h5>
 <p>Initialize migrations for the project.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>DIRECTORY<span class="o">]</span>
@@ -855,26 +1343,38 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-init-c">
+<span id="cmdoption-app-database-init-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-init-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-init-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-multidb">
-<span class="sig-name descname"><span class="pre">--multidb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-multidb" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--multidb</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-multidb" title="Link to this definition">#</a></dt>
 <dd><p>Support multiple databases</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-package">
-<span class="sig-name descname"><span class="pre">--package</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-package" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--package</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-package" title="Link to this definition">#</a></dt>
 <dd><p>Create <cite>__init__.py</cite> for created folder</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -886,13 +1386,22 @@ autodiscovery</p>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-init-arg-DIRECTORY">
-<span class="sig-name descname"><span class="pre">DIRECTORY</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-arg-DIRECTORY" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">DIRECTORY</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-init-arg-DIRECTORY" title="Link to this definition">#</a></dt>
 <dd><p>Optional argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-init-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-init-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-list-templates">
-<h5>list-templates<a class="headerlink" href="#app-database-list-templates" title="Link to this heading">¶</a></h5>
+<h5>list-templates<a class="headerlink" href="#app-database-list-templates" title="Link to this heading">#</a></h5>
 <p>List available Alembic migration templates</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>list-templates<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -900,14 +1409,35 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-list-templates-c">
+<span id="cmdoption-app-database-list-templates-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-list-templates-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-list-templates-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-list-templates-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-list-templates-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-list-templates-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-list-templates-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-list-templates-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-list-templates-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-make-migrations">
-<h5>make-migrations<a class="headerlink" href="#app-database-make-migrations" title="Link to this heading">¶</a></h5>
+<h5>make-migrations<a class="headerlink" href="#app-database-make-migrations" title="Link to this heading">#</a></h5>
 <p>Create a new migration revision.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>make-migrations<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -915,62 +1445,74 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-c">
+<span id="cmdoption-app-database-make-migrations-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-m">
-<span id="cmdoption-app-database-make-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-m" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-database-make-migrations-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-m" title="Link to this definition">#</a></dt>
 <dd><p>Revision message</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-autogenerate">
-<span id="cmdoption-app-database-make-migrations-no-autogenerate"></span><span class="sig-name descname"><span class="pre">--autogenerate</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-autogenerate</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-autogenerate" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-database-make-migrations-no-autogenerate"></span><span class="sig-name descname"><span class="pre">--autogenerate</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-autogenerate</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-autogenerate" title="Link to this definition">#</a></dt>
 <dd><p>Automatically populate revision with detected changes</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-sql" title="Link to this definition">#</a></dt>
 <dd><p>Export to <cite>.sql</cite> instead of writing to the database.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-head">
-<span class="sig-name descname"><span class="pre">--head</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;head&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-head" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--head</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;head&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-head" title="Link to this definition">#</a></dt>
 <dd><p>Specify head revision to use as base for new revision.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-splice">
-<span class="sig-name descname"><span class="pre">--splice</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-splice" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--splice</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-splice" title="Link to this definition">#</a></dt>
 <dd><p>Allow a non-head revision as the “head” to splice onto</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-branch-label">
-<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-branch-label" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-branch-label" title="Link to this definition">#</a></dt>
 <dd><p>Specify a branch label to apply to the new revision</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-version-path">
-<span class="sig-name descname"><span class="pre">--version-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-version-path" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--version-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version_path&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-version-path" title="Link to this definition">#</a></dt>
 <dd><p>Specify specific path from config for version file</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-rev-id">
-<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-rev-id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-rev-id" title="Link to this definition">#</a></dt>
 <dd><p>Specify a ID to use for revision.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-make-migrations-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-make-migrations-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -979,9 +1521,18 @@ autodiscovery</p>
 </dl>
 </dd></dl>
 
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-make-migrations-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-make-migrations-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
 </section>
 <section id="app-database-merge">
-<h5>merge<a class="headerlink" href="#app-database-merge" title="Link to this heading">¶</a></h5>
+<h5>merge<a class="headerlink" href="#app-database-merge" title="Link to this heading">#</a></h5>
 <p>Merge two revisions together, creating a new migration file</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>merge<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISIONS
@@ -989,32 +1540,44 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-c">
+<span id="cmdoption-app-database-merge-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-merge-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-m">
-<span id="cmdoption-app-database-merge-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-m" title="Link to this definition">¶</a></dt>
+<span id="cmdoption-app-database-merge-message"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--message</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;message&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-m" title="Link to this definition">#</a></dt>
 <dd><p>Merge message</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-branch-label">
-<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-branch-label" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--branch-label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;branch_label&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-branch-label" title="Link to this definition">#</a></dt>
 <dd><p>Branch label for merge revision</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-rev-id">
-<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-rev-id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--rev-id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rev_id&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-merge-rev-id" title="Link to this definition">#</a></dt>
 <dd><p>Specify custom revision ID</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1026,13 +1589,22 @@ autodiscovery</p>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-merge-arg-REVISIONS">
-<span class="sig-name descname"><span class="pre">REVISIONS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-arg-REVISIONS" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISIONS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-merge-arg-REVISIONS" title="Link to this definition">#</a></dt>
 <dd><p>Required argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-merge-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-merge-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-show">
-<h5>show<a class="headerlink" href="#app-database-show" title="Link to this heading">¶</a></h5>
+<h5>show<a class="headerlink" href="#app-database-show" title="Link to this heading">#</a></h5>
 <p>Show the revision denoted by the given symbol</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
@@ -1040,21 +1612,78 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-c">
+<span id="cmdoption-app-database-show-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-arg-REVISION" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-arg-REVISION" title="Link to this definition">#</a></dt>
 <dd><p>Required argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-show-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-show-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="app-database-show-config">
+<h5>show-config<a class="headerlink" href="#app-database-show-config" title="Link to this heading">#</a></h5>
+<p>Show all configurations with migrations enabled.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show-config<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-config-c">
+<span id="cmdoption-app-database-show-config-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-config-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-config-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-config-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-config-bind-key">
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-config-bind-key" title="Link to this definition">#</a></dt>
+<dd><p>Specify which SQLAlchemy config to use by bind key</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-show-config-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-show-config-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-show-current-revision">
-<h5>show-current-revision<a class="headerlink" href="#app-database-show-current-revision" title="Link to this heading">¶</a></h5>
+<h5>show-current-revision<a class="headerlink" href="#app-database-show-current-revision" title="Link to this heading">#</a></h5>
 <p>Shows the current revision for the database.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>show-current-revision<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -1062,20 +1691,41 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-c">
+<span id="cmdoption-app-database-show-current-revision-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-show-current-revision-verbose">
-<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-verbose" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-show-current-revision-verbose" title="Link to this definition">#</a></dt>
 <dd><p>Enable verbose output.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-show-current-revision-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-show-current-revision-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-stamp">
-<h5>stamp<a class="headerlink" href="#app-database-stamp" title="Link to this heading">¶</a></h5>
+<h5>stamp<a class="headerlink" href="#app-database-stamp" title="Link to this heading">#</a></h5>
 <p>Stamp the revision table with the given revision; don’t run any migrations</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>stamp<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>REVISION
@@ -1083,39 +1733,60 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-c">
+<span id="cmdoption-app-database-stamp-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-stamp-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-stamp-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-stamp-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-sql" title="Link to this definition">#</a></dt>
 <dd><p>Generate SQL output for offline migrations</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-stamp-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-tag" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-stamp-tag" title="Link to this definition">#</a></dt>
 <dd><p>Arbitrary ‘tag’ that can be intercepted by custom env.py scripts</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-stamp-purge">
-<span class="sig-name descname"><span class="pre">--purge</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-purge" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--purge</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-purge" title="Link to this definition">#</a></dt>
 <dd><p>Delete all entries in version table before stamping</p>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-stamp-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-arg-REVISION" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-stamp-arg-REVISION" title="Link to this definition">#</a></dt>
 <dd><p>Required argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-stamp-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-stamp-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 <section id="app-database-upgrade">
-<h5>upgrade<a class="headerlink" href="#app-database-upgrade" title="Link to this heading">¶</a></h5>
+<h5>upgrade<a class="headerlink" href="#app-database-upgrade" title="Link to this heading">#</a></h5>
 <p>Upgrade database to a specific revision.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>database<span class="w"> </span>upgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>REVISION<span class="o">]</span>
@@ -1123,26 +1794,38 @@ autodiscovery</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-upgrade-c">
+<span id="cmdoption-app-database-upgrade-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-c" title="Link to this definition">#</a></dt>
+<dd><p>Dotted or colon path to SQLAlchemy config(s) or factory callable (env: ALCHEMY_CONFIG)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-app-database-upgrade-validate-config">
+<span class="sig-name descname"><span class="pre">--validate-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-validate-config" title="Link to this definition">#</a></dt>
+<dd><p>Validate configuration before executing migrations</p>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-bind-key">
-<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-bind-key" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--bind-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bind_key&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-bind-key" title="Link to this definition">#</a></dt>
 <dd><p>Specify which SQLAlchemy config to use by bind key</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-sql">
-<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--sql</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-sql" title="Link to this definition">#</a></dt>
 <dd><p>Generate SQL output for offline migrations.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-tag">
-<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-tag" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-app-database-upgrade-tag" title="Link to this definition">#</a></dt>
 <dd><p>an arbitrary ‘tag’ that can be intercepted by custom env.py scripts via the .EnvironmentContext.get_tag_argument method.</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-no-prompt">
-<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-no-prompt" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--no-prompt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-no-prompt" title="Link to this definition">#</a></dt>
 <dd><p>Do not prompt for confirmation before executing the command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
@@ -1154,24 +1837,33 @@ autodiscovery</p>
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-database-upgrade-arg-REVISION">
-<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-arg-REVISION" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REVISION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-database-upgrade-arg-REVISION" title="Link to this definition">#</a></dt>
 <dd><p>Optional argument</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="app-database-upgrade-config-alchemy-config">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">ALCHEMY_CONFIG</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-app-database-upgrade-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config</span></code></a></p>
+</div></blockquote>
 </dd></dl>
 
 </section>
 </section>
 </section>
 <section id="user-management-cli">
-<h3>User management CLI<a class="headerlink" href="#user-management-cli" title="Link to this heading">¶</a></h3>
+<h3>User management CLI<a class="headerlink" href="#user-management-cli" title="Link to this heading">#</a></h3>
 <section id="app-user">
-<h4>app user<a class="headerlink" href="#app-user" title="Link to this heading">¶</a></h4>
+<h4>app user<a class="headerlink" href="#app-user" title="Link to this heading">#</a></h4>
 <p>Manage application users and roles.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></pre></div>
 </div>
 <section id="app-user-create-roles">
-<h5>create-roles<a class="headerlink" href="#app-user-create-roles" title="Link to this heading">¶</a></h5>
+<h5>create-roles<a class="headerlink" href="#app-user-create-roles" title="Link to this heading">#</a></h5>
 <p>Create pre-configured application roles and assign to users.</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-roles<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -1179,7 +1871,7 @@ autodiscovery</p>
 </div>
 </section>
 <section id="app-user-create-user">
-<h5>create-user<a class="headerlink" href="#app-user-create-user" title="Link to this heading">¶</a></h5>
+<h5>create-user<a class="headerlink" href="#app-user-create-user" title="Link to this heading">#</a></h5>
 <p>Create a user</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>create-user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -1188,31 +1880,31 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-user-create-user-email">
-<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-email" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-email" title="Link to this definition">#</a></dt>
 <dd><p>Email of the new user</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-user-create-user-name">
-<span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-name" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-name" title="Link to this definition">#</a></dt>
 <dd><p>Full name of the new user</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-user-create-user-password">
-<span class="sig-name descname"><span class="pre">--password</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;password&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-password" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--password</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;password&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-create-user-password" title="Link to this definition">#</a></dt>
 <dd><p>Password</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-user-create-user-superuser">
-<span class="sig-name descname"><span class="pre">--superuser</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-user-create-user-superuser" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">--superuser</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-app-user-create-user-superuser" title="Link to this definition">#</a></dt>
 <dd><p>Is a superuser</p>
 </dd></dl>
 
 </section>
 <section id="app-user-promote-to-superuser">
-<h5>promote-to-superuser<a class="headerlink" href="#app-user-promote-to-superuser" title="Link to this heading">¶</a></h5>
+<h5>promote-to-superuser<a class="headerlink" href="#app-user-promote-to-superuser" title="Link to this heading">#</a></h5>
 <p>Promotes a user to application superuser</p>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">app<span class="w"> </span>user<span class="w"> </span>promote-to-superuser<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
@@ -1221,8 +1913,8 @@ autodiscovery</p>
 <p class="rubric">Options</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-app-user-promote-to-superuser-email">
-<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-promote-to-superuser-email" title="Link to this definition">¶</a></dt>
-<dd><p>Email of the user</p>
+<span class="sig-name descname"><span class="pre">--email</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;email&gt;</span></span><a class="headerlink" href="#cmdoption-app-user-promote-to-superuser-email" title="Link to this definition">#</a></dt>
+<dd><p><strong>Required</strong> Email of the user</p>
 </dd></dl>
 
 </section>
@@ -1243,10 +1935,10 @@ autodiscovery</p>
         <span>Previous</span><div class="title">API Reference</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="asgi.html">
+    <a href="server.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">app</div>
+        <div class="title">server</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>
@@ -1257,7 +1949,7 @@ autodiscovery</p>
 <footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
     <div class="sy-foot-reserved md:flex justify-between items-center">
-      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
   
   <p>
     Made with
@@ -1272,10 +1964,10 @@ autodiscovery</p>
   </div>
 </footer>
       <script src="../_static/documentation_options.js?v=e259d695"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
 </html>

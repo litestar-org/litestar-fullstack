@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Security &amp; Authentication - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Queues, AsyncAPI &amp; MCP Server" href="queues-and-mcp.html" /><link rel="prev" title="Starting the Server" href="startup.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="Security &amp; Authentication"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Starting the Server</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deployment.html">Deployment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/db.html">db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/lib/index.html">lib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/email.html">email</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib/settings.html">settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/domain/index.html">domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/security.html">security</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/teams/index.html">teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/domain/system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/domain/system/jobs.html">jobs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#key-capabilities">Key Capabilities</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Usage</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Security &amp; Authentication</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="security-authentication">
+<h1>Security &amp; Authentication<a class="headerlink" href="#security-authentication" title="Link to this heading">#</a></h1>
+<p>Authentication and authorization are assembled declaratively by <code class="docutils literal notranslate"><span class="pre">litestar-security</span></code> in
+<code class="docutils literal notranslate"><span class="pre">app.domain.accounts.security.build_security_config</span></code>.</p>
+<section id="key-capabilities">
+<h2>Key Capabilities<a class="headerlink" href="#key-capabilities" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><strong>Fail-Closed Controllers</strong>: Protected routes subclass <code class="docutils literal notranslate"><span class="pre">SecureController</span></code>; public routes explicitly subclass <code class="docutils literal notranslate"><span class="pre">PublicController</span></code> or opt in via <code class="docutils literal notranslate"><span class="pre">&#64;public</span></code>. Audit every route with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>run<span class="w"> </span>app<span class="w"> </span>security<span class="w"> </span>routes
+</span></pre></div>
+</div>
+</li>
+<li><p><strong>Cookie Sessions &amp; CSRF</strong>: <code class="docutils literal notranslate"><span class="pre">LocalAuth.session</span></code> stores server-side sessions in PostgreSQL via <code class="docutils literal notranslate"><span class="pre">SQLAlchemyStore</span></code> on <code class="docutils literal notranslate"><span class="pre">app_store</span></code> with <code class="docutils literal notranslate"><span class="pre">HttpOnly</span></code>, <code class="docutils literal notranslate"><span class="pre">SameSite=Lax</span></code> cookies and HKDF-derived CSRF tokens (<code class="docutils literal notranslate"><span class="pre">XSRF-TOKEN</span></code> / <code class="docutils literal notranslate"><span class="pre">X-XSRF-TOKEN</span></code>).</p></li>
+<li><p><strong>Step-Up TOTP MFA</strong>: Encrypted TOTP secrets (<code class="docutils literal notranslate"><span class="pre">AESGCMSecretProtector</span></code>) and peppered recovery codes enforce <code class="docutils literal notranslate"><span class="pre">require_at_login=&quot;enrolled&quot;</span></code> with single-use login challenges and step-up grants (<code class="docutils literal notranslate"><span class="pre">totp-enroll</span></code>, <code class="docutils literal notranslate"><span class="pre">totp-remove</span></code>, <code class="docutils literal notranslate"><span class="pre">recovery-codes</span></code>).</p></li>
+<li><p><strong>WebAuthn Passkeys</strong>: Credential registration and assertion verification are stored in <code class="docutils literal notranslate"><span class="pre">auth_passkey</span></code> and <code class="docutils literal notranslate"><span class="pre">auth_passkey_challenge</span></code>.</p></li>
+<li><p><strong>OAuth2</strong>: Optional GitHub OAuth2 enabled via <code class="docutils literal notranslate"><span class="pre">GITHUB_OAUTH2_CLIENT_ID</span></code> / <code class="docutils literal notranslate"><span class="pre">GITHUB_OAUTH2_CLIENT_SECRET</span></code>, mounted under <code class="docutils literal notranslate"><span class="pre">/api/auth/oauth/github/...</span></code>. The callback must be served over HTTPS, so <code class="docutils literal notranslate"><span class="pre">APP_URL</span></code> needs an <code class="docutils literal notranslate"><span class="pre">https://</span></code> origin whenever GitHub sign-in is enabled.</p></li>
+<li><p><strong>Personal API Keys</strong>: Self-service hashed keys under <code class="docutils literal notranslate"><span class="pre">/api/me/api-keys</span></code> support Bearer authentication, rotation, revocation, and scoped access to <code class="docutils literal notranslate"><span class="pre">/mcp</span></code>.</p></li>
+<li><p><strong>Password Policy</strong>: One <code class="docutils literal notranslate"><span class="pre">PasswordPolicy</span></code> (<code class="docutils literal notranslate"><span class="pre">PASSWORD_POLICY</span></code> in <code class="docutils literal notranslate"><span class="pre">app.domain.accounts.services</span></code>) decides every new password: sign-up, password reset, password change, admin user create and update, and <code class="docutils literal notranslate"><span class="pre">app</span> <span class="pre">users</span> <span class="pre">create-user</span></code>. A password is 12 to 128 characters long and is not on the common-password list; no character classes are required. It also may not repeat the account’s email address, which password reset alone does not check. A rejected password answers <code class="docutils literal notranslate"><span class="pre">400</span></code>.</p></li>
+<li><p><strong>Password Confirmation</strong>: Creating, rotating, or revoking an API key, changing the password, and deleting the account are admitted within five minutes of sign-in. After that the request must carry <code class="docutils literal notranslate"><span class="pre">currentPassword</span></code>; without it the API answers <code class="docutils literal notranslate"><span class="pre">403</span></code> with <code class="docutils literal notranslate"><span class="pre">code</span></code> set to <code class="docutils literal notranslate"><span class="pre">reauthentication_required</span></code> and the SPA prompts for the password and retries.</p></li>
+<li><p><strong>Application Access</strong>: Every account is created with the <code class="docutils literal notranslate"><span class="pre">Application</span> <span class="pre">Access</span></code> role, which is required to use the application. A signed-in user who holds neither that role nor <code class="docutils literal notranslate"><span class="pre">Superuser</span></code> gets <code class="docutils literal notranslate"><span class="pre">403</span></code> with <code class="docutils literal notranslate"><span class="pre">code</span></code> set to <code class="docutils literal notranslate"><span class="pre">application_access_required</span></code> on every route except sign-out.</p></li>
+<li><p><strong>Error Responses</strong>: Errors are <code class="docutils literal notranslate"><span class="pre">application/problem+json</span></code> with <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">title</span></code> (the HTTP reason phrase), <code class="docutils literal notranslate"><span class="pre">detail</span></code> (the human-readable message), and, where relevant, a machine-readable <code class="docutils literal notranslate"><span class="pre">code</span></code>. A request body that breaks a field rule answers <code class="docutils literal notranslate"><span class="pre">400</span></code> and lists each offending field under <code class="docutils literal notranslate"><span class="pre">extra</span></code> as <code class="docutils literal notranslate"><span class="pre">message</span></code>, <code class="docutils literal notranslate"><span class="pre">key</span></code>, and <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p></li>
+<li><p><strong>Email Verification</strong>: <code class="docutils literal notranslate"><span class="pre">REGISTRATION_REQUIRE_VERIFICATION</span></code> (default <code class="docutils literal notranslate"><span class="pre">true</span></code>) decides whether new password accounts must confirm their email address before signing in.</p></li>
+<li><p><strong>Tenant &amp; Role Guards</strong>: Team routes enforce <code class="docutils literal notranslate"><span class="pre">requires_team_role(&quot;member&quot;</span> <span class="pre">|</span> <span class="pre">&quot;admin&quot;</span> <span class="pre">|</span> <span class="pre">&quot;owner&quot;)</span></code> and admin routes enforce <code class="docutils literal notranslate"><span class="pre">requires_role(&quot;superuser&quot;)</span></code> via <code class="docutils literal notranslate"><span class="pre">AppAuthorizationResolver</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="startup.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Starting the Server</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="queues-and-mcp.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Queues, AsyncAPI &amp; MCP Server</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>

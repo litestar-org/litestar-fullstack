@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>app.domain.accounts.security._config - Litestar Fullstack Docs</title><link rel="index" title="Index" href="../../../../../genindex.html" /><link rel="search" title="Search" href="../../../../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=6a604523" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="app.domain.accounts.security._config"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../../index.html">
+      
+      
+      <strong>app</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage/index.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/installation.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/development.html">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/startup.html">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/security.html">Security &amp; Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/queues-and-mcp.html">Queues, AsyncAPI &amp; MCP Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../usage/deployment.html">Deployment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/cli.html">cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/server.html">server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/config.html">config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/db.html">db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/lib/index.html">lib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/email.html">email</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/exceptions.html">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/schema.html">schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/secrets.html">secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/lib/settings.html">settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/domain/index.html">domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/accounts/index.html">accounts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/deps.html">deps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/jobs.html">jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/security.html">security</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/accounts/controllers/index.html">accounts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/admin/index.html">admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/admin/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/admin/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/teams/index.html">teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/teams/services.html">services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/teams/controllers/index.html">teams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/tags/index.html">tags</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/tags/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/tags/services.html">services</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/domain/system/index.html">system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/system/controllers.html">controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../api/domain/system/jobs.html">jobs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contribution-guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../../index.html"><span itemprop="name">app</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">app.domain.accounts.security._config</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <h1>Source code for app.domain.accounts.security._config</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">"""Unified ``litestar-security`` configuration factory and session/CSRF middleware builders."""</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">structlog</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.extensions.litestar.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyStore</span>
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.config.csrf</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSRFConfig</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScopeType</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar.middleware.session.server_side</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServerSideSessionConfig</span>
+</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_queues</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_service</span>
+</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_security</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="16">    <span class="n">MFAConfig</span><span class="p">,</span>
+</span><span data-line="17">    <span class="n">PasskeyConfig</span><span class="p">,</span>
+</span><span data-line="18">    <span class="n">SecurityConfig</span><span class="p">,</span>
+</span><span data-line="19">    <span class="n">SecurityHeadersConfig</span><span class="p">,</span>
+</span><span data-line="20">    <span class="n">WebSocketSecurityConfig</span><span class="p">,</span>
+</span><span data-line="21"><span class="p">)</span>
+</span><span data-line="22"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_security.accounts</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="23">    <span class="n">LocalAuth</span><span class="p">,</span>
+</span><span data-line="24">    <span class="n">LocalAuthConfig</span><span class="p">,</span>
+</span><span data-line="25">    <span class="n">LocalAuthSecrets</span><span class="p">,</span>
+</span><span data-line="26">    <span class="n">NotificationCommand</span><span class="p">,</span>
+</span><span data-line="27">    <span class="n">PurposeTokenCodec</span><span class="p">,</span>
+</span><span data-line="28">    <span class="n">RecoveryCodePepper</span><span class="p">,</span>
+</span><span data-line="29">    <span class="n">RegistrationMode</span><span class="p">,</span>
+</span><span data-line="30">    <span class="n">RegistrationPolicy</span><span class="p">,</span>
+</span><span data-line="31">    <span class="n">SessionBindingConfig</span><span class="p">,</span>
+</span><span data-line="32">    <span class="n">StepUpService</span><span class="p">,</span>
+</span><span data-line="33">    <span class="n">forwarded_client_key</span><span class="p">,</span>
+</span><span data-line="34">    <span class="n">trusted_client_key</span><span class="p">,</span>
+</span><span data-line="35"><span class="p">)</span>
+</span><span data-line="36"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_security.providers.api_key</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIKeyConfig</span>
+</span><span data-line="37"><span class="kn">from</span><span class="w"> </span><span class="nn">litestar_security.providers.oauth</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="38">    <span class="n">GitHubOAuthProvider</span><span class="p">,</span>
+</span><span data-line="39">    <span class="n">OAuthAccountService</span><span class="p">,</span>
+</span><span data-line="40">    <span class="n">OAuthConfig</span><span class="p">,</span>
+</span><span data-line="41">    <span class="n">OAuthLifecycleService</span><span class="p">,</span>
+</span><span data-line="42">    <span class="n">OAuthLocalAuthTransport</span><span class="p">,</span>
+</span><span data-line="43">    <span class="n">OAuthProvider</span><span class="p">,</span>
+</span><span data-line="44">    <span class="n">OAuthProviderRegistration</span><span class="p">,</span>
+</span><span data-line="45">    <span class="n">OAuthRedirectPolicy</span><span class="p">,</span>
+</span><span data-line="46">    <span class="n">OAuthStepUpAuthorizer</span><span class="p">,</span>
+</span><span data-line="47">    <span class="n">OAuthTransactionService</span><span class="p">,</span>
+</span><span data-line="48">    <span class="n">ProtectedResourceConfig</span><span class="p">,</span>
+</span><span data-line="49">    <span class="n">SecretStr</span><span class="p">,</span>
+</span><span data-line="50">    <span class="n">StepUpOAuthAuthorizer</span><span class="p">,</span>
+</span><span data-line="51"><span class="p">)</span>
+</span><span data-line="52">
+</span><span data-line="53"><span class="kn">from</span><span class="w"> </span><span class="nn">app.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span> <span class="k">as</span> <span class="n">m</span>
+</span><span data-line="54"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._api_key</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIKeyIdentityResolver</span><span class="p">,</span> <span class="n">SQLAlchemyAPIKeyStore</span>
+</span><span data-line="55"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemySecurityBackend</span>
+</span><span data-line="56"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._event</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuditSecurityEventSink</span>
+</span><span data-line="57"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._mfa</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="58">    <span class="n">SQLAlchemyMFALoginChallengeService</span><span class="p">,</span>
+</span><span data-line="59">    <span class="n">SQLAlchemyMFAService</span><span class="p">,</span>
+</span><span data-line="60">    <span class="n">SQLAlchemyStepUpService</span><span class="p">,</span>
+</span><span data-line="61">    <span class="n">build_secret_protector</span><span class="p">,</span>
+</span><span data-line="62"><span class="p">)</span>
+</span><span data-line="63"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._oauth</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="64">    <span class="n">SQLAlchemyOAuthAccountStore</span><span class="p">,</span>
+</span><span data-line="65">    <span class="n">SQLAlchemyOAuthTransactionStore</span><span class="p">,</span>
+</span><span data-line="66">    <span class="n">build_oauth_protector</span><span class="p">,</span>
+</span><span data-line="67"><span class="p">)</span>
+</span><span data-line="68"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._passkey</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyPasskeyStore</span>
+</span><span data-line="69"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._rate_limit</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_rate_limiter</span>
+</span><span data-line="70"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.security._resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppAuthorizationResolver</span>
+</span><span data-line="71"><span class="kn">from</span><span class="w"> </span><span class="nn">app.domain.accounts.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">PASSWORD_POLICY</span>
+</span><span data-line="72"><span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.secrets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="73">    <span class="n">API_KEY_PEPPER_INFO</span><span class="p">,</span>
+</span><span data-line="74">    <span class="n">CSRF_SECRET_INFO</span><span class="p">,</span>
+</span><span data-line="75">    <span class="n">OAUTH_TRANSACTION_PEPPER_INFO</span><span class="p">,</span>
+</span><span data-line="76">    <span class="n">PURPOSE_TOKEN_PEPPER_INFO</span><span class="p">,</span>
+</span><span data-line="77">    <span class="n">RECOVERY_CODE_PEPPER_INFO</span><span class="p">,</span>
+</span><span data-line="78">    <span class="n">SESSION_BINDING_PEPPER_INFO</span><span class="p">,</span>
+</span><span data-line="79">    <span class="n">derive_subkey</span><span class="p">,</span>
+</span><span data-line="80"><span class="p">)</span>
+</span><span data-line="81">
+</span><span data-line="82"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span data-line="83">    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
+</span><span data-line="84">
+</span><span data-line="85">    <span class="kn">from</span><span class="w"> </span><span class="nn">advanced_alchemy.extensions.litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyAsyncConfig</span>
+</span><span data-line="86">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Request</span>
+</span><span data-line="87">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefineMiddleware</span>
+</span><span data-line="88">    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar_queues</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueueService</span>
+</span><span data-line="89">
+</span><span data-line="90">    <span class="kn">from</span><span class="w"> </span><span class="nn">app.lib.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">Settings</span>
+</span><span data-line="91">
+</span><span data-line="92"><span class="n">logger</span> <span class="o">=</span> <span class="n">structlog</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span data-line="93">
+</span><span data-line="94"><span class="n">_GITHUB_ISSUER</span> <span class="o">=</span> <span class="s2">"https://github.com"</span>
+</span><span data-line="95">
+</span><span data-line="96"><span class="n">_WILDCARD_PROXY_NETWORKS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="97">    <span class="s2">"127.0.0.0/8"</span><span class="p">,</span>
+</span><span data-line="98">    <span class="s2">"10.0.0.0/8"</span><span class="p">,</span>  <span class="c1"># NOSONAR - RFC 1918 private range</span>
+</span><span data-line="99">    <span class="s2">"172.16.0.0/12"</span><span class="p">,</span>  <span class="c1"># NOSONAR - RFC 1918 private range</span>
+</span><span data-line="100">    <span class="s2">"192.168.0.0/16"</span><span class="p">,</span>  <span class="c1"># NOSONAR - RFC 1918 private range</span>
+</span><span data-line="101">    <span class="s2">"100.64.0.0/10"</span><span class="p">,</span>  <span class="c1"># NOSONAR - RFC 6598 shared address space</span>
+</span><span data-line="102">    <span class="s2">"169.254.0.0/16"</span><span class="p">,</span>  <span class="c1"># NOSONAR - RFC 3927 link-local range</span>
+</span><span data-line="103">    <span class="s2">"::1/128"</span><span class="p">,</span>
+</span><span data-line="104">    <span class="s2">"fc00::/7"</span><span class="p">,</span>
+</span><span data-line="105">    <span class="s2">"fe80::/10"</span><span class="p">,</span>
+</span><span data-line="106"><span class="p">)</span>
+</span><span data-line="107"><span class="n">_ACCESS_ROUTE_PREFIX</span> <span class="o">=</span> <span class="s2">"/api/access"</span>
+</span><span data-line="108"><span class="n">_OAUTH_ROUTE_PREFIX</span> <span class="o">=</span> <span class="s2">"/api/auth"</span>
+</span><span data-line="109"><span class="n">_OAUTH_RETURN_PATHS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"/home"</span><span class="p">,</span> <span class="s2">"/dashboard"</span><span class="p">,</span> <span class="s2">"/settings/security"</span><span class="p">,</span> <span class="s2">"/auth/github/callback"</span><span class="p">})</span>
+</span><span data-line="110"><span class="n">_VERIFICATION_EMAIL_TASK</span> <span class="o">=</span> <span class="s2">"email.send_verification"</span>
+</span><span data-line="111"><span class="n">_RECOVERY_EMAIL_TASK</span> <span class="o">=</span> <span class="s2">"email.send_password_reset"</span>
+</span><span data-line="112">
+</span><span data-line="113"><span class="n">_TEMPLATE_TASK_MAP</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="114">    <span class="s2">"local.verify"</span><span class="p">:</span> <span class="n">_VERIFICATION_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="115">    <span class="s2">"local.recovery"</span><span class="p">:</span> <span class="n">_RECOVERY_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="116">    <span class="s2">"verification"</span><span class="p">:</span> <span class="n">_VERIFICATION_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="117">    <span class="s2">"email_verification"</span><span class="p">:</span> <span class="n">_VERIFICATION_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="118">    <span class="s2">"recovery"</span><span class="p">:</span> <span class="n">_RECOVERY_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="119">    <span class="s2">"password_reset"</span><span class="p">:</span> <span class="n">_RECOVERY_EMAIL_TASK</span><span class="p">,</span>
+</span><span data-line="120">    <span class="s2">"password_reset_confirmation"</span><span class="p">:</span> <span class="s2">"email.send_password_reset_confirmation"</span><span class="p">,</span>
+</span><span data-line="121"><span class="p">}</span>
+</span><span data-line="122">
+</span><span data-line="123"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="124">    <span class="s2">"build_csrf_config"</span><span class="p">,</span>
+</span><span data-line="125">    <span class="s2">"build_notification_handler"</span><span class="p">,</span>
+</span><span data-line="126">    <span class="s2">"build_security_config"</span><span class="p">,</span>
+</span><span data-line="127">    <span class="s2">"build_session_middleware"</span><span class="p">,</span>
+</span><span data-line="128">    <span class="s2">"build_session_store"</span><span class="p">,</span>
+</span><span data-line="129"><span class="p">)</span>
+</span><span data-line="130">
+</span><span data-line="131">
+<div class="viewcode-block" id="build_session_store">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/security.html#app.domain.accounts.security.build_session_store">[docs]</a>
+</span><span data-line="132"><span class="k">def</span><span class="w"> </span><span class="nf">build_session_store</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLAlchemyStore</span><span class="p">[</span><span class="n">SQLAlchemyAsyncConfig</span><span class="p">]:</span>
+</span><span data-line="133"><span class="w">    </span><span class="sd">"""Build the SQLAlchemy-backed Litestar server-side session store on ``m.AppStore``.</span>
+</span><span data-line="134">
+</span><span data-line="135"><span class="sd">    Returns:</span>
+</span><span data-line="136"><span class="sd">        Configured ``SQLAlchemyStore`` instance for session storage.</span>
+</span><span data-line="137"><span class="sd">    """</span>
+</span><span data-line="138">    <span class="k">return</span> <span class="n">SQLAlchemyStore</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">alchemy_config</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">AppStore</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">"sessions"</span><span class="p">)</span></div>
+
+</span><span data-line="139">
+</span><span data-line="140">
+<div class="viewcode-block" id="build_session_middleware">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/security.html#app.domain.accounts.security.build_session_middleware">[docs]</a>
+</span><span data-line="141"><span class="k">def</span><span class="w"> </span><span class="nf">build_session_middleware</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DefineMiddleware</span><span class="p">:</span>
+</span><span data-line="142"><span class="w">    </span><span class="sd">"""Build Litestar's native server-side session middleware backed by ``SQLAlchemyStore``.</span>
+</span><span data-line="143">
+</span><span data-line="144"><span class="sd">    Returns:</span>
+</span><span data-line="145"><span class="sd">        Configured server-side session middleware definition.</span>
+</span><span data-line="146"><span class="sd">    """</span>
+</span><span data-line="147">    <span class="n">cookie_secure</span> <span class="o">=</span> <span class="n">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="148">    <span class="k">return</span> <span class="n">ServerSideSessionConfig</span><span class="p">(</span>
+</span><span data-line="149">        <span class="n">key</span><span class="o">=</span><span class="s2">"__Host-app-session"</span> <span class="k">if</span> <span class="n">cookie_secure</span> <span class="k">else</span> <span class="s2">"app-session"</span><span class="p">,</span>
+</span><span data-line="150">        <span class="n">max_age</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">SESSION_MAX_AGE</span><span class="p">,</span>
+</span><span data-line="151">        <span class="n">secure</span><span class="o">=</span><span class="n">cookie_secure</span><span class="p">,</span>
+</span><span data-line="152">        <span class="n">httponly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="153">        <span class="n">samesite</span><span class="o">=</span><span class="s2">"lax"</span><span class="p">,</span>
+</span><span data-line="154">        <span class="n">scopes</span><span class="o">=</span><span class="p">{</span><span class="n">ScopeType</span><span class="o">.</span><span class="n">HTTP</span><span class="p">,</span> <span class="n">ScopeType</span><span class="o">.</span><span class="n">WEBSOCKET</span><span class="p">},</span>
+</span><span data-line="155">        <span class="n">store</span><span class="o">=</span><span class="s2">"sessions"</span><span class="p">,</span>
+</span><span data-line="156">    <span class="p">)</span><span class="o">.</span><span class="n">middleware</span></div>
+
+</span><span data-line="157">
+</span><span data-line="158">
+<div class="viewcode-block" id="build_csrf_config">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/security.html#app.domain.accounts.security.build_csrf_config">[docs]</a>
+</span><span data-line="159"><span class="k">def</span><span class="w"> </span><span class="nf">build_csrf_config</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSRFConfig</span><span class="p">:</span>
+</span><span data-line="160"><span class="w">    </span><span class="sd">"""Build Litestar's native CSRF configuration using an HKDF-derived secret.</span>
+</span><span data-line="161">
+</span><span data-line="162"><span class="sd">    Returns:</span>
+</span><span data-line="163"><span class="sd">        Configured ``CSRFConfig`` instance.</span>
+</span><span data-line="164"><span class="sd">    """</span>
+</span><span data-line="165">    <span class="n">cookie_secure</span> <span class="o">=</span> <span class="n">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="166">    <span class="n">secret</span> <span class="o">=</span> <span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">CSRF_SECRET_INFO</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span><span data-line="167">    <span class="k">return</span> <span class="n">CSRFConfig</span><span class="p">(</span>
+</span><span data-line="168">        <span class="n">secret</span><span class="o">=</span><span class="n">secret</span><span class="p">,</span>
+</span><span data-line="169">        <span class="n">cookie_name</span><span class="o">=</span><span class="s2">"XSRF-TOKEN"</span><span class="p">,</span>
+</span><span data-line="170">        <span class="n">header_name</span><span class="o">=</span><span class="s2">"X-XSRF-TOKEN"</span><span class="p">,</span>
+</span><span data-line="171">        <span class="n">cookie_secure</span><span class="o">=</span><span class="n">cookie_secure</span><span class="p">,</span>
+</span><span data-line="172">        <span class="n">cookie_httponly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="173">        <span class="n">cookie_samesite</span><span class="o">=</span><span class="s2">"lax"</span><span class="p">,</span>
+</span><span data-line="174">    <span class="p">)</span></div>
+
+</span><span data-line="175">
+</span><span data-line="176">
+<div class="viewcode-block" id="build_notification_handler">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/security.html#app.domain.accounts.security.build_notification_handler">[docs]</a>
+</span><span data-line="177"><span class="k">def</span><span class="w"> </span><span class="nf">build_notification_handler</span><span class="p">(</span>
+</span><span data-line="178">    <span class="n">queue_service</span><span class="p">:</span> <span class="n">QueueService</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="179"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">NotificationCommand</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]]:</span>
+</span><span data-line="180"><span class="w">    </span><span class="sd">"""Create a ``LocalAuth`` notification callback enqueueing canonical ``email.send_*`` queue tasks.</span>
+</span><span data-line="181">
+</span><span data-line="182"><span class="sd">    Returns:</span>
+</span><span data-line="183"><span class="sd">        Async notification callback accepting a ``NotificationCommand``.</span>
+</span><span data-line="184"><span class="sd">    """</span>
+</span><span data-line="185">
+</span><span data-line="186">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_dispatch_notification</span><span class="p">(</span><span class="n">notification</span><span class="p">:</span> <span class="n">NotificationCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="187">        <span class="n">task_name</span> <span class="o">=</span> <span class="n">_TEMPLATE_TASK_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">notification</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+</span><span data-line="188">        <span class="k">if</span> <span class="n">task_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="189">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Ignoring unmapped security notification template"</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">notification</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+</span><span data-line="190">            <span class="k">return</span>
+</span><span data-line="191">        <span class="n">queues</span> <span class="o">=</span> <span class="n">queue_service</span> <span class="k">if</span> <span class="n">queue_service</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">get_default_service</span><span class="p">()</span>
+</span><span data-line="192">        <span class="k">if</span> <span class="n">queues</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="193">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No QueueService available to enqueue security email"</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">)</span>
+</span><span data-line="194">            <span class="k">return</span>
+</span><span data-line="195">        <span class="k">await</span> <span class="n">queues</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span>
+</span><span data-line="196">            <span class="n">task_name</span><span class="p">,</span>
+</span><span data-line="197">            <span class="n">queue</span><span class="o">=</span><span class="s2">"emails"</span><span class="p">,</span>
+</span><span data-line="198">            <span class="n">email</span><span class="o">=</span><span class="n">notification</span><span class="o">.</span><span class="n">destination</span><span class="p">,</span>
+</span><span data-line="199">            <span class="n">token</span><span class="o">=</span><span class="n">notification</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+</span><span data-line="200">            <span class="n">token_expires_at</span><span class="o">=</span><span class="n">notification</span><span class="o">.</span><span class="n">expires_at</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+</span><span data-line="201">            <span class="n">return_url</span><span class="o">=</span><span class="n">notification</span><span class="o">.</span><span class="n">return_url</span><span class="p">,</span>
+</span><span data-line="202">        <span class="p">)</span>
+</span><span data-line="203">
+</span><span data-line="204">    <span class="k">return</span> <span class="n">_dispatch_notification</span></div>
+
+</span><span data-line="205">
+</span><span data-line="206">
+<div class="viewcode-block" id="build_security_config">
+<a class="viewcode-back" href="../../../../../api/domain/accounts/security.html#app.domain.accounts.security.build_security_config">[docs]</a>
+</span><span data-line="207"><span class="k">def</span><span class="w"> </span><span class="nf">build_security_config</span><span class="p">(</span>
+</span><span data-line="208">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="209">    <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">,</span>
+</span><span data-line="210">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="211">    <span class="n">queue_service</span><span class="p">:</span> <span class="n">QueueService</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="212"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SecurityConfig</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">]:</span>
+</span><span data-line="213"><span class="w">    </span><span class="sd">"""Assemble the complete declarative ``SecurityConfig[m.User]`` for the application.</span>
+</span><span data-line="214">
+</span><span data-line="215"><span class="sd">    Returns:</span>
+</span><span data-line="216"><span class="sd">        Fully configured ``SecurityConfig`` instance.</span>
+</span><span data-line="217"><span class="sd">    """</span>
+</span><span data-line="218">    <span class="n">backend</span> <span class="o">=</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">(</span>
+</span><span data-line="219">        <span class="n">alchemy_config</span><span class="p">,</span>
+</span><span data-line="220">        <span class="n">notification_handler</span><span class="o">=</span><span class="n">build_notification_handler</span><span class="p">(</span><span class="n">queue_service</span><span class="o">=</span><span class="n">queue_service</span><span class="p">),</span>
+</span><span data-line="221">    <span class="p">)</span>
+</span><span data-line="222">    <span class="n">event_sink</span> <span class="o">=</span> <span class="n">AuditSecurityEventSink</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">)</span>
+</span><span data-line="223">    <span class="n">step_up_store</span> <span class="o">=</span> <span class="n">SQLAlchemyStepUpService</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">)</span>
+</span><span data-line="224">    <span class="n">local_auth</span> <span class="o">=</span> <span class="n">_build_local_auth</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">event_sink</span><span class="p">)</span>
+</span><span data-line="225">    <span class="n">passkey_config</span> <span class="o">=</span> <span class="n">_build_passkey_config</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">event_sink</span><span class="p">,</span> <span class="n">step_up_store</span><span class="p">)</span>
+</span><span data-line="226">    <span class="k">return</span> <span class="n">SecurityConfig</span><span class="p">(</span>
+</span><span data-line="227">        <span class="n">local_auth</span><span class="o">=</span><span class="n">local_auth</span><span class="p">,</span>
+</span><span data-line="228">        <span class="n">mfa</span><span class="o">=</span><span class="n">_build_mfa_config</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">event_sink</span><span class="p">,</span> <span class="n">step_up_store</span><span class="p">),</span>
+</span><span data-line="229">        <span class="n">passkeys</span><span class="o">=</span><span class="n">passkey_config</span><span class="p">,</span>
+</span><span data-line="230">        <span class="n">oauth</span><span class="o">=</span><span class="n">_build_oauth_config</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">,</span> <span class="n">local_auth</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">step_up_store</span><span class="p">),</span>
+</span><span data-line="231">        <span class="n">api_key</span><span class="o">=</span><span class="n">_build_api_key_config</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">),</span>
+</span><span data-line="232">        <span class="n">protected_resource</span><span class="o">=</span><span class="n">ProtectedResourceConfig</span><span class="p">(</span>
+</span><span data-line="233">            <span class="n">resource</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">),</span>
+</span><span data-line="234">            <span class="n">scopes_supported</span><span class="o">=</span><span class="p">(</span><span class="s2">"read"</span><span class="p">,</span> <span class="s2">"write"</span><span class="p">,</span> <span class="s2">"mcp"</span><span class="p">),</span>
+</span><span data-line="235">        <span class="p">),</span>
+</span><span data-line="236">        <span class="n">websocket</span><span class="o">=</span><span class="n">_build_websocket_config</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">passkey_origins</span><span class="o">=</span><span class="n">passkey_config</span><span class="o">.</span><span class="n">origins</span><span class="p">),</span>
+</span><span data-line="237">        <span class="n">headers</span><span class="o">=</span><span class="n">SecurityHeadersConfig</span><span class="o">.</span><span class="n">hardened</span><span class="p">(),</span>
+</span><span data-line="238">        <span class="n">authorization_resolver</span><span class="o">=</span><span class="n">AppAuthorizationResolver</span><span class="p">(),</span>
+</span><span data-line="239">        <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"^/static"</span><span class="p">],</span>
+</span><span data-line="240">    <span class="p">)</span></div>
+
+</span><span data-line="241">
+</span><span data-line="242">
+</span><span data-line="243"><span class="k">def</span><span class="w"> </span><span class="nf">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="244">    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">COOKIE_SECURE</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">COOKIE_SECURE</span><span class="p">)</span>
+</span><span data-line="245">
+</span><span data-line="246">
+</span><span data-line="247"><span class="k">def</span><span class="w"> </span><span class="nf">_build_local_auth</span><span class="p">(</span>
+</span><span data-line="248">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="249">    <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">,</span>
+</span><span data-line="250">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="251">    <span class="n">event_sink</span><span class="p">:</span> <span class="n">AuditSecurityEventSink</span><span class="p">,</span>
+</span><span data-line="252"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LocalAuthConfig</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">]:</span>
+</span><span data-line="253">    <span class="n">cookie_secure</span> <span class="o">=</span> <span class="n">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="254">    <span class="n">proxy_networks</span> <span class="o">=</span> <span class="n">_trusted_proxy_networks</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">LITESTAR_TRUSTED_PROXIES</span><span class="p">)</span>
+</span><span data-line="255">    <span class="k">return</span> <span class="n">LocalAuth</span><span class="o">.</span><span class="n">session</span><span class="p">(</span>
+</span><span data-line="256">        <span class="n">accounts</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+</span><span data-line="257">        <span class="n">session_resolver</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+</span><span data-line="258">        <span class="n">secrets</span><span class="o">=</span><span class="n">LocalAuthSecrets</span><span class="p">(</span>
+</span><span data-line="259">            <span class="n">purpose_tokens</span><span class="o">=</span><span class="n">PurposeTokenCodec</span><span class="p">(</span><span class="n">pepper</span><span class="o">=</span><span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">PURPOSE_TOKEN_PEPPER_INFO</span><span class="p">)),</span>
+</span><span data-line="260">        <span class="p">),</span>
+</span><span data-line="261">        <span class="n">binding</span><span class="o">=</span><span class="n">SessionBindingConfig</span><span class="p">(</span>
+</span><span data-line="262">            <span class="n">pepper</span><span class="o">=</span><span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">SESSION_BINDING_PEPPER_INFO</span><span class="p">),</span>
+</span><span data-line="263">            <span class="n">cookie_name</span><span class="o">=</span><span class="s2">"__Host-app-binding"</span> <span class="k">if</span> <span class="n">cookie_secure</span> <span class="k">else</span> <span class="s2">"app-binding"</span><span class="p">,</span>
+</span><span data-line="264">            <span class="n">secure</span><span class="o">=</span><span class="n">cookie_secure</span><span class="p">,</span>
+</span><span data-line="265">            <span class="n">allow_insecure</span><span class="o">=</span><span class="ow">not</span> <span class="n">cookie_secure</span><span class="p">,</span>
+</span><span data-line="266">            <span class="n">max_age</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="mi">86_400</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">SESSION_MAX_AGE</span><span class="p">),</span>
+</span><span data-line="267">        <span class="p">),</span>
+</span><span data-line="268">        <span class="n">password_policy</span><span class="o">=</span><span class="n">PASSWORD_POLICY</span><span class="p">,</span>
+</span><span data-line="269">        <span class="n">registration</span><span class="o">=</span><span class="n">RegistrationPolicy</span><span class="p">(</span>
+</span><span data-line="270">            <span class="n">mode</span><span class="o">=</span><span class="n">RegistrationMode</span><span class="o">.</span><span class="n">PUBLIC</span><span class="p">,</span>
+</span><span data-line="271">            <span class="n">require_verification</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">REGISTRATION_REQUIRE_VERIFICATION</span><span class="p">,</span>
+</span><span data-line="272">        <span class="p">),</span>
+</span><span data-line="273">        <span class="n">route_prefix</span><span class="o">=</span><span class="n">_ACCESS_ROUTE_PREFIX</span><span class="p">,</span>
+</span><span data-line="274">        <span class="n">register_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="275">        <span class="n">rate_limiter</span><span class="o">=</span><span class="n">build_rate_limiter</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">),</span>
+</span><span data-line="276">        <span class="n">events</span><span class="o">=</span><span class="n">event_sink</span><span class="p">,</span>
+</span><span data-line="277">        <span class="n">client_key</span><span class="o">=</span><span class="n">forwarded_client_key</span><span class="p">(</span><span class="n">trusted_proxies</span><span class="o">=</span><span class="n">proxy_networks</span><span class="p">)</span> <span class="k">if</span> <span class="n">proxy_networks</span> <span class="k">else</span> <span class="n">trusted_client_key</span><span class="p">,</span>
+</span><span data-line="278">    <span class="p">)</span>
+</span><span data-line="279">
+</span><span data-line="280">
+</span><span data-line="281"><span class="k">def</span><span class="w"> </span><span class="nf">_trusted_proxy_networks</span><span class="p">(</span><span class="n">trusted_proxies</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="282">    <span class="n">networks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="283">    <span class="k">for</span> <span class="n">trusted_proxy</span> <span class="ow">in</span> <span class="n">trusted_proxies</span><span class="p">:</span>
+</span><span data-line="284">        <span class="n">network</span> <span class="o">=</span> <span class="n">trusted_proxy</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span data-line="285">        <span class="k">if</span> <span class="n">network</span> <span class="o">==</span> <span class="s2">"*"</span><span class="p">:</span>
+</span><span data-line="286">            <span class="n">networks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wildcard</span> <span class="k">for</span> <span class="n">wildcard</span> <span class="ow">in</span> <span class="n">_WILDCARD_PROXY_NETWORKS</span> <span class="k">if</span> <span class="n">wildcard</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">networks</span><span class="p">)</span>
+</span><span data-line="287">        <span class="k">elif</span> <span class="n">network</span> <span class="ow">and</span> <span class="n">network</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">networks</span><span class="p">:</span>
+</span><span data-line="288">            <span class="n">networks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="p">)</span>
+</span><span data-line="289">    <span class="k">return</span> <span class="n">networks</span>
+</span><span data-line="290">
+</span><span data-line="291">
+</span><span data-line="292"><span class="k">def</span><span class="w"> </span><span class="nf">_build_mfa_config</span><span class="p">(</span>
+</span><span data-line="293">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="294">    <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">,</span>
+</span><span data-line="295">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="296">    <span class="n">event_sink</span><span class="p">:</span> <span class="n">AuditSecurityEventSink</span><span class="p">,</span>
+</span><span data-line="297">    <span class="n">step_up_store</span><span class="p">:</span> <span class="n">SQLAlchemyStepUpService</span><span class="p">,</span>
+</span><span data-line="298"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MFAConfig</span><span class="p">:</span>
+</span><span data-line="299">    <span class="n">recovery_code_pepper</span> <span class="o">=</span> <span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">RECOVERY_CODE_PEPPER_INFO</span><span class="p">)</span>
+</span><span data-line="300">    <span class="k">return</span> <span class="n">MFAConfig</span><span class="p">(</span>
+</span><span data-line="301">        <span class="n">store</span><span class="o">=</span><span class="n">SQLAlchemyMFAService</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">),</span>
+</span><span data-line="302">        <span class="n">secret_protector</span><span class="o">=</span><span class="n">build_secret_protector</span><span class="p">(</span><span class="n">settings</span><span class="p">),</span>
+</span><span data-line="303">        <span class="n">recovery_peppers</span><span class="o">=</span><span class="p">(</span><span class="n">RecoveryCodePepper</span><span class="p">(</span><span class="n">key_version</span><span class="o">=</span><span class="s2">"v1"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">recovery_code_pepper</span><span class="p">),),</span>
+</span><span data-line="304">        <span class="n">login_methods</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+</span><span data-line="305">        <span class="n">events</span><span class="o">=</span><span class="n">event_sink</span><span class="p">,</span>
+</span><span data-line="306">        <span class="n">step_up_store</span><span class="o">=</span><span class="n">step_up_store</span><span class="p">,</span>
+</span><span data-line="307">        <span class="n">require_at_login</span><span class="o">=</span><span class="s2">"enrolled"</span><span class="p">,</span>
+</span><span data-line="308">        <span class="n">login_challenge_store</span><span class="o">=</span><span class="n">SQLAlchemyMFALoginChallengeService</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">),</span>
+</span><span data-line="309">        <span class="n">route_prefix</span><span class="o">=</span><span class="n">_ACCESS_ROUTE_PREFIX</span><span class="p">,</span>
+</span><span data-line="310">        <span class="n">issuer</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+</span><span data-line="311">        <span class="n">register_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="312">    <span class="p">)</span>
+</span><span data-line="313">
+</span><span data-line="314">
+</span><span data-line="315"><span class="k">def</span><span class="w"> </span><span class="nf">_build_passkey_config</span><span class="p">(</span>
+</span><span data-line="316">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="317">    <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">,</span>
+</span><span data-line="318">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="319">    <span class="n">event_sink</span><span class="p">:</span> <span class="n">AuditSecurityEventSink</span><span class="p">,</span>
+</span><span data-line="320">    <span class="n">step_up_store</span><span class="p">:</span> <span class="n">SQLAlchemyStepUpService</span><span class="p">,</span>
+</span><span data-line="321"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasskeyConfig</span><span class="p">:</span>
+</span><span data-line="322">    <span class="n">cookie_secure</span> <span class="o">=</span> <span class="n">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="323">    <span class="n">passkey_store</span> <span class="o">=</span> <span class="n">SQLAlchemyPasskeyStore</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">)</span>
+</span><span data-line="324">    <span class="n">rp_id</span> <span class="o">=</span> <span class="n">_extract_rp_id</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">PASSKEY_RP_ID</span><span class="p">)</span>
+</span><span data-line="325">    <span class="k">return</span> <span class="n">PasskeyConfig</span><span class="p">(</span>
+</span><span data-line="326">        <span class="n">store</span><span class="o">=</span><span class="n">passkey_store</span><span class="p">,</span>
+</span><span data-line="327">        <span class="n">challenge_store</span><span class="o">=</span><span class="n">passkey_store</span><span class="p">,</span>
+</span><span data-line="328">        <span class="n">rp_id</span><span class="o">=</span><span class="n">rp_id</span><span class="p">,</span>
+</span><span data-line="329">        <span class="n">rp_name</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">PASSKEY_RP_NAME</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+</span><span data-line="330">        <span class="n">origins</span><span class="o">=</span><span class="n">_resolve_passkey_origins</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">rp_id</span><span class="o">=</span><span class="n">rp_id</span><span class="p">,</span> <span class="n">cookie_secure</span><span class="o">=</span><span class="n">cookie_secure</span><span class="p">),</span>
+</span><span data-line="331">        <span class="n">allow_insecure_localhost</span><span class="o">=</span><span class="ow">not</span> <span class="n">cookie_secure</span><span class="p">,</span>
+</span><span data-line="332">        <span class="n">login_methods</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+</span><span data-line="333">        <span class="n">events</span><span class="o">=</span><span class="n">event_sink</span><span class="p">,</span>
+</span><span data-line="334">        <span class="n">step_up_store</span><span class="o">=</span><span class="n">step_up_store</span><span class="p">,</span>
+</span><span data-line="335">        <span class="n">route_prefix</span><span class="o">=</span><span class="n">_ACCESS_ROUTE_PREFIX</span><span class="p">,</span>
+</span><span data-line="336">        <span class="n">register_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="337">    <span class="p">)</span>
+</span><span data-line="338">
+</span><span data-line="339">
+</span><span data-line="340"><span class="k">def</span><span class="w"> </span><span class="nf">_extract_rp_id</span><span class="p">(</span><span class="n">app_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configured_rp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="341">    <span class="k">if</span> <span class="n">configured_rp_id</span> <span class="ow">and</span> <span class="n">configured_rp_id</span> <span class="o">!=</span> <span class="s2">"localhost"</span><span class="p">:</span>
+</span><span data-line="342">        <span class="k">return</span> <span class="n">configured_rp_id</span>
+</span><span data-line="343">    <span class="n">origin</span> <span class="o">=</span> <span class="n">_normalize_origin</span><span class="p">(</span><span class="n">app_url</span><span class="p">)</span>
+</span><span data-line="344">    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="345">        <span class="n">hostname</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span>
+</span><span data-line="346">        <span class="k">if</span> <span class="n">hostname</span><span class="p">:</span>
+</span><span data-line="347">            <span class="k">return</span> <span class="n">hostname</span>
+</span><span data-line="348">    <span class="k">return</span> <span class="n">configured_rp_id</span> <span class="ow">or</span> <span class="s2">"localhost"</span>
+</span><span data-line="349">
+</span><span data-line="350">
+</span><span data-line="351"><span class="k">def</span><span class="w"> </span><span class="nf">_resolve_passkey_origins</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cookie_secure</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+</span><span data-line="352">    <span class="n">origins</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="353">    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span> <span class="o">*</span><span class="n">settings</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">PASSKEY_ORIGINS</span><span class="p">):</span>
+</span><span data-line="354">        <span class="n">origin</span> <span class="o">=</span> <span class="n">_normalize_origin</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span data-line="355">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="356">            <span class="k">continue</span>
+</span><span data-line="357">        <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+</span><span data-line="358">        <span class="k">if</span> <span class="n">cookie_secure</span> <span class="ow">and</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span> <span class="o">!=</span> <span class="s2">"https"</span><span class="p">:</span>
+</span><span data-line="359">            <span class="k">continue</span>
+</span><span data-line="360">        <span class="k">if</span> <span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span> <span class="o">!=</span> <span class="n">rp_id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">".</span><span class="si">{</span><span class="n">rp_id</span><span class="si">}</span><span class="s2">"</span><span class="p">):</span>
+</span><span data-line="361">            <span class="k">continue</span>
+</span><span data-line="362">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">origins</span><span class="p">:</span>
+</span><span data-line="363">            <span class="n">origins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+</span><span data-line="364">    <span class="k">if</span> <span class="ow">not</span> <span class="n">origins</span><span class="p">:</span>
+</span><span data-line="365">        <span class="n">scheme</span> <span class="o">=</span> <span class="s2">"https"</span> <span class="k">if</span> <span class="n">cookie_secure</span> <span class="k">else</span> <span class="s2">"http"</span>
+</span><span data-line="366">        <span class="n">origins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">scheme</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">rp_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="367">    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">origins</span><span class="p">)</span>
+</span><span data-line="368">
+</span><span data-line="369">
+</span><span data-line="370"><span class="k">def</span><span class="w"> </span><span class="nf">_normalize_origin</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="371">    <span class="n">candidate</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+</span><span data-line="372">    <span class="k">if</span> <span class="ow">not</span> <span class="n">candidate</span><span class="p">:</span>
+</span><span data-line="373">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="374">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="375">        <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+</span><span data-line="376">        <span class="n">_</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">port</span>
+</span><span data-line="377">    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="378">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="379">    <span class="k">if</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"http"</span><span class="p">,</span> <span class="s2">"https"</span><span class="p">}</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span><span class="p">:</span>
+</span><span data-line="380">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="381">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="382">
+</span><span data-line="383">
+</span><span data-line="384"><span class="k">def</span><span class="w"> </span><span class="nf">_build_oauth_config</span><span class="p">(</span>
+</span><span data-line="385">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="386">    <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">,</span>
+</span><span data-line="387">    <span class="n">local_auth</span><span class="p">:</span> <span class="n">LocalAuthConfig</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">],</span>
+</span><span data-line="388">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="389">    <span class="n">step_up_store</span><span class="p">:</span> <span class="n">SQLAlchemyStepUpService</span><span class="p">,</span>
+</span><span data-line="390"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OAuthConfig</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="391">    <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">github_oauth_enabled</span><span class="p">:</span>
+</span><span data-line="392">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="393">    <span class="n">github</span> <span class="o">=</span> <span class="n">_github_registration</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="394">    <span class="n">protector</span> <span class="o">=</span> <span class="n">build_oauth_protector</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</span><span data-line="395">    <span class="n">transactions</span> <span class="o">=</span> <span class="n">OAuthTransactionService</span><span class="p">(</span>
+</span><span data-line="396">        <span class="n">store</span><span class="o">=</span><span class="n">SQLAlchemyOAuthTransactionStore</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">,</span> <span class="n">protector</span><span class="p">),</span>
+</span><span data-line="397">        <span class="n">pepper</span><span class="o">=</span><span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">OAUTH_TRANSACTION_PEPPER_INFO</span><span class="p">),</span>
+</span><span data-line="398">        <span class="n">redirects</span><span class="o">=</span><span class="n">OAuthRedirectPolicy</span><span class="p">(</span>
+</span><span data-line="399">            <span class="n">callback_uris</span><span class="o">=</span><span class="p">{</span><span class="s2">"github"</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="n">github</span><span class="o">.</span><span class="n">redirect_uri</span><span class="p">})},</span>
+</span><span data-line="400">            <span class="n">return_to</span><span class="o">=</span><span class="n">_OAUTH_RETURN_PATHS</span><span class="p">,</span>
+</span><span data-line="401">            <span class="n">allow_insecure_localhost</span><span class="o">=</span><span class="ow">not</span> <span class="n">_resolve_cookie_secure</span><span class="p">(</span><span class="n">settings</span><span class="p">),</span>
+</span><span data-line="402">        <span class="p">),</span>
+</span><span data-line="403">        <span class="n">lifetime</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+</span><span data-line="404">    <span class="p">)</span>
+</span><span data-line="405">    <span class="n">lifecycle</span> <span class="o">=</span> <span class="n">OAuthLifecycleService</span><span class="p">(</span>
+</span><span data-line="406">        <span class="n">registrations</span><span class="o">=</span><span class="p">(</span><span class="n">github</span><span class="p">,),</span>
+</span><span data-line="407">        <span class="n">transactions</span><span class="o">=</span><span class="n">transactions</span><span class="p">,</span>
+</span><span data-line="408">        <span class="n">accounts</span><span class="o">=</span><span class="n">OAuthAccountService</span><span class="p">(</span>
+</span><span data-line="409">            <span class="n">store</span><span class="o">=</span><span class="n">SQLAlchemyOAuthAccountStore</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">,</span> <span class="n">protector</span><span class="p">),</span>
+</span><span data-line="410">            <span class="n">provision_unknown</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="411">        <span class="p">),</span>
+</span><span data-line="412">        <span class="n">local</span><span class="o">=</span><span class="n">OAuthLocalAuthTransport</span><span class="p">(</span>
+</span><span data-line="413">            <span class="n">local_auth_service</span><span class="o">=</span><span class="n">local_auth</span><span class="o">.</span><span class="n">local_auth_service</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+</span><span data-line="414">        <span class="p">),</span>
+</span><span data-line="415">        <span class="n">step_up</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">"OAuthStepUpAuthorizer"</span><span class="p">,</span> <span class="n">_build_oauth_step_up_authorizer</span><span class="p">(</span><span class="n">local_auth</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">step_up_store</span><span class="p">)),</span>
+</span><span data-line="416">    <span class="p">)</span>
+</span><span data-line="417">    <span class="k">return</span> <span class="n">OAuthConfig</span><span class="p">(</span><span class="n">oauth_service</span><span class="o">=</span><span class="n">lifecycle</span><span class="p">,</span> <span class="n">route_prefix</span><span class="o">=</span><span class="n">_OAUTH_ROUTE_PREFIX</span><span class="p">,</span> <span class="n">register_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="418">
+</span><span data-line="419">
+</span><span data-line="420"><span class="k">def</span><span class="w"> </span><span class="nf">_github_registration</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OAuthProviderRegistration</span><span class="p">:</span>
+</span><span data-line="421">    <span class="n">provider</span> <span class="o">=</span> <span class="n">GitHubOAuthProvider</span><span class="p">(</span>
+</span><span data-line="422">        <span class="n">client_id</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">GITHUB_OAUTH2_CLIENT_ID</span><span class="p">,</span>
+</span><span data-line="423">        <span class="n">client_secret</span><span class="o">=</span><span class="n">SecretStr</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">GITHUB_OAUTH2_CLIENT_SECRET</span><span class="p">),</span>
+</span><span data-line="424">    <span class="p">)</span>
+</span><span data-line="425">    <span class="k">return</span> <span class="n">OAuthProviderRegistration</span><span class="p">(</span>
+</span><span data-line="426">        <span class="n">provider</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="s2">"OAuthProvider"</span><span class="p">,</span> <span class="n">provider</span><span class="p">),</span>
+</span><span data-line="427">        <span class="n">redirect_uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span><span class="si">}{</span><span class="n">_OAUTH_ROUTE_PREFIX</span><span class="si">}</span><span class="s2">/oauth/github/callback"</span><span class="p">,</span>
+</span><span data-line="428">        <span class="n">default_scopes</span><span class="o">=</span><span class="nb">frozenset</span><span class="p">({</span><span class="s2">"user:email"</span><span class="p">,</span> <span class="s2">"read:user"</span><span class="p">}),</span>
+</span><span data-line="429">        <span class="n">expected_issuer</span><span class="o">=</span><span class="n">_GITHUB_ISSUER</span><span class="p">,</span>
+</span><span data-line="430">        <span class="n">retain_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="431">    <span class="p">)</span>
+</span><span data-line="432">
+</span><span data-line="433">
+</span><span data-line="434"><span class="k">def</span><span class="w"> </span><span class="nf">_build_oauth_step_up_authorizer</span><span class="p">(</span>
+</span><span data-line="435">    <span class="n">local_auth</span><span class="p">:</span> <span class="n">LocalAuthConfig</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">User</span><span class="p">],</span>
+</span><span data-line="436">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="437">    <span class="n">step_up_store</span><span class="p">:</span> <span class="n">SQLAlchemyStepUpService</span><span class="p">,</span>
+</span><span data-line="438"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepUpOAuthAuthorizer</span><span class="p">:</span>
+</span><span data-line="439">    <span class="n">session_auth</span> <span class="o">=</span> <span class="n">local_auth</span><span class="o">.</span><span class="n">session_auth</span>
+</span><span data-line="440">
+</span><span data-line="441">    <span class="k">def</span><span class="w"> </span><span class="nf">current_session_id</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="442">        <span class="k">if</span> <span class="n">session_auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="443">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="444">        <span class="n">authentication</span> <span class="o">=</span> <span class="n">session_auth</span><span class="o">.</span><span class="n">current_authentication</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span><span data-line="445">        <span class="k">return</span> <span class="n">authentication</span><span class="o">.</span><span class="n">session_id</span> <span class="k">if</span> <span class="n">authentication</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="446">
+</span><span data-line="447">    <span class="k">return</span> <span class="n">StepUpOAuthAuthorizer</span><span class="o">.</span><span class="n">from_step_up_service</span><span class="p">(</span>
+</span><span data-line="448">        <span class="n">StepUpService</span><span class="p">(</span><span class="n">step_up_store</span><span class="p">),</span>
+</span><span data-line="449">        <span class="n">epochs</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+</span><span data-line="450">        <span class="n">session_binding</span><span class="o">=</span><span class="n">current_session_id</span><span class="p">,</span>
+</span><span data-line="451">    <span class="p">)</span>
+</span><span data-line="452">
+</span><span data-line="453">
+</span><span data-line="454"><span class="k">def</span><span class="w"> </span><span class="nf">_build_api_key_config</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">alchemy_config</span><span class="p">:</span> <span class="n">SQLAlchemyAsyncConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">APIKeyConfig</span><span class="p">:</span>
+</span><span data-line="455">    <span class="n">api_key_store</span> <span class="o">=</span> <span class="n">SQLAlchemyAPIKeyStore</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">)</span>
+</span><span data-line="456">    <span class="k">return</span> <span class="n">APIKeyConfig</span><span class="p">(</span>
+</span><span data-line="457">        <span class="n">store</span><span class="o">=</span><span class="n">api_key_store</span><span class="p">,</span>
+</span><span data-line="458">        <span class="n">pepper</span><span class="o">=</span><span class="n">derive_subkey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">API_KEY_PEPPER_INFO</span><span class="p">),</span>
+</span><span data-line="459">        <span class="n">identity_resolver</span><span class="o">=</span><span class="n">APIKeyIdentityResolver</span><span class="p">(</span><span class="n">alchemy_config</span><span class="p">),</span>
+</span><span data-line="460">        <span class="n">usage_sink</span><span class="o">=</span><span class="n">api_key_store</span><span class="p">,</span>
+</span><span data-line="461">        <span class="n">accept_authorization_bearer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="462">    <span class="p">)</span>
+</span><span data-line="463">
+</span><span data-line="464">
+</span><span data-line="465"><span class="k">def</span><span class="w"> </span><span class="nf">_build_websocket_config</span><span class="p">(</span>
+</span><span data-line="466">    <span class="n">settings</span><span class="p">:</span> <span class="n">Settings</span><span class="p">,</span>
+</span><span data-line="467">    <span class="n">backend</span><span class="p">:</span> <span class="n">SQLAlchemySecurityBackend</span><span class="p">,</span>
+</span><span data-line="468">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="469">    <span class="n">passkey_origins</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span data-line="470"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebSocketSecurityConfig</span><span class="p">:</span>
+</span><span data-line="471">    <span class="n">cors_origins</span> <span class="o">=</span> <span class="p">(</span><span class="n">_normalize_origin</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">ALLOWED_CORS_ORIGINS</span><span class="p">)</span>
+</span><span data-line="472">    <span class="k">return</span> <span class="n">WebSocketSecurityConfig</span><span class="p">(</span>
+</span><span data-line="473">        <span class="n">allowed_origins</span><span class="o">=</span><span class="nb">frozenset</span><span class="p">({</span><span class="o">*</span><span class="n">passkey_origins</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">origin</span> <span class="k">for</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">cors_origins</span> <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)}),</span>
+</span><span data-line="474">        <span class="n">current_security_epoch</span><span class="o">=</span><span class="n">backend</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span>
+</span><span data-line="475">    <span class="p">)</span>
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+      <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../../../_static/design-tabs.js?v=fcb327ea"></script>
+      <script src="../../../../../_static/shibuya.js?v=50760d75"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script></body>
+</html>
