@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import click
 import pytest
 from advanced_alchemy.base import orm_registry
 from click.testing import CliRunner
@@ -72,21 +73,21 @@ def test_cli_click_commands_via_runner(tmp_path: Path, monkeypatch: pytest.Monke
     anyio.run(_setup)
     monkeypatch.setattr(cli_commands, "alchemy", db_cfg)
 
-    runner = CliRunner(env={"NO_COLOR": "1", "FORCE_COLOR": "0"})
+    runner = CliRunner()
     res_create = runner.invoke(
         cli_commands.user_management_group,
         ["create-user", "--email", "runner@example.com", "--name", "Runner", "--password", "StrongPassword!123"],
     )
     assert res_create.exit_code == 0, res_create.output
-    assert "User created: runner@example.com" in res_create.output
+    assert "User created: runner@example.com" in click.unstyle(res_create.output)
 
     res_promote = runner.invoke(
         cli_commands.user_management_group,
         ["promote-to-superuser", "--email", "runner@example.com"],
     )
     assert res_promote.exit_code == 0, res_promote.output
-    assert "Promoting user: runner@example.com" in res_promote.output
-    assert "%" not in res_promote.output
+    assert "Promoting user: runner@example.com" in click.unstyle(res_promote.output)
+    assert "%" not in click.unstyle(res_promote.output)
 
     res_missing = runner.invoke(
         cli_commands.user_management_group,
@@ -96,4 +97,4 @@ def test_cli_click_commands_via_runner(tmp_path: Path, monkeypatch: pytest.Monke
 
     res_roles = runner.invoke(cli_commands.user_management_group, ["create-roles"])
     assert res_roles.exit_code == 0, res_roles.output
-    assert "Assigned default role to 1 user(s)." in res_roles.output
+    assert "Assigned default role to 1 user(s)." in click.unstyle(res_roles.output)
