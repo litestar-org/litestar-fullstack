@@ -89,7 +89,7 @@ test = [
 
 [build-system]
 build-backend = "uv_build"
-requires = ["uv_build>=0.13.0,<0.14.0"]
+requires = ["uv_build>=0.13.9,<0.14.0"]
 
 [tool.uv]
 exclude-newer = "7 days"
