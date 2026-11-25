@@ -10,9 +10,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createTeamInvitationMutation, getTeamQueryKey, listTeamInvitationsQueryKey } from "@/lib/generated/api/@tanstack/react-query.gen"
+import { emailField } from "@/lib/validation"
 
 const inviteSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: emailField("Please enter a valid email address"),
   role: z.enum(["MEMBER", "ADMIN"] as const),
 })
 

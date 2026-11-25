@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { configureApiClient, extractApiErrorMessage, isApplicationAccessRequired, isReauthenticationRequired, resetApiClientForTest } from "@/lib/api-client"
+import { configureApiClient, extractApiErrorMessage, isApplicationAccessRequired, isGenericRejection, isReauthenticationRequired, resetApiClientForTest } from "@/lib/api-client"
 import { client } from "@/lib/generated/api/client.gen"
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/generated/routes"
 
@@ -137,5 +137,15 @@ describe("extractApiErrorMessage", () => {
     expect(extractApiErrorMessage({ status: 409, title: "Conflict", message: "This invitation was already used." }, "Try again")).toBe("This invitation was already used.")
     expect(extractApiErrorMessage({ status: 403, title: "Forbidden" }, "Try again")).toBe("Forbidden")
     expect(extractApiErrorMessage({ status: 500 }, "Try again")).toBe("Try again")
+  })
+})
+
+describe("isGenericRejection", () => {
+  it("recognizes only the deliberately uninformative rejection", () => {
+    expect(isGenericRejection({ status: 400, title: "Bad Request", detail: "The request is invalid." })).toBe(true)
+    expect(isGenericRejection({ status: 400, title: "Bad Request", detail: "Password is too common." })).toBe(false)
+    expect(isGenericRejection({ status: 400, title: "Bad Request" })).toBe(false)
+    expect(isGenericRejection(new Error("The request is invalid."))).toBe(false)
+    expect(isGenericRejection(null)).toBe(false)
   })
 })

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
-import { extractApiErrorMessage } from "@/lib/api-client"
+import { extractApiErrorMessage, isGenericRejection } from "@/lib/api-client"
 import { localPasswordResetMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { newPasswordSchema } from "@/lib/validation"
 
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/_public/reset-password")({
 })
 
 const LOGIN_REDIRECT_DELAY_MS = 3000
+const RESET_REJECTED_MESSAGE = "We couldn't reset your password. The link may have expired, or the password may be too common. Request a new link or choose a different password."
 
 const resetPasswordSchema = z
   .object({
@@ -66,9 +67,7 @@ function ResetPasswordPage() {
       toast.success("Password reset successfully!")
     },
     onError: (error) => {
-      const message = extractApiErrorMessage(error, "Failed to reset password")
-      const isLinkUnusable = /expired|invalid/i.test(message)
-      toast.error(isLinkUnusable ? "This reset link has expired or is invalid. Please request a new one." : message)
+      toast.error(isGenericRejection(error) ? RESET_REJECTED_MESSAGE : extractApiErrorMessage(error, "Failed to reset password"))
     },
   })
 

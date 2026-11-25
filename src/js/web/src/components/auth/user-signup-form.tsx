@@ -11,14 +11,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { PasswordStrength } from "@/components/ui/password-strength"
 import { useAuthConfig } from "@/lib/api/hooks/auth"
-import { extractApiErrorMessage } from "@/lib/api-client"
+import { extractApiErrorMessage, isGenericRejection } from "@/lib/api-client"
 import { localRegisterMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
 import { DEFAULT_AUTH_REDIRECT } from "@/lib/redirect-utils"
-import { newPasswordSchema } from "@/lib/validation"
+import { emailField, newPasswordSchema } from "@/lib/validation"
+
+const SIGNUP_REJECTED_MESSAGE = "We couldn't create your account. Use a password of 12 to 128 characters that is not your email address and not a common password."
 
 const signupSchema = z
   .object({
-    email: z.string().email("Invalid email address"),
+    email: emailField("Invalid email address"),
     password: newPasswordSchema,
     name: z.string().min(1, "Name is required"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
@@ -68,7 +70,7 @@ export function UserSignupForm({ redirectUrl }: Readonly<UserSignupFormProps>) {
       toast.success(isVerificationRequired ? "Account created! Please check your email to verify your account." : "Account created! You can sign in now.")
       void navigate({ to: "/login", search: redirectUrl ? { redirect: redirectUrl } : undefined })
     } catch (error) {
-      toast.error(extractApiErrorMessage(error, "Signup failed"))
+      toast.error(isGenericRejection(error) ? SIGNUP_REJECTED_MESSAGE : extractApiErrorMessage(error, "Signup failed"))
     }
   }
 

@@ -18,6 +18,10 @@ const CREDENTIAL_CHECK_PATH_FRAGMENTS = [
 const REAUTHENTICATION_REQUIRED = "reauthentication_required"
 const APPLICATION_ACCESS_REQUIRED = "application_access_required"
 
+// The security library's own routes (register, password reset, password change) answer every
+// rejection with this sentence, so the reason has to be explained by the form that sent the request.
+const GENERIC_REJECTION_DETAIL = "The request is invalid."
+
 export interface ApiClientConfigOptions {
   baseUrl?: string
   /** The session is missing or expired. */
@@ -67,6 +71,11 @@ export function extractApiErrorMessage(error: unknown, fallback: string): string
     return readNonEmptyString(error, "detail") ?? readNonEmptyString(error, "message") ?? readNonEmptyString(error, "title") ?? fallback
   }
   return fallback
+}
+
+/** True when the API refused a request without saying why. */
+export function isGenericRejection(error: unknown): boolean {
+  return typeof error === "object" && error !== null && readNonEmptyString(error, "detail") === GENERIC_REJECTION_DETAIL
 }
 
 export function isReauthenticationRequired(error: unknown): boolean {

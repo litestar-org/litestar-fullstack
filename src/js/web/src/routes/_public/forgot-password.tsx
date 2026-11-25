@@ -13,13 +13,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { extractApiErrorMessage } from "@/lib/api-client"
 import { localPasswordRecoveryMutation } from "@/lib/generated/api/@tanstack/react-query.gen"
+import { emailField } from "@/lib/validation"
 
 export const Route = createFileRoute("/_public/forgot-password")({
   component: ForgotPasswordPage,
 })
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: emailField("Please enter a valid email address"),
 })
 
 type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>
